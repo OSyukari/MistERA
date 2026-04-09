@@ -38,6 +38,24 @@ public class BodyInternal_Instance
         } 
     }
 
+    public void UnequipByLayer(BodyEquipLayer filter, Revealing revealingScoreFilter = Revealing.Erotic)
+    {
+        foreach (var layer in this.equipLayers)
+        {
+            if (filter == BodyEquipLayer.None || layer <= filter)
+            {
+                foreach (BodyPartEquipSlot slot in this.availableSlots)
+                {
+                    var equip = this.GetEquip(layer, slot);
+                    if (equip > -1 && scr_System_CampaignManager.current.FindItemInstanceByID(equip).GetComp_Equippable().revealing >= revealingScoreFilter)
+                    {
+                        UnequipItem(equip);
+                    }
+                }
+            }
+            else continue;
+        }
+    }
     [JsonIgnore] public Memory_Entry LastExperience { get 
         {
             if (lastExperience == 0) return null;

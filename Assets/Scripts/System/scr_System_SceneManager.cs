@@ -63,15 +63,12 @@ public class scr_System_SceneManager : MonoBehaviour
         var scr_menu = targetCanvas.GetComponent<scr_Menu>();
 
         var selfRect = from.ParentCanvas != null ? from.ParentCanvas.PanelAnchor : from.m_Canvas.GetComponent<RectTransform>();
-        if (from.ParentCanvas == null)
-        {
-            targetCanvas.anchorMax = new Vector2(0.5f, 0.5f);
-            targetCanvas.anchorMin = new Vector2(0.5f, 0.5f);
-            targetCanvas.anchoredPosition = new Vector2(0f, 0f);
-        }
         targetCanvas.SetParent(selfRect, false);
-        targetCanvas.sizeDelta = new Vector2(selfRect.sizeDelta.x, selfRect.sizeDelta.y);
-        //Debug.Log($"parent sizedelta {selfRect.sizeDelta.x} {selfRect.sizeDelta.y}");
+        targetCanvas.localScale = Vector3.one;
+        targetCanvas.anchorMin = Vector2.zero;
+        targetCanvas.anchorMax = Vector2.one;
+        targetCanvas.offsetMin = Vector2.zero;
+        targetCanvas.offsetMax = Vector2.zero;
 
         if (scr_menu != null) scr_menu.ParentCanvas = from.ParentCanvas;
 
@@ -94,16 +91,13 @@ public class scr_System_SceneManager : MonoBehaviour
         var scr_menu = targetCanvas.GetComponent<scr_Menu>();
 
         var selfRect = from.ParentCanvas != null ? from.ParentCanvas.PanelAnchor : from.m_Canvas.GetComponent<RectTransform>();
-        if (from.ParentCanvas == null)
-        {
-            targetCanvas.anchorMax = new Vector2(0.5f, 0.5f);
-            targetCanvas.anchorMin = new Vector2(0.5f, 0.5f);
-            targetCanvas.anchoredPosition = new Vector2(0f, 0f);
-        }
         targetCanvas.SetParent(selfRect, false);
-        targetCanvas.sizeDelta = new Vector2(selfRect.sizeDelta.x, selfRect.sizeDelta.y);
-       // Debug.Log($"parent sizedelta {selfRect.sizeDelta.x} {selfRect.sizeDelta.y}");
-        
+        targetCanvas.localScale = Vector3.one;
+        targetCanvas.anchorMin = Vector2.zero;
+        targetCanvas.anchorMax = Vector2.one;
+        targetCanvas.offsetMin = Vector2.zero;
+        targetCanvas.offsetMax = Vector2.zero;
+
         if (scr_menu != null) scr_menu.ParentCanvas = from.ParentCanvas;
         
         canvasList.Add(targetCanvas);
@@ -114,17 +108,15 @@ public class scr_System_SceneManager : MonoBehaviour
     {
         targetCanvas = Instantiate(prefab) as RectTransform;
 
-        targetCanvas.anchorMax = new Vector2(0.5f, 0.5f);
-        targetCanvas.anchorMin = new Vector2(0.5f, 0.5f);
-        targetCanvas.anchoredPosition = new Vector2(0f, 0f);
-
         if (parent != null)
         {
-            //if (target.parent != null && target.parent != target) target = target.parent;
             targetCanvas.SetParent(parent, false);
-            //targetCanvas.pixel
-            targetCanvas.sizeDelta = new Vector2(parent.sizeDelta.x, parent.sizeDelta.y);
         }
+        targetCanvas.localScale = Vector3.one;
+        targetCanvas.anchorMin = Vector2.zero;
+        targetCanvas.anchorMax = Vector2.one;
+        targetCanvas.offsetMin = Vector2.zero;
+        targetCanvas.offsetMax = Vector2.zero;
         canvasList.Add(targetCanvas);
 
 

@@ -60,6 +60,20 @@ public static class ResultCharaUtility
                 //Debug.Log($"{c.FirstName} redress");
                 c.Redress();
                 break;
+            case CharaResultType.undress:
+                if (r.tags.Count > 0)
+                {
+                    if (c.Body == null || c.Body.Body == null) break;
+                    c.Body.UndressAllBy(r.tags, BodyEquipLayer.None);
+                    // undress by part
+                    
+                }
+                else
+                {
+                    // undress all
+                    c.UndressAll(BodyEquipLayer.None);
+                }
+                break;
             default: break;
         }
         if (r.useItemFromTargetInventory != "")

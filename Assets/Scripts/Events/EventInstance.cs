@@ -25,6 +25,32 @@ public class EventInstance
         }
     }
 
+    public bool ConflictWith (EventInstance ev)
+    {
+        if (this.currentEvent != ev.currentEvent) return false;
+        if (!this.allowDuplicate) return true;
+
+        if (CooldownRestrictSelf && this.Self != null && this.Self == ev.Self) return true;
+        if (CooldownRestrictTarget)
+        {
+            List<Character_Trainable> actors_self = new List<Character_Trainable>(), actors_ev = new List<Character_Trainable>();
+
+            foreach (var target in this.Targets) actors_self.AddRange(target.Value);
+            actors_self = Utility.Distinct(actors_self);
+            actors_self.Remove(null);
+
+            foreach (var target in ev.Targets) actors_ev.AddRange(target.Value);
+            actors_ev = Utility.Distinct(actors_ev);
+            actors_ev.Remove(null);
+
+            if (actors_self.Count < 1 || actors_ev.Count < 1) return false;
+            else if (Utility.ListContainsLoose(actors_self, actors_ev)) return true;
+        }
+
+        return false;
+
+    }
+
     public bool overrideTargetGen = false;
     public bool overrideTargetScope = false;
     public List<Event.GenerationParameters> OverrideTargetGen = new List<Event.GenerationParameters>();
@@ -111,6 +137,41 @@ public class EventInstance
     protected Event currentEvent = null;
     protected Event.EventEntry currentEntry = null;
 
+    public string CurrentEventID
+    {
+        get
+        {
+            return currentEvent == null ? "null" : currentEvent.ID;
+        }
+    }
+
+    public int EventCooldown
+    {
+        get
+        {
+            return currentEvent == null ? nextEvent == null ? 0 : nextEvent.cooldownTime : currentEvent.cooldownTime;
+        }
+    }
+
+    public bool CooldownRestrictSelf
+    {
+        get
+        {
+            return currentEvent == null ? nextEvent == null ? false : nextEvent.cooldownRestrictSelf : currentEvent.cooldownRestrictSelf;
+
+        }
+    }
+
+
+    public bool CooldownRestrictTarget
+    {
+        get
+        {
+            return currentEvent == null ? nextEvent == null ? false : nextEvent.cooldownRestrictTarget : currentEvent.cooldownRestrictTarget;
+
+        }
+    }
+
     [JsonIgnore]
     public string DumpCurrentLine
     {
@@ -174,7 +235,9 @@ public class EventInstance
         }
     }
     public bool canRun { get { return nextEntry != null && nextEvent != null; } }
-    public bool allowDuplicate { get { return (currentEvent == null || currentEvent.allowDuplicate) && (nextEvent == null || nextEvent.allowDuplicate); } }
+    public bool allowDuplicate { get {
+            return currentEvent == null ? nextEvent == null ? false : nextEvent.allowDuplicate : currentEvent.allowDuplicate;
+        } }
     public bool Active { get { return Status != EventStatus.idle; } }
     public bool Displayable { get { return true; } }
     public void Start(bool waitingEnd = false)

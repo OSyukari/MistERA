@@ -14,17 +14,39 @@ public static class MapUtility
 
         foreach (var ep in eps)
         {
+            if (ep.Package.isTemporaryAP) continue;
             if (ep.job.Actors.Contains(self) && ep.job.Actors.Contains(target)) continue;
 
-            var kol = new KojoCollector(self, ep.targetCOM.tooltipID, "_Interrupt");
-            kol.LoadEP(ep, target);
-            kol = self.Relationships.GetKOJOMessage_Suffix(kol, null);
-            if (kol == null) continue;
-            kol.ReplaceString("$self$", self.FirstName);
-            kol.ReplaceString("$target$", target.FirstName);
+            var kol2 = new KojoCollector(self, ep.targetCOM.tooltipID, "_Interrupt");
+            kol2.LoadEP(ep, target);
+            kol2 = self.Relationships.GetKOJOMessage_Suffix(kol2, null);
+            if (kol2 != null)
+            {
+                kol2.ReplaceString("$self$", self.FirstName);
+                kol2.ReplaceString("$target$", target.FirstName);
+                kol2.ReplaceString("$epDescription$", ep.Description_Ongoing);
+                kol2.LoadRelevantActors(ep.ActorRefs);
+                kol2.autoAnimate = true;
+                scr_UpdateHandler.current.AppendKojoMessage(kol2, self.CurrentRoom);
+                return true;
+            }
+            else
+            {
+                var kol3 = new KojoCollector(self, "Interrupt");
+                kol3.LoadRel(rel);
+                kol3 = self.Relationships.GetKOJOMessage_Suffix(kol3, null);
+                if (kol3 != null)
+                {
+                    kol3.ReplaceString("$self$", self.FirstName);
+                    kol3.ReplaceString("$target$", target.FirstName);
+                    kol3.ReplaceString("$epDescription$", ep.Description_Ongoing);
+                    kol3.LoadRelevantActors(ep.ActorRefs);
+                    kol3.autoAnimate = true;
+                    scr_UpdateHandler.current.AppendKojoMessage(kol3, self.CurrentRoom);
+                    return true;
+                }
+            }
 
-            scr_UpdateHandler.current.AppendKojoMessage(kol, self.CurrentRoom);
-            return true;
         }
         return false;
         /*
@@ -59,6 +81,8 @@ public static class MapUtility
     /// <param name="selfTags"></param>
     public static bool CheckInterrupt(Character_Trainable Owner, ActionPackage ap, List<string> selfTags)
     {
+        if (ap != null && ap.isTemporaryAP) return false;
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Interrupt;
         // if any EP satisfy interrupt condition, every actor in ap are checked for relationship mod
         var triggerEventID = "Interrupt";
 
@@ -87,8 +111,8 @@ if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.mes
         {
             kol.rightAlign = true;
             if (ap != null) kol.LoadRelevantActors(ap.actorRefs);
-
             kol.ReplaceString("$self$", Owner.FirstName);
+            if (debug) Debug.Log($"Interrupt [{Owner.FirstName}] visible? {kol.VisibleTo(scr_System_CampaignManager.current.Player, Owner.CurrentRoom)} : {kol.collect.message}");
             scr_UpdateHandler.current.AppendKojoMessage(kol, Owner.CurrentRoom);
             return true;
         }

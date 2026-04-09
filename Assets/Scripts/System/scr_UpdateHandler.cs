@@ -422,6 +422,11 @@ public class scr_UpdateHandler : MonoBehaviour
         } }
     scr_AttachToUpdateHandler imageScript = null;
 
+    /// <summary>
+    /// Only observer should be logs panel
+    /// </summary>
+    /// <param name="status"></param>
+    /// <param name="forcelogging"></param>
     public void InvokeEventStatus(EventStatus status, bool forcelogging)
     {
         this.Observer_EventStatus?.Invoke(status, forcelogging);
@@ -508,6 +513,7 @@ public class scr_UpdateHandler : MonoBehaviour
     {
         var time = scr_System_Time.current.getCurrentTime();
         Observer_PreUpdateTime?.Invoke();
+        this.EventHandler.TickCooldown();
         if (time.Minute == 0) Observer_PreUpdateTime_Hourly?.Invoke();
     }
 
@@ -728,8 +734,14 @@ public class scr_UpdateHandler : MonoBehaviour
         FlushCollectedLogs(true, oneLoop, true);
         //NotifyLogsSingleUpdate(CallbackResumeUpdate);
         scr_System_CampaignManager.current.NotifyEventEnd();
+        var player = scr_System_CampaignManager.current.Player;
+        var desc = new DescriptionCollector($"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", VisibilityLevel.Roomwide);
+        desc.tooltip = scr_System_Time.current.getCurrentTime().ToString();
+        desc.rightAlign = true;
+        desc.autoAnimate = true;
+        desc.relevantActors.Add(player.RefID);
 
-        cnManager.AddLog(-1000, $"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", true, true, scr_System_Time.current.getCurrentTime().ToString());
+        cnManager.AddLog(desc, player, true);
     }
 
     public void DeferredUpdateCall(int intref, string text)
@@ -812,14 +824,18 @@ public class scr_UpdateHandler : MonoBehaviour
         bool visible = m.VisibleTo(player, room);
         bool record = room != null && room.HasRecording;
 
+        if (record) room.NotifyKojoCollect(m);
         if (visible)
         {
             m.collect.rightAlign = m.rightAlign;
-            this.Message.messages_kojo.Add(m.collect);
+            this.Message.AddKojo(m);
            // FlushCollectedLogs_PreEvents();
+           if (!Updating)
+            {
+                this.Message.FlushCollectLogs(player);
+                Debug.Log($"AppendKojoMessage not updating, flushing");
+            }
         }
-        if (record) room.NotifyKojoCollect(m);
-        if (visible && !Updating) this.Message.FlushCollectLogs(player);
     }
     public ExperienceLog GetExpLogs()
     {
@@ -827,18 +843,6 @@ public class scr_UpdateHandler : MonoBehaviour
     }
 
 
-    public void FlushCollectedLogs_PreEvents()
-    {
-
-        if (Message.messages_checks.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_checks), false);
-        if (Message.messages_before.Count > 0) cnManager.AddLog(-1, String.Join("\n", Message.messages_before), false);
-
-        foreach (var kvp in Message.messages_kojo) cnManager.AddLog(kvp);
-
-        Message.messages_before.Clear();
-        Message.messages_checks.Clear();
-        Message.messages_kojo.Clear();
-    }
     /// <summary>
     /// executeCallbacks == true will cause infinite loop if flushcollectedlogs is inside callbacks !!
     /// </summary>

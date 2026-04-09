@@ -232,50 +232,6 @@ public class Character_Personality
         }
     }
 
-
-
-    public MessageCollect_KojoEntry GetKOJOMessage(string eventID, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, Character_Relationship rel)
-    {
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Try GetKOJOMessage evID["+eventID+"] [" + rel.Owner.FirstName + "->" + rel.Target.FirstName + "], self[" + String.Join("|", selfEPs) + "] target[" + String.Join("|", targetEPs) + "]");
-        if (rel.Owner.RefID == 0) return null;
-        if (!entries.ContainsKey(eventID))
-        {
-           // if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, selfEPs, targetEPs, rel);
-           // else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log( "Personality [" + this.DisplayName + "] unimplemented event response for [" + eventID + "] and for target [" + rel.Target.FirstName + "]");
-            return null;
-        }
-        if (!entries[eventID].Validate(rel.Owner)) return null;
-
-        eventID = entries[eventID].CheckRedirect(eventID);
-        return entries[eventID].GetResponse(rel, selfEPs, targetEPs);
-    }
-
-    public MessageCollect_KojoEntry GetKOJOMessage(string eventID, Character_Trainable owner,  List<string> selfTags, List<EvaluationPackage> allEPs)
-    {
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents || (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt && eventID == "Interrupt")) Debug.Log("Try GetKOJOMessage from ["+owner.FirstName+"] evID[" + eventID + "] [missing relation, checking with all ep actors] self[" + String.Join("|", selfTags) + "] target[" + String.Join("|", allEPs) + "]");
-
-        if (!entries.ContainsKey(eventID))
-        {
-            if (this.Fallback != null) return Fallback.GetKOJOMessage(eventID, owner, selfTags, allEPs);
-            else if (scr_System_CentralControl.current.LogPrefs.DLog_UnimplementedKojo) Debug.Log($"Personality [{this.DisplayName}] unimplemented event response for [{eventID}]");
-            return null;
-        }
-
-        if (!entries[eventID].Validate(owner))
-        {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt && eventID == "Interrupt") Debug.LogError("validation failed");
-            return null;
-        }
-        else
-        {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt && eventID == "Interrupt") Debug.LogError("validation success");
-
-            eventID = entries[eventID].CheckRedirect(eventID);
-            return entries[eventID].GetResponse(owner, selfTags, allEPs);
-        }
-    }
-
-
     public MessageCollect_KojoEntry GetKOJOMessage(KojoCollector kol)
     { if (kol.Owner.RefID == 0) return null;
         var key = $"{kol.eventID}{kol.suffix}";
@@ -320,49 +276,6 @@ public class Character_Personality
 
         return entries[eventID].GetResponse(kol);
     }
-
-    /// <summary>
-    /// New API replacing GetKOJOMessage(string, Character_Trainable, List&lt;string&gt;, List&lt;EvaluationPackage&gt;).
-    /// Caller sets kol.eventID and kol.selfTags, then passes allEPs.
-    /// Iterates EPs to resolve the appropriate target, loads EP data into a kol copy, and delegates to GetKOJOMessage(KojoCollector).
-    /// </summary>
-    public MessageCollect_KojoEntry GetKOJOMessage(KojoCollector kol, List<EvaluationPackage> allEPs)
-    {
-        if (kol.Owner.RefID == 0) return null;
-
-        foreach (var ep in allEPs)
-        {
-            // Owner observing Doer (owner is not the Doer)
-            if (ep.Doer != null && ep.Doer != kol.Owner)
-            {
-                var attempt = kol.Copy();
-                attempt.LoadEP(ep, ep.Doer);
-                var result = GetKOJOMessage(attempt);
-                if (result != null) return result;
-            }
-
-            // Owner observing Receiver (owner is not the Receiver)
-            if (ep.Receiver != null && ep.Receiver != kol.Owner)
-            {
-                var attempt = kol.Copy();
-                attempt.LoadEP(ep, ep.Receiver);
-                var result = GetKOJOMessage(attempt);
-                if (result != null) return result;
-            }
-
-            // Self-referencing: owner IS the Doer with no Receiver
-            if (ep.Doer == kol.Owner && ep.Receiver == null)
-            {
-                var attempt = kol.Copy();
-                attempt.LoadEP(ep, null);
-                var result = GetKOJOMessage(attempt);
-                if (result != null) return result;
-            }
-        }
-
-        return null;
-    }
-
 
     public MessageCollect_KojoEntry GetKOJOMessage(string eventID, Character_Relationship rel)
     {

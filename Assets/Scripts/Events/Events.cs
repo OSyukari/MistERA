@@ -83,6 +83,9 @@ public class Event : I_SerializationCallbackReceiver
 {
     public string ID = "";
     public bool allowDuplicate = true;
+    public int cooldownTime = 0;
+    public bool cooldownRestrictSelf = false;
+    public bool cooldownRestrictTarget = true;
     /// <summary>
     /// Since there is jump involved, Event itself should not be managing the flow
     /// Event only responsible for query and nothing more
@@ -223,7 +226,6 @@ public class Event : I_SerializationCallbackReceiver
 
         public string label = "";
         public bool isLast = false;
-        public bool allowDuplicate = true;
         public string nextEventID = "";
         public string nextEntryLabel = "";
 
@@ -338,8 +340,21 @@ public class Event : I_SerializationCallbackReceiver
         public enum ExecutionType
         {
             None,
+
+            /// <summary>
+            /// [string eventID, string labelID]
+            /// </summary>
             JumpToLabel,
+
+            /// <summary>
+            /// [string rel_self, string rel_target, string kojoID, string storeIntoAppendID]
+            /// </summary>
             GetKojoEntry,
+
+            /// <summary>
+            /// [string rel_self, string rel_target, string kojoID_fromAppendStrings, string storeIntoAppendID]
+            /// </summary>
+            GetKojoEntryFromAppendStrings,
 
             /// <summary>
             /// [self/targetkey, isdaily, stringkey, value]
@@ -381,11 +396,20 @@ public class Event : I_SerializationCallbackReceiver
             ExistCallbackID,
             FlushLogs,
             ExistAppendStrings,
+            /// <summary>
+            /// [string appendStringKey, bool visibletoAll]
+            /// <br/>This will be recorded in owner.Self's room
+            /// </summary>
             FlushAppendStrings,
-
+            /// <summary>
+            /// Flush collected content in event.message.exp into screen
+            /// <br/>Will save climax and message into event.self's room, if available
+            /// </summary>
             FlushMessageExpAll,
 
-
+            /// <summary>
+            /// This should only be used by debug, as printing kojo message for AP is not supposed to happen (only printing exp and message is expected)
+            /// </summary>
             FlushMessageAll,
             /// <summary>
             /// [] <br/>
@@ -396,7 +420,17 @@ public class Event : I_SerializationCallbackReceiver
             /// [Self/targetlabel, eventid, eventlabel, originalSelfLabel]
             /// </summary>
             StartEvent,
-            JoinTargetJob, TryJoinTargetJob,
+            /// <summary>
+            /// [string targetKey, string comTag, Memory_Response forceResponse]
+            /// <br/>Will first check if FindJoinableAP_Callback exist, and skip all internal validation and run that instead
+            /// </summary>
+            TryJoinTargetJob,
+            /// <summary>
+            /// [string targetKey, string comTag, Memory_Response forceResponse]
+            /// <br/> will store query result into [callbacks FindJoinableAP_Callback]
+            /// <br/> will skip validation if callback exists
+            /// </summary>
+            FindJoinableAP,
             /// <summary>
             /// require Targets containing scopeKeys: teamA_frontline, teamA_backline, teamB_frontline, teamB_backline
             /// </summary>

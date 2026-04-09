@@ -189,6 +189,7 @@ public class ActionPackage_PathTo : ActionPackage
             desc_prev.message_excludeRelated = s_prev;
             desc_prev.LoadActors(Doer.RefID, true, false);
             desc_prev.tooltip = s_next;
+            desc_prev.autoAnimate = true;
 
             //Debug.Log($"before AppendMessageBefore, [{desc_prev.message}] [{desc_prev.message_excludeRelated}]");
             scr_UpdateHandler.current.AppendMessageBefore(desc_prev, prev);
@@ -204,6 +205,8 @@ public class ActionPackage_PathTo : ActionPackage
 
             desc.LoadActors(Doer.RefID, true, false);
             desc.message_excludeRelated = s_next;
+            desc.tooltip = s_prev;
+            desc.autoAnimate = true;
             List<string> s2 = new List<string>();
             //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
                 

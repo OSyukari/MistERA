@@ -1,10 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System;
 using Newtonsoft.Json;
 using QuikGraph;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 
 
@@ -28,6 +28,16 @@ public class ActionPackage_Undress : ActionPackage
     public ActionPackage_Undress() : base()
     {
 
+    }
+
+    [JsonProperty] CharaReq targetReq = null;
+
+    public ActionPackage_Undress(Job job, int doerRef, COM_Requirements req, bool isdoer, int duration = 5) : base()
+    {
+        ReEstablishParent(job);
+        this.duration = duration;
+        this.doerRefs.Add(doerRef);
+        this.targetReq = isdoer ? req.requirement.req_Doers : req.requirement.req_Receivers;
     }
 
     public ActionPackage_Undress(Job job, int doerRef, BodyEquipLayer layer = BodyEquipLayer.None, Revealing includeRating = Revealing.Erotic, int duration = 5) : this()
@@ -120,8 +130,24 @@ public class ActionPackage_Undress : ActionPackage
         //Debug.Log("ActionPackage_Undress Execute for [" + Doer.FirstName + "]");
         var c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
         if (c != null)
-        {   if (targetLayer == BodyEquipLayer.None) c.Undress(targetLayer, includeRating, true);
-            else c.UndressAll(targetLayer, includeRating, true);
+        {   
+            if (targetReq != null && targetReq.clothingRequirement < BodyEquipLayer.Outer)
+            {
+                if (targetReq.requireUndressedTags.Count > 0)
+                {
+                    c.Body.UndressAllBy(targetReq.requireUndressedTags, targetReq.clothingRequirement);
+                }
+                else if (targetReq.clothingRequirement < BodyEquipLayer.Outer)
+                {
+                    c.UndressAll(targetReq.clothingRequirement, includeRating, true);
+                }
+            }
+            else
+            {
+                if (targetLayer == BodyEquipLayer.None) c.Undress(targetLayer, includeRating, true);
+                else c.UndressAll(targetLayer, includeRating, true);
+            }
+            
             c.NotifyConsciousClothingChange(targetLayer);
         }
         executeSuccessful = true;

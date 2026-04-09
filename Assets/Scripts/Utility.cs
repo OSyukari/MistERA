@@ -760,6 +760,9 @@ public static class UtilityEX
             Debug.LogError("STRING REPLACE COMDESC [" + s + "] with [" + (ap.targetCOM == null ? "" : ap.targetCOM.DisplayName(ap.COMVariantID)) + "]");
             s = s.Replace("$comdesc$", ap.targetCOM == null ? "" : ap.targetCOM.DisplayName(ap.COMVariantID));
         }
+
+        s = s.Replace("$result$", LocalizeDictionary.QueryThenParse($"Memory_Response_{ap.injectResult}"));
+
     }
 
     public static void StringReplace(EvaluationPackage evp, ref string s)
@@ -1035,6 +1038,11 @@ public static class UtilityEX
         }
         else if (c.Stats.isConsciousnessUnconscious) tags.Add("unconscious");
 
+        if (c.CurrentJob != null)
+        {
+            c.CurrentJob.GetActorAPTags(c.RefID, tags);
+        }
+        tags = Utility.Distinct(tags);
         //if (c.Climaxing) tags.Add("climax");  this will make it too easy to get climax exp
     }
 

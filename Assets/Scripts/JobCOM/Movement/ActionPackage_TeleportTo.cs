@@ -129,6 +129,7 @@ public class ActionPackage_TeleportTo : ActionPackage
         desc_prev.message_excludeRelated = s_prev;
         desc_prev.LoadActors(Doer.RefID, true, false);
         desc_prev.tooltip = s_next;
+        desc_prev.autoAnimate = true;
         scr_UpdateHandler.current.AppendMessageBefore(desc_prev, prev);
         //scr_System_CampaignManager.current.AddLog(desc_prev, prev, true);
 
@@ -139,6 +140,8 @@ public class ActionPackage_TeleportTo : ActionPackage
 
         desc.LoadActors(Doer.RefID, true, false);
         desc.message_excludeRelated = s_next;
+        desc.tooltip = s_prev;
+        desc.autoAnimate = true;
         List<string> s2 = new List<string>();
         //string msg = "Entering room " + scr_System_CampaignManager.current.Map.Rooms[e.Target].DisplayName;
 

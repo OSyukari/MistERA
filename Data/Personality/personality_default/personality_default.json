@@ -347,29 +347,28 @@
                             {
                                 "_comment": "interrupt does not check self AP, selftags will mostly be [], so to remedy this, this response will trigger an event with eventInstance.Self == target, and inject self as argument, letting the event take care of validating everything",
                                 "requirement": {
-                                    "targetTags": [
+                                    "selfTags": [
                                         "privacy"
                                     ],
-                                    "requireSelfAction": false,
-                                    "requireTargetAction": true,
+                                    "requireTargetAction": false,
+                                    "requireSelfAction": true,
                                     "requireEPSuccess": false
                                 },
                                 "responses": [
-                                    "kojo_default_event_interrupt_02"
+                                    "kojo_default_event_interrupt_02_reverse"
                                 ],
-                                "forbidPortaitDisplay":true,
+                                "useActiveTags":true,
+                                "extraPortraitTags":["blush","angry","disgusted","sorry"],
                                 "results": [
                                     {
-                                        "flushLog": true,
                                         "launchEvent": {
                                             "eventID": "RequestLeave_PrivateAction",
                                             "eventLabel": "",
-                                            "reverseTargets": true
+                                            "reverseTargets": false
                                         }
                                     }
                                 ]
-                            },
-                            
+                            },                            
                             {
                                 "requirement": {
                                     "requireTargetAction": false,
@@ -394,7 +393,7 @@
                                 "forbidPortaitDisplay":true,
                                 "results": [
                                     {
-                                        "flushLog": true,
+                                        "flushLog": false,
                                         "launchEvent": {
                                             "eventID": "RequestJoin",
                                             "eventLabel": "",
@@ -439,8 +438,10 @@
                 "kojo_default_event_greeting_04": "$self$今天第一次问候$target$",
                 "kojo_default_event_interrupt_01": "<link=\"kojo_default_event_interrupt_01_tooltip\"><color=#373737>$self$看到$epDescription$</color></link>",
                 "kojo_default_event_interrupt_01_tooltip": "interrupt 1",
-                "kojo_default_event_interrupt_02": "<link=\"kojo_default_event_interrupt_02_tooltip\"><color=#373737>$self$看到2$target$$epDescription$</color></link>",
+                "kojo_default_event_interrupt_02": "<link=\"kojo_default_event_interrupt_02_tooltip\"><color=#373737>$self$看到$target$$epDescription$</color></link>",
                 "kojo_default_event_interrupt_02_tooltip": "interrupt 2",
+                "kojo_default_event_interrupt_02_reverse": "<link=\"kojo_default_event_interrupt_02_reverse_tooltip\">$target$看到 $epDescription$</link>",
+                "kojo_default_event_interrupt_02_reverse_tooltip": "interrupt 2 reverse",
                 "kojo_default_event_interrupt_03": "<color=#373737>工作中的$self$看到$target$$epDescription$</color>"
             },
             "en-us": {

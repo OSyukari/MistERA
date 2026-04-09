@@ -334,10 +334,19 @@ public class RelationshipManager
     }*/
 
 
-
+    /// <summary>
+    /// Reserved for map Interrupt calls
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="selfEPs"></param>
+    /// <param name="targetEPs"></param>
+    /// <param name="triggerEventID"></param>
+    /// <returns></returns>
     public bool NotifyMeeting(Character_Trainable c, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs, string triggerEventID = "")
     {
-        if (c == null || c.RefID < 0) return false;
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Interrupt && Owner != null && c != null && (Owner.RefID == 0 || c.RefID == 0);
+        if (triggerEventID == "") return false;
+        if (c == null) return false;
         if (Owner.RefID == 0)
         {
             //Debug.LogError("Player NotifyMeeting break!");
@@ -347,14 +356,12 @@ public class RelationshipManager
         foreach (var i in selfEPs) s += i.targetCOM.ID + "_";
         s += "\nTargetEPs";
         foreach (var i in targetEPs) s += i.targetCOM.ID + "_";
-        //Debug.Log("NotifyMeeting between " + Owner.FirstName + " and " + c.FirstName+"\n"+s);
+        if (debug) Debug.Log("NotifyMeeting between " + Owner.FirstName + " and " + c.FirstName+"\n"+s);
 
         var rel = FindRelationshipWith(c);
 
         //Utility.GetEventTagsFrom(Owner, c, out List<string> selfTags, out List<string> targetTags ,out List<EvaluationPackage> selfEPs);
         //Utility.GetEPsFrom(owner, c, out List<EvaluationPackage> selfEPs, out List<EvaluationPackage> targetEPs);
-
-        if (triggerEventID == "") return false;
 
         var kol = new KojoCollector(Owner, triggerEventID);
         kol.LoadRel(rel);
@@ -362,7 +369,7 @@ public class RelationshipManager
         //var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
         if (kol != null && kol.collect != null)
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("[" + Owner.FirstName + "] -> [" + c.FirstName + "] get kojomsg for event [" + triggerEventID + "] and msgcontent [" + kol.collect.message + "]");
+            if (debug) Debug.Log($"[{Owner.FirstName} -> {c.FirstName}] NotifyMeeting [{kol.eventID}{kol.suffix}] result [{kol.collect.message}]\n{Owner.FirstName} = {kol.Owner.FirstName} tags: {String.Join(" ", kol.SelfTags)}\n{c.FirstName} = {kol.Target.FirstName} tags: {String.Join(" ", kol.targetTags)}");
             kol.ReplaceString("$self$", Owner.FirstName);
             kol.ReplaceString("$target$", c.FirstName);//.message = msg.message.Replace().Replace();
             scr_UpdateHandler.current.AppendKojoMessage(kol, Owner.CurrentRoom);
@@ -388,7 +395,7 @@ public class RelationshipManager
                 return kol;
             }
         }
-        foreach (var ep in selfEPs)
+        foreach (var ep in targetEPs)
         {
             kol2 = kol.Copy();
             kol2.LoadEP(ep, target);
@@ -400,6 +407,13 @@ public class RelationshipManager
                 return kol;
             }
         }
+        var response2 = this.Personality.GetKOJOMessage(kol);
+        if (response2 != null)
+        {
+            kol.collect = response2;
+            return kol;
+        }
+        // no ep
         return null;
     }
 
@@ -579,7 +593,7 @@ public class RelationshipManager
             if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
             kol.collect = message;
             return kol;
-            m.messages_kojo.Add(message);
+            //m.AddKojo(kol);
             if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
         }
         else return null;
@@ -599,7 +613,7 @@ public class RelationshipManager
         return null;
     }
 
-    public KojoCollector GetKOJOMessage_Suffix(KojoCollector kol, MessageCollect m)
+    public KojoCollector GetKOJOMessage_Suffix(KojoCollector kol, MessageCollect m = null)
     {
         if (Owner.RefID == 0) return null;
 
@@ -613,7 +627,7 @@ public class RelationshipManager
         */
         if (true || scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
 
-        if (message != null && message.message.Length > 0)
+        if (message != null && message.message != null && message.message.Length > 0)
         {
             if (kol.targetCOM != null) message.message = kol.targetCOM.Replace(message.message);
             // if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);

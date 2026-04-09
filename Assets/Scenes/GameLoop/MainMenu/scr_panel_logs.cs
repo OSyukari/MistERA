@@ -116,6 +116,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
         //Debug.Log("loglist anchored position is " + LogsList.anchoredPosition.x + "|" + LogsList.anchoredPosition.y);
         LogsList.anchoredPosition = new Vector2(0, 0);
 
+        bool drawnNew = false;
+
         var current = todo.Count > 0 ? todo[0] : null;
         if (current == null)
         {
@@ -135,21 +137,28 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
                 msgbox.SetParent(LogsList, false);
                 waiting = (current as Message_Text).Draw(skipping, msgbox.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine) || waiting;
                 // if (waiting) Debug.Log("waiting!");
-                firstLine = false;
+                drawnNew = true;
             }
             else if (current is Message_Question)
             {
                 var question = Instantiate(prefab_question);
                 question.transform.SetParent(LogsList, false);
                 (current as Message_Question).Draw(skipping, this.m_Canvas, question, this);
-                firstLine = true;
+                drawnNew = true;
             }
             else if (current is Message_LLMQuery)
             {
                 var query = Instantiate(prefab_llm);
                 query.transform.SetParent(LogsList, false);
                 (current as Message_LLMQuery).Draw(skipping, this.m_Canvas, query, this);
-                firstLine = true;
+                drawnNew = true;
+            }
+            else if (current is Message_Question_Record)
+            {
+                var question = Instantiate(prefab_question);
+                question.transform.SetParent(LogsList, false);
+                (current as Message_Question_Record).Draw(skipping, this.m_Canvas, question, this);
+                drawnNew = true;
             }
         }
         else if (current.canAnimate())
@@ -157,10 +166,22 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
             current.Animate();
         }
 
+        if (current.displayed && drawnNew && firstLine && !current.autoAnimate) firstLine = false;
+
         if (current.displayed && !current.canAnimate())
         {
             todo.RemoveAt(0);
-            UpdateAnimatingStatus();
+
+            // auto advance check
+            var next = todo.Count > 0 ? todo[0] : null;
+            if (next != null && next.autoAnimate)
+            {
+                AnimateOneStep();
+            }
+            else
+            {
+                UpdateAnimatingStatus();
+            }
         }
 
 
@@ -232,7 +253,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     protected void OnEvent(EventStatus status, bool forceLogging)
     {
 #if UNITY_EDITOR
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"OnEvent {status}, waiting? {(status == EventStatus.waiting)} firstline {firstLine}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnEvent {status}, waiting? {(status == EventStatus.waiting)} firstline {firstLine}");
 #endif
         if (!this.gameObject.activeInHierarchy) this.gameObject.SetActive(true);
         if (forceLogging) this.firstLine = true;

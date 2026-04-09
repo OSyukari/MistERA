@@ -39,10 +39,15 @@ public class scr_menu_question : scr_Menu
             }
         }
     }
+
+    public List<Button_OptionBtn> options = new List<Button_OptionBtn>();
+    public EventInstance evInstance = null;
+
     public void InitializeWithArgs(Canvas mainCanvas, EventInstance instance, Event.EventEntry.EventEntry_Question query, scr_panel_logs logs)
     {
         if (!initialized) Initialize();
         this.logs = logs;
+        this.evInstance = instance;
         SetCanvas(mainCanvas, true);
         this.Text.SetText(UtilityEX.ParseEventEntry(instance, query.question));
         SelfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
@@ -53,14 +58,20 @@ public class scr_menu_question : scr_Menu
             preferredLen = Math.Max(preferredLen, button.GetComponent<TMP_Text>().preferredWidth);
             button.SetText(UtilityEX.ParseEventEntry(instance, option.option));
             if (option.isDefaultCancel && defaultCancel == null) defaultCancel = button.Validator as Button_OptionBtn;
+
+            this.options.Add(button.Validator as Button_OptionBtn);
         }
        // Debug.Log($"Initializing question menu, grid size {Grid.cellSize.ToString()} rectTransformSizedelta {self.sizeDelta} deltaX {self.sizeDelta.x} rectwidth {self.rect.width} gridflexwidth {Grid.flexibleWidth} rectlocalscale");
         //Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
         ValidateAll();
         scr_UpdateHandler.current.InvokeEventStatus(EventStatus.waiting, true);
-        
 
         if (defaultCancel != null && logs != null) logs.Observer_OnClick += OnClick;
+    }
+
+    public void InitializeWithArgs(Canvas mainCanvas, QuestionBoxCollector collect, scr_panel_logs logs)
+    {
+
     }
 
     public override void Initialize()
@@ -120,6 +131,13 @@ public class scr_menu_question : scr_Menu
         button.Validate();
     }
 
+    public void FinalizeQuestion()
+    {
+        var box = new QuestionBoxCollector(this);
+        scr_System_CampaignManager.current.FinalizeLog_Question(box, evInstance == null || evInstance.Self == null ? null : evInstance.Self.CurrentRoom);
+    }
+
+
     protected override void Awake()
     {
         base.Awake();
@@ -133,7 +151,7 @@ public class scr_menu_question : scr_Menu
         public scr_SelectableText button;
         Event.EventEntry.EventEntry_Question.Options option;
         EventInstance instance;
-        bool selected = false;
+        public bool selected = false;
         /// <summary>
         /// Attach a custom validator, isbuttonvalid check validator, onclick apply validator
         /// </summary>
@@ -170,10 +188,10 @@ public class scr_menu_question : scr_Menu
             {
                 parent.Active = false;
                 selected = true;
-
+                parent.FinalizeQuestion();
+                scr_UpdateHandler.current.InvokeEventStatus(EventStatus.running, true);
                 EventUtility.Execute(instance, option, true);// option.Execute(instance, true);
             }
         }
     }
 }
-

@@ -249,6 +249,7 @@ public class Message_Text : MessageLog
         var chara = scr_System_CampaignManager.current.FindInstanceByID(m.portraitRefID);
         this.PortraitRef = chara == null ? null : chara.PortraitManager;
         this.tagsOverride = m.portraitTags;
+        this.autoAnimate = ra;
         AddMessage(m.message, ra);
         this.tooltip = tooltip;
     }
@@ -273,6 +274,7 @@ public class Message_Text : MessageLog
         this.tooltip = desc.tooltip;
         this.tagsOverride = desc.displayTagsOverride;
         this.time = desc.Timestamp;
+        this.autoAnimate = desc.autoAnimate;
     }
 
     public Message_Text() { }
@@ -378,44 +380,6 @@ public class Message_Text : MessageLog
 
 
 
-public class Message_Question : MessageLog
-{
-    public override bool DisplaPortrait
-    {
-        get
-        {
-             return multipleChara.Count > 0 || PortraitRef != null; 
-        }
-    }
-
-    public override bool canAnimate()
-    {
-        return false;
-    }
-    Event.EventEntry.EventEntry_Question question;
-    public Message_Question(PortraitManager portraitRef, List<string> tags, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default):base(portraitRef, time, parent)
-    {
-        this.tagsOverride = tags;
-        this.question = question;
-    }
-    public Message_Question(List<Character_Trainable> charas, List<string> tags,  EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(charas, tags, time, parent)
-    {
-        this.question = question;
-    }
-
-    public override void Animate()
-    {
-        Debug.LogError("Animate called on message_question");
-    }
-
-    public void Draw(bool skipImage, Canvas mainCanvas, scr_menu_question questionBox , scr_panel_logs logs = null)
-    {
-        // question log always draw
-        questionBox.InnerQuestion = this;
-        base.Draw(false);
-        questionBox.InitializeWithArgs(mainCanvas, parentEvent, question, logs);
-    }
-}
 
 
 public class Message_LLMQuery : MessageLog
@@ -474,9 +438,21 @@ public class Message_LLMQuery : MessageLog
 public abstract class MessageLog
 {
     public bool displayed = false;
+    public bool autoAnimate = false;
     public abstract bool canAnimate();
 
     public EventInstance parentEvent = null;
+
+    public List<Character_Trainable> PortraitRefExport
+    {
+        get
+        {
+            if (multipleChara.Count > 0) return multipleChara;
+            if (PortraitRef != null) return new List<Character_Trainable>() { PortraitRef.Owner };
+            return new List<Character_Trainable>();
+
+        }
+    }
 
     public PortraitManager PortraitRef = null;
     public List<Character_Trainable> multipleChara = new List<Character_Trainable>();

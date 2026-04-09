@@ -129,8 +129,9 @@ public partial class ResponseEntry
                     returnV2 = new MessageCollect_KojoEntry(forbidPortaitDisplay ? -1 : kol.Owner.RefID);
                     if (!forbidPortaitDisplay)
                     {
-                        returnV2.portraitTags = new List<string>(extraPortraitTags);
+                        returnV2.portraitTags.AddRange(extraPortraitTags);
                         if (useActiveTags) returnV2.portraitTags.AddRange(kol.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        returnV2.portraitTags = Utility.Distinct(returnV2.portraitTags);
                     }
                     returnV2.message = result;
 
@@ -202,8 +203,9 @@ public partial class ResponseEntry
                     returnV2 = new MessageCollect_KojoEntry(forbidPortaitDisplay ? -1 : rel.Owner.RefID);
                     if (!forbidPortaitDisplay)
                     {
-                        returnV2.portraitTags = new List<string>(extraPortraitTags);
+                        returnV2.portraitTags.AddRange(extraPortraitTags);
                         if (useActiveTags) returnV2.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        returnV2.portraitTags = Utility.Distinct(returnV2.portraitTags);
                     }
                     returnV2.message = result;
 
@@ -544,7 +546,7 @@ public partial class ResponseEntry
             {
                 if (flushLog)
                 {
-                    scr_System_CampaignManager.current.AddLogSingle(message);
+                    scr_System_CampaignManager.current.AddLog(message);
                 }
                 if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel.Relation);
                 if (this.launchEvent != null && this.launchEvent.isValid)
@@ -557,7 +559,7 @@ public partial class ResponseEntry
             {
                 if (flushLog)
                 {
-                    scr_System_CampaignManager.current.AddLogSingle(message);
+                    scr_System_CampaignManager.current.AddLog(message);
                 }
                 if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel);
                 if (this.launchEvent != null && this.launchEvent.isValid)

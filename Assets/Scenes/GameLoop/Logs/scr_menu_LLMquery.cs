@@ -304,6 +304,11 @@ public class scr_menu_LLMQuery : scr_Menu
         LoadResponse();
     }
 
+    public void FinalizeQuestion()
+    {
+        var box = new LLMCollector(this);
+        scr_System_CampaignManager.current.FinalizeLog_LLM(box, scr_System_CampaignManager.current.CurrentRoom);
+    }
 
     public override void Initialize()
     {
@@ -397,6 +402,7 @@ public class scr_menu_LLMQuery : scr_Menu
         }
         public void OnClickButton()
         {
+            parent.FinalizeQuestion();
             parent.ExecuteResponse();
         }
     }

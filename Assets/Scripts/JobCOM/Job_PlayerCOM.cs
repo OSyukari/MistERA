@@ -26,7 +26,7 @@ public class Job_PlayerCOM : Job
     }
 
 
-    [JsonIgnore] public override bool CanBeInterrupted { get { return false; } }
+    [JsonIgnore] public override bool CanBeInterrupted { get { return true; } }
 
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {

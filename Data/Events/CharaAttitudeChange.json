@@ -46,7 +46,7 @@
                             ]
                         },
                         "option": "player branch",
-                        "Results": [ { "Type":"FlushMessageAll" },
+                        "Results": [ { "Type":"GetKojoEntryFromAppendStrings", "arguments":["self", "target","targetRel","kojotext"] },
                                      { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
                     },
                     {   
@@ -96,7 +96,7 @@
                 "AttitudeChange":"态度变化",
                 "RequestRelationshipChange":"请求变更关系",
 "event_AttitudeChange_string":"【$self.name$对$target.name$的态度从$originalAttitude$转变为了$newAttitude$】",
-"RequestRelationshipChange_event_ev01":"$self.name$请求将二人的关系从$original$变更为$new$",
+"RequestRelationshipChange_event_ev01":"$kojotext$\n$self.name$请求将二人的关系从$original$变更为$new$",
 "RequestRelationshipChange_event_ev01_op01":"同意",
 "RequestRelationshipChange_event_ev01_op02":"拒绝"
             },
@@ -105,7 +105,7 @@
                 "AttitudeChange":"Attitude Change",
                 "RequestRelationshipChange":"Relationship Change Request",
 "event_AttitudeChange_string":"[$self.name$'s attitude towards $target.name$ changed from $originalAttitude$ to $newAttitude$]",
-"RequestRelationshipChange_event_ev01":"$self.name$ requests to change our relationship from $original$ to $new$",
+"RequestRelationshipChange_event_ev01":"$kojotext$\n$self.name$ requests to change our relationship from $original$ to $new$",
 "RequestRelationshipChange_event_ev01_op01":"Accept",
 "RequestRelationshipChange_event_ev01_op02":"Refuse"
             }

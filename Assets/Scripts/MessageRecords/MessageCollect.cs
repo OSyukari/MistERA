@@ -11,12 +11,13 @@ public class MessageCollect
 {
     public bool sendRecording = true;
     public bool displayOverride = false;
-    public Dictionary<string, string> messages_checks = new Dictionary<string, string>();
+    public List<I_Records> messages_checks = new List<I_Records>();
     public List<I_Records> messages_before = new List<I_Records>();
     public List<I_Records> messages_after = new List<I_Records>();
-    public List<MessageCollect_KojoEntry> messages_kojo = new List<MessageCollect_KojoEntry>();
+    public List<KojoCollector> messages_kojo = new List<KojoCollector>();
     public ExperienceLog exp = new ExperienceLog();
-    public List<MessageCollect_KojoEntry> messages_kojo_after = new List<MessageCollect_KojoEntry>();
+    public List<I_Records> messages_exp = new List<I_Records>();
+    public List<KojoCollector> messages_kojo_after = new List<KojoCollector>();
 
     public void AddMessage_Before(I_Records desc, Room_Instance recording)
     {
@@ -54,7 +55,7 @@ public class MessageCollect
         if (visible) this.messages_after.Add(desc);
         if (sendRecording && recording != null && recording.HasRecording) recording.NotifyKojoCollect(desc);
     }
-    public void AddKojo(KojoCollector m, Room_Instance room, bool tryMerge = true)
+    public void AddKojo(KojoCollector m, Room_Instance room, bool tryMerge = false)
     {
         //Debug.Log("AppendKojoMessage");
         var player = scr_System_CampaignManager.current.Player;
@@ -67,16 +68,18 @@ public class MessageCollect
             //this.messages_kojo.Add(m.collect);
             if (tryMerge)
             {
-                foreach (var kj in this.messages_kojo)
+                foreach(var kol in this.messages_kojo)
                 {
-                    if (kj.portraitRefID == m.collect.portraitRefID)
+
+                    if (kol.collect.portraitRefID == m.collect.portraitRefID)
                     {
-                        kj.Merge(m.collect);
+                        kol.collect.Merge(m.collect);
                         return;
                     }
+                    
                 }
             }
-            messages_kojo.Add(m.collect);
+            messages_kojo.Add(m);
         }
     }
 
@@ -85,90 +88,54 @@ public class MessageCollect
         var cnManager = scr_System_CampaignManager.current;
         if (visible == null) visible = scr_System_CampaignManager.current.Player;
 
-        if (messages_checks.Count > 0)
-        {
-            foreach(var check in messages_checks)
-            {
-                cnManager.AddLog(-1, check.Key, false, false, check.Value);
-            }
-        }
-        if (messages_before.Count > 0)
-        {
-            foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true);
-           // cnManager.AddLog(-1, String.Join("\n", messages_before), false);
-        }
+        foreach(var check in messages_checks) cnManager.AddLog(check, visible, true);
+        foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true);
+        foreach (var kvp in messages_kojo) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip );
 
-        foreach (var kvp in messages_kojo) cnManager.AddLog(kvp);
+        exp.Finalize(out var desc, out var rec);
+        if (desc != null) this.messages_exp.Add(desc);
 
-        cnManager.AddLog(-1, exp.PrintContent_Messages(), true);
-
-        cnManager.AddLog(-1, exp.PrintContent_Climax(), true);
-
-        foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp);
-
-        cnManager.AddLog(-1, exp.PrintContent_Stats(), true);
-       // cnManager.AddLog(-1, exp.PrintContent_Relations(), true);
-      //  cnManager.AddLog(-1, exp.PrintContent_Exps(), true);
-
-        if (messages_after.Count > 0)
-        {
-            foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true);
-            //cnManager.AddLog(-1, String.Join("\n", messages_after), true);
-        }
-
+        foreach(var msg in messages_exp) cnManager.AddLog(msg, visible, true);
+        foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip);
+        foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true);
+        //cnManager.AddLog(-1, String.Join("\n", messages_after), true);
         Clear();
     }
 
+    /// <summary>
+    /// This does not go through recording check
+    /// </summary>
+    /// <param name="visible"></param>
     public void FlushCollectLogsCallback(Character_Trainable visible = null)
     {
-
+        var cnManager = scr_System_CampaignManager.current;
         if (visible == null) visible = scr_System_CampaignManager.current.Player;
 
-        if (messages_checks.Count > 0)
-        {
-            var s = String.Join("\n", messages_checks);
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, false));
-        }
-        if (messages_before.Count > 0)
-        {
-            foreach(var m in messages_before) scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true));
-           // var s = String.Join("\n", messages_before);
-        }
+        foreach (var check in messages_checks) 
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(check, visible, true));
 
-        foreach (var kvp in messages_kojo)
-        {
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
-        }
+        foreach(var m in messages_before) 
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true));
 
-        var s2 = exp.PrintContent_Messages();
-        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s2, true));
+        foreach (var kvp in messages_kojo)  scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
 
-        var s4 = exp.PrintContent_Climax();
+        exp.Finalize(out var exps, out var rec);
+        if (exps != null) messages_exp.Add(exps);
+
+        foreach(var kvp in messages_exp)
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp, visible, true));
+        
 
         foreach (var kvp in messages_kojo_after)
-        {
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp));
-        }
-        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s4, true));
-        var s3 = exp.PrintContent_Stats();
-        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s3, true));
-
-       // var s5 = exp.PrintContent_Relations();
-       // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s5, true));
-
-        //var s6 = exp.PrintContent_Exps();
-       // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s6, true));
-
-        if (messages_after.Count > 0)
-        {
-            //var s = String.Join("\n", messages_after);
-            foreach (var m in messages_after) scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true));
-           // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
-        }
-
-
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
+        
+        //var s = String.Join("\n", messages_after);
+        foreach (var m in messages_after) 
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true));
+        // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
         Clear();
     }
+
 
     public MessageCollect() { }
     public MessageCollect(bool displayOverride = false)
@@ -182,33 +149,57 @@ public class MessageCollect
         messages_after.Clear();
         messages_kojo.Clear();
         messages_kojo_after.Clear();
+        messages_exp.Clear();
         exp.Clear();
     }
 
-    public void AddKojo(MessageCollect_KojoEntry kojo, bool tryMerge = true)
+    public void AddKojo(KojoCollector kojo, bool tryMerge = false)
     {
+        //this.messages_kojo.Add(m.collect);
         if (tryMerge)
         {
-            foreach (var kj in this.messages_kojo)
+            foreach (var kol in this.messages_kojo)
             {
-                if (kj.portraitRefID == kojo.portraitRefID)
+
+                if (kol.collect.portraitRefID == kojo.collect.portraitRefID)
                 {
-                    kj.Merge(kojo);
+                    kol.collect.Merge(kojo.collect);
                     return;
                 }
+
             }
         }
         messages_kojo.Add(kojo);
+    }
+
+    public void AddKojoAfter(KojoCollector kojo, bool tryMerge = false)
+    {
+        //this.messages_kojo.Add(m.collect);
+        if (tryMerge)
+        {
+            foreach (var kol in this.messages_kojo_after)
+            {
+
+                if (kol.collect.portraitRefID == kojo.collect.portraitRefID)
+                {
+                    kol.collect.Merge(kojo.collect);
+                    return;
+                }
+
+            }
+        }
+        messages_kojo_after.Add(kojo);
     }
 
     public void Merge(MessageCollect m, bool shorten)
     {
         if (m.messages_checks.Count > 0)
         {
+            this.messages_checks.AddRange(m.messages_checks);/*
             foreach(var check in m.messages_checks)
             {
                 this.messages_checks[check.Key] = check.Value;
-            }
+            }*/
         }
         // accumate result, on flush addlog to CNManager
         if (m.messages_before != null && m.messages_before.Count > 0)
@@ -220,8 +211,12 @@ public class MessageCollect
 
         this.messages_kojo.AddRange(m.messages_kojo);
         this.messages_kojo_after.AddRange(m.messages_kojo_after);
-        
-        this.exp.MergeWith(m.exp, shorten);
+
+        exp.Finalize(out var desc, out var rec);
+        if (desc != null) this.messages_exp.Add(desc);
+        this.messages_exp.AddRange(m.messages_exp);
+
+        //this.exp.MergeWith(m.exp, shorten);
         this.displayOverride = this.displayOverride || m.displayOverride;
 
         m.Clear();

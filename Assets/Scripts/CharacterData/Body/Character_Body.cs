@@ -415,6 +415,20 @@ public class Character_Body
         else return false;
     }
 
+    public void UndressAllBy(List<string> tags, BodyEquipLayer layer = BodyEquipLayer.Skin)
+    {
+        foreach(var tag in tags)
+        {
+            foreach (BodyPart_Instance b in Body)
+            {
+                if (b.hasTag(tag))
+                {
+                    b.UnequipByLayer(layer);
+                }
+            }
+        }
+    }
+
     public int GetRevealingScoreByTag(string tag, BodyEquipLayer layer = BodyEquipLayer.Skin)
     {
         var i = -1;
@@ -691,8 +705,6 @@ public class Character_Body
                 UtilityEX.GetAPsFrom(this.owner, out var listAP);
                 var listEP = new List<EvaluationPackage>();
                 foreach (var ap in listAP) listEP.AddRange(ap.ListEP);
-                List<string> tags = new List<string>();
-                UtilityEX.GetActorTag(ref tags, this.Owner);
 
                 bool logged = false;
 
@@ -709,8 +721,14 @@ public class Character_Body
                         {
                             if (!logged)
                             {
-                                message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_target", rel, tags, null));
-                                logged = true;
+                                var kol = new KojoCollector(Owner, "OnClimax_target");
+                                kol.LoadRel(rel);
+                                kol = Owner.Relationships.GetKOJOMessage_Suffix(kol, null);
+                                if (kol != null)
+                                {
+                                    message.AddKojoAfter(kol);//.Add();
+                                    logged = true;
+                                }
                             }
                             float value = Mathf.Abs(climaxDebuff * 0.1f) + satisfiedBonus;
                             rel.ModRelationValue(RelationshipScoreType.Goodwill, value, false);
@@ -725,7 +743,16 @@ public class Character_Body
                 if (!logged)
                 {
                     //exp.AddMessage(Owner.RefID, "kojo message here");
-                    message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_single", this.Owner, tags, listEP));
+                    var kol = new KojoCollector(Owner, "OnClimax_single");
+                    kol.LoadSelfTags(Owner, null);
+                    kol = Owner.Relationships.GetKOJOMessage_Suffix(kol, null);
+                    if (kol != null)
+                    {
+                        message.AddKojoAfter(kol);//.Add();
+                       // logged = true;
+                    }
+
+                    //message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_single", this.Owner, tags, listEP));
                 }
 
             }

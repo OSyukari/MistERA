@@ -1598,6 +1598,7 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
+            var txt = this.text.Text.text;
             scr_System_CentralControl.current.AutoSave();
 
             List<Character_Trainable> actors = new List<Character_Trainable>();
@@ -1623,7 +1624,7 @@ public class scr_panel_COMmanager : scr_Menu
             cachedAP.JoinAP(actors);
             if (cachedAP.isPaused) scr_System_CampaignManager.current.Register(cachedAP, false);
             cachedAP.LoggedBegin = false;
-            scr_System_CampaignManager.current.FreeUpdate(-1, cachedAP.DisplayName);
+            scr_System_CampaignManager.current.FreeUpdate(-1, txt);
         }
     }
 
@@ -2934,8 +2935,8 @@ public class scr_panel_COMmanager : scr_Menu
             chara = ( isPlayer ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget );
             if (chara == null) return false;
 
-            if (safeMode) return chara.Body.HasEquipByFilter(BodyEquipLayer.Skin + 1, revealingScoreFilter);
-            else return chara.Body.HasEquipByFilter(BodyEquipLayer.None + 1, revealingScoreFilter);
+            if (safeMode) return chara.NeedUndress(BodyEquipLayer.Skin, (Revealing)revealingScoreFilter);
+            else return chara.NeedUndress(BodyEquipLayer.None, (Revealing)revealingScoreFilter);
         }
 
         public void OnClickButton()
@@ -2977,7 +2978,7 @@ public class scr_panel_COMmanager : scr_Menu
             {
                 layer = (BodyEquipLayer)i;
 
-                if (chara.Body.HasEquipByFilter(BodyEquipLayer.Outer) || chara.Body.HasEquipByFilter(layer, revealingScoreFilter) )
+                if (chara.NeedUndress((BodyEquipLayer)(i - 1), (Revealing)revealingScoreFilter))
                 {
                     this.text.SetText("%%comManager_com_undress_" + layer.ToString() + "%%");
                     return true;
@@ -3151,7 +3152,7 @@ public class scr_panel_COMmanager : scr_Menu
             var equippedPart = chara.GetPartByEquipRef(equipRef);
 
             isEquipped = !(chara.Inventory.Contains(item) || equippedPart == null);
-            isVisible = (!isEquipped || equippedPart.GetRevealingScore(eq.equipLayer) <= 1);
+            isVisible = scr_System_CampaignManager.current.DebugMode || (!isEquipped || equippedPart.GetRevealingScore(eq.equipLayer) <= 1);
             allowDuringSex = !(chara.CurrentJob is Job_Sex_Group) || (int)eq.revealing <= 0;
 
             bool returnVal = true;

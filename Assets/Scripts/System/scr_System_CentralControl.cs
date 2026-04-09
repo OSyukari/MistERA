@@ -30,6 +30,7 @@ public class DebugLogSettings
     public bool DLog_Pathing = false;
     public bool DLog_Equipping = false;
     public bool DLog_Events = false;
+    public bool DLog_Events_Execute = false;
     public bool DLog_Production = false;
     public bool DLog_Inventory = false;
     public bool DLog_Memory = false;
@@ -355,7 +356,8 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public void RegisterSpineCache(string skeletonPath, SpineDataTiny data)
     {
-            _spineDataCache[skeletonPath] = data;
+        if (_spineDataCache.TryGetValue(skeletonPath, out var existing)) existing.Clear();
+        _spineDataCache[skeletonPath] = data;
     }
 
     public void ClearSpineCache()

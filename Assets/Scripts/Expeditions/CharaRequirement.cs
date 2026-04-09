@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 public class CharaReq
 {
 
+    public BodyEquipLayer clothingRequirement = BodyEquipLayer.Outer;
+    public List<string> requireUndressedTags = new List<string>();
     public List<string> BodyTags = new List<string>();
     public int minRevealingScore = -1;
 

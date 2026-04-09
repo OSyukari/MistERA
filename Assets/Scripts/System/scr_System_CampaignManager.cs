@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 public class scr_System_CampaignManager_Serializable
 {
     public Dictionary<int, Job> Jobs;
@@ -451,6 +452,12 @@ public class scr_System_CampaignManager : MonoBehaviour
         playerAPLogs.Add(ap);
     }
 
+    /// <summary>
+    /// Bypass room recording
+    /// </summary>
+    /// <param name="record"></param>
+    /// <param name="visible"></param>
+    /// <param name="animate"></param>
     public void AddLog(I_Records record, Character_Trainable visible,  bool animate = false)
     {
         if (record == null) return;
@@ -459,8 +466,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             var desc = record as DescriptionCollector;
             if (desc == null) return;
-            if (desc.message.Length < 1 && desc.message_excludeRelated.Length < 1) return;
-
+            var purged = desc.DirectlyRelated(visible) ? desc.message : desc.message_excludeRelated;
+            purged = purged.Replace("\n", "");
+            if (purged.Length < 1)
+            {
+                Debug.Log("skipping empty message");
+                return;
+            }
             var log = LogManager.AddLog(desc, visible);
             if (log != null) Observer_MessageLogs?.Invoke(log, animate);
 
@@ -471,7 +483,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             // RefID -1 no display
             // RefID -2 
             if (desc == null) return;
-            if (desc.VisibleTo(visible, null)) AddLog(desc.collect, animate, desc.RightAlign(visible));
+            if (desc.VisibleTo(visible, null)) AddLog(desc, animate, desc.RightAlign(visible));
         }
 
     }
@@ -514,27 +526,39 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
 
-    public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "")
+    public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "", bool skipVisibility = false)
     {
         if (m == null) return;
-        if (m.message != null && m.message.Length > 0)
+        if (m.message != null && m.message.Length > 0 && (skipVisibility || scr_System_CampaignManager.current.isCharaVisibleToPlayer(m.portraitRefID)))
         {
             Message_Text msg = new Message_Text(m, rightAlign || m.rightAlign, tooltip);
             Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
         }
         foreach(var next in m.nexts) AddLog(next, animate, rightAlign || m.rightAlign);
     }
-
-    public void AddLogSingle(MessageCollect_KojoEntry m)
+    /// <summary>
+    /// This function bypass visibility check
+    /// </summary>
+    /// <param name="kol"></param>
+    /// <param name="animate"></param>
+    /// <param name="rightAlign"></param>
+    /// <param name="tooltip"></param>
+    public void AddLog(KojoCollector kol, bool animate = false, bool rightAlign = false, string tooltip = "")
     {
+        var m = kol.collect;
         if (m == null) return;
-        if (m.message != null && m.message.Length > 0 && scr_System_CampaignManager.current.isCharaVisibleToPlayer(m.portraitRefID))
+        if (m.message != null && m.message.Length > 0)
         {
-            var chara = FindInstanceByID(m.portraitRefID);
-            var rightAlign = chara != null && chara != Player;
-            Message_Text msg = new Message_Text(chara, m.portraitTags, m.message, rightAlign);
-            Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), true);
-            m.message = null;
+            Message_Text msg = new Message_Text(m, rightAlign || m.rightAlign, tooltip);
+            Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
+        }
+        foreach (var next in m.nexts) 
+        { 
+            if (next.message != null && next.message.Length > 0)
+            {
+                Message_Text msg = new Message_Text(next, rightAlign || next.rightAlign, tooltip);
+                Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
+            }
         }
     }
 
@@ -560,7 +584,8 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         // here we need to process line into translated
         //Debug.Log($"Event Addline {line}");
-        MessageLog log = null;
+        Message_Text log = null;
+
         var content = UtilityEX.ParseEventEntry(instance, line.line);
         if (content.Length < 1) return;
         //Debug.Log($"AddLog_Line parsed content: {content}");
@@ -568,18 +593,48 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             var msglog = new Message_Text(instance.Self, line.portraitTagsOverride, content, rA, "", default, instance);
             //msglog.AddMessage(content, rA);
-            log = LogManager.AddLog(msglog);
+            log = LogManager.AddLog(msglog) as Message_Text;
         }
         else if (instance.Targets.TryGetValue(line.portraitRefKey, out var targetrefs))
         {
             var msglog = new Message_Text(targetrefs, line.portraitTagsOverride, null, "", default, instance);
             msglog.AddMessage(content, rA);
-            log = LogManager.AddLog(msglog);
+            log = LogManager.AddLog(msglog) as Message_Text;
         }
         else
         {
-            log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false);
+            log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false) as Message_Text;
         }
+
+        //
+        if (log != null && instance.Self != null && instance.Self.CurrentRoom != null && instance.Self.CurrentRoom.HasRecording)
+        {
+            var actors = new List<int>();
+
+            // collect actors from event... TODO
+
+            actors.Add(instance.Self.RefID);
+            foreach(var trefs in instance.Targets)
+            {
+                foreach(var tgt in trefs.Value)
+                {
+                    if (!actors.Contains(tgt.RefID)) actors.Add(tgt.RefID);
+                }
+            }
+            var desc = new DescriptionCollector(content, actors);
+
+            var export = log.PortraitRefExport;
+            if (export.Count > 0)
+            {
+                foreach (var c in export) if (!desc.portraitRefs.Contains(c.RefID)) desc.portraitRefs.Add(c.RefID);
+            }
+            desc.displayTagsOverride.AddRange(log.tagsOverride);
+            desc.message = content;
+
+            instance.Self.CurrentRoom.NotifyKojoCollect(desc);
+        }
+
+
         Observer_MessageLogs?.Invoke(log, false);
     }
     /// <summary>
@@ -610,12 +665,23 @@ public class scr_System_CampaignManager : MonoBehaviour
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
 
+    public void FinalizeLog_Question(QuestionBoxCollector box, Room_Instance room)
+    {
+        Debug.Log($"FinalizeLog_Question {(room == null ? "room null" : !room.HasRecording ? "no recording" : "recording...")}");
+        if (room != null && room.HasRecording) room.NotifyKojoCollect(box);
+    }
+
     public void AddLog_LLM(LLMRequest request)
     {
         PortraitManager portraitRef = null;
         MessageLog log = LogManager.AddLog(new Message_LLMQuery(portraitRef, new List<string>(), request));
         
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
+    }
+    public void FinalizeLog_LLM(LLMCollector box, Room_Instance room)
+    {
+        Debug.LogError("UNIMPLEMENTED");
+        //if (room != null) room.NotifyKojoCollect(box);
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
@@ -1833,6 +1899,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         scr_UpdateHandler.current.LoadSaveFile(saveHolder, true);
         yield return null;
         yield return CachePortraitCoroutine();
+        yield return Resources.UnloadUnusedAssets(); 
+        System.GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+        System.GC.WaitForPendingFinalizers();
+        yield return null;
+
         Observer_LoadComplete?.Invoke();
     }
 

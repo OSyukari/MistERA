@@ -658,6 +658,7 @@ public static class EventUtility
     public static bool Execute(EventInstance owner, Event.EventEntry.Executor exec)
     {
         //Debug.Log($"Execute option type {exec.Type}");
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Events_Execute;
         switch (exec.Type)
         {
             case Event.EventEntry.ExecutionType.FullHPRecovery:
@@ -736,8 +737,25 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.GetKojoEntry:
                 if (exec.arguments.Count >= 4)
                 {
-                    var requestlist = owner.Targets[exec.arguments[0]];
-                    var targetlist = owner.Targets[exec.arguments[1]];
+                    List<Character_Trainable> requestlist = new List<Character_Trainable>(), targetlist = new List<Character_Trainable>();
+                    if (exec.arguments[0] == "self" && owner.Self != null) requestlist.Add(owner.Self);
+                    else if (owner.Targets.TryGetValue(exec.arguments[0], out requestlist)) { }
+                    else
+                    {
+                        // cannot find
+                        Debug.LogError($"error in Event GetKojoEntry, cannot find actor key {exec.arguments[0]} for requestlist");
+                        return false;
+                    }
+                    if (exec.arguments[1] == "self" && owner.Self != null) targetlist.Add(owner.Self);
+                    else if (owner.Targets.TryGetValue(exec.arguments[1], out targetlist)) { }
+                    else
+                    {
+                        // cannot find
+                        Debug.LogError($"error in Event GetKojoEntry, cannot find actor key {exec.arguments[1]} for targetlist");
+                        return false;
+                    }
+                    // var requestlist = exec.arguments[0] == "self" && owner.Self != null ? new List<Character_Trainable>() { owner.Self } : owner.Targets[exec.arguments[0]];
+                    //var targetlist = owner.Targets[exec.arguments[1]];
                     if (requestlist.Count < 1 || targetlist.Count < 1) return false;
                     if (exec.arguments[2].Length < 1 || exec.arguments[3].Length < 1) return false;
                     List<string> texts = new List<string>();
@@ -745,9 +763,75 @@ public static class EventUtility
                     {
                         var randtarget = Utility.GetRandomElement(targetlist);
                         var rel = i.Relationships.FindRelationshipWith(randtarget);
-                        var msg = i.Relationships.Personality.GetKOJOMessage(exec.arguments[2], new List<EvaluationPackage>(), new List<EvaluationPackage>(), rel);
-                        msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
-                        if (msg.message.Length > 0) texts.Add(msg.message);
+                        var kol = new KojoCollector(i, exec.arguments[2]);
+                        kol.LoadRel(rel);
+                        kol = i.Relationships.GetKOJOMessage_Suffix(kol, null);
+                        if (kol != null)
+                        {
+                            kol.ReplaceString("$self$", i.FirstName);
+                            kol.ReplaceString("$target$", randtarget.FirstName);
+                            if (kol.collect.message.Length > 0) texts.Add(kol.collect.message);
+                            foreach(var next in kol.collect.nexts)
+                            {
+                                if (next.message.Length > 0) texts.Add(next.message);
+                            }
+                        }
+                        //var msg = i.Relationships.Personality.GetKOJOMessage(exec.arguments[2], new List<EvaluationPackage>(), new List<EvaluationPackage>(), rel);
+                       // msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
+                        //if (msg.message.Length > 0) texts.Add(msg.message);
+                    }
+                    if (texts.Count > 0) owner.AppendStrings.Add(exec.arguments[3], texts);
+                    return texts.Count > 0;
+                }
+                else return false;
+            case Event.EventEntry.ExecutionType.GetKojoEntryFromAppendStrings:
+                if (exec.arguments.Count >= 4 )
+                {
+                    List<Character_Trainable> requestlist = new List<Character_Trainable>(), targetlist = new List<Character_Trainable>();
+                    if (exec.arguments[0] == "self" && owner.Self != null) requestlist.Add(owner.Self);
+                    else if (owner.Targets.TryGetValue(exec.arguments[0], out requestlist)) { }
+                    else
+                    {
+                        // cannot find
+                        Debug.LogError($"error in Event GetKojoEntry, cannot find actor key {exec.arguments[0]} for requestlist");
+                        return false;
+                    }
+                    if (exec.arguments[1] == "self" && owner.Self != null) targetlist.Add(owner.Self);
+                    else if (owner.Targets.TryGetValue(exec.arguments[1], out targetlist)) { }
+                    else
+                    {
+                        // cannot find
+                        Debug.LogError($"error in Event GetKojoEntry, cannot find actor key {exec.arguments[1]} for targetlist");
+                        return false;
+                    }
+                    if (requestlist.Count < 1 || targetlist.Count < 1) return false;
+                    if (exec.arguments[2].Length < 1 || exec.arguments[3].Length < 1) return false;
+                    List<string> texts = new List<string>();
+                    string request = "";
+                    if (owner.AppendStrings.TryGetValue(exec.arguments[2], out var keys))
+                    {
+                        request = String.Join("", keys);
+                    } else return false;
+                    foreach (var i in requestlist)
+                    {
+                        var randtarget = Utility.GetRandomElement(targetlist);
+                        var rel = i.Relationships.FindRelationshipWith(randtarget);
+                        var kol = new KojoCollector(i, request);
+                        kol.LoadRel(rel);
+                        kol = i.Relationships.GetKOJOMessage_Suffix(kol, null);
+                        if (kol != null)
+                        {
+                            kol.ReplaceString("$self$", i.FirstName);
+                            kol.ReplaceString("$target$", randtarget.FirstName);
+                            if (kol.collect.message.Length > 0) texts.Add(kol.collect.message);
+                            foreach (var next in kol.collect.nexts)
+                            {
+                                if (next.message.Length > 0) texts.Add(next.message);
+                            }
+                        }
+                        //var msg = i.Relationships.Personality.GetKOJOMessage(exec.arguments[2], new List<EvaluationPackage>(), new List<EvaluationPackage>(), rel);
+                        // msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
+                        //if (msg.message.Length > 0) texts.Add(msg.message);
                     }
                     if (texts.Count > 0) owner.AppendStrings.Add(exec.arguments[3], texts);
                     return texts.Count > 0;
@@ -757,57 +841,126 @@ public static class EventUtility
                 if (exec.arguments.Count != 2)
                 {
 #if UNITY_EDITOR
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("jumptolabel does not have enough arguments");
+                    if (debug) Debug.LogError("jumptolabel does not have enough arguments");
 #endif
                     return false;
                 }
                 else
                 {
 #if UNITY_EDITOR
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JumpToLabel {exec.arguments[0]} {exec.arguments[1]}");
+                    if (debug) Debug.Log($"JumpToLabel {exec.arguments[0]} {exec.arguments[1]}");
 #endif
                     owner.LoadNext(exec.arguments[0], exec.arguments[1]);
                     return true;
                 }
             case Event.EventEntry.ExecutionType.EventEnd:
                 return false;
-            case Event.EventEntry.ExecutionType.JoinTargetJob:
-                if (exec.arguments.Count >= 2)
+            case Event.EventEntry.ExecutionType.FindJoinableAP:
+                if (owner.FunctionCalls.ContainsKey("FindJoinableAP_Callback"))
                 {
+                    var callbacks = owner.FunctionCalls["FindJoinableAP_Callback"];
+                    if (callbacks.Count > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        owner.FunctionCalls.Remove("FindJoinableAP_Callback");
+                    }
+                }
+                if (exec.arguments.Count >= 2 && owner.Self != null)
+                {
+                    Memory_Response forceResponse = Memory_Response.None;
+                    if (exec.arguments.Count >= 3 && Enum.TryParse(exec.arguments[2], out forceResponse))
+                    {
+                        //
+                    }
+                    else
+                    {
+                        forceResponse = Memory_Response.None;
+                    }
                     var targetList = owner.Targets[exec.arguments[0]];
                     var target = targetList.Count < 1 ? null : Utility.GetRandomElement(targetList);
                     var targetJob = target == null ? null : target.CurrentJob;
                     var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x => x.AllowJoining && (exec.arguments[1] == "" || x.ComTags.Contains(exec.arguments[1])));
                     if (packages.Count < 1)
                     {
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
+                        if (debug) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
                         return false;
                     }
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
+                    if (debug) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
 
                     var randpackage = Utility.GetRandomElement(packages);
-                    return randpackage.JoinAP(owner.Self, Memory_Response.Accept, true);
+                    if (randpackage != null)
+                    {
+                        var callbacks = new List<Action>();
+                        owner.FunctionCalls.Add("FindJoinableAP_Callback", callbacks);
+                        callbacks.Add(() => randpackage.JoinAP(owner.Self, forceResponse, true));
+
+                        var c = owner.Self;
+                        var pl2 = randpackage;
+                        var rel = c.Relationships.FindRelationshipWith(target);
+                        var ev = owner;
+                        var empty = new List<string>() { "" };
+
+                        var msg1 = new KojoCollector(c, pl2.targetCOM.ID, "_Tryjoin");
+                        msg1.LoadRel(rel);
+                        msg1 = c.Relationships.GetKOJOMessage_Suffix(msg1, null);
+                        ev.AppendStrings.Add("kojo_tryjoin", msg1 == null || msg1.collect == null || msg1.collect.message.Length < 1 ? empty : new List<string>() { msg1.collect.message });
+
+                        var msg2 = new KojoCollector(c, pl2.targetCOM.ID, "_Joined");
+                        msg2.LoadRel(rel);
+                        msg2 = c.Relationships.GetKOJOMessage_Suffix(msg2, null);
+                        ev.AppendStrings.Add("kojo_joined", msg2 == null || msg2.collect == null || msg2.collect.message.Length < 1 ? empty : new List<string>() { msg2.collect.message });
+
+                        var msg3 = new KojoCollector(c, pl2.targetCOM.ID, "_Join_Refused");
+                        msg3.LoadRel(rel);
+                        msg3 = c.Relationships.GetKOJOMessage_Suffix(msg3, null);
+                        ev.AppendStrings.Add("kojo_join_refused", msg3 == null || msg3.collect == null || msg3.collect.message.Length < 1 ? empty : new List<string>() { msg3.collect.message });
+
+                        return true;
+                    }
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             case Event.EventEntry.ExecutionType.TryJoinTargetJob:
+                if (owner.FunctionCalls.ContainsKey("FindJoinableAP_Callback"))
+                {
+                    var callbacks = owner.FunctionCalls["FindJoinableAP_Callback"];
+                    if (callbacks.Count > 0)
+                    {
+                        foreach (var call in callbacks) call.Invoke();
+                        return true;
+                    }
+                    else
+                    {
+                        owner.FunctionCalls.Remove("FindJoinableAP_Callback");
+                    }
+                }
                 if (exec.arguments.Count >= 2)
                 {
+
+                    Memory_Response forceResponse = Memory_Response.None;
+                    if (exec.arguments.Count >= 3 && Enum.TryParse(exec.arguments[2], out forceResponse))
+                    {
+                        //
+                    }
+                    else
+                    {
+                        forceResponse = Memory_Response.None;
+                    }
                     var targetList = owner.Targets[exec.arguments[0]];
                     var target = targetList.Count < 1 ? null : Utility.GetRandomElement(targetList);
                     var targetJob = target == null ? null : target.CurrentJob;
                     var packages = targetJob == null ? new List<ActionPackage>() : targetJob.GetExistingPackages(target, false, false, false).FindAll(x => x.AllowJoining && (exec.arguments[1] == "" || x.ComTags.Contains(exec.arguments[1])));
                     if (packages.Count < 1)
                     {
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
+                        if (debug) Debug.Log($"JoinTargetJob cannot find package containg keyword [{exec.arguments[1]}], key[{exec.arguments[0]}] targs[{targetList.Count} targ[{(target == null ? "null" : target.FirstName)}");
                         return false;
                     }
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
+                    if (debug) Debug.Log($"JoinTargetJob found {packages.Count} joinable packages, rand select");
 
                     var randpackage = Utility.GetRandomElement(packages);
-                    return randpackage.JoinAP(owner.Self, Memory_Response.None, true);
+                    return randpackage.JoinAP(owner.Self, forceResponse, true);
                 }
                 else
                 {
@@ -863,7 +1016,7 @@ public static class EventUtility
                 if (exec.arguments.Count < 3)
                 {
 #if UNITY_EDITOR
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.LogError("interruptAP does not have enough arguments");
+                    if (debug) Debug.LogError("interruptAP does not have enough arguments");
 #endif
                     return false;
                 }
@@ -877,14 +1030,14 @@ public static class EventUtility
                     {
                         // interrupt self AP by arg[1]
 #if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing InterruptAP argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
+                        if (debug) Debug.Log($"Executing InterruptAP argument self, current self {(owner.Self == null ? "null" : owner.Self.FirstName)}");
 #endif
                         var joblists = new List<Job>();
                         queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
                         //Debug.Log($"found relevant package {queryPackages.Count}");
                         if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, exec.arguments[2]));
 #if UNITY_EDITOR
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count}");
+                        if (debug) Debug.Log($"found relevant package {queryPackages.Count}");
 #endif
 
                         foreach (var package in queryPackages)
@@ -926,7 +1079,7 @@ public static class EventUtility
                                 queryPackages = scr_System_CampaignManager.current.GetExistingPackages(chara, true, true, true);
                                 if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, exec.arguments[2]));
 #if UNITY_EDITOR
-                                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
+                                if (debug) Debug.Log($"found relevant package {queryPackages.Count} on {chara.FirstName}");
 #endif
                                 foreach (var package in queryPackages)
                                 {
@@ -1007,10 +1160,36 @@ public static class EventUtility
                 scr_UpdateHandler.current.FlushCollectedLogs(true, false);
                 return true;
             case Event.EventEntry.ExecutionType.FlushAppendStrings:
-                var execKey2 = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
-                if (!owner.AppendStrings.ContainsKey(execKey2)) return false;
-                scr_System_CampaignManager.current.AddLog(owner.Self == null ? -1 : owner.Self.RefID, String.Join("\n", owner.AppendStrings[execKey2]));
-                return true;
+                if (exec.arguments.Count >= 2)
+                {
+                    if (owner.AppendStrings.TryGetValue(exec.arguments[0], out var list) && bool.TryParse(exec.arguments[0], out var visibletoall))
+                    {
+                        var desc = new DescriptionCollector(String.Join("\n", list));
+                        desc.autoAnimate = true;
+                        if (visibletoall)
+                        {
+                            // dont do anything
+                        }
+                        else
+                        {
+                            // restrict visibility
+                            if (owner.Self != null) desc.relevantActors.Add(owner.Self.RefID);
+                            foreach (var target in owner.Targets)
+                            {
+                                foreach (var cs in target.Value)
+                                {
+                                    desc.relevantActors.Add(cs.RefID);
+                                }
+                            }
+                            desc.relevantActors = Utility.Distinct(desc.relevantActors);
+                        }
+                        if (owner.Self != null) owner.Self.CurrentRoom.NotifyKojoCollect(desc);
+                        scr_System_CampaignManager.current.AddLog(desc, owner.Self);
+                        
+                        return true;
+                    }
+                }
+                return false;
             case Event.EventEntry.ExecutionType.LeaveRoom:
                 if (owner.Self == null) return false;
 
@@ -1060,19 +1239,19 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.FlushMessageExpAll:
                 if (true)
                 {
-                    var m1 = owner.message.exp.PrintContent_Messages();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m1, false));
-                    var m2 = owner.message.exp.PrintContent_Stats();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m2, false));
-                    var m5 = owner.message.exp.PrintContent_Climax();
-                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m5, false));
-                   // var m3 = owner.message.exp.PrintContent_Relations();
-                    //scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m3, false));
-                   // var m4 = owner.message.exp.PrintContent_Exps();
-                   // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, m4, false));
+                    owner.message.exp.Finalize(out var desc, out var rec);
+                    if (rec != null && owner.Self != null && owner.Self.CurrentRoom != null)
+                    {
+                        owner.Self.CurrentRoom.NotifyKojoCollect(rec);
+                    }
+                    if (desc != null)
+                    {
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                    }
                 }
                 return true;
             case Event.EventEntry.ExecutionType.FlushMessageAll:
+
                 owner.message.FlushCollectLogsCallback();
                 return true;
             case Event.EventEntry.ExecutionType.ExecuteAPOnSingleChara:
@@ -1378,7 +1557,7 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.PartyKidnap:
                 if (exec.arguments.Count >= 5)
                 {
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Events)
+                    if (debug)
                     {
                         Debug.Log($"PartyKidnap called on [{String.Join("|", exec.arguments)}]");
                     }

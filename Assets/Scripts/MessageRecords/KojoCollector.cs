@@ -8,7 +8,7 @@ public class KojoCollector : I_ResultStorage, I_Records
 {
     public VisibilityLevel Visibility = VisibilityLevel.Roomwide;
     public List<int> relevantActorRefs = new List<int>();
-
+    public bool autoAnimate = false;
     public void LoadRelevantActors(List<int> list)
     {
         if (list == null) return;
@@ -175,9 +175,8 @@ public class KojoCollector : I_ResultStorage, I_Records
     {
         selfRef = c.RefID;
         _owner = c;
-        this.selfTags.AddRange(extraTags);
+        if (extraTags != null) this.selfTags.AddRange(extraTags);
         UtilityEX.GetActorTag(ref this.selfTags, c);
-        selfTags = Utility.Distinct(selfTags);
     }
 
     [JsonIgnore] public List<string> SelfTags { get { return selfTags; } }
@@ -249,11 +248,19 @@ public class KojoCollector : I_ResultStorage, I_Records
         {
             Debug.LogError("error loadrel null");
             return;
+        }else if (this.Owner != null && this.Owner != rel.Owner)
+        {
+            Debug.LogError("ERROR LOADREL WRONG REL OWNER");
+            return;
         }
         this.Target = rel.Target;
         this.isPlayerInvolved = this.isPlayerInvolved 
             || (Owner.CurrentJob != null && Owner.CurrentJob.actorRefID.Contains(0)) 
             || (Target.CurrentJob != null && Target.CurrentJob.actorRefID.Contains(0));
+
+        UtilityEX.GetActorTag(ref this.selfTags, Owner);
+
+        UtilityEX.GetActorTag(ref this.targetTags, Target);
     }
 
     /// <summary>
@@ -280,7 +287,6 @@ public class KojoCollector : I_ResultStorage, I_Records
 
             UtilityEX.GetActorTag(ref this.selfTags, ep.Receiver);
         }
-        selfTags = Utility.Distinct(selfTags);
 
         if (ep.Receiver != null)
         {
@@ -304,7 +310,6 @@ public class KojoCollector : I_ResultStorage, I_Records
             }
             doerAttitude = ep.DoerAttitude;
         }
-        targetTags = Utility.Distinct(targetTags);
 
         if (ep.Master != null) masterRef = ep.Master.RefID;
         else if (ep.Doer != null) masterRef = ep.Doer.RefID;

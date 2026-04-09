@@ -143,7 +143,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void UpdateAnchor(PortraitManager.CharaPortrait p)
     {
-
+        if (picture == null || picture.rectTransform == null) return;
         //Debug.Log($"update anchor {x} {y} {size}");
         picture.SetNativeSize();
         picture.rectTransform.localScale = new Vector3(p.portrait_offset_size, p.portrait_offset_size, p.portrait_offset_size);

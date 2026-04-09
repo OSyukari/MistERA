@@ -14,10 +14,10 @@
                     "privacy"
                 ],
                 "requirements": {
-                    "clothingRequirement":"Skin",
                     "requirement": {
                         "treatReceiverAsDoer": true,
                         "req_Doers": {
+                            "clothingRequirement":"Skin",
                             "requireConscious": false
                         }
                     }
@@ -84,9 +84,28 @@
                 "displayName": "com_furniture_restroom_displayName_1",
                 "timeScale": 10,
                 "comTags": [
-                    "furniture","bathroom", "unsafe"
+                    "furniture","bathroom", "unsafe",
+                    "privacy"
                 ],
                 "requirements": {
+                    "requirement":{
+                        "req_Doers":{
+                            "BodyTags": ["lower"]
+                        }
+                    }
+                },
+                "results_immediate":{
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "undress",
+                                "tags":["lower"]
+                            }
+                        }
+                    ]
                 },
                 "results": {
                     "results_character": [
@@ -115,17 +134,9 @@
                     "baseAcceptanceValue": 20
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_after":
-                {
-                    "Entries":[
-                        {
-                            "keepLooking":true,
-                            "texts":[ "$doer.firstname$ finished using toilet" ]
-                        }
-                    ]
-                },
-                "description_begin":{ "Entries":[{"texts":["$doer.firstname$ starts using toilet"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$ is using toilet"]}], "keepLooking":false }
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_restroom_description_after_1"]}] },
+                "description_begin":{ "Entries":[{"texts":["com_furniture_restroom_description_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_restroom_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_furniture_takingBreak",
@@ -189,7 +200,8 @@
                 },
                 "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takingBreak_description_begin_1"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takingBreak_description_after_1"]}] }
             },
             {
                 "ID": "com_furniture_takingLongBreak",
@@ -263,7 +275,8 @@
                 },
                 "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takingBreak_description_begin_1"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takingLongBreak_description_after_1"]}] }
             },
             {
                 "ID": "com_furniture_playVideoGames",
@@ -363,7 +376,8 @@
                         },
                         "DifficultyCheck":{ "baseD20Check":10 },
                         "description_begin":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_variant_begin_1"]}], "keepLooking":false },
-                        "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_variant_ongoing_1"]}], "keepLooking":false }
+                        "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_variant_ongoing_1"]}], "keepLooking":false },
+                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_playVideoGames_description_variant_after_1"]}] }
                     }
                 },
                 "results": {
@@ -420,7 +434,8 @@
                 },
                 "DifficultyCheck":{ "baseD20Check":10 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_begin_1"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_playVideoGames_description_after_1"]}] }
             },
             {
                 "ID": "com_furniture_watchVideo",
@@ -520,7 +535,8 @@
                         },
                         "DifficultyCheck": { "baseD20Check": 5 },
                         "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_watchVideo_description_variant_begin_1"] }] },
-                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_watchVideo_description_variant_ongoing_1"] }], "keepLooking": false }
+                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_watchVideo_description_variant_ongoing_1"] }], "keepLooking": false },
+                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_watchVideo_description_variant_after_1"]}] }
                     }
                 },
                 "results": {
@@ -577,7 +593,8 @@
                 },
                 "DifficultyCheck":{ "baseD20Check":5 },
                 "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_furniture_watchVideo_description_begin_1" ] } ] },
-                "description_ongoing":{ "Entries":[ { "texts":["com_furniture_watchVideo_description_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[ { "texts":["com_furniture_watchVideo_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_watchVideo_description_after_1"]}] }
             },
             {
                 "ID": "com_furniture_readBooks",
@@ -675,7 +692,8 @@
                         },
                         "DifficultyCheck": { "baseD20Check": 3 },
                         "description_begin": { "Entries": [{ "keepLooking": false, "texts": ["com_furniture_readBooks_description_variant_begin_1"] }] },
-                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_variant_ongoing_1"] }], "keepLooking": false }
+                        "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_variant_ongoing_1"] }], "keepLooking": false },
+                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_readBooks_description_variant_after_1"]}] }
                     }
                 },
                 "results": {
@@ -732,7 +750,8 @@
                 },
                 "DifficultyCheck": { "baseD20Check": 3 },
                 "description_begin": { "Entries": [{ "keepLooking": false, "texts": ["com_furniture_readBooks_description_begin_1"] }] },
-                "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_ongoing_1"] }], "keepLooking": false }
+                "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_ongoing_1"] }], "keepLooking": false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_readBooks_description_after_1"]}] }
             },
             {
                 "ID": "com_furniture_takeShower",
@@ -785,7 +804,8 @@
                     ]
                 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takeShower_description_begin_1"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takeShower_description_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_takeShower_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takeShower_description_after_1"]}] }
             },
             {
                 "ID": "com_furniture_restroom_fix",
@@ -799,8 +819,8 @@
                     "fixingClothes",
                     "privacy"
                 ],
-                "requirements":{  
-                    "requirement":{ 
+                "requirements":{
+                    "requirement":{
                         "req_Doers":{
                             "requireUndressed" :true
                         }  }  },
@@ -821,7 +841,8 @@
                                 "applyToDoer": true
                             },
                             "entry_results": {
-                                "type": "redress"
+                                "type": "redress",
+                                "tags":["lower"]
                             }
                         },
                         {
@@ -841,7 +862,8 @@
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_restroom_fix_ongoing_1"]}], "keepLooking":false },
-                "description_begin":{ "Entries":[{"texts":["com_furniture_restroom_fix_begin_1"]}], "keepLooking":false }
+                "description_begin":{ "Entries":[{"texts":["com_furniture_restroom_fix_begin_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_restroom_fix_after_1"]}] }
             },
             {
                 "ID": "com_furniture_cryosleep",
@@ -997,7 +1019,8 @@
                         },
                         "DifficultyCheck": { "baseD20Check": 0 },
                         "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
-                        "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false }
+                        "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false },
+                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_after_1"]}] }
                     }
 
                 },
@@ -1051,7 +1074,8 @@
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
-                "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_after_1"]}] }
             },
             {
                 "ID": "com_furniture_prison",
@@ -1137,6 +1161,9 @@
             "zh-cn":
             {
                 "com_furniture_restroom_displayName_1": "上厕所",
+                "com_furniture_restroom_description_begin_1": "$doer.firstname$开始上厕所",
+                "com_furniture_restroom_description_ongoing_1": "$doer.firstname$正在上厕所",
+                "com_furniture_restroom_description_after_1": "$doer.firstname$上完了厕所",
 
                 "com_furniture_sleep_displayName_1": "睡觉",
                 "com_furniture_sleep_displayName_2": "一起睡觉",
@@ -1227,12 +1254,31 @@
                 "com_furniture_getmeal_ongoing_1": "$doer.firstname$正在吃饭",
 
                 "com_furniture_getmeal_displayName_1": "吃$name$",
-                "com_furniture_getmeal_displayName_2": "一起吃$name$"
-                
+                "com_furniture_getmeal_displayName_2": "一起吃$name$",
+
+                "com_furniture_takingBreak_description_after_1": "$doer.firstname$休息完毕——$result$",
+                "com_furniture_takingLongBreak_description_after_1": "$doer.firstname$长休完毕——$result$",
+
+                "com_furniture_playVideoGames_description_after_1": "$doer.firstname$打完了游戏——$result$",
+                "com_furniture_playVideoGames_description_variant_after_1": "$doer.firstname$玩完了$name$——$result$",
+
+                "com_furniture_watchVideo_description_after_1": "$doer.firstname$看完了电视——$result$",
+                "com_furniture_watchVideo_description_variant_after_1": "$doer.firstname$看完了$name$——$result$",
+
+                "com_furniture_readBooks_description_after_1": "$doer.firstname$读完了书——$result$",
+                "com_furniture_readBooks_description_variant_after_1": "$doer.firstname$读完了$name$——$result$",
+
+                "com_furniture_takeShower_description_after_1": "$doer.firstname$洗完了澡",
+                "com_furniture_restroom_fix_after_1": "$doer.firstname$整理好了衣物",
+                "com_furniture_getmeal_after_1": "$doer.firstname$吃完了饭"
+
             },
             "en-us":
             {
 "com_furniture_restroom_displayName_1": "Use Restroom",
+                "com_furniture_restroom_description_begin_1": "$doer.firstname$ starts using the restroom",
+                "com_furniture_restroom_description_ongoing_1": "$doer.firstname$ is using the restroom",
+                "com_furniture_restroom_description_after_1": "$doer.firstname$ finished using the restroom",
 
                 "com_furniture_getmeal": "Get Meal",
                 "com_furniture_sleep_displayName_1": "Sleep",
@@ -1304,7 +1350,23 @@
 
 
     "com_furniture_getmeal_begin_3": "$doer.firstname$ starts eating",
-    "com_furniture_getmeal_ongoing_1": "$doer.firstname$ is eating"
+    "com_furniture_getmeal_ongoing_1": "$doer.firstname$ is eating",
+
+    "com_furniture_takingBreak_description_after_1": "$doer.firstname$ finished taking a break — $result$",
+    "com_furniture_takingLongBreak_description_after_1": "$doer.firstname$ finished their long rest — $result$",
+
+    "com_furniture_playVideoGames_description_after_1": "$doer.firstname$ finished playing video games — $result$",
+    "com_furniture_playVideoGames_description_variant_after_1": "$doer.firstname$ finished playing $name$ — $result$",
+
+    "com_furniture_watchVideo_description_after_1": "$doer.firstname$ finished watching TV — $result$",
+    "com_furniture_watchVideo_description_variant_after_1": "$doer.firstname$ finished watching $name$ — $result$",
+
+    "com_furniture_readBooks_description_after_1": "$doer.firstname$ finished reading — $result$",
+    "com_furniture_readBooks_description_variant_after_1": "$doer.firstname$ finished reading $name$ — $result$",
+
+    "com_furniture_takeShower_description_after_1": "$doer.firstname$ finished taking a shower",
+    "com_furniture_restroom_fix_after_1": "$doer.firstname$ finished fixing their clothes",
+    "com_furniture_getmeal_after_1": "$doer.firstname$ finished their meal"
             }
         }
     }

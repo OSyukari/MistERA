@@ -310,9 +310,9 @@ public class Job_Furniture : Job
             AddPackage(new List<ActionPackage>() { package });
             return true;
         }
-        else if (desiredCOM != null && desiredCOM.requirements.clothingRequirement < BodyEquipLayer.Outer && c.NeedUndress(desiredCOM.requirements.clothingRequirement, Revealing.Erotic))
+        else if (desiredCOM != null && c.NeedUndress(desiredCOM.requirements, true))
         {
-            ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements.clothingRequirement, Revealing.Erotic);
+            ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements, true);
             if (!package.Validate())
             {
                 ss += "actor undress package creation failed ||";
@@ -368,6 +368,11 @@ public class Job_Furniture : Job
 
                     var addMems = new List<Action>();
                     ev.FunctionCalls.Add("OnRefusedJoin", addMems);
+
+                    var join = new List<Action>();
+                    ev.FunctionCalls.Add("FindJoinableAP_Callback", join);
+                    join.Add(() => pl2.JoinAP(c, Memory_Response.None, true));
+
                     string desc = $"failed to join {pl2.DescriptionText()}";
                     var mem = new MemInstance(pl2.actorRefs, pl2.ComTags, pl2.targetCOM.ID, pl2.COMVariantID, pl2.masterRef, false, Memory_Response.Refuse, Memory_Attitude.None, desc);
 #if UNITY_EDITOR
@@ -383,23 +388,30 @@ public class Job_Furniture : Job
                 }
                 else if( pl2.JoinAP(c, Memory_Response.None, true))
                 {
-                    ss += "join existing pkg " + pl2.DescriptionText(c.RefID);
+                    ss += $"join existing pkg {(pl2.Ticked? "ONGOING" : "SILENT")} {pl2.DescriptionText(c.RefID)}";
 
-                    var empty = new List<string>() { "" };
 
-                    // make an event that skip straight to join print since joining is already handled
-                    var ev = new EventInstance(c, "RequestJoin", "br_join");
-                    ev.Self = c;
-                    var tActors = new List<Character_Trainable>();
-                    foreach (var a in pl2.actorRefs) if (a != c.RefID) tActors.Add(scr_System_CampaignManager.current.FindInstanceByID(a));
-                    ev.Targets.Add("evTarget", tActors);
-                    ev.AppendStrings.Add("kojo_joined", empty);
-                    ev.AppendStrings.Add("kojo_join_refused", empty);
-                    ev.AppendStrings.Add("kojo_tryjoin", empty);
+                    if (pl2.Ticked)
+                    {
+                        // make an event that skip straight to join print since joining is already handled
+                        var empty = new List<string>() { "" };
+                        var ev = new EventInstance(c, "RequestJoin", "br_join");
+                        ev.Self = c;
+                        var tActors = new List<Character_Trainable>();
+                        foreach (var a in pl2.actorRefs) if (a != c.RefID) tActors.Add(scr_System_CampaignManager.current.FindInstanceByID(a));
+                        ev.Targets.Add("evTarget", tActors);
+                        ev.AppendStrings.Add("kojo_joined", empty);
+                        ev.AppendStrings.Add("kojo_join_refused", empty);
+                        ev.AppendStrings.Add("kojo_tryjoin", empty);
 
-                    scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+                        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false); 
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
 
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} join existing package {pl2.DescriptionText(c.RefID)}");
+                    }else if (scr_System_CentralControl.current.LogPrefs.DLog_JoinAP) Debug.Log($"{scr_System_Time.current.getCurrentTime()}: {c.FirstName} NOT TICKED, SILENT JOIN {pl2.DescriptionText(c.RefID)}");
+
+
+
+
                     return true;
                 }
                 else

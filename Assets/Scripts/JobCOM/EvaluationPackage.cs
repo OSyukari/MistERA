@@ -576,6 +576,19 @@ public partial class EvaluationPackage : I_ResultStorage
     }
 
     /// <summary>
+    /// Called for COM's executeimmediate
+    /// </summary>
+    /// <param name="m"></param>
+    public void ExecuteImmediate(MessageCollect m)
+    {
+        if (Doer != null) targetCOM.ApplyResultsImmediate(job, p, this, attitude_doer, Doer, m == null ? null : m.exp);
+        if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResultsImmediate(job, p, this, attitude_receiver, Receiver, m == null ? null : m.exp);
+
+    }
+
+
+
+    /// <summary>
     /// Cleared on Execute() so no need to store any of it. But the property must 
     /// </summary>
     //[JsonProperty] public ExperienceLog m = new ExperienceLog();
@@ -1304,20 +1317,7 @@ public partial class EvaluationPackage : I_ResultStorage
 
     public string LogMessage_After(bool rightAlign = false, MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
-        var s = Description_After;
 
-        var pOrderPackage = Package as ActionPackage_ProductionOrder;
-
-        if (pOrderPackage != null && pOrderPackage.order != null && pOrderPackage.order.Recipe != null && pOrderPackage.order.Recipe.OutputItem != null)
-        {
-            s = s.Replace("$item$", pOrderPackage.order.Recipe.OutputItem.DisplayName);
-        }
-
-        if (s.Length > 0)
-        {
-            return s;
-        }
         return "";
 
     }
@@ -1784,6 +1784,50 @@ public class ExperienceLog
                 MessageLog.ContainsKey(0) || climaxMessage.ContainsKey(0) ;  } }
     [JsonIgnore] public bool leftAlignOverride = false;
 
+    public bool finalized = false;
+
+    public List<int> relevantActorRefs = new List<int>();
+
+    public void Finalize(out DescriptionCollector desc, out DescriptionCollector recording)
+    {
+        desc = new DescriptionCollector();
+        recording = new DescriptionCollector();
+
+        var msg = PrintContent_Messages();
+        if (msg.Length > 0)
+        {
+            desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{msg}";
+            recording.message += $"{(recording.message.Length > 0 ? "\n" : "")}{msg}";
+        }
+        var climax = PrintContent_Climax();
+        if (climax.Length > 0)
+        {
+            desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{climax}";
+            recording.message += $"{(recording.message.Length > 0 ? "\n" : "")}{climax}";
+        }
+        var stats = PrintContent_Stats();
+        if (stats.Length > 0) desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{stats}";
+
+        desc.LoadActors(this.relevantActorRefs);
+        recording.LoadActors(this.relevantActorRefs);
+        Clear();
+
+        if (desc.message.Length < 1) desc = null;
+        if (recording.message.Length < 1) recording = null;
+        return;
+    }
+
+    public void AddRelevantChara(List<int> list)
+    {
+        foreach (var i in list) if (!relevantActorRefs.Contains(i)) relevantActorRefs.Add(i);
+    }
+
+    public bool VisibleTo(Character_Trainable c)
+    {
+        if (c == null) return true;
+        return relevantActorRefs.Contains(c.RefID);
+    }
+
     protected SortedDictionary<int, bool> RightAlign = new SortedDictionary<int, bool>();
     protected SortedDictionary<int, Dictionary<string, double>> StatLog = new SortedDictionary<int, Dictionary<string, double>>();
     protected SortedDictionary<int, Dictionary<string, int>> ExpLog = new SortedDictionary<int, Dictionary<string, int>>();
@@ -1817,6 +1861,7 @@ public class ExperienceLog
     }
     public void AddChara(int charaRef)
     {
+        if (!this.relevantActorRefs.Contains(charaRef)) this.relevantActorRefs.Add(charaRef);
         if (!this.RightAlign.ContainsKey(charaRef)) this.RightAlign.Add(charaRef, charaRef == 0 ? false : true);
     }
 
@@ -1871,7 +1916,14 @@ public class ExperienceLog
 
     public void MergeWith(ExperienceLog log, bool shorten)
     {
+        Debug.LogError("DO NOT USE THIS");
+        /*
+         EXP PRINT ITSELF, THEN THECK LOG VISIBILITY, TREAT AS DESCCOLLECTOR         
+         */
+
         leftAlignOverride = leftAlignOverride || log.leftAlignOverride;
+
+        this.AddRelevantChara(log.relevantActorRefs);
 
         foreach (KeyValuePair<int, bool> kvp in log.RightAlign)
         {
@@ -1953,43 +2005,53 @@ public class ExperienceLog
         StatLog.Clear();
 
         MessageLog.Clear();
+
+        relevantActorRefs.Clear();
+        finalized = false;
     }
 
     public string PrintContent_Stats()
     {
+
         // Debug.Log("EVP Explog, print");
         List<string> lines = new List<string>();
+        List<int> keys = new List<int>();
+        keys.AddRange(StatLog.Keys);
+        keys.AddRange(ExpLog.Keys);
+        keys = Utility.Distinct(keys);
 
-        foreach (var kvp_refID in StatLog)
+        foreach(var key in keys)
         {
-            if (kvp_refID.Value.Count > 0)
+            string s = scr_System_CampaignManager.current.FindInstanceByID(key).FirstName + ": ";
+            bool hasvalue = false;
+            if (StatLog.TryGetValue(key, out var kvp_refID) && kvp_refID.Values.Count > 0)
             {
-                string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0.#;-0.#") + " ";
-                if (s.Length < 1) continue;
-
-                s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines.Add(!leftAlignOverride && RightAlign.ContainsKey(kvp_refID.Key) && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
+                foreach (var kvp in kvp_refID)
+                {
+                    if (kvp.Value != 0)
+                    {
+                        hasvalue = true;
+                        s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0.#;-0.#") + " ";
+                    }
+                }
             }
-        }
-
-        // Debug.Log("EVP Explog, print");
-        List<string> lines2 = new List<string>();
-        // Only player character related relationship increase is logged
-        foreach (var kvp_refID in ExpLog)
-        {
-            if (kvp_refID.Value.Count > 0)
+            if (ExpLog.TryGetValue(key, out var kvp_refID2) && kvp_refID2.Values.Count > 0)
             {
-                string s = scr_System_CampaignManager.current.FindInstanceByID(kvp_refID.Key).FirstName + ": ";
-                foreach (var kvp in kvp_refID.Value) if (kvp.Value != 0 || kvp_refID.Value.Count < 2) s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0;-#") + " ";
-                if (s.Length < 1) continue;
-
-                s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
-                lines2.Add(!leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{s}</align>" : s);
+                foreach (var kvp in kvp_refID2)
+                {
+                    if (kvp.Value != 0)
+                    {
+                        hasvalue = true;
+                        s += "" + LocalizeDictionary.QueryThenParse(kvp.Key) + "" + kvp.Value.ToString("+0.#;-0.#") + " ";
+                    }
+                }
             }
+            if (!hasvalue) continue;
+            s = Utility.WrapTextColor(s, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
+            lines.Add(!leftAlignOverride && RightAlign.ContainsKey(key) && RightAlign[key] ? $"<align=\"right\">{s}</align>" : s);
         }
-        bool breakline = lines.Count > 0 && lines2.Count > 0;
-        return $"{String.Join('\n', lines.ToArray())}{(breakline?"\n\n":"")}{(String.Join('\n', lines2.ToArray()))}" ;
+        if (lines.Count < 1) return "";
+        return $"{String.Join('\n', lines.ToArray())}" ;
     }
     /*
     public string PrintContent_Relations()
@@ -2015,11 +2077,12 @@ public class ExperienceLog
     {
        // Debug.Log("EVP Explog, print");
         List<string> lines = new List<string>();
-        foreach(var kvp_refID in MessageLog)
+        List<int> keys = MessageLog.Keys.ToList();
+        foreach (var key in keys)
         {
-            if (kvp_refID.Value.Count > 0)
+            if (MessageLog.TryGetValue(key, out var kvp_refID) && kvp_refID.Count > 0)
             {
-                string s = !leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" :  String.Join("\n", kvp_refID.Value);
+                string s = !leftAlignOverride && RightAlign[key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID)}</align>" :  String.Join("\n", kvp_refID);
                 if (s.Length < 1) continue;
                 lines.Add(s);
             }
@@ -2032,11 +2095,12 @@ public class ExperienceLog
     {
         // Debug.Log("EVP Explog, print");
         List<string> lines = new List<string>();
-        foreach (var kvp_refID in climaxMessage)
+        List<int> keys = climaxMessage.Keys.ToList();
+        foreach (var key in keys)
         {
-            if (kvp_refID.Value.Length > 0)
+            if (climaxMessage.TryGetValue(key, out var kvp_refID) && kvp_refID.Length > 0)
             {
-                string s = !leftAlignOverride && RightAlign[kvp_refID.Key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID.Value)}</align>" : String.Join("\n", kvp_refID.Value);
+                string s = !leftAlignOverride && RightAlign[key] ? $"<align=\"right\">{String.Join("</align>\n<align=\"right\">", kvp_refID)}</align>" : String.Join("\n", kvp_refID);
                 if (s.Length < 1) continue;
                 lines.Add(s);
             }

@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -341,13 +342,20 @@ public abstract class ActionPackage
                     .Replace("$names$", c2.FirstName)
                     .Replace("$comname$", comname);
 
+                    // join success branch
                     if (!LogMessage_Join(c2, s))
                     {
+                        Debug.LogError("error logmessagejoin failure");
                         var desc = new DescriptionCollector(s);
                         desc.LoadActors(this.job.actorRefID);
                         desc.LoadActors(c2.RefID, true, true);
                         desc.message_excludeRelated = s;
                         this.job.m.AddMessage_Before(desc, this.RoomKey);
+                    }
+                    else
+                    {
+
+                        Debug.LogError("logmessagejoin");
                     }
                 }
             }
@@ -562,6 +570,7 @@ public abstract class ActionPackage
             {
                 pausedTick = 0;
                 foreach (var d in this.doer) d.NotifyJobStateChange();
+                PackageBegin();
             }
         } }
 
@@ -789,6 +798,7 @@ public abstract class ActionPackage
                         }
                     }
                 }
+                PackageBegin();
             }
         }
        
@@ -1135,6 +1145,26 @@ public abstract class ActionPackage
 
 
 
+    /// <summary>
+    /// If MessageCollect is null, then there will be participant check
+    /// </summary>
+    /// <param name="m"></param>
+    protected void PackageBegin(MessageCollect m = null)
+    {
+        if (targetCOM == null) return;
+        if (isTemporaryAP) return;
+        if (m == null) m = this.job.m;
+        
+        if (packages == null || packages.Count < 1)
+        {
+            Debug.Log($"AP {DisplayName} execution() called but there is no package inside. Rebuilding... package count {packages.Count}");
+            RemakePackages();
+        }
+        foreach(var package in packages)
+        {
+            package.ExecuteImmediate(m);
+        }
+    }
 
 
     /// <summary>
@@ -1421,9 +1451,10 @@ public abstract class ActionPackage
         //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
     }
 
-    public void LogCheckResult(bool rightAlign, bool resultOnly = false, MessageCollect m = null)
+    public void LogCheckResult(bool rightAlign, bool displayFull, bool resultOnly = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
+        var desc = new DescriptionCollector();
         if (!resultOnly)
         {
             List<string> checkResults = new List<string>();
@@ -1437,17 +1468,38 @@ public abstract class ActionPackage
             }
 
             if (checkResults.Count < 1) return;
-            string finalResults = String.Join("\n", checkResults);
-            if (finalResults.Length < 1) return;
-            m.messages_checks.Add(rightAlign ? $"<align=\"right\">{finalResults}</align>" : finalResults, "");
+            desc.message = String.Join("\n", checkResults);
+            if (desc.message.Length < 1) return;
+
+            List<string> names = new List<string>();
+
+
+            desc.message_excludeRelated = "end of action";
+            //m.messages_checks.Add(rightAlign ? $"<align=\"right\">{finalResults}</align>" : finalResults, "");
+            
 
         }
-        else if (executeSuccessful && this.checkResults_result != "")
+        else if (executeSuccessful)
         {
-            this.checkResults_result = rightAlign ? $"<align=\"right\">{this.checkResults_result}</align>" : this.checkResults_result;
-            if (!m.messages_checks.ContainsKey(this.checkResults_result)) m.messages_checks.Add(this.checkResults_result, this.checkResults_tooltips);
+            desc.message = !displayFull && this.checkResults_result_short != "" ? this.checkResults_result_short : this.checkResults_result;
+            desc.tooltip = this.checkResults_tooltips;/*
+            if (!displayFull && this.checkResults_result_short != "")
+            {
+                this.checkResults_result_short = rightAlign ? $"<align=\"right\">{this.checkResults_result_short}</align>" : this.checkResults_result_short;
+                if (!m.messages_checks.ContainsKey(this.checkResults_result_short)) m.messages_checks.Add(this.checkResults_result_short, this.checkResults_tooltips);
+            }
+            else if (checkResults_result != "")
+            {
+                this.checkResults_result = rightAlign ? $"<align=\"right\">{this.checkResults_result}</align>" : this.checkResults_result;
+                if (!m.messages_checks.ContainsKey(this.checkResults_result)) m.messages_checks.Add(this.checkResults_result, this.checkResults_tooltips);
+            }*/
         }
+        if (desc.message.Length > 0)
+        {
+            desc.LoadActors(this.actorRefs);
+            m.messages_checks.Add(desc);//
 
+        }
 
         //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
     }
@@ -1569,6 +1621,7 @@ public abstract class ActionPackage
         return success;
     }
 
+    public Memory_Response injectResult = Memory_Response.None;
     /// <summary>
     /// 
     /// </summary>
@@ -1591,7 +1644,6 @@ public abstract class ActionPackage
             //Debug.LogError("executing meal AP");
         }
 
-        Memory_Response injectResult = Memory_Response.None;
 
         if (this.targetCOM != null)
         {
@@ -2068,7 +2120,7 @@ public abstract class ActionPackage
             var responses = ep.LogMessage_Kojo(m, rel);
             foreach (var kol in responses)
             {
-                if (visible) m.messages_kojo.Add(kol.collect);
+                if (visible) m.AddKojo(kol);
                 if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
             }
             if (single && !ep.isPlayerEP) break;
@@ -2103,17 +2155,22 @@ public abstract class ActionPackage
             if (!requestAccepted && ep.Response != Memory_Response.Refuse) continue;
 
             var responses = ep.LogMessage_Join(target, joinAP_list, m);
+            bool logged = false;
             foreach (var kol in responses)
             {
+                if (kol.collect == null) continue;
+                if (kol.collect.message.Length < 1) continue;
+                logged = true;
                 //if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{kol.collect.message}</align>" : kol.collect.message);
                 // if (visible)
                 // {
                 kol.tooltip = tooltip;
+                kol.LoadRelevantActors(this.job.actorRefID);
                 m.AddMessage_Before(kol, visible, recordingRoom, false);
                 //}
                 if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
             }
-            if (responses.Count > 0) return true;
+            if (logged) return true;
         }
         return false;
     }
@@ -2151,7 +2208,7 @@ public abstract class ActionPackage
                 //m.AddMessage_Before(kol, visible, recordingRoom, rightAlign);
                 exist = exist || kol.collect.message.Length > 0;
                 desc.Load(kol.collect);
-                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+                //if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
             }
             if (single && !ep.isPlayerEP) break;
         }
@@ -2161,7 +2218,7 @@ public abstract class ActionPackage
             desc.LoadActors(this.job.actorRefID);
             desc.message_excludeRelated = desc.message;
             //desc.LoadPortraits(this.actorRefs, true);
-            m.AddMessage_Before(desc, visible, recordingRoom, rightAlign);
+            m.AddMessage_Before(desc, desc.VisibleTo(scr_System_CampaignManager.current.Player), recordingRoom, rightAlign);
         }
     }
     /// <summary>
@@ -2249,7 +2306,7 @@ public abstract class ActionPackage
 
             foreach (var kol in responses)
             {
-                if (visible) m.messages_kojo_after.Add(kol.collect);
+                if (visible) m.AddKojo(kol);
                 if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
             }
         }
@@ -2311,11 +2368,11 @@ public abstract class ActionPackage
         this.LoggedBegin = true;
     }
 
-
     public void LogMessage_After(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        if (!visible && recordingRoom == null) return;
+        //if (!visible && recordingRoom == null) return;
+        if (isTemporaryAP) return;
 
         if (shuffledList.Count < 1)
         {
@@ -2323,42 +2380,85 @@ public abstract class ActionPackage
             //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
         }
         Utility.Shuffle(shuffledList);
+
         bool single = ShortenAPDisplay;
+
+        string s = "";// targetCOM != null && COMVariantID >= 0 ? targetCOM.variants[COMVariantID].GetDescription_After(targetCOM, this) : "";
+        string s_exlcude = "";
+        if (targetCOM != null && COMVariantID >= 0)
+        {
+            s = targetCOM.variants[COMVariantID].GetDescription_After(targetCOM, this);
+            UtilityEX.StringReplace(this, ref s);
+            s = targetCOM.Replace(s);
+
+            s_exlcude = targetCOM.variants[COMVariantID].GetDescription_After(targetCOM, this);
+            UtilityEX.StringReplace(this, ref s_exlcude);
+            s_exlcude = targetCOM.Replace(s_exlcude);
+
+
+            if (this is ActionPackage_ProductionOrder)
+            {
+                var pOrderPackage = this as ActionPackage_ProductionOrder;
+                if (pOrderPackage != null && pOrderPackage.order != null && pOrderPackage.order.Recipe != null && pOrderPackage.order.Recipe.OutputItem != null)
+                {
+                    s = s.Replace("$item$", pOrderPackage.order.Recipe.OutputItem.DisplayName);
+                    s_exlcude = s_exlcude.Replace("$item$", pOrderPackage.order.Recipe.OutputItem.DisplayName);
+                }
+            }
+        }
+
+        var desc = new DescriptionCollector("");
+
+        bool exist = s.Length > 0 || s_exlcude.Length > 0;
+
         foreach (var ep in shuffledList)
         {
             if (targetCOM == null) continue;
             if (targetCOM is COM_Sex) continue;
             if (ep.Response < Memory_Response.Success) continue;
             var rs = ep.LogMessage_After(rightAlign, m);
+
             if (rs.Length > 0)
             {
-               // if (visible)
-               // {
-                    var desc = new DescriptionCollector(rs);
-                desc.LoadActors(job.actorRefID);
-                desc.message_excludeRelated = rs;
-                m.AddMessage_After(desc, visible, recordingRoom, rightAlign);
-                    //m.messages_after.Add(rightAlign ? $"<align=\"right\">{rs}</align>" : rs);
-               // }
-                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(rs, this.actorRefs));
+                exist = true;
+                desc.message+=$"{(desc.message.Length > 0 ? "\n" : "")}{rs}" ;
             }
+
             else if (rightAlign)
             {
                 var responses = ep.LogMessage_Ongoing(rightAlign, m, null);
                 if (responses.Count < 1) continue;
+                bool hasresponse = false;
                 foreach (var kol in responses)
                 {
-                    //if (visible)
-                    //{
-                    m.AddMessage_After(kol, visible, recordingRoom, rightAlign);
-                  //  m.messages_after.Add(rightAlign ? $"<align=\"right\">{kol.collect.message}</align>" : kol.collect.message);
-                   // }
-                    if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+                    if (kol.collect.message.Length < 1) continue;
+                    exist = true;
+                    hasresponse = true;
+                    desc.Load(kol.collect);
+
+//                    m.AddMessage_After(kol, visible, recordingRoom, rightAlign);
+
+                   // if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
                 }
+                if (!hasresponse) continue;
             }
 
             if (single && !ep.isPlayerEP) break;
         }
+
+
+        if (exist)
+        {
+            desc.LoadActors(this.job.actorRefID);
+            desc.message_excludeRelated = $"{s_exlcude}{(s_exlcude.Length > 0 ? "\n" : "")}{desc.message}";
+            desc.message = "";
+
+            //desc.LoadPortraits(this.actorRefs, true);
+            //Debug.Log($"logmessageafter!\n{desc.message}\n{desc.message_excludeRelated}");
+            
+            m.AddMessage_After(desc, desc.VisibleTo(scr_System_CampaignManager.current.Player, recordingRoom), recordingRoom, rightAlign);
+        }
+
     }
 
     public List<string> ActorTargetTags(int refID)
@@ -2430,6 +2530,10 @@ public abstract class ActionPackage
 
             mm.Merge(this.job.m, false);
             mm.exp.leftAlignOverride = mm.exp.isPlayerLog;
+
+            mm.exp.AddRelevantChara(job.actorRefID);
+            mm.exp.AddRelevantChara(job.actorJobComplete);
+            mm.exp.AddRelevantChara(job.actorRemove);
             this.job.m.Clear();
 
             failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm, false));// .m.Merge(mm, false));

@@ -349,6 +349,7 @@ public class Map_Instance
 
         }
         ri.Tick();
+        var log = scr_System_CentralControl.current.LogPrefs.DLog_Interrupt;
 
 
         // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
@@ -388,11 +389,9 @@ public class Map_Instance
 
             // check interrupt
             var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(ri.RefID, true) : new List<ActionPackage>(dirtyCharaAPRef);
-            //if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.LogError(xx.FirstName + " checking dirty chara ref isDirty[" + (isDirty) + "] checkAPs ["+String.Join("|",checkInterruptAPs)+"]");
-            //if (xx.RefID != 0)
-            //{
-                // only check interrupt if not player
-                // these are all ap that chara could react to
+
+            // only check interrupt if not player
+            // these are all ap that chara could react to
             foreach (var i in checkInterruptAPs)
             {
                 if (i.RoomKey != ri.RefID) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
@@ -403,13 +402,13 @@ public class Map_Instance
                 if (i.timestopTick && !xx.CanActInTimeStop) continue;
                 if (xx.InteractionJob != null && xx.InteractionJob.isActive) continue;
                 if (xx.CurrentJob != null && !xx.CurrentJob.CanBeInterrupted) continue;
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
+                if (log) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|",i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
+                
                 if (MapUtility.CheckInterrupt(xx, i, selfTags) && xx.RefID != 0)
                 {
                     interrupted = true;
                     ignoreList.AddRange(i.actorRefs);
                 }
-                //interrupted = xx.Relationships.CheckInterrupt(i, selfTags) || interrupted;
             }
             // }
 
@@ -425,17 +424,12 @@ public class Map_Instance
 
 
                     var yyEPs = tempDicts[yy];
-                    var log = scr_System_CentralControl.current.LogPrefs.DLog_Interrupt;
                     /*
                     Prioritise self or target.
                      */
                     bool greeting = (forceGreeting || isDirty || dirtyCharaRef.Contains(yy.RefID)) && scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) != scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID);
-                    if (false && (xx.CanActInTimeStop != yy.CanActInTimeStop) && scr_System_Time.current.TimeResume && xx.Relationships.NotifyMeeting(yy, xxEPs, yyEPs, "OnTimestopEnd"))
-                    {
-                        if (log) Debug.Log($"OnTimestopEnd on {yy.CallName}");
-                    }
-                    else if (greeting && yy.Relationships.NotifyMeeting(xx,  yyEPs, xxEPs, "Greeting"))
-                    {
+                    if (false)// && greeting && yy.Relationships.NotifyMeeting(xx,  yyEPs, xxEPs, "Greeting"))
+                    {   // "greeting" event is not being used, use "dailygreeting" instead
                         // allow party member to trigger each other greeting (and log relationship)
                         if (log) Debug.Log($"Greeting from {yy.FirstName} to {xx.FirstName}");
                     }
@@ -455,13 +449,13 @@ public class Map_Instance
                     }
                     else
                     {
-                        //Debug.LogError($"Greeting Failed {xx.CallName} -> {yy.CallName}, {forceGreeting} {isDirty} {dirtyCharaRef.Contains(yy.RefID)} {!(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID))}");
+                        //if (log) Debug.LogError($"Greeting Failed {xx.CallName} -> {yy.CallName}, {forceGreeting} {isDirty} {dirtyCharaRef.Contains(yy.RefID)} {!(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID))}");
                     }
                 }
             }
             else
             {
-               // Debug.LogError($"{xx.CallName} is interrupted, not calling greeting events");
+                if (log) Debug.LogError($"{xx.CallName} is interrupted, not calling greeting events");
             }
 
             if (isDirty)

@@ -239,10 +239,17 @@ public class Job_Sex_Group : Job
             {
                 if (actor == player) continue;
                 var rel = actor.Relationships.FindRelationshipWith(player);
-                var actorTag = new List<string>();
-                UtilityEX.GetActorTag(ref actorTag, actor);
-                var m = actor.Relationships.Personality.GetKOJOMessage(sendKojoID, rel, actorTag, playerTag);
-                this.m.AddKojo(m);
+                //var actorTag = new List<string>();
+                //UtilityEX.GetActorTag(ref actorTag, actor);
+                var kol = new KojoCollector(actor, sendKojoID);
+                kol.LoadRel(rel);
+                kol = actor.Relationships.GetKOJOMessage_Suffix(kol, null);
+                //var m = actor.Relationships.Personality.GetKOJOMessage(sendKojoID, rel, actorTag, playerTag);
+                if (kol != null)
+                {
+                    this.m.AddKojo(kol);
+                }
+                
                 //Debug.Log($"adding kojo for {actor.FirstName}: {m.message}");
             }
         }

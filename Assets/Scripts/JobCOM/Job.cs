@@ -35,6 +35,7 @@ public class Job : IDisposable, I_Disposable
     }
     [JsonIgnore] public virtual int targetActorRef { get { return scr_System_CampaignManager.current.CurrentTargetRef; } }
     /// <summary>
+    /// Event use this check to see if they can interrupt current job <br/>
     /// AP also use this to determine whether they can shorten EP description
     /// </summary>
     [JsonIgnore] public virtual bool CanBeInterrupted { get { return true; } }
@@ -142,6 +143,8 @@ public class Job : IDisposable, I_Disposable
             return actorRefIDStorage.Keys.ToList(); 
         } 
     }
+
+
 
     List<Character_Trainable> _actors_cache = null;
     [JsonIgnore] public List<Character_Trainable> Actors
@@ -315,6 +318,7 @@ public class Job : IDisposable, I_Disposable
         }
         actorJoinTime[charaRef] = scr_System_Time.current.getCurrentTime();
         actorJobComplete.Remove(charaRef);
+        actorRemove.Remove(charaRef);
         _actors_cache = null;
     }
 
@@ -378,6 +382,7 @@ public class Job : IDisposable, I_Disposable
             }*/
         }
         actorJobComplete.Remove(charaRef);
+        actorRemove.Add(charaRef);
         _actors_cache = null;
     }
 
@@ -621,6 +626,7 @@ public class Job : IDisposable, I_Disposable
         this.packages_previous.Clear();
         this.packages_current.Clear();
         this.actorJobComplete.Clear();
+        this.actorRemove.Clear();
         this.actorJoinTime.Clear();
         this.actorRefIDStorage.Clear();
         this.packages_completed.Clear();
@@ -734,27 +740,26 @@ public class Job : IDisposable, I_Disposable
 
             if (display && displayStrict)
             {
-                ap.LogCheckResult(rightAlign, ap.LoggedBegin, m);
+                ap.LogCheckResult(rightAlign, display && displayStrict, ap.LoggedBegin, m);
             }
             if (!ap.LoggedBegin)
             {
                 if (ap.executeSuccessful)
                 {
                     if (ap.repeated) ap.LogMessage_Begin_Ongoing(display, recording ? room : null, false, rightAlign, m);
-                    else ap.LogMessage_Begin(display, recording ? room : null, false, rightAlign, m, scr_System_CampaignManager.current.Player);
+                    else ap.LogMessage_Begin(display,  room, false, rightAlign, m, scr_System_CampaignManager.current.Player);
                 }
                 else
                 {
-                    ap.LogMessage_Begin_Refuse(display, recording ? room : null, rightAlign, m);
+                    ap.LogMessage_Begin_Refuse(display, room, rightAlign, m);
                 }
                 ap.LoggedBegin = true;
             }
-            if (display)
-            {
-                ap.LogMessage_Kojo(display, recording ? room : null, m);
-            }
 
-            ap.LogMessage_After(display, recording ? room : null, rightAlign, m);
+            ap.LogMessage_Kojo(display, room, m);
+
+            // After is displayed only for non-player commands, displaying NPC's results
+            ap.LogMessage_After(display, room, rightAlign, m);
             
             m.exp.leftAlignOverride = !rightAlign;
         }
@@ -766,29 +771,43 @@ public class Job : IDisposable, I_Disposable
             //if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult, tooltip);
             if (displayStrict && display)
             {
-                ap.LogCheckResult(rightAlign, false, m);
+                ap.LogCheckResult(rightAlign, displayStrict && display, false, m);
             }
 
-            if (ap.repeated) ap.LogMessage_Begin_Ongoing(display, recording ? room : null, false, rightAlign, m);
-            else ap.LogMessage_Begin(display, recording ? room : null, false, rightAlign, m, scr_System_CampaignManager.current.Player);
+            if (ap.repeated) ap.LogMessage_Begin_Ongoing(display,  room , false, rightAlign, m);
+            else ap.LogMessage_Begin(display, room , false, rightAlign, m, scr_System_CampaignManager.current.Player);
 
             ap.LoggedBegin = true;
         }
         else if (!ap.isPaused && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(display, recording ? room : null, rightAlign, m, scr_System_CampaignManager.current.Player);
+    
+        
     }
 
 
     public void NotifyDescriptionsOutOfUpdate()
     {
         //Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
-        if (this.isVisibleToPlayer) scr_UpdateHandler.current.NotifyJobDescriptions(m, true);
+        if (this.isVisibleToPlayer)
+        {
+            m.exp.AddRelevantChara(this.actorRefID);
+            m.exp.AddRelevantChara(this.actorJobComplete);
+            m.exp.AddRelevantChara(this.actorRemove);
+            scr_UpdateHandler.current.NotifyJobDescriptions(m, true);
+        }
         m.Clear();
     }
 
     public void NotifyDescriptionsOutOfUpdate(bool shortenLogs=  true)
     {
         //Debug.Log($"NotifyDescriptionsOutOfUpdate on {DisplayName}");
-        if (this.isVisibleToPlayer) scr_UpdateHandler.current.NotifyJobDescriptions(m, shortenLogs);
+        if (this.isVisibleToPlayer)
+        {
+            m.exp.AddRelevantChara(this.actorRefID);
+            m.exp.AddRelevantChara(this.actorJobComplete);
+            m.exp.AddRelevantChara(this.actorRemove);
+            scr_UpdateHandler.current.NotifyJobDescriptions(m, shortenLogs);
+        }
         m.Clear();
     }
 
@@ -848,7 +867,9 @@ public class Job : IDisposable, I_Disposable
         //InternalJobUpdate();
         if (visible)
         {
-
+            this.m.exp.AddRelevantChara(this.actorRemove);
+            this.m.exp.AddRelevantChara(this.actorJobComplete);
+            this.m.exp.AddRelevantChara(this.actorRefID);
             scr_UpdateHandler.current.NotifyJobDescriptions(m, false);
         }
 
@@ -856,7 +877,8 @@ public class Job : IDisposable, I_Disposable
 
     }
 
-    protected List<int> actorJobComplete = new List<int>();
+    public List<int> actorJobComplete = new List<int>();
+    public List<int> actorRemove = new List<int>();
     public bool hasActorCompletedJob(int refID)
     {
          return actorJobComplete.Contains(refID); 

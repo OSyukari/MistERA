@@ -46,14 +46,15 @@
             "AcceptanceCheck":{ "baseAcceptanceValue":10 },
             "description_begin":
             {
-                "Entries":[ 
+                "Entries":[
                     {
                         "keepLooking":true,
                         "texts": ["com_interaction_partyInvite_begin_1"]
                     }
                 ]
-                
+
             },
+            "description_end":{ "Entries":[{"texts":["com_interaction_partyInvite_end_1"]}], "keepLooking":false },
             "description_ongoing":{ "Entries":[{"texts":["com_interaction_partyInvite_ongoing_1"]}], "keepLooking":false }
         },
         {

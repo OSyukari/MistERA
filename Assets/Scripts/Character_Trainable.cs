@@ -1537,12 +1537,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             // timestop start kojo
             //Debug.Log($"{FirstName} cannot act in timestop");
             var rel = Relationships.FindRelationshipWith(scr_System_CampaignManager.current.Player);
-            var m = Relationships.Personality.GetKOJOMessage("OnTimestopStart", rel, new List<string>(), new List<string>());
-
-            if (m != null)
+            //var m = Relationships.Personality.GetKOJOMessage("OnTimestopStart", rel, new List<string>(), new List<string>());
+            var kol = new KojoCollector(this, "OnTimestopStart");
+            kol.LoadRel(rel);
+            kol = Relationships.GetKOJOMessage_Suffix(kol, null);
+            if (kol != null)
             {
-                this.InteractionJob.m.AddKojo(m);
-                //Debug.Log($"timestop start {m.message}");
+                this.InteractionJob.m.AddKojo(kol);
+                Debug.Log($"timestop start {kol.collect.message}");
             }
 
             this.InteractionJob.NotifyDescriptionsOutOfUpdate();
@@ -1641,10 +1643,19 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             if (tags.Count > 1) Debug.Log($"Timestop End, {FirstName} tags [{String.Join("|", tags)}]");
 
             var rel = Relationships.FindRelationshipWith(scr_System_CampaignManager.current.Player);
-            var m = Relationships.Personality.GetKOJOMessage("OnTimestopEnd", rel, tags, new List<string>());
+           // var m = Relationships.Personality.GetKOJOMessage("OnTimestopEnd", rel, tags, new List<string>());
 
 
-            if (m != null) this.InteractionJob.m.AddKojo(m);
+
+            var kol = new KojoCollector(this, "OnTimestopEnd");
+            kol.LoadRel(rel);
+            kol.LoadSelfTags(this, tags);
+            kol = Relationships.GetKOJOMessage_Suffix(kol, null);
+            if (kol != null)
+            {
+                this.InteractionJob.m.AddKojo(kol);
+                Debug.Log($"timestop start {kol.collect.message}");
+            }
 
             this.InteractionJob.NotifyDescriptionsOutOfUpdate();
 
@@ -1973,6 +1984,23 @@ public class Character_Trainable : ScriptableObject, I_Disposable
                 return true;
             }
         }
+        return false;
+    }
+    public bool NeedUndress(COM_Requirements req, bool isdoer)
+    {
+        if (scr_System_CentralControl.current.isSafeMode) return false;
+        var charareq = isdoer ? req.requirement.req_Doers : req.requirement.req_Receivers;
+
+        
+        if (charareq.requireUndressedTags.Count > 0)
+        {
+            foreach(var tag in charareq.requireUndressedTags)
+            {
+                foreach (var part in Body.Body) if (part.hasTag(tag) && part.HasEquipByFilter(charareq.clothingRequirement, charareq.minRevealingScore)) return true;
+            }
+        }
+        else if (charareq.clothingRequirement < BodyEquipLayer.Outer && NeedUndress(charareq.clothingRequirement, Revealing.Erotic)) return true;
+
         return false;
     }
 

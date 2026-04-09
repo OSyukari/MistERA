@@ -366,7 +366,8 @@ public class Character_Relationship
 
                 // send event to ask permission
                 var evinst = new EventInstance(Owner, "RequestRelationshipChange", "");
-                LogKojoMessage(eventID,"", evinst.message);
+                evinst.AppendStrings.Add("targetRel", new List<string>() { eventID });
+                //LogKojoMessage(eventID,"", evinst.message);
                 evinst.Targets.Add("target", new List<Character_Trainable>() { Target });
 
                 var npcCallback = new List<Action>();
@@ -465,7 +466,9 @@ public class Character_Relationship
             }
             else
             {
-                m.AddKojo(kol, Owner.CurrentRoom);
+                // if m exist, then it means its a event message request
+                // in such cases, do not log recording
+                m.AddKojo(kol, null);
             }
             
         }
@@ -536,14 +539,16 @@ public class Character_Relationship
 
         if (sendKojo && Owner.RefID != 0)
         {
-            Debug.Log($"{a == null} {relationshipTypeID_Personal == ""}");
+            //Debug.Log($"{a == null} {relationshipTypeID_Personal == ""}");
             var eventID = a != null ? $"{a.ID}_set{(a.isEqualRelationship ? "" : isA ? "_A" : "_B")}"
                 : this.relationshipTypeID_Personal != "" ? $"{this.relationshipTypeID_Personal}_break{(_Relationship_Personal.isEqualRelationship ? "" : isA ? "_A" : "_B")}" : "";
 
             LogKojoMessage(eventID);
         }
 
-        var desc = new DescriptionCollector($"[{memString}]", this);
+        var desc = new DescriptionCollector($"[{memString}]");
+        // do not load rel, cuz it will consider target actor as relevantActor. we dont want that.
+        desc.relevantActors.Add(Owner.RefID);
         scr_UpdateHandler.current.AppendMessageAfter(desc, Owner.CurrentRoom, true);
 
         RelationshipCooldown = 6;

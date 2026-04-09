@@ -15,6 +15,7 @@ public class DescriptionCollector : I_Records
     public DateTime timestamp = DateTime.MinValue;
     public List<int> portraitRefs = new List<int>();
     public List<string> displayTagsOverride = new List<string>();
+    public bool autoAnimate = false;
 
     [JsonIgnore] public DateTime Timestamp { get { return timestamp; } }
 

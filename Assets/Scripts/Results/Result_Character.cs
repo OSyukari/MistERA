@@ -17,7 +17,7 @@ public enum CharaResultType
 {
     none,
     statMod_ST, statMod_EN, statMod_HP, statMod_MP,
-    redress
+    redress, undress
 
 }
 
@@ -44,6 +44,7 @@ public class Result_Character
         public ModStatusValue modifyStatusValue = new ModStatusValue();
         public CharaResultType type = CharaResultType.none;
         public string value = "";
+        public List<string> tags = new List<string>();
 
         public int statMod_ST = 0;
         public int statMod_EN = 0;

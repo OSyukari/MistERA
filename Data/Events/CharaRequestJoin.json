@@ -3,7 +3,9 @@
         "list": [
             {
                 "ID": "RequestJoin",
-                "_comment":"this event requires code to inject valid event target prior to event start, the most complex validation [target has a joinable AP] should already be validated beforehand, and since this events only targets chara.currentjob and a job instance (unless its sex) only have 1 executing package per actor... no need to validate more.",
+                "cooldownTime":15,
+                "_comment":["this event requires code to inject valid event target prior to event start, the most complex validation [target has a joinable AP] should already be validated beforehand, and since this events only targets chara.currentjob and a job instance (unless its sex) only have 1 executing package per actor... no need to validate more.",
+            "There are 2 path that calls for this event: Kojo Interrupt direct calls, and furniture job assign join"],
                 "SelfValidator":{
                     "chara_conditions":[
                         {"parameters":["exists"]},
@@ -39,6 +41,7 @@
             },
             "option": "player branch",
             "Results": [    
+                {"Type":"FindJoinableAP","arguments":["evTarget", ""]},
                 { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
         },
         {      
@@ -103,7 +106,7 @@
     "options":[
         {   
             "option": "silent branch event, this shouldnt be displayed",
-            "Results": [ { "Type":"JoinTargetJob", "arguments":["evTarget", ""]},
+            "Results": [ { "Type":"TryJoinTargetJob", "arguments":["evTarget", "", "Accept"]},
                             { "Type":"JumpToLabel", "arguments":["","br_join"]} ] 
         },
         {   

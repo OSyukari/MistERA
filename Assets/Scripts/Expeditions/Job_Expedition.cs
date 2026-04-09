@@ -819,9 +819,9 @@ public class Job_Expedition : Job
             ss += "waiting for team to gather ||";
             return true;
         }
-        else if (desiredCOM != null && desiredCOM.requirements.clothingRequirement < BodyEquipLayer.Outer && c.NeedUndress(desiredCOM.requirements.clothingRequirement, Revealing.Erotic))
+        else if (desiredCOM != null && c.NeedUndress(desiredCOM.requirements, true))
         {
-            ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements.clothingRequirement, Revealing.Erotic);
+            ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements, true);
             if (!package.Validate())
             {
                 ss += "actor undress package creation failed ||";

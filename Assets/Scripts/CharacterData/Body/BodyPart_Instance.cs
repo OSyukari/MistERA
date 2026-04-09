@@ -419,13 +419,35 @@ public class BodyPart_Instance : I_CombatItem
         return returnVal;
     }
 
-    public bool HasEquipByFilter(BodyEquipLayer layer, int revealingScoreFilter = -1)
+    public void UnequipByLayer(BodyEquipLayer filter, Revealing revealingScoreFilter = Revealing.Erotic)
     {
-        if (!this.equipLayers.Contains(layer)) return false;
-        foreach(BodyPartEquipSlot slot in this.availableSlots)
+        foreach(var layer in this.equipLayers)
         {
-            var equip = this.GetEquip(layer, slot);
-            if (equip > -1 && (int)scr_System_CampaignManager.current.FindItemInstanceByID(equip).GetComp_Equippable().revealing >= revealingScoreFilter) return true;
+            if (layer < filter) continue;
+            {
+                foreach (BodyPartEquipSlot slot in this.availableSlots)
+                {
+                    var equip = this.GetEquip(layer, slot);
+                    if (equip > -1 && scr_System_CampaignManager.current.FindItemInstanceByID(equip).GetComp_Equippable().revealing >= revealingScoreFilter)
+                    {
+                        Owner.UnequipItem(equip);
+                    }
+                }
+                foreach (var organ in this.internals) organ.UnequipByLayer(layer, revealingScoreFilter);
+            }
+        }
+    }
+
+    public bool HasEquipByFilter(BodyEquipLayer layerFilter, int revealingScoreFilter = -1)
+    {
+        foreach(var layer in this.equipLayers)
+        {
+            if (layer >= layerFilter && layerFilter != BodyEquipLayer.None) continue;
+            foreach (BodyPartEquipSlot slot in this.availableSlots)
+            {
+                var equip = this.GetEquip(layer, slot);
+                if (equip > -1 && (int)scr_System_CampaignManager.current.FindItemInstanceByID(equip).GetComp_Equippable().revealing >= revealingScoreFilter) return true;
+            }
         }
         return false;
     }

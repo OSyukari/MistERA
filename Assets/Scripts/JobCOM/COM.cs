@@ -480,7 +480,6 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         else if (variantID >= variants.Count) return "GetDescription_Ongoing ERROR variantID out of bound";
         else return variants[variantID].GetDescription_Ongoing(this, ap);
     }
-
     public virtual string GetDescription_After(EvaluationPackage evp, int variantID)
     {
         if (variantID == -1) return description_after.GetText(ref evp);
@@ -488,6 +487,15 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         else return variants[variantID].GetDescription_After(this, evp);
     }
 
+    public virtual string GetDescription_After(ActionPackage ap, int variantID)
+    {
+        if (variantID == -1) return description_after.GetText(ap);
+        else if (variantID >= variants.Count) return "GetDescription_After ERROR variantID out of bound";
+        else return variants[variantID].GetDescription_After(this, ap);
+    }
+
+    //public Validator_Costs costs;
+    public COM_Results results_immediate = new COM_Results();
 
     //public Validator_Costs costs;
     public COM_Results results = new COM_Results();
@@ -504,12 +512,17 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         if (m.VariantID >= 0) this.variants[m.VariantID].ApplyCost(this, m, msg);
         //else
         //{
-            //Debug.LogError("COM " + displayName + " apply cost error, both variantID < 0");
-            //int validVar = GetValidVariant(m.Doer, m.Receiver);
-            //if (validVar >= 0) this.variants[validVar].ApplyCost(this, m, msg);
-           // 
-       // }
-        
+        //Debug.LogError("COM " + displayName + " apply cost error, both variantID < 0");
+        //int validVar = GetValidVariant(m.Doer, m.Receiver);
+        //if (validVar >= 0) this.variants[validVar].ApplyCost(this, m, msg);
+        // 
+        // }
+
+    }
+    public void ApplyResultsImmediate(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
+    {
+        //Debug.Log("ApplyResults doer[" + (evp.Doer != null ? evp.Doer.FirstName : "-") + "] receiver[" + (evp.Receiver != null ? evp.Receiver.FirstName : "-") + "]");
+        results_immediate.ApplyResults(job, p, evp, target, log);
     }
 
     public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
@@ -1018,6 +1031,21 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_Ongoing(ap, useAnothersDescription));
             if (ap == null || ownerCOM == null) Debug.LogError($"ap null? {ap == null} ownercom null? {ownerCOM == null}");
             if (useBaseDescription) s.Add(ownerCOM.GetDescription_Ongoing(ap, -1));
+
+            if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
+            s.RemoveAll(x => x.Length < 1);
+            string s2 = String.Join("\n", s);
+            //s2 = Utility.StringReplace(ref evp, s2);
+            return s2;
+        }
+
+        public string GetDescription_After(COM ownerCOM, ActionPackage ap)
+        {
+            List<string> s = new List<string>();
+            s.Add(description_after.GetText(ap));
+            // prevent infinite loop
+            if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_After(ap, useAnothersDescription));
+            if (useBaseDescription) s.Add(ownerCOM.GetDescription_After(ap, -1));
 
             if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);

@@ -77,7 +77,8 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["com_job_cleaning_description_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_cleaning_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_cleaning_description_after_1"]}] }
             },
             {
                 "ID": "com_job_production_cooking",
@@ -242,7 +243,7 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在制造化学产品"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_production_chemistry_description_ongoing_1"]}], "keepLooking":false }
             },
             {
                 "ID": "com_job_production_engineering",
@@ -304,7 +305,8 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在制造工程道具"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_production_engineering_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_production_engineering_description_after_1"]}] }
             },
             {
                 "ID": "com_job_research_engineering",
@@ -363,7 +365,8 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究工程项目"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_research_engineering_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_research_engineering_description_after_1"]}] }
             },
             {
                 "ID": "com_job_research_physics",
@@ -422,7 +425,8 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究物理"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_research_physics_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_research_physics_description_after_1"]}] }
             },
             {
                 "ID": "com_job_research_biochemistry",
@@ -469,7 +473,8 @@
                     "baseAcceptanceValue": 10
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在研究生物化学"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_research_biochemistry_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_research_biochemistry_description_after_1"]}] }
             },
             {
                 "ID": "com_job_training_shooting",
@@ -527,7 +532,8 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在训练射击"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_training_shooting_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_training_shooting_description_after_1"]}] }
             },
             {
                 "ID": "com_job_training_melee",
@@ -585,7 +591,8 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["$doer.firstname$正在格斗训练"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_training_melee_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_training_melee_description_after_1"]}] }
             },
             {
                 "ID": "com_job_farm_maintain",
@@ -672,7 +679,8 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_maintain_description_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_maintain_description_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_farm_maintain_description_after_1"]}] }
             },
             {
                 "$type": "COM_FarmRecipe, Assembly-CSharp",
@@ -855,7 +863,8 @@
                             ]
                             
                         },
-                        "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_crop_ongoing_1"]}], "keepLooking":false }
+                        "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_crop_ongoing_1"]}], "keepLooking":false },
+                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_farm_cultivate_crop_description_after_1"]}] }
                     }
                 },
                 "requirements": {
@@ -920,7 +929,8 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_crop_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_crop_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_farm_cultivate_crop_description_after_1"]}] }
             },
             {
                 "ID": "com_job_farm_cultivate_meat",
@@ -1001,7 +1011,8 @@
                     ]
                     
                 },
-                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_meat_ongoing_1"]}], "keepLooking":false }
+                "description_ongoing":{ "Entries":[{"texts":["com_job_farm_cultivate_meat_ongoing_1"]}], "keepLooking":false },
+                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_job_farm_cultivate_meat_description_after_1"]}] }
             }
         ]
     },
@@ -1096,7 +1107,29 @@
 "com_job_farm_remove_displayName_3": "一起移除作物",
 "com_job_farm_remove_begin_1": "$doer.firstname$开始移除安置在此的对象。",
 "com_job_farm_remove_after_1": "$doer.firstname$移除了指定对象",
-"com_job_farm_remove_ongoing_1": "$doer.firstname$正在移除作物"
+"com_job_farm_remove_ongoing_1": "$doer.firstname$正在移除作物",
+
+"com_job_cleaning_description_after_1": "$doer.firstname$完成了清洁——$result$",
+
+"com_job_production_chemistry_description_ongoing_1": "$doer.firstname$正在制造化学产品",
+"com_job_production_engineering_description_ongoing_1": "$doer.firstname$正在制造工程道具",
+"com_job_production_engineering_description_after_1": "$doer.firstname$做出了$item$",
+
+"com_job_research_engineering_description_ongoing_1": "$doer.firstname$正在研究工程项目",
+"com_job_research_engineering_description_after_1": "$doer.firstname$完成了工程研究",
+"com_job_research_physics_description_ongoing_1": "$doer.firstname$正在研究物理",
+"com_job_research_physics_description_after_1": "$doer.firstname$完成了物理研究",
+"com_job_research_biochemistry_description_ongoing_1": "$doer.firstname$正在研究生物化学",
+"com_job_research_biochemistry_description_after_1": "$doer.firstname$完成了生化研究",
+
+"com_job_training_shooting_description_ongoing_1": "$doer.firstname$正在训练射击",
+"com_job_training_shooting_description_after_1": "$doer.firstname$完成了射击训练",
+"com_job_training_melee_description_ongoing_1": "$doer.firstname$正在格斗训练",
+"com_job_training_melee_description_after_1": "$doer.firstname$完成了格斗训练",
+
+"com_job_farm_maintain_description_after_1": "$doer.firstname$打理好了农场——$result$",
+"com_job_farm_cultivate_crop_description_after_1": "$doer.firstname$完成了作物种植——$result$",
+"com_job_farm_cultivate_meat_description_after_1": "$doer.firstname$完成了肉食培育——$result$"
 
 
                 
@@ -1182,7 +1215,29 @@
 "com_job_farm_cultivate_crop_displayName_3": "Plant $name$",
 "com_job_farm_cultivate_meat_displayName": "Grow meat",
 "com_job_farm_cultivate_meat_displayName_1": "Grow $name$",
-"com_job_farm_cultivate_meat_displayName_2": "Grow $name$"
+"com_job_farm_cultivate_meat_displayName_2": "Grow $name$",
+
+"com_job_cleaning_description_after_1": "$doer.firstname$ finished cleaning — $result$",
+
+"com_job_production_chemistry_description_ongoing_1": "$doer.firstname$ is crafting chemical products",
+"com_job_production_engineering_description_ongoing_1": "$doer.firstname$ is crafting engineering tools",
+"com_job_production_engineering_description_after_1": "$doer.firstname$ finished making $item$",
+
+"com_job_research_engineering_description_ongoing_1": "$doer.firstname$ is researching engineering",
+"com_job_research_engineering_description_after_1": "$doer.firstname$ finished researching engineering",
+"com_job_research_physics_description_ongoing_1": "$doer.firstname$ is studying physics",
+"com_job_research_physics_description_after_1": "$doer.firstname$ finished studying physics",
+"com_job_research_biochemistry_description_ongoing_1": "$doer.firstname$ is researching biochemistry",
+"com_job_research_biochemistry_description_after_1": "$doer.firstname$ finished researching biochemistry",
+
+"com_job_training_shooting_description_ongoing_1": "$doer.firstname$ is training their shooting",
+"com_job_training_shooting_description_after_1": "$doer.firstname$ finished firearm training",
+"com_job_training_melee_description_ongoing_1": "$doer.firstname$ is training CQC",
+"com_job_training_melee_description_after_1": "$doer.firstname$ finished CQC training",
+
+"com_job_farm_maintain_description_after_1": "$doer.firstname$ finished maintaining the farm — $result$",
+"com_job_farm_cultivate_crop_description_after_1": "$doer.firstname$ finished planting crops — $result$",
+"com_job_farm_cultivate_meat_description_after_1": "$doer.firstname$ finished growing meat — $result$"
             }
         }
     }
