@@ -11,21 +11,16 @@ public class KojoRecording
 
     // timestamp collector?
 
-    public void AddCollector(I_Records kol)
+    public void AddCollector(MessageCollect kol, DateTime timestamp)
     {
-        if (kol.Timestamp == null || kol.Timestamp == DateTime.MinValue)
+
+        if (!collect.ContainsKey(timestamp))
         {
-            Debug.LogError($"error collect kojo recording: timestamp null");
+            collect.Add(timestamp, new List<MessageCollect>());
+            cachedplaytime = false;
         }
-        else
-        {
-            if (!collect.ContainsKey(kol.Timestamp))
-            {
-                collect.Add(kol.Timestamp, new List<I_Records>());
-                cachedplaytime = false;
-            }
-            collect[kol.Timestamp].Add(kol);
-        }
+        collect[timestamp].Add(kol);
+        
     }
 
     // replay recording?
@@ -45,7 +40,7 @@ public class KojoRecording
         } }
 
     [JsonProperty]
-    SortedDictionary<DateTime, List<I_Records>> collect = new SortedDictionary<DateTime, List<I_Records>>();
+    SortedDictionary<DateTime, List<MessageCollect>> collect = new SortedDictionary<DateTime, List<MessageCollect>>();
 
     [JsonIgnore]
     public string DebugTool
@@ -62,7 +57,7 @@ public class KojoRecording
             return $"keyscount {keyscount}, total [{String.Join(" ", total)}]";
         }
     }
-
+    /*
     public List<I_Records> GetKojoFrom(DateTime starttime, Character_Trainable from = null)
     {
         List<I_Records> returnList = null;
@@ -70,7 +65,7 @@ public class KojoRecording
         {
             if (kvp.Key <= starttime) continue;
 
-            returnList = new List<I_Records>( kvp.Value);
+            returnList = new List<MessageCollect>( kvp.Value);
             for (int i = returnList.Count - 1; i >= 0; i--)
             {
                 if (!returnList[i].VisibleTo(from)) returnList.RemoveAt(i);
@@ -78,7 +73,7 @@ public class KojoRecording
             if (returnList.Count > 0) break;
         }
         return returnList;
-    }
+    }*/
 
     /*
      if character is playing...

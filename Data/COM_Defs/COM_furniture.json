@@ -66,12 +66,12 @@
                     "baseAcceptanceValue": 15
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_after":
+                "description_onComplete":
                 {
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts":[ "com_furniture_sleep_after_1" ]
+                            "texts":[ "com_furniture_sleep_onComplete_1" ]
                         }
                     ]
                 },
@@ -134,7 +134,7 @@
                     "baseAcceptanceValue": 20
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_restroom_description_after_1"]}] },
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_restroom_description_onComplete_1"]}] },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_restroom_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_restroom_description_ongoing_1"]}], "keepLooking":false }
             },
@@ -201,7 +201,7 @@
                 "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takingBreak_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takingBreak_description_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takingBreak_description_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_takingLongBreak",
@@ -276,7 +276,7 @@
                 "DifficultyCheck": { "baseD20Check": 5 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takingBreak_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_takingBreak_description_ongoing_1"]}], "keepLooking":false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takingLongBreak_description_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takingLongBreak_description_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_playVideoGames",
@@ -377,7 +377,7 @@
                         "DifficultyCheck":{ "baseD20Check":10 },
                         "description_begin":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_variant_begin_1"]}], "keepLooking":false },
                         "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_variant_ongoing_1"]}], "keepLooking":false },
-                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_playVideoGames_description_variant_after_1"]}] }
+                        "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_playVideoGames_description_variant_onComplete_1"]}] }
                     }
                 },
                 "results": {
@@ -435,7 +435,7 @@
                 "DifficultyCheck":{ "baseD20Check":10 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_playVideoGames_description_ongoing_1"]}], "keepLooking":false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_playVideoGames_description_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_playVideoGames_description_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_watchVideo",
@@ -536,7 +536,7 @@
                         "DifficultyCheck": { "baseD20Check": 5 },
                         "description_begin": { "Entries": [{ "keepLooking": true, "texts": ["com_furniture_watchVideo_description_variant_begin_1"] }] },
                         "description_ongoing": { "Entries": [{ "texts": ["com_furniture_watchVideo_description_variant_ongoing_1"] }], "keepLooking": false },
-                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_watchVideo_description_variant_after_1"]}] }
+                        "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_watchVideo_description_variant_onComplete_1"]}] }
                     }
                 },
                 "results": {
@@ -594,7 +594,7 @@
                 "DifficultyCheck":{ "baseD20Check":5 },
                 "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_furniture_watchVideo_description_begin_1" ] } ] },
                 "description_ongoing":{ "Entries":[ { "texts":["com_furniture_watchVideo_description_ongoing_1"]}], "keepLooking":false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_watchVideo_description_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_watchVideo_description_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_readBooks",
@@ -693,7 +693,7 @@
                         "DifficultyCheck": { "baseD20Check": 3 },
                         "description_begin": { "Entries": [{ "keepLooking": false, "texts": ["com_furniture_readBooks_description_variant_begin_1"] }] },
                         "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_variant_ongoing_1"] }], "keepLooking": false },
-                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_readBooks_description_variant_after_1"]}] }
+                        "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_readBooks_description_variant_onComplete_1"]}] }
                     }
                 },
                 "results": {
@@ -751,7 +751,7 @@
                 "DifficultyCheck": { "baseD20Check": 3 },
                 "description_begin": { "Entries": [{ "keepLooking": false, "texts": ["com_furniture_readBooks_description_begin_1"] }] },
                 "description_ongoing": { "Entries": [{ "texts": ["com_furniture_readBooks_description_ongoing_1"] }], "keepLooking": false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_readBooks_description_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_readBooks_description_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_takeShower",
@@ -805,7 +805,7 @@
                 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takeShower_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_takeShower_description_ongoing_1"]}], "keepLooking":false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takeShower_description_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takeShower_description_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_restroom_fix",
@@ -863,7 +863,7 @@
                 "DifficultyCheck": { "baseD20Check": 0 },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_restroom_fix_ongoing_1"]}], "keepLooking":false },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_restroom_fix_begin_1"]}], "keepLooking":false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_restroom_fix_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_restroom_fix_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_cryosleep",
@@ -920,12 +920,12 @@
                     "baseAcceptanceValue": 20
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_after":
+                "description_onComplete":
                 {
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts":[ "com_furniture_cryosleep_after_1" ]
+                            "texts":[ "com_furniture_cryosleep_onComplete_1" ]
                         }
                     ]
                 },
@@ -1020,7 +1020,7 @@
                         "DifficultyCheck": { "baseD20Check": 0 },
                         "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
                         "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false },
-                        "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_after_1"]}] }
+                        "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_onComplete_1"]}] }
                     }
 
                 },
@@ -1075,7 +1075,7 @@
                 "DifficultyCheck": { "baseD20Check": 0 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_getmeal_begin_1","com_furniture_getmeal_begin_2","com_furniture_getmeal_begin_3"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_getmeal_ongoing_1"]}], "keepLooking":false },
-                "description_after":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_after_1"]}] }
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_getmeal_onComplete_1"]}] }
             },
             {
                 "ID": "com_furniture_prison",
@@ -1131,12 +1131,12 @@
                     "baseAcceptanceValue": 30
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "description_after":
+                "description_onComplete":
                 {
                     "Entries":[
                         {
                             "keepLooking":true,
-                            "texts":[ "com_furniture_prison_after_1" ]
+                            "texts":[ "com_furniture_prison_onComplete_1" ]
                         }
                     ]
                 },
@@ -1163,14 +1163,14 @@
                 "com_furniture_restroom_displayName_1": "上厕所",
                 "com_furniture_restroom_description_begin_1": "$doer.firstname$开始上厕所",
                 "com_furniture_restroom_description_ongoing_1": "$doer.firstname$正在上厕所",
-                "com_furniture_restroom_description_after_1": "$doer.firstname$上完了厕所",
+                "com_furniture_restroom_description_onComplete_1": "$doer.firstname$上完了厕所",
 
                 "com_furniture_sleep_displayName_1": "睡觉",
                 "com_furniture_sleep_displayName_2": "一起睡觉",
                 "com_furniture_sleep": "玩家只有在可睡眠时间段（默认为23H-6H）才可睡眠，可以在阵营管理-工作分配界面检查玩家的时间表确认。\n该指令执行后，参与者会获得时长等于参与者自身%%stats_derived_sleepNeed%%分钟的睡眠状态。当该状态结束时角色会立刻醒来",
                 "com_furniture_sleep_begin_1": "$doer.firstname$舒服地把自己埋进被子里",
                 "com_furniture_sleep_begin_2": "$doer.firstname$关掉床头灯后缓缓闭上眼睛",
-                "com_furniture_sleep_after_1": "$doer.firstname$睡着了",
+                "com_furniture_sleep_onComplete_1": "$doer.firstname$睡着了",
                 "com_furniture_sleep_description_begin_1": "$doer.firstname$开始睡觉",
                 "com_furniture_sleep_description_ongoing_1": "$doer.firstname$正在睡觉",
 
@@ -1226,9 +1226,9 @@
                 "com_furniture_cryosleep_description_ongoing_1_ADD": "$doer.firstname$正在冷冻休眠",
                 "com_furniture_cryosleep_description_ongoing_1_REMOVE": "$doer.firstname$正在解除冷冻休眠",
                 "com_furniture_cryosleep_begin_1_ADD": "$doer.firstname$将$receiver.firstname$安置在冷冻休眠装置中",
-                "com_furniture_cryosleep_after_1_ADD": "$receiver.firstname$陷入了冷冻休眠中",
+                "com_furniture_cryosleep_onComplete_1_ADD": "$receiver.firstname$陷入了冷冻休眠中",
                 "com_furniture_cryosleep_begin_1_REMOVE": "$doer.firstname$开始解除$receiver.firstname$的冷冻休眠",
-                "com_furniture_cryosleep_after_1_REMOVE": "$receiver.firstname$从冷冻休眠中醒来了",
+                "com_furniture_cryosleep_onComplete_1_REMOVE": "$receiver.firstname$从冷冻休眠中醒来了",
 
                 "com_furniture_prison_displayname": "监禁",
                 "com_furniture_prison_ADD": "将对象监禁在此处（无法自由行动），且只能与此处的家具互动",
@@ -1236,9 +1236,9 @@
                 "com_furniture_prison_displayname_ADD": "监禁对象",
                 "com_furniture_prison_displayname_REMOVE": "移出监牢",
                 "com_furniture_prison_begin_1_ADD": "$doer.firstname$将$receiver.firstname$关押在监牢中",
-                "com_furniture_prison_after_1_ADD": "$receiver.firstname$被关押了起来",
+                "com_furniture_prison_onComplete_1_ADD": "$receiver.firstname$被关押了起来",
                 "com_furniture_prison_begin_1_REMOVE": "$doer.firstname$尝试从监牢将$receiver.firstname$释放",
-                "com_furniture_prison_after_1_REMOVE": "$receiver.firstname$被释放了",
+                "com_furniture_prison_onComplete_1_REMOVE": "$receiver.firstname$被释放了",
                 
                 "com_furniture_restroom_fix_displayName_1": "整理衣物",
                 "com_furniture_restroom_fix_begin_1": "$doer.firstname$开始换衣物",
@@ -1256,21 +1256,21 @@
                 "com_furniture_getmeal_displayName_1": "吃$name$",
                 "com_furniture_getmeal_displayName_2": "一起吃$name$",
 
-                "com_furniture_takingBreak_description_after_1": "$doer.firstname$休息完毕——$result$",
-                "com_furniture_takingLongBreak_description_after_1": "$doer.firstname$长休完毕——$result$",
+                "com_furniture_takingBreak_description_onComplete_1": "$doer.firstname$休息完毕——$result$",
+                "com_furniture_takingLongBreak_description_onComplete_1": "$doer.firstname$长休完毕——$result$",
 
-                "com_furniture_playVideoGames_description_after_1": "$doer.firstname$打完了游戏——$result$",
-                "com_furniture_playVideoGames_description_variant_after_1": "$doer.firstname$玩完了$name$——$result$",
+                "com_furniture_playVideoGames_description_onComplete_1": "$doer.firstname$打完了游戏——$result$",
+                "com_furniture_playVideoGames_description_variant_onComplete_1": "$doer.firstname$玩完了$name$——$result$",
 
-                "com_furniture_watchVideo_description_after_1": "$doer.firstname$看完了电视——$result$",
-                "com_furniture_watchVideo_description_variant_after_1": "$doer.firstname$看完了$name$——$result$",
+                "com_furniture_watchVideo_description_onComplete_1": "$doer.firstname$看完了电视——$result$",
+                "com_furniture_watchVideo_description_variant_onComplete_1": "$doer.firstname$看完了$name$——$result$",
 
-                "com_furniture_readBooks_description_after_1": "$doer.firstname$读完了书——$result$",
-                "com_furniture_readBooks_description_variant_after_1": "$doer.firstname$读完了$name$——$result$",
+                "com_furniture_readBooks_description_onComplete_1": "$doer.firstname$读完了书——$result$",
+                "com_furniture_readBooks_description_variant_onComplete_1": "$doer.firstname$读完了$name$——$result$",
 
-                "com_furniture_takeShower_description_after_1": "$doer.firstname$洗完了澡",
-                "com_furniture_restroom_fix_after_1": "$doer.firstname$整理好了衣物",
-                "com_furniture_getmeal_after_1": "$doer.firstname$吃完了饭"
+                "com_furniture_takeShower_description_onComplete_1": "$doer.firstname$洗完了澡",
+                "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$整理好了衣物",
+                "com_furniture_getmeal_onComplete_1": "$doer.firstname$吃完了饭"
 
             },
             "en-us":
@@ -1278,7 +1278,7 @@
 "com_furniture_restroom_displayName_1": "Use Restroom",
                 "com_furniture_restroom_description_begin_1": "$doer.firstname$ starts using the restroom",
                 "com_furniture_restroom_description_ongoing_1": "$doer.firstname$ is using the restroom",
-                "com_furniture_restroom_description_after_1": "$doer.firstname$ finished using the restroom",
+                "com_furniture_restroom_description_onComplete_1": "$doer.firstname$ finished using the restroom",
 
                 "com_furniture_getmeal": "Get Meal",
                 "com_furniture_sleep_displayName_1": "Sleep",
@@ -1286,7 +1286,7 @@
                 "com_furniture_sleep": "Sleep. Can be executed only during sleep hours (for Player, default value is 23H-6H, can be confirmed in Player Schedules in Management-Work Assignment tab)\nOn execution, every participant will fall into sleep status with duration equal to %%stats_derived_sleepNeed%% in minutes, and will wake up on status removal",
                 "com_furniture_sleep_begin_1": "$doer.firstname$ comfortably snuggled into the blanket",
                 "com_furniture_sleep_begin_2": "$doer.firstname$ turned off the bedside lamp and slowly closed their eyes",
-                "com_furniture_sleep_after_1": "$doer.firstname$ fell asleep",
+                "com_furniture_sleep_onComplete_1": "$doer.firstname$ fell asleep",
                 "com_furniture_takingBreak_displayName_1": "Take a Break",
                 "com_furniture_takingBreak_displayName_2": "Take a Break",
                 "com_furniture_takingLongBreak_displayName_1": "Take a longer break",
@@ -1305,16 +1305,16 @@
                 "com_furniture_cryosleep_displayName_ADD": "Cryosleep",
                 "com_furniture_cryosleep_displayName": "Cryosleep",
                 "com_furniture_cryosleep_begin_1_ADD": "$doer.firstname$ starts putting $receiver.firstname$ into the cryosleep device",
-                "com_furniture_cryosleep_after_1_ADD": "$receiver.firstname$ is being put into cryosleep",
+                "com_furniture_cryosleep_onComplete_1_ADD": "$receiver.firstname$ is being put into cryosleep",
                 "com_furniture_cryosleep_begin_1_REMOVE": "$doer.firstname$ begins releasing $receiver.firstname$ from cryosleep",
-                "com_furniture_cryosleep_after_1_REMOVE": "$receiver.firstname$ wakes up from cryosleep",
+                "com_furniture_cryosleep_onComplete_1_REMOVE": "$receiver.firstname$ wakes up from cryosleep",
                 "com_furniture_prison_displayname": "Imprison",
                 "com_furniture_prison_displayname_ADD": "Imprison target",
                 "com_furniture_prison_displayname_REMOVE": "Release target",
                 "com_furniture_prison_begin_1_ADD": "$doer.firstname$ starts imprisoning $receiver.firstname$ into the holding cell",
-                "com_furniture_prison_after_1_ADD": "$receiver.firstname$ is being jailed in the cell",
+                "com_furniture_prison_onComplete_1_ADD": "$receiver.firstname$ is being jailed in the cell",
                 "com_furniture_prison_begin_1_REMOVE": "$doer.firstname$ tries releasing $receiver.firstname$ from the holding cell",
-                "com_furniture_prison_after_1_REMOVE": "$receiver.firstname$ is being released",
+                "com_furniture_prison_onComplete_1_REMOVE": "$receiver.firstname$ is being released",
                 "com_furniture_restroom_fix_displayName_1": "Fix clothes",
                 "com_furniture_restroom_fix_begin_1": "$doer.firstname$ starts changing their clothes",
                 "com_furniture_restroom_fix_ongoing_1": "$doer.firstname$ is changing their clothes",
@@ -1352,21 +1352,21 @@
     "com_furniture_getmeal_begin_3": "$doer.firstname$ starts eating",
     "com_furniture_getmeal_ongoing_1": "$doer.firstname$ is eating",
 
-    "com_furniture_takingBreak_description_after_1": "$doer.firstname$ finished taking a break — $result$",
-    "com_furniture_takingLongBreak_description_after_1": "$doer.firstname$ finished their long rest — $result$",
+    "com_furniture_takingBreak_description_onComplete_1": "$doer.firstname$ finished taking a break — $result$",
+    "com_furniture_takingLongBreak_description_onComplete_1": "$doer.firstname$ finished their long rest — $result$",
 
-    "com_furniture_playVideoGames_description_after_1": "$doer.firstname$ finished playing video games — $result$",
-    "com_furniture_playVideoGames_description_variant_after_1": "$doer.firstname$ finished playing $name$ — $result$",
+    "com_furniture_playVideoGames_description_onComplete_1": "$doer.firstname$ finished playing video games — $result$",
+    "com_furniture_playVideoGames_description_variant_onComplete_1": "$doer.firstname$ finished playing $name$ — $result$",
 
-    "com_furniture_watchVideo_description_after_1": "$doer.firstname$ finished watching TV — $result$",
-    "com_furniture_watchVideo_description_variant_after_1": "$doer.firstname$ finished watching $name$ — $result$",
+    "com_furniture_watchVideo_description_onComplete_1": "$doer.firstname$ finished watching TV — $result$",
+    "com_furniture_watchVideo_description_variant_onComplete_1": "$doer.firstname$ finished watching $name$ — $result$",
 
-    "com_furniture_readBooks_description_after_1": "$doer.firstname$ finished reading — $result$",
-    "com_furniture_readBooks_description_variant_after_1": "$doer.firstname$ finished reading $name$ — $result$",
+    "com_furniture_readBooks_description_onComplete_1": "$doer.firstname$ finished reading — $result$",
+    "com_furniture_readBooks_description_variant_onComplete_1": "$doer.firstname$ finished reading $name$ — $result$",
 
-    "com_furniture_takeShower_description_after_1": "$doer.firstname$ finished taking a shower",
-    "com_furniture_restroom_fix_after_1": "$doer.firstname$ finished fixing their clothes",
-    "com_furniture_getmeal_after_1": "$doer.firstname$ finished their meal"
+    "com_furniture_takeShower_description_onComplete_1": "$doer.firstname$ finished taking a shower",
+    "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$ finished fixing their clothes",
+    "com_furniture_getmeal_onComplete_1": "$doer.firstname$ finished their meal"
             }
         }
     }

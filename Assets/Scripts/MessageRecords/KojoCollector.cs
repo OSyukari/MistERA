@@ -51,7 +51,7 @@ public class KojoCollector : I_ResultStorage, I_Records
         if (collect == null) return false;
         if (Visibility == VisibilityLevel.Global) return true;
         if (room != null && !room.RoomChara.Contains(c)) return false;
-        return DirectlyRelated(c) || relevantActorRefs.Contains(c.RefID);
+        return DirectlyRelated(c) || relevantActorRefs.Count < 1 || relevantActorRefs.Contains(c.RefID);
     }
 
     // validate target baseID

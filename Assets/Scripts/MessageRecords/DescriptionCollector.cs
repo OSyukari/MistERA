@@ -78,7 +78,11 @@ public class DescriptionCollector : I_Records
             portraitRefs = Utility.Distinct(portraitRefs);
         }
 
-        if (kojo.message.Length > 0) this.message += $"{(message.Length > 0 ? "\n" : "")}{kojo.message}";
+        if (kojo.message.Length > 0)
+        {
+            this.message += $"{(message.Length > 0 ? "\n" : "")}{kojo.message}";
+            this.message_excludeRelated += $"{(message_excludeRelated.Length > 0 ? "\n" : "")}{kojo.message}";
+        }
         
         this.displayTagsOverride.AddRange(kojo.portraitTags);
         this.displayTagsOverride = Utility.Distinct(displayTagsOverride);

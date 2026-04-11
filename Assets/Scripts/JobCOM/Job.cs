@@ -490,19 +490,19 @@ public class Job : IDisposable, I_Disposable
         List<string> list = new List<string>();
         foreach (var ap in this.packages_current)
         {
-            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            if (!ap.actorRefs.Contains(refID)) continue;
             if(packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
         }
         foreach (var ap in this.packages_previous)
         {
-            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            if (!ap.actorRefs.Contains(refID)) continue;
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
         }
         foreach (var ap in this.packages_completed)
         {
-            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            if (!ap.actorRefs.Contains(refID)) continue;
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
         }
@@ -738,10 +738,7 @@ public class Job : IDisposable, I_Disposable
         else if (ap.Duration == 0)
         {//   duration == 0 this might be aborted
 
-            if (display && displayStrict)
-            {
-                ap.LogCheckResult(rightAlign, display && displayStrict, ap.LoggedBegin, m);
-            }
+            
             if (!ap.LoggedBegin)
             {
                 if (ap.executeSuccessful)
@@ -755,8 +752,9 @@ public class Job : IDisposable, I_Disposable
                 }
                 ap.LoggedBegin = true;
             }
+            ap.LogResultCheck(room, true, m);
 
-            ap.LogMessage_Kojo(display, room, m);
+            //ap.LogMessage_Kojo(display, room, m);
 
             // After is displayed only for non-player commands, displaying NPC's results
             ap.LogMessage_After(display, room, rightAlign, m);
@@ -769,10 +767,8 @@ public class Job : IDisposable, I_Disposable
 
             // var checkResult = ap.GetCheckResult(out var tooltip, rightAlign);
             //if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult, tooltip);
-            if (displayStrict && display)
-            {
-                ap.LogCheckResult(rightAlign, displayStrict && display, false, m);
-            }
+
+            ap.LogAcceptanceCheck(rightAlign, displayStrict && display, false, m);
 
             if (ap.repeated) ap.LogMessage_Begin_Ongoing(display,  room , false, rightAlign, m);
             else ap.LogMessage_Begin(display, room , false, rightAlign, m, scr_System_CampaignManager.current.Player);
@@ -780,10 +776,9 @@ public class Job : IDisposable, I_Disposable
             ap.LoggedBegin = true;
         }
         else if (!ap.isPaused && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(display, recording ? room : null, rightAlign, m, scr_System_CampaignManager.current.Player);
-    
-        
-    }
 
+        m.FinalizeEXP(this.actorRefID, display, room);
+    }
 
     public void NotifyDescriptionsOutOfUpdate()
     {

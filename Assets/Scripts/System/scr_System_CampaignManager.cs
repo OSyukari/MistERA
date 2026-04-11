@@ -631,7 +631,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             desc.displayTagsOverride.AddRange(log.tagsOverride);
             desc.message = content;
 
-            instance.Self.CurrentRoom.NotifyKojoCollect(desc);
+            instance.Self.CurrentRoom.NotifyDescCollect(desc);
         }
 
 
@@ -668,7 +668,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void FinalizeLog_Question(QuestionBoxCollector box, Room_Instance room)
     {
         Debug.Log($"FinalizeLog_Question {(room == null ? "room null" : !room.HasRecording ? "no recording" : "recording...")}");
-        if (room != null && room.HasRecording) room.NotifyKojoCollect(box);
+        if (room != null && room.HasRecording) room.NotifyDescCollect(box);
     }
 
     public void AddLog_LLM(LLMRequest request)
@@ -1967,13 +1967,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         return results;
     }
 
-    public Job FindJobInstanceByID(int id)
+    public Job FindJobInstanceByID(int id, bool logMiss = true)
     {
         if (id < 0) return null;
         if (Index_JobReferenceID.ContainsKey(id)) return Index_JobReferenceID[id];
         else
         {
-            Debug.LogError("CampaignManager FindJobInstanceByID " + id + " cannot find key");
+            if (logMiss) Debug.LogError("CampaignManager FindJobInstanceByID " + id + " cannot find key");
             return null;
         }
     }

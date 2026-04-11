@@ -347,14 +347,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         //if (Stats.GetStatusSeverityByStringMatch("chara_status_sleeping") > 0)
         if (Stats.isConsciousnessUnconscious)
         {
-            timeSinceLastSleep = 24;
+            timeSinceLastSleep = 0;
 
             // Recover chara based on sleep efficiency ?
         }
         else if (hasStatKeyword("sleep"))
         {
-            timeSinceLastSleep -= 1;
-            if (timeSinceLastSleep < 0) Stats.AddOrModStatus("chara_status_sleep_deprived", 1440, 1440);
+            timeSinceLastSleep += 1;
+            if (timeSinceLastSleep > 24)
+            {
+                var sleephours = Stats.SleepHours;
+                if (sleephours > 0) Stats.AddOrModStatus("chara_status_sleep_deprived", (sleephours * 60)*1.2f);
+            }
         }
         this.Body.UpdateTimeHour(t);
         timeSinceLastEat = Math.Min(24, timeSinceLastEat + 1);
@@ -413,7 +417,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     }
 
-    [JsonProperty] protected int timeSinceLastSleep = 24;
+    [JsonProperty] protected int timeSinceLastSleep = 0;
     [JsonProperty] protected int timeSinceLastEat = 24;
     private void Observer_GlobalDay_0(int updateOrder)
     {
@@ -1262,11 +1266,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     [JsonIgnore] public bool canEat { get {
             return this.hasStatKeyword("hunger") && this.Stats.GetStatValue("stats_derived_foodConsumption") >= 1 && timeSinceLastEat > 3; } }
-    [JsonIgnore] public bool canSleep { get {
-            if (!hasSleepNeed) return false;
-            if (this.Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived") > 0) return true;
-            if (this.Stats.Fatigue != null && this.Stats.Fatigue.Severity > 0.9) return true;
-            return timeSinceLastSleep < (24 - 8);  } }
+
     [JsonIgnore] public bool isSleeping { get
         {
             return Stats.GetStatusSeverityByStringMatch("chara_status_sleeping") > 0;
@@ -1280,19 +1280,41 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return true;
         }
     }
-
+    bool needSleep
+    {
+        get
+        {
+            if (this.Stats.Fatigue != null && this.Stats.Fatigue.Severity > 0.9) return true;
+            var induced = this.Stats.FindStatusByExactID("chara_status_inducedSleep");
+            if (induced != null && induced.Severity > 5) return true;
+            return false;
+        }
+    }
+    bool canSleep
+    {
+        get
+        {
+            if (this.Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived") > 0) return true;
+            var sleephours = Stats.SleepHours;
+            return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours * 1.5 ;
+        }
+    }
     [JsonIgnore] public bool shouldSleep { get
         {
-            if (!hasSleepNeed) return false;
-            if (this.FactionManager.HasSleepSchedule) 
+            if (needSleep) return true;
+            else if (canSleep)
             {
-                var v = GetJobPost();
-                return v != null && v.comIDs.Contains("com_furniture_sleep") && canSleep;
+                if (this.FactionManager.HasSleepSchedule)
+                {
+                    var v = GetJobPost();
+                    return v != null && v.comIDs.Contains("com_furniture_sleep");
+                }
+                else
+                {
+                    return true;
+                }
             }
-            else
-            {
-                return canSleep;
-            }
+            else return false;
         } }
 
     [JsonIgnore] public bool shouldRest { get
@@ -1567,11 +1589,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             // Check Climax
             if (!Body.isClimaxing())
             {
-                Body.CheckClimax(this.InteractionJob.m);
-                if (Body.isClimaxing())
+                if (Body.CheckClimax(this.InteractionJob.m))
                 {
                     tags.Add("climax");
-                    // skip others check
                 }
             }
             else
@@ -1659,6 +1679,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
             this.InteractionJob.NotifyDescriptionsOutOfUpdate();
 
+            // If something notable happened, interrupt the NPC's current job so they recheck what to do
+            if (tags.Count > 1 && CurrentJob != null && CurrentJob.CanBeInterrupted)
+            {
+                ChangeCurrentJob(null);
+            }
         }
         Memory.TimestopEnd();
         /*
@@ -1900,7 +1925,39 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     public int Sleep()
     {
         var tired = Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived");
-        var sleepHour = (int)Math.Ceiling(tired > 0 ? Math.Min(Stats.SleepHours * 60, tired) : Stats.SleepHours * 60);
+
+        int sleepHour;
+        if (tired > 0)
+        {
+            // Case 1: resuming interrupted sleep — use remaining duration stored in sleep_deprived severity
+            sleepHour = (int)Math.Ceiling(Math.Min(Stats.SleepHours * 60, tired));
+        }
+        else
+        {
+            // Count consecutive scheduled sleep hours starting from the current hour
+            int currentHour = scr_System_Time.current.getCurrentTime().Hour;
+            int scheduledSleepMinutes = 0;
+            for (int i = 0; i < 24; i++)
+            {
+                var post = GetJobPost((currentHour + i) % 24);
+                if (post != null && post.comIDs.Contains("com_furniture_sleep"))
+                    scheduledSleepMinutes += 60;
+                else
+                    break;
+            }
+
+            if (scheduledSleepMinutes > 0)
+            {
+                // Case 2: sleeping during scheduled hours — sleep until the scheduled window ends
+                sleepHour = scheduledSleepMinutes;
+            }
+            else
+            {
+                // Case 3: off-schedule sleep — sleep for the character's normal sleep need
+                sleepHour = (int)Math.Ceiling(Stats.SleepHours * 60f);
+            }
+        }
+
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
         Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");
 

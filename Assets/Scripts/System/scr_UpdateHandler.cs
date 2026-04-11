@@ -867,7 +867,7 @@ public class scr_UpdateHandler : MonoBehaviour
         
         //else Debug.Log($"AppendMessageBefore not visible, [{desc.message}] [{desc.message_excludeRelated}]\n room? {(room == null ? "null" : $"{room.DisplayNameShort} {String.Join(" ", room.RoomCharaRefs)} {room.RoomChara.Contains(player)} {player.CurrentRoom == room} {scr_System_CampaignManager.current.CurrentRoom == room}")} direct? {desc.DirectlyRelated(player)} ");
         
-        if (room != null && room.HasRecording) room.NotifyKojoCollect(desc);
+        if (room != null && room.HasRecording) room.NotifyDescCollect(desc);
 
         if (allowFlush && visible && !Updating)
         {
@@ -880,7 +880,7 @@ public class scr_UpdateHandler : MonoBehaviour
         var player = scr_System_CampaignManager.current.Player;
         var visible = desc.VisibleTo(player, room);
         if (visible) this.Message.AddMessage_After(desc, room);
-        if (room != null && room.HasRecording) room.NotifyKojoCollect(desc);
+        if (room != null && room.HasRecording) room.NotifyDescCollect(desc, MessageCollect_Type.after);
 
         if (allowFlush && visible && !Updating)
         {

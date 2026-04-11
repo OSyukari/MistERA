@@ -2384,7 +2384,7 @@ public class scr_panel_COMmanager : scr_Menu
                // return false;
                 return Deactivate();
             }
-            var job2 = scr_System_CampaignManager.current.FindJobInstanceByID(job.RefID);
+            var job2 = scr_System_CampaignManager.current.FindJobInstanceByID(job.RefID, false);
             if (job2 == null || job2 != job)
             {
                 tooltip = "fail 3";

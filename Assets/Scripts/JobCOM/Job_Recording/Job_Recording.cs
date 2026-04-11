@@ -130,13 +130,10 @@ public class Job_Recording : Job, I_CanEndJob
         base.PreUpdateTime(currentMinute);
     }
 
-    public void CollectLogs(List<I_Records> kols)
+    public void CollectLogs(MessageCollect message, DateTime timestamp)
     {
-        if (kols == null) return;
-        foreach (var kol in kols)
-        {
-            currentRecording.AddCollector(kol);
-        }
+        if (message == null) return;
+        currentRecording.AddCollector(message, timestamp);
     }
     [JsonIgnore]
     public override bool RequireAdditionalLastUpdate
@@ -202,7 +199,7 @@ public class Job_Recording : Job, I_CanEndJob
         foreach (var room in _trackedRooms)
         {
             bool isCurrent = room == ParentRoom;
-            CollectLogs(room.Collect(this, renew && isCurrent));
+            CollectLogs(room.Collect(this, renew && isCurrent), scr_UpdateHandler.current.UpdateTime);
         }
 
         _trackedRooms.Clear();

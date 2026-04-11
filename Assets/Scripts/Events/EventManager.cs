@@ -167,7 +167,7 @@ public class EventManager
     public void StartEvent(EventInstance ev, bool startImmediate)
     {
         startImmediate = startImmediate || scr_UpdateHandler.current.Updating;
-
+        ev.RelevantActors = null;
         // check if allow duplicate
         if (CheckConflict(ev)) return;
 

@@ -20,8 +20,10 @@ public class COM_Character_Insert : COM
         this.requirements.requireContaining.allowPlanting = null;
         // entry results class still WIP
 
-        foreach(var i in description_begin.Entries) i.AppendToText("_ADD");
-        foreach (var i in description_after.Entries) i.AppendToText("_ADD");
+        if (description_begin.Entries != null) foreach (var i in description_begin.Entries) i.AppendToText("_ADD");
+        if (description_ongoing.Entries != null) foreach (var i in description_ongoing.Entries) i.AppendToText("_ADD");
+        if (description_onComplete.Entries != null) foreach (var i in description_onComplete.Entries) i.AppendToText("_ADD");
+        if (description_after.Entries != null) foreach (var i in description_after.Entries) i.AppendToText("_ADD");
 
     }
     //public override string ID { get { return ParentCOM.ID + "_" + comp.growType + "_" + comp.yieldItemID; } }
@@ -72,8 +74,10 @@ public class COM_Character_Remove : COM
         newVar.requirements.requirement.receiverCount = 99;
         variants.Add(newVar);
         // entry results class still WIP
-        foreach (var i in description_begin.Entries) i.AppendToText("_REMOVE");
-        foreach (var i in description_after.Entries) i.AppendToText("_REMOVE");
+        if (description_begin.Entries != null) foreach (var i in description_begin.Entries) i.AppendToText("_REMOVE");
+        if (description_ongoing.Entries != null) foreach (var i in description_ongoing.Entries) i.AppendToText("_REMOVE");
+        if (description_onComplete.Entries != null) foreach (var i in description_onComplete.Entries) i.AppendToText("_REMOVE");
+        if (description_after.Entries != null) foreach (var i in description_after.Entries) i.AppendToText("_REMOVE");
 
         this.displayName += "_REMOVE";
 

@@ -289,11 +289,43 @@ public class Room_Instance: IDisposable, I_Disposable
     }
 
     protected List<I_CanEndJob> recorders = new List<I_CanEndJob>();
-    protected List<I_Records> kols = new List<I_Records>();
-    public void NotifyKojoCollect(I_Records kol)
+    protected MessageCollect kols = new MessageCollect(false, false);
+    public void NotifyKojoCollect(KojoCollector kol, MessageCollect_Type type = MessageCollect_Type.kojo)
     {
         if (recorders.Count < 1) return;
-        if (!kols.Contains(kol)) kols.Add(kol);
+        switch (type)
+        {
+            case MessageCollect_Type.kojo:
+                kols.messages_kojo.Add(kol);break;
+            case MessageCollect_Type.kojo_after:
+                kols.messages_kojo_after.Add(kol);
+                break;
+            default:
+                Debug.LogError($"error NotifyKojoCollect cannot add KojoCollector into other types [{type}]");
+                return;
+        }
+        hasStoredRecord = true;
+    }
+    protected bool hasStoredRecord = false;
+    public void NotifyDescCollect(I_Records kol, MessageCollect_Type type = MessageCollect_Type.before)
+    {
+        if (recorders.Count < 1) return;
+        switch (type)
+        {
+            case MessageCollect_Type.checks:
+                kols.messages_checks.Add(kol); break;
+            case MessageCollect_Type.before:
+                kols.messages_before.Add(kol); break;
+            case MessageCollect_Type.after:
+                kols.messages_after.Add(kol); break;
+            case MessageCollect_Type.exp:
+                kols.messages_exp.Add(kol); 
+                break;
+            default:
+                Debug.LogError($"error NotifyKojoCollect cannot add DescriptionCollector into other types [{type}]");
+                return;
+        }
+        hasStoredRecord = true;
     }
 
     public void AddCollector(I_CanEndJob job)
@@ -314,10 +346,11 @@ public class Room_Instance: IDisposable, I_Disposable
     /// <summary>
     /// Each job collects a copy of the shared log. kols is cleared only once the last recorder has collected.
     /// </summary>
-    public List<I_Records> Collect(I_CanEndJob job, bool renew_recording)
+    public MessageCollect Collect(I_CanEndJob job, bool renew_recording)
     {
         if (!renew_recording) recorders.Remove(job);
-        return new List<I_Records>( kols);
+        if (hasStoredRecord) return kols;
+        else return null;
     }
     public List<I_CanEndJob> GetCollectors()
     {
@@ -325,7 +358,8 @@ public class Room_Instance: IDisposable, I_Disposable
     }
     public void ClearRecords()
     {
-        this.kols.Clear();
+        this.kols = new MessageCollect();
+        hasStoredRecord = false;
     }
 
 

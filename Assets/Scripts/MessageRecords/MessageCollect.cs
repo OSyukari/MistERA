@@ -5,6 +5,16 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
+public enum MessageCollect_Type
+{
+    none,
+    checks,
+    before,
+    after,
+    kojo,
+    kojo_after,
+    exp
+}
 
 
 public class MessageCollect
@@ -42,7 +52,7 @@ public class MessageCollect
     public void AddMessage_Before(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
     {
         if (visible) this.messages_before.Add(desc);
-        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyKojoCollect(desc);
+        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.before);
     }
     public void AddMessage_After(I_Records desc, Room_Instance recording)
     {
@@ -53,8 +63,35 @@ public class MessageCollect
     public void AddMessage_After(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
     {
         if (visible) this.messages_after.Add(desc);
-        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyKojoCollect(desc);
+        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.after);
     }
+    public void AddMessage_Checks(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
+    {
+        if (visible) this.messages_checks.Add(desc);
+        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.checks);
+    }
+
+    public void FinalizeEXP(List<int> relevantActorInject, bool visible, Room_Instance recording)
+    {
+        this.exp.Finalize(out var desc, out var rec);
+        if (desc != null)
+        {
+            desc.LoadActors(relevantActorInject);
+            if (visible) this.messages_exp.Add(desc);
+        }
+        if (rec != null)
+        {
+            rec.LoadActors(relevantActorInject);
+            if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(rec, MessageCollect_Type.exp);
+        }
+    }
+    public void FinalizeEXP(List<int> relevantActorInject, out DescriptionCollector desc, out DescriptionCollector rec)
+    {
+        this.exp.Finalize(out desc, out rec);
+        if (desc != null) desc.LoadActors(relevantActorInject);
+        if (rec != null) rec.LoadActors(relevantActorInject);
+    }
+
     public void AddKojo(KojoCollector m, Room_Instance room, bool tryMerge = false)
     {
         //Debug.Log("AppendKojoMessage");
@@ -62,7 +99,7 @@ public class MessageCollect
         bool visible = m.VisibleTo(player, room);
         bool record = room != null && room.HasRecording;
 
-        if (record) room.NotifyKojoCollect(m);
+        if (sendRecording && record) room.NotifyKojoCollect(m);
         if (visible)
         {
             //this.messages_kojo.Add(m.collect);
@@ -138,9 +175,10 @@ public class MessageCollect
 
 
     public MessageCollect() { }
-    public MessageCollect(bool displayOverride = false)
+    public MessageCollect(bool displayOverride = false, bool sendRecording = true)
     {
         this.displayOverride = displayOverride;
+        this.sendRecording = sendRecording;
     }
     public void Clear()
     {
@@ -172,24 +210,6 @@ public class MessageCollect
         messages_kojo.Add(kojo);
     }
 
-    public void AddKojoAfter(KojoCollector kojo, bool tryMerge = false)
-    {
-        //this.messages_kojo.Add(m.collect);
-        if (tryMerge)
-        {
-            foreach (var kol in this.messages_kojo_after)
-            {
-
-                if (kol.collect.portraitRefID == kojo.collect.portraitRefID)
-                {
-                    kol.collect.Merge(kojo.collect);
-                    return;
-                }
-
-            }
-        }
-        messages_kojo_after.Add(kojo);
-    }
 
     public void Merge(MessageCollect m, bool shorten)
     {

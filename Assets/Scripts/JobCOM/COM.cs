@@ -412,6 +412,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public COM_Descriptions description_remove = new COM_Descriptions();
     public COM_Descriptions description_ongoing = new COM_Descriptions();
     public COM_Descriptions description_after = new COM_Descriptions();
+    public COM_Descriptions description_onComplete = new COM_Descriptions();
 
     [JsonIgnore]
     public int MaxActorCount
@@ -492,6 +493,20 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         if (variantID == -1) return description_after.GetText(ap);
         else if (variantID >= variants.Count) return "GetDescription_After ERROR variantID out of bound";
         else return variants[variantID].GetDescription_After(this, ap);
+    }
+
+    public virtual string GetDescription_OnComplete(EvaluationPackage evp, int variantID)
+    {
+        if (variantID == -1) return description_onComplete.GetText(ref evp);
+        else if (variantID >= variants.Count) return "GetDescription_OnComplete ERROR variantID out of bound";
+        else return variants[variantID].GetDescription_OnComplete(this, evp);
+    }
+
+    public virtual string GetDescription_OnComplete(ActionPackage ap, int variantID)
+    {
+        if (variantID == -1) return description_onComplete.GetText(ap);
+        else if (variantID >= variants.Count) return "GetDescription_OnComplete ERROR variantID out of bound";
+        else return variants[variantID].GetDescription_OnComplete(this, ap);
     }
 
     //public Validator_Costs costs;
@@ -955,6 +970,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         public COM_Descriptions description_remove = new COM_Descriptions();
         public COM_Descriptions description_ongoing = new COM_Descriptions();
         public COM_Descriptions description_after = new COM_Descriptions();
+        public COM_Descriptions description_onComplete = new COM_Descriptions();
 
         public COM_Requirements requirements = new COM_Requirements();
         public bool setForce = false;
@@ -1066,6 +1082,34 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             s.RemoveAll(x => x.Length < 1);
             string s2 = String.Join("\n", s);
             //s2 = Utility.StringReplace(ref evp, s2);
+            return s2;
+        }
+
+        public string GetDescription_OnComplete(COM ownerCOM, ActionPackage ap)
+        {
+            List<string> s = new List<string>();
+            s.Add(description_onComplete.GetText(ap));
+            // prevent infinite loop
+            if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_OnComplete(ap, useAnothersDescription));
+            if (useBaseDescription) s.Add(ownerCOM.GetDescription_OnComplete(ap, -1));
+
+            if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
+            s.RemoveAll(x => x.Length < 1);
+            string s2 = String.Join("\n", s);
+            return s2;
+        }
+
+        public string GetDescription_OnComplete(COM ownerCOM, EvaluationPackage evp)
+        {
+            List<string> s = new List<string>();
+            s.Add(description_onComplete.GetText(ref evp));
+            // prevent infinite loop
+            if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_OnComplete(evp, useAnothersDescription));
+            if (useBaseDescription) s.Add(ownerCOM.GetDescription_OnComplete(evp, -1));
+
+            if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
+            s.RemoveAll(x => x.Length < 1);
+            string s2 = String.Join("\n", s);
             return s2;
         }
 

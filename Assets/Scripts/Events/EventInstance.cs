@@ -76,6 +76,35 @@ public class EventInstance
         }
     }
 
+
+
+    List<int> relevantActors = null;
+    public List<int> RelevantActors
+    {
+        get
+        {
+            if (relevantActors == null)
+            {
+                relevantActors = new List<int>();
+                if (this.Self != null) relevantActors.Add(Self.RefID);
+                foreach(var kvp in Targets)
+                {
+                    foreach(var c in kvp.Value)
+                    {
+                        relevantActors.Add(c.RefID);
+                    }
+                }
+                relevantActors = Utility.Distinct(relevantActors);
+            }
+            return relevantActors;
+        }
+        set
+        {
+            relevantActors = null;
+        }
+    }
+
+
     public bool isPlayerRelated
     { get
         {

@@ -505,7 +505,7 @@ public class Character_Body
         originalString = "experience_sex_strong_climax" + "||" + key + "||" + count;
     }
 
-    public void CheckClimax(MessageCollect message)
+    public bool CheckClimax(MessageCollect message)
     {
         ExperienceLog exp = new ExperienceLog();
         string climaxKeywords = "";
@@ -515,16 +515,16 @@ public class Character_Body
         // if (Owner.Stats.SexStimulation.Severity >= 5) Debug.Log($"Checking climax on {Owner.FirstName}, {Owner.Stats.Climaxing == null} {!Stimulated} {isClimaxing()} {Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold}");
 #endif
         //if (scr_UpdateHandler.current.skipCurrentRoundClimaxCheck) return;
-        if (Owner.Stats.Climaxing == null) return;
-        if (!Stimulated) return;
-        if (isClimaxing()) return;
+        if (Owner.Stats.Climaxing == null) return false;
+        if (!Stimulated) return false;
+        if (isClimaxing()) return true;
         if (Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold) 
         {
            // Debug.Log($"canclimax, checking timestop {scr_System_Time.current.TimeStopStrict && !Owner.CanActInTimeStop} or {Owner.Stats.Climaxing.Severity > 0}");
             // forbid climax if timestopped
             // BUT!! ALLOW CLIMAX DURING RESUME
-            if (Owner.isTimeStopped) return;
-            if (Owner.Stats.Climaxing.Severity > 0) return; // block repeat climax if still lingering
+            if (Owner.isTimeStopped) return false;
+            if (Owner.Stats.Climaxing.Severity > 0) return true; // block repeat climax if still lingering
 
             List<string> climaxTags = new List<string>();
             UtilityEX.GetActorTag(ref climaxTags, Owner);
@@ -598,7 +598,7 @@ public class Character_Body
                             UtilityEX.GetActorTag(ref containerTags, container.Owner);
                             if (container.Sensitivity != "") containerTags.Add(container.Sensitivity);
 
-                            UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cumAmount, false, containerTags, new List<string>());
+                            UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cumAmount, false, containerTags, new List<string>(), exp);
 
                             // ADDLOG CUM FOR SHOOTER
                             var desc2 = LocalizeDictionary.QueryThenParse( "ui_entry_memory_description_cumOnto");
@@ -646,7 +646,7 @@ public class Character_Body
                         var memInst5 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst5, selfTag, -1, true);
 
-                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
+                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>(), exp);
 
                     }
                     else
@@ -659,14 +659,14 @@ public class Character_Body
                         var memInst6 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst6, selfTag, -1, true);
 
-                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>());
+                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>(), exp);
                     }
                 }
             }
 
             if (Climax) Owner.Stats.Climaxing.SeverityAdd(Cum ? 2 : 7);
-            
-            if (climaxDebuff != 0 && climaxKeywords.Length > 0) 
+
+            if (climaxDebuff != 0 && climaxKeywords.Length > 0)
             {
                 //if (!Cum) climaxDebuff = Math.Clamp(climaxDebuff, -200, 0);
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Status) Debug.Log($"Adding climax status on {Owner.FirstName} debuffstrength {climaxDebuff}");
@@ -698,10 +698,6 @@ public class Character_Body
 
                 //Debug.LogError("Merge Climax Message");
 
-                //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
-                //exp.AddClimaxMSG(Owner.RefID, s);
-                message.exp.MergeWith(exp, false);
-
                 UtilityEX.GetAPsFrom(this.owner, out var listAP);
                 var listEP = new List<EvaluationPackage>();
                 foreach (var ap in listAP) listEP.AddRange(ap.ListEP);
@@ -713,7 +709,7 @@ public class Character_Body
                     List<int> relevantActorRefs = Owner.CurrentJob.GetLastInteractedActorRefs(Owner.RefID);
                     Utility.ShuffleList(relevantActorRefs);
 
-                    foreach(var c in relevantActorRefs)
+                    foreach (var c in relevantActorRefs)
                     {
                         var target = scr_System_CampaignManager.current.FindInstanceByID(c);
                         var rel = target == null ? null : Owner.Relationships.FindRelationshipWith(target);
@@ -726,20 +722,45 @@ public class Character_Body
                                 kol = Owner.Relationships.GetKOJOMessage_Suffix(kol, null);
                                 if (kol != null)
                                 {
-                                    message.AddKojoAfter(kol);//.Add();
+                                    kol.relevantActorRefs.Clear();
+                                    message.AddMessage_After(kol, Owner.CurrentRoom);//.Add();
                                     logged = true;
                                 }
                             }
                             float value = Mathf.Abs(climaxDebuff * 0.1f) + satisfiedBonus;
                             rel.ModRelationValue(RelationshipScoreType.Goodwill, value, false);
                             rel.ModRelationValue(RelationshipScoreType.Desire, value, false);
-                            message.exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Goodwill, (int)value);
-                            message.exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Desire, (int)value);
-                            if (satisfiedBonus > 0) message.exp.AddMessage(rel.Owner.RefID, $"{Owner.FirstName}'s desire is getting satisfied ({(satisfiedBonus).ToString("+0;-#")})");
+                            exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Goodwill, (int)value);
+                            exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Desire, (int)value);
+                            if (satisfiedBonus > 0) exp.AddMessage(rel.Owner.RefID, $"{Owner.FirstName}'s desire is getting satisfied ({(satisfiedBonus).ToString("+0;-#")})");
                         }
-                        
+
                     }
                 }
+
+                //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
+                //exp.AddClimaxMSG(Owner.RefID, s);
+                exp.Finalize(out var desc, out var rec);
+                //message.exp.MergeWith(exp, false);
+                List<int> actors = new List<int>();
+                if (Owner.CurrentJob != null) actors.AddRange(Owner.CurrentJob.actorRefID);
+                actors.AddRange(Owner.InteractionJob.actorRefID);
+                actors = Utility.Distinct(actors);
+
+                if (desc != null)
+                {
+                    desc.relevantActors = actors;
+                    desc.message_excludeRelated = desc.message;
+                    Debug.Log($"addexp {desc.message}");
+                    message.messages_exp.Add(desc);
+                }
+                if (rec != null)
+                {
+                    rec.relevantActors = actors;
+                    rec.message_excludeRelated = rec.message;
+                    if (Owner.CurrentRoom != null) Owner.CurrentRoom.NotifyDescCollect(rec, MessageCollect_Type.exp);
+                }
+
                 if (!logged)
                 {
                     //exp.AddMessage(Owner.RefID, "kojo message here");
@@ -748,16 +769,20 @@ public class Character_Body
                     kol = Owner.Relationships.GetKOJOMessage_Suffix(kol, null);
                     if (kol != null)
                     {
-                        message.AddKojoAfter(kol);//.Add();
-                       // logged = true;
+                        kol.relevantActorRefs.Clear();
+                        message.AddMessage_After(kol, Owner.CurrentRoom);//.Add();
+                                                                         // logged = true;
                     }
 
                     //message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_single", this.Owner, tags, listEP));
                 }
+                return true;
 
             }
+            else return false;
 
         }
+        else return false;
     }
 
 }

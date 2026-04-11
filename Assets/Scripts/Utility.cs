@@ -1022,7 +1022,12 @@ public static class UtilityEX
         if (extraTargetTags.Contains("timestop") || extraTargetTags.Contains("sleeping") || extraTargetTags.Contains("unconscious")) extraComTags.Remove("service");
     }
 
-
+    /// <summary>
+    /// Only get actor's current status (such as sleeping, timestopped, etc)
+    /// <br/> for current actions, call another function
+    /// </summary>
+    /// <param name="tags"></param>
+    /// <param name="c"></param>
     public static void GetActorTag(ref List<string> tags, Character_Trainable c)
     {
         var result = scr_System_CentralControl.current.GetGender(c);
@@ -1038,10 +1043,6 @@ public static class UtilityEX
         }
         else if (c.Stats.isConsciousnessUnconscious) tags.Add("unconscious");
 
-        if (c.CurrentJob != null)
-        {
-            c.CurrentJob.GetActorAPTags(c.RefID, tags);
-        }
         tags = Utility.Distinct(tags);
         //if (c.Climaxing) tags.Add("climax");  this will make it too easy to get climax exp
     }

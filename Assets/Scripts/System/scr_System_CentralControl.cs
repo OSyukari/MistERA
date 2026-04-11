@@ -751,6 +751,7 @@ public class SaveFile
     public bool SafeMode;
     public scr_System_Time_Serializable Time;
     public scr_System_CampaignManager_Serializable Campaign;
+    public Dictionary<string, EventManager.EventCooldown> EventCooldowns;
 
     public SaveFile() { }
     public SaveFile(bool createNew)
@@ -760,6 +761,7 @@ public class SaveFile
 
         this.Time = scr_System_Time.current.GetSerializable();
         this.Campaign = scr_System_CampaignManager.current.GetSerializable();
+        this.EventCooldowns = scr_UpdateHandler.current.EventHandler.eventCooldowns;
         this.Version = Application.version;
         this.Language = LocalizeDictionary.Instance.Index.cachedLang;
         this.SaveDescription = LocalizeDictionary.QueryThenParse("ui_load_fileDescription")
@@ -775,6 +777,8 @@ public class SaveFile
     {   // external call to updatehandler notifySL
         scr_System_Time.current.LoadSerializable(Time);
         scr_System_CampaignManager.current.LoadSerializable(Campaign);
+        scr_UpdateHandler.current.EventHandler.eventCooldowns =
+            EventCooldowns ?? new Dictionary<string, EventManager.EventCooldown>();
     }
 
 }

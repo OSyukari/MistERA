@@ -1183,7 +1183,7 @@ public static class EventUtility
                             }
                             desc.relevantActors = Utility.Distinct(desc.relevantActors);
                         }
-                        if (owner.Self != null) owner.Self.CurrentRoom.NotifyKojoCollect(desc);
+                        if (owner.Self != null) owner.Self.CurrentRoom.NotifyDescCollect(desc);
                         scr_System_CampaignManager.current.AddLog(desc, owner.Self);
                         
                         return true;
@@ -1239,10 +1239,12 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.FlushMessageExpAll:
                 if (true)
                 {
-                    owner.message.exp.Finalize(out var desc, out var rec);
+                    var relActors = owner.RelevantActors;
+                    owner.message.FinalizeEXP(relActors, out var desc, out var rec);
+                    //owner.message.exp.Finalize(out var desc, out var rec);
                     if (rec != null && owner.Self != null && owner.Self.CurrentRoom != null)
                     {
-                        owner.Self.CurrentRoom.NotifyKojoCollect(rec);
+                        owner.Self.CurrentRoom.NotifyDescCollect(rec, MessageCollect_Type.exp);
                     }
                     if (desc != null)
                     {
