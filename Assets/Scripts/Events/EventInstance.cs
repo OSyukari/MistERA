@@ -137,6 +137,7 @@ public class EventInstance
     /// </summary>
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
     public MessageCollect message = new MessageCollect(true);
+    public string CurrentInput = "";
     /// <summary>
     /// TargetRef == -1 for null target
     /// </summary>
@@ -215,6 +216,10 @@ public class EventInstance
             {
                 return UtilityEX.ParseEventEntry(this, (currentEntry as Event.EventEntry.EventEntry_Question).question);
             }
+            else if (currentEntry is Event.EventEntry.EventEntry_InputField)
+            {
+                return UtilityEX.ParseEventEntry(this, (currentEntry as Event.EventEntry.EventEntry_InputField).question);
+            }
             else return "";
         }
     }
@@ -258,6 +263,7 @@ public class EventInstance
         get
         {
             if (currentEntry != null && currentEntry is Event.EventEntry.EventEntry_Question) return EventStatus.waiting;
+            else if (currentEntry != null && currentEntry is Event.EventEntry.EventEntry_InputField) return EventStatus.waiting;
             else if ((currentEvent != null && currentEntry != null) || canRun) return EventStatus.running;
             else return EventStatus.idle;
             

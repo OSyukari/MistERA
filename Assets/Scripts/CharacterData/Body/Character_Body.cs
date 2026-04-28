@@ -722,7 +722,7 @@ public class Character_Body
                                 kol = Owner.Relationships.GetKOJOMessage_Suffix(kol, null);
                                 if (kol != null)
                                 {
-                                    kol.relevantActorRefs.Clear();
+                                    kol.SetVisibleToAll();
                                     message.AddMessage_After(kol, Owner.CurrentRoom);//.Add();
                                     logged = true;
                                 }
@@ -740,7 +740,7 @@ public class Character_Body
 
                 //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
                 //exp.AddClimaxMSG(Owner.RefID, s);
-                exp.Finalize(out var desc, out var rec);
+                exp.Finalize(out var desc);
                 //message.exp.MergeWith(exp, false);
                 List<int> actors = new List<int>();
                 if (Owner.CurrentJob != null) actors.AddRange(Owner.CurrentJob.actorRefID);
@@ -750,15 +750,9 @@ public class Character_Body
                 if (desc != null)
                 {
                     desc.relevantActors = actors;
-                    desc.message_excludeRelated = desc.message;
-                    Debug.Log($"addexp {desc.message}");
+                    //desc.message_excludeRelated = desc.message;
                     message.messages_exp.Add(desc);
-                }
-                if (rec != null)
-                {
-                    rec.relevantActors = actors;
-                    rec.message_excludeRelated = rec.message;
-                    if (Owner.CurrentRoom != null) Owner.CurrentRoom.NotifyDescCollect(rec, MessageCollect_Type.exp);
+                    if (Owner.CurrentRoom != null) Owner.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
                 }
 
                 if (!logged)
@@ -769,7 +763,7 @@ public class Character_Body
                     kol = Owner.Relationships.GetKOJOMessage_Suffix(kol, null);
                     if (kol != null)
                     {
-                        kol.relevantActorRefs.Clear();
+                        kol.SetVisibleToAll();
                         message.AddMessage_After(kol, Owner.CurrentRoom);//.Add();
                                                                          // logged = true;
                     }

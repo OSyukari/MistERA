@@ -1236,7 +1236,12 @@
 
 "com_job_farm_maintain_description_onComplete_1": "$doer.firstname$ finished maintaining the farm — $result$",
 "com_job_farm_cultivate_crop_description_onComplete_1": "$doer.firstname$ finished planting crops — $result$",
-"com_job_farm_cultivate_meat_description_onComplete_1": "$doer.firstname$ finished growing meat — $result$"
+"com_job_farm_cultivate_meat_description_onComplete_1": "$doer.firstname$ finished growing meat — $result$",
+
+"com_job_farm_cultivate_crop_displayName_parent_2": "Plant Crops Together (2)",
+"com_job_farm_cultivate_crop_displayName_parent_3": "Plant Crops Together (Group)",
+"com_job_production_cooking_onComplete_1": "$doer.firstname$ finished making $item$ — $result$"
+
             }
         }
     }

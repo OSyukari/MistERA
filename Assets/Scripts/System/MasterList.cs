@@ -54,6 +54,7 @@ public class MasterList
                 list.Add(ExplorationFeatures);
                 list.Add(ExpeditionEntry);
                 list.Add(FindJobNodeRoots);
+                list.Add(ExperienceInitializers);
             }
             return list;
         }
@@ -87,6 +88,7 @@ public class MasterList
     public Index_CombatActionPresets CombatActionPresets = new Index_CombatActionPresets();
     public Index_CharGenTemplates CharGenTemplates = new Index_CharGenTemplates();
     public Index_EncounterGen Encounters = new Index_EncounterGen();
+    public Index_ExperienceInitializer ExperienceInitializers = new Index_ExperienceInitializer();
 
     public void InitializeLists(bool initCoreList = false)
     {

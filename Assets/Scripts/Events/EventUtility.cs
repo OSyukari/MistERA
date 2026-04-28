@@ -302,7 +302,7 @@ public static class EventUtility
                 else return false;
             case "hasJoinableAP":
                 if (ev.Self == null) return false;
-                return c.CurrentJob.GetExistingPackages(c, false, false, false).FindAll(x => x.AllowJoining && (bool)(x.canJoinAP(ev.Self, out var a, out var b) >= 0)).Count > 0;
+                return c.CurrentJob.GetExistingPackages(c, false, false, false).FindAll(x => x.AllowJoining && (bool)(x.canJoinAP(ev.Self, out var a, out var b, out var ttps) >= 0)).Count > 0;
             case "isWorkingOnJob":
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isWorkingOnJob))
                 {
@@ -554,6 +554,7 @@ public static class EventUtility
         if (ev is Event.EventEntry.EventEntry_Line) Execute(owner, ev as Event.EventEntry.EventEntry_Line);
         else if (ev is Event.EventEntry.EventEntry_Question) Execute(owner, ev as Event.EventEntry.EventEntry_Question);
         else if (ev is Event.EventEntry.EventEntry_Branch) Execute(owner, ev as Event.EventEntry.EventEntry_Branch);
+        else if (ev is Event.EventEntry.EventEntry_InputField) Execute(owner, ev as Event.EventEntry.EventEntry_InputField);
         else Debug.LogError("eventutility error cannot parse");
     }
 
@@ -606,6 +607,31 @@ public static class EventUtility
         // load next but allow to be overwritten
         //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
     }
+    public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_InputField block)
+    {
+
+#if UNITY_EDITOR
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.question} isVisible {owner.isVisible}");
+#endif
+
+        if (owner.isVisible)
+        {
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_InputField(owner, block, false));
+            //scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
+            owner.Notify(EventStatus.waiting);
+        }
+        else
+        {
+            Debug.LogError($"Event {owner.Name} questionbox {block.Name} not visible to player! calling default cancel");
+            var def = block.Default;
+            if (def == null) return;
+            Execute(owner, def, true);
+        }
+
+        // load next but allow to be overwritten
+        //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
+    }
+
 
     public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_Branch block)
     {
@@ -1240,14 +1266,12 @@ public static class EventUtility
                 if (true)
                 {
                     var relActors = owner.RelevantActors;
-                    owner.message.FinalizeEXP(relActors, out var desc, out var rec);
+                    owner.message.FinalizeEXP(relActors, out var desc);
                     //owner.message.exp.Finalize(out var desc, out var rec);
-                    if (rec != null && owner.Self != null && owner.Self.CurrentRoom != null)
-                    {
-                        owner.Self.CurrentRoom.NotifyDescCollect(rec, MessageCollect_Type.exp);
-                    }
+                    
                     if (desc != null)
                     {
+                        if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
                         scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
                     }
                 }

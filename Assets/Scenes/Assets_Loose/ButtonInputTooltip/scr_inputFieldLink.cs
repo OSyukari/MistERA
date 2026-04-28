@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class scr_inputFieldLink:MonoBehaviour
+public class scr_inputFieldLink : MonoBehaviour
 {
     private TextMeshProUGUI parent;
     public TextMeshProUGUI placeholder;
@@ -32,7 +32,7 @@ public class scr_inputFieldLink:MonoBehaviour
 
     public void OnValueChange(string s)
     {
-        parent.text = s;
+        if (parent != null) parent.text = s;
     }
 
 

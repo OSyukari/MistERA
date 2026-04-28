@@ -70,6 +70,25 @@ public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, 
             temp.PurgeNonExistingData();
         }
     }
+
+    // Returns the serializable wrapper for a given baseID so callers can read
+    // parentTemplateID and experienceInitializerIDs without going through the
+    // resolved CharaTemplate. Falls through to the generator's targetBaseID when
+    // the ID belongs to a CharaTemplateGenerator rather than a direct wrapper.
+    public CharaSerializableTemplate_Base GetWrapperForBaseID(string id)
+    {
+        var wrapper = GetByID(id);
+        if (wrapper != null) return wrapper;
+
+        if (Gen_Dictionary.TryGetValue(id, out CharaTemplateGenerator gen))
+        {
+            string fallback = gen.targetBaseIDs != null && gen.targetBaseIDs.Count > 0
+                ? gen.targetBaseIDs[0]
+                : gen.targetBaseID;
+            return GetByID(fallback);
+        }
+        return null;
+    }
 }
 
 [System.Serializable]
@@ -81,6 +100,12 @@ public abstract class CharaSerializableTemplate_Base
     {
        // Debug.Log("CALLING VIRTUAL METHOD PurgeNonExistingData");
     }
+
+    // Optional parent template ID for experience initializer inheritance.
+    // When set, the parent's resolved initializer IDs are prepended before this template's own.
+    public string parentTemplateID = "";
+    // IDs referencing ExperienceInitializer entries in MasterList.ExperienceInitializers.
+    public List<string> experienceInitializerIDs = new List<string>();
 }
 
 [System.Serializable]
@@ -193,6 +218,9 @@ public abstract class CharaTemplate
     public List<presetInventory> initialInventory = new List<presetInventory>();
     public List<presetInventory> overrideInventory = new List<presetInventory>();
 
+    public List<string> basicExperience = new List<string>();
+    public List<string> initialExperiences = new List<string>();
+
     public abstract CharaTemplate Copy();
 
     public abstract void SetGender(Humanoid_GenderAppearance gender);
@@ -255,6 +283,8 @@ public class CharaSafeTemplate : CharaTemplate
         newInstance.personalityID = personalityID;
         newInstance.initialInventory = new List<presetInventory>(initialInventory);
         newInstance.initialRelationship = new List<RelationshipManager.presetRelationship>(initialRelationship);
+        newInstance.initialExperiences = new List<string>(initialExperiences);
+        newInstance.basicExperience = basicExperience;
         return newInstance;
     }
 
@@ -437,6 +467,9 @@ public class CharaTrainableTemplate : CharaTemplate
         newInstance.personalityID = personalityID;
         newInstance.initialInventory = new List<presetInventory>(initialInventory);
         newInstance.initialRelationship = new List<RelationshipManager.presetRelationship>(initialRelationship);
+
+        newInstance.basicExperience = basicExperience;
+        newInstance.initialExperiences = new List<string>(initialExperiences);
         newInstance.BodyType = BodyType;
 
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.UI.GridLayoutGroup;
 
 public static class MapUtility
 {
@@ -11,42 +12,47 @@ public static class MapUtility
         if (self.RefID == 0) return false;
         var rel = self.Relationships.FindRelationshipWith(target);
         if (rel == null) return false;
+        bool debug = true || scr_System_CentralControl.current.LogPrefs.DLog_Interrupt;
 
-        foreach (var ep in eps)
+        foreach (var ap in eps)
         {
-            if (ep.Package.isTemporaryAP) continue;
-            if (ep.job.Actors.Contains(self) && ep.job.Actors.Contains(target)) continue;
+            if (ap.Package.isTemporaryAP) continue;
+            if (ap.job.Actors.Contains(self) && ap.job.Actors.Contains(target)) continue;
 
-            var kol2 = new KojoCollector(self, ep.targetCOM.tooltipID, "_Interrupt");
-            kol2.LoadEP(ep, target);
-            kol2 = self.Relationships.GetKOJOMessage_Suffix(kol2, null);
-            if (kol2 != null)
+            foreach(var ep in eps)
             {
-                kol2.ReplaceString("$self$", self.FirstName);
-                kol2.ReplaceString("$target$", target.FirstName);
-                kol2.ReplaceString("$epDescription$", ep.Description_Ongoing);
-                kol2.LoadRelevantActors(ep.ActorRefs);
-                kol2.autoAnimate = true;
-                scr_UpdateHandler.current.AppendKojoMessage(kol2, self.CurrentRoom);
-                return true;
-            }
-            else
-            {
-                var kol3 = new KojoCollector(self, "Interrupt");
-                kol3.LoadRel(rel);
-                kol3 = self.Relationships.GetKOJOMessage_Suffix(kol3, null);
-                if (kol3 != null)
+                var kol2 = new KojoCollector(self, ep.targetCOM.tooltipID, "_Interrupt");
+                kol2.LoadEP(ep, target);
+                var kol4 = self.Relationships.GetKOJOMessage_Suffix(kol2, null);
+                if (kol4 != null)
                 {
-                    kol3.ReplaceString("$self$", self.FirstName);
-                    kol3.ReplaceString("$target$", target.FirstName);
-                    kol3.ReplaceString("$epDescription$", ep.Description_Ongoing);
-                    kol3.LoadRelevantActors(ep.ActorRefs);
-                    kol3.autoAnimate = true;
-                    scr_UpdateHandler.current.AppendKojoMessage(kol3, self.CurrentRoom);
+                    kol4.ReplaceString("$self$", self.FirstName);
+                    kol4.ReplaceString("$target$", target.FirstName);
+                    kol4.ReplaceString("$epDescription$", ep.Description_Ongoing);
+                    kol4.LoadRelevantActors(ep.ActorRefs);
+                    kol4.autoAnimate = true;
+                    scr_UpdateHandler.current.AppendKojoMessage(kol4, self.CurrentRoom);
+                    if (debug) Debug.Log($"Interrupt [{self.FirstName}] visible? {kol4.VisibleTo(scr_System_CampaignManager.current.Player, self.CurrentRoom)} : {kol4.collect.message}");
                     return true;
                 }
+                else
+                {
+                    var kol3 = kol2.Copy("Interrupt", "");
+                    //kol3.LoadRel(rel);
+                    kol3 = self.Relationships.GetKOJOMessage_Suffix(kol3, null);
+                    if (kol3 != null)
+                    {
+                        kol3.ReplaceString("$self$", self.FirstName);
+                        kol3.ReplaceString("$target$", target.FirstName);
+                        kol3.ReplaceString("$epDescription$", ep.Description_Ongoing);
+                        kol3.LoadRelevantActors(ep.ActorRefs);
+                        kol3.autoAnimate = true;
+                        scr_UpdateHandler.current.AppendKojoMessage(kol3, self.CurrentRoom);
+                        if (debug) Debug.Log($"Interrupt [{self.FirstName}] visible? {kol3.VisibleTo(scr_System_CampaignManager.current.Player, self.CurrentRoom)} : {kol3.collect.message}");
+                        return true;
+                    }
+                }
             }
-
         }
         return false;
         /*
@@ -73,6 +79,10 @@ public static class MapUtility
          */
     }
 
+
+
+
+
     /// <summary>
     /// Conditions are pre-filtered in Map pre CheckInterrupt calls <br/>
     /// player will trigger interrupt but will skip kojo message logging (cuz messagelog is being taken care of from the other direction)
@@ -89,24 +99,9 @@ public static class MapUtility
         var kol = new KojoCollector(Owner, triggerEventID);
         kol.LoadSelfTags(Owner, selfTags);
         kol = Owner.Relationships.GetKojoMessage_AP(kol, ap);
-        /*
-var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);
-if (msg == null)
-{
-    // for each ep check interrupt
-}
-if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message != null && msg.message.Length > 0)
-{
-    msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//;
-    bool visible = scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID);
-    bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
 
-    msg.AddRelevantActor(Owner);
-    msg.AddRelevantActors(ap.Actors);
+        // Debug.Log("checkInterrupt");
 
-    scr_UpdateHandler.current.AppendKojoMessage(msg, visible, recording ? Owner.CurrentRoom : null);
-    return true;
-}*/
         if (kol != null)
         {
             kol.rightAlign = true;
@@ -116,7 +111,29 @@ if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.mes
             scr_UpdateHandler.current.AppendKojoMessage(kol, Owner.CurrentRoom);
             return true;
         }
-        return false;
+        else
+        {
+            if (debug) Debug.Log($"Interrupt [{Owner.FirstName}] visible? null");
+            return false;
+        }
+        /*
+var msg = Personality.GetKOJOMessage(triggerEventID, Owner, selfTags, ap.ListEP);
+if (msg == null)
+{
+// for each ep check interrupt
+}
+if (scr_System_CampaignManager.current.Player != Owner && msg != null && msg.message != null && msg.message.Length > 0)
+{
+msg.message = $"<align=\"right\">{msg.message.Replace("$self$", Owner.FirstName)}</align>";//;
+bool visible = scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID);
+bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+
+msg.AddRelevantActor(Owner);
+msg.AddRelevantActors(ap.Actors);
+
+scr_UpdateHandler.current.AppendKojoMessage(msg, visible, recording ? Owner.CurrentRoom : null);
+return true;
+}*/
     }
     public static List<COM> GetFurnitureCOMs(FurnitureBase.Furniture_COMGiver furniture)
     {

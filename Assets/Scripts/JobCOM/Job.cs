@@ -413,55 +413,104 @@ public class Job : IDisposable, I_Disposable
     
     */
 
-    public List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, string comID, bool allowInvalid = false, List<string> debug = null)
+    public List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, string comID, bool allowInvalid = false, COM filter = null, List<string> debug = null)
     {
         actorRefIDStorage.Add(c.RefID, new COM_Match(comID));
-        return MakePackages(c, allowParent, allowChild, allowInvalid, debug);
+        return MakePackages(c, allowParent, allowChild, allowInvalid, filter, debug);
     }
 
-    public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, List<string> debug = null)
+    protected virtual List<COM> FilterPossibleCOMs(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, COM filter = null, List<string> debug = null)
     {
+        List<COM> results = new List<COM>(allusableCOMs.Count);
         if (actorRefIDStorage.ContainsKey(c.RefID) || allowInvalid)
         {
             var possibleCOMs = allowInvalid ? allusableCOMs : actorRefIDStorage[c.RefID].Match(this);
-            possibleCOMs = possibleCOMs.FindAll(x => (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
-                                                );
+            //possibleCOMs = possibleCOMs.FindAll(x => (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd)));
 
-            List<ActionPackage> results = new List<ActionPackage>();
             foreach (var com in possibleCOMs)
             {
-                // bool valid = false;
-                /*if (com is COM_Character_Remove && this.Container != null && this.Container is JobContainer_Chara && (this.Container as JobContainer_Chara).CharaRefs)
+                if (com.hasFactionReq && !com.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
                 {
-                    var container = this.Container as JobContainer_Chara;
-                    var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(container.CharaRefs), -1, po);
-                    if (package.Validate() || allowInvalid)
+                    if (debug != null) debug.Add($"{com.ID} skipped by failing faction req");
+                    continue;
+                }
+
+                if (filter != null)
+                {
+                    if (com.ID != filter.ID && (com.ParentCOM == null || com.ParentCOM.ID != filter.ID))
                     {
-                        results.Add(package);
-                       // valid = true;
+                        if (debug != null) debug.Add($"{com.ID} skipped by filter {com.ID} != {filter.ID}");
+                        continue;
                     }
                 }
-                else*/
-                if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r)))
+                if (!allowParent && (com.childCOMs.Count > 0))
+                {
+                    if (debug != null) debug.Add($"{com.ID} disallowparent skip");
+                    continue;
+                }
+                if (!allowChild && com.ParentCOM != null)
+                {
+                    if (debug != null) debug.Add($"{com.ID} disallowChild skip");
+                    continue;
+                }
+
+                if (com is COM_TakeMeal && !FactionOwner.isMealHour)
+                {
+                    if (debug != null) debug.Add($"{com.ID} skipped by not meeting meal hour req");
+                    continue;
+                }
+                results.Add(com);
+            }
+
+        }
+
+        return results;
+
+    }
+    public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, COM filter = null,  List<string> debug = null)
+    {
+        var possibleCOMs = FilterPossibleCOMs(c, allowParent, allowChild, allowInvalid, filter, debug);
+
+        List<ActionPackage> results = new List<ActionPackage>();
+
+        foreach (var com in possibleCOMs)
+        {
+            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r)))
+            {
+                bool haspackage = false;
+                if (allowChild && com.GenerateAP != null)
+                {
+                    foreach(var package in com.MakePackages(this, new List<int>() { c.RefID }, new List<int>(), -1))
+                    {
+                        if (package.Validate() || allowInvalid)
+                        {
+                            haspackage = true;
+                            results.Add(package);
+                            if (debug != null) debug.Add($"add com {com.DisplayName()} -> {package.DisplayName}");
+                            //  valid = true;
+                        }
+                    }
+                }
+                else
                 {
                     var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1);
                     if (package.Validate() || allowInvalid)
                     {
+                        haspackage = true;
                         results.Add(package);
                         if (debug != null) debug.Add($"add com {com.DisplayName()}");
                         //  valid = true;
                     }
-                    else if (debug != null) debug.Add($"com {com.DisplayName()} invalid");
-
                 }
-                else if (debug != null) debug.Add($"com {com.DisplayName()} skipped");
-                // if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
-            }
+                if (!haspackage && debug != null) debug.Add($"com {com.DisplayName()} invalid");
 
-            return results;
+            }
+            else if (debug != null) debug.Add($"com {com.DisplayName()} skipped");
+            // if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
         }
+        
         //Debug.Log("UNIMPLEMENTED MAKEPACKAGE FUNCTION");
-        else return new List<ActionPackage>();
+        return results;
     }
 
     public virtual bool isCOMValid(COM com)
@@ -727,55 +776,25 @@ public class Job : IDisposable, I_Disposable
 
         // Debug.LogError($"CollectLogs Duration {ap.Duration} rightAlign {rightAlign}");
 
-        if (ap.Duration >= 0) ap.LogMessage_Climax(display, recording ? room : null, m);
-        
+        var player = scr_System_CampaignManager.current.Player;
+
+
+
 
         if (ap.Duration == -1 && packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count < 1)
         {
-            if (display) ap.LogMessage_Begin_Abort(rightAlign,m);
             ap.DisablePackage(true);
         }
-        else if (ap.Duration == 0)
-        {//   duration == 0 this might be aborted
 
-            
-            if (!ap.LoggedBegin)
-            {
-                if (ap.executeSuccessful)
-                {
-                    if (ap.repeated) ap.LogMessage_Begin_Ongoing(display, recording ? room : null, false, rightAlign, m);
-                    else ap.LogMessage_Begin(display,  room, false, rightAlign, m, scr_System_CampaignManager.current.Player);
-                }
-                else
-                {
-                    ap.LogMessage_Begin_Refuse(display, room, rightAlign, m);
-                }
-                ap.LoggedBegin = true;
-            }
-            ap.LogResultCheck(room, true, m);
-
-            //ap.LogMessage_Kojo(display, room, m);
-
-            // After is displayed only for non-player commands, displaying NPC's results
-            ap.LogMessage_After(display, room, rightAlign, m);
-            
-            m.exp.leftAlignOverride = !rightAlign;
+        if (ap.packageStateChanged)
+        {
+            m.Merge(ap.mcol, false);
+            ap.CaptureRecording();
         }
-        //else if ( ap.targetCOM != null && ap.Duration + 1 == ap.targetCOM.TimeScale)
-        else if (!ap.LoggedBegin && !ap.isPaused)
-        {   // one ticked
 
-            // var checkResult = ap.GetCheckResult(out var tooltip, rightAlign);
-            //if (displayStrict && checkResult.Length > 0) m.messages_checks.Add(checkResult, tooltip);
+        if (!ap.isPaused && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(m, scr_System_CampaignManager.current.Player);
 
-            ap.LogAcceptanceCheck(rightAlign, displayStrict && display, false, m);
 
-            if (ap.repeated) ap.LogMessage_Begin_Ongoing(display,  room , false, rightAlign, m);
-            else ap.LogMessage_Begin(display, room , false, rightAlign, m, scr_System_CampaignManager.current.Player);
-
-            ap.LoggedBegin = true;
-        }
-        else if (!ap.isPaused && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(display, recording ? room : null, rightAlign, m, scr_System_CampaignManager.current.Player);
 
         m.FinalizeEXP(this.actorRefID, display, room);
     }
@@ -788,7 +807,7 @@ public class Job : IDisposable, I_Disposable
             m.exp.AddRelevantChara(this.actorRefID);
             m.exp.AddRelevantChara(this.actorJobComplete);
             m.exp.AddRelevantChara(this.actorRemove);
-            scr_UpdateHandler.current.NotifyJobDescriptions(m, true);
+            scr_UpdateHandler.current.NotifyJobDescriptions(m);
         }
         m.Clear();
     }
@@ -801,7 +820,7 @@ public class Job : IDisposable, I_Disposable
             m.exp.AddRelevantChara(this.actorRefID);
             m.exp.AddRelevantChara(this.actorJobComplete);
             m.exp.AddRelevantChara(this.actorRemove);
-            scr_UpdateHandler.current.NotifyJobDescriptions(m, shortenLogs);
+            scr_UpdateHandler.current.NotifyJobDescriptions(m);
         }
         m.Clear();
     }
@@ -865,7 +884,7 @@ public class Job : IDisposable, I_Disposable
             this.m.exp.AddRelevantChara(this.actorRemove);
             this.m.exp.AddRelevantChara(this.actorJobComplete);
             this.m.exp.AddRelevantChara(this.actorRefID);
-            scr_UpdateHandler.current.NotifyJobDescriptions(m, false);
+            scr_UpdateHandler.current.NotifyJobDescriptions(m);
         }
 
         m.Clear();
@@ -1060,11 +1079,16 @@ public class Job : IDisposable, I_Disposable
 
     public void LogMessage_Begin_Replace(ActionPackage aprevious, ActionPackage anext, MessageCollect m = null)
     {
-        if (m == null) m = this.m;
+
+        // if (m == null) m = this.m;
         // Im not sure if this triggers at all, let's keep it for a while if it doesnt then delete
         //Debug.Log("LogMessage_Begin_Replace");
-
-        aprevious.LogMessage_Begin_Abort();
+        if (m == null)
+        {
+            if (anext != null) m = anext.mcol;
+            else m = this.m;
+        }
+        aprevious.LogMessage_Begin_Abort(m);
         /*
         if (!m.displayOverride && !isVisibleToPlayer) return;
         foreach (var ep in aprevious.ListEP)

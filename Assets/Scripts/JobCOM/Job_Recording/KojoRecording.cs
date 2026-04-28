@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 
@@ -16,11 +15,50 @@ public class KojoRecording
 
         if (!collect.ContainsKey(timestamp))
         {
-            collect.Add(timestamp, new List<MessageCollect>());
+            collect.Add(timestamp, new MessageCollect());
             cachedplaytime = false;
         }
-        collect[timestamp].Add(kol);
+        collect[timestamp].Merge(kol);
         
+    }
+
+    public List<ActorRecord> ActorSettings = new List<ActorRecord>();
+    public ActorRecord cameraman = null;
+
+    public void FinalizeRecording()
+    {
+        Dictionary<int, ActorRecord> rectemp = new Dictionary<int, ActorRecord>();
+        foreach(var col in collect)
+        {
+            col.Value.RecordActor(rectemp);
+        }
+        ActorSettings = new List<ActorRecord>(rectemp.Values);
+    }
+
+    bool initialized = false;
+    public void Initialize()
+    {
+        _MessageCountByActor.Clear();
+
+        foreach (var setting in ActorSettings)
+        {
+            setting.Update();
+            _MessageCountByActor.Add(setting.baseID, setting);
+        }
+
+        foreach(var m in collect)
+        {
+            m.Value.ReadActorRecord(_MessageCountByActor);
+        }
+    }
+
+    [JsonIgnore]
+    public int ActorCount
+    {
+        get
+        {
+            return _MessageCountByActor.Count;
+        }
     }
 
     // replay recording?
@@ -40,7 +78,7 @@ public class KojoRecording
         } }
 
     [JsonProperty]
-    SortedDictionary<DateTime, List<MessageCollect>> collect = new SortedDictionary<DateTime, List<MessageCollect>>();
+    SortedDictionary<DateTime, MessageCollect> collect = new SortedDictionary<DateTime, MessageCollect>();
 
     [JsonIgnore]
     public string DebugTool
@@ -52,28 +90,71 @@ public class KojoRecording
             foreach(var kvp in collect)
             {
                 keyscount += 1;
-                total.Add( kvp.Value.Count);
+                total.Add( kvp.Value.MessageCount);
             }
             return $"keyscount {keyscount}, total [{String.Join(" ", total)}]";
         }
     }
-    /*
-    public List<I_Records> GetKojoFrom(DateTime starttime, Character_Trainable from = null)
-    {
-        List<I_Records> returnList = null;
-        foreach(var kvp in collect)
-        {
-            if (kvp.Key <= starttime) continue;
 
-            returnList = new List<MessageCollect>( kvp.Value);
-            for (int i = returnList.Count - 1; i >= 0; i--)
+    Dictionary<string, ActorRecord> _MessageCountByActor = new Dictionary<string, ActorRecord>();
+    List<DateTime> cached_datetime = null;
+    [JsonIgnore]
+    public List<string> ActorInfo
+    {
+        get
+        {
+            List<string> info = new List<string>();
+            foreach(var kvp in _MessageCountByActor)
             {
-                if (!returnList[i].VisibleTo(from)) returnList.RemoveAt(i);
+                var curname = kvp.Value.Name;
+                info.Add((kvp.Value.firstNameOriginal == curname ? curname : $"{curname}({kvp.Value.firstNameOriginal})")+$"({kvp.Value.Count})");
             }
-            if (returnList.Count > 0) break;
+            return info;
         }
-        return returnList;
-    }*/
+    }
+
+    /// <summary>
+    /// Return next collect message (exclude current time)
+    /// </summary>
+    /// <param name="elapsedTime"></param>
+    /// <param name="c"></param>
+    /// <param name="newDuration"></param>
+    /// <returns></returns>
+    public MessageCollect GetKojoFrom(ref int elapsedTime, Character_Trainable c, out int newDuration)
+    {
+        if (collect.Count < 1)
+        {
+            newDuration = 0;
+            return null;
+        }
+
+        if (cached_datetime == null)
+        {
+            cached_datetime = collect.Keys.ToList();
+        }
+
+        var message = new MessageCollect();
+        var startTime = collect.First().Key;
+        var targetTime = startTime.AddMinutes(elapsedTime);
+
+        foreach(var key in cached_datetime)
+        {
+            if (key <= targetTime) continue;
+            if (collect.TryGetValue(key, out var msg) && message.MergeVisible(msg, c))
+            {
+                if (msg.apRecords != null) message.apRecords.AddRange(msg.apRecords);
+                newDuration = (key - targetTime).Minutes;
+                elapsedTime += newDuration;
+
+                message.AddReplaceString(_MessageCountByActor);
+
+                return message;
+            }
+        }
+        newDuration = 0;
+        return null;
+    }
+
 
     /*
      if character is playing...
@@ -81,7 +162,6 @@ public class KojoRecording
     Job replay,
     total duration get recording playtime, depending on remaining playtime get collectors
 
-     
      */
 
 }

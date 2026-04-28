@@ -80,7 +80,7 @@ public class MessageLogManager
         this.currentPortrait = null;
     }
 
-    public MessageLog AddLog(DescriptionCollector desc, Character_Trainable chara)
+    public MessageLog AddLog(DescriptionCollector desc, Character_Trainable chara, Dictionary<string, string> replaceStrings = null)
     {
         if (desc == null) return null;
         if (!desc.VisibleTo(chara)) return null;
@@ -88,7 +88,7 @@ public class MessageLogManager
         else if (!desc.DirectlyRelated(chara) && desc.message_excludeRelated.Length < 1) return null;
         bool rA = desc.RightAlign(chara);
 
-        Message_Text log = new Message_Text(desc, desc.DirectlyRelated(chara), rA);       
+        Message_Text log = new Message_Text(desc, desc.DirectlyRelated(chara), rA, replaceStrings);       
         return AddLog(log);
     }
 
@@ -234,6 +234,8 @@ public class Message_Text : MessageLog
     public Message_Text(Character_Trainable chara, List<string> tags, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , tags, time, parentEvent)
     {
         this.tagsOverride = tags;
+        if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
+
         AddMessage(messages, rA);
         this.tooltip = tooltip;
     }
@@ -244,36 +246,50 @@ public class Message_Text : MessageLog
         this.tooltip = tooltip;
     }
 
-    public Message_Text(MessageCollect_KojoEntry m, bool ra, string tooltip)
+    public Message_Text(MessageCollect_KojoEntry m, bool ra, string tooltip, Dictionary<string, string> replaceStrings = null)
     {
-        var chara = scr_System_CampaignManager.current.FindInstanceByID(m.portraitRefID);
+        var chara = scr_System_CampaignManager.current.FindInstanceByID(m.PortraitRefID);
         this.PortraitRef = chara == null ? null : chara.PortraitManager;
         this.tagsOverride = m.portraitTags;
+
+        if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
+
         this.autoAnimate = ra;
-        AddMessage(m.message, ra);
+        var msg = m.message;
+        if (replaceStrings != null)
+        {
+            foreach (var kvp in replaceStrings) msg = msg.Replace(kvp.Key, kvp.Value);
+        }
+
+        AddMessage(msg, ra);
         this.tooltip = tooltip;
     }
 
-    public Message_Text(DescriptionCollector desc, bool isDirectlyRelated, bool rightAlign)
+    public Message_Text(DescriptionCollector desc, bool isDirectlyRelated, bool rightAlign, Dictionary<string, string> replaceStrings = null)
     {
 
-        if (desc.portraitRefs.Count == 1)
+        if (desc.PortraitRefs.Count == 1)
         {
-            var chara = scr_System_CampaignManager.current.FindInstanceByID(desc.portraitRefs[0]);
+            var chara = scr_System_CampaignManager.current.FindInstanceByID(desc.PortraitRefs[0]);
             if (chara != null) this.PortraitRef = chara.PortraitManager;
         }
-        else if (desc.portraitRefs.Count > 1)
+        else if (desc.PortraitRefs.Count > 1)
         {
-            foreach (var c in desc.portraitRefs)
+            foreach (var c in desc.PortraitRefs)
             {
                 var chara = scr_System_CampaignManager.current.FindInstanceByID(c);
                 if (chara != null) this.multipleChara.Add(chara);
             }
         }
-        AddMessage(isDirectlyRelated ? desc.message : desc.message_excludeRelated, rightAlign);
+        var msg = isDirectlyRelated ? desc.message : desc.message_excludeRelated;
+        if (replaceStrings != null) foreach (var kvp in replaceStrings) msg = msg.Replace(kvp.Key, kvp.Value);
+        AddMessage(msg, rightAlign);
         this.tooltip = desc.tooltip;
         this.tagsOverride = desc.displayTagsOverride;
-        this.time = desc.Timestamp;
+
+        //if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
+
+        this.time = scr_UpdateHandler.current.UpdateTime;
         this.autoAnimate = desc.autoAnimate;
     }
 

@@ -85,12 +85,12 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
                     var execName = execMove == null ? "" : LocalizeDictionary.QueryThenParse("ItemComponent_Weapon_tooltip_execution").Replace("$name$", execMove.DisplayName);
                     cc.Replace("$execution$", execName);
                 }
-                compTooltips.Add(cc);
+                if (cc.Length > 0) compTooltips.Add(cc);
             }
             return LocalizeDictionary.QueryThenParse("Item_Instance_Tooltip")
                 .Replace("$tags$", $"[{String.Join("|", this.Tags)}]")
                 .Replace("$parent$", Parent.Tooltip)
-                .Replace("$comps$", compTooltips.Count > 0 ? String.Join("\n\n", compTooltips) : ""); } }
+                .Replace("$comps$", compTooltips.Count > 0 ? $"\n\n"+String.Join("\n\n", compTooltips) : ""); } }
     [JsonIgnore] public bool Stackable { get { return Parent.Stackable && this.compInstances.Count < 1; } }
     [JsonIgnore] public int Cleanliness { get { return Parent.cleanlinessMod; } }
     [JsonIgnore] public bool isTrash { get { return Parent.Tags.Contains("trash"); } }

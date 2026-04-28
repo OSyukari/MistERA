@@ -161,6 +161,8 @@ public class CharaTemplateGenerator
     public int str_base = 0, str_var = 0, con_base = 0, con_var = 0, psy_base = 0, psy_var = 0, wil_base = 0, wil_var = 0;
     public Humanoid_GenderAppearance Appearance = Humanoid_GenderAppearance.Female;
     public List<presetInventory> inventoryOverride = new List<presetInventory>();
+    public List<string> basicExperienceOverride = new List<string>();
+    public List<string> experienceOverride = new List<string>();
 
     CharaTemplate _template = null;
 
@@ -198,6 +200,16 @@ public class CharaTemplateGenerator
             if (this.weightVariation > 0) template.Weight = (int)Utility.RandVariation(template.Weight, this.weightVariation);
 
             if (this.inventoryOverride.Count > 0) template.initialInventory.AddRange(this.inventoryOverride);
+            if (this.basicExperienceOverride.Count > 0)
+            {
+                Debug.Log($"setting basic experience override: {String.Join(" ", this.basicExperienceOverride)}");
+                template.basicExperience = this.basicExperienceOverride;
+            }
+            if (this.experienceOverride.Count > 0)
+            {
+                template.initialExperiences.AddRange(this.experienceOverride);
+                Debug.Log($"adding basic experience override: {String.Join(" ", this.experienceOverride)}");
+            }
             return template;
         }
     }

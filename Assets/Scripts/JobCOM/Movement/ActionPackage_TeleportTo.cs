@@ -135,7 +135,7 @@ public class ActionPackage_TeleportTo : ActionPackage
 
 
         Room_Instance room = Doer.CurrentRoom;
-        string s = LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$room$", room.DisplayName);
+        string s = LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", room.DisplayName);
         var desc = new DescriptionCollector(s);
 
         desc.LoadActors(Doer.RefID, true, false);

@@ -207,8 +207,7 @@ public class Job_Sex_Group : Job
                 {
                     var desc = new DescriptionCollector(i.Value);
                     desc.message_excludeRelated = i.Value;
-                    this.m.AddMessage_After(desc, true, this.ParentRoom, false);
-                   // this.m.messages_after.Add(i.Value);
+                    this.m.AddMessage_After(desc, this.ParentRoom);
                 }
             }
         }
@@ -227,17 +226,13 @@ public class Job_Sex_Group : Job
             var playerTag = new List<string>();
             UtilityEX.GetActorTag(ref playerTag, player);
             var actors = new List<Character_Trainable>(this.Actors);
-            if (additionalActors != null) 
-            {
-                actors.AddRange(additionalActors);
-                actors = Utility.Distinct(actors);
-            }
 
             Debug.Log($"EndSexjob called with kojoID {sendKojoID}, ActorCount {this.actorRefID.Count}+{(additionalActors == null ? 0 : additionalActors.Count)}={actors.Count}");
 
             foreach (var actor in actors)
             {
                 if (actor == player) continue;
+                if (additionalActors != null && additionalActors.Contains(actor)) continue;
                 var rel = actor.Relationships.FindRelationshipWith(player);
                 //var actorTag = new List<string>();
                 //UtilityEX.GetActorTag(ref actorTag, actor);
@@ -283,7 +278,7 @@ public class Job_Sex_Group : Job
             var desc = new DescriptionCollector(appendAfterMsg);
             desc.LoadActors(newList);
             desc.message_excludeRelated = appendAfterMsg;
-            this.m.AddMessage_After(desc, true, ParentRoom, false);
+            this.m.AddMessage_After(desc, ParentRoom);
             //this.m.messages_after.Add(appendAfterMsg);
         }
 
@@ -531,13 +526,14 @@ public class Job_Sex_Group : Job
                         else if (UtilityEX.DetectConflict(p, packages_current[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
 
-                            if (display) packages_current[ii].LogMessage_Begin_Abort();
+                            //if (display) packages_current[ii].LogMessage_Begin_Abort();
 
                             replaced = true;
+                            LogMessage_Begin_Replace(packages_current[ii], null);
                             packages_current[ii].LoggedBegin = true;
-
                             packages_current[ii].PackageRepeat = false;
                             packages_current[ii].DisablePackage();
+
                             packages_previous.Add(packages_current[ii]);
                             packages_current.RemoveAt(ii);
                         }
@@ -548,7 +544,7 @@ public class Job_Sex_Group : Job
 
                         if (packages_previous[ii].Duration > 0 && UtilityEX.DetectConflict(p, packages_previous[ii]))
                         {   // leave the conflict package in previous to use for COM text selection purposes.
-                            if (display) packages_previous[ii].LogMessage_Begin_Abort();
+                           // if (display) packages_previous[ii].LogMessage_Begin_Abort();
 
                             replaced = true;
                             packages_previous[ii].LoggedBegin = true;

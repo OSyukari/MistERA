@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +22,14 @@ public enum AP_Priority
 
 public enum AP_Status
 {
+    none,
     aborted,
-    waitingForRequest,
-    accepted
+    refused,
+    refused_doer,
+    refused_receiver,
+    accepted,
+    running,
+    success
 }
 
 
@@ -37,6 +41,7 @@ public enum AP_Status
 /// </summary>
 public abstract class ActionPackage
 {
+    public AP_Status internalState = AP_Status.none;
     public bool timestopTick = false;
     string cache_refusedResponse = "";
     string RefuseResponse { get
@@ -237,6 +242,18 @@ public abstract class ActionPackage
             if (this.job != null && this.job.ParentRoom != null) return this.job.ParentRoom.RefID;
             return -1; } }
 
+    Room_Instance _room = null;
+    [JsonIgnore] public Room_Instance Room { get
+        {
+            if (RoomKey == -1) return null;
+            if (_room == null || _room.RefID != RoomKey)
+            {
+                _room = scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
+            }
+            return _room;
+        } }
+
+
     public DateTime time;
 
 
@@ -266,7 +283,7 @@ public abstract class ActionPackage
     /// <param name="doers"></param>
     /// <param name="receivers"></param>
     /// <returns></returns>
-    public virtual int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers)
+    public virtual int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers, out List<string> tooltips)
     {
         doers = new List<int>(this.DoerRefs);
         receivers = new List<int>(this.ReceiverRefs);
@@ -277,6 +294,7 @@ public abstract class ActionPackage
             else receivers.Add(c.RefID);
         }
         //Debug.LogError("Error calling canJoinAP on default APs");
+        tooltips = null;
         return -1;
     }
 
@@ -316,7 +334,7 @@ public abstract class ActionPackage
         if (this.doer.Contains(c)) return true;
         else if (this.receiver.Contains(c)) return true;
 
-        var variantID = canJoinAP(c, out var doers1, out var receivers1);
+        var variantID = canJoinAP(c, out var doers1, out var receivers1, out var ttps);
         if (variantID >= 0)
         {
             var old_d = this.DoerRefs;
@@ -504,6 +522,8 @@ public abstract class ActionPackage
 
     [JsonProperty] public List<string> tooltip = new List<string>();
     [JsonProperty] protected List<string> extraCOMTags = new List<string>();
+    [JsonIgnore]
+    public List<string> ExtraCOMTags { get { return extraCOMTags; } }
     public void AddExtraCOMTags(List<string> extratags)
     {
         this.extraCOMTags.AddRange(extratags);
@@ -570,7 +590,7 @@ public abstract class ActionPackage
             {
                 pausedTick = 0;
                 foreach (var d in this.doer) d.NotifyJobStateChange();
-                PackageBegin();
+                PackageResume();
             }
         } }
 
@@ -635,7 +655,7 @@ public abstract class ActionPackage
     /// <param name="targetCOM"></param>
     /// <param name="doer"></param>
     /// <param name="receiver"></param>
-    protected virtual void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
+    public virtual void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
     {
 
         if (tooltip == null) tooltip = new List<string>();
@@ -686,10 +706,26 @@ public abstract class ActionPackage
     /// </summary>
     public virtual void DisablePackage(bool extraTick = false)
     {
-        if (!extraTick) this.duration = -1;
-        else this.duration = -2;
+        if (!extraTick)
+        {
+            this.duration = -1;
+
+        }
+        else
+        {
+            LogMessage_Begin_Abort();
+            this.duration = -2;
+        }
 
         this.toggleRepeat = false;
+    }
+
+    public void CaptureRecording()
+    {
+        if (this.Room != null) Room.CaptureAPSnapshot(this);
+
+        mcol.Clear();
+        packageStateChanged = false;
     }
 
     public bool repeated = false;
@@ -721,6 +757,7 @@ public abstract class ActionPackage
     public bool LoggedOngoing = false;
     public bool LoggedKojo = false;
     public bool Ticked = false;
+    public bool LaunchOptionsChecked = false;
     // package refused by C_MANAGER due to low package priority
 
 
@@ -738,6 +775,13 @@ public abstract class ActionPackage
         //Debug.Log("before timestop");
 
         bool timeTimestop = scr_System_Time.current.TimeStop;
+
+        if (this.Duration == -1)
+        {
+
+        }
+
+
         //Debug.Log("before doerRefs");
         foreach (var chara in DoerRefs)
         {
@@ -758,52 +802,63 @@ public abstract class ActionPackage
         if (!timeStop && !allUnconscious)
         {
             if (!Ticked) StartTime = scr_System_Time.current.getCurrentTime() - TimeSpan.FromMinutes(tickDuration);
-            else LoggedBegin = true;
-
             this.duration = Math.Max(0, this.duration - tickDuration);
+
             if (this.isPaused)
             {
                 Debug.LogError($"Tick on paused AP {this.DisplayName}, unpausing");
                 this.isPaused = false;
             }
-            Ticked = true;
             // if refused, cut short the whole thing
 
-            if (!requested && !Request())
+            if (!requested)
             {
-                // refuse!
-                duration = 0;
-                //Debug.LogError("Actor Refused Package "+DisplayName);
-                    
-                toggleRepeat = false;
-                ExecutePackage();
-                return true;
+                if (!Request())
+                {
+                    // refuse!
+                    duration = 0;
+                    //Debug.LogError("Actor Refused Package "+DisplayName);
+                    Ticked = true;
+                    internalState = AP_Status.refused;
+                    toggleRepeat = false;
+                    LogAcceptanceCheck();
+                    LogMessage_Begin_Refuse();
+                    ExecutePackage();
+                    return true;
+                }
+                else
+                {   // accept
+                    LogAcceptanceCheck();
+                    internalState = AP_Status.accepted;
+                    if (receiver.Count > 0 && duration > 0)
+                    {
+                        string s = "Package " + DisplayName + " accepted : ";
+                        foreach (var rc in receiver)
+                        {
+                            if (!(this.job is Job_CharaCOM) && rc.CurrentJob != this.job)
+                            {
+                                string s2 = "";
+                                foreach (var allusablep in job.allusableCOMs) s2 += allusablep.ID + " ";
+                                s += " Changing " + rc.FirstName + "'s job to [" + String.Join(" ", job.allusableCOMStrings) + "] comIDs [" + s2 + "]";
+
+                                rc.ChangeCurrentJob(job);   // THIS IS BAD!
+                                Debug.LogError($"WARNING CHARA {rc.FirstName} JOIN JOB {this.DisplayName} THROUGH TICK!");
+                            }
+                        }
+                    }
+                    PackageBegin();
+                }
             }
             else
             {
-
-                if (receiver.Count > 0 && duration > 0)
-                {
-                    string s = "Package "+DisplayName+" accepted : ";
-                    foreach (var rc in receiver)
-                    {
-                        if (!(this.job is Job_CharaCOM) && rc.CurrentJob != this.job)
-                        {
-                            string s2 = "";
-                            foreach (var allusablep in job.allusableCOMs) s2 += allusablep.ID + " ";
-                            s += " Changing " + rc.FirstName + "'s job to [" + String.Join(" ", job.allusableCOMStrings) + "] comIDs ["+s2+"]";
-
-                            rc.ChangeCurrentJob(job);   // THIS IS BAD!
-                            Debug.LogError($"WARNING CHARA {rc.FirstName} JOIN JOB {this.DisplayName} THROUGH TICK!");
-                        }
-                    }
-                }
-                PackageBegin();
+                internalState = AP_Status.running;
             }
+            PackageTick();
         }
        
         if (duration <= 0)
         {
+            internalState = AP_Status.success;
             ExecutePackage();
             return true;
         }
@@ -965,7 +1020,7 @@ public abstract class ActionPackage
         else
         {
             isValid = false;
-            //this.tooltip.Add("no valid variant");
+            this.tooltip.Add($"no valid variant");
         }
 
         //extraCOMTags = new List<string>();
@@ -991,6 +1046,10 @@ public abstract class ActionPackage
                    // this.responseRate = Math.Min(t.ResponseRate, this.responseRate);
                     this.requestRate = Math.Min(t.RequestRate, this.requestRate);
                 }
+                else
+                {
+                    this.tooltip.Add($"evp validation fail for {c_doer.FirstName}");
+                }
 
                 this.tooltip.AddRange(t.tooltip);
             }
@@ -1008,6 +1067,10 @@ public abstract class ActionPackage
                         //this.attitudeRate_pos = t.attitudeRate_pos;
                         this.responseRate = Math.Min(t.RequestRate, this.responseRate);
                         //this.requestRate = Math.Min(t.RequestRate, this.requestRate);
+                    }
+                    else
+                    {
+                        this.tooltip.Add($"evp validation fail for {c_doer.FirstName}");
                     }
 
                     this.tooltip.AddRange(t.tooltip);
@@ -1039,6 +1102,10 @@ public abstract class ActionPackage
                             //this.attitudeRate_pos = Math.Min(this.attitudeRate_pos, t.attitudeRate_pos);
                             this.responseRate = Math.Min(this.responseRate, t.ResponseRate);
                             this.requestRate = Math.Min(this.requestRate, t.RequestRate);
+                        }
+                        else
+                        {
+                            this.tooltip.Add($"evp validation fail for {c_doer.FirstName} and {c_receiver.FirstName}");
                         }
 
                         this.tooltip.AddRange(t.tooltip);
@@ -1076,7 +1143,7 @@ public abstract class ActionPackage
     //public int AttitudeRate_Neg { get { return attitudeRate_neg; } }
     
 
-    public void GetSerializedAPData(LLMUtils.SerializedAP ap)
+    public virtual void GetSerializedAPData(LLMUtils.SerializedAP ap)
     {
         RemakePackages();
         List<string> acceptances = new List<string>(), mods = new List<string>(), cat3 = new List<string>();
@@ -1142,15 +1209,20 @@ public abstract class ActionPackage
 
 
 
+    protected virtual void PackageTick(MessageCollect m = null)
+    {
+        Ticked = true;
+    }
 
-
+    public bool packageStateChanged = false;
 
     /// <summary>
     /// If MessageCollect is null, then there will be participant check
     /// </summary>
     /// <param name="m"></param>
-    protected void PackageBegin(MessageCollect m = null)
+    protected virtual void PackageBegin(MessageCollect m = null)
     {
+        if (LoggedBegin) return;
         if (targetCOM == null) return;
         if (isTemporaryAP) return;
         if (m == null) m = this.job.m;
@@ -1160,11 +1232,52 @@ public abstract class ActionPackage
             Debug.Log($"AP {DisplayName} execution() called but there is no package inside. Rebuilding... package count {packages.Count}");
             RemakePackages();
         }
-        foreach(var package in packages)
+
+        foreach (var package in packages)
         {
             package.ExecuteImmediate(m);
         }
+
+        if (!LaunchOptionsChecked)
+        {
+            var ops = LaunchOptions();
+            if (ops == null || ops.Count < 1) LaunchOptionsChecked = true;
+            else
+            {
+                ops[0].callback.Invoke();
+                Debug.Log($"Launch options not selected for {this.DisplayName}, default to first option {ops[0].optionName}");
+                LaunchOptionsChecked = true;
+            }
+        }
+
+        if (repeated)
+        {
+            LogMessage_Begin_Ongoing();
+        }
+        else
+        {
+            LogMessage_Begin();
+        }
+
     }
+    /// <summary>
+    /// If MessageCollect is null, then there will be participant check
+    /// </summary>
+    /// <param name="m"></param>
+    protected virtual void PackageResume(MessageCollect m = null)
+    {
+        this.Ticked = true;
+        if (targetCOM == null) return;
+        if (isTemporaryAP) return;
+        if (m == null) m = this.job.m;
+
+        if (packages == null || packages.Count < 1)
+        {
+            Debug.Log($"AP {DisplayName} execution() called but there is no package inside. Rebuilding... package count {packages.Count}");
+            RemakePackages();
+        }
+    }
+
 
 
     /// <summary>
@@ -1451,59 +1564,73 @@ public abstract class ActionPackage
         //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
     }
 
-    public void LogResultCheck(Room_Instance room, bool addKojo = true, MessageCollect m = null)
+    public void LogResultCheck(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
+        if (isTemporaryAP) return;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
 
         bool single = ShortenAPDisplay;
         var desc = new DescriptionCollector();
 
-        desc.message = this.checkResults_result;
+        desc.message = $"{this.checkResults_result}";
         if (targetCOM != null && COMVariantID >= 0)
         {
+            //desc.message = targetCOM.variants[COMVariantID].GetDescription_OnComplete(targetCOM, this);
             desc.message_excludeRelated = targetCOM.variants[COMVariantID].GetDescription_OnComplete(targetCOM, this);
             UtilityEX.StringReplace(this, ref desc.message_excludeRelated);
             desc.message_excludeRelated = targetCOM.Replace(desc.message_excludeRelated);
+            if (desc.message.Length < 1)
+            {
+                //Debug.LogError("logcheckresult null defaulting");
+                //desc.message = desc.message_excludeRelated;
+            }
         }
 
         desc.tooltip = this.checkResults_tooltips;
 
-        if (addKojo)
+        var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
+
+        if (shuffledList.Count < 1)
         {
-            var kojoTarget = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
-
-            if (shuffledList.Count < 1)
-            {
-                shuffledList = new List<EvaluationPackage>(ListEP);
-                //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
-            }
-            Utility.Shuffle(shuffledList);
-            foreach (var ep in shuffledList)
-            {
-
-                var rel = ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget ? ep.Doer.Relationships.FindRelationshipWith(kojoTarget) : null;
-                var responses = ep.LogMessage_Kojo(m, rel);
-
-                bool exist = false;
-                foreach (var kol in responses)
-                {
-                    exist = exist || kol.collect.message.Length > 0;
-                    desc.Load(kol.collect);
-                }
-                if (exist && single) break;
-            }
-
+            shuffledList = new List<EvaluationPackage>(ListEP);
+            //Debug.LogError($"shuffled list count 0, resetting to {shuffledList.Count}");
         }
+        Utility.Shuffle(shuffledList);
+        foreach (var ep in shuffledList)
+        {
 
+            var rel = ep.Receiver == null && kojoTarget != null && ep.Doer != kojoTarget ? ep.Doer.Relationships.FindRelationshipWith(kojoTarget) : null;
+            var responses = ep.LogMessage_Kojo(m, rel);
+
+            bool exist = false;
+            foreach (var kol in responses)
+            {
+                exist = exist || kol.collect.message.Length > 0;
+                desc.Load(kol.collect);
+            }
+            if (exist && single) break;
+        }
         desc.LoadActors(this.job.actorRefID);
+
         //desc.message_excludeRelated = desc.message;
         //desc.LoadPortraits(this.actorRefs, true);
-        m.AddMessage_Checks(desc, true, this.job.ParentRoom, false);        
+        m.AddMessage_Checks(desc, logging ? Room : null);    
+        if (!logging) packageStateChanged = true;
     }
 
-    public void LogAcceptanceCheck(bool rightAlign, bool displayFull, bool resultOnly = false, MessageCollect m = null)
+    public void LogAcceptanceCheck(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
         var desc = new DescriptionCollector();
 
         List<string> checkResults = new List<string>();
@@ -1511,7 +1638,7 @@ public abstract class ActionPackage
         foreach (var ep in packages)
         {
             if (ep.skipCheckResult) continue; // skip player alone package
-            var res = ep.GetCheckResult(!rightAlign);
+            var res = ep.GetCheckResult(false);
             if (res.Length < 1) continue;
             checkResults.Add(res);
         }
@@ -1522,11 +1649,8 @@ public abstract class ActionPackage
 
 
         desc.LoadActors(this.actorRefs);
-        m.messages_checks.Add(desc);//
-
-        
-
-        //scr_UpdateHandler.current.NotifyCheckResult(finalResults);
+        m.AddMessage_Checks(desc, logging? Room : null);//
+        if (!logging) packageStateChanged = true;
     }
 
     /// <summary>
@@ -1664,11 +1788,12 @@ public abstract class ActionPackage
 
         joinAP_list.Clear();
 
+
+
         if (this.targetCOM != null && targetCOM.comTags.Contains("food_meal"))
         {
             //Debug.LogError("executing meal AP");
         }
-
 
         if (this.targetCOM != null)
         {
@@ -1718,6 +1843,9 @@ public abstract class ActionPackage
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
         }
+
+
+        LogResultCheck();
 
         var actors = new List<Character_Trainable>();
         actors.AddRange(this.doer);
@@ -2025,9 +2153,12 @@ public abstract class ActionPackage
 
         if (this.temporaryM != null)
         {
-            m.Merge(this.temporaryM, false);
+            m.Merge(this.temporaryM);
             this.temporaryM = null;
         }
+
+        LogMessage_Climax();
+        LogMessage_After();
     }
 
     MessageCollect temporaryM = null;
@@ -2112,19 +2243,15 @@ public abstract class ActionPackage
 
     public void LogMessage_Kojo(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
-        var visible = job.isPlayerRelatedJob || isPlayerRelatedPackage;
-        var recordingRoom = this.RoomKey == -1 ? null : scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
-        if (recordingRoom != null && !recordingRoom.HasRecording) recordingRoom = null;
-
-        LogMessage_Kojo(visible, recordingRoom, m);
-    }
-
-    public void LogMessage_Kojo(bool visible, Room_Instance recordingRoom, MessageCollect m = null)
-    {
-        if (m == null) m = this.job.m;
         if (LoggedKojo) return;
-        if (!visible && recordingRoom == null) return;
+
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
+
         LoggedKojo = true;
         //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Kojo Message triggered for " + ep.Doer.FirstName + ", tags: [" + String.Join("|", ep.DoerSelfTag) + "] -> [" + String.Join("|", ep.ReceiverTargetTag) + $"], epStatus [{ep.Response}]");
 
@@ -2145,8 +2272,9 @@ public abstract class ActionPackage
             var responses = ep.LogMessage_Kojo(m, rel);
             foreach (var kol in responses)
             {
-                if (visible) m.AddKojo(kol);
-                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+                m.AddKojo(kol);
+                if (!logging) packageStateChanged = true;
+                else if (Room != null && Room.HasRecording) Room.NotifyKojoCollect(kol);
             }
             if (single && !ep.isPlayerEP) break;
         }
@@ -2157,17 +2285,13 @@ public abstract class ActionPackage
     public bool LogMessage_Join(Character_Trainable target, string tooltip, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
-        var visible = job.isPlayerRelatedJob || isPlayerRelatedPackage;
-        var recordingRoom = this.RoomKey == -1 ? null : scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
-        if (recordingRoom != null && !recordingRoom.HasRecording) recordingRoom = null;
 
-        return LogMessage_Join(visible, recordingRoom, target, tooltip, m);
-    }
-
-    public bool LogMessage_Join(bool visible, Room_Instance recordingRoom, Character_Trainable target, string tooltip, MessageCollect m = null)
-    {
-        if (m == null) m = this.job.m;
-        if (!visible && (recordingRoom == null || !recordingRoom.HasRecording)) return false;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
 
         var list = new List<EvaluationPackage>(this.packages);
         Utility.Shuffle(list);
@@ -2191,23 +2315,33 @@ public abstract class ActionPackage
                 // {
                 kol.tooltip = tooltip;
                 kol.LoadRelevantActors(this.job.actorRefID);
-                m.AddMessage_Before(kol, visible, recordingRoom, false);
-                //}
-                if (recordingRoom != null) recordingRoom.NotifyDescCollect(kol);
+                m.AddMessage_Before(kol, true, logging ? Room : null, false);
+                if (!logging) packageStateChanged = true;
+                else if (Room != null && Room.HasRecording) Room.NotifyDescCollect(kol);
             }
             if (logged) return true;
         }
         return false;
     }
 
-    public void LogMessage_Begin(bool visible, Room_Instance recordingRoom, bool ignoreBegin = false, bool rightAlign = false,  MessageCollect m = null, Character_Trainable target = null)
-    {
-        if (m == null) m = this.job.m;
-        if (!visible && recordingRoom == null) return;
-        if (!ignoreBegin && LoggedBegin) return;
-        if (targetCOM == null || COMVariantID < 0) return;
+    public MessageCollect mcol = new MessageCollect();
 
+
+    public void LogMessage_Begin(MessageCollect m = null, Character_Trainable injectChara = null)
+    {
+        if (LoggedBegin) return;
+        if (targetCOM == null || COMVariantID < 0) return;
+        if (isTemporaryAP) return;
+
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
         LoggedBegin = true;
+        var playerRef = scr_System_CampaignManager.current.Player;
+        if (this.Actors.Contains(playerRef) && injectChara == null) injectChara = playerRef;
 
         string s = targetCOM.variants[COMVariantID].GetDescription_Begin(targetCOM, this);
         UtilityEX.StringReplace(this, ref s);
@@ -2227,8 +2361,8 @@ public abstract class ActionPackage
         bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
         {
-            var responses = ep.LogMessage_Begin(ignoreBegin, m, target);
-            foreach(var kol in responses)
+            var responses = ep.LogMessage_Begin(m, null, injectChara);   // InjectChara should be null, as 
+            foreach (var kol in responses)
             {
                 //m.AddMessage_Before(kol, visible, recordingRoom, rightAlign);
                 exist = exist || kol.collect.message.Length > 0;
@@ -2243,30 +2377,36 @@ public abstract class ActionPackage
             desc.LoadActors(this.job.actorRefID);
             desc.message_excludeRelated = desc.message;
             //desc.LoadPortraits(this.actorRefs, true);
-            m.AddMessage_Before(desc, desc.VisibleTo(scr_System_CampaignManager.current.Player), recordingRoom, rightAlign);
+            m.AddMessage_Before(desc, true, logging ? Room : null);
+            if (!logging) packageStateChanged = true;
         }
     }
     /// <summary>
-    /// This one should be allowed to repeat on every player command input, so there is less check
-    /// </summary>
-    /// <param name="ep"></param>
-    public void LogMessage_Begin_Ongoing(bool visible, Room_Instance recordingRoom, bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+     /// This one should be allowed to repeat on every player command input, so there is less check
+     /// </summary>
+     /// <param name="ep"></param>
+    public void LogMessage_Begin_Ongoing(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
-        if (!visible && recordingRoom == null) return;
-        if (!ignoreBegin && LoggedBegin) return;
+        if (LoggedBegin) return;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
         LoggedBegin = true;
 
         foreach (var ep in this.ListEP)
         {
-            var response = ep.LogMessage_Begin_Ongoing(ignoreBegin, rightAlign, m);
+            var response = ep.LogMessage_Begin_Ongoing(mcol);
             if (response.Length < 1) continue;
 
-            
+
             var desc = new DescriptionCollector(response);
             desc.LoadActors(this.job.actorRefID);
             desc.message_excludeRelated = response;
-            m.AddMessage_Before(desc, visible, recordingRoom, rightAlign);
+            mcol.AddMessage_Before(desc, true, logging ? Room : null);
+            if (!logging) packageStateChanged = true;
         }
     }
 
@@ -2278,11 +2418,15 @@ public abstract class ActionPackage
     /// <param name="rightAlign"></param>
     /// <param name="m"></param>
     /// <param name="target"></param>
-    public void LogMessage_Ongoing(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null, Character_Trainable target = null)
+    public void LogMessage_Ongoing(MessageCollect m, Character_Trainable target = null)
     {
         if (this.isTemporaryAP) return;
-        if (!visible && recordingRoom == null) return;
-        if (m == null) m = this.job.m;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
         var ss = new List<string>();
         string s = targetCOM.variants[COMVariantID].GetDescription_Ongoing(targetCOM, this);
         //Debug.Log("AP LogMessage_Ongoing");
@@ -2302,7 +2446,7 @@ public abstract class ActionPackage
         bool single = ShortenAPDisplay;
         foreach (var ep in shuffledList)
         {
-            var responses = ep.LogMessage_Ongoing(rightAlign, m, target);
+            var responses = ep.LogMessage_Ongoing(m, target);
             foreach (var kol in responses)
             {
                 //ss.Add(kol.collect.message);
@@ -2318,74 +2462,79 @@ public abstract class ActionPackage
             desc.LoadActors(this.job.actorRefID);
             desc.message_excludeRelated = desc.message;
             desc.autoAnimate = true;
-            m.AddMessage_After(desc, visible, null, rightAlign);
+            if (!logging) packageStateChanged = true;
+            m.AddMessage_After(desc, logging ? Room : null);
         }
     }
 
 
-    public void LogMessage_Climax(bool visible, Room_Instance recordingRoom, MessageCollect m = null)
+    public void LogMessage_Climax(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
         foreach (var ep in this.ListEP)
         {
-            var responses = ep.LogMessage_Climax( m);
+            var responses = ep.LogMessage_Climax(mcol);
 
             foreach (var kol in responses)
             {
-                if (visible) m.AddKojo(kol);
-                if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
+                mcol.AddKojo(kol);
+                if (!logging) packageStateChanged = true;
+                else if (Room != null && Room.HasRecording) Room.NotifyKojoCollect(kol);
             }
         }
 
     }
-
-    public void LogMessage_Begin_Refuse(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_Begin_Refuse(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
         if (LoggedBegin) return;
-        if (!visible && recordingRoom == null) return;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
+        LoggedBegin = true;
         foreach (var ep in this.ListEP)
         {
-            var responses = ep.LogMessage_Begin_Refuse(rightAlign, m);
+            var responses = ep.LogMessage_Begin_Refuse(false, mcol);
 
             if (responses.Length > 0)
             {
                 var desc = new DescriptionCollector(responses);
                 desc.LoadActors(this.job.actorRefID);
                 desc.message_excludeRelated = responses;
-                m.AddMessage_Before(desc, visible, recordingRoom, rightAlign);
-
-                //if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{responses}</align>" : responses);
-                //if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(responses, this.actorRefs));
+                mcol.AddMessage_Before(desc, true, logging ? Room : null);
+                if (!logging) packageStateChanged = true;
             }
         }
     }
-    public void LogMessage_Begin_Abort( bool rightAlign = false, MessageCollect m = null)
-    {
-        if (m == null) m = this.job.m;
-        var visible = job.isPlayerRelatedJob || isPlayerRelatedPackage;
-        var recordingRoom = this.RoomKey == -1 ? null : scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey);
-        if (recordingRoom != null && !recordingRoom.HasRecording) recordingRoom = null;
 
-        LogMessage_Begin_Abort(visible, recordingRoom, rightAlign, m);
-    }
-
-    public void LogMessage_Begin_Abort(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_Begin_Abort(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
-        if (!visible && recordingRoom == null) return;
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
         //if (LoggedBegin) return;
         if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("LogMessage_Begin_Abort");
         foreach (var ep in this.ListEP)
         {
-            var responses = ep.LogMessage_Begin_Abort(rightAlign, m);
+            var responses = ep.LogMessage_Begin_Abort(false, m);
 
             if (responses.Length > 0)
             {
                 var desc = new DescriptionCollector(responses);
                 desc.LoadActors(this.job.actorRefID);
                 desc.message_excludeRelated = responses;
-                m.AddMessage_Before(desc, visible, recordingRoom, rightAlign);
+                m.AddMessage_Before(desc, true, logging ? Room : null);
+                if (!logging) packageStateChanged = true;
 
                 //if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{responses}</align>" : responses);
                 //if (recordingRoom != null) recordingRoom.NotifyKojoCollect(new DescriptionCollector(responses, this.actorRefs));
@@ -2394,12 +2543,17 @@ public abstract class ActionPackage
         this.LoggedBegin = true;
     }
 
-    public void LogMessage_After(bool visible, Room_Instance recordingRoom, bool rightAlign = false, MessageCollect m = null)
+    public void LogMessage_After(MessageCollect m = null)
     {
-        if (m == null) m = this.job.m;
         //if (!visible && recordingRoom == null) return;
         if (isTemporaryAP) return;
 
+        bool logging = true;
+        if (m == null)
+        {
+            logging = false;
+            m = this.mcol;
+        }
         if (shuffledList.Count < 1)
         {
             shuffledList = new List<EvaluationPackage>(ListEP);
@@ -2438,7 +2592,7 @@ public abstract class ActionPackage
             if (targetCOM == null) continue;
             if (targetCOM is COM_Sex) continue;
             if (ep.Response < Memory_Response.Success) continue;
-            var rs = ep.LogMessage_After(rightAlign, m);
+            var rs = ep.LogMessage_After(false, mcol);
 
             if (rs.Length > 0)
             {
@@ -2446,9 +2600,9 @@ public abstract class ActionPackage
                 desc.message+=$"{(desc.message.Length > 0 ? "\n" : "")}{rs}" ;
             }
 
-            else if (rightAlign)
+            else if (!isPlayerRelatedPackage)
             {
-                var responses = ep.LogMessage_Ongoing(rightAlign, m, null);
+                var responses = ep.LogMessage_Ongoing(mcol, null);
                 if (responses.Count < 1) continue;
                 bool hasresponse = false;
                 foreach (var kol in responses)
@@ -2477,8 +2631,8 @@ public abstract class ActionPackage
 
             //desc.LoadPortraits(this.actorRefs, true);
             //Debug.Log($"logmessageafter!\n{desc.message}\n{desc.message_excludeRelated}");
-            
-            m.AddMessage_After(desc, desc.VisibleTo(scr_System_CampaignManager.current.Player, recordingRoom), recordingRoom, rightAlign);
+            mcol.AddMessage_After(desc, logging ? Room : null);
+            if (!logging) packageStateChanged = true;
         }
 
     }
@@ -2513,6 +2667,10 @@ public abstract class ActionPackage
         return this.doer.Contains(c);
     }
 
+    public virtual List<ActionPackageOptions> LaunchOptions()
+    {
+        return null;
+    }
 
     protected void SendRefuseEvent()
     {
@@ -2550,7 +2708,7 @@ public abstract class ActionPackage
             MessageCollect mm = new MessageCollect();
             this.job.CollectLogs(this, mm);
 
-            mm.Merge(this.job.m, false);
+            mm.Merge(this.job.m);
             mm.exp.leftAlignOverride = mm.exp.isPlayerLog;
 
             mm.exp.AddRelevantChara(job.actorRefID);
@@ -2558,7 +2716,7 @@ public abstract class ActionPackage
             mm.exp.AddRelevantChara(job.actorRemove);
             this.job.m.Clear();
 
-            failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm, false));// .m.Merge(mm, false));
+            failCallbacks.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm));// .m.Merge(mm, false));
             //failCallbacks.Add(() => scr_UpdateHandler.current.NotifyLogsSingleUpdate());
 
             ActionPackage forceAP = this.Copy();
@@ -2566,7 +2724,7 @@ public abstract class ActionPackage
 
             //var checkResults = GetCheckResult(false);
             //eventStart.Add(() => scr_System_CampaignManager.current.AddLog(-1, checkResults, true));
-            eventStart.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm, true));
+            eventStart.Add(() => scr_UpdateHandler.current.NotifyJobDescriptions(mm));
             
             //refuseInfo.Add(GetCheckResult(false));
             this.LoggedBegin = true;

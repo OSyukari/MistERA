@@ -100,7 +100,7 @@ public class COM_Requirements
             actorCount.RemoveAll(x=>x < 0);
             */
             hardlock = false;
-            bool logging = !scr_UpdateHandler.current.Updating;
+            bool logging = _tooltip != null && ( !scr_UpdateHandler.current.Updating || scr_System_CentralControl.current.LogPrefs.DLog_JoinAP);
             var actorCount = 1;
 
             if (doerCount == -1) { }
@@ -174,7 +174,7 @@ public class COM_Requirements
             }
             else if (doerCount > 1 && doerCount < 9)
             {
-                if (actorCount <= (doerCount * actorCountMult)) { }
+                if (actorCountMult < 1 || actorCount <= (doerCount * actorCountMult)) { }
                 else
                 {
                     if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_doerCountInvalid")
@@ -198,7 +198,7 @@ public class COM_Requirements
                 return false;
             }
 
-            if ((receiverCount == 1 && receiverRefIDs.Count > receiverCount) || (receiverCount > 1 && receiverRefIDs.Count > receiverCount * actorCountMult))
+            if ((receiverCount == 1 && receiverRefIDs.Count > receiverCount) || (actorCountMult > 0 && receiverCount > 1 && receiverRefIDs.Count > receiverCount * actorCountMult))
             {
                 if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_COM_Requirements_toomanyReceiver")
                                             .Replace("$target$", $"{receiverRefIDs.Count}")

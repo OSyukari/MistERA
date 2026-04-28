@@ -290,15 +290,28 @@ public class Room_Instance: IDisposable, I_Disposable
 
     protected List<I_CanEndJob> recorders = new List<I_CanEndJob>();
     protected MessageCollect kols = new MessageCollect(false, false);
+    //protected List<ActionPackageRecords> apRecords = new List<ActionPackageRecords>();
+
+    public void CaptureAPSnapshot(ActionPackage ap)
+    {
+        if (!this.HasRecording) return;
+        if (ap == null) return;
+        var rec = new ActionPackageRecords(ap);
+        kols.apRecords.Add(rec);
+        hasStoredRecord = true;
+        // merge ap
+        //this.kols.Merge(ap.mcol);
+    }
+
     public void NotifyKojoCollect(KojoCollector kol, MessageCollect_Type type = MessageCollect_Type.kojo)
     {
         if (recorders.Count < 1) return;
         switch (type)
         {
             case MessageCollect_Type.kojo:
-                kols.messages_kojo.Add(kol);break;
+                kols.AddKojo(kol); break;
             case MessageCollect_Type.kojo_after:
-                kols.messages_kojo_after.Add(kol);
+                kols.AddKojoAfter(kol);
                 break;
             default:
                 Debug.LogError($"error NotifyKojoCollect cannot add KojoCollector into other types [{type}]");
@@ -310,17 +323,22 @@ public class Room_Instance: IDisposable, I_Disposable
     public void NotifyDescCollect(I_Records kol, MessageCollect_Type type = MessageCollect_Type.before)
     {
         if (recorders.Count < 1) return;
+        if (!kol.isValid)
+        {
+            Debug.LogError("error message invalid skipping");
+            return;
+        }
+
         switch (type)
         {
             case MessageCollect_Type.checks:
-                kols.messages_checks.Add(kol); break;
+                kols.AddMessage_Checks(kol, null); break;
             case MessageCollect_Type.before:
-                kols.messages_before.Add(kol); break;
+                kols.AddMessage_Before(kol, null); break;
             case MessageCollect_Type.after:
-                kols.messages_after.Add(kol); break;
+                kols.AddMessage_After(kol, null); break;
             case MessageCollect_Type.exp:
-                kols.messages_exp.Add(kol); 
-                break;
+                kols.AddMessage_EXP(kol, null);  break;
             default:
                 Debug.LogError($"error NotifyKojoCollect cannot add DescriptionCollector into other types [{type}]");
                 return;

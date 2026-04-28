@@ -63,8 +63,7 @@ public class scr_menu_LLMQuery : scr_Menu
     List<LLMResponse> currentList = new List<LLMResponse>();
     int currentIndex = -1;
 
-    LLMResponse CurrentResponse = null;
-    MessageJSON internalJson = null;
+    public LLMResponse CurrentResponse = null;
     public bool HasValidResponse
     {
         get

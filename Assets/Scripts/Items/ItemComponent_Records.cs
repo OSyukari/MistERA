@@ -43,17 +43,30 @@ public class ItemComponent_Records : ItemComponent_Base
     {
         if (!(other is ItemComponent_Records)) return false;
         var other2 = other as ItemComponent_Records;
-        return base.canMergeWith(other) && this.records == null && other2.records == null;
+        return base.canMergeWith(other) && this.Records == null && other2.Records == null;
     }
 
     [JsonIgnore] public override bool Serializable { get { return true; } }
     [JsonIgnore] public override bool Stackable { get { return false; } }
 
-    public KojoRecording records = null;
-
+    [JsonProperty] KojoRecording records = null;
+    [JsonIgnore] public KojoRecording Records
+    {
+        get
+        {
+            if (records != null) return records;
+            if (CompTemplate.Comp_Records != null && CompTemplate.Comp_Records.records != null) return CompTemplate.Comp_Records.records;
+            return null;
+        }
+        set
+        {
+            records = value;
+        }
+    }
     public void LoadRecords(KojoRecording recording)
     {
         this.records = recording;
     }
+
 }
 

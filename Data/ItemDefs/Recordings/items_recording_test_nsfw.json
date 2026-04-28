@@ -1,0 +1,4321 @@
+{
+  "Items": {
+    "list": [
+      {
+        "id": "item_Record_test_nsfw_0425",
+        "displayName": "Test AV 0425",
+        "Tags": [
+          "industrial",
+          "item_records",
+          "AV"
+        ],
+        "itemComps_Template": [
+          {
+            "compType": "ItemComponent_Records",
+            "Comp_Records": {
+              "records": {
+                "ActorSettings": [
+                  {
+                    "baseID": "male_actor_dummy",
+                    "refID": -1,
+                    "firstNameOriginal": "老师",
+                    "firstNameOverwrite": "男优1"
+                  },
+                  {
+                    "baseID": "Wuwa_Aemeath",
+                    "refID": 1000471,
+                    "firstNameOriginal": "爱弥斯",
+                    "firstNameOverwrite": ""
+                  }
+                ],
+                "cameraman": {
+                  "baseID": "male_actor_dummy",
+                  "refID": -1,
+                  "firstNameOriginal": "老师",
+                  "firstNameOverwrite": ""
+                },
+                "collect": {
+                  "1980-08-30T07:11:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师正在用摄像机录像",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": null,
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "interaction",
+                              "recording",
+                              "canbeignored",
+                              "initRecording",
+                              "item_recorder",
+                              "industrial",
+                              "rarity_common",
+                              "NonInteraction",
+                              "male",
+                              "human"
+                            ],
+                            "DoerSelfTag": [
+                              "interaction",
+                              "recording",
+                              "canbeignored",
+                              "initRecording",
+                              "item_recorder",
+                              "industrial",
+                              "rarity_common",
+                              "NonInteraction",
+                              "male",
+                              "human"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [],
+                            "ReceiverSelfTag": [],
+                            "ReceiverTargetTag": [
+                              "interaction",
+                              "recording",
+                              "canbeignored",
+                              "initRecording",
+                              "item_recorder",
+                              "industrial",
+                              "rarity_common",
+                              "NonInteraction"
+                            ],
+                            "DoerAttitude": 3,
+                            "ReceiverAttitude": 0,
+                            "Response": 3,
+                            "commandID": "com_recording_begin_item_recording_camera",
+                            "comVariantID": 0
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_recording_begin_item_recording_camera",
+                        "COMVariantID": 0,
+                        "displayName": "用摄像机录像",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [],
+                              "displayTagsOverride": [],
+                              "autoAnimate": false,
+                              "message": "",
+                              "message_excludeRelated": "(用摄像机录像: 结束)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": []
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:12:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 5,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师推倒了爱弥斯",
+                            "hasPermission": false,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "action",
+                              "interaction",
+                              "initSex",
+                              "unsafe",
+                              "sex",
+                              "male",
+                              "human"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverTargetTag": [
+                              "action",
+                              "interaction",
+                              "initSex",
+                              "unsafe",
+                              "sex",
+                              "female",
+                              "human"
+                            ],
+                            "DoerAttitude": 3,
+                            "ReceiverAttitude": 3,
+                            "Response": 3,
+                            "commandID": "com_interaction_initiateSex",
+                            "comVariantID": 2
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_interaction_initiateSex",
+                        "COMVariantID": 2,
+                        "displayName": "强奸",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [],
+                              "displayTagsOverride": [],
+                              "autoAnimate": false,
+                              "message": "(老师 -> 爱弥斯) 强奸: 必定接受",
+                              "message_excludeRelated": "",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [],
+                              "displayTagsOverride": [],
+                              "autoAnimate": false,
+                              "message": "老师推倒了爱弥斯",
+                              "message_excludeRelated": "老师推倒了爱弥斯",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0
+                              ]
+                            }
+                          ],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:13:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师推倒了爱弥斯",
+                            "hasPermission": false,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": false,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "action",
+                              "interaction",
+                              "initSex",
+                              "unsafe",
+                              "sex",
+                              "male",
+                              "human"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverTargetTag": [
+                              "action",
+                              "interaction",
+                              "initSex",
+                              "unsafe",
+                              "sex",
+                              "female",
+                              "human"
+                            ],
+                            "DoerAttitude": 3,
+                            "ReceiverAttitude": 3,
+                            "Response": 3,
+                            "commandID": "com_interaction_initiateSex",
+                            "comVariantID": 2
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_interaction_initiateSex",
+                        "COMVariantID": 2,
+                        "displayName": "强奸",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "love",
+                                "happy",
+                                "relaxed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "爱弥斯死咬嘴唇，泪水盈眶，颤抖着松开护在胸前的手，不敢看老师那充满侵略性的眼神。",
+                              "message_excludeRelated": "(强奸: 结束)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:14:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 5,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": false,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped"
+                            ],
+                            "DoerAttitude": 3,
+                            "ReceiverAttitude": 2,
+                            "Response": 3,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [],
+                              "displayTagsOverride": [],
+                              "autoAnimate": false,
+                              "message": "(老师 -> 爱弥斯) 强制口交: 必定接受",
+                              "message_excludeRelated": "",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "fear",
+                                "trembling",
+                                "tearful",
+                                "pain"
+                              ],
+                              "autoAnimate": false,
+                              "message": "老师抓住了爱弥斯的脑袋，将阴茎粗暴地插入了爱弥斯嘴里\n爱弥斯发出恐惧的呜咽声，双手紧紧抓着自己的衣角。在绝对的力量差距面前，她放弃了抵抗，颤颤巍巍地低下头去服侍。",
+                              "message_excludeRelated": "老师抓住了爱弥斯的脑袋，将阴茎粗暴地插入了爱弥斯嘴里\n爱弥斯发出恐惧的呜咽声，双手紧紧抓着自己的衣角。在绝对的力量差距面前，她放弃了抵抗，颤颤巍巍地低下头去服侍。",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:16:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": false,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 1,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 6 = 6 < 15, 失败\n爱弥斯狼狈地咳嗽着，嘴角挂着无法吞咽的唾液。她绝望地闭着眼睛，忍受着这漫长的折磨，心中对老师仅剩的一点好感也荡然无存。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:19:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "angry",
+                                "cry",
+                                "glare",
+                                "disgust",
+                                "pouting",
+                                "sad",
+                                "troubled",
+                                "silence"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 5 = 5 < 15, 失败\n爱弥斯的身体因为持续的干呕而痉挛，眼神空洞地盯着地板。这种单方面的发泄只是让她感到无比的恶心和痛苦。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:22:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 3 = 3 < 15, 失败\n爱弥斯的眼神变得有些冷淡和委屈，利用换气的间隙偏过头，大口喘息着，身体僵硬地抗拒着下一次的插入。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:25:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 4,
+                            "ReceiverAttitude": 0,
+                            "Response": 6,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 17 = 17 >= 15, 成功\n爱弥斯痛苦地拍打着老师的大腿，喉咙里发出难受的干呕声，生理性的泪水沾湿了睫毛。这种粗暴的对待让她感到的只有不适，而不是快感。",
+                              "message_excludeRelated": "(强制口交: 成功)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:28:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "love",
+                                "happy",
+                                "relaxed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 4 = 4 < 15, 失败\n爱弥斯的眼角因为持续的吞吐而泛起泪光，但眼神中却满是爱意。她双手不再是被动地垂下，而是环抱住了老师的腰，似乎在享受这种被填满的窒息感。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:31:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 10 = 10 < 15, 失败\n爱弥斯的眼神变得有些冷淡和委屈，利用换气的间隙偏过头，大口喘息着，身体僵硬地抗拒着下一次的插入。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:34:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 5,
+                            "ReceiverAttitude": 0,
+                            "Response": 7,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 20 = 20 >= 15, 大成功\n爱弥斯捂着喉咙干呕了几声，眼角渗出生理性的泪水。\"太粗暴了……下次如果你再这样按着我的头，我就真的生气了。\"",
+                              "message_excludeRelated": "(强制口交: 大成功)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:37:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "love",
+                                "happy",
+                                "relaxed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 13 = 13 < 15, 失败\n爱弥斯发出呜呜的闷哼声，虽然嘴巴被塞得满满的，但她依然努力用脸颊蹭着老师的手掌，似乎在鼓励对方更深入一些。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:40:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 4,
+                            "ReceiverAttitude": 0,
+                            "Response": 6,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 19 = 19 >= 15, 成功\n爱弥斯捂着喉咙干呕了几声，眼角渗出生理性的泪水。\"太粗暴了……下次如果你再这样按着我的头，我就真的生气了。\"",
+                              "message_excludeRelated": "(强制口交: 成功)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:43:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 1,
+                            "ReceiverAttitude": 0,
+                            "Response": 4,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "love",
+                                "happy",
+                                "relaxed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 1 = 1 < 15, 大失败\n爱弥斯的眼角因为持续的吞吐而泛起泪光，但眼神中却满是爱意。她双手不再是被动地垂下，而是环抱住了老师的腰，似乎在享受这种被填满的窒息感。",
+                              "message_excludeRelated": "(强制口交: 大失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:46:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 1,
+                            "ReceiverAttitude": 0,
+                            "Response": 4,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 1 = 1 < 15, 大失败\n爱弥斯捂着喉咙干呕了几声，眼角渗出生理性的泪水。\"太粗暴了……下次如果你再这样按着我的头，我就真的生气了。\"",
+                              "message_excludeRelated": "(强制口交: 大失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:49:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 14 = 14 < 15, 失败\n爱弥斯捂着喉咙干呕了几声，眼角渗出生理性的泪水。\"太粗暴了……下次如果你再这样按着我的头，我就真的生气了。\"",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:52:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 11 = 11 < 15, 失败\n爱弥斯痛苦地拍打着老师的大腿，喉咙里发出难受的干呕声，生理性的泪水沾湿了睫毛。这种粗暴的对待让她感到的只有不适，而不是快感。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:55:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 4,
+                            "ReceiverAttitude": 0,
+                            "Response": 6,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 17 = 17 >= 15, 成功\n爱弥斯痛苦地拍打着老师的大腿，喉咙里发出难受的干呕声，生理性的泪水沾湿了睫毛。这种粗暴的对待让她感到的只有不适，而不是快感。",
+                              "message_excludeRelated": "(强制口交: 成功)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T07:58:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 4,
+                            "ReceiverAttitude": 0,
+                            "Response": 6,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "love",
+                                "happy",
+                                "relaxed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 18 = 18 >= 15, 成功\n爱弥斯的眼角因为持续的吞吐而泛起泪光，但眼神中却满是爱意。她双手不再是被动地垂下，而是环抱住了老师的腰，似乎在享受这种被填满的窒息感。",
+                              "message_excludeRelated": "(强制口交: 成功)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T08:01:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "love",
+                                "happy",
+                                "relaxed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 11 = 11 < 15, 失败\n爱弥斯发出呜呜的闷哼声，虽然嘴巴被塞得满满的，但她依然努力用脸颊蹭着老师的手掌，似乎在鼓励对方更深入一些。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T08:04:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 2 = 2 < 15, 失败\n爱弥斯的眼神变得有些冷淡和委屈，利用换气的间隙偏过头，大口喘息着，身体僵硬地抗拒着下一次的插入。",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T08:07:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 1,
+                            "ReceiverAttitude": 0,
+                            "Response": 4,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 1 = 1 < 15, 大失败\n爱弥斯痛苦地拍打着老师的大腿，喉咙里发出难受的干呕声，生理性的泪水沾湿了睫毛。这种粗暴的对待让她感到的只有不适，而不是快感。",
+                              "message_excludeRelated": "(强制口交: 大失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T08:10:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 2,
+                            "ReceiverAttitude": 0,
+                            "Response": 5,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 14 = 14 < 15, 失败\n爱弥斯捂着喉咙干呕了几声，眼角渗出生理性的泪水。\"太粗暴了……下次如果你再这样按着我的头，我就真的生气了。\"",
+                              "message_excludeRelated": "(强制口交: 失败)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T08:13:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": ""
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": ""
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "老师的阴茎正蹂躏着爱弥斯的嘴",
+                            "hasPermission": true,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human",
+                              "rape",
+                              "mouth"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "ReceiverTargetTag": [
+                              "sex",
+                              "penetration",
+                              "position_face",
+                              "position_inequal",
+                              "oral",
+                              "unsafe",
+                              "interaction",
+                              "female",
+                              "human",
+                              "raped",
+                              "penis",
+                              "arm"
+                            ],
+                            "DoerAttitude": 4,
+                            "ReceiverAttitude": 0,
+                            "Response": 6,
+                            "commandID": "com_sex_oral_P_Force",
+                            "comVariantID": 4
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_sex_oral_P_Force",
+                        "COMVariantID": 4,
+                        "displayName": "强制口交",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver",
+                                "blowjob",
+                                "forced",
+                                "pain",
+                                "bored",
+                                "doubt",
+                                "disappointed"
+                              ],
+                              "autoAnimate": false,
+                              "message": "强制口交 D20 = 19 = 19 >= 15, 成功\n爱弥斯痛苦地拍打着老师的大腿，喉咙里发出难受的干呕声，生理性的泪水沾湿了睫毛。这种粗暴的对待让她感到的只有不适，而不是快感。",
+                              "message_excludeRelated": "(强制口交: 成功)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [
+                      {
+                        "$type": "DescriptionCollector, Assembly-CSharp",
+                        "Visibility": 0,
+                        "portraitRefs": [],
+                        "displayTagsOverride": [],
+                        "autoAnimate": false,
+                        "message": "老师: C强绝顶/射精 (爱弥斯's 嘴 17ml)\n<color=#808080FF>爱弥斯: 信赖-16 厌恶+16 恐惧+16 口内射精经验+1 口内射精量+16 </color>\n<color=#808080FF>老师: C绝顶经验+1 </color>",
+                        "message_excludeRelated": "",
+                        "tooltip": "",
+                        "rightAlign": false,
+                        "relevantActors": [
+                          0,
+                          1000471
+                        ]
+                      }
+                    ],
+                    "messages_kojo_after": []
+                  },
+                  "1980-08-30T08:14:00": {
+                    "apRecords": [
+                      {
+                        "internalState": 7,
+                        "Doers": [
+                          {
+                            "baseID": "male_actor_dummy",
+                            "refID": -1,
+                            "firstNameOriginal": "老师",
+                            "firstNameOverwrite": "男优"
+                          },
+                          {
+                            "baseID": "Wuwa_Aemeath",
+                            "refID": 1000471,
+                            "firstNameOriginal": "爱弥斯",
+                            "firstNameOverwrite": ""
+                          }
+                        ],
+                        "Receivers": [],
+                        "Master": {
+                          "baseID": "male_actor_dummy",
+                          "refID": -1,
+                          "firstNameOriginal": "老师",
+                          "firstNameOverwrite": "无名摄影师"
+                        },
+                        "ListEPs": [
+                          {
+                            "Description_Ongoing": "",
+                            "hasPermission": false,
+                            "isStrongP": false,
+                            "ismale_actor_dummyInvolved": true,
+                            "requestAccepted": true,
+                            "isForced": false,
+                            "Doer": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "Receiver": {
+                              "baseID": "Wuwa_Aemeath",
+                              "refID": 1000471,
+                              "firstNameOriginal": "爱弥斯",
+                              "firstNameOverwrite": ""
+                            },
+                            "Master": {
+                              "baseID": "male_actor_dummy",
+                              "refID": -1,
+                              "firstNameOriginal": "老师",
+                              "firstNameOverwrite": ""
+                            },
+                            "DoerTargetTag": [
+                              "action",
+                              "endSex",
+                              "NonInteraction",
+                              "unsafe",
+                              "male",
+                              "human"
+                            ],
+                            "DoerSelfTag": [
+                              "male",
+                              "human"
+                            ],
+                            "DoerTag": [
+                              "male",
+                              "human"
+                            ],
+                            "ReceiverTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverSelfTag": [
+                              "female",
+                              "human"
+                            ],
+                            "ReceiverTargetTag": [
+                              "action",
+                              "endSex",
+                              "NonInteraction",
+                              "unsafe",
+                              "female",
+                              "human"
+                            ],
+                            "DoerAttitude": 3,
+                            "ReceiverAttitude": 3,
+                            "Response": 3,
+                            "commandID": "com_interaction_endOngoingSex",
+                            "comVariantID": 2
+                          }
+                        ],
+                        "Room": {
+                          "roomName": "老师的房间",
+                          "baseID": "lounge2_exec_suite_1",
+                          "floorID": "floor_stockasset_lounge2"
+                        },
+                        "targetCOMID": "com_interaction_endOngoingSex",
+                        "COMVariantID": 2,
+                        "displayName": "结束强奸",
+                        "extraCOMTags": [],
+                        "mcol": {
+                          "apRecords": [],
+                          "sendRecording": true,
+                          "displayOverride": false,
+                          "messages_checks": [
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [],
+                              "displayTagsOverride": [],
+                              "autoAnimate": false,
+                              "message": "(老师 -> 爱弥斯) 结束强奸: 必定接受",
+                              "message_excludeRelated": "",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0,
+                                1000471
+                              ]
+                            },
+                            {
+                              "$type": "DescriptionCollector, Assembly-CSharp",
+                              "Visibility": 0,
+                              "portraitRefs": [
+                                1000471
+                              ],
+                              "displayTagsOverride": [
+                                "sex",
+                                "receiver"
+                              ],
+                              "autoAnimate": false,
+                              "message": "爱弥斯像个破布娃娃一样被扔在一边，身上布满了青紫色的淤痕。那种被当作排泄工具使用的屈辱感让她浑身发抖，下身的撕裂痛楚时刻提醒着她刚才经历了什么，而对方早已提上裤子转身离去。",
+                              "message_excludeRelated": "(结束强奸: 结束)",
+                              "tooltip": "",
+                              "rightAlign": false,
+                              "relevantActors": [
+                                0
+                              ]
+                            }
+                          ],
+                          "messages_before": [],
+                          "messages_after": [],
+                          "messages_kojo": [],
+                          "exp": {
+                            "finalized": false,
+                            "relevantActorRefs": []
+                          },
+                          "messages_exp": [],
+                          "messages_kojo_after": []
+                        }
+                      }
+                    ],
+                    "sendRecording": true,
+                    "displayOverride": false,
+                    "messages_checks": [],
+                    "messages_before": [],
+                    "messages_after": [],
+                    "messages_kojo": [],
+                    "exp": {
+                      "finalized": false,
+                      "relevantActorRefs": []
+                    },
+                    "messages_exp": [],
+                    "messages_kojo_after": []
+                  }
+                }
+              },
+              "parentID": "item_recorded_camera_Tape"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+        "item_Record_test_nsfw_0425": "（DEBUG）AV 爱弥斯强制口交",
+        "item_Record_test_nsfw_0425_tooltip": "测试用AV\n购入后，在任意电视处即可播放内容\n如果当前游戏没生成爱弥斯，则不会显示其立绘"
+      },
+      "en-us": {
+        "item_Record_test_nsfw_0425": "(DEBUG) AV: Aemeath Forced Oral",
+"item_Record_test_nsfw_0425_tooltip": "Test AV\nAfter purchase, content can be played at any TV\nIf Aemeath has not been generated in the current game, her portrait will not be displayed"
+
+
+      }
+    }
+  }
+}

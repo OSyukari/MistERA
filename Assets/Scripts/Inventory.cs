@@ -381,6 +381,23 @@ public class Inventory
         if (list == null || list.Count < 1) return;
         foreach (var ii in list) AddItem(ii);
     }
+    public List<Item_Instance> GetItemByTag(string tag)
+    {
+        List<Item_Instance> results = new List<Item_Instance>();
+        if (tag == "") return results;
+        foreach (var item in Contents)
+        {
+            if (!item.Tags.Contains(tag)) continue; //!= baseID) continue; // && !item.markForDelete) i += item.Count;
+            else if (item.markForDelete) continue;
+            else results.Add(item);
+            /*
+            if (!item.isToken && !item.markForDelete) i += item.Count;
+            else if (item.isToken && !item.markForDelete) i += item.InnerCount;*/
+        }
+
+        //Debug.Log("Faction check item [" + baseID + "] count result [" + i + "]");
+        return results;
+    }
 
     public int GetItemCount(string baseID)
     {

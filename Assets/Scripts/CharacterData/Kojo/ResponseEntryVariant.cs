@@ -312,7 +312,10 @@ public partial class ResponseEntry
             public bool requireEPFailure = false;
             public Memory_Response requireEPSuccessGTE = Memory_Response.None;
             public Memory_Attitude requireSelfAttitudeGTE = Memory_Attitude.None;
+            public AP_Status requireAPStatus = AP_Status.none;
             public bool requirePermission = false;
+            public string requireInCooldownID = "";
+            public string requireNotInCooldownID = "";
             public List<string> selfTags = new List<string>();
             public List<string> excludeSelfTags = new List<string>();
             public List<string> targetTags = new List<string>();
@@ -320,6 +323,7 @@ public partial class ResponseEntry
             public bool requireSelfForced = false;
             public int variantID = -1;
             public CharaReq selfReq = null;
+            public bool allowRecording = false;
             public CharaReq targetReq = null;
             public string requireSelfAttitudeKey = "";
             public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
@@ -345,7 +349,6 @@ public partial class ResponseEntry
                     if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, CharaReqUtility.Validate targetReq failure");
                     return false;
                 }
-
                 if (requireSelfAttitudeKey != "")
                 {
                     if (rel == null)
@@ -360,9 +363,25 @@ public partial class ResponseEntry
                         return false;
                     }
                 }
+                if (requireInCooldownID != "" && !self.Relationships.BehaviorInCooldown(requireInCooldownID))
+                {
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireInCooldownID {requireInCooldownID}");
+                    return false;
+                }
+                if (requireNotInCooldownID != "" && self.Relationships.BehaviorInCooldown(requireNotInCooldownID))
+                {
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireNotInCooldownID {requireNotInCooldownID}");
+                    return false;
+                }
+
 
                 if (ep != null)
                 {
+                    if (!allowRecording && ep.isRecording)
+                    {
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, allowRecording {allowRecording} ep isrecording? {ep.isRecording}");
+                        return false;
+                    }
                     //if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validating EP reqFailure? {requireEPFailure && ep.Response > Memory_Response.Refuse} reqSuccess? {!requireEPFailure && requireEPSuccess && ep.Response < Memory_Response.Accept} ");
                     if (requireEPFailure && (ep.requestAccepted || ep.Response != Memory_Response.Refuse))
                     {
@@ -388,6 +407,11 @@ public partial class ResponseEntry
                     if (requireSelfAttitudeGTE != Memory_Attitude.None && ep.GetActorAttitude(self.RefID) < requireSelfAttitudeGTE)
                     {
                         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireSelfAttitudeGTE {requireSelfAttitudeGTE}, ep {ep.GetActorAttitude(self.RefID)} {ep.GetActorAttitude(self.RefID) < requireSelfAttitudeGTE}");
+                        return false;
+                    }
+                    if (requireAPStatus != AP_Status.none && ep.APStatus != requireAPStatus)
+                    {
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireAPStatus {requireAPStatus}, ep {ep.APStatus}");
                         return false;
                     }
 
@@ -541,12 +565,18 @@ public partial class ResponseEntry
             public ModKojoVariable modifyKojoVariables = new ModKojoVariable();
             public EventInitializer launchEvent = new EventInitializer();
             public Result_Character.ModStatusValue modifyStatusValue = new Result_Character.ModStatusValue();
+            public string addCooldownID = "";
+            public int addCooldownDuration = 0;
             public bool flushLog = false;
             public void Execute(MessageCollect_KojoEntry message, KojoCollector rel)
             {
                 if (flushLog)
                 {
                     scr_System_CampaignManager.current.AddLog(message);
+                }
+                if (addCooldownID != "" && addCooldownDuration > 0 && rel != null && rel.Owner != null)
+                {
+                    rel.Owner.Relationships.BehaviorCooldown(addCooldownID, 0, addCooldownDuration);
                 }
                 if (modifyKojoVariables != null && modifyKojoVariables.isValid) modifyKojoVariables.Execute(rel.Relation);
                 if (this.launchEvent != null && this.launchEvent.isValid)

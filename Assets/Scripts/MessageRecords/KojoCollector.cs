@@ -2,13 +2,31 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static ActionPackageRecords;
 
 
 public class KojoCollector : I_ResultStorage, I_Records
 {
+
+    [JsonIgnore] public bool isrecording = false;
+    [JsonIgnore] public bool isRecording { get { return isrecording; } }
     public VisibilityLevel Visibility = VisibilityLevel.Roomwide;
-    public List<int> relevantActorRefs = new List<int>();
+
+    public void SetVisibleToAll()
+    {
+        this.relevantActorRefs.Clear();
+    }
+    [JsonProperty] protected List<int> relevantActorRefs = new List<int>();
+    List<int> relevantActorRefsOverride = null;
     public bool autoAnimate = false;
+    [JsonIgnore]
+    public bool isValid
+    {
+        get
+        {
+            return collect != null && (collect.message != "" || collect.nexts.Count > 0);
+        }
+    }
     public void LoadRelevantActors(List<int> list)
     {
         if (list == null) return;
@@ -19,6 +37,7 @@ public class KojoCollector : I_ResultStorage, I_Records
     {
         return c == null || Owner == c || Target == c || doerRef == c.RefID || receiverRef == c.RefID;
     }
+
     [JsonIgnore]
     public bool requestAccepted
     {
@@ -51,7 +70,8 @@ public class KojoCollector : I_ResultStorage, I_Records
         if (collect == null) return false;
         if (Visibility == VisibilityLevel.Global) return true;
         if (room != null && !room.RoomChara.Contains(c)) return false;
-        return DirectlyRelated(c) || relevantActorRefs.Count < 1 || relevantActorRefs.Contains(c.RefID);
+        var actlist = relevantActorRefsOverride == null ? relevantActorRefs : relevantActorRefsOverride;
+        return DirectlyRelated(c) || actlist.Count < 1 || actlist.Contains(c.RefID);
     }
 
     // validate target baseID
@@ -143,9 +163,9 @@ public class KojoCollector : I_ResultStorage, I_Records
         }
     }
 
-    public KojoCollector Copy()
+    public KojoCollector Copy(string overrideID = null, string overrideSuffix = null)
     {
-        var newinstance = new KojoCollector(this.Owner, this.eventID, this.suffix);
+        var newinstance = new KojoCollector(this.Owner, overrideID != null ? overrideID : this.eventID, overrideSuffix != null ? overrideSuffix : this.suffix);
         newinstance.comVariantID = comVariantID;
         newinstance.selfTags = new List<string>(selfTags);
         newinstance.targetTags = new List<string>(targetTags);
@@ -167,7 +187,8 @@ public class KojoCollector : I_ResultStorage, I_Records
         newinstance.isStrongP = isStrongP;
         newinstance.isPlayerInvolved = isPlayerInvolved;
         newinstance.timestamp = timestamp;
-
+        newinstance.apStatus = apStatus;
+        newinstance.isrecording = isrecording;
         return newinstance;
     }
 
@@ -231,7 +252,7 @@ public class KojoCollector : I_ResultStorage, I_Records
     public bool IsForced = false;
     public bool hasPackageData = false;
     public bool isStrongP = false;
-
+    public AP_Status apStatus = AP_Status.none;
     public KojoCollector() { }
     public KojoCollector(Character_Trainable c, string eventID, string suffix = "", VisibilityLevel visibility = VisibilityLevel.Roomwide)
     {
@@ -262,6 +283,82 @@ public class KojoCollector : I_ResultStorage, I_Records
 
         UtilityEX.GetActorTag(ref this.targetTags, Target);
     }
+    /// <summary>
+    /// Load EP data.
+    /// </summary>
+    /// <param name="loadReceiver">if True, load receiver's relationship</param>
+    public void LoadEPRecord(EvaluationPackageRecord ep, ActorRecord target)
+    {
+        if (ep == null) return;
+        hasPackageData = true;
+        hasPermission = ep.hasPermission;
+        isStrongP = ep.isStrongP;
+
+        var targetCandidate = Owner.Relationships.FindRelationshipWith(target.baseID);
+        var masterCandidate = ep.Master != null ? Owner.Relationships.FindRelationshipWith(ep.Master.baseID)
+                                                : ep.Doer != null ? Owner.Relationships.FindRelationshipWith(ep.Doer.baseID)
+                                                : null;
+
+        if (ep.Doer != null && ep.Doer.Match(Owner))
+        {
+            if (ep.Receiver == null) this.selfTags = ep.DoerTargetTag;
+            else this.selfTags = ep.DoerSelfTag;
+
+            UtilityEX.GetActorTag(ref this.selfTags, Owner);
+        }
+        else if (ep.Receiver != null && ep.Receiver.Match(Owner))
+        {
+            this.selfTags = ep.ReceiverSelfTag;
+
+            UtilityEX.GetActorTag(ref this.selfTags, Owner);
+        }
+
+        if (ep.Receiver != null)
+        {
+            if (ep.Receiver.Equal(target))
+            {
+                targetTags = ep.ReceiverTargetTag;
+                if (targetCandidate != null)
+                {
+                    Target = targetCandidate.Target;
+                    receiverRef = targetCandidate.Target.RefID;
+                }
+            }
+            receiverAttitude = ep.ReceiverAttitude;
+        }
+        if (ep.Doer != null)
+        {
+            if (ep.Doer.Equal(target))
+            {
+                targetTags = ep.DoerTargetTag;
+                if (targetCandidate != null)
+                {
+                    doerRef = targetCandidate.Target.RefID;
+                    Target = targetCandidate.Target;
+                }
+            }
+            doerAttitude = ep.DoerAttitude;
+        }
+
+        if (masterCandidate != null) masterRef = masterCandidate.Target.RefID;
+
+        if (ep.comVariantID != -1)
+        {
+            this.commandID = ep.commandID;
+            this.comVariantID = ep.comVariantID;
+        }
+
+        if (Target == null && targetCandidate != null)
+        {
+            Target = targetCandidate.Target;
+        }
+
+        IsForced = ep.isForced;
+
+        isPlayerInvolved = isPlayerInvolved || ep.isPlayerInvolved;
+        isRequestAccepted = ep.requestAccepted;
+        response = ep.Response;
+    }
 
     /// <summary>
     /// Load EP data.
@@ -273,7 +370,7 @@ public class KojoCollector : I_ResultStorage, I_Records
         hasPackageData = true;
         hasPermission = ep.hasPermission;
         isStrongP = ep.isStrongP;
-
+        if (ep.Package != null) this.apStatus = ep.Package.internalState;
         if (ep.Doer == Owner)
         {
             if (ep.Receiver == null) this.selfTags = ep.DoerTargetTag;
@@ -340,12 +437,61 @@ public class KojoCollector : I_ResultStorage, I_Records
     public DateTime timestamp = DateTime.MinValue;
     [JsonIgnore] public DateTime Timestamp { get { return timestamp; } }
 
+    [JsonIgnore]
+    public AP_Status APStatus
+    {
+        get
+        {
+            return this.apStatus;
+        }
+    }
+
     public void ReplaceString(string oldstring, string newstring)
     {
         if (collect != null)
         {
             collect.ReplaceString(oldstring, newstring);
         }
+    }
+
+    public void RecordActor(Dictionary<int, ActorRecord> recTable)
+    {
+        foreach (var actorref in relevantActorRefs) RecordActorSingle(actorref, recTable);
+        RecordActorSingle(selfRef, recTable, true);
+        if (targetRef != selfRef) RecordActorSingle(targetRef, recTable, true);
+        if (doerRef != targetRef && doerRef != selfRef) RecordActorSingle(doerRef, recTable, true);
+        if (receiverRef != doerRef && receiverRef != targetRef && receiverRef != selfRef) RecordActorSingle(receiverRef, recTable, true);
+    }
+
+    public void ReadActorRecord(Dictionary<string, ActorRecord> recTable)
+    {
+        //foreach (var actorref in relevantActorRefs) LoadActorSingle(actorref, recTable);
+        //if (!relevantActorRefs.Contains(selfRef)) LoadActorSingle(selfRef, recTable);
+        //if (!relevantActorRefs.Contains(targetRef)) LoadActorSingle(targetRef, recTable);
+        //if (!relevantActorRefs.Contains(doerRef)) LoadActorSingle(doerRef, recTable);
+        //if (!relevantActorRefs.Contains(receiverRef)) LoadActorSingle(receiverRef, recTable);
+
+
+        collect.ReadActorRecord(recTable);
+    }
+
+    void RecordActorSingle(int refID, Dictionary<int, ActorRecord> recTable, bool incCount = false)
+    {
+        if (refID == -1) return;
+        var actor = scr_System_CampaignManager.current.FindInstanceByID(refID);
+        if (actor == null) return;
+        foreach(var rec in recTable)
+        {
+            if (rec.Key == refID)
+            {
+                if (incCount) rec.Value.Count += 1;
+                return;
+            }
+        }
+        var newrec = new ActorRecord(actor);
+        if (incCount) newrec.Count += 1;
+        recTable.Add(actor.RefID, newrec);
+        Debug.Log($"adding element to recTable {newrec.Name}");
     }
 }
 

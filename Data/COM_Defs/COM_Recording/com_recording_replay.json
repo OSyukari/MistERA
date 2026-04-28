@@ -1,0 +1,93 @@
+{
+    "COMs": {
+        "list": [
+            {
+                "ID": "com_recording_replay",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_recording_replay_displayName_1",
+                "timeScale": 5,
+                "comTags": [
+                    "furniture",
+                    "TV"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "cost_EN": 2
+                        }
+                    },
+                    "requireRoomExisting":{
+                        "requireNotRecording":true
+                    }
+                },
+                "GenerateAP": {
+                    "itemTag": "item_records",
+                    "targetAPClass":{
+                        "$type": "ActionPackage_ItemUse_Recording, Assembly-CSharp"
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_recording_replay_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 9
+                            }
+                        },
+                        "displayName": "com_recording_replay_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 5
+                },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_recording_replay_displayName_begin_1" ] } ] },
+                "description_ongoing":{ "Entries":[ { "texts":["com_recording_replay_displayName_ongoing_1"]}], "keepLooking":false }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                
+"com_recording_replay_displayName_1":"观看录像",
+"com_recording_replay_displayName_2":"一起观看录像",
+"com_recording_replay_displayName_begin_1":"$doer.firstname$开始观看录像",
+"com_recording_replay_displayName_ongoing_1":"$doer.firstname$正在观看录像",
+
+"com_recording_replay_displayName_1_EXTEND":"观看录像：$name$",
+"com_recording_replay_displayName_2_EXTEND":"一起观看录像：$name$",
+
+"com_recording_replay_displayName_variant_begin_1":"$doer.firstname$开始观看$name$录像",
+"com_recording_replay_displayName_variant_ongoing_1":"$doer.firstname$正在观看$name$录像"
+         
+                
+            },
+            "en-us":
+            {
+"com_recording_replay_displayName_1": "Watch Recording",
+"com_recording_replay_displayName_2": "Watch Recording Together",
+"com_recording_replay_displayName_begin_1": "$doer.firstname$ starts watching the recording",
+"com_recording_replay_displayName_ongoing_1": "$doer.firstname$ is watching the recording",
+
+"com_recording_replay_displayName_1_EXTEND": "Watch Recording: $name$",
+"com_recording_replay_displayName_2_EXTEND": "Watch Recording Together: $name$",
+
+"com_recording_replay_displayName_variant_begin_1": "$doer.firstname$ starts watching the $name$ recording",
+"com_recording_replay_displayName_variant_ongoing_1": "$doer.firstname$ is watching the $name$ recording"
+
+            }
+        }
+    }
+}

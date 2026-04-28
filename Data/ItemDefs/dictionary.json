@@ -5,7 +5,7 @@
         {
             "zh-cn":
             {
-"Item_Instance_Tooltip":"类型：$tags$\n\n$parent$\n\n$comps$",
+"Item_Instance_Tooltip":"类型：$tags$\n\n$parent$$comps$",
 "ItemComponent_Weapon_tooltip":"平衡$balance$ 尺寸$mass$ $execution$",
 "ItemComponent_Weapon_tooltip_execution":"处决动作：$name$",
 "ItemComponent_Weapon_tooltip_dtypes":"$move$动作倍率 x$mult$ $dtypes$",
@@ -35,6 +35,11 @@
 "ItemComponent_Equippable_tooltip":"Equippable on layer $layer$ on slot $slots$\n$covers$",
 "ItemComponent_Equippable_tooltip_covers":"Extra Coverage on layer $layer$ on slot $covers$",
 "ItemComponent_Degradable_tooltip":"Will disappear in $minutes$ minutes",
+
+"ItemComponent_Ingestible_additive_tooltip": "This item can be used as a food additive (via the %%com_furniture_mealPrep_displayName%% command)",
+"ItemComponent_Ingestible_nontoken_tooltip": "This food item cannot be eaten directly at the canteen and cannot be mixed with additives",
+"ItemComponent_Ingestible_token_tooltip": "This food item will add an eating command at the canteen and can be mixed with additives (requires executing the %%com_furniture_mealPrep_displayName%% command first)"
+,
 
 "ItemComponentTemplate_Craftable_Recipe_tooltip":"Time Required: $time$ minutes\nSkill Requirement: $skillreqs$\nItem Consumption: $itemreqs$\n\n$basetooltip$"
             }

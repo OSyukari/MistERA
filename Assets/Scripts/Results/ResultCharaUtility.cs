@@ -104,7 +104,7 @@ public static class ResultCharaUtility
 
         if (r.behaviorCooldown > 0 && r.behaviorCooldownID != "")
         {
-            c.Relationships.BehaviorCooldown(r.behaviorCooldownID, (int)Utility.RandVariation(r.behaviorCooldown, r.behaviorCooldownVariation));
+            c.Relationships.BehaviorCooldown(r.behaviorCooldownID, (int)Utility.RandVariation(r.behaviorCooldown, r.behaviorCooldownVariation),0);
         }
     }
 }

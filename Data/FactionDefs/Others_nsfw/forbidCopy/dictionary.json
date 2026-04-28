@@ -5,18 +5,20 @@
         {
             "zh-cn":
             {
-"charx_yerin_firstname":"叶琳",
-"charx_yerin_lastname":"徐",
+                "charx_yerin_firstname":"叶琳",
+                "charx_yerin_lastname":"徐",
 
-"charx_arin_firstname":"雅琳",
-"charx_arin_lastname":"徐"
+                "charx_arin_firstname":"雅琳",
+                "charx_arin_lastname":"徐"
             },
             
             "en-us":
             {
-        
+                "charx_yerin_firstname": "Yerin",
+                "charx_yerin_lastname": "Seo",
 
-
+                "charx_arin_firstname": "Arin",
+                "charx_arin_lastname": "Seo"
             }
         }
     }

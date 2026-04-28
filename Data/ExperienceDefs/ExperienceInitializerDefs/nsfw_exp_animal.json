@@ -1,0 +1,39 @@
+{
+  "ExperienceInitializers": {
+    "list_actor": [
+      {
+        "ID":"expinit_target_dog_1",
+        "displayName": "expinit_target_dog",
+        "insertionName": "expinit_target_dog_penis"
+      },
+      {
+        "ID":"expinit_target_dog_2",
+        "displayName": "expinit_target_dog_shepherd",
+        "insertionName": "expinit_target_dog_penis"
+      },
+      {
+        "ID":"expinit_target_dog_3",
+        "displayName": "expinit_target_dog_wandering",
+        "insertionName": "expinit_target_dog_penis"
+      }
+    ]
+  },
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+
+
+        "expinit_target_dog": "狗",
+        "expinit_target_dog_shepherd": "德牧",
+        "expinit_target_dog_wandering": "流浪狗",
+        "expinit_target_dog_penis": "狗阴茎"
+
+
+      },
+      "en-us": {
+
+        
+      }
+    }
+  }
+}

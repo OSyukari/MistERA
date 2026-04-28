@@ -1,0 +1,318 @@
+{
+    "ExperienceInitializers": {
+        "list": [
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "specific_exp_event_goblin_captive_collection",
+                "_comment": "collections of generic settings for girls",
+                "randActor":["expinit_target_goblin_1", "expinit_target_goblin_2"],
+                "selectOne": {
+                    "specific_exp_event_goblin_captive_short": 1,
+                    "specific_exp_event_goblin_captive_extended": 1,
+                    "specific_exp_event_rescued_goblin_gangRape": 1
+                },
+                "selectEach": {}
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "specific_exp_event_goblin_captive_short",
+                "_comment": "Brief goblin captivity. 1-3 rape incidents before rescue. Vaginal first experience: doggy style by a goblin.",
+                "experienceEntries": [
+                    {
+                        "experienceID": "experience_sex_raped",
+                        "minAmount": 2,
+                        "maxAmount": 5
+                    },
+                    {
+                        "experienceID": "experience_sex_nonhuman",
+                        "minAmount": 2,
+                        "maxAmount": 5
+                    },
+                    {
+                        "experienceID": "experience_sex_animal",
+                        "minAmount": 2,
+                        "maxAmount": 5
+                    },
+                    {
+                        "experienceID": "experience_sex_V",
+                        "minAmount": 10,
+                        "maxAmount": 30
+                    },
+                    {
+                        "experienceID": "experience_pain",
+                        "minAmount": 10,
+                        "maxAmount": 30
+                    }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "bodyPartTags": [
+                            "vagina"
+                        ],
+                        "interactionTags": [
+                            "sex",
+                            "penetration",
+                            "position_reverse",
+                            "position_equal"
+                        ],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_displayName_1",
+                        "isConsensual": false
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "specific_exp_event_goblin_captive_extended",
+                "_comment": "Extended goblin captivity. Repeated assaults, all holes used. Vaginal/anal/mouth all marked non-consensual.",
+                "experienceEntries": [
+                    {
+                        "experienceID": "experience_sex_raped",
+                        "minAmount": 20,
+                        "maxAmount": 60
+                    },
+                    {
+                        "experienceID": "experience_sex_nonhuman",
+                        "minAmount": 20,
+                        "maxAmount": 60
+                    },
+                    {
+                        "experienceID": "experience_sex_animal",
+                        "minAmount": 20,
+                        "maxAmount": 60
+                    },
+                    {
+                        "experienceID": "experience_sex_V",
+                        "minAmount": 80,
+                        "maxAmount": 200
+                    },
+                    {
+                        "experienceID": "experience_sex_V_cum",
+                        "minAmount": 10,
+                        "maxAmount": 30
+                    },
+                    {
+                        "experienceID": "experience_sex_A",
+                        "minAmount": 40,
+                        "maxAmount": 120
+                    },
+                    {
+                        "experienceID": "experience_sex_A_cum",
+                        "minAmount": 5,
+                        "maxAmount": 20
+                    },
+                    {
+                        "experienceID": "experience_sex_M",
+                        "minAmount": 40,
+                        "maxAmount": 100
+                    },
+                    {
+                        "experienceID": "experience_sex_M_cum",
+                        "minAmount": 5,
+                        "maxAmount": 20
+                    },
+                    {
+                        "experienceID": "experience_sex_maso",
+                        "minAmount": 10,
+                        "maxAmount": 40
+                    },
+                    {
+                        "experienceID": "experience_pain",
+                        "minAmount": 60,
+                        "maxAmount": 180
+                    }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "bodyPartTags": [
+                            "vagina"
+                        ],
+                        "interactionTags": [
+                            "sex",
+                            "penetration",
+                            "position_reverse",
+                            "position_equal"
+                        ],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "bodyPartTags": [
+                            "anus"
+                        ],
+                        "interactionTags": [
+                            "sex",
+                            "penetration",
+                            "position_reverse",
+                            "position_equal"
+                        ],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_A_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "bodyPartTags": [
+                            "mouth"
+                        ],
+                        "interactionTags": [
+                            "sex",
+                            "penetration",
+                            "position_face",
+                            "position_inequal",
+                            "external"
+                        ],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_Force_displayName_1",
+                        "isConsensual": false
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "specific_exp_event_rescued_goblin_gangRape",
+                "_comment": "Rescued from goblin gang assault (event_goblin_gangRape_rescuedChara). Acute multi-assailant attack. All body parts marked non-consensual.",
+                "experienceEntries": [
+                    {
+                        "experienceID": "experience_sex_raped",
+                        "minAmount": 15,
+                        "maxAmount": 40
+                    },
+                    {
+                        "experienceID": "experience_sex_nonhuman",
+                        "minAmount": 15,
+                        "maxAmount": 40
+                    },
+                    {
+                        "experienceID": "experience_sex_animal",
+                        "minAmount": 15,
+                        "maxAmount": 40
+                    },
+                    {
+                        "experienceID": "experience_sex_V",
+                        "minAmount": 60,
+                        "maxAmount": 150
+                    },
+                    {
+                        "experienceID": "experience_sex_V_cum",
+                        "minAmount": 8,
+                        "maxAmount": 25
+                    },
+                    {
+                        "experienceID": "experience_sex_A",
+                        "minAmount": 30,
+                        "maxAmount": 80
+                    },
+                    {
+                        "experienceID": "experience_sex_A_cum",
+                        "minAmount": 5,
+                        "maxAmount": 15
+                    },
+                    {
+                        "experienceID": "experience_sex_M",
+                        "minAmount": 30,
+                        "maxAmount": 80
+                    },
+                    {
+                        "experienceID": "experience_sex_M_cum",
+                        "minAmount": 5,
+                        "maxAmount": 15
+                    },
+                    {
+                        "experienceID": "experience_sex_maso",
+                        "minAmount": 10,
+                        "maxAmount": 30
+                    },
+                    {
+                        "experienceID": "experience_pain",
+                        "minAmount": 50,
+                        "maxAmount": 150
+                    }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "bodyPartTags": [
+                            "vagina"
+                        ],
+                        "interactionTags": [
+                            "sex",
+                            "penetration",
+                            "position_reverse",
+                            "position_equal"
+                        ],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "bodyPartTags": [
+                            "anus"
+                        ],
+                        "interactionTags": [
+                            "sex",
+                            "penetration",
+                            "position_reverse",
+                            "position_equal"
+                        ],
+                        "description": "",
+                        "actionName": "com_sex_P_doggy_A_displayName_1",
+                        "isConsensual": false
+                    },
+                    {
+                        "bodyPartTags": [
+                            "mouth"
+                        ],
+                        "interactionTags": [
+                            "sex",
+                            "penetration",
+                            "position_face",
+                            "position_inequal",
+                            "external"
+                        ],
+                        "description": "",
+                        "actionName": "com_sex_oral_P_Force_displayName_1",
+                        "isConsensual": false
+                    }
+                ]
+            }
+        ],
+        
+        "list_actor": [
+            {
+                "ID":"expinit_target_goblin_1",
+                "displayName": "expinit_target_goblin",
+                "insertionName": "expinit_target_male_penis_large"
+            },
+            {
+                "ID":"expinit_target_goblin_2",
+                "displayName": "expinit_target_goblin",
+                "insertionName": "expinit_target_goblin_penis"
+            }
+        ]
+    },
+    "CharGenTemplates": {
+        "list": [
+            {
+                "ID": "goblin_victim_BD2_random_3star_female",
+                "targetBaseID": "BD2_random_3star_female",
+                "basicExperienceOverride": [
+                    "exp_collection_girl_hetero"
+                ],
+                "experienceOverride": [
+                    "exp_collection_randomProfession",
+                    "specific_exp_event_goblin_captive_collection"
+                ]
+            }
+        ]
+    },
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+        "expinit_target_goblin": "哥布林",
+        "expinit_target_goblin_penis": "恶臭阴茎"
+      },
+      "en-us": {
+      }
+    }
+  }
+}

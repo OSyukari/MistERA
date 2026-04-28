@@ -2,28 +2,6 @@
     "Events":{
         "list":[
             {
-                "ID":"OnEnterRoom",
-                "_trigger":"OnEnterRoom",
-                "SelfValidator":{
-                    "chara_conditions":
-                    [
-                        { "parameters":["isPlayer"] },
-                        { "parameters":["hasActionPackageType","ActionPackage_PathTo", "true", "true"] }
-                    ]
-                },
-                "events":[
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "Player OnEnterRoom!"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "Event END",
-                        "isLast": true
-                    }
-                ]
-            },
-            {
                 "ID":"OnEnterRoom_interrupt",
                 "trigger":"OnEnterRoom",
                 "SelfValidator":{

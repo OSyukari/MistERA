@@ -163,34 +163,58 @@ public class Job_Furniture : Job
     public List<ActionPackage> MakePackagesJoinable(Character_Trainable c)
     {
         List<ActionPackage> pkgs = new List<ActionPackage>();
-
+        bool debug = scr_System_CentralControl.current.LogPrefs.DLog_JoinAP;
         foreach(var pkg in this.ActivePackages)
         {
-            if (pkg.Duration <= 1) continue;
-            if (pkg.actorRefs.Contains(c.RefID)) continue;
-            if (pkg.isPaused) continue;
-            if (pkg.isTemporaryAP) continue;
-            if (!pkg.AllowJoining) continue;
+            if (pkg.isTemporaryAP)
+            {
+                //if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, package is temporary");
+                continue;
+            }
+            if (pkg.Duration <= 1)
+            {
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, package duration < 1");
+                continue;
+            }
+            if (pkg.actorRefs.Contains(c.RefID))
+            {
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, already contain {c.FirstName} refid");
+                continue;
+            }
+            if (pkg.isPaused)
+            {
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, package paused");
+                continue;
+            }
+            if (!pkg.AllowJoining)
+            {
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, does not allow joining");
+                continue;
+            }
             if (actorRefIDStorage.ContainsKey(c.RefID) && !actorRefIDStorage[c.RefID].Match(pkg.targetCOM))
             {
-                //Debug.LogError($"{c.FirstName} try join: actor registered for |{actorRefIDStorage[c.RefID].comID}|{actorRefIDStorage[c.RefID].tag}| does not match {pkg.DisplayName}");
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, actor registered for |{actorRefIDStorage[c.RefID].comID}|{actorRefIDStorage[c.RefID].tag}| does not match {pkg.DisplayName}");
                 continue;
             }
             //if (pkg.Duration * 2 < pkg.targetCOM.TimeScale) continue;
-            if (!CanCOMAcceptMoreActor(pkg.targetCOM, c))
+            if (false && !CanCOMAcceptMoreActor(pkg.targetCOM, c))
             {
-                //Debug.LogError($"{c.FirstName} try join: {pkg.DisplayName} cannot accept more actor");
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, {pkg.DisplayName} cannot accept more actor");
                 continue;
             }//if (pkg.targetCOM.variants[0])
 
             var newpkg = pkg.Copy();
-            if (newpkg.canJoinAP(c, out var a, out var b) < 0) continue;
+            if (newpkg.canJoinAP(c, out var a, out var b, out var ttps) < 0)
+            {
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, newpackage fail message:\n{String.Join("\n", ttps)}");
+                continue;
+            }
             else pkgs.Add(pkg);
         }
         return pkgs;
     }
 
-    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, List<string> debug = null)
+    protected override List<COM> FilterPossibleCOMs(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, COM filter = null, List<string> debug = null)
     {
         //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
         // 2 - if actor is in room, set COM package
@@ -198,7 +222,14 @@ public class Job_Furniture : Job
         var m = FactionOwner is Manageable ? FactionOwner as Manageable : null;
         // during registration, chara addactor register currentjobschedule, or register recreation / meal / etc
 
-        List<COM> possibleCOMs = c.RefID != scr_System_CampaignManager.current.Player.RefID && actorRefIDStorage.ContainsKey(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
+
+
+        //List<COM> possibleCOMs = c.RefID != scr_System_CampaignManager.current.Player.RefID && actorRefIDStorage.ContainsKey(c.RefID) ? actorRefIDStorage[c.RefID].Match(this) : (allowInvalid ? allusableCOMs : new List<COM>());
+
+        var possibleCOMs = base.FilterPossibleCOMs(c, allowParent, allowChild, allowInvalid, filter, debug);
+
+
+        List<COM> results = new List<COM>();
 
         List<string> comnames = new List<string>();
         foreach (var i in possibleCOMs) comnames.Add(i.DisplayName());
@@ -206,57 +237,34 @@ public class Job_Furniture : Job
 
         if (possibleCOMs.Count < 1)
         {
-           // Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage.TryGetValue(c.RefID, out) actorRefIDStorage[c.RefID].comID} at step 1");
-            return new List<ActionPackage>();
-        }   
-        
-        if (!allowInvalid) 
-        {
-            possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x) 
-                                                    && CanCOMAcceptMoreActor(x, c) 
-                                                    && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
-                                                    && (!x.hasFactionReq || !x.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out var po)))
-                                                );
-            //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");
-        }
-        List<ActionPackage> results = new List<ActionPackage>();
-        foreach(var com in possibleCOMs)
-        {
-            if (!allowParent && com.childCOMs.Count > 0) continue;
-            if (!allowChild && com.ParentCOM != null) continue;
-
-            Manageable.ProductionOrder po = null;
-            // bool valid = false;
-            /*if (com is COM_Character_Remove && this.Container != null && this.Container is JobContainer_Chara && (this.Container as JobContainer_Chara).CharaRefs)
-            {
-                var container = this.Container as JobContainer_Chara;
-                var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(container.CharaRefs), -1, po);
-                if (package.Validate() || allowInvalid)
-                {
-                    results.Add(package);
-                   // valid = true;
-                }
-            }
-            else*/
-            if (com is COM_TakeMeal && !FactionOwner.isMealHour) continue;
-            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r)))
-            {
-                var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1);
-                if (package.Validate() || allowInvalid)
-                {
-                    results.Add(package);
-                    if (debug != null) debug.Add($"add com {com.DisplayName()}");
-                    //  valid = true;
-                }
-                else if (debug != null) debug.Add($"com {com.DisplayName()} invalid");
-                
-            }
-            else if(debug != null)  debug.Add($"com {com.DisplayName()} skipped");
-            // if (com.comTags.Contains("food_meal") && !valid) Debug.LogError($"mealcom {com.ID} failed playerCOM validation, allowinvalid {allowInvalid} hasfactionreq {(!com.hasFactionReq || FactionOwner.GetProductionOrder(this, out var ccc2, out po))}");
+            // Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} looking for {actorRefIDStorage.TryGetValue(c.RefID, out) actorRefIDStorage[c.RefID].comID} at step 1");
+            return results;
         }
 
+        foreach (var com in possibleCOMs)
+        {
+
+            if (!allowInvalid)
+            {
+                if (!ValidCOMs.Contains(com)) continue;
+                if (!CanCOMAcceptMoreActor(com, c)) continue;
+                if (com.hasFactionReq && !com.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd)) continue;
+                if (com.hasFactionReq && com.isJobCOM && (m == null || !m.GetProductionOrder(this, out var xxx, out var po))) continue;
+
+                /*
+                possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x)
+                                                        && CanCOMAcceptMoreActor(x, c)
+                                                        && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
+                                                        && (!x.hasFactionReq || !x.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out var po)))
+                                                    );*/
+                //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");
+            }
+
+            results.Add(com);
+        }
         return results;
     }
+
 
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)
     {

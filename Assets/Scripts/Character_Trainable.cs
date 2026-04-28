@@ -175,7 +175,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     public void InitializeWithRefID(int refID)
     {
-        
+
         this.referenceID = refID;
 
         this.Appearance = Template.Appearance;
@@ -203,6 +203,43 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
         this.Relationships = new RelationshipManager(this);
         this.PortraitManager.RebuildInternal(this);
+
+
+        // Apply experience initializers declared in the template hierarchy.
+        // Parent initializers are prepended (run first), then child's own.
+        var baseExp = Template.basicExperience;
+        var addonExps = Template.initialExperiences;
+
+        if (baseExp.Count > 0)
+        {
+            var rand = Utility.GetRandomElement(baseExp);
+            var expp = scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID(rand);
+            if (expp != null)
+            {
+                Debug.Log($"adding exp {expp.BaseID}");
+                expp.Execute(this);
+            }
+            else
+            {
+                Debug.Log($"cannot find exp {rand}");
+            }
+        }
+
+        foreach (var id in addonExps)
+        {
+            var init = scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID(id);
+            if (init != null)
+            {
+                Debug.Log($"adding exp {init.BaseID}");
+                init.Execute(this);
+            }
+            else
+            {
+                Debug.Log($"cannot find exp {id}");
+            }
+        }
+
+        Skills.UpdateAllSkills(null);
     }
 
     [JsonProperty] protected SkillManager _Skills = null;
@@ -340,6 +377,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     {
         //Debug.Log($"Chara stat update globaltime {t.TotalMinutes}");
         this.Stats.UpdateTimeMinute(t, t_real);
+        this.Relationships.RefreshMinute1();
     }
     private void Observer_GlobalHour(TimeSpan t)
     {

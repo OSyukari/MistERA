@@ -340,32 +340,15 @@ public class Map_Instance
     private void UpdateRoom(Room_Instance ri, bool forceGreeting = false)
     {
         var charaInRoom = ri.RoomChara;
-
         if (scr_System_CampaignManager.current.CurrentRoom == ri && !charaInRoom.Contains(scr_System_CampaignManager.current.Player))
         {
             Debug.LogError("error room does not contain player ref");
-            charaInRoom.Add(scr_System_CampaignManager.current.Player);
-            //ri.AddChara(scr_System_CampaignManager.current.Player);
-
         }
         ri.Tick();
         var log = scr_System_CentralControl.current.LogPrefs.DLog_Interrupt;
-
-
-        // if(Rooms.ContainsKey(iii.Key) && iii.Value.Count > 0) Debug.Log("roomCharaRef " + Rooms[iii.Key].DisplayName + " and charaRefs " + String.Join("|", iii.Value));
-        /*if (iii.Key == scr_System_CampaignManager.current.CurrentRoom.RefID)
-        {
-            if (!charaInRoom.Contains(0))
-            {
-                //Debug.LogError("charaInRoom does not contain player, fixing");
-                charaInRoom.Add(0);
-            }
-            //Debug.Log("roomCharaRef " + GetRoomByRef(iii.Key).DisplayName + " and charaRefs " + String.Join("|", charaInRoom));
-        }*/
-
         Dictionary<Character_Trainable, List<EvaluationPackage>> tempDicts = new Dictionary<Character_Trainable, List<EvaluationPackage>>();
 
-        foreach(var i in charaInRoom)
+        foreach (var i in charaInRoom)
         {
             if (i == null) continue;
             UtilityEX.GetEPsFrom(i, out List<EvaluationPackage> eps);
@@ -382,7 +365,139 @@ public class Map_Instance
             bool isDirty = dirtyCharaRef.Contains(xx.RefID) || (xx.CanActInTimeStop && xx.MovedInTimeStop && scr_System_Time.current.TimeResume);
 
             List<string> selfTags = new List<string>();
-            foreach (var i in xxEPs) selfTags.AddRange(i.isDoer(xx) ? i.DoerTargetTag : i.ReceiverTargetTag);
+            foreach (var i in xxEPs)
+            {
+                if (i.isDoer(xx)) selfTags.AddRange(i.DoerTargetTag);
+                else if (i.isReceiver(xx)) selfTags.AddRange(i.ReceiverTargetTag);
+            }
+            selfTags = Utility.Distinct(selfTags);
+
+            List<int> ignoreList = new List<int>();
+
+            // check interrupt
+            var checkInterruptAPs = isDirty ? scr_System_CampaignManager.current.GetRegisteredAPByRoom(ri.RefID, true) : new List<ActionPackage>(dirtyCharaAPRef);
+
+            // only check interrupt if not player
+            // these are all ap that chara could react to
+            if (xx.InteractionJob != null && xx.InteractionJob.isActive) 
+            {
+                //
+            }
+            else if (xx.CurrentJob != null && !xx.CurrentJob.CanBeInterrupted)
+            {
+                //
+            }
+            else
+            {
+
+                foreach (var i in checkInterruptAPs)
+                {
+                    if (i.RoomKey != ri.RefID) continue;// { Debug.LogError("dirtychararef roomkey inequal [" + i.RoomKey + "] [" + iii.Key + "]"); continue; }
+                    if (i.job.actorRefID.Contains(xx.RefID)) continue;//{ Debug.LogError("dirtychararef actorref contains [" + String.Join("|", i.actorRefs) + "] [" + charaInRoom[x] + "]"); continue; }
+                                                                      // if (xx.CurrentJob != null && i.job != null && i.job.RefID == xx.CurrentJobRefID) continue;//{ Debug.LogError("dirtychararef currentjob identical [" + i.job.DisplayName + "]"); continue; }
+                                                                      // if (xx.InteractionJob != null && i.job != null && i.job.RefID == xx.InteractionJob.RefID) continue;//{ Debug.LogError("dirtychararef interactionjob identical [" + i.job.DisplayName + "]"); continue; }
+                    if (Utility.ListContainsStrict(ignoreList, i.actorRefs)) continue;//{ Debug.LogError("dirtychararef ignorelist contains [" + String.Join("|", ignoreList) + "] [" + String.Join("|", i.actorRefs) + "]"); continue; }
+                    if (i.timestopTick && !xx.CanActInTimeStop) continue;
+                    //if (xx.InteractionJob != null && xx.InteractionJob.isActive) continue;
+                    if (log) Debug.Log($"Checking interrupt on {xx.FirstName} for AP {i.DisplayName} [{(i.targetCOM == null ? "" : String.Join("|", i.targetCOM.comTags))}] selftags [{String.Join("|", selfTags)}]");
+
+                    if (MapUtility.CheckInterrupt(xx, i, selfTags) && xx.RefID != 0)
+                    {
+                        interrupted = true;
+                        ignoreList.AddRange(i.actorRefs);
+                    }
+
+                }
+            }
+
+            // check greeting -> y react to x
+            for (int y = 0; y < charaInRoom.Count; y++)
+            {
+                var yy = charaInRoom[y];
+                if (xx == yy) continue;
+                if (yy == null) continue;
+
+
+                var yyEPs = tempDicts[yy];
+                /*
+                Prioritise self or target.
+                    */
+                bool greeting = (forceGreeting || isDirty || dirtyCharaRef.Contains(yy.RefID)) && scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) != scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID);
+                if (false)// && greeting && yy.Relationships.NotifyMeeting(xx,  yyEPs, xxEPs, "Greeting"))
+                {   // "greeting" event is not being used, use "dailygreeting" instead
+                    // allow party member to trigger each other greeting (and log relationship)
+                    if (log) Debug.Log($"Greeting from {yy.FirstName} to {xx.FirstName}");
+                }
+                else if (greeting && yy.forbidGreeting)
+                {
+                    if (log) Debug.Log($"forbidGreeting from {yy.CallName} to {xx.CallName}");
+                }
+                else if (greeting && MapUtility.CheckReverseInterrupt(yyEPs, yy, xx))
+                {
+                    if (log) Debug.Log($"CheckReverseInterrupt 2 from {yy.CallName} to {xx.CallName}");
+                }
+                else if (greeting && yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "DailyGreeting"))
+                {
+                    // Debug.LogError($"Greeting {xx.CallName} -> {yy.CallName}");
+                    if (log) Debug.Log($"DailyGreeting from {yy.FirstName} to {xx.FirstName}");
+                    //yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "Greeting");
+                }
+                else
+                {
+                    //if (log) Debug.LogError($"Greeting Failed {xx.CallName} -> {yy.CallName}, {forceGreeting} {isDirty} {dirtyCharaRef.Contains(yy.RefID)} {!(scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) && scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID))}");
+                }
+            }
+
+
+            if (isDirty)
+            {
+                scr_UpdateHandler.current.EventHandler.Trigger(xx, EventTrigger.OnEnterRoom);
+            }
+        }
+
+        foreach (var i in charaInRoom)
+        {
+            i.Relationships.RefreshMoodlets(charaInRoom);
+        }
+    }
+
+
+    /*
+    private void UpdateRoom2(Room_Instance ri, bool forceGreeting = false)
+    {
+        var charaInRoom = ri.RoomChara;
+
+        if (scr_System_CampaignManager.current.CurrentRoom == ri && !charaInRoom.Contains(scr_System_CampaignManager.current.Player))
+        {
+            Debug.LogError("error room does not contain player ref");
+            charaInRoom.Add(scr_System_CampaignManager.current.Player);
+            //ri.AddChara(scr_System_CampaignManager.current.Player);
+
+        }
+        ri.Tick();
+        var log = scr_System_CentralControl.current.LogPrefs.DLog_Interrupt;
+
+
+        Dictionary<Character_Trainable, List<ActionPackage>> tempDicts = new Dictionary<Character_Trainable, List<ActionPackage>>();
+
+        foreach(var i in charaInRoom)
+        {
+            if (i == null) continue;
+            UtilityEX.GetAPsFrom(i, out List<ActionPackage> eps);
+            tempDicts.Add(i, eps);
+        }
+
+        for (int x = 0; x < charaInRoom.Count; x++)
+        {
+            var xx = charaInRoom[x];
+            if (xx == null) continue;
+            var xxEPs = tempDicts[xx];
+
+            bool interrupted = false;
+            bool isDirty = dirtyCharaRef.Contains(xx.RefID) || (xx.CanActInTimeStop && xx.MovedInTimeStop && scr_System_Time.current.TimeResume);
+
+            List<string> selfTags = new List<string>();
+            foreach (var i in xxEPs) selfTags.AddRange(i.ActorTargetTags(xx.RefID));
             selfTags = Utility.Distinct(selfTags);
 
             List<int> ignoreList = new List<int>();
@@ -424,9 +539,9 @@ public class Map_Instance
 
 
                     var yyEPs = tempDicts[yy];
-                    /*
-                    Prioritise self or target.
-                     */
+               
+                    //Prioritise self or target.
+                     
                     bool greeting = (forceGreeting || isDirty || dirtyCharaRef.Contains(yy.RefID)) && scr_System_CampaignManager.current.isPlayerPartyMember(xx.RefID) != scr_System_CampaignManager.current.isPlayerPartyMember(yy.RefID);
                     if (false)// && greeting && yy.Relationships.NotifyMeeting(xx,  yyEPs, xxEPs, "Greeting"))
                     {   // "greeting" event is not being used, use "dailygreeting" instead
@@ -437,9 +552,13 @@ public class Map_Instance
                     {
                         if (log) Debug.Log($"forbidGreeting from {yy.CallName} to {xx.CallName}");
                     }
+                    else if (greeting && MapUtility.CheckReverseInterrupt(xxEPs, xx, yy))
+                    {
+                        if (log) Debug.Log($"CheckReverseInterrupt 1 from {xx.CallName} to {yy.CallName}");
+                    }
                     else if (greeting && MapUtility.CheckReverseInterrupt(yyEPs, yy, xx))
                     {
-                        if (log) Debug.Log($"CheckReverseInterrupt from {yy.CallName} to {xx.CallName}");
+                        if (log) Debug.Log($"CheckReverseInterrupt 2 from {yy.CallName} to {xx.CallName}");
                     }
                     else if (greeting && yy.Relationships.NotifyMeeting(xx, yyEPs, xxEPs, "DailyGreeting"))
                     {
@@ -468,7 +587,7 @@ public class Map_Instance
         {
             i.Relationships.RefreshMoodlets(charaInRoom);
         }
-    }
+    }*/
 
     public void RefreshRoomMoodlets()
     {

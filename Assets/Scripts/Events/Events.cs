@@ -272,6 +272,25 @@ public class Event : I_SerializationCallbackReceiver
                 }
             }
         }
+
+        public class EventEntry_InputField : EventEntry
+        {
+            public override string Name { get { return question; } }
+            public string question = "";
+            public string defaultFieldValue = "";
+            public List<Options> options = new List<Options>();
+
+            [JsonIgnore]
+            public Options Default
+            {
+                get
+                {
+
+                    foreach (var i in options) if (i.isDefaultCancel) return i;
+                    return options.Count > 0 ? options[0] : null;
+                }
+            }
+        }
         public class EventEntry_Branch : EventEntry
         {
             public List<Options> options = new List<Options>();
@@ -471,6 +490,7 @@ public class Event : I_SerializationCallbackReceiver
             ExecuteAPOnFurniture,
 
             CheckRelationship,
+
 
             /// <summary>
             /// [target, basestringID]

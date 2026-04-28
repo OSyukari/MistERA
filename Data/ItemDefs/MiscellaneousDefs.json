@@ -36,7 +36,10 @@
             },
             "en-us":
             {
-
+                "itemm_gamecd_minesweeper": "Minesweeper",
+                "itemm_gamecd_minesweeper_tooltip": "Minesweeper",
+                "item_videocd_news": "News",
+                "item_videocd_news_tooltip": "News"
             }
         }
     }

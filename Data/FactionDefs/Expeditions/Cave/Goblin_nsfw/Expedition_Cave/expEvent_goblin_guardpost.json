@@ -140,7 +140,7 @@
                                 "allowScope": false,
                                 "charaTemplate": [
                                     {
-                                        "baseID": "BD2_random_3star_female",
+                                        "baseID": "goblin_victim_BD2_random_3star_female",
                                         "refKeys": [
                                             "victims"
                                         ],
@@ -186,7 +186,7 @@
                                 ],
                                 "charaTemplate": [
                                     {
-                                        "baseID": "BD2_random_3star_female",
+                                        "baseID": "goblin_victim_BD2_random_3star_female",
                                         "refKeys": [
                                             "victims"
                                         ],

@@ -93,7 +93,10 @@
 "Campaign1_Nikke_Grave_firstname":"Grave",
 
   "humanRaceAddon_Android_Nikke": "Nikke",
-  "humanRaceAddon_Android_Nikke_tooltip": "An android created to be closer to the human appearance in order to accommodate human thought.\nAlthough their combat power far exceeds that of ordinary people, %%humanRaceAddon_Android_Nikke%% still require a living environment similar to that of normal humans in order to maintain their mental stability.\nSTR+10, CON+10, Base Obedience +1"
+  "humanRaceAddon_Android_Nikke_tooltip": "An android created to be closer to the human appearance in order to accommodate human thought.\nAlthough their combat power far exceeds that of ordinary people, %%humanRaceAddon_Android_Nikke%% still require a living environment similar to that of normal humans in order to maintain their mental stability.\nSTR+10, CON+10, Base Obedience +1",
+
+  "charaComment_source_nikke_characard": "Character card entry from tavern card: Goddess of Victory: NIKKE (permission not obtained)"
+
   
 
             }

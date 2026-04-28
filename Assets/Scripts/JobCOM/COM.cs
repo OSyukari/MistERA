@@ -1,8 +1,10 @@
-using System.Collections.Generic;
-using UnityEngine;
-using System;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using Unity.Jobs;
+using UnityEngine;
 
 [System.Serializable]
 public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLateInitialize, I_IndexMergeable, I_RemoveElemByTag, I_RemoveNSFW
@@ -257,13 +259,29 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
 public class COM: I_SerializationCallbackReceiver, hasCategory
 {
 
-
+    /// <summary>
+    /// Called on GenerateCOM  loadBaseItem:TRUE
+    /// </summary>
+    /// <param name="baseCOM"></param>
+    /// <param name="item"></param>
     public virtual void InitializeChildCOM(COM baseCOM, Item_Base item)
     {
         // ignore if not child com
 
         ParentCOM = baseCOM;
     }
+    /// <summary>
+    /// Called on GenerateCOM  loadBaseItem:FALSE
+    /// </summary>
+    /// <param name="baseCOM"></param>
+    /// <param name="item"></param>
+    public virtual void InitializeChildCOM(COM baseCOM, Item_Instance item)
+    {
+        // ignore if not child com
+
+        ParentCOM = baseCOM;
+    }
+
 
     [JsonIgnore]
     public List<COM> childCOMs = new List<COM>();
@@ -361,6 +379,14 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     {
         public string itemTag = "";
         public COM targetCOMClass = null;
+        public bool hideChild = true;
+    }
+
+    public GenerateAPWithTemplate GenerateAP = null;
+    public class GenerateAPWithTemplate
+    {
+        public string itemTag = "";
+        public ActionPackage targetAPClass = null;
         public bool hideChild = true;
     }
 
@@ -1095,6 +1121,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
             if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);
+            if (s.Count < 1)
+            {
+                s.Add($"({ap.targetCOM.DisplayName(ap.COMVariantID)}: {LocalizeDictionary.QueryThenParse($"Memory_Response_{( ap.injectResult != Memory_Response.None ? ap.injectResult : "Complete" )}") })");
+            }
             string s2 = String.Join("\n", s);
             return s2;
         }
@@ -1109,6 +1139,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
             if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);
+            if (s.Count < 1) s.Add($"({evp.targetCOM.DisplayName(evp.Package.COMVariantID)}: {evp.Response})");
             string s2 = String.Join("\n", s);
             return s2;
         }
@@ -1218,6 +1249,14 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
 
     public string ActionPackageClass = "";
+    /// <summary>
+    /// This is not called by Furniture.
+    /// </summary>
+    /// <param name="job"></param>
+    /// <param name="doers"></param>
+    /// <param name="receivers"></param>
+    /// <param name="masterRef"></param>
+    /// <returns></returns>
     public ActionPackage MakePackage(Job job, List<int> doers, List<int> receivers, int masterRef)
     {
         ActionPackage returnValue = null;
@@ -1244,7 +1283,6 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 }
                 else returnValue = new ActionPackage_ProductionOrder(pOrder, jFurn, this, doers, receivers, masterRef);
                 break;
-
             default:
                 break;
 
@@ -1252,6 +1290,78 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         if (returnValue == null) Debug.LogError("Error making package for com " + ID);
         return returnValue;
     }
+
+    public List<ActionPackage> MakePackages(Job job, List<int> doers, List<int> receivers, int masterRef)
+    {
+        List<ActionPackage> returnValues = new List<ActionPackage>();
+        if (this.GenerateAP != null && this.GenerateAP.itemTag != null && this.GenerateAP.targetAPClass != null)
+        {
+            var itemUseAP = this.GenerateAP.targetAPClass as ActionPackage_ItemUse;
+            if (itemUseAP == null)
+            {
+                // error
+
+            }
+            else
+            {
+                var items = job.FactionOwner.Inventory.GetItemByTag(this.GenerateAP.itemTag);
+                foreach (var item in items)
+                {
+                    // make package
+                    var newap = itemUseAP.Copy() as ActionPackage_ItemUse;
+                    //newap.ItemInstance = item;
+                    newap.ReInitializeCOM(job, this, doers, receivers, masterRef, true);
+                    newap.LoadItem(item);
+                    returnValues.Add(newap);
+                }
+            }
+
+            if (returnValues.Count < 1) Debug.Log($"Error GenerateAP for com {ID}, probably missing items");
+        }
+        else
+        {
+            ActionPackage returnValue = null;
+            Manageable.ProductionOrder pOrder = null;
+            if (!isJobCOM || (job.FactionOwner != null && job.FactionOwner.FactionOwnerRoot.GetProductionOrder(job as Job_Furniture, out var xxx, out pOrder)))
+            {
+
+            }
+            switch (ActionPackageClass)
+            {
+                case "ActionPackage_Interaction":
+                    returnValue = new ActionPackage_Interaction(job, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+                case "ActionPackage_ItemUse":
+
+
+                    break;
+                case "ActionPackage_Sex":
+                    returnValue = new ActionPackage_Sex(job, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+                case "ActionPackage_ProductionOrder":
+                    Job_Furniture jFurn = job as Job_Furniture;
+                    if (jFurn == null) break;
+                    else if (pOrder == null)
+                    {
+                        Debug.LogError("ActionPackage_ProductionOrder creation error, missing pOrder");
+                        returnValue = new ActionPackage_Interaction(job, this, doers, receivers, masterRef);
+                    }
+                    else returnValue = new ActionPackage_ProductionOrder(pOrder, jFurn, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+
+                default:
+                    break;
+
+            }
+            if (returnValues.Count < 1) Debug.LogError("Error making package for com " + ID);
+        }
+        
+        return returnValues;
+    }
+
 
    public virtual string Replace(string s)
     {

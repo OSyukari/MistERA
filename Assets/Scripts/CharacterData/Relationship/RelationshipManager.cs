@@ -36,11 +36,11 @@ public class RelationshipManager
 
     [JsonProperty] Dictionary<string, int> behaviorCooldown = new Dictionary<string, int>();
 
-    public void BehaviorCooldown(string cooldownID, int cooldownHours)
+    public void BehaviorCooldown(string cooldownID, int cooldownHours, int cooldownMinutes)
     {
         if (cooldownHours <= 0) return;
         if (cooldownID == "") return;
-        behaviorCooldown[cooldownID] = cooldownHours;
+        behaviorCooldown[cooldownID] = cooldownHours * 60 + cooldownMinutes;
         //Debug.Log($"{Owner.FirstName} BehaviorCooldown {cooldownID} {behaviorCooldown[cooldownID]}");
     }
     public bool BehaviorInCooldown(string cooldownID)
@@ -121,13 +121,16 @@ public class RelationshipManager
     }
     public void RefreshMinute5()
     {
+
+    }
+    public void RefreshMinute1()
+    {
         int value = 0;
         foreach (var key in behaviorCooldown.Keys.ToList())
         {
-            value = 0;
             if (behaviorCooldown.TryGetValue(key, out value) && value > 0)
             {
-                behaviorCooldown[key] = (value - 5);
+                behaviorCooldown[key] = (value - 1);
                 //Debug.Log($"{Owner.FirstName} tick behaviorCooldown {key} {value} -> {behaviorCooldown[key]}");
             }
         }
@@ -379,7 +382,19 @@ public class RelationshipManager
         return false;
 
     }
-    public KojoCollector GetKojoMessage_anyEP(KojoCollector kol, Character_Trainable target, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
+
+
+    KojoCollector GetKojoMessage_anyAP(KojoCollector kol, Character_Trainable target, List<ActionPackage> selfEPs, List<ActionPackage> targetEPs)
+    {
+        List<EvaluationPackage> allself = new List<EvaluationPackage>(), alltarget = new List<EvaluationPackage>();
+
+        foreach(var ap in selfEPs) foreach (var ep in ap.ListEP) if (ep.ActorRefs.Contains(kol.selfRef)) allself.Add(ep);
+        foreach (var ap in targetEPs) foreach (var ep in ap.ListEP) if (ep.ActorRefs.Contains(target.RefID)) alltarget.Add(ep);
+        return GetKojoMessage_anyEP(kol, target, allself, alltarget);
+    }
+
+
+    KojoCollector GetKojoMessage_anyEP(KojoCollector kol, Character_Trainable target, List<EvaluationPackage> selfEPs, List<EvaluationPackage> targetEPs)
     {
         // kol have initialized all stuff
         KojoCollector kol2 = null;
@@ -424,6 +439,46 @@ public class RelationshipManager
         foreach (var rel in GenericRelationship) rel.Value.ClearEPCache();
     }
 
+    public KojoCollector GetKojoMessage_APRecord(KojoCollector kol, ActionPackageRecords rec)
+    {
+        // kol have initialized all stuff
+        KojoCollector kol2 = null;
+
+        // kol should load the whole ap
+        MessageCollect_KojoEntry response = null;
+        kol.apStatus = rec.internalState;
+        foreach (var ep in rec.ListEPs)
+        {
+            kol2 = kol.Copy();
+            if (response == null && ep.Doer != null)
+            {
+                kol2.LoadEPRecord(ep, ep.Doer);
+                response = this.Personality.GetKOJOMessage(kol2);
+                if (response != null)
+                {
+                    response.ReplaceString("$epDescription$", ep.Description_Ongoing);
+                    if (kol.collect == null) kol.collect = response;
+                    else kol.collect.nexts.Add(response);
+                    break;
+                }
+            }
+            if (response == null && ep.Receiver != null)
+            {
+                kol2.LoadEPRecord(ep, ep.Receiver);
+                response = this.Personality.GetKOJOMessage(kol2);
+                if (response != null)
+                {
+                    response.ReplaceString("$epDescription$", ep.Description_Ongoing);
+                    if (kol.collect == null) kol.collect = response;
+                    else kol.collect.nexts.Add(response);
+                    break;
+                }
+            }
+        }
+        if (response != null) return kol;
+        else return null;
+    }
+
     public KojoCollector GetKojoMessage_AP(KojoCollector kol, ActionPackage AP)
     {
         // kol have initialized all stuff
@@ -453,7 +508,7 @@ public class RelationshipManager
                 response = this.Personality.GetKOJOMessage(kol2);
                 if (response != null)
                 {
-                    response.ReplaceString("$epDescription$", ep.Package.targetCOM.DisplayName(ep.Package.COMVariantID));
+                    response.ReplaceString("$epDescription$", ep.Description_Ongoing);
                     if (kol.collect == null) kol.collect = response;
                     else kol.collect.nexts.Add(response);
                     break;
@@ -625,7 +680,7 @@ public class RelationshipManager
         MessageCollect_KojoEntry message = injectRel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
             : this.Personality.GetKOJOMessage_Suffix(suffix, ep.isDoer(Owner), ep.isReceiver(Owner), ep, injectRel);
         */
-        if (true || scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
 
         if (message != null && message.message != null && message.message.Length > 0)
         {
@@ -639,7 +694,7 @@ public class RelationshipManager
         }
         else return null;
     }
-    public KojoCollector GetKOJOMessage_Suffix(string suffix, EvaluationPackage ep, MessageCollect m, Character_Trainable injectRel)
+    public KojoCollector GetKOJOMessage_Suffix(string suffix, EvaluationPackage ep, Character_Trainable injectRel)
     {
         if (Owner.RefID == 0) return null;
 
@@ -674,6 +729,19 @@ public class RelationshipManager
     public bool ExistRelationship(int charaRef)
     {
         return relationships.ContainsKey(charaRef);
+    }
+    public Character_Relationship FindRelationshipWith(string baseID)
+    {
+        if (baseID.Length < 1) return null;
+        // first check if exist in baseIDlist
+        foreach(var rel in relationships)
+        {
+            if (rel.Value.TargetBaseID == baseID)
+            {
+                return rel.Value;
+            }
+        }
+        return null;
     }
 
     public Character_Relationship FindRelationshipWith(int charaRef)

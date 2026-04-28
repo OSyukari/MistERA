@@ -146,6 +146,13 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
                 (current as Message_Question).Draw(skipping, this.m_Canvas, question, this);
                 drawnNew = true;
             }
+            else if (current is Message_InputField)
+            {
+                var question = Instantiate(prefab_inputField);
+                question.transform.SetParent(LogsList, false);
+                (current as Message_InputField).Draw(skipping, this.m_Canvas, question, this);
+                drawnNew = true;
+            }
             else if (current is Message_LLMQuery)
             {
                 var query = Instantiate(prefab_llm);
@@ -215,6 +222,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler
     public RectTransform prefab_LogEntry, prefab_SeparationEntry;
     public scr_HoverableText prefab_LogLine;
     public scr_menu_question prefab_question;
+    public scr_menu_inputField prefab_inputField;
     public scr_menu_LLMQuery prefab_llm;
 
 

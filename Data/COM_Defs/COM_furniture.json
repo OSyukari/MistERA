@@ -1366,7 +1366,29 @@
 
     "com_furniture_takeShower_description_onComplete_1": "$doer.firstname$ finished taking a shower",
     "com_furniture_restroom_fix_onComplete_1": "$doer.firstname$ finished fixing their clothes",
-    "com_furniture_getmeal_onComplete_1": "$doer.firstname$ finished their meal"
+    "com_furniture_getmeal_onComplete_1": "$doer.firstname$ finished their meal",
+
+    "com_furniture_getmeal_displayName_base_2": "Dine Together",
+
+"com_furniture_playVideoGames_displayName_variant_1": "Play $name$",
+"com_furniture_playVideoGames_displayName_variant_2": "Play $name$ Together",
+"com_furniture_playVideoGames_description_variant_begin_1": "$doer.firstname$ starts playing $name$",
+"com_furniture_playVideoGames_description_variant_ongoing_1": "$doer.firstname$ is playing $name$",
+
+"com_furniture_readBooks_displayName_1": "Read Books",
+"com_furniture_readBooks_displayName_2": "Read Books Together",
+"com_furniture_readBooks_displayName_variant_1": "Read $name$",
+"com_furniture_readBooks_displayName_variant_2": "Read $name$ Together",
+"com_furniture_readBooks_description_begin_1": "$doer.firstname$ starts reading",
+"com_furniture_readBooks_description_ongoing_1": "$doer.firstname$ is reading",
+"com_furniture_readBooks_description_variant_begin_1": "$doer.firstname$ starts reading $name$",
+"com_furniture_readBooks_description_variant_ongoing_1": "$doer.firstname$ is reading $name$",
+
+"com_furniture_watchVideo_displayName_variant_1": "Watch $name$",
+"com_furniture_watchVideo_displayName_variant_2": "Watch $name$ Together",
+"com_furniture_watchVideo_description_variant_begin_1": "$doer.firstname$ starts watching $name$",
+"com_furniture_watchVideo_description_variant_ongoing_1": "$doer.firstname$ is watching $name$"
+
             }
         }
     }

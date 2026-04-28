@@ -202,7 +202,7 @@
                                 "doerCount": 1
                             }
                         },
-                        "displayName": "film"
+                        "displayName": "com_recording_end_displayName_1"
                     },
                     {
                         "requirements": {
@@ -211,7 +211,7 @@
                                 "receiverCount":1
                             }
                         },
-                        "displayName": "order filming"
+                        "displayName": "com_recording_end_displayName_2"
                     }
                 ],
                 "AcceptanceCheck": {
@@ -234,6 +234,15 @@
 "com_recording_begin_displayName_begin_1":"$doer.firstname$开始录像",
 "com_recording_begin_displayName_ongoing_1":"$doer.firstname$正在录像",
 
+"com_recording_end_displayName_1":"中止录像",
+"com_recording_end_displayName_2":"命令中止录像",
+"com_recording_end_displayName_begin_1":"$doer.firstname$开始停止录制",
+"com_recording_end_displayName_ongoing_1":"$doer.firstname$正在停止录制",
+
+"com_recording_end_job_result_dumped":"录像结束，由于缺乏需要的存储媒介 $reqitem$x$reqCount$（当前持有$count$)，录像内容已废弃",
+"com_recording_end_job_result_failure":"录像结束，录像带道具ID [$itemID$] 生成失败，录像内容已废弃",
+"com_recording_end_job_result_success":"录像结束，成功创建录像：$itemname$，总时长$totalTime$",
+
 "com_recording_begin_displayName_variant_1":"用$name$录像",
 "com_recording_begin_displayName_variant_2":"请求用$name$录像",
 "com_recording_begin_displayName_variant_begin_1":"$doer.firstname$开始用$name$录像",
@@ -242,6 +251,24 @@
             },
             "en-us":
             {
+"com_recording_begin_displayName_1": "Record",
+"com_recording_begin_displayName_2": "Request Recording",
+"com_recording_begin_displayName_begin_1": "$doer.firstname$ starts recording",
+"com_recording_begin_displayName_ongoing_1": "$doer.firstname$ is recording",
+
+"com_recording_end_displayName_1": "Stop Recording",
+"com_recording_end_displayName_2": "Command Stop Recording",
+"com_recording_end_displayName_begin_1": "$doer.firstname$ starts stopping the recording",
+"com_recording_end_displayName_ongoing_1": "$doer.firstname$ is stopping the recording",
+
+"com_recording_end_job_result_dumped": "Recording ended. Due to lacking required storage media $reqitem$x$reqCount$ (currently holding $count$), recording content has been discarded",
+"com_recording_end_job_result_failure": "Recording ended. Failed to generate tape item ID [$itemID$], recording content has been discarded",
+"com_recording_end_job_result_success": "Recording ended. Successfully created recording: $itemname$, total duration: $totalTime$",
+
+"com_recording_begin_displayName_variant_1": "Record with $name$",
+"com_recording_begin_displayName_variant_2": "Request Recording with $name$",
+"com_recording_begin_displayName_variant_begin_1": "$doer.firstname$ starts recording with $name$",
+"com_recording_begin_displayName_variant_ongoing_1": "$doer.firstname$ is recording with $name$"
 
             }
         }

@@ -1,0 +1,1745 @@
+{
+  "ExperienceInitializers": {
+    "list": [
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_virgin_pure",
+        "_comment": "Tier 1 — No experience whatsoever. Pristine history.",
+        "experienceEntries": [],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_virgin_sheltered",
+        "_comment": "Tier 1 — No direct experience, no masturbation. Character knows the basics by observation only.",
+        "experienceEntries": [],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_curious",
+        "_comment": "Tier 2 — Self-exploration only. Modest masturbation habit. No partner experience.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_masturbate",
+            "minAmount": 8,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 40,
+            "maxAmount": 120
+          },
+          {
+            "experienceID": "experience_sex_C_climax",
+            "minAmount": 3,
+            "maxAmount": 10
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_self_aware",
+        "_comment": "Tier 2 — Regular self-pleasure habit. Clitoral and vaginal self-familiarity. Still a virgin to partners.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_masturbate",
+            "minAmount": 25,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 100,
+            "maxAmount": 250
+          },
+          {
+            "experienceID": "experience_sex_C_climax",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 15,
+            "maxAmount": 50
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_first_timer_female",
+        "_comment": "Tier 3 — One or a few encounters with a woman. Consensual. Still a virgin to men. Vaginal last-experience recorded via cunnilingus; virginity not flagged since com_sex_oral_V lacks 'penetration' tag (accurate).",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_female",
+            "minAmount": 3,
+            "maxAmount": 8
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 1,
+            "maxAmount": 4
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 30,
+            "maxAmount": 90
+          },
+          {
+            "experienceID": "experience_sex_C_climax",
+            "minAmount": 2,
+            "maxAmount": 6
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 15,
+            "maxAmount": 50
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "position_face",
+              "position_inequal"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_V_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_first_timer_male",
+        "_comment": "Tier 3 — First experience with a man. Consensual missionary for vaginal; consensual blowjob for mouth.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 3,
+            "maxAmount": 10
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 25,
+            "maxAmount": 70
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 0,
+            "maxAmount": 3
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 1,
+            "maxAmount": 4
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 10,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 0,
+            "maxAmount": 2
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_equal",
+              "missionary"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_missionary_displayName_1",
+            "isConsensual": true
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_early_relationship",
+        "_comment": "Tier 3 — Short relationship with a man. Missionary for vaginal first; blowjob for mouth. Consensual throughout.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 20,
+            "maxAmount": 50
+          },
+          {
+            "experienceID": "experience_sex_masturbate",
+            "minAmount": 5,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 5,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 40,
+            "maxAmount": 100
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 5,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_sex_M_climax",
+            "minAmount": 1,
+            "maxAmount": 6
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 50,
+            "maxAmount": 120
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 30,
+            "maxAmount": 80
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_equal",
+              "missionary"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_missionary_displayName_1",
+            "isConsensual": true
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_active_hetero",
+        "_comment": "Tier 4 — Multiple male partners. Missionary for vaginal; blowjob for mouth; doggy anal for anus. All consensual.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 40,
+            "maxAmount": 100
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 150,
+            "maxAmount": 350
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 15,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_M_climax",
+            "minAmount": 2,
+            "maxAmount": 10
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_A",
+            "minAmount": 30,
+            "maxAmount": 100
+          },
+          {
+            "experienceID": "experience_sex_A_climax",
+            "minAmount": 1,
+            "maxAmount": 8
+          },
+          {
+            "experienceID": "experience_sex_A_cum",
+            "minAmount": 3,
+            "maxAmount": 15
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 60,
+            "maxAmount": 160
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 40,
+            "maxAmount": 120
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_equal",
+              "missionary"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_missionary_displayName_1",
+            "isConsensual": true
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_displayName_1",
+            "isConsensual": true
+          },
+          {
+            "bodyPartTags": [
+              "anus"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_A_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_active_bi",
+        "_comment": "Tier 4 — Both male and female partners. Vaginal via cunnilingus (first was a woman); blowjob for mouth; doggy anal for anus.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_female",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_masturbate",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 120,
+            "maxAmount": 300
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 15,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_C_climax",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 60,
+            "maxAmount": 160
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_M_climax",
+            "minAmount": 2,
+            "maxAmount": 10
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 60,
+            "maxAmount": 160
+          },
+          {
+            "experienceID": "experience_sex_B_climax",
+            "minAmount": 3,
+            "maxAmount": 15
+          },
+          {
+            "experienceID": "experience_sex_A",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_A_climax",
+            "minAmount": 1,
+            "maxAmount": 6
+          },
+          {
+            "experienceID": "experience_sex_A_cum",
+            "minAmount": 3,
+            "maxAmount": 15
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "position_face",
+              "position_inequal"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_V_displayName_1",
+            "isConsensual": true
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_displayName_1",
+            "isConsensual": true
+          },
+          {
+            "bodyPartTags": [
+              "anus"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_A_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_active_homo",
+        "_comment": "Tier 4 — Female partners only. Vaginal recorded via cunnilingus. No male experiences.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_female",
+            "minAmount": 40,
+            "maxAmount": 100
+          },
+          {
+            "experienceID": "experience_sex_masturbate",
+            "minAmount": 15,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 100,
+            "maxAmount": 250
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 120,
+            "maxAmount": 300
+          },
+          {
+            "experienceID": "experience_sex_C_climax",
+            "minAmount": 15,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_B_climax",
+            "minAmount": 5,
+            "maxAmount": 20
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "position_face",
+              "position_inequal"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_V_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_sex_worker",
+        "_comment": "Tier 5 — Professional. First client: doggy for vaginal, forced blowjob for mouth, doggy anal for anus. All non-consensual.",
+        "randActor":["expinit_target_client_male_1",
+        "expinit_target_client_male_2",
+        "expinit_target_client_male_3",
+        "expinit_target_client_male_4",
+        "expinit_target_client_male_5"
+      ],
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 200,
+            "maxAmount": 500
+          },
+          {
+            "experienceID": "experience_sex_service",
+            "minAmount": 100,
+            "maxAmount": 300
+          },
+          {
+            "experienceID": "experience_sex_exposure",
+            "minAmount": 50,
+            "maxAmount": 150
+          },
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 10,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 500,
+            "maxAmount": 1200
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 300,
+            "maxAmount": 800
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 60,
+            "maxAmount": 160
+          },
+          {
+            "experienceID": "experience_sex_swallow_cum",
+            "minAmount": 40,
+            "maxAmount": 120
+          },
+          {
+            "experienceID": "experience_sex_A",
+            "minAmount": 150,
+            "maxAmount": 400
+          },
+          {
+            "experienceID": "experience_sex_A_climax",
+            "minAmount": 10,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_A_cum",
+            "minAmount": 30,
+            "maxAmount": 100
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 100,
+            "maxAmount": 300
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 150,
+            "maxAmount": 400
+          },
+          {
+            "experienceID": "experience_pain",
+            "minAmount": 50,
+            "maxAmount": 150
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_Force_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "anus"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_A_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "basic_exp_career_entertainer",
+        "_comment": "Tier 5 — Stage work where sex was expected. First acts were coerced by a patron. Doggy for vaginal, forced blowjob for mouth.",
+                "randActor":["expinit_target_client_male_1",
+        "expinit_target_client_male_2",
+        "expinit_target_client_male_3",
+        "expinit_target_client_male_4",
+        "expinit_target_client_male_5"
+      ],
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_service",
+            "minAmount": 100,
+            "maxAmount": 300
+          },
+          {
+            "experienceID": "experience_sex_exposure",
+            "minAmount": 100,
+            "maxAmount": 250
+          },
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_female",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 15,
+            "maxAmount": 50
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 200,
+            "maxAmount": 500
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 15,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 150,
+            "maxAmount": 400
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_M_climax",
+            "minAmount": 5,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_sex_swallow_cum",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 60,
+            "maxAmount": 150
+          },
+          {
+            "experienceID": "experience_sex_maso",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_pain",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_Force_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_job_cook",
+        "_comment": "Job background — Cooking work. No sexual content.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_cooking",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_job_farmer",
+        "_comment": "Job background — Farming work. No sexual content.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_farming",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_job_medic",
+        "_comment": "Job background — Medical and caregiving work. No sexual content.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_operating",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_job_guard",
+        "_comment": "Job background — Combat and patrol work. No sexual content. PROGRAMMER: verify experience_combat is registered in ExperienceDefs.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_combat",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_job_merchant",
+        "_comment": "Job background — Trading and social work. No sexual content.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_social",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_job_entertainer",
+        "_comment": "Job background — Performing arts with revealing costume work. Low exhibitionism only.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_exposure",
+            "minAmount": 5,
+            "maxAmount": 20
+          }
+        ],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_bear_assault",
+        "_comment": "Sexually assaulted by a cave bear during expedition. Forced mounting from behind. Vaginal first experience: doggy style by the bear.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_animal",
+            "minAmount": 3,
+            "maxAmount": 8
+          },
+          {
+            "experienceID": "experience_sex_animal_climax",
+            "minAmount": 1,
+            "maxAmount": 3
+          },
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 3,
+            "maxAmount": 8
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 1,
+            "maxAmount": 5
+          },
+          {
+            "experienceID": "experience_pain",
+            "minAmount": 20,
+            "maxAmount": 60
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_utnapishtim_cryo_intact",
+        "_comment": "Woke from cryo-pod (exp_event_Utnapishtim_cryoPod) with no signs of tampering. No experience changes.",
+        "experienceEntries": [],
+        "firstExperienceEntries": []
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_utnapishtim_cryo_abused",
+        "_comment": "Woke from cryo-pod with evidence of assault while unconscious. No memory. Vaginal first experience: missionary by an unknown person.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_sleeping",
+            "minAmount": 2,
+            "maxAmount": 6
+          },
+          {
+            "experienceID": "experience_sex_sleeping_climax",
+            "minAmount": 1,
+            "maxAmount": 3
+          },
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 2,
+            "maxAmount": 6
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 1,
+            "maxAmount": 5
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_equal",
+              "missionary"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_missionary_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_sold_sex_service",
+        "_comment": "Sold into sexual service temporarily before rescue. All acts coerced by buyers. Vaginal (doggy), mouth (forced blowjob), anal (doggy anal) all marked non-consensual.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_service",
+            "minAmount": 60,
+            "maxAmount": 150
+          },
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_exposure",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 200,
+            "maxAmount": 500
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 100,
+            "maxAmount": 250
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_swallow_cum",
+            "minAmount": 10,
+            "maxAmount": 40
+          },
+          {
+            "experienceID": "experience_sex_A",
+            "minAmount": 60,
+            "maxAmount": 150
+          },
+          {
+            "experienceID": "experience_sex_A_cum",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_pain",
+            "minAmount": 30,
+            "maxAmount": 80
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_Force_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "anus"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_A_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_first_time_female_consensual",
+        "_comment": "First consensual experience with a woman. Vaginal last-experience recorded via cunnilingus. Modest V/C experience.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_female",
+            "minAmount": 1,
+            "maxAmount": 3
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 0,
+            "maxAmount": 2
+          },
+          {
+            "experienceID": "experience_sex_C",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_C_climax",
+            "minAmount": 1,
+            "maxAmount": 4
+          },
+          {
+            "experienceID": "experience_sex_B",
+            "minAmount": 10,
+            "maxAmount": 30
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "position_face",
+              "position_inequal"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_V_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_first_time_male_consensual",
+        "_comment": "First willing encounter with a man. Missionary for vaginal; blowjob for mouth. Both consensual.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 1,
+            "maxAmount": 3
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V_climax",
+            "minAmount": 0,
+            "maxAmount": 2
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 0,
+            "maxAmount": 2
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 5,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 0,
+            "maxAmount": 2
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_equal",
+              "missionary"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_missionary_displayName_1",
+            "isConsensual": true
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "service",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_displayName_1",
+            "isConsensual": true
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_first_time_male_assault",
+        "_comment": "First encounter with a man was non-consensual. Doggy style assault. Vaginal marked as assault.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 1,
+            "maxAmount": 3
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 0,
+            "maxAmount": 2
+          },
+          {
+            "experienceID": "experience_pain",
+            "minAmount": 10,
+            "maxAmount": 30
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_gangbang_survivor",
+        "_comment": "Survived a multi-person human assault. All body parts used. High pain. Vaginal (doggy), anal (doggy anal), mouth (forced blowjob) — all non-consensual.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 60,
+            "maxAmount": 150
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 5,
+            "maxAmount": 15
+          },
+          {
+            "experienceID": "experience_sex_A",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_A_cum",
+            "minAmount": 3,
+            "maxAmount": 10
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 30,
+            "maxAmount": 80
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 3,
+            "maxAmount": 10
+          },
+          {
+            "experienceID": "experience_sex_maso",
+            "minAmount": 5,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_pain",
+            "minAmount": 60,
+            "maxAmount": 180
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "anus"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_reverse",
+              "position_equal"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_doggy_A_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_Force_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      },
+      {
+        "$type": "ExpInitializer_Single, Assembly-CSharp",
+        "baseID": "specific_exp_event_recurring_abuse",
+        "_comment": "Long-term non-domestic or captive abuse. Repeated coercion over extended period. Vaginal (missionary) and mouth (forced blowjob) both marked as by an abuser, non-consensual.",
+        "experienceEntries": [
+          {
+            "experienceID": "experience_sex_raped",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_male",
+            "minAmount": 20,
+            "maxAmount": 60
+          },
+          {
+            "experienceID": "experience_sex_V",
+            "minAmount": 80,
+            "maxAmount": 200
+          },
+          {
+            "experienceID": "experience_sex_V_cum",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_sex_M",
+            "minAmount": 40,
+            "maxAmount": 100
+          },
+          {
+            "experienceID": "experience_sex_M_cum",
+            "minAmount": 5,
+            "maxAmount": 20
+          },
+          {
+            "experienceID": "experience_sex_maso",
+            "minAmount": 10,
+            "maxAmount": 30
+          },
+          {
+            "experienceID": "experience_pain",
+            "minAmount": 40,
+            "maxAmount": 120
+          }
+        ],
+        "firstExperienceEntries": [
+          {
+            "bodyPartTags": [
+              "vagina"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_equal",
+              "missionary"
+            ],
+            "description": "",
+            "actionName": "com_sex_P_missionary_displayName_1",
+            "isConsensual": false
+          },
+          {
+            "bodyPartTags": [
+              "mouth"
+            ],
+            "interactionTags": [
+              "sex",
+              "penetration",
+              "position_face",
+              "position_inequal",
+              "external"
+            ],
+            "description": "",
+            "actionName": "com_sex_oral_P_Force_displayName_1",
+            "isConsensual": false
+          }
+        ]
+      }
+    ],
+    "list_actor": [
+
+            {
+        "ID":"expinit_target_client_male_1",
+        "displayName": "expinit_target_client_male",
+        "insertionName": "expinit_target_male_penis_undev"
+      },
+      {
+        "ID":"expinit_target_client_male_2",
+        "displayName": "expinit_target_client_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_client_male_3",
+        "displayName": "expinit_target_client_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_client_male_4",
+        "displayName": "expinit_target_client_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+      {
+        "ID":"expinit_target_client_male_5",
+        "displayName": "expinit_target_client_male",
+        "insertionName": "expinit_target_male_penis_stinky"
+      },
+
+
+      {
+        "ID":"expinit_target_sbrother_male_1",
+        "displayName": "expinit_target_sbrother_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_sbrother_male_2",
+        "displayName": "expinit_target_sbrother_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_sbrother_male_3",
+        "displayName": "expinit_target_sbrother_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+      {
+        "ID":"expinit_target_brother_male_1",
+        "displayName": "expinit_target_brother_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_brother_male_2",
+        "displayName": "expinit_target_brother_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_brother_male_3",
+        "displayName": "expinit_target_brother_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+      {
+        "ID":"expinit_target_father_male_1",
+        "displayName": "expinit_target_father_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_father_male_2",
+        "displayName": "expinit_target_father_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_father_male_3",
+        "displayName": "expinit_target_father_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+      {
+        "ID":"expinit_target_stepfather_male_1",
+        "displayName": "expinit_target_stepfather_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_stepfather_male_2",
+        "displayName": "expinit_target_stepfather_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_stepfather_male_3",
+        "displayName": "expinit_target_stepfather_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+
+
+      {
+        "ID":"expinit_target_landlord_male_1",
+        "displayName": "expinit_target_landlord_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_landlord_male_2",
+        "displayName": "expinit_target_landlord_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_landlord_male_3",
+        "displayName": "expinit_target_landlord_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+      {
+        "ID":"expinit_target_boss_male_1",
+        "displayName": "expinit_target_boss_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_boss_male_2",
+        "displayName": "expinit_target_boss_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_boss_male_3",
+        "displayName": "expinit_target_boss_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+
+      {
+        "ID":"expinit_target_classmate_male_1",
+        "displayName": "expinit_target_classmate_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_classmate_male_2",
+        "displayName": "expinit_target_classmate_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_classmate_male_3",
+        "displayName": "expinit_target_classmate_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+
+      {
+        "ID":"expinit_target_delinquent_male_1",
+        "displayName": "expinit_target_delinquent_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_delinquent_male_2",
+        "displayName": "expinit_target_delinquent_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_delinquent_male_3",
+        "displayName": "expinit_target_delinquent_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+{
+        "ID":"expinit_target_pickup_male_1",
+        "displayName": "expinit_target_pickup_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_pickup_male_2",
+        "displayName": "expinit_target_pickup_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_pickup_male_3",
+        "displayName": "expinit_target_pickup_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+{
+        "ID":"expinit_target_hobo_male_1",
+        "displayName": "expinit_target_hobo_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_hobo_male_2",
+        "displayName": "expinit_target_hobo_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_hobo_male_3",
+        "displayName": "expinit_target_hobo_male",
+        "insertionName": "expinit_target_male_penis_large"
+      },
+      {
+        "ID":"expinit_target_boyfriend_male_1",
+        "displayName": "expinit_target_boyfriend_male",
+        "insertionName": "expinit_target_male_penis_small"
+      },
+      {
+        "ID":"expinit_target_boyfriend_male_2",
+        "displayName": "expinit_target_boyfriend_male",
+        "insertionName": "expinit_target_male_penis_medium"
+      },
+      {
+        "ID":"expinit_target_boyfriend_male_3",
+        "displayName": "expinit_target_boyfriend_male",
+        "insertionName": "expinit_target_male_penis_large"
+      }
+    ]
+  },
+  "Dictionary": {
+    "Entries": {
+      "zh-cn": {
+
+        "expinit_target_sbrother_male": "弟弟",
+        "expinit_target_brother_male": "哥哥",
+        "expinit_target_father_male": "生父",
+        "expinit_target_stepfather_male": "继父",
+
+
+        "expinit_target_landlord_male": "房东",
+        "expinit_target_boss_male": "领导",
+
+        "expinit_target_delinquent_male": "小混混",
+        "expinit_target_pickup_male": "搭讪男",
+        "expinit_target_classmate_male": "男同学",
+        "expinit_target_client_male": "男客人",
+        "expinit_target_hobo_male": "流浪汉",
+
+        "expinit_target_husband_male": "丈夫",
+        "expinit_target_boyfriend_male": "男友",
+
+        "expinit_target_male_penis_undev": "包茎肉棒",
+        "expinit_target_male_penis_small": "短小阴茎",
+        "expinit_target_male_penis_medium": "阴茎",
+        "expinit_target_male_penis_large": "粗大的阴茎",
+        "expinit_target_male_penis_stinky": "恶臭的阴茎",
+
+        "expinit_target_client_female": "女客人",
+        "expinit_target_female_dildo": "假阳具"
+
+
+
+      },
+      "en-us": {
+
+      }
+    }
+  }
+}

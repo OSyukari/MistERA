@@ -99,6 +99,56 @@ public class BodyInternal_Instance
         }
     }
 
+    // Called by ExperienceInitializer at generation time to mark this body part as already
+    // deflowered, without a real partner or memory entry. Timestamp 1 is non-zero so virginity
+    // checks pass, but is never a real DateTime tick value so FirstExperience returns null.
+    public bool WriteSexExperience(bool hasPermission, string targetName, string comName, List<string> actiontags)
+    {
+        if (lastExperience == 0 || lastExperience == 1)
+        {
+            this.lastExperience = 1;
+            this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName);
+        }
+
+        if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1)
+        {
+            // do nothing
+            return false;
+        }
+        else if (actiontags != null && Utility.ListContainsLoose(actiontags, this.Base.virginityLossTags))
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", actiontags)}");
+            this.firstExperience = 1;
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            return true;
+        }
+        else return false;
+    }
+    // Called by ExperienceInitializer at generation time to mark this body part as already
+    // deflowered, without a real partner or memory entry. Timestamp 1 is non-zero so virginity
+    // checks pass, but is never a real DateTime tick value so FirstExperience returns null.
+    public bool WriteSexExperience(bool hasPermission, ExperienceActor target, string comName, List<string> actiontags)
+    {
+        if (lastExperience == 0 || lastExperience == 1)
+        {
+            this.lastExperience = 1;
+            this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", LocalizeDictionary.QueryThenParse( target.displayName)).Replace("$command$", comName).Replace("$insertion$", LocalizeDictionary.QueryThenParse(target.insertionName));
+        }
+
+        if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1)
+        {
+            // do nothing
+            return false;
+        }
+        else if (actiontags != null && Utility.ListContainsLoose(actiontags, this.Base.virginityLossTags))
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", actiontags)}");
+            this.firstExperience = 1;
+            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", LocalizeDictionary.QueryThenParse(target.displayName)).Replace("$insertion$", LocalizeDictionary.QueryThenParse(target.insertionName)).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            return true;
+        }
+        else return false;
+    }
     public void Draw_FirstExperience(scr_HoverableText box)
     {
         if (Base.firstExperienceDesc == "") box.SetText("");    // this organ does not register first experience at all

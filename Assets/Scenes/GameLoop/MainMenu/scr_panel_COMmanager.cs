@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class scr_panel_COMmanager : scr_Menu
 {
@@ -976,7 +974,7 @@ public class scr_panel_COMmanager : scr_Menu
                             newRect.SetParent(Box_FurnitureCOMsList, false);
                             List<string> debugLogger = null;
                             List<string> coms = new List<string>();
-                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true, false, true, debugLogger))
+                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player, true, false, true, null, debugLogger))
                             {
                                 coms.Add(ap.targetCOM.DisplayName());
                                 MakeCOMButton(newScript.list, buttonPrefab_COM, j, ap.targetCOM, true, false, ap);
@@ -986,12 +984,16 @@ public class scr_panel_COMmanager : scr_Menu
                         }
                         else
                         {
-                                                      
-                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player,true, false, true))
+                            bool debug = false;
+                            List<string> ss = new List<string>();
+                            List<string> ss2 = new List<string>();
+
+                            foreach (var ap in j.MakePackages(scr_System_CampaignManager.current.Player,true, false, true, null, debug ? ss : null))
                             {
-                                MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
+                                var refid = MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, ap.targetCOM, ap.targetCOM.COMRepeat, false, ap);
+                                if (debug) ss2.Add($"{ap.targetCOM.ID} --> {refid}");
                             }
-                            
+                            if (debug) Debug.Log($"debug for furniture {jfurn.ParentInstance.DisplayName}:\n{String.Join("\n", ss)}\nRefs:\n{String.Join("\n", ss2)}");
                         }
                     }
 
@@ -1234,9 +1236,9 @@ public class scr_panel_COMmanager : scr_Menu
     /// <param name="hidingOverride"></param>
     /// <param name="ap"></param>
     /// <returns></returns>
-    private int MakeCOMButton(RectTransform parent, RectTransform prefab, Job job, COM com, bool comRepeat = false, bool hidingOverride = false, ActionPackage ap = null)
+    private int MakeCOMButton(RectTransform parent, RectTransform prefab, Job job, COM com, bool comRepeat = false, bool hidingOverride = false, ActionPackage ap = null, string suffix = "", bool allowChildPanel = true)
     {
-        var key = "|jobRef|"+ (job == null ? "": job.RefID) + "|comID|" + (com == null? "": com.ID) + "|doers|" + (ap == null? "": ap.DoerRefs.Sum().ToString());
+        var key = $"|jobRef|{(job == null ? "" : job.RefID)}|comID|{(com == null ? "" : com.ID)}|doers|{(ap == null ? "" : ap.DoerRefs.Sum().ToString())}|suffix|{suffix}";
         if (!indexCOM.ContainsKey(key))
         {
             int hash = AssertUniqueHash( job.RefID + com.GetHashCode() + (ap != null ? ap.DoerRefs.Sum() : 0));
@@ -1262,8 +1264,8 @@ public class scr_panel_COMmanager : scr_Menu
                 r.SetParent(parent, false);
                 scr_SelectableText comp = r.GetComponent<scr_SelectableText>();
 
-                if (ap != null) comp.Initialize(this, new ButtonValidator_validateCOM(this, ap, comp, comRepeat, hidingOverride));
-                else comp.Initialize(this, new ButtonValidator_validateCOM(this, job.RefID, com.ID, comp, comRepeat, hidingOverride));
+                if (ap != null) comp.Initialize(this, new ButtonValidator_validateCOM(this, ap, comp, comRepeat, hidingOverride, allowChildPanel));
+                else comp.Initialize(this, new ButtonValidator_validateCOM(this, job.RefID, com.ID, comp, comRepeat, hidingOverride, allowChildPanel));
                 comp.linkText = com.tooltipID;
                 comp.SetText(com.displayName);
 
@@ -1278,6 +1280,10 @@ public class scr_panel_COMmanager : scr_Menu
                 indexCOM.Add(key, comp.optionID);
                 return comp.optionID;
             }
+        }
+        else
+        {
+            Debug.LogError($"indexCOM contains key {key}, skipped");
         }
         return -1;
     }
@@ -1661,8 +1667,9 @@ public class scr_panel_COMmanager : scr_Menu
         bool COMRepeat;
 
         ActionPackage innerAP = null;
+        bool allowChildPanel = true;
 
-        public ButtonValidator_validateCOM(scr_Menu parent, ActionPackage AP, scr_SelectableText text, bool COMRepeat = false, bool hidingOverride = false):base(parent)
+        public ButtonValidator_validateCOM(scr_Menu parent, ActionPackage AP, scr_SelectableText text, bool COMRepeat = false, bool hidingOverride = false, bool allowChildPanel = true) :base(parent)
         {
             innerAP = AP;
             this.package_cache = RemakePackage();
@@ -1672,11 +1679,11 @@ public class scr_panel_COMmanager : scr_Menu
             this.text = text;
             this.COMRepeat = COMRepeat;
             this.hidingOverride = hidingOverride;
-
+            this.allowChildPanel = allowChildPanel;
 
             this.noValidate = true;
         }
-        public ButtonValidator_validateCOM(scr_Menu parent, int jobRefID, string comID, scr_SelectableText text, bool COMRepeat = false, bool hidingOverride = false) : base(parent)
+        public ButtonValidator_validateCOM(scr_Menu parent, int jobRefID, string comID, scr_SelectableText text, bool COMRepeat = false, bool hidingOverride = false, bool allowChildPanel = true) : base(parent)
         {
             this.parent = parent as scr_panel_COMmanager;
             this.jobRefID = jobRefID;
@@ -1684,6 +1691,7 @@ public class scr_panel_COMmanager : scr_Menu
             this.text = text;
             this.COMRepeat = COMRepeat;
             this.hidingOverride = hidingOverride;
+            this.allowChildPanel = allowChildPanel;
 
             this.noValidate = true;
         }
@@ -1782,7 +1790,7 @@ public class scr_panel_COMmanager : scr_Menu
                             package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0);
                         }
                     }
-                    else if (package is ActionPackage_Interaction || package is ActionPackage_ProductionOrder)
+                    else 
                     {
                         var doers = new List<int>();
                         var receivers = new List<int>(cachedReceivers);
@@ -1812,10 +1820,6 @@ public class scr_panel_COMmanager : scr_Menu
 
                         package.ResetRequest(doers, receivers, 0);
                         // package.ReInitializeCOM(job, com, doers, receivers, 0, false);
-                    }
-                    else
-                    {
-                        Debug.LogError("COMMANAGER package typecheck failed");
                     }
 
 
@@ -1926,40 +1930,115 @@ public class scr_panel_COMmanager : scr_Menu
         public void OnClickButton()
         {
 
-            if (package.targetCOM != null && package.targetCOM.childCOMs.Count > 0)
+            if (allowChildPanel && package.targetCOM != null && (package.targetCOM.childCOMs.Count > 0 || package.targetCOM.GenerateAP != null))
             {
                 // create panel
-                parent.LoadChildCOMPanel(job, package, package.targetCOM.childCOMs);
+                parent.LoadChildCOMPanel(job, package);
             }
             else
             {
-
-                parent.childCOMPanel.Active = false;
-                scr_System_CentralControl.current.AutoSave();
-
                 var ppp = package.Copy();
-
-                if (!package.isTemporaryAP)
+                var ops = ppp.LaunchOptions();
+                if (ops != null && ops.Count > 0)
                 {
-                    scr_System_CampaignManager.current.LogPlayerPackage(package.Copy());
+                   // Debug.LogError($"loading options {ops.Count}");
+                    parent.LoadCOMOptionsPanel(ppp, ops, new Action(() => Execute(ppp)));
                 }
-
-                //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
-                //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
-                foreach (var actor in ppp.actorRefs)
-                {
-                    scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
-                }
-
-                job.AddPackage(new List<ActionPackage>() { ppp }, true);
-                scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
+                else Execute(ppp);
             }
+        }
+
+        void Execute(ActionPackage ppp)
+        {
+            parent.childCOMPanel.Active = false;
+            parent.COMOptionsPanel.Active = false;
+            scr_System_CentralControl.current.AutoSave();
+
+            if (!package.isTemporaryAP)
+            {
+                scr_System_CampaignManager.current.LogPlayerPackage(package.Copy());
+            }
+
+            //Debug.Log("Adding package to job [" + job.GetJobDescription(0) + "] with actors [" + String.Join(" ", package.actorRefs)+"], doers["+ String.Join(" ", package.DoerRefs)+"] receivers["+ String.Join(" ", package.ReceiverRefs) + "]");
+            //scr_System_CampaignManager.current.Player.ChangeCurrentJob(job);
+            foreach (var actor in ppp.actorRefs)
+            {
+                scr_System_CampaignManager.current.FindInstanceByID(actor).ChangeCurrentJob(job, ppp.targetCOM.ID);
+            }
+
+            job.AddPackage(new List<ActionPackage>() { ppp }, true);
+            scr_System_CampaignManager.current.FreeUpdate(-1, this.text.Text.text);
         }
     }
 
     public scr_childCOMs childCOMPanel;
+    public scr_childCOMs COMOptionsPanel;
 
-    public void LoadChildCOMPanel(Job sourceJob, ActionPackage sourceAP, List<COM> childCOMs)
+    public void LoadCOMOptionsPanel(ActionPackage sourceAP, List<ActionPackageOptions> options, Action Callback)
+    {
+        if (options == null || options.Count < 1)
+        {
+            COMOptionsPanel.Active = false;
+            return;
+        }
+        Vector2 mousePos = Input.mousePosition;
+        //Debug.Log($"mouse position {mousePos.x}");
+        COMOptionsPanel.verticalAlignment.anchoredPosition = new Vector2(mousePos.x - 400, COMOptionsPanel.verticalAlignment.anchoredPosition.y);
+        Utility.DestroyAllChildrenFrom(COMOptionsPanel.comList, 1);
+        // destroy button id — GameObjects already destroyed above, so only clean up dictionaries
+        foreach (var id in COMOptionsPanel.trackedIDs)
+        {
+            if (!buttonsByID.ContainsKey(id)) continue;
+
+            string matchKey = null;
+            foreach (var kvp in indexCOM)
+            {
+                if (kvp.Value == id) { matchKey = kvp.Key; break; }
+            }
+
+            ButtonValidator validator = validatorsByID[id];
+            buttonsByID.Remove(id);
+            validatorsByID.Remove(id);
+            validator.Destroy();
+
+            if (matchKey != null) indexCOM.Remove(matchKey);
+        }
+        COMOptionsPanel.trackedIDs.Clear();
+
+        COMOptionsPanel.title.SetText($"Options for {sourceAP.targetCOM.DisplayName(sourceAP.COMVariantID)}");
+        COMOptionsPanel.Active = true;
+
+        foreach (var op in options)
+        {
+            var index = MakeCOMOptionsButton(COMOptionsPanel.comList, buttonPrefab_COM, op, Callback);
+            if (index != -1 && !COMOptionsPanel.trackedIDs.Contains(index)) COMOptionsPanel.trackedIDs.Add(index);
+        }
+
+    }
+
+    int MakeCOMOptionsButton(RectTransform parent, RectTransform prefab, ActionPackageOptions op, Action Callback)
+    {
+        int hash = AssertUniqueHash(op.GetHashCode());
+
+        RectTransform r = Instantiate(prefab);
+        r.SetParent(parent, false);
+        scr_SelectableText comp = r.GetComponent<scr_SelectableText>();
+
+        comp.Initialize(this, new ButtonValidator_COMOptions(this, comp, op, Callback));
+        comp.SetText(op.optionName);
+
+        comp.optionID = hash;
+        comp.showBrackets = true;
+
+        buttonsByID.Add(comp.optionID, comp);
+        validatorsByID.Add(comp.optionID, comp.Validator);
+
+        comp.Validate();
+        return comp.optionID;
+        
+    }
+
+    public void LoadChildCOMPanel(Job sourceJob, ActionPackage sourceAP)
     {
         Vector2 mousePos = Input.mousePosition;
         childCOMPanel.ap = sourceAP;
@@ -1989,14 +2068,19 @@ public class scr_panel_COMmanager : scr_Menu
         childCOMPanel.title.SetText($"{sourceJob.DisplayName}: {sourceAP.targetCOM.DisplayName(sourceAP.COMVariantID)}");
         childCOMPanel.Active = true;
 
-
-        foreach (var ap in sourceJob.MakePackages(scr_System_CampaignManager.current.Player, false, true, true))
+        bool debug = true;
+        List<string> ss = new List<string>();
+        foreach (var ap in sourceJob.MakePackages(scr_System_CampaignManager.current.Player, false, true, true, sourceAP.targetCOM, debug ? ss : null))
         {
-            if (ap.targetCOM.ParentCOM == null || ap.targetCOM.ParentCOM != sourceAP.targetCOM) continue;
-            var index = MakeCOMButton(childCOMPanel.comList, buttonPrefab_COM, sourceJob, ap.targetCOM, true, false, ap);
+            //if (ap.targetCOM.ParentCOM == null || ap.targetCOM.ParentCOM != sourceAP.targetCOM) continue;
+            var index = MakeCOMButton(childCOMPanel.comList, buttonPrefab_COM, sourceJob, ap.targetCOM, true, false, ap, ap.DisplayName, false);
             if (index != -1 && !childCOMPanel.trackedIDs.Contains(index)) childCOMPanel.trackedIDs.Add(index);
+            else
+            {
+                Debug.LogError($"error creating {ap.targetCOM.ID} with index {index}");
+            }
         }
-
+        if (debug) Debug.Log($"debug for furniture:\n{String.Join("\n", ss)}");
     }
 
 
@@ -2907,6 +2991,34 @@ public class scr_panel_COMmanager : scr_Menu
         {
             scr_System_CampaignManager.current.ToggleTimeStop();
             //scr_System_CampaignManager.current.NotifyUpdate();
+        }
+    }
+
+
+    public class ButtonValidator_COMOptions: ButtonValidator, I_ButtonClickable
+    {
+        new scr_panel_COMmanager parent;
+        scr_SelectableText text;
+        ActionPackageOptions op;
+        Action Callback;
+        public ButtonValidator_COMOptions(scr_panel_COMmanager parent, scr_SelectableText text, ActionPackageOptions op, Action Callback) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+            this.op = op;
+            this.Callback = Callback;
+        }
+        public override bool IsButtonValid()
+        {
+            if (text == null || !text.gameObject.activeInHierarchy) return false;
+            return parent.COMOptionsPanel.Active;
+        }
+
+        public void OnClickButton()
+        {
+            op.callback.Invoke();
+            Callback.Invoke();
+            parent.COMOptionsPanel.Active = false;
         }
     }
 

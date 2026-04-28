@@ -74,7 +74,7 @@
     [
         {
             "factionTemplate":"AlwaysHostile", "factionInventory": [ ], "allowScope":false,
-            "charaTemplate":[ { "baseID":"BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" } ]
+            "charaTemplate":[ { "baseID":"goblin_victim_BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" } ]
         }
     ]
 },
@@ -93,7 +93,7 @@
                     "supportKeys": [ "enemy", "teamB_backline" ]
                 }
             ],
-            "charaTemplate":[ { "baseID":"BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" } ]
+            "charaTemplate":[ { "baseID":"goblin_victim_BD2_random_3star_female", "refKeys":["victims"], "status":"Prisoner" } ]
         }
     ]
 }

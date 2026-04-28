@@ -243,6 +243,14 @@ public static class Utility
         float max = baseNumber + maxVariation;
         return min + (float)(random.NextDouble() * (max - min));
     }
+
+    /// <summary>
+    /// Return [count, count*face]
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="face"></param>
+    /// <param name="rand"></param>
+    /// <returns></returns>
     public static int Dice(int count, int face, System.Random rand = null)
     {
         var random = rand == null ? Random : rand;

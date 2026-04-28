@@ -252,6 +252,7 @@ public static class CharaReqUtility
         //Debug.Log("ApplyCOST for com " + m.targetCOM.DisplayName(m.VariantID) + " on chara " + c.FirstName);
         if (q != null && q.cost_EN != 0f)
         {
+            //Debug.LogError($"EN COST DEDUCTION {q.cost_EN} FROM {m.Package.DisplayName} on {c.FirstName}");
             if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
             c.Stats.Energy.ModValue(-q.cost_EN);
         }
@@ -263,7 +264,7 @@ public static class CharaReqUtility
 
         var tags = (isDoer ? m.ReceiverTargetTag : m.DoerTargetTag);
 
-        if (!tags.Contains("NonInteraction") && !c.Stats.isConsciousnessUnconscious)
+        if (!tags.Contains("NonInteraction") && !c.Stats.isConsciousnessUnconscious && !c.isTimeStopped)
         {
             int cost = 0;
             if (tags.Contains("unsafe") || tags.Contains("safe"))
@@ -290,7 +291,8 @@ public static class CharaReqUtility
 
             if (cost != 0)
             {
-               // Debug.Log($"interaction cost {cost} for {String.Join("|", tags)}");
+                // Debug.Log($"interaction cost {cost} for {String.Join("|", tags)}");
+                //Debug.LogError($"interaction EN COST DEDUCTION {cost} FROM {m.Package.DisplayName} on {c.FirstName}");
                 if (msg != null) msg.exp.AddStats(c.RefID, "stats_derived_extended_energy", cost);
                 c.Stats.Energy.ModValue(cost);
             }
@@ -306,6 +308,7 @@ public static class CharaReqUtility
         {
             if (tooltip != null) str.Add($"{LocalizeDictionary.QueryThenParse("stats_derived_extended_energy")}{(-q.cost_EN).ToString("+0;-#")}");
             //m.m.AddStats(c.RefID, "stats_derived_extended_energy", -q.cost_EN);
+           // Debug.LogError($"EN COST DEDUCTION {q.cost_EN} on {c.FirstName}");
             c.Stats.Energy.ModValue(-q.cost_EN);
         }
         if (q.cost_ST != 0f)

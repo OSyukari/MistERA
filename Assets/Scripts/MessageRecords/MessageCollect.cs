@@ -19,15 +19,70 @@ public enum MessageCollect_Type
 
 public class MessageCollect
 {
+
+    public List<ActionPackageRecords> apRecords = new List<ActionPackageRecords>();
+    [JsonIgnore]
+    public int MessageCount { get
+        {
+            var i = 0;
+            i += messages_checks.Count;
+            i += messages_before.Count;
+            i += messages_after.Count;
+            i += messages_kojo.Count;
+            i += messages_exp.Count;
+            i += messages_kojo_after.Count;
+            return i;
+        } }
+
     public bool sendRecording = true;
     public bool displayOverride = false;
-    public List<I_Records> messages_checks = new List<I_Records>();
-    public List<I_Records> messages_before = new List<I_Records>();
-    public List<I_Records> messages_after = new List<I_Records>();
-    public List<KojoCollector> messages_kojo = new List<KojoCollector>();
+    
+    [JsonProperty] protected List<I_Records> messages_checks = new List<I_Records>();
+    [JsonProperty] protected List<I_Records> messages_before = new List<I_Records>();
+    [JsonProperty] protected List<I_Records> messages_after = new List<I_Records>();
+    [JsonProperty] protected List<KojoCollector> messages_kojo = new List<KojoCollector>();
     public ExperienceLog exp = new ExperienceLog();
     public List<I_Records> messages_exp = new List<I_Records>();
     public List<KojoCollector> messages_kojo_after = new List<KojoCollector>();
+
+    /// <summary>
+    /// message loadactor and ap loadactor behaves differently, beware!
+    /// </summary>
+    /// <param name="recTable"></param>
+    public void ReadActorRecord(Dictionary<string,ActorRecord> recTable)
+    {
+        foreach (var m in messages_checks) m.ReadActorRecord(recTable);
+        foreach (var m in messages_before) m.ReadActorRecord(recTable);
+        foreach (var m in messages_after) m.ReadActorRecord(recTable);
+        foreach (var m in messages_kojo) m.ReadActorRecord(recTable);
+        foreach (var m in messages_exp) m.ReadActorRecord(recTable);
+        foreach (var m in messages_kojo_after) m.ReadActorRecord(recTable);
+
+        foreach(var ap in this.apRecords) { ap.ReadActorRecord(recTable); }
+    }
+    /// <summary>
+    /// message loadactor and ap loadactor behaves differently, beware!
+    /// </summary>
+    /// <param name="recTable"></param>
+    public void RecordActor(Dictionary<int, ActorRecord> recTable)
+    {
+        foreach (var m in messages_checks) m.RecordActor(recTable);
+        foreach (var m in messages_before) m.RecordActor(recTable);
+        foreach (var m in messages_after) m.RecordActor(recTable);
+        foreach (var m in messages_kojo) m.RecordActor(recTable);
+        foreach (var m in messages_exp) m.RecordActor(recTable);
+        foreach (var m in messages_kojo_after) m.RecordActor(recTable);
+
+        foreach (var ap in this.apRecords) { ap.RecordActor(recTable); }
+    }
+
+    // package begin
+    // package ongoing
+    // package end
+    public void NotifyPackageRecording(ActionPackage p)
+    {
+
+    }
 
     public void AddMessage_Before(I_Records desc, Room_Instance recording)
     {
@@ -49,47 +104,46 @@ public class MessageCollect
     /// <param name="visible">shorthand for player visibility, to avoid redundant checks</param>
     /// <param name="recording"></param>
     /// <param name="rightAlign"></param>
-    public void AddMessage_Before(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
+    public void AddMessage_Before(I_Records desc, bool visible, Room_Instance recording, bool rightAlign = false)
     {
         if (visible) this.messages_before.Add(desc);
         if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.before);
     }
-    public void AddMessage_After(I_Records desc, Room_Instance recording)
+    public void AddMessage_EXP(I_Records desc, Room_Instance recording = null)
     {
-        var player = scr_System_CampaignManager.current.Player;
-        bool visible = desc.VisibleTo(player, recording);
-        AddMessage_After(desc, visible, recording, desc.RightAlign(player));
+        this.messages_exp.Add(desc);
+        //if (recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.exp);
     }
-    public void AddMessage_After(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
+
+    public void AddMessage_After(I_Records desc, Room_Instance recording = null)
     {
-        if (visible) this.messages_after.Add(desc);
-        if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.after);
+        this.messages_after.Add(desc);
+        if (recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.after);
     }
-    public void AddMessage_Checks(I_Records desc, bool visible, Room_Instance recording, bool rightAlign)
+    public void AddMessage_Checks(I_Records desc, Room_Instance recording = null)
     {
-        if (visible) this.messages_checks.Add(desc);
+        if (desc is DescriptionCollector)
+        {
+           // Debug.LogError($"addcheck with tags {String.Join(" ", (desc as DescriptionCollector).displayTagsOverride)}");
+        }
+        this.messages_checks.Add(desc);
         if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.checks);
     }
 
     public void FinalizeEXP(List<int> relevantActorInject, bool visible, Room_Instance recording)
     {
-        this.exp.Finalize(out var desc, out var rec);
+        this.exp.Finalize(out var desc);
         if (desc != null)
         {
             desc.LoadActors(relevantActorInject);
             if (visible) this.messages_exp.Add(desc);
-        }
-        if (rec != null)
-        {
-            rec.LoadActors(relevantActorInject);
-            if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(rec, MessageCollect_Type.exp);
+            if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.exp);
         }
     }
-    public void FinalizeEXP(List<int> relevantActorInject, out DescriptionCollector desc, out DescriptionCollector rec)
+    public void FinalizeEXP(List<int> relevantActorInject, out DescriptionCollector desc)
     {
-        this.exp.Finalize(out desc, out rec);
+        this.exp.Finalize(out desc);
         if (desc != null) desc.LoadActors(relevantActorInject);
-        if (rec != null) rec.LoadActors(relevantActorInject);
     }
 
     public void AddKojo(KojoCollector m, Room_Instance room, bool tryMerge = false)
@@ -108,7 +162,7 @@ public class MessageCollect
                 foreach(var kol in this.messages_kojo)
                 {
 
-                    if (kol.collect.portraitRefID == m.collect.portraitRefID)
+                    if (kol.collect.PortraitRefID == m.collect.PortraitRefID)
                     {
                         kol.collect.Merge(m.collect);
                         return;
@@ -125,18 +179,40 @@ public class MessageCollect
         var cnManager = scr_System_CampaignManager.current;
         if (visible == null) visible = scr_System_CampaignManager.current.Player;
 
-        foreach(var check in messages_checks) cnManager.AddLog(check, visible, true);
-        foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true);
-        foreach (var kvp in messages_kojo) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip );
+        foreach(var check in messages_checks) cnManager.AddLog(check, visible, true, replaceStrings);
+        foreach (var msg in messages_before) cnManager.AddLog(msg, visible, true, replaceStrings);
+        foreach (var kvp in messages_kojo) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
 
-        exp.Finalize(out var desc, out var rec);
+        exp.Finalize(out var desc);
         if (desc != null) this.messages_exp.Add(desc);
 
-        foreach(var msg in messages_exp) cnManager.AddLog(msg, visible, true);
-        foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip);
-        foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true);
+        foreach(var msg in messages_exp) cnManager.AddLog(msg, visible, true, replaceStrings);
+        foreach (var kvp in messages_kojo_after) cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip, replaceStrings);
+        foreach (var msg in messages_after) cnManager.AddLog(msg, visible, true, replaceStrings);
         //cnManager.AddLog(-1, String.Join("\n", messages_after), true);
         Clear();
+    }
+
+    public Dictionary<string, string> replaceStrings = new Dictionary<string, string>();
+    public void AddReplaceString(string old, string news)
+    {
+        if (!replaceStrings.ContainsKey(old)) replaceStrings.Add(old, news);
+    }
+    public void AddReplaceString(Dictionary<string, ActorRecord> records)
+    {
+        foreach(var rec in records)
+        {
+            var name = rec.Value.Name;
+            if (name != rec.Value.firstNameOriginal) AddReplaceString(rec.Value.firstNameOriginal, name);
+        }
+    }
+    public void AddReplaceString(Dictionary<string, string> records)
+    {
+        if (records == null) return;
+        foreach (var rec in records)
+        {
+            AddReplaceString(rec.Key, rec.Value);
+        }
     }
 
     /// <summary>
@@ -156,7 +232,7 @@ public class MessageCollect
 
         foreach (var kvp in messages_kojo)  scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
 
-        exp.Finalize(out var exps, out var rec);
+        exp.Finalize(out var exps);
         if (exps != null) messages_exp.Add(exps);
 
         foreach(var kvp in messages_exp)
@@ -189,6 +265,8 @@ public class MessageCollect
         messages_kojo_after.Clear();
         messages_exp.Clear();
         exp.Clear();
+        apRecords.Clear();
+        replaceStrings.Clear();
     }
 
     public void AddKojo(KojoCollector kojo, bool tryMerge = false)
@@ -199,7 +277,7 @@ public class MessageCollect
             foreach (var kol in this.messages_kojo)
             {
 
-                if (kol.collect.portraitRefID == kojo.collect.portraitRefID)
+                if (kol.collect.PortraitRefID == kojo.collect.PortraitRefID)
                 {
                     kol.collect.Merge(kojo.collect);
                     return;
@@ -210,8 +288,91 @@ public class MessageCollect
         messages_kojo.Add(kojo);
     }
 
+    public void AddKojoAfter(KojoCollector kojo, bool tryMerge = false)
+    {
+        //this.messages_kojo.Add(m.collect);
+        if (tryMerge)
+        {
+            foreach (var kol in this.messages_kojo_after)
+            {
 
-    public void Merge(MessageCollect m, bool shorten)
+                if (kol.collect.PortraitRefID == kojo.collect.PortraitRefID)
+                {
+                    kol.collect.Merge(kojo.collect);
+                    return;
+                }
+
+            }
+        }
+        messages_kojo_after.Add(kojo);
+    }
+
+    public bool MergeVisible(MessageCollect m, Character_Trainable c)
+    {
+        bool added = false;
+        foreach (var mm in m.messages_checks)
+        {
+            if (mm.VisibleTo(c))
+            {
+                this.messages_checks.Add(mm);
+                added = true;
+            }
+        }
+        foreach (var mm in m.messages_before)
+        {
+            if (mm.VisibleTo(c))
+            {
+                this.messages_before.Add(mm);
+                added = true;
+            }
+        }
+        foreach (var mm in m.messages_after)
+        {
+            if (mm.VisibleTo(c))
+            {
+                this.messages_after.Add(mm);
+                added = true;
+            }
+        }
+        foreach (var mm in m.messages_kojo) 
+        {
+            if (mm.VisibleTo(c)) {
+                this.messages_kojo.Add(mm);
+                added = true;
+            }
+        }
+        foreach (var mm in m.messages_kojo_after) 
+        {
+            if (mm.VisibleTo(c)) {
+                this.messages_kojo_after.Add(mm);
+                added = true;
+            }
+        }
+        foreach (var mm in m.messages_exp)
+        {
+            if (mm.VisibleTo(c))
+            {
+                this.messages_exp.Add(mm);
+                added = true;
+            }
+        }
+        foreach(var apCollect in m.apRecords)
+        {
+            if (apCollect.mcol == null) continue;
+            if (MergeVisible(apCollect.mcol, c))
+            {
+                added = true;
+            }
+        }
+
+        AddReplaceString(m.replaceStrings);
+
+        return added;
+    }
+
+
+
+    public void Merge(MessageCollect m, bool clear = true)
     {
         if (m.messages_checks.Count > 0)
         {
@@ -232,14 +393,17 @@ public class MessageCollect
         this.messages_kojo.AddRange(m.messages_kojo);
         this.messages_kojo_after.AddRange(m.messages_kojo_after);
 
-        exp.Finalize(out var desc, out var rec);
+        exp.Finalize(out var desc);
         if (desc != null) this.messages_exp.Add(desc);
         this.messages_exp.AddRange(m.messages_exp);
 
-        //this.exp.MergeWith(m.exp, shorten);
         this.displayOverride = this.displayOverride || m.displayOverride;
 
-        m.Clear();
+        this.apRecords.AddRange(m.apRecords);
+
+        AddReplaceString(m.replaceStrings);
+
+        if (clear) m.Clear();
     }
 }
 
@@ -247,10 +411,34 @@ public class MessageCollect_KojoEntry
 {
 
     [JsonIgnore] public bool rightAlign = false;
-    public int portraitRefID = -1;
+    [JsonProperty] protected int portraitRefID = -1;
+    [JsonIgnore]
+    public int PortraitRefID
+    {
+        get
+        {
+            if (portraitRefsOverride == -1) return portraitRefID;
+            else return portraitRefsOverride;
+        }
+    }
     public List<string> portraitTags = new List<string>();
     public List<int> relevantActors = new List<int>();
     public string message = "";
+    int portraitRefsOverride = -1;
+    public void ReadActorRecord(Dictionary<string, ActorRecord> recTable)
+    {
+        if (portraitRefID == -1) return;
+        foreach (var rec in recTable)
+        {
+            if (rec.Value.refID == -1) continue;
+            if (rec.Value.refID == portraitRefID && rec.Value.refID_overwrite != -1)
+            {
+                portraitRefsOverride = rec.Value.refID_overwrite;
+                return;
+            }
+        }
+    }
+
 
     public List<MessageCollect_KojoEntry> nexts = new List<MessageCollect_KojoEntry>();
 

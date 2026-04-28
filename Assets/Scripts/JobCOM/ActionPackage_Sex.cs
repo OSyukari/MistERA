@@ -25,7 +25,7 @@ public class ActionPackage_Sex : ActionPackage
         ReInitializeCOM(job, targetCOM, doer, receiver, masterRef);
     }
 
-    protected override void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
+    public override void ReInitializeCOM(Job job, COM targetCOM, List<int> doer, List<int> receiver, int masterRef = -1, bool resetDuration = true)
     {
         base.ReInitializeCOM(job, targetCOM, doer, receiver, masterRef);
         toggleRepeat = job is Job_Sex_Group ? true : false;

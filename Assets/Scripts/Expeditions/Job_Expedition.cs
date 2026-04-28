@@ -914,7 +914,7 @@ public class Job_Expedition : Job
     /// <param name="c"></param>
     /// <param name="allowInvalid"></param>
     /// <returns></returns>
-    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, List<string> debug = null)
+    public override List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, COM filter = null, List<string> debug = null)
     {
         //Debug.Log("JobFurniture : [" + c.FirstName + "] at work location, adding job command with [" + validCOMs.Count + "] valid jobCOMs [" + String.Join(",", s) + "]");
         // 2 - if actor is in room, set COM package

@@ -372,6 +372,8 @@
 "ui_management_production_jobkeyword": "工作类别",
 "ui_management_production_orderType": "订单类别",
 "ui_management_production_add": "添加",
+"ui_management_production_movePriority": "<link=ui_management_production_movePriority_tooltip> ≡ </link>",
+"ui_management_production_movePriority_tooltip": "长按此处拖动，即可调整订单的优先级顺序",
 "ui_management_production_amount": "订单数",
 "ui_management_jobs_edit_tooltip": "更改NPC的每日工作安排\nNPC会遵循 工作阵营>家庭阵营>私人时间 的阵营优先级来决定和执行执行时间安排\nNPC会在私人时间内安排睡眠时间（优先选择无间断的私人时间）\n为了确保NPC适当休息，请确保NPC至少有等同于睡眠时长需求的无间断私人时间\nNPC的私人时间行动优先级为 进食>睡觉>娱乐\n\n更详细的解释请见%%helper_messageTitle%%",
 "ui_management_jobs_edit": "更改日程",
@@ -555,8 +557,8 @@
 "msg_tradeSuccess":"全部贸易订单都顺利结算",
 "msg_tradeFailure":"部分订单没能结算",
 
-"ui_ap_join_success":"$names$成功加入",
-"ui_ap_join_fail":"$names$加入失败",
+"ui_ap_join_success":"$names$成功加入$comname$",
+"ui_ap_join_fail":"$names$加入$comname$失败",
 
 "ui_map_floor_roomsList":"房间列表",
 "ui_map_floor_charaInRoom":"房间内成员",
@@ -567,8 +569,11 @@
 "ui_movement_leavesRoom":"$self$离开了$room$",
 "ui_movement_entersRoom":"$self$进入了$room$",
 "ui_movement_enters_leavesRoom":"$self$离开了$leaves$，进入了$enters$",
-"ui_movement_playerEntersRoom":"<align=\"center\">进入了$room$</align>",
+"ui_movement_playerEntersRoom":"<align=\"center\">$self$进入了$room$</align>",
 "ui_movement_charaInRoom":"<align=\"center\">房间内成员：$names$</align>",
+
+"ui_ActionPackage_ItemUse_Recording_BEGIN": "<align=\"center\">录像回放开始</align>",
+"ui_ActionPackage_ItemUse_Recording_END": "<align=\"center\">录像回放结束</align>",
 
 "ui_diceroll_autosuccess":"必定接受",
 "ui_diceroll_success":"接受",
@@ -644,7 +649,8 @@
 "Memory_Response_CriticalFailure":"大失败",
 "Memory_Response_Failure":"失败",
 "Memory_Response_Success":"成功",
-"Memory_Response_CriticalSuccess":"大成功"
+"Memory_Response_CriticalSuccess":"大成功",
+"Memory_Response_Complete":"结束"
 
             },
             "en-us": {
@@ -950,6 +956,9 @@
 "craftCount": "Order Count",
 "craftUntilCount": "Order Until",
 
+"ui_management_production_movePriority": "<link=ui_management_production_movePriority_tooltip> ≡ </link>",
+"ui_management_production_movePriority_tooltip": "Click here and drag to adjust orders priority.",
+
 "ui_main_comtab_title": "%%ui_main_comtab_title_title1%%\n%%ui_main_comtab_title_title2%%",
 "ui_main_comtab_title_title1": "Command Tab",
 "ui_main_comtab_title_title2": "Command Filters",
@@ -1251,7 +1260,56 @@
 "Memory_Response_CriticalFailure":"Critical Failure",
 "Memory_Response_Failure":"Failure",
 "Memory_Response_Success":"Success",
-"Memory_Response_CriticalSuccess":"Critical Success"
+"Memory_Response_CriticalSuccess":"Critical Success",
+
+"charaDetail_btn_changePortraitManager": "<link=\"charaDetail_btn_changePortraitManager_tooltip\">Change Portrait Set</link>",
+"charaDetail_btn_changePortraitManager_tooltip": "Replace the current character's portrait data with another character's\nThis data will be saved to the file\nAfter replacing, the player's adjusted portrait coordinates and scale will be lost.",
+"charaPortrait_change_title": "Change $name$'s portrait set to...",
+"charaPortrait_change_confirm": "Save and Exit",
+"charaPortrait_change_abort": "Discard Changes and Exit",
+
+"comLogs_causes_reduced_consciousness_tooltip": "Characters with reduced consciousness cannot determine whether to allow the target to execute this type of command",
+
+"ui_entry_memory_blacklist": "Failed to find $comName$$comTags$ work in $room$",
+"ui_main_comtab_title_records": "Command Records:",
+
+"management_modCount_remove": "Remove",
+
+"ui_movement_enters_leavesRoom": "$self$ left $leaves$ and entered $enters$",
+
+"ui_ActionPackage_ItemUse_Recording_BEGIN": "<align=\"center\">Recording Playback Started</align>",
+"ui_ActionPackage_ItemUse_Recording_END": "<align=\"center\">Recording Playback Ended</align>",
+
+"ui_ap_onHoverTooltip_conflictAP": "Due to conflict, the following commands will be removed:\n$names$",
+
+"ui_management_linkStatus_faction_tooltip": "Meal hours: $mealhours$",
+
+"ui_management_mealprep_title": "Prepping $faction$'s meals...",
+"ui_management_mealprep_additive_title": "Additive: $name$, Holding: $count$, Applicable Foods: $food$",
+"ui_management_mealprep_additive_title_extratooltip": "Applicable foods:\n$names$",
+"ui_management_mealprep_additive_applyTo": "Target:",
+"ui_management_mealprep_additive_addEntry": "Add Condition",
+"ui_management_mealprep_additive_applyTo_BTN_All": "Target: %%ui_management_mealprep_targeting_type_All%%",
+"ui_management_mealprep_additive_applyTo_BTN_AllIncludePlayer": "Target: %%ui_management_mealprep_targeting_type_AllIncludePlayer%%",
+"ui_management_mealprep_additive_applyTo_BTN_Custom": "Target: $names$",
+"ui_management_mealprep_additive_applyTo_BTN_Custom_none": "None",
+"ui_management_mealprep_additive_dosage": "Dosage: $dosage$",
+"ui_management_mealprep_additive_expiresIn_inactive": "Inactive",
+"ui_management_mealprep_additive_expiresIn_active": "Active ($minutes$ min)",
+"ui_management_mealprep_additive_expiresIn_alwaysactive": "Always Active",
+"ui_management_mealprep_activateAll": "Enable All",
+"ui_management_mealprep_activateAll_tooltip": "Takes effect within the next 2 hours",
+"ui_management_mealprep_quit": "End Meal Prep",
+"ui_management_mealprep_quit_tooltip": "NPCs will be able to come to the canteen to eat during the next hour (if there are edible meals)",
+"ui_management_mealprep_targeting_title": "Change Target",
+"ui_management_mealprep_targeting_type_All": "Everyone",
+"ui_management_mealprep_targeting_type_AllIncludePlayer": "Everyone (Including Player)",
+"ui_management_mealprep_targeting_type_Custom": "Custom Target",
+"ui_management_mealprep_targeting_end": "Finish Editing",
+"ui_management_mealprep_targeting_end_tooltip": "%%ui_button_tooltip_exit%%",
+
+"Memory_Response_Complete": "Complete"
+
 
 
             }

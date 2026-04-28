@@ -621,6 +621,7 @@ public class scr_UpdateHandler : MonoBehaviour
         Updating = true;
         int loopCount = 0;
         firstLoopCounter = 2;
+        float lastDisplayYield = Time.realtimeSinceStartup;
 
         Job playerJob = null;
         cnManager.ChangeCurrentViewMode(ViewMode.View_Logs, true);
@@ -687,11 +688,15 @@ public class scr_UpdateHandler : MonoBehaviour
             _updateTime = scr_System_Time.current.getCurrentTime();
 
             //yield return wait;
-            if (loopCount % 30 == 0) yield return wait;
+            if (Time.realtimeSinceStartup - lastDisplayYield >= 0.05f)
+            {
+                yield return null;
+                lastDisplayYield = Time.realtimeSinceStartup;
+            }
             //yield return new WaitForSecondsRealtime(waitTime);
             //yield return 
 
-            if (TempLongCOMFix && loopCount >= 240)
+            if (false && TempLongCOMFix && loopCount >= 240)
             {
                 Debug.Log($"Temporarily break update loop after {loopCount}");
                 break;
@@ -801,10 +806,10 @@ public class scr_UpdateHandler : MonoBehaviour
     }
 
     MessageCollect Message = new MessageCollect();
-    public void NotifyJobDescriptions(MessageCollect m, bool shorten)
+    public void NotifyJobDescriptions(MessageCollect m, bool clearOnMerge = true)
     {
        // Debug.Log("NotifyJobDescriptions");
-        this.Message.Merge(m, shorten);
+        this.Message.Merge(m, clearOnMerge);
     }
 
     /*
@@ -821,7 +826,7 @@ public class scr_UpdateHandler : MonoBehaviour
     {
         //Debug.Log("AppendKojoMessage");
         var player = scr_System_CampaignManager.current.Player;
-        bool visible = m.VisibleTo(player, room);
+        bool visible = m.DirectlyRelated(player) && m.VisibleTo(player, room);
         bool record = room != null && room.HasRecording;
 
         if (record) room.NotifyKojoCollect(m);
@@ -867,7 +872,8 @@ public class scr_UpdateHandler : MonoBehaviour
         
         //else Debug.Log($"AppendMessageBefore not visible, [{desc.message}] [{desc.message_excludeRelated}]\n room? {(room == null ? "null" : $"{room.DisplayNameShort} {String.Join(" ", room.RoomCharaRefs)} {room.RoomChara.Contains(player)} {player.CurrentRoom == room} {scr_System_CampaignManager.current.CurrentRoom == room}")} direct? {desc.DirectlyRelated(player)} ");
         
-        if (room != null && room.HasRecording) room.NotifyDescCollect(desc);
+        // message addmessage already has a addstuff inside
+        //if (room != null && room.HasRecording) room.NotifyDescCollect(desc);
 
         if (allowFlush && visible && !Updating)
         {
@@ -880,7 +886,7 @@ public class scr_UpdateHandler : MonoBehaviour
         var player = scr_System_CampaignManager.current.Player;
         var visible = desc.VisibleTo(player, room);
         if (visible) this.Message.AddMessage_After(desc, room);
-        if (room != null && room.HasRecording) room.NotifyDescCollect(desc, MessageCollect_Type.after);
+       // if (room != null && room.HasRecording) room.NotifyDescCollect(desc, MessageCollect_Type.after);
 
         if (allowFlush && visible && !Updating)
         {

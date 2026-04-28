@@ -253,7 +253,9 @@ public class Job_Recording : Job, I_CanEndJob
                 if (consumeItems.Count < 1)
                 {
                     failed = true;
-                    var desc = new DescriptionCollector($"recording dumped, missing required storage item {recordComp.Comp_Recorder.storeItemID} (require {removeCount}, owns {FactionOwner.Inventory.GetItemCount(recordComp.Comp_Recorder.storeItemID)})");
+                    var reqItem = Masterlist_Items.GetByID(recordComp.Comp_Recorder.storeItemID);
+                    var errorStr = LocalizeDictionary.QueryThenParse("com_recording_end_job_result_dumped").Replace("$reqitem$", reqItem == null ? "NULL" : reqItem.DisplayName).Replace("$reqCount$", $"{removeCount}").Replace("$count$", $"{FactionOwner.Inventory.GetItemCount(recordComp.Comp_Recorder.storeItemID)}");
+                    var desc = new DescriptionCollector(errorStr);
                     desc.LoadActors(actorRefID);
                     this.m.AddMessage_After(desc, ParentRoom);
                 }
@@ -264,22 +266,26 @@ public class Job_Recording : Job, I_CanEndJob
                 // get a naming convention component
 
                 var createItem = WorldManager.Instantiate(recordComp.Comp_Recorder.resultItemID);
-                if (createItem == null || createItem.Comp_Records == null) 
+                if (createItem == null || createItem.Comp_Records == null )
                 {
                     failed = true;
-                    var desc = new DescriptionCollector("recording dumped, failed to create result item");
+                    var desc = new DescriptionCollector(LocalizeDictionary.QueryThenParse("com_recording_end_job_result_failure").Replace("$itemID$", recordComp.Comp_Recorder.resultItemID));
                     desc.LoadActors(actorRefID);
                     this.m.AddMessage_After(desc, ParentRoom);
                 }
                 else
                 {
                     // store into createitem
+                    this.currentRecording.FinalizeRecording();
+
                     createItem.Comp_Records.LoadRecords(this.currentRecording);
+                    createItem.Comp_Records.Records.cameraman = new ActorRecord(cameraman);// = this._cameramanRef;
                     createItem.nameOverwrite = "new tape";
                     FactionOwner.Inventory.AddItem(createItem);
 
 
-                    var desc = new DescriptionCollector($"successfully stored recording with {this.currentRecording.DebugTool}");
+                    var desc = new DescriptionCollector(LocalizeDictionary.QueryThenParse("com_recording_end_job_result_success").Replace("$itemname$", createItem.DisplayName).Replace("$totalTime$", $"{createItem.Comp_Records.Records.TotalPlayTime}"));
+
                     desc.LoadActors(actorRefID);
                     this.m.AddMessage_After(desc, ParentRoom);
                 }

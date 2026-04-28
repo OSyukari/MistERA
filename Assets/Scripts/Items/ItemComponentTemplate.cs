@@ -57,6 +57,7 @@ public class ItemComponentTemplate
     public ItemComponentTemplate_Furniture Comp_Furniture = null;
 
     public ItemComponentTemplate_Recorder Comp_Recorder = null;
+    public ItemComponentTemplate_Records Comp_Records = null;
     public ItemComponent_Base Instantiate(Item_Base parent)
     {
         switch (compType)

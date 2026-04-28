@@ -68,7 +68,7 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
             DirectoryInfo d = new DirectoryInfo(scr_System_Serializer.SavePath);
             foreach (var file in d.GetFiles("*.json"))
             {
-                Debug.Log($"reading save file {file.Name}");
+               // Debug.Log($"reading save file {file.Name}");
                 BuildSingleButton(file, file.Name == "AutoSave.json");
             }
         }

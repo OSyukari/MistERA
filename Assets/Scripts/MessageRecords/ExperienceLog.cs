@@ -23,32 +23,27 @@ public class ExperienceLog
 
     public List<int> relevantActorRefs = new List<int>();
 
-    public void Finalize(out DescriptionCollector desc, out DescriptionCollector recording)
+    public void Finalize(out DescriptionCollector desc)
     {
         desc = new DescriptionCollector();
-        recording = new DescriptionCollector();
 
         var msg = PrintContent_Messages();
         if (msg.Length > 0)
         {
             desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{msg}";
-            recording.message += $"{(recording.message.Length > 0 ? "\n" : "")}{msg}";
         }
         var climax = PrintContent_Climax();
         if (climax.Length > 0)
         {
             desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{climax}";
-            recording.message += $"{(recording.message.Length > 0 ? "\n" : "")}{climax}";
         }
         var stats = PrintContent_Stats();
         if (stats.Length > 0) desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{stats}";
 
         desc.LoadActors(this.relevantActorRefs);
-        recording.LoadActors(this.relevantActorRefs);
         Clear();
 
         if (desc.message.Length < 1) desc = null;
-        if (recording.message.Length < 1) recording = null;
         return;
     }
 

@@ -1,0 +1,187 @@
+{
+    "Items": {
+        "list": [
+            {
+                "id": "item_recording_camera",
+                "displayName": "Camera",
+                "Tags": [
+                    "item_recorder",
+                    "industrial",
+                    "rarity_common"
+                ],
+                "value": 18000,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Recorder",
+                        "comp_Recorder": {
+                            "storeItemID": "item_recording_camera_Tape",
+                            "resultItemID": "item_recorded_camera_Tape",
+                            "durationPerItem": 120,
+                            "maxDuration": 360
+                        }
+                    }
+                ]
+            },
+            {
+                "id": "item_recording_camera_Tape",
+                "displayName": "Camera Tape",
+                "Tags": [
+                    "industrial",
+                    "rarity_common"
+                ],
+                "value": 400
+            },
+            {
+                "id": "item_recorded_camera_Tape",
+                "displayName": "Used Camera Tape",
+                "Tags": [
+                    "industrial",
+                    "item_records"
+                ],
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Records"
+                    }
+                ]
+            }
+        ]
+    },
+     "Events": {
+        "list": [
+            {
+                "ID": "Recording_OnBeginPlay",
+                "_comment":["this event plays when recording replay begin"],
+                "SelfValidator":{
+                    "chara_conditions":[
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment":"silent branch player/npc split",
+                        "options":[
+                            {   
+                                "self_chara_conditions":[
+                                    {"parameters":["excludePlayer"]}
+                                ],
+                                "option": "npc branch",
+                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_startPlay"]} ] 
+                            },
+                            {      
+                                "self_chara_conditions":[
+                                    {"parameters":["isPlayer"]}
+                                ],
+                                "option": "player branch",
+                                "Results": [     { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+                            },
+                            {      
+                                "option": "silent fail branch",
+                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_end"]} ] 
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label":"br_choice",
+                        "question":"Recording_OnBeginPlay_ev01",
+                        "options":[
+                            {   
+                                "option": "Recording_OnBeginPlay_ev01_op01",
+                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_startPlay"]} ] 
+                            },
+                            {   
+                                "option": "Recording_OnBeginPlay_ev01_op02",
+                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_changename"]} ] 
+                            },
+                            {   
+                                "option": "Recording_OnBeginPlay_ev01_op03", "isDefaultCancel":true,
+                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_endPlay"]} ] 
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_startPlay",
+                        "isLast": true,
+                        "Results": [ {"Type":"ExecuteCallback","arguments":["startCallback"]} ] 
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_endPlay",
+                        "isLast": true,
+                        "Results": [ {"Type":"ExecuteCallback","arguments":["endCallback"]} ] 
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_end",
+                        "isLast": true,
+                        "Results": [ {"Type":"ExecuteCallback","arguments":["failCallback"]} ] 
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_InputField, Assembly-CSharp",
+                        "label": "br_changename",
+                        "question":"Recording_OnBeginPlay_ev02",
+                        "defaultFieldValue":"itemName",
+                        "options":[
+                            {   
+                                "option": "Recording_OnBeginPlay_ev02_op01",
+                                "Results": [ 
+                                    { "Type":"ExecuteCallback","arguments":["nameChangeCallback"]},
+                                    { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+                            },
+                            {   
+                                "option": "Recording_OnBeginPlay_ev02_op02", "isDefaultCancel":true,
+                                "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+
+                "Recording_OnBeginPlay_ev01":"录像：$itemName$\n总时长：$duration$分钟，摄影人：$cameraMan$\n出演者（$actorCount$）：$actorNames$\n录像类型：$recordType$",
+                "Recording_OnBeginPlay_ev01_op01":"开始播放",
+                "Recording_OnBeginPlay_ev01_op02":"更改录像名",
+                "Recording_OnBeginPlay_ev01_op03":"取消播放",
+
+                "item_recording_camera":"摄像机",
+                "item_recording_camera_tooltip":"允许玩家（在单人时）执行摄影指令。会开启录制模式，记录所有摄影者能看到的事件，直到停止摄影。",
+                "item_recording_camera_Tape":"录像带（空白）",
+                "item_recording_camera_Tape_tooltip":"可以存储摄像机的录制内容。会在结束拍摄时被消耗。",
+                "item_recorded_camera_Tape":"录像带（已录制）",
+                "item_recorded_camera_Tape_tooltip":"可在任何电视或电脑处播放影片",
+
+                "Recording_OnBeginPlay_ev02":"请输入新的录像名（之前的名称 $itemName$ 会被覆盖）",
+                "Recording_OnBeginPlay_ev02_op01":"确认",
+                "Recording_OnBeginPlay_ev02_op02":"取消"
+                
+            },
+            "en-us": {
+"Recording_OnBeginPlay_ev01": "Recording: $itemName$\nTotal Duration: $duration$ min, Cinematographer: $cameraMan$\nActors ($actorCount$): $actorNames$\nRecording Type: $recordType$",
+"Recording_OnBeginPlay_ev01_op01": "Play",
+"Recording_OnBeginPlay_ev01_op02": "Rename Recording",
+"Recording_OnBeginPlay_ev01_op03": "Cancel",
+
+"item_recording_camera": "Camera",
+"item_recording_camera_tooltip": "Allows the player (when alone) to execute recording commands. Activates recording mode, recording all events visible to the camera operator, until recording is stopped.",
+"item_recording_camera_Tape": "Camera Tape (Blank)",
+"item_recording_camera_Tape_tooltip": "Can store the camera's recording content. Will be consumed when the recording ends.",
+"item_recorded_camera_Tape": "Camera Tape (Recorded)",
+"item_recorded_camera_Tape_tooltip": "Can be played at any TV or computer",
+
+"Recording_OnBeginPlay_ev02": "Enter a new recording name (the previous name $itemName$ will be overwritten)",
+"Recording_OnBeginPlay_ev02_op01": "Confirm",
+"Recording_OnBeginPlay_ev02_op02": "Cancel"
+
+
+
+            }
+        }
+    }
+}

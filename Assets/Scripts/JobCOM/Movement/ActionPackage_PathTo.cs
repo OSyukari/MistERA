@@ -200,7 +200,7 @@ public class ActionPackage_PathTo : ActionPackage
 
       
             Room_Instance room = Doer.CurrentRoom;
-            string s = (int)pc.Tag.Cost > 0 ? LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$room$", room.DisplayName) : "";
+            string s = (int)pc.Tag.Cost > 0 ? LocalizeDictionary.QueryThenParse("ui_movement_playerEntersRoom").Replace("$self$", Doer.FirstName).Replace("$room$", room.DisplayName) : "";
             var desc = new DescriptionCollector(s);
 
             desc.LoadActors(Doer.RefID, true, false);

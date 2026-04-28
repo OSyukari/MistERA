@@ -1,0 +1,122 @@
+{
+    "ExperienceInitializers": {
+        "list": 
+        [
+            {
+                "$type":"ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_girl_hetero",
+                "_comment": "collections of generic settings for girls",
+                "randActor":[],
+                "selectOne":{
+                    "basic_exp_virgin_pure":1,
+                    "basic_exp_virgin_sheltered":1,
+                    "basic_exp_curious":1,
+                    "basic_exp_self_aware":1,
+                    "basic_exp_first_timer_male":1,
+                    "basic_exp_early_relationship":1,
+                    "basic_exp_active_hetero":1
+                },
+                "selectEach":{
+
+                }
+            },
+            {
+                "$type":"ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_girl_bi",
+                "_comment": "collections of generic settings for girls",
+                "randActor":[],
+                "selectOne":{
+                    "basic_exp_virgin_pure":1,
+                    "basic_exp_virgin_sheltered":1,
+                    "basic_exp_curious":1,
+                    "basic_exp_self_aware":1,
+                    "basic_exp_first_timer_female":1,
+                    "basic_exp_first_timer_male":1,
+                    "basic_exp_early_relationship":1,
+                    "basic_exp_active_hetero":1,
+                    "basic_exp_active_bi":1,
+                    "basic_exp_active_homo":1
+                },
+                "selectEach":{
+
+                }
+            },
+            {
+                "$type":"ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_randomProfession",
+                "_comment": "collections of generic professions",
+                "selectOne":{
+                    "basic_exp_sex_worker":1,
+                    "basic_exp_career_entertainer":1,
+
+                    "specific_exp_job_cook":1,
+                    "specific_exp_job_farmer":1,
+                    "specific_exp_job_medic":1,
+                    "specific_exp_job_guard":1,
+                    "specific_exp_job_merchant":1,
+                    "specific_exp_job_entertainer":1
+                }
+            },
+            {
+                "$type":"ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_recurringAbuse_modern",
+                "randActor":[
+          "expinit_target_landlord_male_1","expinit_target_landlord_male_2","expinit_target_landlord_male_3",
+          "expinit_target_boss_male_1","expinit_target_boss_male_2","expinit_target_boss_male_3",
+          "expinit_target_classmate_male_1","expinit_target_classmate_male_2","expinit_target_classmate_male_3"],
+                "selectOne":{
+                    "specific_exp_event_recurring_abuse":1
+                }
+            },
+            {
+                "$type":"ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_recurringAbuse_domestic",
+                "randActor":[
+          "expinit_target_sbrother_male_1","expinit_target_sbrother_male_2","expinit_target_sbrother_male_3",
+          "expinit_target_brother_male_1","expinit_target_brother_male_2","expinit_target_brother_male_3",
+          "expinit_target_father_male_1","expinit_target_father_male_2","expinit_target_father_male_3",
+          "expinit_target_stepfather_male_1","expinit_target_stepfather_male_2","expinit_target_stepfather_male_3"],
+                "selectOne":{
+                    "specific_exp_event_recurring_abuse":1
+                }
+            },
+            {
+                "$type":"ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_assaulted",
+                "randActor":[
+                    "expinit_target_delinquent_male_1","expinit_target_delinquent_male_2","expinit_target_delinquent_male_3",
+                    "expinit_target_pickup_male_1","expinit_target_pickup_male_2","expinit_target_pickup_male_3",
+                    "expinit_target_hobo_male_1","expinit_target_hobo_male_2","expinit_target_hobo_male_3"
+                    ],
+                "selectOne":{
+                    "specific_exp_event_gangbang_survivor":1,
+                    "specific_exp_event_first_time_male_assault":1
+                }
+            },
+            {
+                "$type":"ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_consensual",
+                "randActor":[
+                    "expinit_target_pickup_male_1","expinit_target_pickup_male_2","expinit_target_pickup_male_3",
+          "expinit_target_classmate_male_1","expinit_target_classmate_male_2","expinit_target_classmate_male_3",
+          "expinit_target_boyfriend_male_1","expinit_target_boyfriend_male_2","expinit_target_boyfriend_male_3"
+                    ],
+                "selectOne":{
+                    "specific_exp_event_first_time_male_consensual":1
+                }
+            }
+        ],
+        "list_actor":[
+
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+
+
+            },
+            "en-us": {}
+        }
+    }
+}

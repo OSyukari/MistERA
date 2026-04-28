@@ -25,15 +25,23 @@ public class ActionPackage_ProductionOrder : ActionPackage
         }
     }
 
-    public override int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers)
+    public override int canJoinAP(Character_Trainable c, out List<int> doers, out List<int> receivers, out List<string> tooltips)
     {
         var tempPackage = this.Copy();
 
-        base.canJoinAP(c, out doers, out receivers);
+        base.canJoinAP(c, out doers, out receivers, out var ttps);
 
         tempPackage.ResetRequest(doers, receivers, this.masterRef);
-        if (tempPackage.Validate()) return tempPackage.COMVariantID;
-        else return -1;
+        if (tempPackage.Validate())
+        {
+            tooltips = tempPackage.tooltip;
+            return tempPackage.COMVariantID;
+        }
+        else
+        {
+            tooltips = tempPackage.tooltip;
+            return -1;
+        }
     }
 
     public override int canJoinAP(List<Character_Trainable> cs, out List<int> doers, out List<int> receivers, out List<string> tooltips)

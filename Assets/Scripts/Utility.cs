@@ -220,6 +220,7 @@ public static class UtilityEX
             case "ActionPackage_PathTo": returnValue = ap is ActionPackage_PathTo;break;
             case "ActionPackage_Sex": returnValue = ap is ActionPackage_Sex; break;
             case "ActionPackage_Interaction": returnValue = ap is ActionPackage_Interaction; break;
+            case "ActionPackage_Interaction_Instanced": returnValue = ap is ActionPackage_Interaction; break;
             case "ActionPackage_ProductionOrder": returnValue = ap is ActionPackage_ProductionOrder; break;
             case "ActionPackage_Redress": returnValue = ap is ActionPackage_Redress; break;
             case "ActionPackage_Undress": returnValue = ap is ActionPackage_Undress; break;
@@ -1030,6 +1031,7 @@ public static class UtilityEX
     /// <param name="c"></param>
     public static void GetActorTag(ref List<string> tags, Character_Trainable c)
     {
+        if (c == null) return;
         var result = scr_System_CentralControl.current.GetGender(c);
         foreach(var tag in result)
         {

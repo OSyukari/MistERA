@@ -40,6 +40,16 @@ public class SkillManager
         if (experienceLogs.ContainsKey(id)) experienceLogs[id] = Math.Max(0, experienceLogs[id] + value);
     }
 
+    // Unlike ModExperienceByID, this creates the entry if it does not yet exist.
+    // Used by ExperienceInitializer at character generation time, when experienceLogs is empty.
+    public void AddExperienceByID(string id, int amount)
+    {
+        if (scr_System_Serializer.current.index_Experiences.GetByID(id) == null) return;
+        if (experienceLogs_currentRound.Count > 0) FinalizeExperience();
+        if (!experienceLogs.ContainsKey(id)) experienceLogs.Add(id, 0);
+        experienceLogs[id] = Math.Max(0, experienceLogs[id] + amount);
+    }
+
     /// <summary>
     /// Called by Character_trainable postupdatetime3
     /// </summary>
@@ -212,7 +222,7 @@ public class SkillManager
             }
             if (initialLevel != currentLevel)
             {
-                messages.Add(new Manageable.DailyReportHandler.MiscMessageEntry($"{Owner.CallName}'s {i.DisplayName} upgraded {initialLevel} -> {currentLevel}", msg1));
+                if (messages != null) messages.Add(new Manageable.DailyReportHandler.MiscMessageEntry($"{Owner.CallName}'s {i.DisplayName} upgraded {initialLevel} -> {currentLevel}", msg1));
                 updated = true;
             }
         }

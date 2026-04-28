@@ -47,8 +47,6 @@ public partial class ResponseEntry
         }else if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log("Validating kojoResponse [" + ID + "] req [" + kol.Owner.FirstName + "->" + kol.Target.FirstName + "], self[" + String.Join("|", kol.SelfTags) + "] target[" + String.Join("|", kol.targetTags) + "]");
 
         MessageCollect_KojoEntry responses = null;
-        bool playerInvolved = kol.isPlayerInvolved;
-        if (!requirePlayer) playerInvolved = true;
 
         foreach (var i in variants)
         {

@@ -458,7 +458,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="record"></param>
     /// <param name="visible"></param>
     /// <param name="animate"></param>
-    public void AddLog(I_Records record, Character_Trainable visible,  bool animate = false)
+    public void AddLog(I_Records record, Character_Trainable visible,  bool animate = false, Dictionary<string, string> replaceStrings = null)
     {
         if (record == null) return;
 
@@ -470,10 +470,10 @@ public class scr_System_CampaignManager : MonoBehaviour
             purged = purged.Replace("\n", "");
             if (purged.Length < 1)
             {
-                Debug.Log("skipping empty message");
+                Debug.Log($"skipping empty message? {desc.message.Length} {desc.message_excludeRelated.Length}\nMessage: {desc.message}\nM_Excluded: {desc.message_excludeRelated}");
                 return;
             }
-            var log = LogManager.AddLog(desc, visible);
+            var log = LogManager.AddLog(desc, visible, replaceStrings);
             if (log != null) Observer_MessageLogs?.Invoke(log, animate);
 
         }
@@ -483,7 +483,19 @@ public class scr_System_CampaignManager : MonoBehaviour
             // RefID -1 no display
             // RefID -2 
             if (desc == null) return;
-            if (desc.VisibleTo(visible, null)) AddLog(desc, animate, desc.RightAlign(visible));
+            if (desc.VisibleTo(visible, null)) AddLog(desc, animate, desc.RightAlign(visible), "", replaceStrings);
+        }
+        else if (record is QuestionBoxCollector)
+        {
+            var desc = record as QuestionBoxCollector;
+            // RefID -1 no display
+            // RefID -2 
+            if (desc == null) return;
+            if (desc.VisibleTo(visible, null)) AddLog_Question_Record(desc, false, replaceStrings);
+        }
+        else
+        {
+            Debug.LogError("unknown record type");
         }
 
     }
@@ -529,7 +541,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void AddLog(MessageCollect_KojoEntry m, bool animate = false, bool rightAlign = false, string tooltip = "", bool skipVisibility = false)
     {
         if (m == null) return;
-        if (m.message != null && m.message.Length > 0 && (skipVisibility || scr_System_CampaignManager.current.isCharaVisibleToPlayer(m.portraitRefID)))
+        if (m.message != null && m.message.Length > 0 && (skipVisibility || scr_System_CampaignManager.current.isCharaVisibleToPlayer(m.PortraitRefID)))
         {
             Message_Text msg = new Message_Text(m, rightAlign || m.rightAlign, tooltip);
             Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
@@ -543,25 +555,36 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="animate"></param>
     /// <param name="rightAlign"></param>
     /// <param name="tooltip"></param>
-    public void AddLog(KojoCollector kol, bool animate = false, bool rightAlign = false, string tooltip = "")
+    public void AddLog(KojoCollector kol, bool animate = false, bool rightAlign = false, string tooltip = "", Dictionary<string, string> replaceStrings = null)
     {
         var m = kol.collect;
         if (m == null) return;
         if (m.message != null && m.message.Length > 0)
         {
-            Message_Text msg = new Message_Text(m, rightAlign || m.rightAlign, tooltip);
+            Message_Text msg = new Message_Text(m, rightAlign || m.rightAlign, tooltip, replaceStrings);
             Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
         }
         foreach (var next in m.nexts) 
         { 
             if (next.message != null && next.message.Length > 0)
             {
-                Message_Text msg = new Message_Text(next, rightAlign || next.rightAlign, tooltip);
+                Message_Text msg = new Message_Text(next, rightAlign || next.rightAlign, tooltip, replaceStrings);
                 Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
             }
         }
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="question"></param>
+    /// <param name="animate">whether on add line invoke a ui update</param>
+    public void AddLog_Question_Record(QuestionBoxCollector question, bool animate = false, Dictionary<string, string> replaceStrings = null)
+    {
+        //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
+        MessageLog log = LogManager.AddLog(new Message_Question_Record(question, replaceStrings));
+        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
+    }
     public bool shortenLogsPrint = true;
 
     public void NotifyEventEnd()
@@ -626,7 +649,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             var export = log.PortraitRefExport;
             if (export.Count > 0)
             {
-                foreach (var c in export) if (!desc.portraitRefs.Contains(c.RefID)) desc.portraitRefs.Add(c.RefID);
+                foreach (var c in export) desc.AddPortraitRef(c.RefID);
             }
             desc.displayTagsOverride.AddRange(log.tagsOverride);
             desc.message = content;
@@ -664,6 +687,34 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="question"></param>
+    /// <param name="animate">whether on add line invoke a ui update</param>
+    public void AddLog_InputField(EventInstance parent, Event.EventEntry.EventEntry_InputField question, bool animate = true)
+    {
+        //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
+        MessageLog log = null;
+        if (question.portraitRefKey == "self")
+        {
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"AddLog_Question Self {parent.Self.RefID}");
+            log = LogManager.AddLog(new Message_InputField(parent.Self == null ? null : parent.Self.PortraitManager, question.portraitTagsOverride, parent, question));
+        }
+        else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
+        {
+            log = LogManager.AddLog(new Message_InputField(targetrefs, question.portraitTagsOverride, parent, question));
+        }
+        else
+        {
+            Debug.Log("null AddLog_Question portraitref");
+            PortraitManager portraitRef = null;
+            log = LogManager.AddLog(new Message_InputField(portraitRef, question.portraitTagsOverride, parent, question));
+        }
+        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
+    }
+
 
     public void FinalizeLog_Question(QuestionBoxCollector box, Room_Instance room)
     {
@@ -1235,7 +1286,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                     }
                     else if (!p.isTemporaryAP)
                     {
-                        Debug.LogError($"package ticked and duration reset to {p.Duration}");
+                        Debug.Log($"package ticked and duration reset to {p.Duration}");
                     }
                 }
             }
@@ -2269,7 +2320,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         var genTemplate = scr_System_Serializer.current.MasterList.CharGenTemplates.GetByID(ID);
         if (genTemplate != null && genTemplate.TargetBaseID != "")
         {
-            //Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
+            Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
             var original_template = GetCharaTemplate(genTemplate.TargetBaseID);
 
             var str = JsonConvert.SerializeObject(original_template, UtilityEX.SerializerSettings);
@@ -2293,6 +2344,17 @@ public class scr_System_CampaignManager : MonoBehaviour
 
             if (genTemplate.setWeight > 0) template.Template.Weight = genTemplate.setWeight;
             if (genTemplate.weightVariation > 0) template.Template.Weight = (int)Utility.RandVariation(template.Template.Weight, genTemplate.weightVariation);
+
+            if (genTemplate.basicExperienceOverride.Count > 0)
+            {
+                Debug.Log($"setting basic experience override: {String.Join(" ", genTemplate.basicExperienceOverride)}");
+                template.Template.basicExperience = genTemplate.basicExperienceOverride;
+            }
+            if (genTemplate.experienceOverride.Count > 0)
+            {
+                template.Template.initialExperiences.AddRange(genTemplate.experienceOverride);
+                Debug.Log($"adding basic experience override: {String.Join(" ", genTemplate.experienceOverride)}");
+            }
 
             return template;
             // operate on template

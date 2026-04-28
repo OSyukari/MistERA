@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class LLMCollector
 {
-
+    public MessageJSON json = null;
 
     public LLMCollector() { }
     public LLMCollector(scr_menu_LLMQuery query) 
     {
-        Debug.LogError("UNIMPLEMENTED CONSTRUCTOR");
+        json = query.CurrentResponse.JSON;
     
     }
 }

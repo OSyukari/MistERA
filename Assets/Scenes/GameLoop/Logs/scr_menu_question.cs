@@ -1,10 +1,9 @@
-using UnityEngine;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class scr_menu_question : scr_Menu
 {
@@ -43,6 +42,7 @@ public class scr_menu_question : scr_Menu
     public List<Button_OptionBtn> options = new List<Button_OptionBtn>();
     public EventInstance evInstance = null;
 
+    Dictionary<string, string> replaceStrings = null;
     public void InitializeWithArgs(Canvas mainCanvas, EventInstance instance, Event.EventEntry.EventEntry_Question query, scr_panel_logs logs)
     {
         if (!initialized) Initialize();
@@ -68,10 +68,43 @@ public class scr_menu_question : scr_Menu
 
         if (defaultCancel != null && logs != null) logs.Observer_OnClick += OnClick;
     }
-
-    public void InitializeWithArgs(Canvas mainCanvas, QuestionBoxCollector collect, scr_panel_logs logs)
+    
+    public void InitializeWithArgs(Canvas mainCanvas, QuestionBoxCollector collect, scr_panel_logs logs, Dictionary<string, string> replaceStrings = null)
     {
+        if (!initialized) Initialize();
+        this.logs = logs;
+        this.replaceStrings = replaceStrings;
+        SetCanvas(mainCanvas, true);
 
+        var cmes = collect.message;
+        if (this.replaceStrings != null)
+        {
+            foreach(var kvp in this.replaceStrings)
+            {
+                cmes = cmes.Replace(kvp.Key, kvp.Value);
+            }
+        }
+
+        this.Text.SetText(cmes);
+        foreach (var option in collect.options)
+        {
+            var button = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
+            button.transform.SetParent(this.Grid.transform, false);
+            preferredLen = Math.Max(preferredLen, button.GetComponent<TMP_Text>().preferredWidth);
+
+            var optext = option.message;
+            if (this.replaceStrings != null)
+            {
+                foreach (var kvp in this.replaceStrings)
+                {
+                    optext = optext.Replace(kvp.Key, kvp.Value);
+                }
+            }
+
+            button.SetText(Utility.WrapTextColor(optext, option.selected ? scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color : scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
+            button.SetExternalTooltip(option.tooltip);
+        }
+        this.Active = false;
     }
 
     public override void Initialize()

@@ -19,10 +19,13 @@ public interface I_ResultStorage
     public Memory_Response Response { get; }
     public Memory_Attitude GetActorAttitude(int refid);
     public int VariantID { get; }
+    public AP_Status APStatus { get; }
+    public bool isRecording { get; }
 }
 
 public partial class EvaluationPackage : I_ResultStorage
 {
+    [JsonIgnore] public bool isRecording { get { return false; } }
     [JsonIgnore]
     public bool requestAccepted
     {
@@ -961,7 +964,7 @@ public partial class EvaluationPackage : I_ResultStorage
         }
         else
         {
-            Debug.LogError("resetting internals");
+            //Debug.LogError("resetting internals");
             doerInternal = null;
             receiverInternal = null;
         }
@@ -1120,7 +1123,7 @@ public partial class EvaluationPackage : I_ResultStorage
     /// <summary>
     /// Logs kojo automatically
     /// </summary>
-    public List<KojoCollector> LogMessage_Begin(bool ignoreBegin = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    public List<KojoCollector> LogMessage_Begin(MessageCollect m = null, Character_Trainable injectChara = null, Character_Trainable injectFallback = null)
     {
         if (m == null) m = this.job.m;
         List<KojoCollector> results = new List<KojoCollector>();
@@ -1130,13 +1133,18 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             if (injectChara != null && Doer != injectChara)
             {
-                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, injectChara);
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Begin", this, injectChara);
                 if (message != null) results.Add(message);
 
             }
             else if (Receiver != null && Receiver != Doer)
             {
-                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, Receiver);
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Begin", this, Receiver);
+                if (message != null) results.Add(message);
+            }
+            else if (injectFallback != null && Doer != injectFallback)
+            {
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Begin", this, injectFallback);
                 if (message != null) results.Add(message);
             }
 
@@ -1145,13 +1153,19 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             if (injectChara != null && Receiver != injectChara) 
             {
-                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, injectChara);
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Begin", this, injectChara);
                 if (message != null) results.Add(message);
             }
             else if (Receiver != Doer)
             {
-                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Begin", this, m, Doer);
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Begin", this, Doer);
                 if (message != null) results.Add(message);
+            }
+            else if (injectFallback != null && Receiver != injectFallback)
+            {
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Begin", this, injectFallback);
+                if (message != null) results.Add(message);
+
             }
         }
         return results;
@@ -1160,7 +1174,7 @@ public partial class EvaluationPackage : I_ResultStorage
     /// <summary>
     /// Logs kojo automatically
     /// </summary>
-    public List<KojoCollector> LogMessage_Ongoing(bool rightAlign = false, MessageCollect m = null, Character_Trainable injectChara = null)
+    public List<KojoCollector> LogMessage_Ongoing(MessageCollect m = null, Character_Trainable injectChara = null)
     {
         if (m == null) m = this.job.m;
         //List<Character_Trainable> actors, string s
@@ -1180,7 +1194,7 @@ public partial class EvaluationPackage : I_ResultStorage
 
             if (injectChara != null && Doer != injectChara)
             {
-                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, injectChara);
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, injectChara);
                 if (message != null) results.Add(message);
                 /*
                  * 
@@ -1196,7 +1210,7 @@ public partial class EvaluationPackage : I_ResultStorage
             }
             else if (Receiver != null && Receiver != Doer)
             {
-                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, Receiver);
+                var message = Doer.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, Receiver);
                 if (message != null) results.Add(message);
             }
         }
@@ -1213,12 +1227,12 @@ public partial class EvaluationPackage : I_ResultStorage
 
             if (injectChara != null && Receiver != injectChara)
             {
-                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, injectChara);
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, injectChara);
                 if (message != null) results.Add(message);
             }
             else if (Receiver != Doer)
             {
-                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, m, Doer);
+                var message = Receiver.Relationships.GetKOJOMessage_Suffix("_Ongoing", this, Doer);
                 if (message != null) results.Add(message);
             }
         }
@@ -1229,7 +1243,7 @@ public partial class EvaluationPackage : I_ResultStorage
     /// This one should be allowed to repeat on every player command input, so there is less check
     /// </summary>
     /// <param name="ep"></param>
-    public string LogMessage_Begin_Ongoing(bool ignoreBegin = false, bool rightAlign = false, MessageCollect m = null)
+    public string LogMessage_Begin_Ongoing(MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
         if (Doer.isTimeStopped) return "";
@@ -1406,7 +1420,16 @@ public partial class EvaluationPackage : I_ResultStorage
         }
     }
 
-    
+    [JsonIgnore]
+    public AP_Status APStatus
+    {
+        get
+        {
+            return this.Package.internalState;
+        }
+    }
+
+
 
 
     /// <summary>

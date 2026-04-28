@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
-
+using UnityEngine;
+using System;
 
 public enum VisibilityLevel
 {
@@ -11,13 +11,31 @@ public enum VisibilityLevel
 
 public class DescriptionCollector : I_Records
 {
+    [JsonIgnore]
+    public bool isValid
+    {
+        get
+        {
+            return message != "" || message_excludeRelated != "";
+        }
+    }
     public VisibilityLevel Visibility = VisibilityLevel.Roomwide;
-    public DateTime timestamp = DateTime.MinValue;
-    public List<int> portraitRefs = new List<int>();
+    //public DateTime timestamp = DateTime.MinValue;
+    [JsonProperty] protected List<int> portraitRefs = new List<int>();
+    List<int> portraitRefsOverride = null;
+    [JsonIgnore] public List<int> PortraitRefs
+    {
+        get
+        {
+            if (portraitRefsOverride != null) return portraitRefsOverride;
+            else return portraitRefs;
+        }
+    }
     public List<string> displayTagsOverride = new List<string>();
     public bool autoAnimate = false;
 
-    [JsonIgnore] public DateTime Timestamp { get { return timestamp; } }
+
+    //[JsonIgnore] public DateTime Timestamp { get { return timestamp; } }
 
     public bool VisibleTo(Character_Trainable c, Room_Instance room = null)
     {
@@ -53,35 +71,35 @@ public class DescriptionCollector : I_Records
         this.message = s;
         this.relevantActors = actors;
         this.Visibility = visibility;
-        this.timestamp = scr_UpdateHandler.current.UpdateTime;
+       // this.timestamp = scr_UpdateHandler.current.UpdateTime;
         LoadActors(actors);
     }
     public DescriptionCollector(string s, Character_Relationship rel, VisibilityLevel visibility = VisibilityLevel.Roomwide)
     {
         this.message = s;
         this.Visibility = visibility;
-        this.timestamp = scr_UpdateHandler.current.UpdateTime;
+       // this.timestamp = scr_UpdateHandler.current.UpdateTime;
         LoadActors(rel);
     }
     public DescriptionCollector(string s, VisibilityLevel visibility = VisibilityLevel.Roomwide)
     {
         this.message = s;
         this.Visibility = visibility;
-        this.timestamp = scr_UpdateHandler.current.UpdateTime;
+       // this.timestamp = scr_UpdateHandler.current.UpdateTime;
     }
 
     public void Load(MessageCollect_KojoEntry kojo)
     {
-        if (kojo.portraitRefID != -1)
+        if (kojo.PortraitRefID != -1)
         {
-            this.portraitRefs.Add(kojo.portraitRefID);
+            this.portraitRefs.Add(kojo.PortraitRefID);
             portraitRefs = Utility.Distinct(portraitRefs);
         }
 
         if (kojo.message.Length > 0)
         {
             this.message += $"{(message.Length > 0 ? "\n" : "")}{kojo.message}";
-            this.message_excludeRelated += $"{(message_excludeRelated.Length > 0 ? "\n" : "")}{kojo.message}";
+            //this.message_excludeRelated += $"{(message_excludeRelated.Length > 0 ? "\n" : "")}{kojo.message}";
         }
         
         this.displayTagsOverride.AddRange(kojo.portraitTags);
@@ -131,6 +149,57 @@ public class DescriptionCollector : I_Records
             portraitRefs = Utility.Distinct(portraitRefs);
         }
 
+    }
+
+
+    public void RecordActor(Dictionary<int, ActorRecord> recTable)
+    {
+        foreach (var refID in portraitRefs)
+        {
+            if (refID == -1) return;
+            var actor = scr_System_CampaignManager.current.FindInstanceByID(refID);
+            if (actor == null) return;
+            foreach (var rec in recTable)
+            {
+                if (rec.Key == refID)
+                {
+                    rec.Value.Count += 1;
+                    return;
+                }
+            }
+            var newrec = new ActorRecord(actor);
+            newrec.Count += 1;
+            recTable.Add(actor.RefID, newrec);
+        }
+
+    }
+
+    public void ReadActorRecord(Dictionary<string, ActorRecord> recTable)
+    {
+        //foreach (var actorref in relevantActorRefs) LoadActorSingle(actorref, recTable);
+        //if (!relevantActorRefs.Contains(selfRef)) LoadActorSingle(selfRef, recTable);
+        //if (!relevantActorRefs.Contains(targetRef)) LoadActorSingle(targetRef, recTable);
+        //if (!relevantActorRefs.Contains(doerRef)) LoadActorSingle(doerRef, recTable);
+        //if (!relevantActorRefs.Contains(receiverRef)) LoadActorSingle(receiverRef, recTable);
+        portraitRefsOverride = new List<int>();
+        foreach (var actorref in portraitRefs)
+        {
+            foreach (var rec in recTable)
+            {
+                if (rec.Value.refID == -1) continue;
+                if (rec.Value.refID == actorref && rec.Value.refID_overwrite != -1)
+                {
+                    portraitRefsOverride.Add(rec.Value.refID_overwrite);
+                    break;
+                }
+            }
+        }
+    }
+
+
+    public void AddPortraitRef(int i)
+    {
+        if (!this.portraitRefs.Contains(i)) this.portraitRefs.Add(i);
     }
 }
 

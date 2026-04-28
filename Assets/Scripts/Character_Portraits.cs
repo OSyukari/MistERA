@@ -191,7 +191,8 @@ public class PortraitManager
         _cache_NeutralPortrait = null;
         _cache_CombatPortrait = null;
         _cache_ActivityPortrait = null;
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"ClearHandlerCache on {Owner.FirstName}");
+        //tags_active.Clear();
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits && Owner.CurrentRoom == scr_System_CampaignManager.current.CurrentRoom) Debug.Log($"ClearHandlerCache on {Owner.FirstName}");
     }
 
 
@@ -271,7 +272,7 @@ public class PortraitManager
     protected void DrawActivityPortrait(scr_CharPortraitBox box, List<string> tags = null, bool forceRefresh = false, bool lowPriority = false)
     {
         //Debug.Log($"{Owner.CallName} DrawActivityPortrait");
-        forceRefresh = tags == null;
+        forceRefresh = tags != null;
         if (_cache_ActivityPortrait == null || forceRefresh)
         {
             if (tags == null) tags = tags_active.Count > 0 ? tags_active : GetOwnerActionTagsByPriority();

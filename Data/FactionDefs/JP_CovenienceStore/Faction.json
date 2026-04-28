@@ -33,7 +33,8 @@
                     { "matchByID":"raw_rice","nameOverwrite":"jp_convenience_store_rice_bag_5kg", "itemCount":5000, "countOverride":true },
                     { "matchByID":"currency_pyroxene","nameOverwrite":"jp_convenience_store_pyroxene_4800", "itemCount":4800, "countOverride":true },
                     { "matchByID":"consumable_drug_sleepingpill","nameOverwrite":"jp_convenience_store_otcsleepingpills_6pack", "itemCount":6, "countOverride":true },
-                    { "matchByID":"consumable_alcohol_beer","nameOverwrite":"jp_convenience_store_beer_6pack", "itemCount":6, "countOverride":true }
+                    { "matchByID":"consumable_alcohol_beer","nameOverwrite":"jp_convenience_store_beer_6pack", "itemCount":6, "countOverride":true },
+                    { "matchByTags":["industrial","item_records", "AV"] }
                 ],
                 "_comment":"here is faction initializer. Calling mapPlan init create a new instance of the faction following this same template.",
                 "_comment2":"called by MapPlan.Instantiate(args)",

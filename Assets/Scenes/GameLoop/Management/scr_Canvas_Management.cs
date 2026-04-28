@@ -5,7 +5,6 @@ using TMPro;
 using UnityEngine.EventSystems;
 using System;
 
-
 public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 {
 
@@ -176,6 +175,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         entry.ItemCount.text = currentFaction.Inventory.GetItemCount(order.Entry.itemID).ToString();
         entry.FactionName.text = order.TargetFaction == currentFaction ? " - " : order.TargetFaction.FactionDisplayName;
         entry.pricing.text = " - ";
+
+
         RectTransform rect = entry.GetComponent<RectTransform>();
 
         RegisterButton(recipeHash + 1, entry.ButtonPlus, new button_ManageTradeOrder_AddCount(this, entry.OrderAmount, order));
@@ -185,6 +186,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         RegisterButton(recipeHash, entry.Btn_action, remover);
 
         rect.SetParent(list_trades, false);
+        entry.RegisterTR(this, CurrentFaction, order);
         loadTrades_Removal.Add(order, remover);
     }
 
@@ -210,6 +212,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         RegisterButton(recipeHash, entry.btn_action, remover);    
 
         rect.SetParent(list_orders, false);
+        entry.RegisterPO(this, CurrentFaction, order);
         loadOrders_Removal.Add(order, remover);
     }
 
@@ -297,6 +300,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     private List<Character_Trainable> charaInFaction;
     public Character_Trainable currentChara;
+
+    public moveOrderScriptBTN moveBoxScript = null;
 
     public delegate void Initializer();
 

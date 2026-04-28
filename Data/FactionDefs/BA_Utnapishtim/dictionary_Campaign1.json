@@ -171,7 +171,10 @@
   "humanRace_android_complex": "Advanced Android",
   "humanRace_android_complex_tooltip": "%%humanRace_android_simple_tooltip%%\nCompared to ordinary androids, advanced androids are closer to humans in more ways, and require relatively more maintenance.",
   "humanRace_android_simple": "Android",
-  "humanRace_android_simple_tooltip": "Humanoid machine created to fulfill specific needs.\nMost androids do not have daily needs."
+  "humanRace_android_simple_tooltip": "Humanoid machine created to fulfill specific needs.\nMost androids do not have daily needs.",
+
+  "Campaign1_students_charCard_comment": "Character card entry taken from tavern's BA character card: [Blue Archive/Doujin] Blue Archive Kivotos Ver2.00\nAuthor's permission has not yet been obtained"
+
 
 
             }
