@@ -171,7 +171,14 @@ public class scr_canvas_changeportrait : scr_Menu, IPointerClickHandler
         {
             _currentTemplate = value;
             // update
-            if (scr_System_CampaignManager.current.CurrentTargetEX_Box != null) scr_System_CampaignManager.current.CurrentTargetEX_Box.InitializeWithArgument(_currentTemplate == null ? _originalTemplate : _currentTemplate);
+            if (scr_System_CampaignManager.current.CurrentTargetEX_Box != null)
+            {
+                scr_System_CampaignManager.current.CurrentTargetEX_Box.InitializeWithArgument(_currentTemplate);
+            }
+            else
+            {
+                Debug.LogError("error CurrentTargetEX_Box null");
+            }
         }
     }
 
@@ -205,8 +212,7 @@ public class scr_canvas_changeportrait : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            if (parent.CurrentTemplate == this.template) parent.CurrentTemplate = null;
-            else parent.CurrentTemplate = this.template;
+            parent.CurrentTemplate = this.template;
         }
     }
 

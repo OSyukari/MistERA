@@ -1,0 +1,168 @@
+{
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_bluearchive_Navigator_Dress",
+            "displayName":"Navigator's Dress",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower"],
+                        "equipTags":[],
+                        "stat_modifiers":[
+                            {
+                                "statID":"Strength",
+                                "modKey":"clothing_bluearchive_Navigator_Dress", "type":"addBase", "valueType":"number", "valueString":"0.5"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Boot",
+            "displayName":"Navigator's Boot",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Feet"],
+                        "stat_modifiers":[
+                            {
+                                "statID":"Strength",
+                                "modKey":"clothing_bluearchive_Navigator_Boot", "type":"addBase", "valueType":"number", "valueString":"1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Cape",
+            "displayName":"Navigator's Cape",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Neck"],
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Hat",
+            "displayName":"Navigator's Hat",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Hair"],
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough",
+                        "stat_modifiers":[
+                            {
+                                "statID":"Willpower",
+                                "modKey":"clothing_bluearchive_Navigator_Hat", "type":"addBase", "valueType":"number", "valueString":"1"
+                            },
+                            {
+                                "statID":"stats_derived_mp_max",
+                                "modKey":"clothing_bluearchive_Navigator_Hat", "type":"addBase", "valueType":"number", "valueString":"2"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Coat",
+            "displayName":"Navigator's Coat",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Outer"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Longcoat",
+            "displayName":"Captain's Long Coat",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Outer",
+                        "coverSlot":["Lower"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_bluearchive_Navigator_Glove",
+            "displayName":"Navigator's Glove",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Hand"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Hand"],
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        }
+        
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+        "clothing_bluearchive_Navigator_Hat":"帽子",
+        "clothing_bluearchive_Navigator_Dress":"连衣裙",
+        "clothing_bluearchive_Navigator_SleevelessMinidress":"无袖迷你连衣裙",
+        "clothing_bluearchive_Navigator_Minidress":"迷你连衣裙",
+        "clothing_bluearchive_Navigator_Coat":"大衣",
+        "clothing_bluearchive_Navigator_Cape":"披肩",
+        "clothing_bluearchive_Navigator_ShortCoat":"短袖外衣",
+        "clothing_bluearchive_Navigator_Longcoat":"舰长的外衣",
+        "clothing_bluearchive_Navigator_Glove":"手套",
+        "clothing_bluearchive_Navigator_HeelBoot":"高跟靴",
+        "clothing_bluearchive_Navigator_Boot":"靴子",
+        "clothing_bluearchive_Navigator_CaptainsGunHolster":"舰长的枪套",
+        "clothing_bluearchive_Navigator_CaptainsHHBoot":"舰长的高跟靴"
+            },
+            "en-us":
+            {
+        "clothing_bluearchive_Navigator_Hat": "Hat",
+        "clothing_bluearchive_Navigator_Dress": "Dress",
+        "clothing_bluearchive_Navigator_SleevelessMinidress": "Sleeveless Minidress",
+        "clothing_bluearchive_Navigator_Minidress": "Mini Dress",
+        "clothing_bluearchive_Navigator_Coat": "Coat",
+        "clothing_bluearchive_Navigator_Cape": "Cape",
+        "clothing_bluearchive_Navigator_ShortCoat": "Short Coat",
+        "clothing_bluearchive_Navigator_Longcoat": "Captain's Coat",
+        "clothing_bluearchive_Navigator_Glove": "Glove",
+        "clothing_bluearchive_Navigator_HeelBoot": "Heeled Boots",
+        "clothing_bluearchive_Navigator_Boot": "Boots",
+        "clothing_bluearchive_Navigator_CaptainsGunHolster": "Captain's Gun Holster",
+        "clothing_bluearchive_Navigator_CaptainsHHBoot": "Captain's High Heel Boots"
+            }
+        }
+    }
+    
+}

@@ -378,7 +378,8 @@ public class Job_Expedition : Job
         {
 
             if (this.FactionOwner_Party.OwnerFaction.mealHours.Contains(currentHour)
-                    || ((this.FactionOwner_Party.AllowPassNight || this.FactionOwner_Party.BaseDuration > 23) && this.FactionOwner_Party.SleepHours.Contains(currentHour))) this.status = ExpeditionStatus.resting;
+                    || ((this.FactionOwner_Party.AllowPassNight || this.FactionOwner_Party.BaseDuration > 23) 
+                            && (this.FactionOwner_Party.SleepHours.Contains(currentHour) || !this.FactionOwner_Party.OwnerFaction.IsActiveHour(currentHour)))) this.status = ExpeditionStatus.resting;
             else this.status = ExpeditionStatus.active;
         }
 

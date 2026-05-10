@@ -31,19 +31,7 @@
             "statKeyword":"stamina",
             "tooltip":"Stamina, consumed when performing physical activity.\nCalculation: CON Score * 10 + others\nNaturally recovers during sleep.\nWhen value falls below Fatigue Threshold, character will become Fatigued (increase stamina expenditure).\nWhen value reaches 0, character will become Exhausted (decrease stamina recovery).",
             "maxValue":{ "valueType":"getStatValue", "valueString":"stats_derived_stamina_max" },
-            "eventTriggers":
-            [
-                {
-                    "type":"valuePercentile",
-                    "argument":"lte 0.5",
-                    "result": { "type":"setStatus", "valueType":"number", "valueString":"chara_status_fatigue", "severity":"1.0" }
-                },
-                {
-                    "type":"valuePercentile",
-                    "argument":"lte 0.1",
-                    "result": { "type":"setStatus", "valueType":"number", "valueString":"chara_status_fatigue", "severity":"2.0" }
-                }
-            ]
+            "linkedStatusID":"chara_status_fatigue"
         }
     ]
     },
@@ -189,6 +177,12 @@
                 "valueBase":{ "baseValue_value":1.5, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":1.0, "valueCeiling":9999 }
             },
             {
+                "id": "stats_derived_wakeupOffset",
+                "statKeyword":"sleep",
+                "displayName":"Wakeup Offset",
+                "valueBase":{ "baseValue_value":0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":-24, "valueCeiling":24 }
+            },
+            {
                 "id": "stats_derived_fatigueThreshold",
                 "displayName":"Fatigue Threshold",
                 "statKeyword":"stamina",
@@ -257,6 +251,16 @@
                 "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
             },
             {
+                "id": "stats_derived_cleanlinessSensitivity",
+                "displayName":"Cleanliness Sensitivity",
+                "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":9999 }
+            },
+            {
+                "id": "stats_derived_cleaningThreshold",
+                "displayName":"Cleaning Threshold",
+                "valueBase":{ "baseValue_value":3.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":2.0, "valueCeiling":9999 }
+            },
+            {
                 "id": "stats_derived_prideThreshold",
                 "statKeyword":"memory",
                 "displayName":"stats_derived_prideThreshold",
@@ -308,7 +312,7 @@
                 "stats_derived_extended_energy": "精力",
                 "stats_derived_extended_energy_tooltip": "执行需要社交、脑力、和集中的工作时消耗\n上限为%%stats_base_Willpower%%*10+其他补正\n能通过睡眠或休息回复\n当精力过低时角色心情会降低，%%notimplemented%%",
                 "stats_derived_extended_stamina": "耐力",
-                "stats_derived_extended_stamina_tooltip": "执行体力劳动时消耗\n上限为%%stats_base_Constitution%%*10+其他补正\n能通过睡眠或休息回复\n当角色体力过低时会陷入疲劳状态，%%notimplemented%%",
+                "stats_derived_extended_stamina_tooltip": "执行体力劳动时消耗\n上限为%%stats_base_Constitution%%*10+其他补正\n能通过睡眠或休息回复\n当角色体力过低时会陷入疲劳状态，详情见【%%chara_status_fatigue%%】状态",
 
                 "stats_derived_hp_max": "HP上限",
                 "stats_derived_hp_max_tooltip": "%%stats_derived_extended_hp_tooltip%%",
@@ -349,6 +353,10 @@
                 "stats_derived_sleepNeed_tooltip": "角色每日需要的睡眠时间（小时单位）\n对该数值的修正只会在角色开始睡觉时取用",
                 "stats_derived_sleepDepth": "睡眠深度",
                 "stats_derived_sleepDepth_tooltip": "角色的睡眠深度，决定角色的睡眠有多容易被打断\n该数值不会低于1.0\n对该数值的修正只会在角色开始睡觉时取用",
+                
+                "stats_derived_wakeupOffset":"睡眠时点",
+                "stats_derived_wakeupOffset_tooltip":"角色是否能准时起床，是否熬夜，默认0（准时）\n该数值大于0时，角色会早睡早起，小于0时角色晚睡晚起",
+                
                 "stats_derived_memoryEntryCount": "记忆数量",
                 "stats_derived_memoryEntryCount_tooltip": "该数值决定了角色的心情会受到多少项记忆条目影响（从新到旧）",
                 "stats_derived_memoryLength": "记忆时长",
@@ -356,7 +364,11 @@
                 "stats_derived_alcoholSensitivity":"酒精耐受",
                 "stats_derived_alcoholSensitivity_tooltip": "该数值（倍率）决定角色有多容易醉，越低越易醉\n默认1.0",
                 "stats_derived_painSensitivity":"疼痛耐受",
-                "stats_derived_painSensitivity_tooltip": "该数值（倍率）决定角色有多容易疼痛，越低疼痛越剧烈\n默认1.0"
+                "stats_derived_painSensitivity_tooltip": "该数值（倍率）决定角色有多容易疼痛，越低疼痛越剧烈\n默认1.0",
+                "stats_derived_cleanlinessSensitivity":"脏污耐性",
+                "stats_derived_cleanlinessSensitivity_tooltip": "该数值（倍率）决定角色有多能容忍房间脏乱，越高越无法容忍\n默认1.0",
+                "stats_derived_cleaningThreshold":"打扫阈值",
+                "stats_derived_cleaningThreshold_tooltip": "该数值决定角色在房间脏乱到达何程度后会决定打扫，越低打扫越勤奋\n默认3，最低2"
             },
             "en-us": {
 

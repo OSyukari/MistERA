@@ -122,11 +122,13 @@ public class SpineAnimator42 : SpineAnimatorBase
             loader.Clear();
             refresh = true;
             if (debug) Debug.Log("42 reinit");
+            loading = false; // clear any stuck flag from a previously interrupted coroutine
             yield return PreCacheData(manager, texturePath, atlasPath, skeletonPath, straightAlpha);
         }
 
         if (refresh)
         {
+            if (dataloader.skeletonDataAsset == null || dataloader.skeletonData == null) yield break;
             loader.Clear();
             //skeletonDataAsset.scale = skeletonScale;
             //Animation = SkeletonAnimation.AddToGameObject(this.gameObject, skeletonDataAsset);

@@ -68,26 +68,48 @@
                 "idleAnimName":"Idle_01", "addonAnimName":"00"
 
             }
-        ]
+        ],
+        "CharaBanner":
+        {
+            "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+            "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 1.2,
+            "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":0.56,
+
+            "portrait_path":"Media_UI_Scenario_Background/BG_View_Abydos.jpg",
+            "icon_path":"Media_UI_Scenario_Background/BG_View_Abydos.jpg"
+
+        }
     },
     "Template": {
       "Appearance": "Female",
       "BodyType": "Default",
-      "stat_STR": 14,
-      "stat_CON": 12,
-      "stat_PSY": 12,
-      "stat_WIL": 12,
+      "stat_STR": 11,
+      "stat_CON": 10,
+      "stat_PSY": 10,
+      "stat_WIL": 13,
       "personalityID": "personality_default",
-      "sensitivity_B": "trait_Sensitivity_B_default",
+      "sensitivity_B": "trait_Sensitivity_B_supersensitive",
       "sensitivity_M": "trait_Sensitivity_M_default",
-      "sensitivity_C": "trait_Sensitivity_C_default",
-      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_C": "trait_Sensitivity_C_sensitive",
+      "sensitivity_V": "trait_Sensitivity_V_sensitive",
       "sensitivity_A": "trait_Sensitivity_A_default",
       "size_B": "trait_Size_B_C",
       "size_P": "trait_Size_P_none",
       "size_V": "trait_Size_V_1",
       "size_A": "trait_Size_A_1",
       "Height":153,
+      "Weight":46,
+      "HWMultiplier":0.30,
+      "traits":[
+        "trait_FatigueResistance_low",
+        "trait_SleepLength_more",
+        "trait_SleepTiming_late",
+        "trait_SelfEsteem_low",
+        "trait_MemoryCapacity_high",
+        "trait_MemoryRetention_high",
+        "trait_MentalFortitude_low"
+      ],
 
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },

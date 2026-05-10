@@ -527,10 +527,10 @@
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_B",
             "variants":[ 
-                { "threshold":0 },
-                { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "displayable":false,"threshold":0 },
+                { "displayable":false,"threshold":39 },
+                { "displayable":false,"threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "displayable":false,"threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_B", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -549,10 +549,10 @@
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_M",
             "variants":[ 
-                { "threshold":0 },
-                { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "displayable":false,"threshold":0 },
+                { "displayable":false,"threshold":39 },
+                { "displayable":false,"threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "displayable":false,"threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_M", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -571,10 +571,10 @@
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_C",
             "variants":[ 
-                { "threshold":0 },
-                { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "displayable":false,"threshold":0 },
+                { "displayable":false,"threshold":39 },
+                { "displayable":false,"threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "displayable":false,"threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_C", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -593,10 +593,10 @@
             } ,
             "variantThresholdModStat":"stats_derived_maxSensitivity_V",
             "variants":[ 
-                { "threshold":0 },
-                { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "displayable":false,"threshold":0 },
+                { "displayable":false,"threshold":39 },
+                { "displayable":false,"threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "displayable":false,"threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_V", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -615,10 +615,10 @@
             } ,
             "variantThresholdModStat":"stats_derived_maxSensitivity_A",
             "variants":[ 
-                { "threshold":0 },
-                { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "displayable":false,"threshold":0 },
+                { "displayable":false,"threshold":39 },
+                { "displayable":false,"threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "displayable":false,"threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_A", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -637,10 +637,10 @@
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_W",
             "variants":[ 
-                { "threshold":0 },
-                { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "displayable":false,"threshold":0 },
+                { "displayable":false,"threshold":39 },
+                { "displayable":false,"threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "displayable":false,"threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex_W", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         },
         {
@@ -658,10 +658,10 @@
             },
             "variantThresholdModStat":"stats_derived_maxSensitivity_Mind",
             "variants":[ 
-                { "threshold":0 },
-                { "threshold":39 },
-                { "threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex__Mind", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
-                { "threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex__Mind", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
+                { "displayable":false,"threshold":0 },
+                { "displayable":false,"threshold":39 },
+                { "displayable":false,"threshold":84, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex__Mind", "type":"setBase", "valueType":"number", "valueString":"1" } ]  } ,
+                { "displayable":false,"threshold":100, "stat_modifiers":[ { "statID":"chara_status_lust", "modKey":"chara_status_sex__Mind", "type":"setBase", "valueType":"number", "valueString":"2" } ]  } 
             ]
         }
     ]

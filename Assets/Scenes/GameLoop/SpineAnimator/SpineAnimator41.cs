@@ -120,6 +120,7 @@ public class SpineAnimator41 : SpineAnimatorBase
             refresh = true;
             if (debug) Debug.Log($"41 reinit, {!dataloader.initialized} {dataloader.atlasPath != atlasPath} {dataloader.skeletonPath != skeletonPath} {!dataloader.texturePath.SequenceEqual(texturePath)}");
 
+            loading = false; // clear any stuck flag from a previously interrupted coroutine
             yield return PreCacheData(manager, texturePath, atlasPath, skeletonPath, straightAlpha);
         }
         //skeletonDataAsset.scale = skeletonScale;
@@ -127,6 +128,7 @@ public class SpineAnimator41 : SpineAnimatorBase
 
         if (refresh)
         {
+            if (dataloader.skeletonDataAsset == null || dataloader.skeletonData == null) yield break;
             loader.Clear();
             if (debug) Debug.Log("41 new animation");
             loader.Animation = SkeletonAnimation.NewSkeletonAnimationGameObject(dataloader.skeletonDataAsset);

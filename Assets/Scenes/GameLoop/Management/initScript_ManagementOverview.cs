@@ -11,7 +11,7 @@ public class initScript_ManagementOverview : MonoBehaviour
     public TMP_Text dailyReport;
     public RectTransform linkedFactionGrid;
     public scr_HoverableText prefab_factionEntry;
-    public TMP_Text factionTimings;
+    public TMP_Text mealHours;
 
 
     string factionPop, factionRes, factionPopTooltip, currentlyOutside;
@@ -26,9 +26,12 @@ public class initScript_ManagementOverview : MonoBehaviour
     public RectTransform messageRect;
     public scr_HoverableText report_managementResult, report_tradeResults, report_currentlyOutsideFaction;
     public scr_HoverableText prefab_miscMessageButton;
+
+    Manageable m;
     public void Initialize(Manageable m)
     {
 
+        this.m = m;
         List<string> managers = new List<string>();
         foreach (var i in m.Managers) managers.Add(i.FullName);
         managerNames.text = String.Join(", ", managers);
@@ -159,9 +162,80 @@ public class initScript_ManagementOverview : MonoBehaviour
         report_currentlyOutsideFaction.SetText(currentlyOutside.Replace("$count$", popCount.ToString()));
         report_currentlyOutsideFaction.SetExternalTooltip(String.Join("\n", popCountTooltip));
 
-        factionTimings.text = $"sleep time {(m is Manageable_HomeFaction ? (m as Manageable_HomeFaction).SharedSleepHour : "none")}, meal time [{String.Join("|",m.mealHours)}]";
+        // meal hours
+
+
+        var mealnames = new List<string>();
+        if (m.isPlayerFaction)
+        {
+            var chefnames = new List<string>();
+            for (int i = 0; i < 24; i++)
+            {
+                chefnames.Clear();
+                foreach (var c in m.ManagedChara)
+                {
+                    var setting = m.GetSchedule(c, i);
+                    if (setting == null) continue;
+                    if (chefnames.Contains(c.FirstName)) continue;
+                    else if (setting.comIDs.Contains("com_furniture_mealPrep")) chefnames.Add(c.FirstName);
+                }
+
+                if (chefnames.Count > 0) mealnames.Add($"{i%12}{(i< 12 ? "AM" : "PM")} {String.Join(" ", chefnames)}");
+            }
+        }
+        else
+        {
+            foreach (var hh in m.mealHours) mealnames.Add($"{hh%12}{(hh < 12? "AM":"PM")}");
+        }
+
+        mealHours.SetText(String.Join("     ", mealnames));
 
         //foreach (KeyValuePair<string, int> kvp in targetFaction.GetMaintenanceCost_Total) values.Add(kvp.Key + kvp.Value.ToString("+0;-#"));
         factionResource.text = factionRes.Replace("$resources$", String.Join(" | ", values));  // targetFaction.GetMaintenanceCost_Total
+
+        activeHoursBegin.self_inputfield.text = m is Manageable_HomeFaction ? $"{(m as Manageable_HomeFaction).DayStartHour}" : "none";
+        activeHoursEnd.self_inputfield.text = m is Manageable_HomeFaction ? $"{(m as Manageable_HomeFaction).DayEndHour}" : "none";
+
+        _activeHours_init = true;
+
+        RefreshActiveHours();
+
+        activeHoursChange.SetText("");
+    }
+
+    bool _activeHours_init = false;
+    public scr_inputFieldLink activeHoursBegin, activeHoursEnd;
+    public scr_HoverableText activeHoursCurrent, activeHoursChange;
+
+    void OnEnable()
+    {
+        activeHoursChange.SetText("");
+    }
+
+    public void OnActiveHoursChanged()
+    {
+        if (!_activeHours_init) return;
+        if (m == null) return;
+        if (int.TryParse(activeHoursBegin.self_inputfield.text, out var begin) && int.TryParse(activeHoursEnd.self_inputfield.text, out var end))
+        {
+            if (m.SetActiveHours(begin, end))
+            {
+                activeHoursChange.SetText(LocalizeDictionary.QueryThenParse("management_faction_activeHours_updatenotice_new"));
+            }
+            else
+            {
+                activeHoursChange.SetText(LocalizeDictionary.QueryThenParse("management_faction_activeHours_updatenotice_invalidnumber"));
+            }
+        }
+        else
+        {
+            activeHoursChange.SetText(LocalizeDictionary.QueryThenParse("management_faction_activeHours_updatenotice_invalidinput"));
+        }
+        RefreshActiveHours();
+    }
+
+    protected void RefreshActiveHours()
+    {
+        activeHoursCurrent.SetText(m.ActivityStateString);
     }
 }

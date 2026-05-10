@@ -8,6 +8,7 @@ using System.Linq;
 public class initScript_Expeditions : MonoBehaviour
 {
     public scr_teamBTN prefab_teamButton;
+    public scr_HoverableText sleepHours;
     public enum PartyEditUI
     {
         Neutral,
@@ -175,6 +176,8 @@ public class initScript_Expeditions : MonoBehaviour
         var tooltip = $"{party.GetAvailability(out var status_tooltip)} {party.Job.status}";
         teamStatus.SetText(status_tooltip);
         teamStatus.SetExternalTooltip(tooltip);
+
+        sleepHours.SetText(String.Join("|", party.SleepHours));
     }
 
 

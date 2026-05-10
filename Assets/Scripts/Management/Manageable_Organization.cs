@@ -13,45 +13,32 @@ let chara ai autoassign their resting time (sleep, recreation, eat)
 [System.Serializable]
 public class Manageable_HomeFaction : Manageable
 {
-
-    [JsonProperty] protected int sharedSleepHour;
-    [JsonIgnore] public int SharedSleepHour { get { return sharedSleepHour; } }
-
     protected override bool isManageableHours(int hour)
     {
-        return true;
+        return IsActiveHour(hour);
     }
-    
 
     public Manageable_HomeFaction()
     {
 
     }
-    public Manageable_HomeFaction(string id, int sleepHour = 22):base(id)
+    public Manageable_HomeFaction(string id) : base(id)
     {
         this._inventory = new FactionInventory(this, new List<string>() { "food_meal" });
-        this.sharedSleepHour = sleepHour;
     }
-
-
 }
 
 
 [System.Serializable]
 public class Manageable_WorkFaction : Manageable
 {
-    [JsonProperty] protected int manageHourStart = 0;
-    [JsonProperty] protected int manageHourEnd = 24;
-
     protected override bool isManageableHours(int hour)
     {
-        return hour >= manageHourStart && hour <= manageHourEnd;
+        return IsActiveHour(hour);
     }
-    
+
     public Manageable_WorkFaction(string id = "") : base(id)
     {
 
     }
-
-
 }

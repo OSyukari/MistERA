@@ -37,7 +37,7 @@ public class scr_menu_AddProductionOrder : scr_Menu, IPointerClickHandler
     {
         int recipeHash = AssertUniqueHash(recipe.RecipeUID.GetHashCode());
         scr_addPO_recipe box = Instantiate(prefab_recipe);
-        box.LoadRecipe(recipe);
+        box.LoadRecipe(faction, recipe);
         RegisterButton(recipeHash, box.Button, new Button_SelectRecipe(this, recipe, box.Button));
         box.GetComponent<RectTransform>().SetParent(recipeList, false);
     }

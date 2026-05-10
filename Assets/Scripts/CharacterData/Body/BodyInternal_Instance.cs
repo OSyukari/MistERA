@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
-using static EvaluationPackage;
 
 public enum Ranking
 {
@@ -728,6 +727,33 @@ public class BodyInternal_Instance
         get
         {
             return scr_System_Serializer.current.GetSensitivityStatus(this.Base.sensitivityClassString);
+        }
+    }
+    [JsonIgnore]
+    public string traitID
+    {
+        get
+        {
+            return this.Base.traitClassString != "" ? this.Base.traitClassString : this.Base.sensitivityClassString;
+        }
+    }
+
+
+    [JsonIgnore]
+    public Traits SizeTrait
+    {
+        get
+        {
+            switch (this.traitID)
+            {
+                case "B":
+                    if (this.Owner == null || this.Owner.Template == null) return null;
+                    return this.Owner.Template.Size_B;
+                case "P":
+                    if (this.Owner == null || this.Owner.Template == null) return null;
+                    return this.Owner.Template.Size_P;
+                default:return null;
+            }
         }
     }
 

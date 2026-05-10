@@ -252,7 +252,7 @@ public class Message_Text : MessageLog
         this.PortraitRef = chara == null ? null : chara.PortraitManager;
         this.tagsOverride = m.portraitTags;
 
-        if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
+        //if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
 
         this.autoAnimate = ra;
         var msg = m.message;

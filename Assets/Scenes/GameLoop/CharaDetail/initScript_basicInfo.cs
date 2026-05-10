@@ -112,6 +112,7 @@ public class initScript_basicInfo : MonoBehaviour
         // get stats grid
         foreach (var statDerived in chara.Stats.list_statsDerived)
         {
+            if (statDerived.Parent.isNSFW) continue;
             if (!statDerived.Parent.isValidStatFor(chara.Stats)) continue;
             if (!isDebug && statDerived.Parent.noDisplay) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
@@ -120,11 +121,12 @@ public class initScript_basicInfo : MonoBehaviour
         }
 
         // get traits grid
-        foreach (var trait in chara.Traits)
+        foreach (var trait in chara.Stats.Traits)
         {
-            if (!trait.isDisplayable) continue;
+            if (trait.Parent.isNSFW) continue;
+            if (!scr_System_CampaignManager.current.DebugMode && !trait.isDisplayable) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
-            link.SetText(trait.displayname, false, trait.ID);
+            link.SetText(trait.displayname, false, trait.TooltipID);
             link.GetComponent<RectTransform>().SetParent(traitsList, false);
         }
 
@@ -134,6 +136,7 @@ public class initScript_basicInfo : MonoBehaviour
         foreach (var stat in chara.Stats.statusInstancesEx)
         {
             if (!debug && !stat.Displayable) continue;
+
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             stat.Draw(link);
             link.GetComponent<RectTransform>().SetParent(statusEXGrid, false);
@@ -145,6 +148,11 @@ public class initScript_basicInfo : MonoBehaviour
         foreach (Status_Instance i in chara.Stats.StatusInstances)
         {
             if (!debug && !i.Displayable) continue;
+#if UNITY_EDITOR
+            if (!debug && !i.Displayable) continue;
+#else
+            if (!i.Displayable) continue;
+#endif
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
             
             UI_Utility.Draw(i, link);
@@ -190,6 +198,7 @@ public class initScript_basicInfo : MonoBehaviour
             Coroutine co = parent.StartCoroutine(parent.chara.PortraitManager.CacheInternal(parent.chara));
             // call for ex watcher to re-update
             scr_System_CampaignManager.current.NotifyCurrentTargetEXReset();
+            parent.InitializeWithArgument(parent.chara.RefID);
         }
     }
 

@@ -106,19 +106,36 @@ public class Manageable_Party : I_IsJobGiver
             if (!_cachedSleepHours)
             {
                 _sleepHours.Clear();
-
+                _sleepHours = ComputeSleepHours_new();
+                /*
                 var maxSleepHour = 0;
                 foreach (var i in this.ManagedChara) maxSleepHour = Math.Max(maxSleepHour, i.Stats.SleepHours);
-                var home = this.OwnerFaction as Manageable_HomeFaction;
-                var homeSleeHour = home == null ? 22 : home.SharedSleepHour;
+                var home = this.OwnerFaction;
+                var homeSleeHour = (home == null || !home.HasDayNight) ? 22 : home.NightStartHour;
 
                 for (int j = 0; j < maxSleepHour; j++)
                 {
                     _sleepHours.Add((homeSleeHour + j) % 24);
-                }
+                }*/
             }
             return _sleepHours;
         } }
+
+    private List<int> ComputeSleepHours_new()
+    {
+        var home = this.OwnerFaction;
+        int wakeHour = (home != null && home.HasDayNight) ? home.DayStartHour : 6;
+
+        int maxSleepHours = 0;
+        foreach (var c in ManagedChara) maxSleepHours = Math.Max(maxSleepHours, c.Stats.SleepHours);
+
+        var result = new List<int>();
+
+        // Fill backward from wakeHour: NPC wakes at wakeHour, sleeps the preceding maxSleepHours hours
+        for (int i = 1; i <= maxSleepHours; i++) result.Add((wakeHour - i + 24) % 24);
+
+        return result;
+    }
 
     [JsonIgnore] public int FinalDuration
     { get
@@ -451,6 +468,7 @@ public class Manageable_Party : I_IsJobGiver
     {
         _managedChara = null;
         _cached_isplayerFaction = false;
+        _cachedSleepHours = false;
     }
 
     /// <summary>

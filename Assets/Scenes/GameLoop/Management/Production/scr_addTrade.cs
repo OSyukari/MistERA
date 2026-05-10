@@ -12,11 +12,12 @@ public class scr_addTrade : MonoBehaviour
         this.itemName.SetExternalTooltip(entry.Tooltip);
         this.factionName.text = parentFaction == targetFaction ? " - " : faction.FactionDisplayName;
         this.pricing.text = targetFaction.GetPricingLabel(entry, parentFaction != targetFaction);
+        this.ownedCount.SetText($"{parentFaction.Inventory.GetItemCount(entry.itemID)}");
     }
 
     protected Manageable faction;
     protected ItemEntry entry;
-    public scr_HoverableText itemName;
+    public scr_HoverableText itemName, ownedCount;
     public TMP_Text factionName, pricing;
     public scr_SelectableText Button;
 }

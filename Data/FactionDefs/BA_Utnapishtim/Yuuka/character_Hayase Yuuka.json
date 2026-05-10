@@ -48,26 +48,48 @@
                 "skeletonJSON_path":"Yuuka/NP0109_spr.skel",
                 "idleAnimName":"Idle_01", "addonAnimName":"00"
             }
-        ]
+        ],
+        "CharaBanner":
+        {
+            "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+            "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 1.5,
+            "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":0.56,
+
+            "portrait_path":"Media_UI_Scenario_Background/BG_MilleniumCorridor.jpg",
+            "icon_path":"Media_UI_Scenario_Background/BG_MilleniumCorridor.jpg"
+
+        }
     },
     "Template": {
       "Appearance": "Female",
       "BodyType": "Default",
-      "stat_STR": 14,
-      "stat_CON": 12,
-      "stat_PSY": 12,
+      "stat_STR": 10,
+      "stat_CON": 10,
+      "stat_PSY": 11,
       "stat_WIL": 12,
       "personalityID": "personality_default",
       "sensitivity_B": "trait_Sensitivity_B_default",
       "sensitivity_M": "trait_Sensitivity_M_default",
-      "sensitivity_C": "trait_Sensitivity_C_default",
-      "sensitivity_V": "trait_Sensitivity_V_default",
+      "sensitivity_C": "trait_Sensitivity_C_sensitive",
+      "sensitivity_V": "trait_Sensitivity_V_sensitive",
       "sensitivity_A": "trait_Sensitivity_A_default",
-      "size_B": "trait_Size_B_D",
+      "size_B": "trait_Size_B_C",
       "size_P": "trait_Size_P_none",
       "size_V": "trait_Size_V_1",
       "size_A": "trait_Size_A_1",
       "Height":156,
+      "Weight":48,
+      "HWMultiplier":0.31,
+      "traits":[
+        "trait_FatigueResistance_low",
+        "trait_SleepQuality_shallow",
+        "trait_SelfEsteem_high",
+        "trait_MemoryCapacity_high",
+        "trait_MemoryRetention_high",
+        "trait_CleanlinessTolerance_low",
+        "trait_EnergyCapacity_low"
+      ],
       "initialRelationship":[
 
             {

@@ -202,6 +202,7 @@ public abstract class CharaTemplate
     public string personalityID = "personality_default";
     public string characterComment = "";
     public string CharacterCard = "";
+    public List<string> traits = new List<string>();
     [JsonIgnore]
     public virtual bool isMale
     {

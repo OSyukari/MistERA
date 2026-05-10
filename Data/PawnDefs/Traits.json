@@ -15,6 +15,7 @@
             "type": 0,
             "SortType":"Singular",
             "neutralIndex": -1,
+            "tags":["do_not_use"],
             "group_tooltip": ""
         },
         {
@@ -92,6 +93,7 @@
             ],
             "type": 0,
             "SortType":"SortedList",
+            "tags":["do_not_use"],
             "neutralIndex": 1,
             "group_tooltip": "How much can one carry gears."
         }
@@ -110,6 +112,7 @@
             ],
             "type": 1,
             "SortType":"Singular",
+            "tags":["do_not_use"],
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -121,20 +124,23 @@
                     "trait_ID": "trait_SleepQuality_shallow",
                     "trait_displayname": "Light sleeper",
                     "trait_score":-1,
-                    "trait_tooltip": "wakes easily with the slight amount of noise."
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_sleepDepth", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"-0.5" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_SleepQuality_default",
                     "trait_displayname": "Default",
                     "isDisplayable":false,
-                    "trait_score":0,
-                    "trait_tooltip": "Default sleep quality."
+                    "trait_score":0
                 },
                 {
                     "trait_ID": "trait_SleepQuality_deep",
                     "trait_displayname": "Deep sleeper",
                     "trait_score":1,
-                    "trait_tooltip": "Even alarm clock have a hard time waking this one up."
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_sleepDepth", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"0.5" }
+                    ]
                 }
             ],
             "type": 1,
@@ -150,20 +156,23 @@
                     "trait_ID": "trait_SleepLength_more",
                     "trait_displayname": "Sleeper",
                     "trait_score":-1,
-                    "trait_tooltip": "Requires more sleep time than average.\nRequired sleep time +2 hours."
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_sleepNeed", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"2" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_SleepLength_default",
                     "trait_displayname": "Default",
                     "isDisplayable":false,
-                    "trait_score":0,
-                    "trait_tooltip": "Default sleep length"
+                    "trait_score":0
                 },
                 {
                     "trait_ID": "trait_SleepLength_less",
                     "trait_displayname": "Quick sleeper",
                     "trait_score":1,
-                    "trait_tooltip": "Requires less sleep time than average.\nRequired sleep time -2 hours."
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_sleepNeed", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"-2" }
+                    ]
                 }
             ],
             "type": 1,
@@ -179,38 +188,49 @@
                     "trait_ID": "trait_AlcoholTolerance_verybad",
                     "trait_displayname": "Alcohol allergic",
                     "trait_score":-2,
-                    "trait_tooltip": "gets drunken with a single sip of alcohol. (+200%)"
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_alcoholSensitivity", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"-0.5" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_AlcoholTolerance_bad",
                     "trait_displayname": "Easily drunken",
                     "trait_score":-1,
-                    "trait_tooltip": "gets drunken much faster. (+100%)"
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_alcoholSensitivity", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"-0.25" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_AlcoholTolerance_default",
                     "trait_displayname": "Default",
                     "isDisplayable":false,
-                    "trait_score":0,
-                    "trait_tooltip": "Default alcohol tolerance."
+                    "trait_score":0
                 },
                 {
                     "trait_ID": "trait_AlcoholTolerance_good",
                     "trait_displayname": "Drinker",
                     "trait_score":1,
-                    "trait_tooltip": "gets drunken much slower. (-30%)"
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_alcoholSensitivity", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"0.50" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_AlcoholTolerance_verygood",
                     "trait_displayname": "Very good drinker",
                     "trait_score":2,
-                    "trait_tooltip": "rarely gets drunk. (-60%)"
+                    "trait_tooltip": "rarely gets drunk. (-60%)",
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_alcoholSensitivity", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"1.0" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_AlcoholTolerance_insensitive",
                     "trait_displayname": "Alcohol insensitive",
                     "trait_score":3,
-                    "trait_tooltip": "this one never gets drunk. period. (-99%)"
+                    "trait_tooltip": "this one never gets drunk. period. (-99%)",
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_alcoholSensitivity", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"9999" }
+                    ]
                 }
             ],
             "type": 1,
@@ -244,6 +264,7 @@
             ],
             "type": 1,
             "SortType":"SortedList",
+            "tags":["do_not_use"],
             "neutralIndex": 1,
             "group_tooltip": "How one respond if they happened to be sick."
         },
@@ -273,6 +294,7 @@
             ],
             "type": 1,
             "SortType":"SortedList",
+            "tags":["do_not_use"],
             "neutralIndex": 1,
             "group_tooltip": "How one respond if they happened to be sick."
         }
@@ -399,6 +421,7 @@
             ],
             "type": 2,
             "SortType":"Singular",
+            "tags":["do_not_use"],
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -434,6 +457,7 @@
             ],
             "type": 2,
             "SortType":"SortedList",
+            "tags":["do_not_use"],
             "neutralIndex": 2,
             "group_tooltip": "How one respond to social encounter."
         },
@@ -462,6 +486,7 @@
             ],
             "type": 2,
             "SortType":"UnsortedList",
+            "tags":["do_not_use"],
             "neutralIndex": 1,
             "group_tooltip": "Likelihood of having an emotional response from witnessing other's experience."
         }
@@ -480,6 +505,7 @@
             ],
             "type": 3,
             "SortType":"Singular",
+            "tags":["do_not_use"],
             "neutralIndex": -1,
             "group_tooltip": ""
         },
@@ -508,6 +534,7 @@
                 }
             ],
             "type": 3,
+            "tags":["do_not_use"],
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Likelihood to express one's emotion openly."
@@ -537,6 +564,7 @@
                 }
             ],
             "type": 3,
+            "tags":["do_not_use"],
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "How strong are positive or negative mood."
@@ -554,12 +582,84 @@
             },
             "zh-cn":
             {
-
+"trait_AlcoholTolerance":"酒量",
+"trait_AlcoholTolerance_tooltip":"对酒精的敏感程度",
+"trait_AlcoholTolerance_verybad":"%%trait_AlcoholTolerance%%：极差",
+"trait_AlcoholTolerance_verybad_tooltip":"%%trait_AlcoholTolerance_tooltip%%\n喝一小口酒便会醉倒",
+"trait_AlcoholTolerance_bad":"%%trait_AlcoholTolerance%%：差",
+"trait_AlcoholTolerance_bad_tooltip":"%%trait_AlcoholTolerance_tooltip%%\n更容易醉酒",
+"trait_AlcoholTolerance_default":"%%trait_AlcoholTolerance%%：普通",
+"trait_AlcoholTolerance_default_tooltip":"%%trait_AlcoholTolerance_tooltip%%\n默认酒量。",
+"trait_AlcoholTolerance_good":"%%trait_AlcoholTolerance%%：好",
+"trait_AlcoholTolerance_good_tooltip":"%%trait_AlcoholTolerance_tooltip%%\n不容易醉酒",
+"trait_AlcoholTolerance_verygood":"%%trait_AlcoholTolerance%%：酒豪",
+"trait_AlcoholTolerance_verygood_tooltip":"%%trait_AlcoholTolerance_tooltip%%\n很难醉酒",
+"trait_AlcoholTolerance_insensitive":"%%trait_AlcoholTolerance%%：海量",
+"trait_AlcoholTolerance_insensitive_tooltip":"%%trait_AlcoholTolerance_tooltip%%\n不会对酒精起任何反应",
+"trait_SleepQuality":"睡眠质量",
+"trait_SleepQuality_tooltip":"此人有多容易从睡眠中惊醒。",
+"trait_SleepQuality_shallow":"%%trait_SleepQuality%%：浅眠",
+"trait_SleepQuality_shallow_tooltip":"%%trait_SleepQuality_tooltip%%\n极小的声响便会将其惊醒。",
+"trait_SleepQuality_default":"%%trait_SleepQuality%%：普通",
+"trait_SleepQuality_default_tooltip":"%%trait_SleepQuality_tooltip%%\n默认睡眠质量。",
+"trait_SleepQuality_deep":"%%trait_SleepQuality%%：深睡",
+"trait_SleepQuality_deep_tooltip":"%%trait_SleepQuality_tooltip%%\n就连闹钟都难以将其唤醒。",
+"trait_SleepLength":"睡眠时长",
+"trait_SleepLength_tooltip":"此人所需的睡眠时间相较于本族平均水平的差异。",
+"trait_SleepLength_more":"%%trait_SleepLength%%：贪睡",
+"trait_SleepLength_more_tooltip":"%%trait_SleepLength_tooltip%%\n所需睡眠时间多于常人。\n所需睡眠时间+2小时。",
+"trait_SleepLength_default":"%%trait_SleepLength%%：普通",
+"trait_SleepLength_default_tooltip":"%%trait_SleepLength_tooltip%%\n默认睡眠时长。",
+"trait_SleepLength_less":"%%trait_SleepLength%%：较少",
+"trait_SleepLength_less_tooltip":"%%trait_SleepLength_tooltip%%\n所需睡眠时间少于常人。\n所需睡眠时间-2小时。",
+"trait_PainSensitivity":"痛觉",
+"trait_PainSensitivity_tooltip":"此人对疼痛的反应程度。",
+"trait_PainSensitivity_sensitive":"%%trait_PainSensitivity%%：敏感",
+"trait_PainSensitivity_sensitive_tooltip":"%%trait_PainSensitivity_tooltip%%\n对疼痛的反应极为强烈，无论其利弊。",
+"trait_PainSensitivity_default":"%%trait_PainSensitivity%%：普通",
+"trait_PainSensitivity_default_tooltip":"%%trait_PainSensitivity_tooltip%%\n默认痛觉。",
+"trait_PainSensitivity_insensitive":"%%trait_PainSensitivity%%：迟钝",
+"trait_PainSensitivity_insensitive_tooltip":"%%trait_PainSensitivity_tooltip%%\n对疼痛的反应极为迟钝。",
+"trait_PainSensitivity_nopain":"%%trait_PainSensitivity%%：无痛",
+"trait_PainSensitivity_nopain_tooltip":"%%trait_PainSensitivity_tooltip%%\n感受不到任何疼痛。"
             },
             "en-us":
             {
-
-
+"trait_AlcoholTolerance":"Alcohol Tolerance",
+"trait_AlcoholTolerance_tooltip":"How does one respond to alcohol.",
+"trait_AlcoholTolerance_verybad":"%%trait_AlcoholTolerance%%: Alcohol Allergic",
+"trait_AlcoholTolerance_bad":"%%trait_AlcoholTolerance%%: Easily Drunken",
+"trait_AlcoholTolerance_default":"%%trait_AlcoholTolerance%%: Default",
+"trait_AlcoholTolerance_default_tooltip":"%%trait_AlcoholTolerance_tooltip%%\nDefault alcohol tolerance.",
+"trait_AlcoholTolerance_good":"%%trait_AlcoholTolerance%%: Drinker",
+"trait_AlcoholTolerance_verygood":"%%trait_AlcoholTolerance%%: Very Good Drinker",
+"trait_AlcoholTolerance_insensitive":"%%trait_AlcoholTolerance%%: Alcohol Insensitive",
+"trait_SleepQuality":"Sleep Quality",
+"trait_SleepQuality_tooltip":"How hard it is to wake one up from sleeping.",
+"trait_SleepQuality_shallow":"%%trait_SleepQuality%%: Light Sleeper",
+"trait_SleepQuality_shallow_tooltip":"%%trait_SleepQuality_tooltip%%\nwakes easily with the slightest amount of noise.",
+"trait_SleepQuality_default":"%%trait_SleepQuality%%: Default",
+"trait_SleepQuality_default_tooltip":"%%trait_SleepQuality_tooltip%%\nDefault sleep quality.",
+"trait_SleepQuality_deep":"%%trait_SleepQuality%%: Deep Sleeper",
+"trait_SleepQuality_deep_tooltip":"%%trait_SleepQuality_tooltip%%\neven an alarm clock has a hard time waking this one up.",
+"trait_SleepLength":"Sleep Length",
+"trait_SleepLength_tooltip":"How much sleep does one require compared to the average of one's race.",
+"trait_SleepLength_more":"%%trait_SleepLength%%: Sleeper",
+"trait_SleepLength_more_tooltip":"%%trait_SleepLength_tooltip%%\nrequires more sleep time than average.\nRequired sleep time +2 hours.",
+"trait_SleepLength_default":"%%trait_SleepLength%%: Default",
+"trait_SleepLength_default_tooltip":"%%trait_SleepLength_tooltip%%\nDefault sleep length.",
+"trait_SleepLength_less":"%%trait_SleepLength%%: Quick Sleeper",
+"trait_SleepLength_less_tooltip":"%%trait_SleepLength_tooltip%%\nrequires less sleep time than average.\nRequired sleep time -2 hours.",
+"trait_PainSensitivity":"Pain Sensitivity",
+"trait_PainSensitivity_tooltip":"How much does one respond to pain.",
+"trait_PainSensitivity_sensitive":"%%trait_PainSensitivity%%: Pain Sensitive",
+"trait_PainSensitivity_sensitive_tooltip":"%%trait_PainSensitivity_tooltip%%\nresponds much stronger to pain, whether beneficial or detrimental.",
+"trait_PainSensitivity_default":"%%trait_PainSensitivity%%: Default",
+"trait_PainSensitivity_default_tooltip":"%%trait_PainSensitivity_tooltip%%\nDefault pain sensitivity.",
+"trait_PainSensitivity_insensitive":"%%trait_PainSensitivity%%: Pain Tolerant",
+"trait_PainSensitivity_insensitive_tooltip":"%%trait_PainSensitivity_tooltip%%\nresponds much less to pain.",
+"trait_PainSensitivity_nopain":"%%trait_PainSensitivity%%: No Pain",
+"trait_PainSensitivity_nopain_tooltip":"%%trait_PainSensitivity_tooltip%%\ndoes not feel pain."
             }
         }
     }

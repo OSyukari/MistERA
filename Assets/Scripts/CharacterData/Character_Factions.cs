@@ -591,7 +591,7 @@ public class Character_Factions
     /// To modify a given chara's schedule, it's preferable to use SetSchedule() as it calls every necessary update internally.
     /// </summary>
     /// <param name="s"></param>
-    public void UpdateSchedule(ref List<string> s)
+    public void UpdateSchedule_old(ref List<string> s)
     {
         var scheduleValidation = ValidateSchedule(ref s);
         privateSchedule.Clear();
@@ -602,7 +602,7 @@ public class Character_Factions
 
         if (HomeFactions.Count < 1) return;
 
-        var homeSleepHour = (HomeFactions[0] as Manageable_HomeFaction).SharedSleepHour;
+        var homeSleepHour = HomeFactions[0].NightStartHour;
         if (consecutiveRestHour >= 24 || (homeSleepHour >= 0 && consecutiveSleepHours[homeSleepHour] > 0 && consecutiveSleepHours[(homeSleepHour + sleepHours) % 24] == consecutiveSleepHours[homeSleepHour] + sleepHours))
         {   // consecutivehours contain start of sleep and end of sleep
             // we assign it normally
@@ -650,6 +650,86 @@ public class Character_Factions
         }
     }
 
+
+    /// <summary>
+    /// New sleep scheduling algorithm (design 2.3).<br/>
+    /// Happy path: aligns wake to faction DayStartHour (or 6:00 for 24/24 factions), trait offset clamped within free hours.<br/>
+    /// Conflict path: fits sleep in longest free block with 1-hour buffer before work; trait offset ignored.<br/>
+    /// Replace UpdateSchedule() with this once approved.
+    /// </summary>
+    public void UpdateSchedule(ref List<string> s)
+    {
+        var scheduleValidation  = ValidateSchedule(ref s);
+        privateSchedule.Clear();
+
+        var consecutiveSleepHours = scheduleValidation.Item1;
+        var consecutiveRestHour   = scheduleValidation.Item2;
+        var sleepHours            = Owner.Stats.SleepHours;
+
+        if (sleepHours == 0 || HomeFactions.Count < 1) return;
+        if (consecutiveRestHour < sleepHours) return; // ValidateSchedule already logged the warning
+
+        // CanWakeAt(w): all sleepHours hours immediately before w are free
+        bool CanWakeAt(int w) => consecutiveSleepHours[(w - 1 + 24) % 24] >= sleepHours;
+
+        // WriteSleep(wakeHour): fills sleepHours hours ending just before wakeHour
+        void WriteSleep(int wakeHour)
+        {
+            for (int i = 0; i < sleepHours; i++)
+            {
+                int h = (wakeHour - sleepHours + i + 24) % 24;
+                privateSchedule.Get(h).Set("com_furniture_sleep");
+            }
+        }
+
+        var homeFaction = HomeFactions[0];
+        int targetWake  = homeFaction.HasDayNight ? homeFaction.DayStartHour : 6;
+        //Debug.LogError($"UpdateSchedule {consecutiveRestHour} {String.Join("|", consecutiveSleepHours)}");
+
+        // Step 2: Happy path — sleep aligned to faction day start
+        if (CanWakeAt(targetWake))
+        {
+            // GetStatValue returns 0 safely when stat_derived_wakeupOffset is not yet defined
+            int traitOffset = (int)Owner.Stats.GetStatValue("stats_derived_wakeupOffset");
+            int desiredWake = (targetWake - traitOffset + 24) % 24;
+
+            if (!CanWakeAt(desiredWake))
+            {
+                // Clamp: step back toward targetWake one hour at a time
+                int step = traitOffset > 0 ? 1 : -1;
+                for (int n = 1; n <= Math.Abs(traitOffset); n++)
+                {
+                    desiredWake = (desiredWake + step + 24) % 24;
+                    if (CanWakeAt(desiredWake)) break;
+                }
+                if (!CanWakeAt(desiredWake)) desiredWake = targetWake; // full fallback
+            }
+
+            WriteSleep(desiredWake);
+            return;
+        }
+
+        // Step 3: Conflict path — bidirectional search from targetWake, traits ignored.
+        // At each distance n, check backward first (prefers later wake = more night-aligned).
+        for (int n = 1; n < 24; n++)
+        {
+            int bw = (targetWake - n + 24) % 24;
+            if (CanWakeAt(bw) && consecutiveSleepHours[bw] > 0) { WriteSleep(bw); return; }
+
+            int fw = (targetWake + n) % 24;
+            if (CanWakeAt(fw) && consecutiveSleepHours[fw] > 0) { WriteSleep(fw); return; }
+        }
+
+        // Step 4: Fallback — no free buffer hour exists (block length == sleepHours exactly).
+        // Find nearest CanWakeAt without the buffer requirement.
+        for (int n = 0; n < 24; n++)
+        {
+            int bw = (targetWake - n + 24) % 24;
+            if (CanWakeAt(bw)) { WriteSleep(bw); return; }
+            int fw = (targetWake + n) % 24;
+            if (n > 0 && CanWakeAt(fw)) { WriteSleep(fw); return; }
+        }
+    }
 
     /// <summary>
     /// Check if chara has enough sleep hours.<br/>

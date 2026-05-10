@@ -101,6 +101,8 @@ public class scr_panel_COMmanager : scr_Menu
         ValidateAll();
     }
 
+    public scr_HoverableText roomCleanliness, roomActivityState;
+
     private void RefreshTitle(int refID = -1)
     {
         if (refID == -1) refID = scr_System_CampaignManager.current.CurrentTargetRef;
@@ -132,7 +134,13 @@ public class scr_panel_COMmanager : scr_Menu
                     if (ap.isTemporaryAP) continue;
                     aps.Add(ap.DescriptionText());
                 }
-                title_furnitures.SetText(curr.DisplayableFurnitureNames_withLink+$"\nRoom Cleanliness: {curr.RoomCleanliness()}"+(curr.Inventory.Contents.Count>0?$"\n{curr.Inventory.PrintContent()}":""));
+                title_furnitures.SetText(curr.DisplayableFurnitureNames_withLink);
+
+                roomCleanliness.SetText(LocalizeDictionary.QueryThenParse($"room_CleaningStatus_{curr.RoomCleanliness()}"));
+                roomCleanliness.SetExternalTooltip(curr.Inventory.Contents.Count > 0 ? curr.Inventory.PrintContent() : "");
+
+                roomActivityState.SetText(curr.ActivityStateString);
+
                 ongoingCOMs.text = String.Join(", ", aps);
                 break;
             case COMTabs.Sex:
@@ -330,6 +338,8 @@ public class scr_panel_COMmanager : scr_Menu
         scr_System_CampaignManager.current.Observer_CurrentTarget += OnCurrentTargetChange;
         scr_System_CampaignManager.current.Observer_UpdateNotice += OnNotifyUpdate;
         scr_System_CampaignManager.current.Observer_GameReload += OnSaveReload;
+
+        scr_System_CampaignManager.current.Observer_LoadComplete += OnLoadComplete;
 
         currentTab = COMTabs.Interaction;
 
@@ -816,6 +826,11 @@ public class scr_panel_COMmanager : scr_Menu
             }
         }
         trackedJobRefs.Clear();
+    }
+
+    protected void OnLoadComplete()
+    {
+        if (this.gameObject.activeInHierarchy) ValidateAll();
     }
 
     private void UpdateJobCOM()

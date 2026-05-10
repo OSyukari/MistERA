@@ -1,7 +1,7 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using UnityEngine;
 
 public interface I_StatsManager
@@ -26,6 +26,7 @@ public interface I_StatsManager
     public StatusEx_Instance GetStatusEXByStringMatch(string s);
     public Stats_Derived_Instance GetDerivedStat(string statID);
     public List<Status_Instance> FindStatusByID(string statID);
+    public void SetStatusSeverity(string statusID, float severity);
 
     [JsonIgnore] public Stats_Derived_Extended_Instance HP { get; }
     [JsonIgnore] public Stats_Derived_Extended_Instance MP { get; }
@@ -39,7 +40,104 @@ public interface I_StatsManager
 
 public class StatsManager : I_StatsManager
 {
+    public void AddTrait(Traits s) {
+        if (s == null) return;
 
+        if (s.Parent != null && (s.Parent.SortType == Trait_Group_Type.SortedList || s.Parent.SortType == Trait_Group_Type.UnsortedList))
+        {
+            foreach(var trait in s.Parent.entries)
+            {
+                if (trait == s)
+                {
+                    continue;
+                }
+                else
+                {
+                    RemoveTrait(trait);
+                }
+            }
+        }
+
+        if (!Traits.Contains(s)) Traits.Add(s);
+        if (!traits.Contains(s.ID)) traits.Add(s.ID);
+    }
+    public void RemoveTrait(Traits s)
+    {
+        if (s == null) return;
+        Traits.Remove(s);
+        traits.Remove(s.ID);
+    }
+
+    bool traits_init = false;
+
+    public void RefreshTraits()
+    {
+        Traits.Clear();
+        if (Owner != null && Owner.Template != null)
+        {
+            foreach (var trait in Owner.Template.traits)
+            {
+                var tr = scr_System_Serializer.current.MasterList.Traits_Groups.GetTraitByID(trait);
+                if (tr != null)
+                {
+                    AddTrait(tr);
+                }
+            }
+
+            if (Owner.Template.Sensitivity_A != null) AddTrait(Owner.Template.Sensitivity_A);
+            if (Owner.Template.Sensitivity_B != null) AddTrait(Owner.Template.Sensitivity_B);
+            if (Owner.Template.Sensitivity_C != null) AddTrait(Owner.Template.Sensitivity_C);
+            if (Owner.Template.Sensitivity_M != null) AddTrait(Owner.Template.Sensitivity_M);
+            if (Owner.Template.Sensitivity_V != null) AddTrait(Owner.Template.Sensitivity_V);
+
+        }
+        var traitsCache = new List<string>(this.traits);
+
+        foreach(var trait in traitsCache)
+        {
+            var tr = scr_System_Serializer.current.MasterList.Traits_Groups.GetTraitByID(trait);
+            if (tr != null)
+            {
+                AddTrait(tr);
+            }
+        }
+        PopulateTraits();
+    }
+
+    public void ResetTrait() {
+
+        traits.Clear();
+        Traits.Clear();
+    }
+
+
+
+    protected void PopulateTraits()
+    {
+        foreach(var tgroup in scr_System_Serializer.current.MasterList.Traits_Groups.traits_All)
+        {
+            foreach(var tr in tgroup)
+            {
+                if (tr.SortType != Trait_Group_Type.SortedList && tr.SortType != Trait_Group_Type.UnsortedList) continue;
+                //if (tr.Type == Trait_Type.Body) continue;
+                if (!tr.allowPopulate) continue;
+                var neutral = tr.getNeutralinGroup();
+                if (neutral == null) continue;
+                foreach(var trr in tr.entries)
+                {
+                    if (HasTrait(trr))
+                    {
+                        neutral = null;
+                        break;
+                    }
+                }
+                if (neutral == null) continue;
+                AddTrait(neutral);
+            }
+        }
+    }
+
+    public bool HasTrait(Traits t) { return traits.Contains(t.ID); }
     /// <summary>
     /// Return all status with id match
     /// </summary>
@@ -56,6 +154,20 @@ public class StatsManager : I_StatsManager
         if (_statusInstances.TryGetValue(statID, out var value)) return value;
         else return null;
     }
+    public void SetStatusSeverity(string statusID, float severity)
+    {
+        var instance = FindStatusByExactID(statusID);
+        if (instance != null)
+        {
+            if (Math.Abs(severity - instance.Severity) < float.Epsilon) return;
+            instance.SeveritySet(severity);
+        }
+        else
+        {
+            AddStatus(statusID, severity);
+        }
+    }
+
     public StatusEx_Instance FindStatusEXByExactID(string statID)
     {
         if (_statusInstancesEx.TryGetValue(statID, out var value)) return value;
@@ -143,6 +255,7 @@ public class StatsManager : I_StatsManager
         foreach (var i in list_statsExtended) i.ReEstablishParent(chara.Stats);
         if (this._statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.Value.ReEstablishParent(chara.Stats);
 
+        this.RefreshTraits();
         this.RefreshAllStats(true);
     }
     public StatsManager()
@@ -183,10 +296,34 @@ public class StatsManager : I_StatsManager
         Constitution.SetValue(con);
         Psyche.SetValue(psy);
         Willpower.SetValue(wil);
+
+        // add traits
+        RefreshTraits();
+
+
         RefreshAllStats(true);
     }
 
-    
+    [JsonProperty] protected List<string> traits = new List<string>();
+    [JsonIgnore] public List<Traits> Traits = new List<Traits>();
+
+    Dictionary<string, Traits> _queryCache = new Dictionary<string, Traits>();
+
+    public Traits GetTraitByGroupID(string id)
+    {
+        if (_queryCache.TryGetValue(id, out var trait)) return trait;
+
+        foreach(var t in Traits)
+        {
+            if (t.Parent.ID == id)
+            {
+                _queryCache.Add(id, t);
+                return t;
+            }
+        }
+        return null;
+    }
+
 
     [JsonProperty] protected Stats_Base baseStat_STR = null, baseStat_CON = null, baseStat_PSY = null, baseStat_WIL = null;
     [JsonIgnore] public Stats_Base Strength { get {
@@ -261,11 +398,21 @@ public class StatsManager : I_StatsManager
             AddStatModifier(Owner.Race.stat_modifiers); // get statMods from race
             if (Owner.RaceTemplate != null) AddStatModifier(Owner.RaceTemplate.stat_modifiers); // get statMods from racetemplate
 
+            /*
             if (Owner.Template != null && Owner.Template.Sensitivity_A != null) AddStatModifier(Owner.Template.Sensitivity_A.stat_modifiers);
             if (Owner.Template != null && Owner.Template.Sensitivity_B != null) AddStatModifier(Owner.Template.Sensitivity_B.stat_modifiers);
             if (Owner.Template != null && Owner.Template.Sensitivity_C != null) AddStatModifier(Owner.Template.Sensitivity_C.stat_modifiers);
             if (Owner.Template != null && Owner.Template.Sensitivity_M != null) AddStatModifier(Owner.Template.Sensitivity_M.stat_modifiers);
             if (Owner.Template != null && Owner.Template.Sensitivity_V != null) AddStatModifier(Owner.Template.Sensitivity_V.stat_modifiers);
+            */
+
+            foreach (var trait in this.Traits)
+            {
+                if (trait.stat_modifiers.Count > 0)
+                {
+                    AddStatModifier(trait.stat_modifiers);
+                }
+            }
 
             foreach (var equipRef in Owner.EquippedItemRefs)    // addstatmod equipment
             {
@@ -783,12 +930,21 @@ public class StatsManager : I_StatsManager
     }
 
     private Status_Instance fatigue = null;
-    [JsonIgnore] public Status_Instance Fatigue
+    protected Status_Instance Fatigue
     {
         get
         {
             if (fatigue == null) fatigue = FindStatusByExactID("chara_status_fatigue");
             return fatigue;
+        }
+    }
+    [JsonIgnore]
+    public bool Fatigued
+    {
+        get
+        {
+            if (Fatigue == null) return false;
+            return Fatigue.SeverityIndex < 2;
         }
     }
 

@@ -243,6 +243,31 @@ public class scr_System_Serializer : MonoBehaviour
             untransDict.Directory.Create();
             File.WriteAllText(untransDict.FullName, s2);
             Debug.Log($"creating/updating untranslated Dictionary in {untransDictPath}");
+
+            // source string tracking: compare current zh-cn against snapshot
+            string snapshotPath = Application.dataPath + "/dict_zh_cn_snapshot.json";
+            string reportPath = Application.dataPath + "/dict_source_updated.json";
+
+            if (File.Exists(snapshotPath))
+            {
+                var snapshot = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(snapshotPath));
+                var changedEntries = new Dictionary<string, Dictionary<string, string>>();
+
+                foreach (var kvp in baseDict)
+                {
+                    if (!snapshot.ContainsKey(kvp.Key))
+                        changedEntries[kvp.Key] = new Dictionary<string, string> { { "old", null }, { "new", kvp.Value } };
+                    else if (snapshot[kvp.Key] != kvp.Value)
+                        changedEntries[kvp.Key] = new Dictionary<string, string> { { "old", snapshot[kvp.Key] }, { "new", kvp.Value } };
+                }
+
+                File.WriteAllText(reportPath, JsonConvert.SerializeObject(changedEntries, Formatting.Indented));
+
+                if (changedEntries.Count > 0)
+                    Debug.Log($"[SourceTracking] {changedEntries.Count} zh-cn source string(s) changed since snapshot. Other languages may need updating. See dict_source_updated.json");
+                else
+                    Debug.Log("[SourceTracking] No source string changes since snapshot.");
+            }
 #endif
             MasterList.Initialize();
 

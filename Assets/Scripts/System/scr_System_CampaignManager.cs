@@ -2592,6 +2592,9 @@ public static class WorldManager
                 }
             }
 
+            // SET SLEEP HOURS
+            org.SetActiveHours(map.activeHoursStart, map.activeHoursEnd);
+
             // set work hours
             foreach (var module in map.workModules)
             {
@@ -2603,15 +2606,9 @@ public static class WorldManager
                 org.SetMainExit(map.mainExit);
             }
 
-            if (map.salesCurrency != "")
-            {
-                org.SetMainCurrency(map.salesCurrency);
-                foreach (var itemInit in map.salesInventory)
-                {
-                    org.AddSalesInventory(itemInit);
-                }
-            }
-            org.priceMult = map.priceMult;
+            org.mapPlanID = map.ID;
+            org.RefreshSalesInventory(map);
+
             org.explorationKeywords = map.explorationKeywords;
             org.mealHours = map.mealHours;
         }

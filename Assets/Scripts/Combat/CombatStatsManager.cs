@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class CombatStatManager : I_StatsManager
 {
@@ -16,6 +17,11 @@ public class CombatStatManager : I_StatsManager
         Broken,
         Recovery,
         Neutral
+    }
+    public Status_Instance FindStatusByExactID(string statID)
+    {
+        if (_statusInstances.TryGetValue(statID, out var value)) return value;
+        else return null;
     }
     [JsonIgnore]
     public Character_Trainable Owner
@@ -230,7 +236,7 @@ public class CombatStatManager : I_StatsManager
         _statusInstances.Clear();
         foreach (var status in Parent.StatusInstances)
         {
-            this._statusInstances.Add(status.Copy(this));
+            this._statusInstances.Add(status.ID, status.Copy(this));
         }
 
         // statusEX
@@ -263,7 +269,7 @@ public class CombatStatManager : I_StatsManager
         if (fullReset) this._evasion = (int)GetStatValue("stats_derived_evasionBase");
     }
 
-    protected List<Status_Instance> _statusInstances = new List<Status_Instance>();
+    protected Dictionary<string, Status_Instance> _statusInstances = new Dictionary<string, Status_Instance>();
     protected List<StatusEx_Instance> _statusInstancesEx = new List<StatusEx_Instance>();
 
     public Stats_Derived_Instance GetDerivedStat(string statID)
@@ -438,6 +444,11 @@ public class CombatStatManager : I_StatsManager
     }
 
 
+    public void SetStatusSeverity(string statusID, float severity)
+    {
+        Parent.SetStatusSeverity(statusID, severity);
+    }    
+
     [JsonIgnore]
     public List<StatusEx_Instance> statusInstancesEx
     {
@@ -447,7 +458,7 @@ public class CombatStatManager : I_StatsManager
         }
     }
 
-    [JsonIgnore] public List<Status_Instance> StatusInstances { get { return _statusInstances; } }
+    [JsonIgnore] public List<Status_Instance> StatusInstances { get { return _statusInstances.Values.ToList(); } }
 
 
     [JsonIgnore]

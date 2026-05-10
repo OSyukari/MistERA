@@ -10,7 +10,10 @@
             },
             "zh-cn": {
 "ui_settings_requireRestart":"部分设定变更需要重启游戏才能生效",
-"ui_entry_traits": "特质",
+
+"ui_entry_traits": "<link=\"charaDetail_panel_traits_tooltip\">特质</link>",
+"ui_entry_traits_tooltip": "角色特质。对角色的%%ui_entry_derivedStats%%有较大影响",
+
 "ui_entry_derivedStats": "<link=\"ui_entry_derivedStats_tooltip\">衍生属性</link>",
 "ui_entry_derivedStats_tooltip": "角色的具体数值。每个数值有自己的计算规则。",
 "ui_entry_status": "状态",
@@ -202,6 +205,9 @@
 "charaDetail_panel_viewHiddenRelationships_tooltip": "若某项人际关系的对象角色被删除，该项人际关系会被移动到此处显示。",
 "charaDetail_panel_skills": "<link=\"charaDetail_panel_skills_tooltip\">技能</link>",
 "charaDetail_panel_skills_tooltip": "如果当前执行的指令符合技能的适用条件，会将技能的等级作为加值 算到当前执行指令的成功率判定上",
+
+
+
 "charaDetail_panel_experiences": "<link=\"charaDetail_panel_experiences_tooltips\">查看经验</link>",
 "charaDetail_panel_experiences_tooltips": "此处会列出角色的所有经验\n",
 "charaDetail_panel_bodyexp": "身体数据",
@@ -240,6 +246,22 @@
 "ui_header_allmembers": "房间内角色：",
 "ui_entry_separator": "，",
 "ui_room_furnitureList": "家具：$list$",
+"ui_room_roomState": "房间状态：",
+"room_CleaningStatus": "房间整洁度：$status$",
+"room_CleaningStatus_None": "无需清洁",
+"room_CleaningStatus_Clean": "干净",
+"room_CleaningStatus_Normal": "勉强干净",
+"room_CleaningStatus_Dirty": "脏乱",
+"room_CleaningStatus_Very_Dirty": "极度脏乱",
+
+"faction_activityState_alwaysActive":"24小时全时制",
+"faction_activityState_activeHours":"活跃时间段为 $start$ - $end$",
+"faction_activityState_set_start":"开始时间：",
+"faction_activityState_set_end":"结束时间：",
+
+"ui_room_roomActivityState_AlwaysActive": "",
+"ui_room_roomActivityState_DayOnly": "仅白日开放（$start$ - $end$）",
+"ui_room_roomActivityState_NightOnly": "仅夜晚开放（$start$ - $end$）",
 "ui_calendar_dayOfWeek_Monday": "周一",
 "ui_calendar_dayOfWeek_Tuesday": "周二",
 "ui_calendar_dayOfWeek_Wednesday": "周三",
@@ -321,6 +343,18 @@
 "management_faction_home_temporary_tooltip": "同家庭阵营，但优先级高于家庭阵营。负责处理角色暂时脱离家庭阵营的情况（例如外出探险）",
 "management_faction_work": "<link=management_faction_work_tooltip>工作阵营</link>",
 "management_faction_work_tooltip": "（未实装）",
+
+
+"management_faction_activeHours": "<link=management_faction_activeHours_tooltip>活跃时间段：</link>",
+"management_faction_activeHours_tooltip": "也可以理解为昼夜划分。\n角色会将活跃时间段的开始视为一天清晨，并以此安排作息和睡眠时间\nNPC的沙盒行为也可能受到昼夜区别影响\n如果设为24小时全活跃时段，那么角色会默认清晨时间6点来安排日程",
+
+
+"management_faction_mealHours": "<link=management_faction_mealHours_tooltip>可用餐时间段：</link>",
+"management_faction_mealHours_tooltip": "该时间段内，NPC会前往餐厅吃饭\n非玩家阵营的可用餐时点是固定的\n玩家阵营中的用餐时点可变动，但需要道具栏中有餐点，并且需要在【%%ui_management_tab_jobs%%】页面中安排【%%com_furniture_mealPrep_displayName%%】指令，才能让NPC展开进食行为",
+
+"management_faction_activeHours_updatenotice_new": "设定已变更！",
+"management_faction_activeHours_updatenotice_invalidnumber": "设定失败！（错误的时间数值）",
+"management_faction_activeHours_updatenotice_invalidinput": "设定失败！（无法识别的数字）",
 
 "ui_management_tab_overview": "阵营简介",
 "ui_management_tab_production": "订单生产",
@@ -563,7 +597,7 @@
 "ui_map_floor_roomsList":"房间列表",
 "ui_map_floor_charaInRoom":"房间内成员",
 "ui_map_floorList":"楼层列表",
-"ui_map_roomTooltip":"房间：$room$\n$furnitures$\n房间内物品：$items$\n房间内角色：$names$\n移动耗时 $time$分钟",
+"ui_map_roomTooltip":"房间：$room$\n$furnitures$\n房间内物品：$items$\n房间内角色：$names$\n移动耗时 $time$分钟\n$roomActivityState$",
 
 "ui_update_elapsedTime":"经过$count$分钟",
 "ui_movement_leavesRoom":"$self$离开了$room$",

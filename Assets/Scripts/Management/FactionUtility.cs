@@ -62,6 +62,23 @@ public static class FactionUtility
 
             foreach (var post in jobs[key])
             {
+                if (post.ParentRoom.ActivityState != RoomActivityState.AlwaysActive && post.ParentRoom.FactionOwner is Manageable)
+                {
+                    var faction = post.ParentRoom.FactionOwner as Manageable;
+                    var hour = scr_System_Time.current.getCurrentTime().Hour;
+                    var isactive = faction != null && faction.IsActiveHour(hour) ? true : false;
+                    if (faction == null) { }
+                    else if (post.ParentRoom.ActivityState == RoomActivityState.DayOnly && isactive)
+                    {
+
+                    }
+                    else if (post.ParentRoom.ActivityState == RoomActivityState.NightOnly && !isactive) { }
+                    else
+                    {
+                        if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to activehours setting mismatch");
+                        continue;
+                    }
+                }
                 if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
                 {
                    // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job blacklisted");
@@ -138,6 +155,24 @@ public static class FactionUtility
 
         foreach (var post in jobs[targetCOM])
         {
+            if (post.ParentRoom.ActivityState != RoomActivityState.AlwaysActive && post.ParentRoom.FactionOwner is Manageable)
+            {
+                var faction = post.ParentRoom.FactionOwner as Manageable;
+                var hour = scr_System_Time.current.getCurrentTime().Hour;
+                var isactive = faction != null && faction.IsActiveHour(hour) ? true : false;
+                if (faction == null) { }
+                else if (post.ParentRoom.ActivityState == RoomActivityState.DayOnly && isactive)
+                {
+
+                }
+                else if (post.ParentRoom.ActivityState == RoomActivityState.NightOnly && !isactive) { }
+                else
+                {
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to activehours setting mismatch");
+                    continue;
+                }
+            }
+
             if (!skipPrivate && !post.ParentRoom.isRoomPrivate) skipPrivate = true;
             //post.RefreshValidJobCOMs();
             if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))

@@ -220,6 +220,28 @@ public class Status_Instance
         return this.SeverityIndex != initialS;
     }
 
+    public bool SeveritySet(float target)
+    {
+        var initialS = this.SeverityIndex;
+
+        var min = BaseRef.variants[0].threshold;
+        var max = BaseRef.variants[BaseRef.variants.Count - 1].threshold;
+
+        var mmm = VariantThresholdMod;
+        if (mmm != 0) { min *= mmm; max *= mmm; }
+
+        min -= Variation;
+        max += Variation;
+
+        severity = Mathf.Clamp(target, min, max);
+
+        if (severity == max) maxed = true;
+        else maxed = false;
+
+        _severityIndex = UpdateSeverity();
+        return this.SeverityIndex != initialS;
+    }
+
     protected int UpdateSeverity()
     {
         for (int i = 0; i < BaseRef.variants.Count; i++)

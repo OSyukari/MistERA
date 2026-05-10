@@ -42,6 +42,22 @@ public class Stats_Derived_Base
 
     public bool allowOvercap = true;
 
+    bool _isnsfw = false;
+    bool _isnsfw_cached = false;
+    [JsonIgnore]public bool isNSFW
+    {
+        get
+        {
+            if (!_isnsfw_cached)
+            {
+                _isnsfw = tags.Contains("nsfw");
+                _isnsfw_cached = true;
+            }
+            return _isnsfw;
+        }
+    }
+    [JsonProperty] protected List<string> tags = new List<string>();
+
     [JsonIgnore] public string ID { get { return id; } }
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id, displayName); } }
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(id+"_tooltip", tooltip); } }

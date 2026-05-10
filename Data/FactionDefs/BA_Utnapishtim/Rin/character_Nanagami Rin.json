@@ -82,7 +82,18 @@
     "idleAnimName":"Idle_01", "addonAnimName":"0aa0"
 
 }
-        ]
+        ],
+        "CharaBanner":
+        {
+            "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+            "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 1.5,
+            "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":0.56,
+
+            "portrait_path":"Media_UI_Scenario_Background/BG_ReceptionRoom.jpg",
+            "icon_path":"Media_UI_Scenario_Background/BG_ReceptionRoom.jpg"
+
+        }
     },
     "Template": {
     "Appearance": "Female",
@@ -112,6 +123,10 @@
                 "baseID":"Campaign1_Char_Momoka",
                 "initialPersonalRelationship":"relationship_bff"
             }
+        ],
+        "traits":[
+            "trait_SleepLength_less",
+            "trait_SleepQuality_shallow"
         ],
     "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },

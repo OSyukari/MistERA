@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+
+public enum RoomActivityState { AlwaysActive, DayOnly, NightOnly }
+
 public class Room_Base
 {
     public string ID = "";
@@ -9,5 +12,5 @@ public class Room_Base
     public List<string> furnitureIDs = new List<string>();
     public bool noCleaning = false;
     public string roomImagePath = "";
-
+    public RoomActivityState activityState = RoomActivityState.AlwaysActive;
 }

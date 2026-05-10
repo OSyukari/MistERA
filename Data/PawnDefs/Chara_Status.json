@@ -308,12 +308,17 @@
         },
         {
             "statusID":"chara_status_fatigue",
+            "constant":true,
+            "stringFormat":"P0",
+            "variantThresholdModStat":"stats_derived_fatigueThreshold",
             "variants":[
                 {
-                    "displayable":false,   "threshold":0
+                    "displayName":"chara_status_fatigue_3",
+                    "threshold":0
                 },
                 {
-                    "threshold":0.9,
+                    "displayName":"chara_status_fatigue_2",
+                    "threshold":1.0,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -322,14 +327,8 @@
                     ]
                 },
                 {
-                    "displayName":"chara_status_fatigue_2",
-                    "threshold":1.9,
-                    "stat_modifiers":[
-                        {
-                            "statID":"chara_status_mood",
-                            "modKey":"chara_status_fatigue", "type":"setBase", "valueType":"number", "valueString":"-2.0"
-                        }
-                    ]
+                    "displayName":"chara_status_fatigue_1",
+                    "threshold":9999
                 }
             ]
         },
@@ -496,8 +495,11 @@
 "chara_status_sleeping_2":"睡眠",
 "chara_status_sleeping_3":"深眠",
 
-"chara_status_fatigue":"疲劳",
-"chara_status_fatigue_2":"%%chara_status_fatigue%%：重度",
+"chara_status_fatigue":"体力",
+"chara_status_fatigue_tooltip":"该数值为当前%%stats_derived_extended_stamina%%的百分比，比例过低时角色会陷入疲劳状态，降低心情。",
+"chara_status_fatigue_1":"%%chara_status_fatigue%%: 充沛",
+"chara_status_fatigue_2":"%%chara_status_fatigue%%: 疲劳",
+"chara_status_fatigue_3":"%%chara_status_fatigue%%: 力竭",
 
 "chara_status_cryosleep":"冷冻睡眠",
 
@@ -558,7 +560,6 @@
 "chara_status_sleeping_3":"Deep Sleep",
 
 "chara_status_fatigue":"Fatigue",
-"chara_status_fatigue_2":"%%chara_status_fatigue%%: Severe",
 
 "chara_status_cryosleep":"Cryosleep",
 

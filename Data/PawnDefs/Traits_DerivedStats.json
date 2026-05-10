@@ -1,0 +1,650 @@
+{
+    "Traits_Groups": {
+        "traits_STR": [
+            {
+                "displayName": "Fatigue Resistance",
+                "ID": "trait_FatigueResistance",
+                "entries": [
+                    {
+                        "trait_ID": "trait_FatigueResistance_low",
+                        "trait_displayname": "Quick to Tire",
+                        "trait_score": -1,
+                        "trait_tooltip": "Fatigues at 55% stamina instead of the default 40%.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_fatigueThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "0.15" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_FatigueResistance_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Fatigues at 40% stamina (default)."
+                    },
+                    {
+                        "trait_ID": "trait_FatigueResistance_high",
+                        "trait_displayname": "Gritty",
+                        "trait_score": 1,
+                        "trait_tooltip": "Fatigues at 25% stamina instead of the default 40%.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_fatigueThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-0.15" }
+                        ]
+                    }
+                ],
+                "type": 0,
+                "SortType": "SortedList",
+                "neutralIndex": 1,
+                "group_tooltip": "At what stamina percentage physical output starts degrading."
+            }
+        ],
+        "traits_CON": [
+            {
+                "displayName": "Physical Vitality",
+                "ID": "trait_PhysicalVitality",
+                "entries": [
+                    {
+                        "trait_ID": "trait_PhysicalVitality_low",
+                        "trait_displayname": "Frail",
+                        "trait_score": -1,
+                        "trait_tooltip": "Max HP -3. Max Stamina -15%.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_hp_max", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-3" },
+                            { "statID": "stats_derived_stamina_max", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "-0.15" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_PhysicalVitality_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default physical vitality."
+                    },
+                    {
+                        "trait_ID": "trait_PhysicalVitality_high",
+                        "trait_displayname": "Tough",
+                        "trait_score": 1,
+                        "trait_tooltip": "Max HP +3. Max Stamina +15%.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_hp_max", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "3" },
+                            { "statID": "stats_derived_stamina_max", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "0.15" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_PhysicalVitality_veryhigh",
+                        "trait_displayname": "Ironclad",
+                        "trait_score": 2,
+                        "trait_tooltip": "Max HP +6. Max Stamina +25%.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_hp_max", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "6" },
+                            { "statID": "stats_derived_stamina_max", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "0.25" }
+                        ]
+                    }
+                ],
+                "type": 1,
+                "SortType": "SortedList",
+                "neutralIndex": 1,
+                "group_tooltip": "Innate physical constitution — modifies both Max HP and Max Stamina independent of CON score."
+            },
+            {
+                "displayName": "Sleep Timing",
+                "ID": "trait_SleepTiming",
+                "entries": [
+                    {
+                        "trait_ID": "trait_SleepTiming_veryearly",
+                        "trait_displayname": "Dawn Riser",
+                        "trait_score": 2,
+                        "trait_tooltip": "Wakeup offset +4h. Sleeps and wakes 4 hours earlier than default.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "4" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_SleepTiming_early",
+                        "trait_displayname": "Early Bird",
+                        "trait_score": 1,
+                        "trait_tooltip": "Wakeup offset +2h. Sleeps and wakes 2 hours earlier than default.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "2" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_SleepTiming_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default sleep schedule (no offset)."
+                    },
+                    {
+                        "trait_ID": "trait_SleepTiming_late",
+                        "trait_displayname": "Night Owl",
+                        "trait_score": -1,
+                        "trait_tooltip": "Wakeup offset -2h. Sleeps and wakes 2 hours later than default.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-2" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_SleepTiming_verylate",
+                        "trait_displayname": "Creature of the Night",
+                        "trait_score": -2,
+                        "trait_tooltip": "Wakeup offset -4h. Sleeps and wakes 4 hours later than default.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-4" }
+                        ]
+                    }
+                ],
+                "type": 1,
+                "SortType": "SortedList",
+                "neutralIndex": 2,
+                "group_tooltip": "The character's natural circadian phase — how many hours earlier or later they prefer to sleep and wake relative to the default schedule."
+            }
+        ],
+        "traits_PSY": [
+            {
+                "displayName": "Self-Esteem",
+                "ID": "trait_SelfEsteem",
+                "entries": [
+                    {
+                        "trait_ID": "trait_SelfEsteem_verylow",
+                        "trait_displayname": "Self-Loathing",
+                        "trait_score": -2,
+                        "trait_tooltip": "Low-pride threshold 80% SE. Obedience +1.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_prideThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "0.20" },
+                            { "statID": "stats_derived_baselineObedience", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "1" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_SelfEsteem_low",
+                        "trait_displayname": "Insecure",
+                        "trait_score": -1,
+                        "trait_tooltip": "Low-pride threshold 70% SE.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_prideThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "0.10" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_SelfEsteem_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default self-esteem. Low-pride threshold 60% SE."
+                    },
+                    {
+                        "trait_ID": "trait_SelfEsteem_high",
+                        "trait_displayname": "Self-Assured",
+                        "trait_score": 1,
+                        "trait_tooltip": "Low-pride threshold 45% SE.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_prideThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-0.15" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_SelfEsteem_veryhigh",
+                        "trait_displayname": "Narcissistic",
+                        "trait_score": 2,
+                        "trait_tooltip": "Low-pride threshold 35% SE. Obedience -1.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_prideThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-0.25" },
+                            { "statID": "stats_derived_baselineObedience", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-1" }
+                        ]
+                    }
+                ],
+                "type": 2,
+                "SortType": "SortedList",
+                "neutralIndex": 2,
+                "group_tooltip": "The character's sense of self-worth. Affects pride threshold and, at extremes, natural compliance."
+            },
+            {
+                "displayName": "Memory Capacity",
+                "ID": "trait_MemoryCapacity",
+                "entries": [
+                    {
+                        "trait_ID": "trait_MemoryCapacity_verylow",
+                        "trait_displayname": "Scatterbrained",
+                        "trait_score": -2,
+                        "trait_tooltip": "Max MP -4. Active memories -3 (4 total).",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_mp_max", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-4" },
+                            { "statID": "stats_derived_memoryEntryCount", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-3" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_MemoryCapacity_low",
+                        "trait_displayname": "Forgetful",
+                        "trait_score": -1,
+                        "trait_tooltip": "Max MP -2. Active memories -1 (6 total).",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_mp_max", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-2" },
+                            { "statID": "stats_derived_memoryEntryCount", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-1" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_MemoryCapacity_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default (7 active memories)."
+                    },
+                    {
+                        "trait_ID": "trait_MemoryCapacity_high",
+                        "trait_displayname": "Sharp Mind",
+                        "trait_score": 1,
+                        "trait_tooltip": "Max MP +2. Active memories +3 (10 total).",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_mp_max", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "2" },
+                            { "statID": "stats_derived_memoryEntryCount", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "3" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_MemoryCapacity_veryhigh",
+                        "trait_displayname": "Eidetic",
+                        "trait_score": 2,
+                        "trait_tooltip": "Max MP +4. Active memories +6 (13 total).",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_mp_max", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "4" },
+                            { "statID": "stats_derived_memoryEntryCount", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "6" }
+                        ]
+                    }
+                ],
+                "type": 2,
+                "SortType": "SortedList",
+                "neutralIndex": 2,
+                "group_tooltip": "Innate depth of the magical mind — affects both Max MP and active memory capacity."
+            },
+            {
+                "displayName": "Memory Retention",
+                "ID": "trait_MemoryRetention",
+                "entries": [
+                    {
+                        "trait_ID": "trait_MemoryRetention_low",
+                        "trait_displayname": "Fleeting",
+                        "trait_score": 0,
+                        "trait_tooltip": "Memory duration x0.5 (12h). Experiences fade quickly from mood calculations.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_memoryLength", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "-0.5" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_MemoryRetention_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default memory retention (24h)."
+                    },
+                    {
+                        "trait_ID": "trait_MemoryRetention_high",
+                        "trait_displayname": "Lasting",
+                        "trait_score": 0,
+                        "trait_tooltip": "Memory duration x1.5 (36h). Experiences linger in mood calculations.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_memoryLength", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "0.5" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_MemoryRetention_veryhigh",
+                        "trait_displayname": "Unforgetting",
+                        "trait_score": 0,
+                        "trait_tooltip": "Memory duration x2.0 (48h). Past experiences exert a strong and lasting influence on mood.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_memoryLength", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "1.0" }
+                        ]
+                    }
+                ],
+                "type": 2,
+                "SortType": "SortedList",
+                "neutralIndex": 1,
+                "group_tooltip": "How long individual experiences persist in mood and stress calculations."
+            },
+            {
+                "displayName": "Cleanliness Tolerance",
+                "ID": "trait_CleanlinessTolerance",
+                "entries": [
+                    {
+                        "trait_ID": "trait_CleanlinessTolerance_verylow",
+                        "trait_displayname": "Germaphobe",
+                        "trait_score": -2,
+                        "trait_tooltip": "Cleanliness sensitivity ×2.5. Cleaning threshold 2 (acts on slight mess).",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_cleanlinessSensitivity", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "1.5" },
+                            { "statID": "stats_derived_cleaningThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-1" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_CleanlinessTolerance_low",
+                        "trait_displayname": "Sensitive",
+                        "trait_score": -1,
+                        "trait_tooltip": "Cleanliness sensitivity ×1.5. Notices and is bothered by mess.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_cleanlinessSensitivity", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "0.5" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_CleanlinessTolerance_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default cleanliness tolerance."
+                    },
+                    {
+                        "trait_ID": "trait_CleanlinessTolerance_high",
+                        "trait_displayname": "Tolerant",
+                        "trait_score": 1,
+                        "trait_tooltip": "Cleanliness sensitivity ×0.7. Comfortable in casual disorder.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_cleanlinessSensitivity", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "-0.3" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_CleanlinessTolerance_veryhigh",
+                        "trait_displayname": "Oblivious",
+                        "trait_score": 2,
+                        "trait_tooltip": "Cleanliness sensitivity ×0.5. Cleaning threshold 4 (only acts on heavy mess).",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_cleanlinessSensitivity", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "-0.5" },
+                            { "statID": "stats_derived_cleaningThreshold", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "1" }
+                        ]
+                    }
+                ],
+                "type": 2,
+                "SortType": "SortedList",
+                "neutralIndex": 2,
+                "group_tooltip": "How strongly the character is internally driven to keep their environment clean."
+            }
+        ],
+        "traits_WIL": [
+            {
+                "displayName": "Energy Capacity",
+                "ID": "trait_EnergyCapacity",
+                "entries": [
+                    {
+                        "trait_ID": "trait_EnergyCapacity_low",
+                        "trait_displayname": "Burnout-Prone",
+                        "trait_score": -1,
+                        "trait_tooltip": "Max Energy -15%.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_energy_max", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "-0.15" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_EnergyCapacity_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default energy capacity."
+                    },
+                    {
+                        "trait_ID": "trait_EnergyCapacity_high",
+                        "trait_displayname": "Focused",
+                        "trait_score": 1,
+                        "trait_tooltip": "Max Energy +15%.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_energy_max", "modKey": "finalMod", "type": "addMult", "valueType": "number", "valueString": "0.15" }
+                        ]
+                    }
+                ],
+                "type": 3,
+                "SortType": "SortedList",
+                "neutralIndex": 1,
+                "group_tooltip": "Mental stamina ceiling — how much energy one can hold before mood suffers."
+            },
+            {
+                "displayName": "Mental Fortitude",
+                "ID": "trait_MentalFortitude",
+                "entries": [
+                    {
+                        "trait_ID": "trait_MentalFortitude_low",
+                        "trait_displayname": "Timid",
+                        "trait_score": -1,
+                        "trait_tooltip": "SE change magnitude +50%. Events hit harder in both directions.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_mentalResilience", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "0.5" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_MentalFortitude_default",
+                        "trait_displayname": "Default",
+                        "trait_score": 0,
+                        "isDisplayable": false,
+                        "trait_tooltip": "Default mental fortitude."
+                    },
+                    {
+                        "trait_ID": "trait_MentalFortitude_high",
+                        "trait_displayname": "Resilient",
+                        "trait_score": 1,
+                        "trait_tooltip": "SE change magnitude -30%. Events land with less weight.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_mentalResilience", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-0.3" }
+                        ]
+                    },
+                    {
+                        "trait_ID": "trait_MentalFortitude_veryhigh",
+                        "trait_displayname": "Unshakeable",
+                        "trait_score": 2,
+                        "trait_tooltip": "SE change magnitude -60%. Very difficult to shake.",
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_mentalResilience", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-0.6" }
+                        ]
+                    }
+                ],
+                "type": 3,
+                "SortType": "SortedList",
+                "neutralIndex": 1,
+                "group_tooltip": "Raw mental toughness — how hard external events land on the character's self-esteem, independent of their self-image."
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "default": {},
+            "zh-cn": {
+                "trait_FatigueResistance": "疲劳抗性",
+                "trait_FatigueResistance_tooltip": "此人在体力消耗下的代谢效率，决定进入疲劳状态的体力阈值。",
+                "trait_FatigueResistance_low": "%%trait_FatigueResistance%%：易疲劳",
+                "trait_FatigueResistance_low_tooltip": "%%trait_FatigueResistance_tooltip%%\n疲劳阈值+15%（体力剩余55%时即进入疲劳）",
+                "trait_FatigueResistance_default": "%%trait_FatigueResistance%%：普通",
+                "trait_FatigueResistance_default_tooltip": "%%trait_FatigueResistance_tooltip%%\n默认（体力剩余40%时进入疲劳）",
+                "trait_FatigueResistance_high": "%%trait_FatigueResistance%%：能撑",
+                "trait_FatigueResistance_high_tooltip": "%%trait_FatigueResistance_tooltip%%\n疲劳阈值-15%（体力剩余25%时才进入疲劳）",
+
+                "trait_PhysicalVitality": "体质",
+                "trait_PhysicalVitality_tooltip": "此人天生的体魄强健程度，同时影响HP上限与体力上限，独立于体质属性。",
+                "trait_PhysicalVitality_low": "%%trait_PhysicalVitality%%：孱弱",
+                "trait_PhysicalVitality_low_tooltip": "%%trait_PhysicalVitality_tooltip%%\nHP上限-3\n体力上限-15%",
+                "trait_PhysicalVitality_default": "%%trait_PhysicalVitality%%：普通",
+                "trait_PhysicalVitality_default_tooltip": "%%trait_PhysicalVitality_tooltip%%\n默认体质",
+                "trait_PhysicalVitality_high": "%%trait_PhysicalVitality%%：强健",
+                "trait_PhysicalVitality_high_tooltip": "%%trait_PhysicalVitality_tooltip%%\nHP上限+3\n体力上限+15%",
+                "trait_PhysicalVitality_veryhigh": "%%trait_PhysicalVitality%%：铁骨",
+                "trait_PhysicalVitality_veryhigh_tooltip": "%%trait_PhysicalVitality_tooltip%%\nHP上限+6\n体力上限+25%",
+
+                "trait_SleepTiming": "作息节律",
+                "trait_SleepTiming_tooltip": "此人天生的昼夜节律，决定其入睡与起床时间\n默认0 标准作息，大于该数值表示早期早睡X小时，小于则是晚睡晚起X小时\n该作息仅在角色能够自由安排睡眠时间时起效\n对远征中的角色不生效",
+                "trait_SleepTiming_veryearly": "%%trait_SleepTiming%%：凌晨起",
+                "trait_SleepTiming_veryearly_tooltip": "%%trait_SleepTiming_tooltip%%\n起床时间偏移+4小时（极度早起）",
+                "trait_SleepTiming_early": "%%trait_SleepTiming%%：早起",
+                "trait_SleepTiming_early_tooltip": "%%trait_SleepTiming_tooltip%%\n起床时间偏移+2小时（习惯早起）",
+                "trait_SleepTiming_default": "%%trait_SleepTiming%%：普通",
+                "trait_SleepTiming_default_tooltip": "%%trait_SleepTiming_tooltip%%\n默认作息（无偏移）",
+                "trait_SleepTiming_late": "%%trait_SleepTiming%%：晚起",
+                "trait_SleepTiming_late_tooltip": "%%trait_SleepTiming_tooltip%%\n起床时间偏移-2小时（习惯晚睡晚起）",
+                "trait_SleepTiming_verylate": "%%trait_SleepTiming%%：夜猫子",
+                "trait_SleepTiming_verylate_tooltip": "%%trait_SleepTiming_tooltip%%\n起床时间偏移-4小时（极度晚睡晚起）",
+
+                "trait_SelfEsteem": "自尊",
+                "trait_SelfEsteem_tooltip": "此人的自我价值感，影响其低自尊阈值，以及极端情况下的服从倾向。",
+                "trait_SelfEsteem_verylow": "%%trait_SelfEsteem%%：极度自卑",
+                "trait_SelfEsteem_verylow_tooltip": "%%trait_SelfEsteem_tooltip%%\n低自尊阈值升至80%\n服从度加值+1",
+                "trait_SelfEsteem_low": "%%trait_SelfEsteem%%：自卑",
+                "trait_SelfEsteem_low_tooltip": "%%trait_SelfEsteem_tooltip%%\n低自尊阈值升至70%",
+                "trait_SelfEsteem_default": "%%trait_SelfEsteem%%：普通",
+                "trait_SelfEsteem_default_tooltip": "%%trait_SelfEsteem_tooltip%%\n默认（低自尊阈值60%）",
+                "trait_SelfEsteem_high": "%%trait_SelfEsteem%%：自信",
+                "trait_SelfEsteem_high_tooltip": "%%trait_SelfEsteem_tooltip%%\n低自尊阈值降至45%",
+                "trait_SelfEsteem_veryhigh": "%%trait_SelfEsteem%%：自负",
+                "trait_SelfEsteem_veryhigh_tooltip": "%%trait_SelfEsteem_tooltip%%\n低自尊阈值降至35%\n服从度加值-1",
+
+                "trait_MemoryCapacity": "记忆量",
+                "trait_MemoryCapacity_tooltip": "此人魔力心智的深度，同时影响魔力上限与记忆容量。",
+                "trait_MemoryCapacity_verylow": "%%trait_MemoryCapacity%%：记性差",
+                "trait_MemoryCapacity_verylow_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMP上限-4\n记忆条数-3（共4条）",
+                "trait_MemoryCapacity_low": "%%trait_MemoryCapacity%%：健忘",
+                "trait_MemoryCapacity_low_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMP上限-2\n记忆条数-1（共6条）",
+                "trait_MemoryCapacity_default": "%%trait_MemoryCapacity%%：普通",
+                "trait_MemoryCapacity_default_tooltip": "%%trait_MemoryCapacity_tooltip%%\n默认（共7条记忆）",
+                "trait_MemoryCapacity_high": "%%trait_MemoryCapacity%%：头脑清晰",
+                "trait_MemoryCapacity_high_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMP上限+2\n记忆条数+3（共10条）",
+                "trait_MemoryCapacity_veryhigh": "%%trait_MemoryCapacity%%：过目不忘",
+                "trait_MemoryCapacity_veryhigh_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMP上限+4\n记忆条数+6（共13条）",
+
+                "trait_MemoryRetention": "记忆时长",
+                "trait_MemoryRetention_tooltip": "此人的每条记忆在情绪与压力计算中持续影响的时长。",
+                "trait_MemoryRetention_low": "%%trait_MemoryRetention%%：转瞬即逝",
+                "trait_MemoryRetention_low_tooltip": "%%trait_MemoryRetention_tooltip%%\n记忆持续时间×0.5（约12小时）\n情绪随近期事件快速变化。",
+                "trait_MemoryRetention_default": "%%trait_MemoryRetention%%：普通",
+                "trait_MemoryRetention_default_tooltip": "%%trait_MemoryRetention_tooltip%%\n默认（约24小时）",
+                "trait_MemoryRetention_high": "%%trait_MemoryRetention%%：印象深刻",
+                "trait_MemoryRetention_high_tooltip": "%%trait_MemoryRetention_tooltip%%\n记忆持续时间×1.5（约36小时）\n过去的经历在情绪上保留更久。",
+                "trait_MemoryRetention_veryhigh": "%%trait_MemoryRetention%%：永志不忘",
+                "trait_MemoryRetention_veryhigh_tooltip": "%%trait_MemoryRetention_tooltip%%\n记忆持续时间×2.0（约48小时）\n过去的经历会在情绪上持续很长时间。",
+
+                "trait_EnergyCapacity": "精力",
+                "trait_EnergyCapacity_tooltip": "此人的精神耐力上限，决定其能积蓄多少精力。",
+                "trait_EnergyCapacity_low": "%%trait_EnergyCapacity%%：易倦怠",
+                "trait_EnergyCapacity_low_tooltip": "%%trait_EnergyCapacity_tooltip%%\n精力上限-15%",
+                "trait_EnergyCapacity_default": "%%trait_EnergyCapacity%%：普通",
+                "trait_EnergyCapacity_default_tooltip": "%%trait_EnergyCapacity_tooltip%%\n默认精力容量",
+                "trait_EnergyCapacity_high": "%%trait_EnergyCapacity%%：专注",
+                "trait_EnergyCapacity_high_tooltip": "%%trait_EnergyCapacity_tooltip%%\n精力上限+15%",
+
+                "trait_CleanlinessTolerance": "污臭耐性",
+                "trait_CleanlinessTolerance_tooltip": "此人对环境脏污的心理耐受程度，决定其主动打扫的频率与门槛。",
+                "trait_CleanlinessTolerance_verylow": "%%trait_CleanlinessTolerance%%：洁癖",
+                "trait_CleanlinessTolerance_verylow_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\n脏污敏感度×2.5\n打扫阈值降为2（稍有脏乱即会打扫）",
+                "trait_CleanlinessTolerance_low": "%%trait_CleanlinessTolerance%%：敏感",
+                "trait_CleanlinessTolerance_low_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\n脏污敏感度×1.5",
+                "trait_CleanlinessTolerance_default": "%%trait_CleanlinessTolerance%%：普通",
+                "trait_CleanlinessTolerance_default_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\n默认耐受度",
+                "trait_CleanlinessTolerance_high": "%%trait_CleanlinessTolerance%%：钝感",
+                "trait_CleanlinessTolerance_high_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\n脏污敏感度×0.7",
+                "trait_CleanlinessTolerance_veryhigh": "%%trait_CleanlinessTolerance%%：无视",
+                "trait_CleanlinessTolerance_veryhigh_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\n脏污敏感度×0.5\n打扫阈值升为4（环境极度脏乱才会打扫）",
+
+                "trait_MentalFortitude": "心理韧性",
+                "trait_MentalFortitude_tooltip": "此人面对外部事件时，自尊心受冲击的程度——与自我评价无关，是纯粹的心理抗压能力。",
+                "trait_MentalFortitude_low": "%%trait_MentalFortitude%%：怯懦",
+                "trait_MentalFortitude_low_tooltip": "%%trait_MentalFortitude_tooltip%%\n自尊心波动幅度+50%",
+                "trait_MentalFortitude_default": "%%trait_MentalFortitude%%：普通",
+                "trait_MentalFortitude_default_tooltip": "%%trait_MentalFortitude_tooltip%%\n默认心理韧性",
+                "trait_MentalFortitude_high": "%%trait_MentalFortitude%%：坚强",
+                "trait_MentalFortitude_high_tooltip": "%%trait_MentalFortitude_tooltip%%\n自尊心波动幅度-30%",
+                "trait_MentalFortitude_veryhigh": "%%trait_MentalFortitude%%：坚如磐石",
+                "trait_MentalFortitude_veryhigh_tooltip": "%%trait_MentalFortitude_tooltip%%\n自尊心波动幅度-60%"
+            },
+            "en-us": {
+                "trait_FatigueResistance": "Fatigue Resistance",
+                "trait_FatigueResistance_tooltip": "At what stamina percentage physical output starts degrading.",
+                "trait_FatigueResistance_low": "%%trait_FatigueResistance%%: Quick to Tire",
+                "trait_FatigueResistance_low_tooltip": "%%trait_FatigueResistance_tooltip%%\nFatigues at 55% stamina instead of the default 40%.",
+                "trait_FatigueResistance_default": "%%trait_FatigueResistance%%: Default",
+                "trait_FatigueResistance_default_tooltip": "%%trait_FatigueResistance_tooltip%%\nFatigues at 40% stamina (default).",
+                "trait_FatigueResistance_high": "%%trait_FatigueResistance%%: Gritty",
+                "trait_FatigueResistance_high_tooltip": "%%trait_FatigueResistance_tooltip%%\nFatigues at 25% stamina instead of the default 40%.",
+
+                "trait_PhysicalVitality": "Physical Vitality",
+                "trait_PhysicalVitality_tooltip": "Innate physical constitution, modifying both Max HP and Max Stamina independent of CON score.",
+                "trait_PhysicalVitality_low": "%%trait_PhysicalVitality%%: Frail",
+                "trait_PhysicalVitality_low_tooltip": "%%trait_PhysicalVitality_tooltip%%\nMax HP -3. Max Stamina -15%.",
+                "trait_PhysicalVitality_default": "%%trait_PhysicalVitality%%: Default",
+                "trait_PhysicalVitality_default_tooltip": "%%trait_PhysicalVitality_tooltip%%\nDefault physical vitality.",
+                "trait_PhysicalVitality_high": "%%trait_PhysicalVitality%%: Tough",
+                "trait_PhysicalVitality_high_tooltip": "%%trait_PhysicalVitality_tooltip%%\nMax HP +3. Max Stamina +15%.",
+                "trait_PhysicalVitality_veryhigh": "%%trait_PhysicalVitality%%: Ironclad",
+                "trait_PhysicalVitality_veryhigh_tooltip": "%%trait_PhysicalVitality_tooltip%%\nMax HP +6. Max Stamina +25%.",
+
+                "trait_SleepTiming": "Sleep Timing",
+                "trait_SleepTiming_tooltip": "The character's natural circadian phase — how many hours earlier or later they prefer to sleep and wake relative to the default schedule.",
+                "trait_SleepTiming_veryearly": "%%trait_SleepTiming%%: Dawn Riser",
+                "trait_SleepTiming_veryearly_tooltip": "%%trait_SleepTiming_tooltip%%\nWakeup offset +4h. Sleeps and wakes 4 hours earlier than default.",
+                "trait_SleepTiming_early": "%%trait_SleepTiming%%: Early Bird",
+                "trait_SleepTiming_early_tooltip": "%%trait_SleepTiming_tooltip%%\nWakeup offset +2h. Sleeps and wakes 2 hours earlier than default.",
+                "trait_SleepTiming_default": "%%trait_SleepTiming%%: Default",
+                "trait_SleepTiming_default_tooltip": "%%trait_SleepTiming_tooltip%%\nDefault sleep schedule (no offset).",
+                "trait_SleepTiming_late": "%%trait_SleepTiming%%: Night Owl",
+                "trait_SleepTiming_late_tooltip": "%%trait_SleepTiming_tooltip%%\nWakeup offset -2h. Sleeps and wakes 2 hours later than default.",
+                "trait_SleepTiming_verylate": "%%trait_SleepTiming%%: Creature of the Night",
+                "trait_SleepTiming_verylate_tooltip": "%%trait_SleepTiming_tooltip%%\nWakeup offset -4h. Sleeps and wakes 4 hours later than default.",
+
+                "trait_SelfEsteem": "Self-Esteem",
+                "trait_SelfEsteem_tooltip": "The character's sense of self-worth. Affects the low-pride threshold, and at extremes, natural compliance.",
+                "trait_SelfEsteem_verylow": "%%trait_SelfEsteem%%: Self-Loathing",
+                "trait_SelfEsteem_verylow_tooltip": "%%trait_SelfEsteem_tooltip%%\nLow-pride threshold 80% SE.\nObedience +1.",
+                "trait_SelfEsteem_low": "%%trait_SelfEsteem%%: Insecure",
+                "trait_SelfEsteem_low_tooltip": "%%trait_SelfEsteem_tooltip%%\nLow-pride threshold 70% SE.",
+                "trait_SelfEsteem_default": "%%trait_SelfEsteem%%: Default",
+                "trait_SelfEsteem_default_tooltip": "%%trait_SelfEsteem_tooltip%%\nDefault (low-pride threshold 60% SE).",
+                "trait_SelfEsteem_high": "%%trait_SelfEsteem%%: Self-Assured",
+                "trait_SelfEsteem_high_tooltip": "%%trait_SelfEsteem_tooltip%%\nLow-pride threshold 45% SE.",
+                "trait_SelfEsteem_veryhigh": "%%trait_SelfEsteem%%: Narcissistic",
+                "trait_SelfEsteem_veryhigh_tooltip": "%%trait_SelfEsteem_tooltip%%\nLow-pride threshold 35% SE.\nObedience -1.",
+
+                "trait_MemoryCapacity": "Memory Capacity",
+                "trait_MemoryCapacity_tooltip": "Innate depth of the magical mind — affects both Max MP and active memory capacity.",
+                "trait_MemoryCapacity_verylow": "%%trait_MemoryCapacity%%: Scatterbrained",
+                "trait_MemoryCapacity_verylow_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMax MP -4.\nActive memories -3 (4 total).",
+                "trait_MemoryCapacity_low": "%%trait_MemoryCapacity%%: Forgetful",
+                "trait_MemoryCapacity_low_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMax MP -2.\nActive memories -1 (6 total).",
+                "trait_MemoryCapacity_default": "%%trait_MemoryCapacity%%: Default",
+                "trait_MemoryCapacity_default_tooltip": "%%trait_MemoryCapacity_tooltip%%\nDefault (7 active memories).",
+                "trait_MemoryCapacity_high": "%%trait_MemoryCapacity%%: Sharp Mind",
+                "trait_MemoryCapacity_high_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMax MP +2.\nActive memories +3 (10 total).",
+                "trait_MemoryCapacity_veryhigh": "%%trait_MemoryCapacity%%: Eidetic",
+                "trait_MemoryCapacity_veryhigh_tooltip": "%%trait_MemoryCapacity_tooltip%%\nMax MP +4.\nActive memories +6 (13 total).",
+
+                "trait_MemoryRetention": "Memory Retention",
+                "trait_MemoryRetention_tooltip": "How long individual experiences persist in mood and stress calculations.",
+                "trait_MemoryRetention_low": "%%trait_MemoryRetention%%: Fleeting",
+                "trait_MemoryRetention_low_tooltip": "%%trait_MemoryRetention_tooltip%%\nMemory duration x0.5 (12h). Experiences fade quickly.",
+                "trait_MemoryRetention_default": "%%trait_MemoryRetention%%: Default",
+                "trait_MemoryRetention_default_tooltip": "%%trait_MemoryRetention_tooltip%%\nDefault (24h).",
+                "trait_MemoryRetention_high": "%%trait_MemoryRetention%%: Lasting",
+                "trait_MemoryRetention_high_tooltip": "%%trait_MemoryRetention_tooltip%%\nMemory duration x1.5 (36h). Experiences linger in mood calculations.",
+                "trait_MemoryRetention_veryhigh": "%%trait_MemoryRetention%%: Unforgetting",
+                "trait_MemoryRetention_veryhigh_tooltip": "%%trait_MemoryRetention_tooltip%%\nMemory duration x2.0 (48h). Past experiences exert lasting influence on mood.",
+
+                "trait_EnergyCapacity": "Energy Capacity",
+                "trait_EnergyCapacity_tooltip": "Mental stamina ceiling — how much energy one can hold before mood suffers.",
+                "trait_EnergyCapacity_low": "%%trait_EnergyCapacity%%: Burnout-Prone",
+                "trait_EnergyCapacity_low_tooltip": "%%trait_EnergyCapacity_tooltip%%\nMax Energy -15%.",
+                "trait_EnergyCapacity_default": "%%trait_EnergyCapacity%%: Default",
+                "trait_EnergyCapacity_default_tooltip": "%%trait_EnergyCapacity_tooltip%%\nDefault energy capacity.",
+                "trait_EnergyCapacity_high": "%%trait_EnergyCapacity%%: Focused",
+                "trait_EnergyCapacity_high_tooltip": "%%trait_EnergyCapacity_tooltip%%\nMax Energy +15%.",
+
+                "trait_CleanlinessTolerance": "Cleanliness Tolerance",
+                "trait_CleanlinessTolerance_tooltip": "How strongly the character is internally driven to keep their environment clean.",
+                "trait_CleanlinessTolerance_verylow": "%%trait_CleanlinessTolerance%%: Germaphobe",
+                "trait_CleanlinessTolerance_verylow_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\nCleanliness sensitivity ×2.5.\nCleaning threshold 2 (acts on slight mess).",
+                "trait_CleanlinessTolerance_low": "%%trait_CleanlinessTolerance%%: Sensitive",
+                "trait_CleanlinessTolerance_low_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\nCleanliness sensitivity ×1.5.",
+                "trait_CleanlinessTolerance_default": "%%trait_CleanlinessTolerance%%: Default",
+                "trait_CleanlinessTolerance_default_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\nDefault tolerance.",
+                "trait_CleanlinessTolerance_high": "%%trait_CleanlinessTolerance%%: Tolerant",
+                "trait_CleanlinessTolerance_high_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\nCleanliness sensitivity ×0.7.",
+                "trait_CleanlinessTolerance_veryhigh": "%%trait_CleanlinessTolerance%%: Oblivious",
+                "trait_CleanlinessTolerance_veryhigh_tooltip": "%%trait_CleanlinessTolerance_tooltip%%\nCleanliness sensitivity ×0.5.\nCleaning threshold 4 (only acts on heavy mess).",
+
+                "trait_MentalFortitude": "Mental Fortitude",
+                "trait_MentalFortitude_tooltip": "Raw mental toughness — how hard external events land on SE, independent of self-image.",
+                "trait_MentalFortitude_low": "%%trait_MentalFortitude%%: Timid",
+                "trait_MentalFortitude_low_tooltip": "%%trait_MentalFortitude_tooltip%%\nSE change magnitude +50%.",
+                "trait_MentalFortitude_default": "%%trait_MentalFortitude%%: Default",
+                "trait_MentalFortitude_default_tooltip": "%%trait_MentalFortitude_tooltip%%\nDefault mental fortitude.",
+                "trait_MentalFortitude_high": "%%trait_MentalFortitude%%: Resilient",
+                "trait_MentalFortitude_high_tooltip": "%%trait_MentalFortitude_tooltip%%\nSE change magnitude -30%.",
+                "trait_MentalFortitude_veryhigh": "%%trait_MentalFortitude%%: Unshakeable",
+                "trait_MentalFortitude_veryhigh_tooltip": "%%trait_MentalFortitude_tooltip%%\nSE change magnitude -60%."
+            }
+        }
+    }
+}

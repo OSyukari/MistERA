@@ -38,7 +38,8 @@ public class Stats_Derived_Extended
     [JsonProperty] protected string tooltip = "";
     [JsonProperty] protected StatGetter maxValue = null;
     [JsonProperty] protected StatGetter reductionModStat = null;
-    [JsonProperty] protected List<object> eventTriggers = null;
+    [JsonProperty] protected string linkedStatusID = "";
+    [JsonIgnore] public string LinkedStatusID { get { return linkedStatusID; } }
 
     [JsonIgnore] public string ID { get { return id; } }
     [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id); } }
@@ -206,6 +207,7 @@ public class Stats_Derived_Extended_Instance
     public void RestoreMax()
     {
         this.value = MaxValue;
+        SyncLinkedStatus();
     }
 
     private Stats_Derived_Instance reductionStat = null;
@@ -218,6 +220,12 @@ public class Stats_Derived_Extended_Instance
         }
     }
 
+    private void SyncLinkedStatus()
+    {
+        if (string.IsNullOrEmpty(Parent.LinkedStatusID)) return;
+        Owner.SetStatusSeverity(Parent.LinkedStatusID, ValuePercentile);
+    }
+
     public void ModValue(float amount)
     {
         if (amount < 0 && this.Owner.Owner.RefID == 0 && scr_System_CampaignManager.current.DebugMode) return;
@@ -227,6 +235,7 @@ public class Stats_Derived_Extended_Instance
             amount = Math.Clamp(amount + ReductionStat.FinalValue(), amount, 0);
         }
         this.value = Math.Clamp(this.value + amount, 0, MaxValue);
+        SyncLinkedStatus();
     }
 
     public int ModValue(int amount)
@@ -239,17 +248,20 @@ public class Stats_Derived_Extended_Instance
             amount = Math.Clamp(amount + (int)ReductionStat.FinalValue(), amount, 0);
         }
         if (amount != 0) this.value = Math.Clamp(this.value + amount, 0, MaxValue);
+        SyncLinkedStatus();
         return amount;
     }
 
     public void RestorePercent(float percent)
     {
         this.value = Math.Clamp(this.value + MaxValue * percent, 0, MaxValue);
+        SyncLinkedStatus();
     }
 
     public void SetValue(float value)
     {
         this.value = Math.Clamp(value, 0, MaxValue);
+        SyncLinkedStatus();
     }
 }
 

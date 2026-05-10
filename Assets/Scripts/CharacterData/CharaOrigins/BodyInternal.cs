@@ -54,6 +54,7 @@ public class BodyInternal_Base
     public string memory_ingest_solid = "";
 
     public string sensitivityClassString = "";
+    public string traitClassString = "";
     public string maxSensitivityStatString = "";
 
     public string exposedKojoID = "";

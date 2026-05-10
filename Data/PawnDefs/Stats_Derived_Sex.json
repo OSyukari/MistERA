@@ -5,38 +5,38 @@
         "list":
         [
             {
-                "id": "stats_derived_maxSensitivity_C",
-                "displayName":"C Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
+                "id": "stats_derived_maxSensitivity_C", "tags":["nsfw"],
+                "displayName":"C Sensitivity",  "statKeyword":"lust", "tooltip":"",
                 "valueBase":{ "baseValue_value":1.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             }, 
             {
-                "id": "stats_derived_maxSensitivity_V",
-                "displayName":"V Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
+                "id": "stats_derived_maxSensitivity_V",  "tags":["nsfw"],
+                "displayName":"V Sensitivity", "statKeyword":"lust", "tooltip":"",
                 "valueBase":{ "baseValue_value":0.4, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             }, 
             {
-                "id": "stats_derived_maxSensitivity_B",
-                "displayName":"B Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
+                "id": "stats_derived_maxSensitivity_B", "tags":["nsfw"],
+                "displayName":"B Sensitivity", "statKeyword":"lust", "tooltip":"",
                 "valueBase":{ "baseValue_value":0.2, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             }, 
             {
-                "id": "stats_derived_maxSensitivity_A",
-                "displayName":"A Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
+                "id": "stats_derived_maxSensitivity_A", "tags":["nsfw"],
+                "displayName":"A Sensitivity",  "statKeyword":"lust", "tooltip":"",
                 "valueBase":{ "baseValue_value":0.1, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             }, 
             {
-                "id": "stats_derived_maxSensitivity_M",
-                "displayName":"M Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
+                "id": "stats_derived_maxSensitivity_M", "tags":["nsfw"],
+                "displayName":"M Sensitivity",  "statKeyword":"lust", "tooltip":"",
                 "valueBase":{ "baseValue_value":0.2, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             }, 
             {
-                "id": "stats_derived_maxSensitivity_W",
-                "displayName":"W Sensitivity", "noDisplay":true, "statKeyword":"lust", "tooltip":"",
+                "id": "stats_derived_maxSensitivity_W", "tags":["nsfw"],
+                "displayName":"W Sensitivity", "statKeyword":"lust", "tooltip":"",
                 "valueBase":{ "baseValue_value":0.0, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             },      
             {
-                "id": "stats_derived_maxSensitivity_Mind",
-                "statKeyword":"lust", "noDisplay":true, "displayName":"Mind Sensitivity", "tooltip":"",
+                "id": "stats_derived_maxSensitivity_Mind", "tags":["nsfw"],
+                "statKeyword":"lust", "displayName":"Mind Sensitivity", "tooltip":"",
                 "valueBase":{ "baseValue_value":0.4, "baseValue_mult":1.0, "finalMod_value":0.0, "finalMod_mult":1.0, "valueFloor":0.0, "valueCeiling":10.0 }
             }
         ]

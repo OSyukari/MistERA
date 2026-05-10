@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -33,12 +34,34 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 #pragma warning restore CS0436 // Type conflicts with imported type
 
     public ptDownTracker portraitTracker;
+
+    public Image bannerBGImage;
+    public CanvasGroup bannerImage;
     public void InitializeWithArgument(int refID)
     {
         chara_refID = refID;
         scr_System_CampaignManager.current.CurrentTargetEX = chara;
 
+        var portraithandler = chara.PortraitManager;
+        if (portraithandler == null || portraithandler.CharaBanner == null)
+        {
+            bannerImage.alpha = 0;
+        }
+        else
+        {
+            bannerImage.alpha = 1;
+        }
+
         if (!initialized) Initialize();
+
+        if (portraithandler != null && portraithandler.CharaBannerBGColor != "")
+        {
+            portraithandler.SetBGColor(bannerBGImage);
+        }
+        else
+        {
+            bannerBGImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Opaque.Color;
+        }
         //pictureRect.onValueChanged.AddListener(OnPictureRectChange);
 
         portraitTracker.SetRectPosition(scr_System_CampaignManager.current.CurrentTargetEXPortrait);
@@ -398,6 +421,28 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         initSexRecords.viewEXPBTN.SetExternalTooltip(String.Join("\n", chara.Skills.ExperiencesToString(true)));
 
         bool isdebug = scr_System_CampaignManager.current.DebugMode;
+
+        foreach (var statDerived in chara.Stats.list_statsDerived)
+        {
+            if (!statDerived.Parent.isNSFW) continue;
+            if (!statDerived.Parent.isValidStatFor(chara.Stats)) continue;
+            if (!isdebug && statDerived.Parent.noDisplay) continue;
+            scr_HoverableText link = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
+            UI_Utility.Draw(statDerived, link);
+            link.GetComponent<RectTransform>().SetParent(initSexRecords.GetDerivedStatGrid(), false);
+        }
+
+        foreach (var si in chara.Stats.Traits)
+        {
+            if (!si.Parent.isNSFW) continue;
+            if (si.Parent != null && !si.Parent.isDisplayable) continue;
+            if (!si.isDisplayable && !isdebug) continue;
+
+            scr_HoverableText box = Instantiate(prefab_text_link).GetComponent< scr_HoverableText>();
+            box.transform.SetParent(initSexRecords.GetTraitGrid(si.Parent.GroupLabel), false);
+            box.SetText(si.displayname, false, si.TooltipID);
+        }
+
         foreach (SkillInstance si in chara.Skills.GetSkills(true))
         {
             if (si.BaseRef.noDisplay && !isdebug) continue;
@@ -408,7 +453,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             if (!ButtonsByID.ContainsKey(hash))
             {
                 scr_SelectableText box = Instantiate(prefab_Button);
-                box.transform.SetParent(initSexRecords.GetGrid(si.CategoryLabel), false);
+                box.transform.SetParent(initSexRecords.GetSkillsGrid(si.CategoryLabel), false);
                 box.Initialize(this, new ButtonValidator_UpgradeSkill(this, box, chara, si));
                 box.optionID = hash;
                 box.showBrackets = false;

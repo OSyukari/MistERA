@@ -1,9 +1,10 @@
-using System.Collections.Generic;
-using UnityEngine;
+using Newtonsoft.Json;
+using NUnit;
 using QuikGraph;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using UnityEngine;
 
 
 
@@ -42,6 +43,104 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         return false;
     }
+
+    [JsonProperty] protected int activeHoursStart = 0;
+    [JsonProperty] protected int activeHoursEnd   = 0;
+
+    [JsonIgnore] private List<int> _activeHoursCache = null;
+    [JsonIgnore] private List<int> ActiveHoursCache
+    {
+        get
+        {
+            if (_activeHoursCache == null) RecomputeActiveHours();
+            return _activeHoursCache;
+        }
+    }
+
+    [JsonIgnore] 
+    public List<int> ActiveHours { get { return ActiveHoursCache; } }
+
+    private void RecomputeActiveHours()
+    {
+        _activeHoursCache = new List<int>();
+        if (activeHoursEnd == activeHoursStart) return;
+
+        int h = activeHoursStart;
+        for (int guard = 0; guard <= 24; guard++)
+        {
+            _activeHoursCache.Add(h);
+            if (h == activeHoursEnd) break;
+            h = (h + 1) % 24;
+        }
+    }
+
+    [JsonIgnore]
+    public int ActiveHoursCount
+    {
+        get
+        {
+            if (IsAlwaysActive) return 24;
+            return this.ActiveHoursCache.Count;
+        }
+    }
+    public bool SetActiveHours(int begin, int end)
+    {
+        if (begin < 0 || begin > 23 || end < 0 || end > 23)
+        {
+            return false;
+        }
+        activeHoursStart = begin;
+        activeHoursEnd = end;
+        _ActivityStateString = string.Empty;
+        NotifyActiveHoursChanged();
+        return true;
+    }
+
+    public void NotifyActiveHoursChanged()
+    {
+        _activeHoursCache = null;
+        List<string> debugmsg = new List<string>();
+        if (managedChara != null)
+        {
+            foreach (var c in ManagedChara)
+            {
+                c.FactionManager.UpdateSchedule(ref debugmsg);
+            }
+        }
+        Debug.Log($"Faction {this.FactionDisplayName} active hours changed!\n{String.Join("\n", debugmsg)}");
+    }
+
+    [JsonIgnore] public bool IsAlwaysActive
+    {
+        get { return activeHoursStart < 0 || activeHoursEnd < 0 || activeHoursStart == activeHoursEnd; }
+    }
+
+
+    string _ActivityStateString = string.Empty;
+    [JsonIgnore]
+    public string ActivityStateString
+    {
+        get
+        {
+            if (_ActivityStateString == string.Empty)
+            {
+                _ActivityStateString = IsAlwaysActive ? LocalizeDictionary.QueryThenParse("faction_activityState_alwaysActive")
+                    : LocalizeDictionary.QueryThenParse("faction_activityState_activeHours")
+                    .Replace("$start$", $"{DayStartHour % 12}{(DayStartHour < 12 ? "AM" : "PM")}")
+                    .Replace("$end$", $"{DayEndHour % 12}{(DayEndHour < 12 ? "AM" : "PM")}");
+            }
+            return _ActivityStateString;
+        }
+    }
+
+    [JsonIgnore] public bool HasDayNight { get { return !IsAlwaysActive; } }
+
+    public bool IsActiveHour(int hour) => IsAlwaysActive || ActiveHoursCache.Contains(hour);
+
+    [JsonIgnore] public int DayStartHour => HasDayNight ? activeHoursStart : 0;
+    [JsonIgnore] public int DayEndHour => HasDayNight ? activeHoursEnd : 0;
+    [JsonIgnore] public int NightStartHour => HasDayNight ? (activeHoursEnd + 1) % 24 : 0;
+    [JsonIgnore] public int NightEndHour => HasDayNight ? (activeHoursStart - 1) % 24 : 0;
 
     public MealManager mealManager = new MealManager();
 
@@ -390,6 +489,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {   // character log their daily consumption at updateOrder 2, refresh report at update3
         if (updateOrder != 3) return;
         this.DailyReport.FinalizeReport();
+        RefreshSalesInventory();
     }
 
     [JsonProperty] protected FactionInventory _inventory;
@@ -515,6 +615,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public Job_Schedule GetSchedule(Character_Trainable c)
     {
         if (ManagedRefs.Contains(c.RefID)) return charaSchedules[c.RefID];
+        else return null;
+    }
+
+    public HourlySchedule GetSchedule(Character_Trainable c, int hour)
+    {
+        if (charaSchedules.TryGetValue(c.RefID, out var setting) && setting != null) return setting.Get(hour);
         else return null;
     }
 
@@ -2247,6 +2353,27 @@ public class Manageable : I_Disposable, I_IsJobGiver
         this.salesInventory.AddEntry(inventory);
     }
 
+    public string mapPlanID = "";
+
+    public void RefreshSalesInventory(MapPlan plan = null)
+    {
+        if (plan == null) plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID(mapPlanID);
+        
+        if (plan != null)
+        {
+            salesInventory.Clear();
+
+            if (plan.salesCurrency != "")
+            {
+                SetMainCurrency(plan.salesCurrency);
+                foreach (var itemInit in plan.salesInventory) AddSalesInventory(itemInit);
+            }
+
+            priceMult = plan.priceMult;
+
+        }
+    }
+
     public SalesInventory salesInventory = new SalesInventory();
 
     public int GetPrice(ItemEntry entry, bool isExport)
@@ -2276,6 +2403,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
         public void AddEntry(MapPlan.SalesInventoryInit inventory)
         {
             entries.Add(inventory);
+            _cache = null;
+        }
+
+        public void Clear()
+        {
+            entries.Clear();
             _cache = null;
         }
 

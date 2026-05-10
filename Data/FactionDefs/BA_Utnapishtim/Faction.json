@@ -295,7 +295,9 @@
                     }
                 ],
                 "salesCurrency":"currency_pyroxene",
-                "mealHours":[6, 12, 18],
+                "mealHours":[8, 12, 18],
+                "activeHoursStart":8,
+                "activeHoursEnd":22,
                 "initializers":[
                     {
                         "initClass":"campaign_init_factionInventory",

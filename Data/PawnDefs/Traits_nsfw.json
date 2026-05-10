@@ -50,13 +50,23 @@
             ],
             "type": 5,
             "SortType":"SortedList",
+            "tags":["do_not_use"],
             "neutralIndex": 1,
             "group_tooltip": "How fast does one cum (affect both penis and vagina/clit activities)."
-        },
+        }
+    ],
+    "traits_PSY_SEX": [
         {
             "displayName":"Gender Preference",
             "ID": "trait_GenderPreference",
             "entries": [
+                {
+                    "trait_ID": "trait_GenderPreference_dontcare",
+                    "trait_displayname": "Default",
+                    "isDisplayable":false,
+                    "trait_score":0,
+                    "trait_tooltip": "no gender restriction."
+                },
                 {
                     "trait_ID": "trait_GenderPreference_hetero",
                     "trait_displayname": "Heterosexual",
@@ -68,12 +78,6 @@
                     "trait_displayname": "Homosexual",
                     "trait_score":0,
                     "trait_tooltip": "sexually attracted to people of same gender."
-                },
-                {
-                    "trait_ID": "trait_GenderPreference_all",
-                    "trait_displayname": "Pansexual",
-                    "trait_score":0,
-                    "trait_tooltip": "sexually attracted to people independent of gender."
                 },
                 {
                     "trait_ID": "trait_GenderPreference_none",
@@ -88,12 +92,12 @@
             "group_tooltip": "Sexual attraction. Influences opinion and favorability towards other.\nSee the related configurations in [Edit Preference] to decide what factor in determining gender.\nDefault: only appearance decide a person's 'gender group'."
         }
     ],
-    "traits_PSY_SEX": [],
     "traits_WIL_SEX": [],
     "traits_BODY": [
         {
             "displayName":"",
             "ID": "trait_Sensitivity_B",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Sensitivity_B_dull",
@@ -105,7 +109,6 @@
                 {
                     "trait_ID": "trait_Sensitivity_B_default",
                     "trait_displayname": "Default",
-                    "isDisplayable":false,
                     "trait_score":0,
                     "trait_tooltip": "Default B sensitivity."
                 },
@@ -132,6 +135,7 @@
         {
             "displayName":"",
             "ID": "trait_Sensitivity_M",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Sensitivity_M_dull",
@@ -143,7 +147,6 @@
                 {
                     "trait_ID": "trait_Sensitivity_M_default",
                     "trait_displayname": "Default",
-                    "isDisplayable":false,
                     "trait_score":0,
                     "trait_tooltip": "Default M sensitivity"
                 },
@@ -170,6 +173,7 @@
         {
             "displayName":"",
             "ID": "trait_Sensitivity_C",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Sensitivity_C_dull",
@@ -181,7 +185,6 @@
                 {
                     "trait_ID": "trait_Sensitivity_C_default",
                     "trait_displayname": "Default",
-                    "isDisplayable":false,
                     "trait_score":0,
                     "trait_tooltip": "Default C sensitivity."
                 },
@@ -208,6 +211,7 @@
         {
             "displayName":"",
             "ID": "trait_Sensitivity_V",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Sensitivity_V_dull",
@@ -219,7 +223,6 @@
                 {
                     "trait_ID": "trait_Sensitivity_V_default",
                     "trait_displayname": "Default",
-                    "isDisplayable":false,
                     "trait_score":0,
                     "trait_tooltip": "Default V sensitivity."
                 },
@@ -246,6 +249,7 @@
         {
             "displayName":"",
             "ID": "trait_Sensitivity_A",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Sensitivity_A_dull",
@@ -257,7 +261,6 @@
                 {
                     "trait_ID": "trait_Sensitivity_A_default",
                     "trait_displayname": "Default",
-                    "isDisplayable":false,
                     "trait_score":0,
                     "trait_tooltip": "Default A sensitivity"
                 },
@@ -284,6 +287,7 @@
         {
             "displayName":"",
             "ID": "trait_Size_B",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Size_B_none",
@@ -355,6 +359,7 @@
                 }
             ],
             "type": 8,
+            "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 4,
             "group_tooltip": "Breast part size."
@@ -362,6 +367,7 @@
         {
             "displayName":"",
             "ID": "trait_Size_P",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Size_P_none",
@@ -402,6 +408,7 @@
                 }
             ],
             "type": 8,
+            "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 3,
             "group_tooltip": "Penis part size."
@@ -409,6 +416,7 @@
         {
             "displayName":"",
             "ID": "trait_Size_V",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Size_V_none",
@@ -424,6 +432,7 @@
                 }
             ],
             "type": 8,
+            "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "has vagina or not."
@@ -431,6 +440,7 @@
         {
             "displayName":"",
             "ID": "trait_Size_A",
+            "isDisplayable":false,
             "entries": [
                 {
                     "trait_ID": "trait_Size_A_none",
@@ -446,6 +456,7 @@
                 }
             ],
             "type": 8,
+            "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "has anus or not. "
@@ -462,35 +473,62 @@
             },
             "zh-cn":
             {
+                "traits_BODY":"身体特质",
+
                 "trait_Sensitivity_B":"B敏感度",
-                "trait_Sensitivity_B_dull":"钝感",
-                "trait_Sensitivity_B_default":"普通",
-                "trait_Sensitivity_B_sensitive":"敏感",
-                "trait_Sensitivity_B_supersensitive":"超敏感",
+                "trait_Sensitivity_B_tooltip":"胸部的感度，影响胸部相关行为的快感强度。",
+                "trait_Sensitivity_B_dull":"%%trait_Sensitivity_B%%：钝感",
+                "trait_Sensitivity_B_dull_tooltip":"%%trait_Sensitivity_B_tooltip%%\n感度上限×0.6",
+                "trait_Sensitivity_B_default":"%%trait_Sensitivity_B%%：普通",
+                "trait_Sensitivity_B_default_tooltip":"%%trait_Sensitivity_B_tooltip%%\n默认感度",
+                "trait_Sensitivity_B_sensitive":"%%trait_Sensitivity_B%%：敏感",
+                "trait_Sensitivity_B_sensitive_tooltip":"%%trait_Sensitivity_B_tooltip%%\n感度上限×1.2",
+                "trait_Sensitivity_B_supersensitive":"%%trait_Sensitivity_B%%：超敏感",
+                "trait_Sensitivity_B_supersensitive_tooltip":"%%trait_Sensitivity_B_tooltip%%\n感度上限×1.5",
 
                 "trait_Sensitivity_M":"M敏感度",
-                "trait_Sensitivity_M_dull":"钝感",
-                "trait_Sensitivity_M_default":"普通",
-                "trait_Sensitivity_M_sensitive":"敏感",
-                "trait_Sensitivity_M_supersensitive":"超敏感",
+                "trait_Sensitivity_M_tooltip":"口腔的感度，影响口腔相关行为的快感强度。",
+                "trait_Sensitivity_M_dull":"%%trait_Sensitivity_M%%：钝感",
+                "trait_Sensitivity_M_dull_tooltip":"%%trait_Sensitivity_M_tooltip%%\n感度上限×0.6",
+                "trait_Sensitivity_M_default":"%%trait_Sensitivity_M%%：普通",
+                "trait_Sensitivity_M_default_tooltip":"%%trait_Sensitivity_M_tooltip%%\n默认感度",
+                "trait_Sensitivity_M_sensitive":"%%trait_Sensitivity_M%%：敏感",
+                "trait_Sensitivity_M_sensitive_tooltip":"%%trait_Sensitivity_M_tooltip%%\n感度上限×1.2",
+                "trait_Sensitivity_M_supersensitive":"%%trait_Sensitivity_M%%：超敏感",
+                "trait_Sensitivity_M_supersensitive_tooltip":"%%trait_Sensitivity_M_tooltip%%\n感度上限×1.5",
 
                 "trait_Sensitivity_C":"C敏感度",
-                "trait_Sensitivity_C_dull":"钝感",
-                "trait_Sensitivity_C_default":"普通",
-                "trait_Sensitivity_C_sensitive":"敏感",
-                "trait_Sensitivity_C_supersensitive":"超敏感",
+                "trait_Sensitivity_C_tooltip":"阴蒂/阴茎的感度，影响相关行为的快感强度。若角色同时拥有阴道与阴茎，此设置同时适用于两者。",
+                "trait_Sensitivity_C_dull":"%%trait_Sensitivity_C%%：钝感",
+                "trait_Sensitivity_C_dull_tooltip":"%%trait_Sensitivity_C_tooltip%%\n感度上限×0.6",
+                "trait_Sensitivity_C_default":"%%trait_Sensitivity_C%%：普通",
+                "trait_Sensitivity_C_default_tooltip":"%%trait_Sensitivity_C_tooltip%%\n默认感度",
+                "trait_Sensitivity_C_sensitive":"%%trait_Sensitivity_C%%：敏感",
+                "trait_Sensitivity_C_sensitive_tooltip":"%%trait_Sensitivity_C_tooltip%%\n感度上限×1.2",
+                "trait_Sensitivity_C_supersensitive":"%%trait_Sensitivity_C%%：超敏感",
+                "trait_Sensitivity_C_supersensitive_tooltip":"%%trait_Sensitivity_C_tooltip%%\n感度上限×1.5",
 
                 "trait_Sensitivity_V":"V敏感度",
-                "trait_Sensitivity_V_dull":"钝感",
-                "trait_Sensitivity_V_default":"普通",
-                "trait_Sensitivity_V_sensitive":"敏感",
-                "trait_Sensitivity_V_supersensitive":"超敏感",
+                "trait_Sensitivity_V_tooltip":"阴道的感度，影响阴道相关行为的快感强度。",
+                "trait_Sensitivity_V_dull":"%%trait_Sensitivity_V%%：钝感",
+                "trait_Sensitivity_V_dull_tooltip":"%%trait_Sensitivity_V_tooltip%%\n感度上限×0.6",
+                "trait_Sensitivity_V_default":"%%trait_Sensitivity_V%%：普通",
+                "trait_Sensitivity_V_default_tooltip":"%%trait_Sensitivity_V_tooltip%%\n默认感度",
+                "trait_Sensitivity_V_sensitive":"%%trait_Sensitivity_V%%：敏感",
+                "trait_Sensitivity_V_sensitive_tooltip":"%%trait_Sensitivity_V_tooltip%%\n感度上限×1.2",
+                "trait_Sensitivity_V_supersensitive":"%%trait_Sensitivity_V%%：超敏感",
+                "trait_Sensitivity_V_supersensitive_tooltip":"%%trait_Sensitivity_V_tooltip%%\n感度上限×1.5",
 
                 "trait_Sensitivity_A":"A敏感度",
-                "trait_Sensitivity_A_dull":"钝感",
-                "trait_Sensitivity_A_default":"普通",
-                "trait_Sensitivity_A_sensitive":"敏感",
-                "trait_Sensitivity_A_supersensitive":"超敏感",
+                "trait_Sensitivity_A_tooltip":"肛门的感度，影响肛门相关行为的快感强度。",
+                "trait_Sensitivity_A_dull":"%%trait_Sensitivity_A%%：钝感",
+                "trait_Sensitivity_A_dull_tooltip":"%%trait_Sensitivity_A_tooltip%%\n感度上限×0.6",
+                "trait_Sensitivity_A_default":"%%trait_Sensitivity_A%%：普通",
+                "trait_Sensitivity_A_default_tooltip":"%%trait_Sensitivity_A_tooltip%%\n默认感度",
+                "trait_Sensitivity_A_sensitive":"%%trait_Sensitivity_A%%：敏感",
+                "trait_Sensitivity_A_sensitive_tooltip":"%%trait_Sensitivity_A_tooltip%%\n感度上限×1.2",
+                "trait_Sensitivity_A_supersensitive":"%%trait_Sensitivity_A%%：超敏感",
+                "trait_Sensitivity_A_supersensitive_tooltip":"%%trait_Sensitivity_A_tooltip%%\n感度上限×1.5",
                 
                 "trait_Size_B":"胸部尺寸",
                 "trait_Size_B_none":"无胸部",
@@ -526,34 +564,59 @@
             "en-us":
             {
                 "trait_Sensitivity_B":"Breast Sensitivity",
-                "trait_Sensitivity_B_dull":"Dull",
-                "trait_Sensitivity_B_default":"Normal",
-                "trait_Sensitivity_B_sensitive":"Sensitive",
-                "trait_Sensitivity_B_supersensitive":"Hypersensitive",
+                "trait_Sensitivity_B_tooltip":"Breast part sensitivity.",
+                "trait_Sensitivity_B_dull":"%%trait_Sensitivity_B%%: Dull",
+                "trait_Sensitivity_B_dull_tooltip":"%%trait_Sensitivity_B_tooltip%%\nMax sensitivity ×0.6.",
+                "trait_Sensitivity_B_default":"%%trait_Sensitivity_B%%: Normal",
+                "trait_Sensitivity_B_default_tooltip":"%%trait_Sensitivity_B_tooltip%%\nDefault sensitivity.",
+                "trait_Sensitivity_B_sensitive":"%%trait_Sensitivity_B%%: Sensitive",
+                "trait_Sensitivity_B_sensitive_tooltip":"%%trait_Sensitivity_B_tooltip%%\nMax sensitivity ×1.2.",
+                "trait_Sensitivity_B_supersensitive":"%%trait_Sensitivity_B%%: Hypersensitive",
+                "trait_Sensitivity_B_supersensitive_tooltip":"%%trait_Sensitivity_B_tooltip%%\nMax sensitivity ×1.5.",
 
-                "trait_Sensitivity_M":"M Sensitivity",
-                "trait_Sensitivity_M_dull":"Dull",
-                "trait_Sensitivity_M_default":"Normal",
-                "trait_Sensitivity_M_sensitive":"Sensitive",
-                "trait_Sensitivity_M_supersensitive":"Hypersensitive",
+                "trait_Sensitivity_M":"Mouth Sensitivity",
+                "trait_Sensitivity_M_tooltip":"Mouth part sensitivity.",
+                "trait_Sensitivity_M_dull":"%%trait_Sensitivity_M%%: Dull",
+                "trait_Sensitivity_M_dull_tooltip":"%%trait_Sensitivity_M_tooltip%%\nMax sensitivity ×0.6.",
+                "trait_Sensitivity_M_default":"%%trait_Sensitivity_M%%: Normal",
+                "trait_Sensitivity_M_default_tooltip":"%%trait_Sensitivity_M_tooltip%%\nDefault sensitivity.",
+                "trait_Sensitivity_M_sensitive":"%%trait_Sensitivity_M%%: Sensitive",
+                "trait_Sensitivity_M_sensitive_tooltip":"%%trait_Sensitivity_M_tooltip%%\nMax sensitivity ×1.2.",
+                "trait_Sensitivity_M_supersensitive":"%%trait_Sensitivity_M%%: Hypersensitive",
+                "trait_Sensitivity_M_supersensitive_tooltip":"%%trait_Sensitivity_M_tooltip%%\nMax sensitivity ×1.5.",
 
-                "trait_Sensitivity_C":"Clitoris Sensitivity",
-                "trait_Sensitivity_C_dull":"Dull",
-                "trait_Sensitivity_C_default":"Normal",
-                "trait_Sensitivity_C_sensitive":"Sensitive",
-                "trait_Sensitivity_C_supersensitive":"Hypersensitive",
+                "trait_Sensitivity_C":"Clit/Penis Sensitivity",
+                "trait_Sensitivity_C_tooltip":"Clit/Penis part sensitivity. If a character has both vagina and penis, this applies to both.",
+                "trait_Sensitivity_C_dull":"%%trait_Sensitivity_C%%: Dull",
+                "trait_Sensitivity_C_dull_tooltip":"%%trait_Sensitivity_C_tooltip%%\nMax sensitivity ×0.6.",
+                "trait_Sensitivity_C_default":"%%trait_Sensitivity_C%%: Normal",
+                "trait_Sensitivity_C_default_tooltip":"%%trait_Sensitivity_C_tooltip%%\nDefault sensitivity.",
+                "trait_Sensitivity_C_sensitive":"%%trait_Sensitivity_C%%: Sensitive",
+                "trait_Sensitivity_C_sensitive_tooltip":"%%trait_Sensitivity_C_tooltip%%\nMax sensitivity ×1.2.",
+                "trait_Sensitivity_C_supersensitive":"%%trait_Sensitivity_C%%: Hypersensitive",
+                "trait_Sensitivity_C_supersensitive_tooltip":"%%trait_Sensitivity_C_tooltip%%\nMax sensitivity ×1.5.",
 
                 "trait_Sensitivity_V":"Vagina Sensitivity",
-                "trait_Sensitivity_V_dull":"Dull",
-                "trait_Sensitivity_V_default":"Normal",
-                "trait_Sensitivity_V_sensitive":"Sensitive",
-                "trait_Sensitivity_V_supersensitive":"Hypersensitive",
+                "trait_Sensitivity_V_tooltip":"Vagina part sensitivity.",
+                "trait_Sensitivity_V_dull":"%%trait_Sensitivity_V%%: Dull",
+                "trait_Sensitivity_V_dull_tooltip":"%%trait_Sensitivity_V_tooltip%%\nMax sensitivity ×0.6.",
+                "trait_Sensitivity_V_default":"%%trait_Sensitivity_V%%: Normal",
+                "trait_Sensitivity_V_default_tooltip":"%%trait_Sensitivity_V_tooltip%%\nDefault sensitivity.",
+                "trait_Sensitivity_V_sensitive":"%%trait_Sensitivity_V%%: Sensitive",
+                "trait_Sensitivity_V_sensitive_tooltip":"%%trait_Sensitivity_V_tooltip%%\nMax sensitivity ×1.2.",
+                "trait_Sensitivity_V_supersensitive":"%%trait_Sensitivity_V%%: Hypersensitive",
+                "trait_Sensitivity_V_supersensitive_tooltip":"%%trait_Sensitivity_V_tooltip%%\nMax sensitivity ×1.5.",
 
                 "trait_Sensitivity_A":"Anus Sensitivity",
-                "trait_Sensitivity_A_dull":"Dull",
-                "trait_Sensitivity_A_default":"Normal",
-                "trait_Sensitivity_A_sensitive":"Sensitive",
-                "trait_Sensitivity_A_supersensitive":"Hypersensitive",
+                "trait_Sensitivity_A_tooltip":"Anal part sensitivity.",
+                "trait_Sensitivity_A_dull":"%%trait_Sensitivity_A%%: Dull",
+                "trait_Sensitivity_A_dull_tooltip":"%%trait_Sensitivity_A_tooltip%%\nMax sensitivity ×0.6.",
+                "trait_Sensitivity_A_default":"%%trait_Sensitivity_A%%: Normal",
+                "trait_Sensitivity_A_default_tooltip":"%%trait_Sensitivity_A_tooltip%%\nDefault sensitivity.",
+                "trait_Sensitivity_A_sensitive":"%%trait_Sensitivity_A%%: Sensitive",
+                "trait_Sensitivity_A_sensitive_tooltip":"%%trait_Sensitivity_A_tooltip%%\nMax sensitivity ×1.2.",
+                "trait_Sensitivity_A_supersensitive":"%%trait_Sensitivity_A%%: Hypersensitive",
+                "trait_Sensitivity_A_supersensitive_tooltip":"%%trait_Sensitivity_A_tooltip%%\nMax sensitivity ×1.5.",
 
                 "trait_Size_B":"Breast Size",
                 "trait_Size_B_none":"Flat",

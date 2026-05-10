@@ -96,7 +96,7 @@
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
 
-    "portrait_offset_x": 17.7,   "portrait_offset_y": 25.6,    "portrait_offset_size": 0.65,
+    "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
     "icon_offset_x":0.0,    "icon_offset_y":-100.3,    "icon_offset_size":0.35,
 
     "Variants":

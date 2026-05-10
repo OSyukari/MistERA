@@ -38,29 +38,39 @@ public class scr_Panel_BodyDetail : MonoBehaviour
         
         if (instance.canFuck)
         {
-            boxSize.gameObject.SetActive(true);
             boxDepth.gameObject.SetActive(true);
-            boxSensitivity.gameObject.SetActive(true);
-
-            boxSize.text = "Size: [" + instance.Size.ToString("N1") + "]";
             boxDepth.text = "Length [" + instance.Depth.ToString("N1") + "]";
-            boxSensitivity.text = instance.Sensitivity;
+
         }
         else if (instance.canBeFucked)
         {
-            boxSize.gameObject.SetActive(true);
             boxDepth.gameObject.SetActive(true);
-            boxSensitivity.gameObject.SetActive(true);
-
-            boxSize.text = "Size: "+instance.Rank_Size+"[" + (instance.Size != 0 ? instance.Size.ToString("N1")+"/"+ instance.MaxSize.ToString("N1") : " - ") + "]";
             boxDepth.text = "Depth " + instance.Rank_Depth + "[" + (instance.Depth != 0 ? instance.Depth.ToString("N1")+"/"+instance.MaxDepth.ToString("N1") : " - ") + "]";
-            boxSensitivity.text = instance.Sensitivity;
         }
         else
         {
-            boxSize.gameObject.SetActive(false);
             boxDepth.gameObject.SetActive(false);
-            boxSensitivity.gameObject.SetActive(false);
+        }
+
+        var size = instance.SizeTrait;
+        var sizestring = size == null || !size.isDisplayable ? "" : size.displayname;
+        if (instance.canFuck) sizestring += (sizestring.Length > 0 ? " " : "") + instance.Size.ToString("N1");
+        else if (instance.canBeFucked) sizestring += (sizestring.Length > 0 ? " " : "") + instance.Rank_Size + "[" + (instance.Size != 0 ? instance.Size.ToString("N1") + "/" + instance.MaxSize.ToString("N1") : " - ") + "]";
+
+        if (sizestring.Length > 0) 
+        {
+            boxSize.gameObject.SetActive(true);
+            boxSize.SetText($"Size: {sizestring}");
+            if (size != null) boxSize.SetExternalTooltip(size.tooltip);
+        }
+        else boxSize.gameObject.SetActive(false);
+
+        var sensitivityTrait = instance.Owner.Stats.GetTraitByGroupID($"trait_Sensitivity_{instance.traitID}");
+        if (sensitivityTrait == null) boxSensitivity.gameObject.SetActive(false);
+        else
+        {
+            boxSensitivity.gameObject.SetActive(true);
+            boxSensitivity.SetText(sensitivityTrait.displayname, false, sensitivityTrait.TooltipID);
         }
 
         instance.Draw_FirstExperience(firstExp);
@@ -94,7 +104,8 @@ public class scr_Panel_BodyDetail : MonoBehaviour
     }*/
 
     public Image image;
-    public TMP_Text boxName, boxSize, boxDepth, boxSensitivity;
+    public TMP_Text boxName,  boxDepth;
+    public scr_HoverableText boxSize,  boxSensitivity;
     public scr_HoverableText boxVolume;
     public RectTransform box_Fuckable;
     public RectTransform description;

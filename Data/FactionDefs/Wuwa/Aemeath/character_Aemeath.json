@@ -24,12 +24,13 @@
 
             }
         ],
+        "CharaBannerBGColor":"#000000FF",
         "CharaBanner":
         {
             "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-            "portrait_offset_x": 27.24082,
-            "portrait_offset_y": -244.8654,
+            "portrait_offset_x": 300,
+            "portrait_offset_y": -300,
             "portrait_offset_size": 0.25,
 
             "icon_offset_x":0.0,

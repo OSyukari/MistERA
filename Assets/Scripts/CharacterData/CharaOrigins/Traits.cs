@@ -33,20 +33,35 @@ public class Traits
 
     public Trait_Type type = Trait_Type.Untyped;
 
-    protected string parentID = "";
-    [JsonIgnore] public string ParentID { get { return parentID; } set { parentID = value; } }
+    public List<string> tags = new List<string>();
+
+    [JsonIgnore] public scr_Traits_Group Parent = null;
+
 
     //-serialized data--
 
     [JsonProperty] private string trait_ID = "";
     [JsonIgnore] public string ID { get { return trait_ID; } }
+    [JsonIgnore] public string TooltipID { get { return $"{trait_ID}_tooltip"; } }
 
     public int trait_score = 0;
     [JsonProperty] private string trait_displayname = "";
     public string trait_tooltip = "";
 
-    [JsonIgnore] public string displayname { get { return trait_displayname; } }
-    [JsonIgnore] public string tooltip { get { return trait_tooltip; } }
+    string? cached_displayName = null;
+    string? cached_tooltip = null;
+    [JsonIgnore] public string displayname { get {
+            if (cached_displayName == null) 
+            {
+                cached_displayName = LocalizeDictionary.QueryThenParse(trait_ID, trait_displayname);
+            }
+            return cached_displayName;} }
+    [JsonIgnore] public string tooltip { get {
+            if (cached_tooltip == null)
+            {
+                cached_tooltip = LocalizeDictionary.QueryThenParse(TooltipID, trait_tooltip);
+            }
+            return cached_tooltip; } }
 
     public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
 
@@ -55,29 +70,25 @@ public class Traits
 
     public Traits GetNextInGroup()
     {
-        if (parentID != "") return CharaOrigins.Instance.Traits.GetGroupByID(parentID).getNextinGroup(this);
+        if (Parent != null) return Parent.getNextinGroup(this);
         else return null;
     }
     public Traits GetPreviousInGroup()
     {
-        if (parentID != "") return CharaOrigins.Instance.Traits.GetGroupByID(parentID).getPreviousinGroup(this);
+        if (Parent != null) return Parent.getPreviousinGroup(this);
         else return null;
     }
 
-}
-
-[System.Serializable]
-public class Traits_index
-{
-    public List<scr_Traits_Group> groups = new List<scr_Traits_Group>();
 }
 
 [System.Serializable]
 public class scr_Traits_Group
 {
     //-SerializedData-------
-    public int neutralIndex = 0;
+    public int neutralIndex = -1;
+    public bool allowPopulate = true;
     public string group_tooltip = "";
+    public List<string> tags = new List<string>();
 
     [JsonProperty]
     private Trait_Type type = Trait_Type.Untyped;
@@ -87,8 +98,24 @@ public class scr_Traits_Group
     public string displayName = "";
     public string ID = "";
 
+    public bool isDisplayable = true;
+
+    [JsonIgnore] public string GroupLabel = "";
     public List<Traits> entries = new List<Traits>();
     //----------------------
+
+    [JsonIgnore] 
+    public bool isNSFW
+    {
+        get
+        {
+            return type == Trait_Type.Body
+                || type == Trait_Type.Sexual_Strength
+                || type == Trait_Type.Sexual_Psyche
+                || type == Trait_Type.Sexual_Constitution
+                || type == Trait_Type.Sexual_Willpower;
+        }
+    }
 
 
     public Trait_Group_Type SortType = Trait_Group_Type.Untyped;
@@ -206,11 +233,22 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
                 foreach (Traits t in s.entries)
                 {
                     t.type = s.Type;
-                    t.ParentID = s.ID;
+                    t.Parent = s;
                 }
 
             }
         }
+        foreach (var group in traits_STR) group.GroupLabel = "traits_STR";
+        foreach (var group in traits_CON) group.GroupLabel = "traits_CON";
+        foreach (var group in traits_PSY) group.GroupLabel = "traits_PSY";
+        foreach (var group in traits_WIL) group.GroupLabel = "traits_WIL";
+        foreach (var group in traits_STR_SEX) group.GroupLabel = "traits_STR_SEX";
+        foreach (var group in traits_CON_SEX) group.GroupLabel = "traits_CON_SEX";
+        foreach (var group in traits_PSY_SEX) group.GroupLabel = "traits_PSY_SEX";
+        foreach (var group in traits_WIL_SEX) group.GroupLabel = "traits_WIL_SEX";
+        foreach (var group in traits_BODY) group.GroupLabel = "traits_BODY";
+        foreach (var group in traits_STR) group.GroupLabel = "traits_STR";
+
     }
 
     Dictionary<string, scr_Traits_Group> ID_Dictionary1 = new Dictionary<string, scr_Traits_Group>();
@@ -223,17 +261,39 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
     {
         messages.Add("Traits_Group_Index : registering ID with list length [" + traits_All.Count + "]");
 
+
         foreach (List<scr_Traits_Group> o in traits_All)
         {
+            var removelist = new List<scr_Traits_Group>();
             foreach (scr_Traits_Group s in o)
             {
-                ID_Dictionary1.Add(s.ID, s);
+                if (s.tags.Contains("do_not_use"))
+                {
+                    removelist.Add(s);
+                    continue;
+                }
+                var removelist2 = new List<Traits>();
+                bool added = false;
                 foreach (Traits t in s.entries)
                 {
+                    if (t.tags.Contains("do_not_use"))
+                    {
+                        removelist2.Add(t);
+                        continue;
+                    }
                     ID_Dictionary2.Add(t.ID, t);
+                    added = true;
                 }
+                foreach (var oo in removelist2) s.entries.Remove(oo);
+                if (!added)
+                {
+                    removelist.Add(s);
+                    continue;
+                }
+                ID_Dictionary1.Add(s.ID, s);
 
             }
+            foreach (var oo in removelist) o.Remove(oo);
         }
     }
 }

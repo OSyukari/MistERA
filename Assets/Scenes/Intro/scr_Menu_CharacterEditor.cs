@@ -391,7 +391,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                         comp.Initialize(this, validator);
                         comp.SetText(entry.displayname);
 
-                        if (Character.Traits.Contains(entry))
+                        if (Character.Stats.Traits.Contains(entry))
                         {
                             comp.Toggle(true, true);
                             Traits_ToggleTraitByID(comp.optionID, entry);
@@ -446,7 +446,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         Traits trait = null;
         foreach (Traits t in group.entries)
         {
-            if (Character.HasTrait(t))
+            if (Character.Stats.HasTrait(t))
             {
                 trait = t; break;
             }
@@ -760,12 +760,13 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         c.MiddleName = input_middlename.text;
         c.LastName = input_lastname.text;
 
-        c.ResetTrait();
+        c.Stats.ResetTrait();
         // save traitlist into Character.traits
         foreach (Traits t in Traits_getTraitbyID.Values)
         {
-            c.AddTrait(t);
+            c.Stats.AddTrait(t);
         }
+        c.Stats.RefreshTraits();
     }
 
     protected void ValidateLate()

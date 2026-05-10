@@ -281,6 +281,7 @@ public class TryFindPrivateRoomCleaning : FindJobNode
 {
     string tag = "production_cleaning";
     string comID = "com_job_cleaning";
+
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         // find cleaning job in current room and in self owned rooms
@@ -293,9 +294,28 @@ public class TryFindPrivateRoomCleaning : FindJobNode
             List<Job_Furniture> possibleCleaning = new List<Job_Furniture>();
             List<int> restrictList = new List<int>();
             var currRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-            restrictList.Add(currRoom.RefID);
+            var threshold = c.Stats.GetStatValue("stats_derived_cleaningThreshold");
+            if (currRoom != null)
+            {
+                var clean = currRoom.RoomCleanliness(c);
+                if (clean > Room_Instance.CleaningStatus.Clean && threshold >= 2 && (int)clean >= threshold)
+                {
+                    restrictList.Add(currRoom.RefID);
+                }
+            }
             var owned = currentLocaleFaction.GetOwnedRooms(c);
-            if (owned != null && owned.Count > 0) restrictList.AddRange(owned);
+            if (owned != null && owned.Count > 0)
+            {
+                foreach(var refid in owned)
+                {
+                    var room = scr_System_CampaignManager.current.Map.GetRoomByRef(refid);
+                    var clean = room.RoomCleanliness(c);
+                    if (clean > Room_Instance.CleaningStatus.Clean && threshold >= 2 && (int)clean >= threshold)
+                    {
+                        restrictList.Add(refid);
+                    }
+                }
+            }
 
             var result = currentLocaleFaction.GetValidJobsByCOMID(c, comID, s, true, true, restrictList);
             if (result != null && result.Count > 0) possibleCleaning.AddRange(result);

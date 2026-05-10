@@ -44,11 +44,13 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         {
             scr_System_CampaignManager.current.Observer_CurrentTargetEX += ReadCurrentChar;
             scr_System_CampaignManager.current.Observer_UpdateCurrentTargetAnchor += OnAnchorChange;
-            scr_System_CampaignManager.current.CurrentTargetEX_Box = this;
+            if(!isBannerBox) scr_System_CampaignManager.current.CurrentTargetEX_Box = this;
         }
     }
 
     bool firstInit = true;
+
+    bool active = true;
 
     private void Start()
     {
@@ -120,9 +122,16 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public bool InitializeWithArgument(Character_SerializableBase template)
     {
-        if (template == null) return false;
-        CheckCharaChange(template.Portrait);
-        return true;
+        if (template == null)
+        {
+            Debug.LogError("error serialized base null");
+            return false;
+        }
+        else
+        {
+            CheckCharaChange(template.Portrait);
+            return true;
+        }
     }
 
 
@@ -173,9 +182,16 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             //Debug.Log($"drawing portrait for {newPortrait.Owner.RefID}");
             if (!isCombatBox)
             {
-                if (isBannerBox) portrait.DrawBanner(this);
+                if (isBannerBox)
+                {
+                    portrait.DrawBanner(this);
+                }
                 else portrait.DrawPortrait(this, tags);
             }
+        }
+        else
+        {
+            Debug.LogError("error portrait null");
         }
     }
 

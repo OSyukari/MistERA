@@ -383,21 +383,29 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     {
         //Debug.Log("Character Observer_GlobalHour for [" + FirstName + "]");
         //if (Stats.GetStatusSeverityByStringMatch("chara_status_sleeping") > 0)
+        
+        var party = this.FactionManager.CurrentParty;
+        int currentHour = scr_System_Time.current.getCurrentTime().Hour;
         if (Stats.isConsciousnessUnconscious)
         {
             timeSinceLastSleep = 0;
 
             // Recover chara based on sleep efficiency ?
         }
+        else if (party != null && party.isActive && party.SleepHours.Contains(currentHour))
+        {
+            timeSinceLastSleep = 0;
+        }
         else if (hasStatKeyword("sleep"))
         {
             timeSinceLastSleep += 1;
-            if (timeSinceLastSleep > 24)
+            var sleephours = Stats.SleepHours;
+            if (timeSinceLastSleep > Math.Max(24, sleephours * 2))
             {
-                var sleephours = Stats.SleepHours;
                 if (sleephours > 0) Stats.AddOrModStatus("chara_status_sleep_deprived", (sleephours * 60)*1.2f);
             }
         }
+
         this.Body.UpdateTimeHour(t);
         timeSinceLastEat = Math.Min(24, timeSinceLastEat + 1);
         this.Relationships.HourlyRefresh();
@@ -529,14 +537,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     public Character_Trainable()
     {
 
-    }
-    public Character_Trainable(bool InitializeNew)
-    {
-        //Stats = new StatsManager(this);
-        this.birthday = UtilityEX.GetCampaignTime().AddYears(-Age);
-
-        InitializeAllTraits();
-        InitializeAllSkills();
     }
 
     [JsonProperty]
@@ -793,12 +793,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             return false;
         }
     }
-
-    public void AddTrait(string s) { traits.Add(s); }
-    public void AddTrait(Traits s) { traits.Add(s.ID); }
-    public void ResetTrait() { traits = new List<string>(); }
-    public bool HasTrait(string s) { return traits.Contains(s); }
-    public bool HasTrait(Traits t) { return traits.Contains(t.ID); }
 
     [JsonIgnore] public int Age { get { return 22; } }
     [JsonProperty] private bool noAging = false;
@@ -1322,7 +1316,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     {
         get
         {
-            if (this.Stats.Fatigue != null && this.Stats.Fatigue.Severity > 0.9) return true;
+            if (this.Stats.Fatigued) return true;
             var induced = this.Stats.FindStatusByExactID("chara_status_inducedSleep");
             if (induced != null && induced.Severity > 5) return true;
             return false;
@@ -1334,25 +1328,34 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         {
             if (this.Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived") > 0) return true;
             var sleephours = Stats.SleepHours;
-            return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours * 1.5 ;
+            return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours ;
         }
     }
     [JsonIgnore] public bool shouldSleep { get
         {
             if (needSleep) return true;
-            else if (canSleep)
+            if (!canSleep) return false;
+
+            // Party override: while in an ongoing expedition, the party sleep window is authoritative.
+            // Personal schedule is bypassed; NPC sleeps iff the party window says so (and canSleep).
+            var party = this.FactionManager.CurrentParty;
+
+            if (party != null && party.isActive)
             {
-                if (this.FactionManager.HasSleepSchedule)
-                {
-                    var v = GetJobPost();
-                    return v != null && v.comIDs.Contains("com_furniture_sleep");
-                }
-                else
-                {
-                    return true;
-                }
+                int currentHour = scr_System_Time.current.getCurrentTime().Hour;
+                return party.SleepHours.Contains(currentHour);
             }
-            else return false;
+
+            if (this.FactionManager.HasSleepSchedule)
+            {
+                var v = GetJobPost();
+                return v != null && v.comIDs.Contains("com_furniture_sleep");
+            }
+            else
+            {
+                return true;
+            }
+
         } }
 
     [JsonIgnore] public bool shouldRest { get
@@ -1383,66 +1386,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         } 
     }
 
-    [JsonIgnore] private List<string> traits = new List<string>();
-
-    [JsonIgnore] public List<Traits> Traits
-    {
-        get
-        {
-            
-            List<Traits> t = new List<Traits>();
-            return t;
-            foreach (string s in traits)
-            {
-                var ss = scr_System_Serializer.current.GetByNameOrID_Traits(s);
-                if (ss != null) t.Add(ss);
-            }
-            return t;
-        }
-    }
-    protected void InitializeAllTraits()
-    {
-        traits = new List<string>();
-
-        foreach(List<scr_Traits_Group> list in scr_System_Serializer.current.index_TraitsAll.traits_All)
-        {
-            foreach (scr_Traits_Group group in list)
-            {
-                if (group.SortType == Trait_Group_Type.Singular)
-                {
-                    // dont do anything
-                }
-                else if (group.Type == Trait_Type.Body)  
-                {
-                    // exclude body untyped
-                }
-                else if (group.SortType == Trait_Group_Type.SortedList || group.SortType == Trait_Group_Type.UnsortedList)
-                {
-                    // skip this, redo trait system
-                    //AddTrait(group.getNeutralinGroup());
-                }
-                else
-                {
-
-                }
-            }
-        }
-    }
-
-
-    //[JsonIgnore] List<Skills> Skills = null;
-    protected void InitializeAllSkills()
-    {
-        /*
-        this.Skills = new List<Skills>();
-        foreach(Skills_Full skl in scr_System_Serializer.current.index_SkillsAll.list)
-        {
-            Skills s = skl.MakeSkill();
-            s.Owner = this;
-            this.Skills.Add(s);
-        }*/
-    }
-
+    
 
     public SkillInstance GetSkill(string skillID)
     {
@@ -1972,27 +1916,37 @@ public class Character_Trainable : ScriptableObject, I_Disposable
         }
         else
         {
-            // Count consecutive scheduled sleep hours starting from the current hour
             int currentHour = scr_System_Time.current.getCurrentTime().Hour;
-            int scheduledSleepMinutes = 0;
-            for (int i = 0; i < 24; i++)
-            {
-                var post = GetJobPost((currentHour + i) % 24);
-                if (post != null && post.comIDs.Contains("com_furniture_sleep"))
-                    scheduledSleepMinutes += 60;
-                else
-                    break;
-            }
 
-            if (scheduledSleepMinutes > 0)
+            // Case 4: party-aligned sleep — wake exactly when the party's sleep window ends
+            var party = this.FactionManager.CurrentParty;
+            if (party != null && party.isActive)
             {
-                // Case 2: sleeping during scheduled hours — sleep until the scheduled window ends
-                sleepHour = scheduledSleepMinutes;
+                sleepHour = (int)Math.Ceiling(Stats.SleepHours * 60f);
             }
             else
             {
-                // Case 3: off-schedule sleep — sleep for the character's normal sleep need
-                sleepHour = (int)Math.Ceiling(Stats.SleepHours * 60f);
+                // Count consecutive scheduled sleep hours starting from the current hour
+                int scheduledSleepMinutes = 0;
+                for (int i = 0; i < 24; i++)
+                {
+                    var post = GetJobPost((currentHour + i) % 24);
+                    if (post != null && post.comIDs.Contains("com_furniture_sleep"))
+                        scheduledSleepMinutes += 60;
+                    else
+                        break;
+                }
+
+                if (scheduledSleepMinutes > 0)
+                {
+                    // Case 2: sleeping during scheduled hours — sleep until the scheduled window ends
+                    sleepHour = scheduledSleepMinutes;
+                }
+                else
+                {
+                    // Case 3: off-schedule sleep — sleep for the character's normal sleep need
+                    sleepHour = (int)Math.Ceiling(Stats.SleepHours * 60f);
+                }
             }
         }
 
@@ -2201,6 +2155,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     protected void ReEstablishObservers()
     {
+        if (this.RefID == -1) return;
+
         scr_System_Time.current.Observer_globalTime += Observer_GlobalMinute;
         scr_System_Time.current.Observer_globalTime_5min += Observer_GlobalMinute5;
         scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
@@ -2221,6 +2177,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
 
     protected void RemoveObservers()
     {
+        if (this.RefID == -1) return;
+
         scr_System_Time.current.Observer_globalTime -= Observer_GlobalMinute;
         scr_System_Time.current.Observer_globalTime_5min -= Observer_GlobalMinute5;
         scr_System_Time.current.Observer_globalTime_Hours -= Observer_GlobalHour;

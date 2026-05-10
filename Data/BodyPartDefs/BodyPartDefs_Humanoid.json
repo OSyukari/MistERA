@@ -126,6 +126,7 @@
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
                 "sensitivityClassString":"C",
+                "traitClassString":"P",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
                 "sortOrder":7,
                 

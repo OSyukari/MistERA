@@ -59,6 +59,9 @@ public class MapPlan
     public string initializeFaction = "";
     public bool setPrivateRoomOwner = false;
 
+    public int activeHoursStart = 0;
+    public int activeHoursEnd = 0;
+
     public List<string> managerBaseIDs = new List<string>();
     public List<WorkHoursInit> workHours = null;
     public List<WorkModuleInit> workModules = new List<WorkModuleInit>();

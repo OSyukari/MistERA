@@ -161,7 +161,8 @@
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 }, { "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":["furniture_TV_flatscreen"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_Auditorium.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Auditorium.jpg",
+                        "activityState":"DayOnly"
                     },
                     {
                         "ID":"lounge2_singlesuite1",

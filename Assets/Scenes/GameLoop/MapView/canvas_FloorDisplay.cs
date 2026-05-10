@@ -346,7 +346,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 .Replace("$room$", room.DisplayName)
                 .Replace("$items$", room.Inventory.PrintContent(" ", true))
                 .Replace("$furnitures$", room.DisplayableFurnitureNames)
-                .Replace("$names$", names.Count > 0 ? String.Join(" ", names) : "-" );
+                .Replace("$names$", names.Count > 0 ? String.Join(" ", names) : "-" )
+                .Replace("$roomActivityState$", room.ActivityStateString);
         }
 
         protected void OnHoverExit()

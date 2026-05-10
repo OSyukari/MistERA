@@ -582,6 +582,76 @@ public class Room_Instance: IDisposable, I_Disposable
             }
             return _isRoomPrivate; } }
 
+    [JsonProperty] private RoomActivityState? activityStateOverride = null;
+
+    [JsonIgnore] public RoomActivityState ActivityState
+    {
+        get {
+            if (this.FactionOwner != null && this.FactionOwner is Manageable)
+            {
+                if (activityStateOverride != null) return activityStateOverride.Value;
+                else if (Base != null) return Base.activityState;
+            }
+            return RoomActivityState.AlwaysActive;
+
+        }
+    }
+
+    [JsonIgnore]
+    public string ActivityStateString
+    {
+        get {
+
+            var target = ActivityState;
+            if (target == RoomActivityState.AlwaysActive) return "";
+            else
+            {
+                var targetS = LocalizeDictionary.QueryThenParse($"ui_room_roomActivityState_{target}");
+                var fff = this.FactionOwner as Manageable;
+                if (fff == null)
+                {
+                    // error
+                }else if (target == RoomActivityState.DayOnly)
+                {
+                    targetS = targetS.Replace("$start$", $"{fff.DayStartHour % 12}{(fff.DayStartHour < 12 ? "AM" : "PM")}")
+                                        .Replace("$end$", $"{fff.DayEndHour % 12}{(fff.DayEndHour < 12 ? "AM" : "PM")}");
+                }
+                else if (target == RoomActivityState.NightOnly)
+                {
+                    targetS = targetS.Replace("$start$", $"{fff.NightStartHour % 12}{(fff.NightStartHour < 12 ? "AM" : "PM")}")
+                                        .Replace("$end$", $"{fff.NightEndHour % 12}{(fff.NightEndHour < 12 ? "AM" : "PM")}");
+                }
+                else
+                {
+                    // unknown error
+                }
+                return targetS;
+            }
+        }
+
+    }
+
+    public void SetActivityStateOverride(RoomActivityState? state)
+    {
+        activityStateOverride = state;
+    }
+
+    public bool IsCurrentlyActive(int currentHour)
+    {
+        var state = ActivityState;
+        if (state == RoomActivityState.AlwaysActive) return true;
+
+        var manageable = FactionOwner as Manageable;
+        if (manageable == null || manageable.IsAlwaysActive) return true;
+
+        switch (state)
+        {
+            case RoomActivityState.DayOnly:   return manageable.IsActiveHour(currentHour);
+            case RoomActivityState.NightOnly: return !manageable.IsActiveHour(currentHour);
+            default: return true;
+        }
+    }
+
     [JsonIgnore] public Room_Instance.CleaningStatus isRoomClean
     {
         get
@@ -608,21 +678,29 @@ public class Room_Instance: IDisposable, I_Disposable
     }
 
     bool _cachedCleanliness = false;
-    CleaningStatus cleanliness = CleaningStatus.None;
+
+    string cleanlinessStringRef = string.Empty;
 
     Stat_Modifier cleanlinessMod = new Stat_Modifier()
     {
-        ModString = "room cleanliness",
+        ModString = "room_CleaningStatus",
         type = Stat_Modifier.StatMod_Type.addBase,
         statID = "chara_status_mood"
     };
 
-    public Stat_Modifier GetCleanlinessMod()
+    public Stat_Modifier GetCleanlinessMod(Character_Trainable c)
     {
         if (Base == null || Base.noCleaning) return null;
-        var cl = RoomCleanliness();
+        var cl = RoomCleanliness(c);
         if (cl == CleaningStatus.None) return null;
-        cleanlinessMod.ModString = $"room cleanliness {cl}";
+
+        if (cleanlinessStringRef == string.Empty)
+        {
+            cleanlinessStringRef = LocalizeDictionary.QueryThenParse("room_CleaningStatus");
+        }
+
+        cleanlinessMod.DisplayName = cleanlinessStringRef.Replace("$status$", LocalizeDictionary.QueryThenParse($"room_CleaningStatus_{cl}") );
+        
         switch (cl)
         {
             case CleaningStatus.Clean:
@@ -654,28 +732,36 @@ public class Room_Instance: IDisposable, I_Disposable
         }
     }
 
+    public CleaningStatus RoomCleanliness(Character_Trainable c) 
+    {
+        if (c == null) return RoomCleanliness();
+        var cleanmod = c.Stats.GetStatValue("stats_derived_cleanlinessSensitivity");
+        return RoomCleanliness(cleanmod);
+    }
+
+    int cachedCleanliness = 0;
+
     public CleaningStatus RoomCleanliness(float extraMod = 1f)
     {
         {
-            if (Base.noCleaning) return CleaningStatus.None;
+            if (Base == null || Base.noCleaning) return CleaningStatus.None;
 
             if (_cachedCleanliness == false)
             {
                 _cachedCleanliness = true;
 
-                int i = 0;
+                cachedCleanliness = 0;
                 foreach (var item in Inventory.Contents)
                 {
-                    i -= item.Cleanliness * item.Count;
+                    cachedCleanliness -= item.Cleanliness * item.Count;
                 }
-                i = (int)(i * extraMod);
-
-                if (i <= 0) cleanliness = CleaningStatus.Clean;
-                else if (i <= 3) cleanliness = CleaningStatus.Normal;
-                else if (i <= 6) cleanliness = CleaningStatus.Dirty;
-                else cleanliness = CleaningStatus.Very_Dirty;
             }
-            return cleanliness;
+
+            var i = (int)(cachedCleanliness * extraMod);
+            if (i <= 0) return CleaningStatus.Clean;
+            else if (i <= 3) return CleaningStatus.Normal;
+            else if (i <= 6) return CleaningStatus.Dirty;
+            else return CleaningStatus.Very_Dirty;
         }
     }
 

@@ -595,7 +595,7 @@ public class RelationshipManager
         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID);
         if (room != null)
         {
-            var modd = room.GetCleanlinessMod();
+            var modd = room.GetCleanlinessMod(Owner);
             if (modd != null) moodlets.Add(modd);
         }
         if (Owner.Stats.Stress != null) Owner.Stats.Stress.ClearCache();

@@ -49,6 +49,30 @@ public static class UtilityEX
         } }
 
 
+    public static Color ColorFromHex(string hex)
+    {
+        // Remove the # if it exists
+        hex = hex.StartsWith("#") ? hex.Substring(1) : hex;
+
+        // Ensure we have 8 characters (RRGGBBAA)
+        // If you only provide 6 (RRGGBB), we'll assume Alpha is 255 (opaque)
+        if (hex.Length == 6) hex += "FF";
+
+        if (hex.Length != 8)
+        {
+            throw new ArgumentException("Hex color must be in RRGGBBAA format.");
+        }
+
+        // Convert hex pairs to bytes
+        byte r = Convert.ToByte(hex.Substring(0, 2), 16);
+        byte g = Convert.ToByte(hex.Substring(2, 2), 16);
+        byte b = Convert.ToByte(hex.Substring(4, 2), 16);
+        byte a = Convert.ToByte(hex.Substring(6, 2), 16);
+
+        return new Color(r, g, b, a);
+    }
+
+
     public static Color32 UI_SelfColor = new Color32(45, 54, 255, 80);
     public static Color32 UI_HostileColor = new Color32(255, 0, 52, 80);
 
@@ -607,6 +631,7 @@ public static class UtilityEX
 
         //Debug.LogError($"Getactornames, |{String.Join(" ", names)}|{String.Join(" ", namesExcept)}| ");
     }
+
 
     /// <summary>
     /// DO NOT CALL THIS

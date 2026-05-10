@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
 
 
 public class PortraitManager
@@ -14,6 +12,21 @@ public class PortraitManager
     public List<CharaPortrait> portraitPriorityList = new List<CharaPortrait>();
 
     public CharaPortrait CharaBanner = null;
+    public string CharaBannerBGColor = "";
+
+    Color _CharaBannerBG;
+    bool colorInit = false;
+    public void SetBGColor(UnityEngine.UI.Image image)
+    {
+        if (image == null) return;
+        if (CharaBannerBGColor == "") return;
+        if (!colorInit)
+        {
+            _CharaBannerBG = UtilityEX.ColorFromHex(CharaBannerBGColor);
+            colorInit = true;
+        }
+        image.color = _CharaBannerBG;
+    }
 
     public string portraitBaseIDOverride = "";
 
@@ -33,11 +46,12 @@ public class PortraitManager
     public void RebuildInternal(Character_Trainable c)
     {
         _owner = c;
-        if (portraitPriorityList != null) foreach (var i in portraitPriorityList) i.Owner = this;
         foreach(var i in this.portraitPriorityList)
         {
             i.RebuildInternal();
+            i.Owner = this;
         }
+        if (this.CharaBanner != null) this.CharaBanner.Owner = this;
     }
     public IEnumerator CacheInternal(Character_Trainable c)
     {
@@ -47,6 +61,11 @@ public class PortraitManager
         foreach (var i in this.portraitPriorityList)
         {
             yield return i.CacheInternal();
+        }
+
+        if (this.CharaBanner != null)
+        {
+            yield return this.CharaBanner.CacheInternal();
         }
     }
 
@@ -124,7 +143,10 @@ public class PortraitManager
             {
                 this.portraitPriorityList.Add(pp.Copy());
             }
+            this.CharaBanner = baseTemplate.Portrait.CharaBanner;
+            this.CharaBannerBGColor = baseTemplate.Portrait.CharaBannerBGColor;
         }
+
 
        // Debug.Log($"Portrait reset, preReset count {i} target template count {baseTemplate.Portrait.portraitPriorityList.Count} final count {this.portraitPriorityList.Count}");
         RebuildInternal(this.Owner);
@@ -202,8 +224,14 @@ public class PortraitManager
 
     public void DrawBanner(scr_CharPortraitBox box)
     {
-        if (this.CharaBanner != null) box.Draw(this.CharaBanner.DrawPortrait(box, this.CharaBanner.PortraitPath(new List<string>())));
-        else DrawNeutralPortrait(box);
+        if (this.CharaBanner != null)
+        {
+            box.Draw(this.CharaBanner.DrawPortrait(box, this.CharaBanner.PortraitPath(new List<string>())));
+        }
+        else
+        {
+
+        }
     }
     protected void DrawNeutralPortrait(scr_CharPortraitBox box)
     {
