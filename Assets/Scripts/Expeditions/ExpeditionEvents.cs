@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using UnityEngine;
 
 [Serializable]
 public class Index_ExpEvents : I_IndexHasID, I_IndexMergeable
@@ -26,11 +27,14 @@ public class Index_ExpEvents : I_IndexHasID, I_IndexMergeable
 
         foreach (ExpEvents o in this.list)
         {
-            // if (o.isValid)
-            ID_Dictionary.TryAdd(o.eventID, o);
+            if (string.IsNullOrEmpty(o.eventID))continue;
+            if (!ID_Dictionary.TryAdd(o.eventID, o)) {
+                Debug.Log($"failed to add Index_ExpEvents id [{o.eventID}] due to duplicate");
+            }else{
             foreach(var result in o.possibleResults)
             {
                 result.teamRequirement.Read(o.teamRequirement);
+            }
             }
         }
     }

@@ -35,9 +35,9 @@ public class Index_Expeditions : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
 
         foreach (Expedition o in this.list)
         {
-            // if (o.isValid)
-            ID_Dictionary.TryAdd(o.ExpeditionID, o);
-            o.Initialize();
+            if (string.IsNullOrEmpty(o.ExpeditionID)) continue;
+            if( !ID_Dictionary.TryAdd(o.ExpeditionID, o)) Debug.Log($"failed to add Index_Expeditions id [{o.ExpeditionID}] due to duplicate");
+            else o.Initialize();
         }
     }
 

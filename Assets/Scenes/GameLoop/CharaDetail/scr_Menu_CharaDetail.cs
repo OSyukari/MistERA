@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -193,6 +194,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         initScript_BasicInfo.InitData(chara);
 
         initScript_BasicInfo.viewExpButton.SetExternalTooltip(String.Join("\n", chara.Skills.ExperiencesToString(false)));
+
+        initScript_BasicInfo.viewKnowledgeButton.SetExternalTooltip(chara.Skills.PrintKnowledges());
 
         foreach (SkillInstance si in chara.Skills.GetSkills(false))
         {
@@ -422,7 +425,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
         bool isdebug = scr_System_CampaignManager.current.DebugMode;
 
-        foreach (var statDerived in chara.Stats.list_statsDerived)
+        foreach (var statDerived in chara.Stats.list_statsDerived.Values.ToList())
         {
             if (!statDerived.Parent.isNSFW) continue;
             if (!statDerived.Parent.isValidStatFor(chara.Stats)) continue;

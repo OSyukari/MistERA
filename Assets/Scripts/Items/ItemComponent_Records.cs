@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 [System.Serializable]
 public class ItemComponentTemplate_Records
 {
+    public string storeItemID = "";
     public KojoRecording records = null;
 }
 
@@ -39,12 +40,20 @@ public class ItemComponent_Records : ItemComponent_Base
         this.parentID = itemBase.ID;
     }
 
+    public override void ReEstablishParent(string parentID, Item_Base parent)
+    {
+        base.ReEstablishParent(parentID, parent);
+        if (this.Records.RecordUID == "") this.Records.RecordUID = parentID;
+    }
+
     public override bool canMergeWith(ItemComponent_Base other)
     {
         if (!(other is ItemComponent_Records)) return false;
         var other2 = other as ItemComponent_Records;
         return base.canMergeWith(other) && this.Records == null && other2.Records == null;
     }
+
+
 
     [JsonIgnore] public override bool Serializable { get { return true; } }
     [JsonIgnore] public override bool Stackable { get { return false; } }
@@ -61,6 +70,13 @@ public class ItemComponent_Records : ItemComponent_Base
         set
         {
             records = value;
+        }
+    }
+    [JsonIgnore] public string storeItemID
+    {
+        get
+        {
+            return CompTemplate.Comp_Records == null ? "" : CompTemplate.Comp_Records.storeItemID;
         }
     }
     public void LoadRecords(KojoRecording recording)

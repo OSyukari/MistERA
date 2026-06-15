@@ -1,5 +1,6 @@
 
 using Newtonsoft.Json;
+using QuikGraph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -178,6 +179,7 @@ public class SkillManager
         this.owner = owner;
         this.ownerRefID = owner.RefID;
         RefreshSkillsList();
+        RefreshKnowledgeInternal();
     }
 
     [JsonProperty] Dictionary<string, SkillInstance> skills = new Dictionary<string, SkillInstance>();
@@ -222,7 +224,14 @@ public class SkillManager
             }
             if (initialLevel != currentLevel)
             {
-                if (messages != null) messages.Add(new Manageable.DailyReportHandler.MiscMessageEntry($"{Owner.CallName}'s {i.DisplayName} upgraded {initialLevel} -> {currentLevel}", msg1));
+                if (messages != null){
+                    var s = LocalizeDictionary.QueryThenParse("ui_management_overview_daily_skill")
+                        .Replace("$name$", Owner.CallName)
+                        .Replace("$skill$", i.DisplayName)
+                        .Replace("$prev$", $"{initialLevel}")
+                        .Replace("$now$", $"{currentLevel}");
+                    messages.Add(new Manageable.DailyReportHandler.MiscMessageEntry(s, msg1));
+                }
                 updated = true;
             }
         }
@@ -308,4 +317,132 @@ public class SkillManager
         return finalmod;
     }
 
+    // KNOWLEDGE
+
+    [JsonProperty] protected Dictionary<string, double> knowledges = new Dictionary<string, double>();
+
+    protected Dictionary<string, Knowledge_Instance> KnowledgeInstances = new Dictionary<string, Knowledge_Instance>();
+
+    public double GetKnowledgeScore(string id)
+    {
+        if (KnowledgeInstances.TryGetValue(id, out var entry)) return entry.Score;
+        else if (knowledges.TryGetValue(id, out var value)) return value;
+        return 0f;
+    }
+
+
+    // knowledge about a specific person? 
+    // add knowledge (list characters)
+
+    // foreach knowledge, add a baseID tracker.
+    // when new relationship added, if baseID match, then transfer that knowledge to target
+    // on rel remove, do the reverse
+
+    // secret should be treated differently.
+
+    /*
+    knowledge dont care who is knowledge holder 
+    knowledge dont be restricted to single relationship since its related to world knowledge
+
+    what about character specific knowledge? is this necessary though?
+    character related knowledge should be in their social tab and character sheet
+    why make redundant info?
+    if its not a secret, then everything is open to public anyway
+
+    knowledge are shared among a lot of ppl so structure would be good
+    since it is standardized, do not allow customization
+     */
+
+    /*
+    Secrets are relative, and important only to the secret holder
+    only secret holder can be threatened with
+
+    secret has special handling
+
+     */
+
+    // secret do care, as only the original holder is 
+
+
+    // generic knowledge?
+
+    Knowledge_Instance GetOrAddKnowledge(string id)
+    {
+        if (KnowledgeInstances.TryGetValue(id, out var entry)) return entry;
+
+        var basekn = scr_System_Serializer.current.MasterList.Knowledges.GetByID(id);
+        if (basekn == null) return null;
+        var knentry = new Knowledge_Instance(basekn, this);
+
+        if (knowledges.TryGetValue(id, out var value))
+        {
+            knentry.Score = value;
+        }
+        else
+        {
+            //knowledges.Add(id, 0);
+        }
+        this.KnowledgeInstances.Add(id, knentry);
+        return knentry;
+    }
+
+    public string PrintKnowledges()
+    {
+        var str = new List<string>();
+        foreach(var i in KnowledgeInstances)
+        {
+            str.Add($"{i.Key} {i.Value.Score}");
+        }
+        return String.Join("\n", str);
+    }
+
+    bool init_knowledge = false;
+    void RefreshKnowledgeInternal()
+    {
+        if (init_knowledge) return;
+        init_knowledge = true;
+        if (knowledges == null) knowledges = new Dictionary<string, double>();
+        foreach (var i in this.knowledges.Keys.ToList())
+        {
+            GetOrAddKnowledge(i);
+        }
+    }
+
+    /// <summary>
+    /// Each topic clamped at 10%
+    /// </summary>
+    /// <returns></returns>
+    public Knowledge_Instance RandomTopicInstance(bool guaranteeTopic = false)
+    {
+        RefreshKnowledgeInternal();
+        var count = KnowledgeInstances.Count;
+        if (count < 1) return null;
+        if (!guaranteeTopic && count < 10 && Utility.Dice(1, 10) > count) return null;
+        else
+        {
+            var kn = Utility.GetRandomElement(KnowledgeInstances);
+            return kn.Value;
+        }
+    }
+
+    public bool AddKnowledgeScore(string id, double score = 1, MessageCollect m = null)
+    {
+        var kn = GetOrAddKnowledge(id);
+        if (kn.AddScore(score))
+        {
+            if (m != null) m.exp.AddStats(Owner.RefID, id, score);
+            return true;
+        }
+        else return false;
+    }
+
+    /// <summary>
+    /// Do not recursion
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="score"></param>
+    public void SetKnowledgeScore(string id, double score)
+    {
+        knowledges[id] = score;
+    }
 }

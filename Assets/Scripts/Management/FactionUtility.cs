@@ -79,7 +79,7 @@ public static class FactionUtility
                         continue;
                     }
                 }
-                if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
+                if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMs))
                 {
                    // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job blacklisted");
                     if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
@@ -175,7 +175,7 @@ public static class FactionUtility
 
             if (!skipPrivate && !post.ParentRoom.isRoomPrivate) skipPrivate = true;
             //post.RefreshValidJobCOMs();
-            if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMIDs))
+            if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMs))
             {
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                 continue;

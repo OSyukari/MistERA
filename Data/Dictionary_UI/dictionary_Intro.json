@@ -96,6 +96,31 @@
                 "char_editor_selectTraitBTN":"<link=\"char_editor_selectTraitBTN_tooltip\">选择特质</link>",
                 "char_editor_selectTraitBTN_tooltip":"%%wip_disabled%%",
 
+                "char_editor_selectTrait_spectrum":"<link=\"char_editor_selectTrait_spectrum_tooltip\">系列特质</link>",
+                "char_editor_selectTrait_spectrum_tooltip":"该类特质中，同类特质只能存在一个（选1）",
+
+                "char_editor_selectTrait_single":"<link=\"char_editor_selectTrait_single_tooltip\">无类别特质</link>",
+                "char_editor_selectTrait_single_tooltip":"该类特质不会与其他特质冲突",
+
+                "char_editor_selectTrait_none":"无",
+
+                "char_editor_selectTrait_STR":"<link=\"char_editor_selectTrait_STR_tooltip\">%%stats_base_Strength%%系特质 - 总属性调整</link>",
+                "char_editor_selectTrait_STR_tooltip":"%%stats_base_Strength_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+                "char_editor_selectTrait_CON":"<link=\"char_editor_selectTrait_CON_tooltip\">%%stats_base_Constitution%%系特质 - 总属性调整</link>",
+                "char_editor_selectTrait_CON_tooltip":"%%stats_base_Constitution_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+                "char_editor_selectTrait_PSY":"<link=\"char_editor_selectTrait_PSY_tooltip\">%%stats_base_Psyche%%系特质 - 总属性调整</link>",
+                "char_editor_selectTrait_PSY_tooltip":"%%stats_base_Psyche_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+                "char_editor_selectTrait_WIL":"<link=\"char_editor_selectTrait_WIL_tooltip\">%%stats_base_Willpower%%系特质 - 总属性调整</link>",
+                "char_editor_selectTrait_WIL_tooltip":"%%stats_base_Willpower_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+
+                "char_editor_selectTrait_Strength_scoreError":"%%stats_base_Strength%%系特质的分数总和不能高于该属性的属性调整（$score$）",
+                "char_editor_selectTrait_Constitution_scoreError":"%%stats_base_Constitution%%系特质的分数总和不能高于该属性的属性调整（$score$）",
+                "char_editor_selectTrait_Psyche_scoreError":"%%stats_base_Psyche%%系特质的分数总和不能高于该属性的属性调整（$score$）",
+                "char_editor_selectTrait_Willpower_scoreError":"%%stats_base_Willpower%%系特质的分数总和不能高于该属性的属性调整（$score$）",
+
+                "char_editor_selectTrait_confirm":"确认并保存",
+                "char_editor_selectTrait_cancel":"取消变更",
+
                 "char_editor_bodydata":"<link=\"char_editor_bodydata_tooltip\">身体数据</link>",
                 "char_editor_bodydata_tooltip":"此处修改角色的身体模板数据。游戏开始后，会根据模板来生成具体的部位\n\n%%ui_tooltip_trait_size%%",
                 "char_editor_sensitivity":"部位感度",

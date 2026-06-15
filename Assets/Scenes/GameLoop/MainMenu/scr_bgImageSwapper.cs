@@ -19,7 +19,12 @@ public class scr_bgImageSwapper : MonoBehaviour
             scr_System_CampaignManager.current.Observer_CurrentRoom += OnRoomChange;
             scr_System_Time.current.Observer_globalTime_Day += OnDailyUpdate;
             OnRoomChange(0, scr_System_CampaignManager.current.CurrentRoom);
+            scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
         }
+    }
+    private void OnHourUpdate(TimeSpan t)
+    {
+        OnRoomChange(0, scr_System_CampaignManager.current.CurrentRoom);
     }
 
     private void OnDailyUpdate(int i)
@@ -36,14 +41,41 @@ public class scr_bgImageSwapper : MonoBehaviour
         if (!this.gameObject.activeInHierarchy) return;
         if (room.Base.roomImagePath != "")
         {
-            lastImagePath = room.Base.roomImagePath;
-            image.color = activeColor;
-            if (co != null)
+            var imagepath = room.Base.roomImagePath;
+
+            if (room.Base.roomImagePath_Inactive != "" && room.FactionOwner is Manageable)
             {
-                StopCoroutine(co);
-                co = null;
+                var faction = room.FactionOwner as Manageable;
+
+                if (faction == null)
+                {
+
+                }
+                else if (room.Base.roomImage_inactive_requireNight && faction.isWorldDay)
+                {
+                    // active
+                }
+                else if (room.Base.roomImage_inactive_requireInactive && faction.IsActiveHour())
+                {
+                    // active
+                }
+                else
+                {
+                    imagepath = room.Base.roomImagePath_Inactive;
+                }
             }
-            co = StartCoroutine(roomchange(room.Base.roomImagePath));
+            
+            if (lastImagePath != imagepath)
+            {
+                lastImagePath = imagepath;
+                image.color = activeColor;
+                if (co != null)
+                {
+                    StopCoroutine(co);
+                    co = null;
+                }
+                co = StartCoroutine(roomchange(imagepath));
+            }
         }
         else
         {

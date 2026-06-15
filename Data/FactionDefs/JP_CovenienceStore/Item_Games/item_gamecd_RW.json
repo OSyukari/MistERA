@@ -1,0 +1,152 @@
+{
+    "Items":{
+        "list":
+        [
+            {
+                "id":"item_gamecd_RW",
+                "displayName":"Rib World",
+                "Tags":["furniture_playVideoGames","videogame","industrial","rarity_common"],
+                "value":4980,
+                    "itemComps_Template":[
+                        {
+                            "compType":"ItemComponent_Knowledges",
+                            "comp_Knowledge":
+                            {
+                                "knowledgeIDs":[
+                                    "knowledge_game_rw"
+                                ],
+                                "knowledgeRatePerMin":0.035
+                            }
+                        }
+                    ]
+            }
+
+        ]
+    },
+    "Knowledges":{
+        "list":[
+            {
+                "baseID":"knowledge_game_rw",
+                "tags":["game","genre_scifi","genre_simulation"],
+                "childrens":[
+                    {
+                        "baseID":"knowledge_game_rw_world",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_rw_world_rimworld" },
+                            { "baseID":"knowledge_game_rw_world_glitterworld" },
+                            { "baseID":"knowledge_game_rw_world_empire" },
+                            { "baseID":"knowledge_game_rw_world_techlevels" },
+                            { "baseID":"knowledge_game_rw_world_archotech" }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_rw_factions",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_rw_factions_tribes" },
+                            { "baseID":"knowledge_game_rw_factions_outlanders" },
+                            { "baseID":"knowledge_game_rw_factions_pirates" },
+                            { "baseID":"knowledge_game_rw_factions_empire" },
+                            { "baseID":"knowledge_game_rw_factions_mechanoids" },
+                            { "baseID":"knowledge_game_rw_factions_insectoids" }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_rw_mechanics",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_rw_mechanics_pawns" },
+                            { "baseID":"knowledge_game_rw_mechanics_research" },
+                            { "baseID":"knowledge_game_rw_mechanics_raids" },
+                            { "baseID":"knowledge_game_rw_mechanics_mood" },
+                            { "baseID":"knowledge_game_rw_mechanics_mentalbreak" },
+                            { "baseID":"knowledge_game_rw_mechanics_trading" }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_rw_storytellers",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            {
+                                "baseID":"knowledge_game_rw_storytellers_cassandra",
+                                "entries":[
+                                    "knowledge_game_rw_storytellers_cassandra_0",
+                                    "knowledge_game_rw_storytellers_cassandra_1"
+                                ]
+                            },
+                            {
+                                "baseID":"knowledge_game_rw_storytellers_randy",
+                                "entries":[
+                                    "knowledge_game_rw_storytellers_randy_0",
+                                    "knowledge_game_rw_storytellers_randy_1"
+                                ]
+                            },
+                            {
+                                "baseID":"knowledge_game_rw_storytellers_phoebe",
+                                "entries":[
+                                    "knowledge_game_rw_storytellers_phoebe_0",
+                                    "knowledge_game_rw_storytellers_phoebe_1"
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "rw_reference":"《肋骨世界》",
+                "item_gamecd_RW":"%%rw_reference%%",
+                "item_gamecd_RW_tooltip":"几个坠毁在星图边缘某颗荒凉星球的幸存者，为了活下去，开始在这里建立殖民地。",
+
+                "knowledge_game_rw":"%%rw_reference%%相关知识",
+
+                "knowledge_game_rw_world":"%%rw_reference%%的世界观",
+                "knowledge_game_rw_world_rimworld":"%%rw_reference%%中的边缘星球",
+                "knowledge_game_rw_world_glitterworld":"%%rw_reference%%中的闪耀世界",
+                "knowledge_game_rw_world_empire":"%%rw_reference%%中的星际帝国",
+                "knowledge_game_rw_world_techlevels":"%%rw_reference%%的技术等级体系",
+                "knowledge_game_rw_world_archotech":"%%rw_reference%%中的远古科技",
+
+                "knowledge_game_rw_factions":"%%rw_reference%%的势力阵营",
+                "knowledge_game_rw_factions_tribes":"%%rw_reference%%中的原始部落",
+                "knowledge_game_rw_factions_outlanders":"%%rw_reference%%中的外域联盟",
+                "knowledge_game_rw_factions_pirates":"%%rw_reference%%中的海盗团伙",
+                "knowledge_game_rw_factions_empire":"%%rw_reference%%中的帝国势力",
+                "knowledge_game_rw_factions_mechanoids":"%%rw_reference%%中的机械体",
+                "knowledge_game_rw_factions_insectoids":"%%rw_reference%%中的虫类",
+
+                "knowledge_game_rw_mechanics":"%%rw_reference%%的游戏机制",
+                "knowledge_game_rw_mechanics_pawns":"%%rw_reference%%的棋子系统",
+                "knowledge_game_rw_mechanics_research":"%%rw_reference%%的科技研究树",
+                "knowledge_game_rw_mechanics_raids":"%%rw_reference%%的袭击事件",
+                "knowledge_game_rw_mechanics_mood":"%%rw_reference%%的心情系统",
+                "knowledge_game_rw_mechanics_mentalbreak":"%%rw_reference%%的精神崩溃",
+                "knowledge_game_rw_mechanics_trading":"%%rw_reference%%的贸易与商队",
+
+                "knowledge_game_rw_storytellers":"%%rw_reference%%的AI叙事者",
+                "knowledge_game_rw_storytellers_cassandra":"%%rw_reference%%的卡珊德拉·经典",
+                "knowledge_game_rw_storytellers_cassandra_0":"好日子不会永远持续。",
+                "knowledge_game_rw_storytellers_cassandra_1":"再撑一撑。让我看看你是什么料子。",
+                "knowledge_game_rw_storytellers_randy":"%%rw_reference%%的兰迪·随机",
+                "knowledge_game_rw_storytellers_randy_0":"哈。哈哈哈。",
+                "knowledge_game_rw_storytellers_randy_1":"我只是想看看这样做会发生什么……",
+                "knowledge_game_rw_storytellers_phoebe":"%%rw_reference%%的菲比·悠哉",
+                "knowledge_game_rw_storytellers_phoebe_0":"放轻松，好好休息。你赢得了这片宁静。",
+                "knowledge_game_rw_storytellers_phoebe_1":"……直到你再也没法放轻松为止。"
+            },
+            "en-us":
+            {
+                "item_gamecd_RW":"Rib World",
+                "item_gamecd_RW_tooltip":"Crash survivors on a forgotten planet at the edge of the star charts, building a colony just to stay alive.",
+                "knowledge_game_rw":"Knowledge on \"Rib World\""
+            }
+        }
+    }
+}

@@ -55,7 +55,8 @@
                         "furnitureIDs":["furniture_sofa_3","furniture_sofa_3", "furniture_sofa_3",
                                         "furniture_round_table_4","furniture_round_table_4",
                                         "furniture_TV_flatscreen" ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_RestingLounge.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_RestingLounge.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_RestingLounge_Night.jpg"
                     },
                     {
                         "ID":"bridge_captainsoffice",
@@ -98,7 +99,8 @@
                         "displayName":"map_hallway",
                         "offsetX":206.0,
                         "offsetY":-376.0,
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"bridge_hallway2",
@@ -107,7 +109,8 @@
                         "offsetY":-376.0,
                         "connects":
                         [ { "ID":"bridge_hallway1"  , "cost":1.0  }],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     }
                 ]
             },
@@ -152,7 +155,8 @@
                             "furniture_cafe_table_2","furniture_cafe_table_2","furniture_cafe_table_2","furniture_round_table_4","furniture_round_table_4",
                             "furniture_dining_table_10","furniture_piano","furniture_marker_getmeal"
                         ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_SchoolCafeteria.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_SchoolCafeteria.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_SchoolCafeteria_Night.jpg"
                     },
                     {
                         "ID":"lounge2_multiuseroom",
@@ -162,7 +166,8 @@
                         [ { "ID":"lounge2_hallway3", "cost":1.0 }, { "ID":"lounge2_hallway4", "cost":1.0 } ],
                         "furnitureIDs":["furniture_TV_flatscreen"],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_Auditorium.jpg",
-                        "activityState":"DayOnly"
+                        "activityState":"DayOnly",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_Auditorium_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite1",
@@ -175,7 +180,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite2",
@@ -188,7 +194,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite3",
@@ -201,7 +208,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite4",
@@ -214,7 +222,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite5",
@@ -227,7 +236,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite6",
@@ -240,7 +250,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite7",
@@ -253,7 +264,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_singlesuite8",
@@ -266,7 +278,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_bathroom_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_SR_1",
@@ -279,7 +292,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
                     },
                     {
                         "ID":"lounge2_SR_2",
@@ -292,7 +306,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
                     },
                     {
                         "ID":"lounge2_SR_3",
@@ -305,7 +320,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
                     },
                     {
                         "ID":"lounge2_SR_4",
@@ -318,7 +334,8 @@
                         [   "furniture_bed_single",
                             "furniture_shower",
                             "furniture_toilet_shower_set","furniture_table_1_chair_1"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_StudentRoom.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_StudentRoom_Night.jpg"
                     },
                     {
                         "ID":"lounge2_exec_suite_1",
@@ -331,7 +348,8 @@
                         "furniture_round_table_4","furniture_sofa_1","furniture_sofa_1",
                         "furniture_stove","furniture_shower","furniture_bathroom_set","furniture_bathtub",
                                         "furniture_TV_flatscreen"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_exec_suite_2",
@@ -344,7 +362,8 @@
                         "furniture_round_table_4","furniture_sofa_1","furniture_sofa_1",
                         "furniture_stove","furniture_shower","furniture_bathroom_set","furniture_bathtub",
                                         "furniture_TV_flatscreen"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_exec_suite_3",
@@ -356,7 +375,8 @@
                         "furnitureIDs":["furniture_bed_single",
                                     "furniture_shower","furniture_bathroom_set",
                                 "furniture_table_1_chair_1","furniture_stove"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_exec_suite_4",
@@ -368,7 +388,8 @@
                         "furnitureIDs":["furniture_bed_single",
                                     "furniture_shower","furniture_bathroom_set",
                                 "furniture_table_1_chair_1","furniture_stove"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LuxuriousRooms.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LuxuriousRooms_Night.jpg"
                     },
                     {
                         "ID":"lounge2_SR_5",
@@ -389,7 +410,8 @@
                         [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
                         "furnitureIDs":["furniture_bed_single_bunk","furniture_bathroom_set","furniture_shower"
                     ,"furniture_stove"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_Dormitory.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Dormitory.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_Dormitory_Night.jpg"
                     },
                     {
                         "ID":"lounge2_housekeeping1",
@@ -438,14 +460,16 @@
                         "connects": 
                         [ { "ID":"lounge2_dining", "cost":1.0 } ],
                         "furnitureIDs":["furniture_galley"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_Kitchen.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Kitchen.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_Kitchen_Night.jpg"
                     },
                     {
                         "ID":"lounge2_hallway1",
                         "displayName":"map_hallway",
                         "offsetX":-211,
                         "offsetY":207,
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"lounge2_hallway2",
@@ -455,7 +479,8 @@
                         "connects": 
                         [ { "ID":"lounge2_hallway1", "cost":1.0 },
                         { "ID":"lounge2_hallway4", "cost":1.0 } ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"lounge2_hallway3",
@@ -464,7 +489,8 @@
                         "offsetY":-205,
                         "connects": 
                         [ { "ID":"lounge2_hallway1", "cost":1.0 } ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"lounge2_hallway4",
@@ -473,7 +499,8 @@
                         "offsetY":-205,
                         "connects": 
                         [ { "ID":"lounge2_hallway3", "cost":1.0 } ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     }
                 ]
             },
@@ -501,7 +528,8 @@
                         "offsetY":206,
                         "furnitureIDs":["furniture_hydroponics","furniture_hydroponics",
                         "furniture_hydroponics","furniture_hydroponics","furniture_hydroponics"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LemonForest.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LemonForest.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LemonForest_Night.jpg"
                     },
                     {
                         "ID":"hydroponics_hallway1",
@@ -509,7 +537,8 @@
                         "offsetY":-207,
                         "connects": 
                         [ { "ID":"hydroponics_hydroponics", "cost":1.0  } ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"hydroponics_storage1",
@@ -536,7 +565,7 @@
                         "connects":
                         [ { "ID":"hydroponics_hallway1", "cost":1.0  } ],
                         "furnitureIDs":["furniture_workbench_engineering"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_Hangar.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Hangar2.jpg"
                     },
                     {
                         "ID":"hydroponics_carniculture_production",
@@ -548,7 +577,8 @@
                         "furnitureIDs":["furniture_carniculture_pod","furniture_carniculture_pod"
                                     ,"furniture_carniculture_pod","furniture_carniculture_pod"
                                     ,"furniture_carniculture_pod","furniture_carniculture_pod"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LemonForest.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LemonForest.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LemonForest_Night.jpg"
                     },
                     {
                         "ID":"hydroponics_carniculture_office",
@@ -559,7 +589,8 @@
                         [ { "ID":"hydroponics_carniculture_production", "cost":1.0  } ],
                         "furnitureIDs":["furniture_computer_terminal","furniture_computer_terminal",
                             "furniture_computer_terminal","furniture_dining_table_10","furniture_round_table_4"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_ValkyrieOffice2.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_ValkyrieOffice2.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_ValkyrieOffice2_Night.jpg"
                     },
                     {
                         "ID":"hydroponics_carniculture_labs",

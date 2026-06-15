@@ -12,6 +12,19 @@ public class QuestionBoxCollector : I_Records
     public List<string> displayTagsOverride = new List<string>();
     public bool autoAnimate = false;
 
+
+    public bool IsRelevantActor(int i)
+    {
+        return relevantActors.Contains(i);
+    }
+    [JsonIgnore]
+    public bool IsSingleActor
+    {
+        get
+        {
+            return relevantActors.Count == 1;
+        }
+    }
     [JsonIgnore]
     public bool isValid
     {
@@ -116,6 +129,10 @@ public class QuestionBoxCollector : I_Records
     public bool DirectlyRelated(Character_Trainable c)
     {
         return c == null || this.relevantActors.Count < 1 || this.relevantActors.Contains(c.RefID);
+    }
+    public bool DirectlyRelated(int c)
+    {
+        return this.relevantActors.Count < 1 || this.relevantActors.Contains(c);
     }
 
 

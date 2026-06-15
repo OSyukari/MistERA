@@ -281,8 +281,11 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
                         removelist2.Add(t);
                         continue;
                     }
-                    ID_Dictionary2.Add(t.ID, t);
-                    added = true;
+                    if (!string.IsNullOrEmpty(t.ID))
+                    {
+                        if (!ID_Dictionary2.TryAdd(t.ID, t)) Debug.Log($"failed to add Traits_Group_Index trait id [{t.ID}] due to duplicate");
+                        else added = true;
+                    }
                 }
                 foreach (var oo in removelist2) s.entries.Remove(oo);
                 if (!added)
@@ -290,7 +293,10 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
                     removelist.Add(s);
                     continue;
                 }
-                ID_Dictionary1.Add(s.ID, s);
+                if (!string.IsNullOrEmpty(s.ID))
+                {
+                    if (!ID_Dictionary1.TryAdd(s.ID, s)) Debug.Log($"failed to add Traits_Group_Index group id [{s.ID}] due to duplicate");
+                }
 
             }
             foreach (var oo in removelist) o.Remove(oo);

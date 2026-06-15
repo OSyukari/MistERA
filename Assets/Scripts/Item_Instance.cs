@@ -198,6 +198,19 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
             return _records;
         }
     }
+    ItemComponent_Knowledges _knowledge = null;
+    [JsonIgnore]
+    public ItemComponent_Knowledges Comp_Knowledge
+    {
+        get
+        {
+            if (_knowledge == null)
+            {
+                _knowledge = GetComp("ItemComponent_Knowledges") as ItemComponent_Knowledges;
+            }
+            return _knowledge;
+        }
+    }
     public ItemComponent_Base GetComp(string name)
     {
         return this.Comps.Find(x=>x.CompType == name);

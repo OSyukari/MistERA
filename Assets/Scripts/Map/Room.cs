@@ -636,6 +636,23 @@ public class Room_Instance: IDisposable, I_Disposable
         activityStateOverride = state;
     }
 
+    public bool IsCurrentlyActive()
+    {
+        var currentHour = scr_System_Time.current.getCurrentTime().Hour;
+        var state = ActivityState;
+        if (state == RoomActivityState.AlwaysActive) return true;
+
+        var manageable = FactionOwner as Manageable;
+        if (manageable == null || manageable.IsAlwaysActive) return true;
+
+        switch (state)
+        {
+            case RoomActivityState.DayOnly: return manageable.IsActiveHour(currentHour);
+            case RoomActivityState.NightOnly: return !manageable.IsActiveHour(currentHour);
+            default: return true;
+        }
+    }
+
     public bool IsCurrentlyActive(int currentHour)
     {
         var state = ActivityState;

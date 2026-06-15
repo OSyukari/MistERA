@@ -233,16 +233,13 @@ public class Job : IDisposable, I_Disposable
             foreach(var i in allusableCOMs) if(!names.Contains(i.DisplayName())) names.Add(i.DisplayName());
             return names;
         } }
-    [JsonIgnore]
-    public List<string> allusableCOMIDs
+
+    public bool allusableCOM_Contains(string id)
     {
-        get
-        {
-            List<string> ids = new List<string>();
-            foreach (var i in allusableCOMs) if (!ids.Contains(i.ID)) ids.Add(i.ID);
-            return ids;
-        }
+        foreach (var i in allusableCOMs) if (i.ID == id) return true;
+        return false;
     }
+
     // doer go to receiver
     // receiver is character or is item ?
     // doer and receiver can be null

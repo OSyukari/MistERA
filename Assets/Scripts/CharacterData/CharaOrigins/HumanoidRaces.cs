@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Newtonsoft.Json;
 using UnityEngine;
-using static UnityEngine.UI.Image;
 
 [System.Serializable]
 public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
@@ -28,7 +24,11 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
     {
         a.Add("Humanoid_Race_Index : registering ID with list length [" + list.Count + "]");
         var ids = new Dictionary<string, Humanoid_Race>();
-        foreach (var i in list) ids.Add(i.ID, i);
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ids.TryAdd(i.ID, i)) Debug.Log($"failed to add Humanoid_Race_Index id [{i.ID}] due to duplicate");
+        }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race>(ids);
     }
 
@@ -98,7 +98,11 @@ public class Humanoid_RaceTemplate_Index : I_IndexHasID, I_IndexMergeable
     {
         messages.Add("Humanoid_RaceTemplate_Index : registering ID with list length [" + list.Count + "]");
         var ids = new Dictionary<string, Humanoid_RaceTemplate>();
-        foreach (var i in list) ids.Add(i.ID, i);
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ids.TryAdd(i.ID, i)) Debug.Log($"failed to add Humanoid_RaceTemplate_Index id [{i.ID}] due to duplicate");
+        }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_RaceTemplate>(ids);
     }
 

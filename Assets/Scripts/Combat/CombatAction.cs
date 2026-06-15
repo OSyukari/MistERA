@@ -30,15 +30,16 @@ public class Index_CombatActions : I_IndexHasID, I_IndexMergeable
 
         foreach (CombatAction o in this.list)
         {
-           // if (o.isValid)
+            if (string.IsNullOrEmpty(o.ID)) continue;
            if (!ID_Dictionary.TryAdd(o.ID, o))
             {
                 Debug.LogError($"duplicate combataction ID {o.ID}");
 
-            }
-
+            }else{
             // add missing tags
             if (o.Movement != 0 || o.Evasion != 0) o.tags.Add("movement");
+            }
+
         }
         // purge identical
         list = ID_Dictionary.Values.ToList();

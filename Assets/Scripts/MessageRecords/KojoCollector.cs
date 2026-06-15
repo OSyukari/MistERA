@@ -8,6 +8,18 @@ using static ActionPackageRecords;
 public class KojoCollector : I_ResultStorage, I_Records
 {
 
+    public bool IsRelevantActor(int i)
+    {
+        return relevantActorRefs.Contains(i);
+    }
+    [JsonIgnore]
+    public bool IsSingleActor
+    {
+        get
+        {
+            return relevantActorRefs.Count == 1;
+        }
+    }
     [JsonIgnore] public bool isrecording = false;
     [JsonIgnore] public bool isRecording { get { return isrecording; } }
     public VisibilityLevel Visibility = VisibilityLevel.Roomwide;

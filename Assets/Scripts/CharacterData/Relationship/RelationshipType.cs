@@ -371,7 +371,11 @@ public class Index_RelationshipTypes : I_IndexHasID, I_IndexMergeable
         s.Add("Index_Status : registering ID with list length bio[" + list_biological.Count + "] personal[" + list_personal.Count + "] social[" + list_social.Count + "]");
 
         var ids = new Dictionary<string, RelationshipType>();
-        foreach (var i in List) ids.Add(i.ID, i);
+        foreach (var i in List)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ids.TryAdd(i.ID, i)) Debug.Log($"failed to add Index_RelationshipTypes id [{i.ID}] due to duplicate");
+        }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, RelationshipType>(ids);
     }
 

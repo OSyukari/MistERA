@@ -24,7 +24,7 @@ public class initScript_ManagementOverview : MonoBehaviour
     }
 
     public RectTransform messageRect;
-    public scr_HoverableText report_managementResult, report_tradeResults, report_currentlyOutsideFaction;
+    public scr_HoverableText report_managementResult, report_tradeResults, report_productionResults, report_currentlyOutsideFaction;
     public scr_HoverableText prefab_miscMessageButton;
 
     Manageable m;
@@ -155,7 +155,9 @@ public class initScript_ManagementOverview : MonoBehaviour
             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
             if (room != null && !m.ManagedRooms.ContainsKey(room.RefID))
             {
-                popCountTooltip.Add($"{c.FirstName} is at {room.DisplayName}({room.FactionOwner.FactionDisplayName})");
+                popCountTooltip.Add(LocalizeDictionary.QueryThenParse("ui_management_overview_external")
+                    .Replace("$name$",c.FirstName)
+                    .Replace("$location$", $"{room.DisplayName}({room.FactionOwner.FactionDisplayName})" ));
                 popCount += 1;
             }
         }
@@ -163,8 +165,6 @@ public class initScript_ManagementOverview : MonoBehaviour
         report_currentlyOutsideFaction.SetExternalTooltip(String.Join("\n", popCountTooltip));
 
         // meal hours
-
-
         var mealnames = new List<string>();
         if (m.isPlayerFaction)
         {
@@ -189,6 +189,11 @@ public class initScript_ManagementOverview : MonoBehaviour
         }
 
         mealHours.SetText(String.Join("     ", mealnames));
+
+        report_productionResults.SetText(LocalizeDictionary.QueryThenParse("ui_management_overview_dailyProduction")
+            .Replace("$count$", $"{m.DailyReport.productionLogs.Count}"));
+        report_productionResults.SetExternalTooltip(String.Join("\n", m.DailyReport.productionLogs));
+
 
         //foreach (KeyValuePair<string, int> kvp in targetFaction.GetMaintenanceCost_Total) values.Add(kvp.Key + kvp.Value.ToString("+0;-#"));
         factionResource.text = factionRes.Replace("$resources$", String.Join(" | ", values));  // targetFaction.GetMaintenanceCost_Total

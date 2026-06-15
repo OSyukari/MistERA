@@ -1,0 +1,99 @@
+{
+    "COMs": {
+        "list": [
+            {
+                "ID": "com_recording_edit",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_recording_edit_displayName_1",
+                "timeScale": 5,
+                "comTags": [
+                    "furniture", "computer"
+                ],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": {
+                            "cost_EN": 2
+                        }
+                    },
+                    "requireRoomExisting":{
+                        "requireNotRecording":true
+                    }
+                },
+                "GenerateAP": {
+                    "itemTag": "item_records",
+                    "targetAPClass":{
+                        "$type": "ActionPackage_ItemUse_RecordEditing, Assembly-CSharp"
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_recording_edit_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 9
+                            }
+                        },
+                        "displayName": "com_recording_edit_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 5
+                },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin": { "Entries":[  { "keepLooking":true, "texts": [  "com_recording_edit_displayName_begin_1" ] } ] },
+                "description_ongoing":{ "Entries":[ { "texts":["com_recording_edit_displayName_ongoing_1"]}], "keepLooking":false }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                
+"com_recording_edit_displayName_1":"编辑录像",
+"com_recording_edit_displayName_2":"一起编辑录像",
+"com_recording_edit_displayName_begin_1":"$doer.firstname$开始编辑录像",
+"com_recording_edit_displayName_ongoing_1":"$doer.firstname$正在编辑录像",
+
+"com_recording_edit_displayName_1_EXTEND":"编辑录像：$name$",
+"com_recording_edit_displayName_2_EXTEND":"一起编辑录像：$name$",
+
+"com_recording_edit_displayName_variant_begin_1":"$doer.firstname$开始编辑$name$录像",
+"com_recording_edit_displayName_variant_ongoing_1":"$doer.firstname$正在编辑$name$录像",
+         
+"recording_edit_canvas_title":"编辑录像：",
+"recording_edit_canvas_preview":"录像内容浏览",
+"recording_edit_canvas_edit_title":"可编辑选项",
+"recording_edit_canvas_confirm":"保存编辑",
+"recording_edit_canvas_export":"存入新录像",
+"recording_edit_canvas_abort":"放弃编辑",
+"recording_edit_canvas_resetAllfilters":"重置变更",
+
+"recording_edit_canvas_actor_originalName":"演员：$name$",
+"recording_edit_canvas_actor_nameOverwrite":"<link=\"recording_edit_canvas_actor_nameOverwrite_tooltip\">饰演：</link>",
+"recording_edit_canvas_actor_nameOverwrite_tooltip":"可变更角色名",
+"recording_edit_canvas_actor_filterAP":"删除行动记录",
+"recording_edit_canvas_actor_filterMSG":"删除消息记录",
+"recording_edit_canvas_actor_filter_only":"...仅与该角色相关",
+"recording_edit_canvas_actor_filter_include":"...所有与该角色相关"
+
+
+
+            },
+            "en-us":
+            {
+
+            }
+        }
+    }
+}

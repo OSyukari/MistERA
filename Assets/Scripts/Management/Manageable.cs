@@ -136,6 +136,21 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonIgnore] public bool HasDayNight { get { return !IsAlwaysActive; } }
 
     public bool IsActiveHour(int hour) => IsAlwaysActive || ActiveHoursCache.Contains(hour);
+    public bool IsActiveHour()
+    {
+        if (IsAlwaysActive) return true;
+        return ActiveHoursCache.Contains(scr_System_Time.current.getCurrentTime().Hour);
+    }
+
+    [JsonIgnore] public bool isWorldDay
+    {
+        get
+        {
+            var hour = scr_System_Time.current.getCurrentTime().Hour;
+            return hour >= 6 && hour < 19;
+        }
+    }
+
 
     [JsonIgnore] public int DayStartHour => HasDayNight ? activeHoursStart : 0;
     [JsonIgnore] public int DayEndHour => HasDayNight ? activeHoursEnd : 0;
@@ -2123,6 +2138,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 Item_Instance item = WorldManager.Instantiate(Recipe.outputItemBaseID,"", Recipe.outputAmount);
                 //Debug.Log("before add");
                 targetInventory.AddItem(item);
+
+                if (item != null && FactionOwner != null && FactionOwner.isPlayerFaction)
+                {
+                    FactionOwner.DailyReport.AddCraftRecord(item.DisplayName, item.Count);
+                    foreach(var del in deleteItems)
+                    {
+                        FactionOwner.DailyReport.AddCraftRecord(del.DisplayName, -del.Count);
+                    }
+                }
             }
         }
 
@@ -2226,13 +2250,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
     protected bool CheckDailyResourceConsumption(List<string> debug = null)
     {
         bool returnValue = true;
+        Dictionary<string, int> consumedTokens = new Dictionary<string, int>();
+        List<string> consumeMessage = new List<string>();
         DailyCharaMaintenance.Clear();
         foreach (KeyValuePair<string, int> kvp in GetMaintenanceCost_Chara(true))
         {
             List<Item_Instance> extraConsume = new List<Item_Instance>();
-            List<string> consumeMessage = new List<string>();
 
-            var itemConsume = Inventory.TickTokenItem(kvp.Key, kvp.Value);
+            var itemConsume = Inventory.TickTokenItem(kvp.Key, kvp.Value, consumedTokens);
             if (itemConsume < 0 && Inventory.RemoveItemByTag(kvp.Key, -itemConsume, ref extraConsume, ref consumeMessage)) itemConsume = 0;
             DailyCharaMaintenance.Add(new Tuple<string, int>(kvp.Key, itemConsume));
             //GetMaintenanceCost_Chara[kvp.Key] = Inventory.TickTokenItem(kvp.Key, kvp.Value);
@@ -2240,16 +2265,29 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (itemConsume < 0)
             {
                 returnValue = false;
-                DailyReport.AddManageReport("insufficient resource " + kvp.Key, true);
+                DailyReport.AddManageReport(LocalizeDictionary.QueryThenParse("ui_management_overview_daily_failure")
+                        .Replace("$name$", LocalizeDictionary.QueryThenParse(kvp.Key)) ,true);
                // if (debug != null) debug.Add("insufficient resource " + kvp.Key);
             }
             if (extraConsume.Count > 0) scr_System_CampaignManager.current.Recycler.AddItem(extraConsume);
-            if (consumeMessage.Count > 0) DailyReport.AddManageReport($"Consumed resources: {String.Join("\n", consumeMessage)}");
+
         }
+
+        foreach (var i in consumedTokens)
+        {
+            consumeMessage.Add($"{i.Key} x{i.Value}");
+        }
+
+        string finalstr = LocalizeDictionary.QueryThenParse("ui_management_overview_dailyconsume")
+            .Replace("$daily$", String.Join("\n", consumeMessage))
+            .Replace("$production$", "none");
+
+        if (consumeMessage.Count > 0) DailyReport.AddManageReport(finalstr);
+        consumedTokens.Clear();
 
         charaRegisteredForResourceConsumption.Clear();
 
-        if (returnValue) DailyReport.AddManageReport("all resources sufficient");
+        DailyReport.AddManageReport($"");
         return returnValue;
     }
 
@@ -2536,6 +2574,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         public bool manageError = false;
         public List<string> manageLogs = new List<string>();
+        public List<string> productionLogs = new List<string>();
 
         public List<MiscMessageEntry> miscMessages = new List<MiscMessageEntry>();
         public class MiscMessageEntry
@@ -2557,6 +2596,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
             this.miscMessages.Add(m);
         }
 
+        public Dictionary<string, int> craftRegistry = new Dictionary<string, int>();
+
+        public void AddCraftRecord(string itemID, int count)
+        {
+            if (craftRegistry.ContainsKey(itemID)) craftRegistry[itemID] += count;
+            else craftRegistry.Add(itemID, count);
+        }
+
         public void AddManageReport(string s, bool isError = false)
         {
             this.manageLogs.Add(isError? Utility.WrapTextColor( s, scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color): s );
@@ -2565,7 +2612,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         public void FinalizeReport()
         {
-            foreach(var entry in tradeRegistry) if(entry.Value != 0) tradeLogs.Add(entry.Key + entry.Value.ToString("+0;-#"));
+            foreach(var entry in tradeRegistry) if(entry.Value != 0) tradeLogs.Add($"{LocalizeDictionary.QueryThenParse(entry.Key)} {entry.Value.ToString("+0;-#")}");
+
+            foreach(var entry in craftRegistry) if (entry.Value != 0) productionLogs.Add($"{LocalizeDictionary.QueryThenParse(entry.Key)} {entry.Value.ToString("+0;-#")}");
+            craftRegistry.Clear();
         }
 
         [JsonIgnore] public string msg_manageSuccess = "";

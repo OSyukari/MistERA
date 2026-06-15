@@ -106,6 +106,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable
             //return jobpost == null ? null : jobpost.getRandCOM; 
         } }
 
+
+
+
     /// <summary>
     /// If self is player, check all packages in job and find if has active <br/>
     /// For NPC, since their AI is limited to work on job only when schedules says so, use schedule and match currentjob commands;

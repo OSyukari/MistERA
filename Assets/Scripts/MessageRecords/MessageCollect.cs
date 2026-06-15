@@ -1,9 +1,9 @@
 
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Newtonsoft.Json;
 
 public enum MessageCollect_Type
 {
@@ -37,6 +37,22 @@ public class MessageCollect
     public bool sendRecording = true;
     public bool displayOverride = false;
     
+    public void PurgeEntry(I_Records rec)
+    {
+        messages_checks.Remove(rec);
+        messages_before.Remove(rec);
+        messages_after.Remove(rec);
+
+        messages_kojo.Remove(rec as KojoCollector);
+        messages_exp.Remove(rec);
+        messages_kojo_after.Remove(rec as KojoCollector);
+
+        foreach (var ap in this.apRecords)
+        {
+            ap.mcol.PurgeEntry(rec);
+        }
+    }
+
     [JsonProperty] protected List<I_Records> messages_checks = new List<I_Records>();
     [JsonProperty] protected List<I_Records> messages_before = new List<I_Records>();
     [JsonProperty] protected List<I_Records> messages_after = new List<I_Records>();
@@ -57,8 +73,8 @@ public class MessageCollect
         foreach (var m in messages_kojo) m.ReadActorRecord(recTable);
         foreach (var m in messages_exp) m.ReadActorRecord(recTable);
         foreach (var m in messages_kojo_after) m.ReadActorRecord(recTable);
-
-        foreach(var ap in this.apRecords) { ap.ReadActorRecord(recTable); }
+        foreach(var ap in this.apRecords)  ap.ReadActorRecord(recTable); 
+        
     }
     /// <summary>
     /// message loadactor and ap loadactor behaves differently, beware!
@@ -120,6 +136,16 @@ public class MessageCollect
         this.messages_after.Add(desc);
         if (recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.after);
     }
+
+    [JsonIgnore]
+    public bool hasMessageChecks
+    {
+        get
+        {
+            return this.messages_checks.Count > 0;
+        }
+    }
+
     public void AddMessage_Checks(I_Records desc, Room_Instance recording = null)
     {
         if (desc is DescriptionCollector)
@@ -194,7 +220,8 @@ public class MessageCollect
     }
 
     public Dictionary<string, string> replaceStrings = new Dictionary<string, string>();
-    public void AddReplaceString(string old, string news)
+    
+    void AddReplaceString(string old, string news)
     {
         if (!replaceStrings.ContainsKey(old)) replaceStrings.Add(old, news);
     }
@@ -206,7 +233,7 @@ public class MessageCollect
             if (name != rec.Value.firstNameOriginal) AddReplaceString(rec.Value.firstNameOriginal, name);
         }
     }
-    public void AddReplaceString(Dictionary<string, string> records)
+    void AddReplaceString(Dictionary<string, string> records)
     {
         if (records == null) return;
         foreach (var rec in records)
@@ -247,6 +274,23 @@ public class MessageCollect
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true));
         // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
         Clear();
+    }
+
+    public void FlushCollectedLogsIntoUI(DateTime timestamp, canvas_videoEdit canvas, Dictionary<string, string> replaceStrings, ActionPackageRecords sourceAP = null)
+    {
+        foreach (var check in messages_checks) canvas.ParseEntry(check, this, timestamp, replaceStrings, sourceAP, sourceAP == null || sourceAP.RecordBox == null ? null : sourceAP.RecordBox.titles);
+        foreach (var msg in messages_before) canvas.ParseEntry(msg, this, timestamp, replaceStrings, sourceAP);
+        foreach (var kvp in messages_kojo) canvas.ParseEntry(kvp, this, timestamp, replaceStrings, sourceAP);
+
+        foreach (var msg in messages_exp) canvas.ParseEntry(msg, this, timestamp, replaceStrings, sourceAP);
+        foreach (var kvp in messages_kojo_after) canvas.ParseEntry(kvp, this, timestamp, replaceStrings, sourceAP);
+        foreach (var msg in messages_after) canvas.ParseEntry(msg, this, timestamp, replaceStrings, sourceAP);
+    
+        foreach(var ap in apRecords)
+        {
+            canvas.RegisterAPRecord(ap);
+            if (ap.mcol != null) ap.mcol.FlushCollectedLogsIntoUI(timestamp, canvas, replaceStrings, ap);
+        }
     }
 
 

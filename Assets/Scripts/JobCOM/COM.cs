@@ -64,9 +64,8 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
         messages.Add("Index_COM : registering ID with list length [" + list.Count + "]");
         foreach (COM s in list)
         {
-            //Debug.Log("serializing com id "+s.ID);
-            if (ID_Dictionary.ContainsKey(s.ID)) ID_Dictionary[s.ID] = s;
-            else ID_Dictionary.Add(s.ID, s);
+            if (string.IsNullOrEmpty(s.ID)) continue;
+            if (!ID_Dictionary.TryAdd(s.ID, s)) Debug.Log($"failed to add Index_COM id [{s.ID}] due to duplicate");
         }
 
     }
@@ -291,6 +290,8 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         childCOMs.Add(child);
         childCOMs = Utility.Distinct(childCOMs);
     }
+
+    public bool hidden = false;
 
     [JsonIgnore] public bool isHiddenChild = false;
     [JsonIgnore] public bool isHiddenParent
@@ -1247,7 +1248,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         return "";
     }
 
-
+    public string fallbackCOMID = "";
     public string ActionPackageClass = "";
     /// <summary>
     /// This is not called by Furniture.
@@ -1282,6 +1283,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                     returnValue = new ActionPackage_Interaction(job, this, doers, receivers, masterRef);
                 }
                 else returnValue = new ActionPackage_ProductionOrder(pOrder, jFurn, this, doers, receivers, masterRef);
+                break;
+            case "ActionPackage_Talk":
+                returnValue = new ActionPackage_Talk(job, this, doers, receivers, masterRef);
                 break;
             default:
                 break;

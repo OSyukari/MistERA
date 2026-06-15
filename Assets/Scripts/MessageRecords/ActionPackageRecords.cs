@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -77,6 +78,21 @@ public class ActorRecord
 }
 public class ActionPackageRecords
 {
+    [JsonIgnore] public scr_actionHolder RecordBox = null;
+    bool disable = false;
+    [JsonIgnore] public bool Disable
+    {
+        get
+        {
+            return disable;
+        }
+        set
+        {
+            disable = value;
+            if (RecordBox != null) RecordBox.Activate = !value;
+        }
+    }
+
     public AP_Status internalState = AP_Status.none;
     public List<ActorRecord> Doers = new List<ActorRecord>();
     public List<ActorRecord> Receivers = new List<ActorRecord>();
@@ -102,6 +118,23 @@ public class ActionPackageRecords
         if (this.mcol != null) this.mcol.ReadActorRecord(recTable);
     }
 
+    public bool hasActor(int i)
+    {
+        foreach (var c in Doers) if (c.refID == i) return true;
+        foreach (var c in Receivers) if (c.refID == i) return true;
+        if (Master != null && Master.refID == i) return true;
+        return false;
+    }
+    public bool isSingleActor()
+    {
+        int ii = 0;
+        ii += Doers.Count;
+        ii += Receivers.Count;
+        if (Master != null) ii += 1;
+        return ii == 1;
+    }
+
+
     public void RecordActor(Dictionary<int, ActorRecord> recTable)
     {
         foreach (var c in Doers) RecordActorSingle(c, recTable);
@@ -119,8 +152,20 @@ public class ActionPackageRecords
             rec.Count += 1;
             return;
         }
+
+        if (aprec.baseID != "")
+        {
+            foreach(var entry in recTable)
+            {
+                if (entry.Value.baseID == aprec.baseID)
+                {
+                    entry.Value.Count += 1;
+                    return;
+                }
+            }
+        }
         aprec.Count += 1;
-        recTable.Add(aprec.refID, aprec);
+        recTable.Add(aprec.refID == -1 ? aprec.baseID.GetHashCode() : aprec.refID, aprec);
        // Debug.Log($"adding element to recTable {aprec.Name}");
     }
 

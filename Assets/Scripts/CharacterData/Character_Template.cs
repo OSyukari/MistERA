@@ -22,8 +22,8 @@ public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, 
 
         foreach (var o in this.list)
         {
-            // if (o.isValid)
-            ID_Dictionary.TryAdd(o.baseID, o);
+            if (string.IsNullOrEmpty(o.baseID)) continue;
+            if (!ID_Dictionary.TryAdd(o.baseID, o)) Debug.Log($"failed to add Character_Trainable_SerializableTemplate_Index id [{o.baseID}] due to duplicate");
         }
 
     }

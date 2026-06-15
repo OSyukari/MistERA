@@ -15,8 +15,8 @@ public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, 
 
         foreach (var o in this.list)
         {
-            //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            ID_Dictionary.Add(o.ID, o);
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_CharaRelationshipAttitudes id [{o.ID}] due to duplicate");
         }
     }
 

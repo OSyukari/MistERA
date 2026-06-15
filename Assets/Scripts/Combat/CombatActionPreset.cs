@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine;
 
 [System.Serializable]
 public class Index_CombatActionPresets : I_IndexHasID, I_IndexMergeable
@@ -27,7 +28,8 @@ public class Index_CombatActionPresets : I_IndexHasID, I_IndexMergeable
 
         foreach (CombatActionPreset o in this.list)
         {
-             ID_Dictionary.TryAdd(o.ID, o);
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_CombatActionPresets id [{o.ID}] due to duplicate");
         }
     }
 }

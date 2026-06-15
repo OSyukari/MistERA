@@ -243,14 +243,11 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         gender.text = $"<link=tooltip_GenderAppearance_{c.Template.Appearance.ToString()}>{LocalizeDictionary.QueryThenParse($"GenderAppearance_{c.Template.Appearance.ToString()}")}</link>";
 
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_STR, true, "STR Traits", "stats_base_Strength_tooltip");
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_STR_SEX, false);
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_CON, true, "CON Traits", "stats_base_Constitution_tooltip");
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_CON_SEX, false);
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_PSY, true, "PSY Traits", "stats_base_Psyche_tooltip");
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_PSY_SEX, false);
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_WIL, true, "WIL Traits", "stats_base_Willpower_tooltip");
-        PopulateTraits_Spectrum_GroupListByType( TraitBox_left, TraitBox_middle, TraitBox_right, scr_System_Serializer.current.index_TraitsAll.traits_WIL_SEX, false);
+        PopulateTraits_Spectrum_GroupListByType( TraitBox_middle, scr_System_Serializer.current.index_TraitsAll.traits_STR, Character.Stats.Strength,  "char_editor_selectTrait_STR", scr_System_Serializer.current.index_TraitsAll.traits_STR_SEX);
+        PopulateTraits_Spectrum_GroupListByType( TraitBox_middle,  scr_System_Serializer.current.index_TraitsAll.traits_CON, Character.Stats.Constitution,  "char_editor_selectTrait_CON", scr_System_Serializer.current.index_TraitsAll.traits_CON_SEX);
+        PopulateTraits_Spectrum_GroupListByType( TraitBox_middle,  scr_System_Serializer.current.index_TraitsAll.traits_PSY, Character.Stats.Psyche,  "char_editor_selectTrait_PSY", scr_System_Serializer.current.index_TraitsAll.traits_PSY_SEX);
+        PopulateTraits_Spectrum_GroupListByType( TraitBox_middle,  scr_System_Serializer.current.index_TraitsAll.traits_WIL, Character.Stats.Willpower,  "char_editor_selectTrait_WIL", scr_System_Serializer.current.index_TraitsAll.traits_WIL_SEX);
+
         // 3 link to rect left, rect middle, rect right
         // assign dynamic ID
 
@@ -317,15 +314,9 @@ public class scr_Canvas_CharacterEditor : scr_Menu
     /// Traits block
     /// </summary>
 
-    public RectTransform TraitBox_left;
     public RectTransform TraitBox_middle;
-    public RectTransform TraitBox_right;
-    public RectTransform prefab_TraitboxHeader;
-    public RectTransform prefab_TraitboxBody;
     public RectTransform prefab_TraitText;
     public RectTransform prefab_TraitLinkText;
-    public RectTransform prefab_TraitButtonLeftRight;
-    public RectTransform prefab_TraitButtonLinkText;
     public RectTransform prefab_TraitButtonBox;
 
     public RectTransform TraitBox_Single;
@@ -366,6 +357,8 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         else Traits_getTraitbyID.Add(id, trait);
     }
 
+    public scr_SelectableText prefab_trait_single;
+
     private void PopulateTraits_Single(RectTransform parent)
     {
         foreach (List<scr_Traits_Group> list in scr_System_Serializer.current.index_TraitsAll.traits_All)
@@ -377,16 +370,12 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                     foreach(Traits entry in group.entries)
                     {
 
-                        RectTransform buttonBox = Instantiate(prefab_TraitButtonLeftRight);
-                        buttonBox.SetParent(parent, false);
-
-                        scr_SelectableText comp = buttonBox.GetComponent<scr_SelectableText>();
+                        scr_SelectableText comp = Instantiate(prefab_trait_single);
+                        comp.SelfRect.SetParent(parent, false);
                         comp.optionID = GetTraitID;
                         ButtonValidator_selectTrait_Single validator = new ButtonValidator_selectTrait_Single(this, comp.optionID, entry);
-                        comp.linkText = entry.ID;
+                        comp.linkText = entry.TooltipID;
                         comp.isButtonToggle = true;
-
-
 
                         comp.Initialize(this, validator);
                         comp.SetText(entry.displayname);
@@ -406,42 +395,47 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             }
         }
     }
-    private void PopulateTraits_Spectrum_GroupListByType(RectTransform boxLeft, RectTransform boxMiddle, RectTransform boxRight, List<scr_Traits_Group> typeGroup, bool newHeader, string displayText = "", string hoverID = "")
+
+
+    private void PopulateTraits_Spectrum_GroupListByType(RectTransform boxMiddle,  List<scr_Traits_Group> typeGroup,  Stats_Base basestat, string displayText,List<scr_Traits_Group> typeGroup2 = null)
     {
         // text prefab
         // text link prefab
         // text button prefab
 
+        var groupBox = Instantiate(prefab_traitclass);
+        groupBox.selfRect.SetParent(boxMiddle, false);
+        groupBox.title.SetText(LocalizeDictionary.QueryThenParse( displayText), false);
 
-        if (newHeader)
-        {
-            RectTransform header = Instantiate(prefab_TraitboxHeader);
-            header.SetParent(boxLeft, false);
-            header.GetComponent<scr_HoverableText>().SetText(displayText, false, hoverID);
-
-            RectTransform empty1 = Instantiate(prefab_TraitText);
-            empty1.SetParent(boxMiddle, false);
-            empty1.GetComponent<TMP_Text>().text = " ";
-
-            RectTransform empty2 = Instantiate(prefab_TraitText);
-            empty2.SetParent(boxRight, false);
-            empty2.GetComponent<TMP_Text>().text = " ";
-        }
-
-        RectTransform groupBox = Instantiate(prefab_TraitboxBody);
-        groupBox.SetParent(boxLeft, false);
+        groupBox.basestat = basestat;
+        trackedBoxes.Add(groupBox);
 
         foreach (scr_Traits_Group group in typeGroup)
         {
             //Debug.Log("Trait group ["+group.groupName+ "] listtype [" + group.sortTypeString + "]");
             if (group.SortType == Trait_Group_Type.SortedList || group.SortType == Trait_Group_Type.UnsortedList)
             {
-                PopulateTraits_Spectrum_GroupList(groupBox, boxMiddle, boxRight, group);
+                PopulateTraits_Spectrum_GroupList(groupBox.body, group);
+            }
+        }
+
+        if (typeGroup2 != null)
+        {
+            foreach (scr_Traits_Group group in typeGroup2)
+            {
+                //Debug.Log("Trait group ["+group.groupName+ "] listtype [" + group.sortTypeString + "]");
+                if (group.SortType == Trait_Group_Type.SortedList || group.SortType == Trait_Group_Type.UnsortedList)
+                {
+                    PopulateTraits_Spectrum_GroupList(groupBox.body, group);
+                }
             }
         }
     }
 
-    private void PopulateTraits_Spectrum_GroupList(RectTransform boxLeft, RectTransform boxMiddle, RectTransform boxRight, scr_Traits_Group group)
+    public scr_trait_spectrum prefab_trait_spectrum;
+    public scr_traitclass prefab_traitclass;
+
+    private void PopulateTraits_Spectrum_GroupList(RectTransform boxMiddle, scr_Traits_Group group)
     {
         Traits trait = null;
         foreach (Traits t in group.entries)
@@ -457,36 +451,17 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             return;
         }
 
-        RectTransform name = Instantiate(prefab_TraitLinkText);
-        name.SetParent(boxLeft, false);
-        name.GetComponent<scr_HoverableText>().SetText(group.displayName, false, group.ID);
+        var box = Instantiate(prefab_trait_spectrum);
+        box.selfRect.SetParent(boxMiddle, false);
 
-        RectTransform number = Instantiate(prefab_TraitText);
-        number.SetParent(boxRight, false);
-        number.GetComponent<TMP_Text>().text = "+0";
+        box.traitMod.text = trait.trait_score.ToString("+0;-#");
+        box.centerText.SetText(trait.displayname, false, trait.TooltipID);
 
-        RectTransform buttonBox = Instantiate(prefab_TraitButtonBox);
-        buttonBox.SetParent(boxMiddle, false);
-
-        RectTransform left = Instantiate(prefab_TraitButtonLeftRight);
-        left.SetParent(buttonBox, false);
-
-        RectTransform middle = Instantiate(prefab_TraitButtonLinkText);
-        middle.SetParent(buttonBox, false);
-
-        RectTransform right = Instantiate(prefab_TraitButtonLeftRight);
-        right.SetParent(buttonBox, false);
-
-
-
-        middle.GetComponent<scr_HoverableText>().SetText(trait.displayname, false, trait.ID);
-
-        scr_SelectableText button_left = left.GetComponent<scr_SelectableText>();
+        var button_left = box.leftBTN;
         button_left.optionID = GetTraitID;
-        ButtonValidator_selectTrait_left_ordered validator_left = new ButtonValidator_selectTrait_left_ordered(this, button_left.optionID, ref number, ref middle);
+        ButtonValidator_selectTrait_ordered validator_left = new ButtonValidator_selectTrait_ordered(this, button_left.optionID, box, true);
         button_left.Initialize(this, validator_left);
         button_left.SetText("<");
-        button_left.GetComponent<RectTransform>().SetParent(buttonBox, false);
 
         buttonsByID.Add(button_left.optionID, button_left);
         validatorsByID.Add(button_left.optionID, validator_left);
@@ -494,35 +469,16 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         button_left.Validate();
 
 
-        scr_SelectableText button_right = right.GetComponent<scr_SelectableText>();
+        var button_right = box.rightBTN;
         button_right.optionID = GetTraitID;
-        ButtonValidator_selectTrait_right_ordered validator_right = new ButtonValidator_selectTrait_right_ordered(this, button_right.optionID, ref number, ref middle);
+        ButtonValidator_selectTrait_ordered validator_right = new ButtonValidator_selectTrait_ordered(this, button_right.optionID, box, false);
         button_right.Initialize(this, validator_right);
         button_right.SetText(">");
-        button_right.GetComponent<RectTransform>().SetParent(buttonBox, false);
 
         buttonsByID.Add(button_right.optionID, button_right);
         validatorsByID.Add(button_right.optionID, validator_right);
         Traits_AddTraitsbyID(button_right.optionID, trait);
         button_right.Validate();
-
-
-
-        
-        
-
-        /*
-        scr_SelectableText button_right = Instantiate(prefab_TraitButtonLeftRight).GetComponent<scr_SelectableText>();
-        button_right.optionID = IDList + 0;
-        button_right.Initialize(this, validator_right);
-        button_right.SetText(">");
-        button_right.GetComponent<RectTransform>().SetParent(buttonBox);
-        IDList += 1;
-
-        buttonsByID.Add(button_right.optionID, button_right);
-
-        validatorsByID.Add(button_right.optionID, validator_right);
-        */
     }
 
     /// <summary>
@@ -760,12 +716,18 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         c.MiddleName = input_middlename.text;
         c.LastName = input_lastname.text;
 
+        c.Template.stat_STR = c.Stats.Strength.BaseValue;
+        c.Template.stat_CON = c.Stats.Constitution.BaseValue;
+        c.Template.stat_PSY = c.Stats.Psyche.BaseValue;
+        c.Template.stat_WIL = c.Stats.Willpower.BaseValue;
+
         c.Stats.ResetTrait();
-        // save traitlist into Character.traits
-        foreach (Traits t in Traits_getTraitbyID.Values)
+
+        foreach (var trait in Traits_getTraitbyID.Values)
         {
-            c.Stats.AddTrait(t);
+            c.Template.traits.Add(trait.ID);
         }
+
         c.Stats.RefreshTraits();
     }
 
@@ -776,23 +738,27 @@ public class scr_Canvas_CharacterEditor : scr_Menu
     }
 
     public RectTransform panel_TraitsLeft;
-    public TMP_Text prefab_panel_TraitsLeft_Single;
+    public RectTransform panel_TraitsLeft_first;
     public void RebuildTraitsLeft()
     {
         // https://stackoverflow.com/questions/46358717/how-to-loop-through-and-destroy-all-children-of-a-game-object-in-unity
-        while (panel_TraitsLeft.transform.childCount > 0)
-        {
-            DestroyImmediate(panel_TraitsLeft.transform.GetChild(0).gameObject);
-        }
+
+        Utility.DestroyAllChildrenFrom(panel_TraitsLeft, 1);
+
+        bool hastrait = false;
+
         foreach(Traits t in Traits_getTraitbyID.Values)
         {
             if (t.isDisplayable)
             {
-                TMP_Text a = Instantiate(prefab_panel_TraitsLeft_Single);
-                a.text = "<link=" + t.ID + ">" + t.displayname + "</link>";
-                a.transform.SetParent(panel_TraitsLeft.transform);
+                hastrait = true;
+                var a = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
+                a.SetText(t.displayname, false, t.TooltipID);
+                a.transform.SetParent(panel_TraitsLeft.transform, false);
             }
         }
+
+        panel_TraitsLeft_first.gameObject.SetActive(!hastrait);
 
     }
 
@@ -880,7 +846,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         mod_psy.text = (Character.Stats.Psyche.GetStatMod()).ToString("+0;-#");
         mod_will.text = (Character.Stats.Willpower.GetStatMod()).ToString("+0;-#");
 
-        
+        foreach (var i in trackedBoxes) i.UpdateScore();
 
         RefreshTraitText(sensitivity_a, Character.Template.Sensitivity_A);
         RefreshTraitText(sensitivity_b, Character.Template.Sensitivity_B);
@@ -895,6 +861,8 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         
         RefreshAllSkills();
     }
+
+    List<scr_traitclass> trackedBoxes = new List<scr_traitclass>();
 
     protected void RefreshTraitText(scr_HoverableText box, Traits data)
     {
@@ -1151,7 +1119,6 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()    // always valid
         {
-            return false;
             if (this.parent.panel_TraitSelect.gameObject.activeSelf == true)
             {
                 btn.Toggle(true, true);
@@ -1171,9 +1138,9 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             //        case 146:   //select sex trait
             parent.panel_TraitSelect.gameObject.SetActive(true);
         }
-
-
     }
+
+
 
     /// <summary>
     /// ////////////////
@@ -1400,102 +1367,27 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         }
     }
 
-    class ButtonValidator_selectTrait_left_ordered : ButtonValidator, I_ButtonClickable
+    class ButtonValidator_selectTrait_ordered : ButtonValidator, I_ButtonClickable
     {
         protected new scr_Canvas_CharacterEditor parent;
         private Traits trait;
         private int buttonID;
-        protected TMP_Text number;
-        protected scr_HoverableText name;
-        public ButtonValidator_selectTrait_left_ordered(scr_Menu parent, int buttonID, ref RectTransform number, ref RectTransform name) : base(parent)
+        scr_trait_spectrum box;
+        bool isLeft = false;
+        public ButtonValidator_selectTrait_ordered(scr_Menu parent, int buttonID, scr_trait_spectrum box, bool isLeft) : base(parent)
         {
             this.parent = parent as scr_Canvas_CharacterEditor;
             this.buttonID = buttonID;
-            this.number = number.GetComponent<TMP_Text>();
-            this.name = name.GetComponent<scr_HoverableText>();
+            this.box = box;
+            this.isLeft = isLeft;
         }
 
         Trait_Type A, B;
         int statMod, totalScore;
         public override bool IsButtonValid()
         {
-            bool result = (parent.Traits_GetTraitByID(buttonID).GetPreviousInGroup() != null);
-            //if (result == false) return result;
 
-            if (result != false)
-            {
-                this.state = ButtonValidator_States.Valid;
-                this.tooltip = "";
-            }
-
-            Trait_Type current = parent.Traits_GetTraitByID(buttonID).type;
-            switch (current)
-            {
-                case Trait_Type.Strength:
-                case Trait_Type.Sexual_Strength:
-                    statMod = parent.Character.Stats.Strength.GetStatMod();
-                    A = Trait_Type.Strength;
-                    B = Trait_Type.Sexual_Strength;
-                    break;
-                case Trait_Type.Constitution:
-                case Trait_Type.Sexual_Constitution:
-                    statMod = parent.Character.Stats.Constitution.GetStatMod();
-                    A = Trait_Type.Constitution;
-                    B = Trait_Type.Sexual_Constitution;
-                    break;
-                case Trait_Type.Psyche:
-                case Trait_Type.Sexual_Psyche:
-                    statMod = parent.Character.Stats.Psyche.GetStatMod();
-                    A = Trait_Type.Psyche;
-                    B = Trait_Type.Sexual_Psyche;
-                    break;
-                case Trait_Type.Willpower:
-                case Trait_Type.Sexual_Willpower:
-                    statMod = parent.Character.Stats.Willpower.GetStatMod();
-                    A = Trait_Type.Willpower;
-                    B = Trait_Type.Sexual_Willpower;
-                    break;
-                default:
-                    break;
-            }
-            totalScore = 0;
-            foreach (Traits t in parent.Traits_getTraitbyID.Values) if (t.type == A || t.type == B) totalScore += t.trait_score;
-            if (statMod < totalScore)
-            {
-                if (result != false) this.state = ButtonValidator_States.Conflict;
-                tooltip += "conflict message buttonID ["+this.buttonID+ "] currentTrait [" + parent.Traits_GetTraitByID(buttonID).displayname + "] current [" + current.ToString() + "] A.type [" + A.ToString() + "] B.type [" + B.ToString() + "] statscore [" + statMod + "] totalscore [" + totalScore + "]";
-            }
-            return result;
-        }
-
-        public void OnClickButton()
-        {
-            trait = parent.Traits_GetTraitByID(buttonID).GetPreviousInGroup();
-            parent.Traits_SetTraitByID(buttonID, trait);
-            number.text = trait.trait_score.ToString("+0;-#");
-            name.SetText(trait.displayname, false, trait.ID);
-        }
-    }
-    class ButtonValidator_selectTrait_right_ordered : ButtonValidator, I_ButtonClickable
-    {
-        protected new scr_Canvas_CharacterEditor parent;
-        private Traits trait;
-        private int buttonID;
-        protected TMP_Text number;
-        protected scr_HoverableText name;
-        public ButtonValidator_selectTrait_right_ordered(scr_Menu parent, int buttonID, ref RectTransform number, ref RectTransform name) : base(parent)
-        {
-            this.parent = parent as scr_Canvas_CharacterEditor;
-            this.buttonID = buttonID;
-            this.number = number.GetComponent<TMP_Text>();
-            this.name = name.GetComponent<scr_HoverableText>();
-        }
-
-        Trait_Type A, B;
-        int statMod, totalScore;
-        public override bool IsButtonValid()
-        {
-            bool result = (parent.Traits_GetTraitByID(buttonID).GetNextInGroup() != null);
+            bool result = isLeft ? parent.Traits_GetTraitByID(buttonID).GetPreviousInGroup() != null : parent.Traits_GetTraitByID(buttonID).GetNextInGroup() != null;
             //if (result == false) return result;
 
             if (result != false)
@@ -1540,6 +1432,9 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             {
                 if (result != false) this.state = ButtonValidator_States.Conflict;
                 //tooltip += "conflict message buttonID [" + this.buttonID + "] currentTrait [" + parent.Traits_GetTraitByID(buttonID).displayname + "] current [" + current.ToString() + "] A.type [" + A.ToString() + "] B.type [" + B.ToString() + "] statscore [" + statMod + "] totalscore [" + totalScore + "]";
+
+                tooltip += LocalizeDictionary.QueryThenParse($"char_editor_selectTrait_{A}_scoreError").Replace("$score$", $"{statMod.ToString("+0;-#")}");
+                
                 tooltip += "trait score in [" + A.ToString() + "] must be equal or smaller than corresponding stat modifier " + statMod;
                 parent.GetButton_TraitsConfirm.NotifyConflict(tooltip);
             }
@@ -1548,10 +1443,18 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public void OnClickButton()
         {
-            trait = parent.Traits_GetTraitByID(buttonID).GetNextInGroup();
+            if (isLeft)
+            {
+                trait = parent.Traits_GetTraitByID(buttonID).GetPreviousInGroup();
+            }
+            else
+            {
+                trait = parent.Traits_GetTraitByID(buttonID).GetNextInGroup();
+            }
+
             parent.Traits_SetTraitByID(buttonID, trait);
-            number.text = trait.trait_score.ToString("+0;-#");
-            name.SetText(trait.displayname, false, trait.ID);
+            box.traitMod.text = trait.trait_score.ToString("+0;-#");
+            box.centerText.SetText(trait.displayname, false, trait.TooltipID);
         }
     }
 

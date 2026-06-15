@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
@@ -53,7 +54,13 @@ public class scr_Menu_CharaSelect : scr_Menu
     {
         if (!initialized) Initialize();
 
-       // Debug.Log("RefreshPresets! Listing All Validators [" + String.Join("|", validatorsByID.Keys) + "]");
+        // Debug.Log("RefreshPresets! Listing All Validators [" + String.Join("|", validatorsByID.Keys) + "]");
+
+        var list = new List<Character_SerializableBase>(dictionary_presets.Keys.ToList());
+        foreach(var ii in list)
+        {
+            UnloadButton(ii);
+        }
 
         foreach(var preset in scr_System_Serializer.current.MasterList.Character_Bases.baseCharacters)
         {
@@ -161,6 +168,16 @@ public class scr_Menu_CharaSelect : scr_Menu
     public void DeleteChara(Character_SerializableBase baseID)
     {
         if (!dictionary_presets.ContainsKey(baseID)) return;
+
+        UnloadButton(baseID);
+
+        scr_System_Serializer.current.MasterList.Character_Bases.DeleteChara(baseID);
+
+        File.Delete($"{scr_System_Serializer.PresetPath}/{baseID.baseID}");
+    }
+
+    void UnloadButton(Character_SerializableBase baseID)
+    {
         var target = dictionary_presets[baseID];
         dictionary_presets.Remove(baseID);
 
@@ -175,10 +192,6 @@ public class scr_Menu_CharaSelect : scr_Menu
 
         target.gameObject.SetActive(false);
         Destroy(target.gameObject);
-
-        scr_System_Serializer.current.MasterList.Character_Bases.DeleteChara(baseID);
-
-        File.Delete($"{scr_System_Serializer.PresetPath}/{baseID.baseID}");
     }
 
 

@@ -16,9 +16,8 @@ public class FindJobNodeRoot_Index : I_IndexHasID, I_IndexMergeable, I_RemoveEle
 
         foreach (var o in this.list)
         {
-            //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            if (!ID_Dictionary.ContainsKey(o.ID)) ID_Dictionary[o.ID] = o;
-            else Debug.LogError($"error registering personality {o.ID} failed");
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"error registering personality {o.ID} failed");
         }
     }
     public void MergeWith(I_IndexMergeable list)

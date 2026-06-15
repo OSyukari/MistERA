@@ -56,7 +56,11 @@ public class Character_Origin_Index : I_IndexHasID, I_NeedLateInitialize, I_Inde
         message.Add("Character_Origin_Index : registering ID with list length [" + list.Count + "]");
 
         var ids = new Dictionary<string, Character_Origin>();
-        foreach (var i in list) ids.Add(i.ID, i);
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ids.TryAdd(i.ID, i)) Debug.Log($"failed to add Character_Origin_Index id [{i.ID}] due to duplicate");
+        }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Character_Origin>(ids);
     }
 
@@ -132,7 +136,11 @@ public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexMergea
     {
         s.Add("Character_Origin_startingOption_Index : registering ID with list length [" + list.Count + "]");
         var ids = new Dictionary<string, Character_Origin_startingOption>();
-        foreach (var i in list) ids.Add(i.ID, i);
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ids.TryAdd(i.ID, i)) Debug.Log($"failed to add Character_Origin_startingOption_Index id [{i.ID}] due to duplicate");
+        }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Character_Origin_startingOption>(ids);
     }
 

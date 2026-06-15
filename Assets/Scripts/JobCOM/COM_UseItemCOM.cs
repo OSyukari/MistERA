@@ -18,6 +18,8 @@ public class COM_UseItemCOM : COM
         }
     }
 
+    [JsonIgnore]
+    public Item_Base InnerItem { get { return targetItem; } }
 
     public override void InitializeChildCOM(COM baseCOM, Item_Base item)
     {

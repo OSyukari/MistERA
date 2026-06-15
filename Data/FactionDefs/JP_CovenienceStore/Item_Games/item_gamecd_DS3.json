@@ -1,0 +1,143 @@
+{
+    "Items":{
+        "list":
+        [
+            {
+                "id":"item_gamecd_DS3",
+                "displayName":"Deep Soul 3",
+                "Tags":["furniture_playVideoGames","videogame","industrial","rarity_common"],
+                "value":2980,
+                    "itemComps_Template":[
+                        {
+                            "compType":"ItemComponent_Knowledges",
+                            "comp_Knowledge":
+                            {
+                                "knowledgeIDs":[
+                                    "knowledge_game_DS3"
+                                ],
+                                "knowledgeRatePerMin":0.035
+                            }
+                        }
+                    ]
+            }
+
+        ]
+    },
+    "Knowledges":{
+        "list":[
+            {
+                "baseID":"knowledge_game_DS3",
+                "tags":["game","genre_fantasy","genre_action","genre_rpg"],
+                "childrens":[
+                    {
+                        "baseID":"knowledge_game_DS3_world",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_DS3_world_lothric" },
+                            { "baseID":"knowledge_game_DS3_world_undead_curse" },
+                            { "baseID":"knowledge_game_DS3_world_age_of_fire" },
+                            { "baseID":"knowledge_game_DS3_world_ringed_city" },
+                            { "baseID":"knowledge_game_DS3_world_painted_world" }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_DS3_mechanics",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_DS3_mechanics_estus" },
+                            { "baseID":"knowledge_game_DS3_mechanics_bonfire" },
+                            { "baseID":"knowledge_game_DS3_mechanics_weaponart" },
+                            { "baseID":"knowledge_game_DS3_mechanics_hollow" },
+                            { "baseID":"knowledge_game_DS3_mechanics_invade" }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_DS3_characters",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_DS3_characters_ashen_one" },
+                            {
+                                "baseID":"knowledge_game_DS3_characters_firekeeper",
+                                "entries":[
+                                    "knowledge_game_DS3_characters_firekeeper_0",
+                                    "knowledge_game_DS3_characters_firekeeper_1",
+                                    "knowledge_game_DS3_characters_firekeeper_2",
+                                    "knowledge_game_DS3_characters_firekeeper_3"
+                                ]
+                            },
+                            { "baseID":"knowledge_game_DS3_characters_sulyvahn" },
+                            { "baseID":"knowledge_game_DS3_characters_gael" },
+                            { "baseID":"knowledge_game_DS3_characters_siegward" },
+                            { "baseID":"knowledge_game_DS3_characters_patches" },
+                            { "baseID":"knowledge_game_DS3_characters_greirat" }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_DS3_bosses",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_DS3_bosses_abyss_watchers" },
+                            { "baseID":"knowledge_game_DS3_bosses_yhorm" },
+                            { "baseID":"knowledge_game_DS3_bosses_aldrich" },
+                            { "baseID":"knowledge_game_DS3_bosses_twin_princes" },
+                            { "baseID":"knowledge_game_DS3_bosses_soul_of_cinder" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "ds3_reference":"《深邃之魂3》",
+                "item_gamecd_DS3":"%%ds3_reference%%",
+                "item_gamecd_DS3_tooltip":"所有的火焰终将熄灭。灰烬，不会燃烧。",
+                "knowledge_game_DS3":"%%ds3_reference%%相关知识",
+
+                "knowledge_game_DS3_world":"%%ds3_reference%%的世界观",
+                "knowledge_game_DS3_world_lothric":"%%ds3_reference%%的洛斯里克王国",
+                "knowledge_game_DS3_world_undead_curse":"%%ds3_reference%%的不死诅咒",
+                "knowledge_game_DS3_world_age_of_fire":"%%ds3_reference%%的火的时代",
+                "knowledge_game_DS3_world_ringed_city":"%%ds3_reference%%的环形城市",
+                "knowledge_game_DS3_world_painted_world":"%%ds3_reference%%中阿里安德尔的绘画世界",
+
+                "knowledge_game_DS3_mechanics":"%%ds3_reference%%的游戏机制",
+                "knowledge_game_DS3_mechanics_estus":"%%ds3_reference%%的发光瓶",
+                "knowledge_game_DS3_mechanics_bonfire":"%%ds3_reference%%的篝火",
+                "knowledge_game_DS3_mechanics_weaponart":"%%ds3_reference%%的战技",
+                "knowledge_game_DS3_mechanics_hollow":"%%ds3_reference%%的空洞化",
+                "knowledge_game_DS3_mechanics_invade":"%%ds3_reference%%的入侵与协助系统",
+
+                "knowledge_game_DS3_characters":"%%ds3_reference%%的角色",
+                "knowledge_game_DS3_characters_ashen_one":"%%ds3_reference%%的灰烬者",
+                "knowledge_game_DS3_characters_firekeeper":"%%ds3_reference%%的火守女",
+                "knowledge_game_DS3_characters_firekeeper_0":"Ashen one, hearest thou my voice, still?",
+                "knowledge_game_DS3_characters_firekeeper_1":"I tend to the flame, and tend to thee.",
+                "knowledge_game_DS3_characters_firekeeper_2":"Are you in search of your lord's remain?",
+                "knowledge_game_DS3_characters_firekeeper_3":"One day, tiny sprites will dance around a bonfire.",
+                "knowledge_game_DS3_characters_sulyvahn":"%%ds3_reference%%的苏利瓦恩主教",
+                "knowledge_game_DS3_characters_gael":"%%ds3_reference%%的奴隶骑士盖尔",
+                "knowledge_game_DS3_characters_siegward":"%%ds3_reference%%的卡塔利娜的齐格瓦德",
+                "knowledge_game_DS3_characters_patches":"%%ds3_reference%%的帕奇斯",
+                "knowledge_game_DS3_characters_greirat":"%%ds3_reference%%的小偷格雷拉特",
+
+                "knowledge_game_DS3_bosses":"%%ds3_reference%%的首领",
+                "knowledge_game_DS3_bosses_abyss_watchers":"%%ds3_reference%%中的深渊监视者",
+                "knowledge_game_DS3_bosses_yhorm":"%%ds3_reference%%中的巨人约姆",
+                "knowledge_game_DS3_bosses_aldrich":"%%ds3_reference%%中的奥尔德里奇",
+                "knowledge_game_DS3_bosses_twin_princes":"%%ds3_reference%%中的洛斯里克双王子",
+                "knowledge_game_DS3_bosses_soul_of_cinder":"%%ds3_reference%%中的灰烬之魂"
+            },
+            "en-us":
+            {
+                "item_gamecd_DS3":"Deep Soul 3",
+                "item_gamecd_DS3_tooltip":"All flames shall fade. Ashes do not burn.",
+                "knowledge_game_DS3":"Knowledge on \"Deep Soul 3\""
+            }
+        }
+    }
+}

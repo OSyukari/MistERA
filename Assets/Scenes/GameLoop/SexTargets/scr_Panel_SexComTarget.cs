@@ -155,9 +155,8 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room && sexJob == null && scr_System_CampaignManager.current.CurrentTarget != null)
+        if (child.gameObject.activeInHierarchy && scr_System_CampaignManager.current.CurrentTarget != null)
         {
-            //Debug.Log("click!");
             scr_System_CampaignManager.current.NotifyCurrentTargetClick();//.PortraitManager.ActivityClick();
         }
     }

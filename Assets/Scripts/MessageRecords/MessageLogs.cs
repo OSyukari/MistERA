@@ -246,6 +246,8 @@ public class Message_Text : MessageLog
         this.tooltip = tooltip;
     }
 
+
+
     public Message_Text(MessageCollect_KojoEntry m, bool ra, string tooltip, Dictionary<string, string> replaceStrings = null)
     {
         var chara = scr_System_CampaignManager.current.FindInstanceByID(m.PortraitRefID);
@@ -364,7 +366,7 @@ public class Message_Text : MessageLog
     List<string> msg = new List<string>();
     protected scr_HoverableText prefab_LogLine;
 
-    public bool animateAllOverride = false;
+    [JsonIgnore] public bool animateAllOverride = false;
 
     public override void Animate()
     {

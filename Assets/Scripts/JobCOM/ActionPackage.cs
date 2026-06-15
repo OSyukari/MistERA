@@ -472,7 +472,7 @@ public abstract class ActionPackage
 
     public string nameOverwrite = "";
 
-     protected string DescriptionText(bool isDoer, int charaRef, bool withRoomName = false)
+    protected string DescriptionText(bool isDoer, int charaRef, bool withRoomName = false)
     {
         if (targetCOM == null || COMVariantID < 0) return "";
 
@@ -1207,6 +1207,7 @@ public abstract class ActionPackage
         return s;
     }
 
+    [JsonProperty] protected Dictionary<string, string> keyReplaceDictionary = new Dictionary<string, string>();
 
 
     protected virtual void PackageTick(MessageCollect m = null)
@@ -1584,6 +1585,7 @@ public abstract class ActionPackage
             desc.message_excludeRelated = targetCOM.variants[COMVariantID].GetDescription_OnComplete(targetCOM, this);
             UtilityEX.StringReplace(this, ref desc.message_excludeRelated);
             desc.message_excludeRelated = targetCOM.Replace(desc.message_excludeRelated);
+            desc.message_excludeRelated = keyReplace(desc.message_excludeRelated);
             if (desc.message.Length < 1)
             {
                 //Debug.LogError("logcheckresult null defaulting");
@@ -2138,8 +2140,24 @@ public abstract class ActionPackage
                     }
                 }
             }
+
         }
 
+        if (targetCOM is COM_UseItemCOM && (targetCOM as COM_UseItemCOM).InnerItem != null)
+        {
+            var item = (targetCOM as COM_UseItemCOM).InnerItem;
+            if (item != null && this.job.FactionOwner != null && this.job.FactionOwner.Inventory != null)
+            {
+                var itemInstance = this.job.FactionOwner.Inventory.GetItem(item.ID);
+                if (itemInstance != null)
+                {
+                    foreach (var actor in this.Actors)
+                    {
+                        UseItem(executeSuccessful, actor, itemInstance, m);
+                    }
+                }
+            }
+        }
         if (targetCOM != null && targetCOM.ExitJobOnExecution)
         {
             var skipRef = job is Job_CharaCOM ? (job as Job_CharaCOM).targetActorRef : -1;
@@ -2159,6 +2177,37 @@ public abstract class ActionPackage
 
         LogMessage_Climax();
         LogMessage_After();
+    }
+
+    protected void UseItem(bool success, Character_Trainable c, Item_Instance item, MessageCollect m = null)
+    {
+        if (c == null || item == null) return;
+        if (item.Comp_Knowledge != null && targetCOM != null)
+        {
+            Debug.Log($"useItem called on {c.FirstName} with {item.DisplayName} with kn entries [{String.Join(" | " , item.Comp_Knowledge.Comp.knowledgeIDs)}] and kpm [{item.Comp_Knowledge.Comp.knowledgeRatePerMin}]");
+            var duration = targetCOM.TimeScale;
+            float learn = duration > 0 ? (duration * item.Comp_Knowledge.Comp.knowledgeRatePerMin) : 0;
+            var list = item.Comp_Knowledge.Comp.knowledgeIDs;
+
+            if (learn > 0)
+            {
+                foreach (var i in Actors)
+                {
+                    Utility.ShuffleList(list);
+                    foreach (var ii in list)
+                    {
+                        if (i.Skills.AddKnowledgeScore(ii, learn, m))
+                        {
+                            Debug.Log($"learn knowledge {ii}, {duration} x {item.Comp_Knowledge.Comp.knowledgeRatePerMin} = {learn}");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
     }
 
     MessageCollect temporaryM = null;
@@ -2326,6 +2375,20 @@ public abstract class ActionPackage
 
     public MessageCollect mcol = new MessageCollect();
 
+    string keyReplace(string s)
+    {
+        if (keyReplaceDictionary == null || keyReplaceDictionary.Count < 1) return s;
+
+        foreach(var kvp in keyReplaceDictionary)
+        {
+            if (kvp.Key == "") continue;
+            //if (!kvp.Key.StartsWith('$')) continue;
+            //if (!kvp.Key.EndsWith('$')) continue;
+            s = s.Replace(kvp.Key, kvp.Value);
+        }
+        return s;
+    }
+
 
     public void LogMessage_Begin(MessageCollect m = null, Character_Trainable injectChara = null)
     {
@@ -2346,6 +2409,8 @@ public abstract class ActionPackage
         string s = targetCOM.variants[COMVariantID].GetDescription_Begin(targetCOM, this);
         UtilityEX.StringReplace(this, ref s);
         s = targetCOM.Replace(s);
+        s = keyReplace(s);
+
 
         var desc = new DescriptionCollector(s);
         bool exist = s.Length > 0;
@@ -2432,6 +2497,7 @@ public abstract class ActionPackage
         //Debug.Log("AP LogMessage_Ongoing");
         UtilityEX.StringReplace(this, ref s);
         s = targetCOM.Replace(s);
+        s = keyReplace(s);
 
         bool exist = s.Length > 0;
 
@@ -2570,6 +2636,7 @@ public abstract class ActionPackage
             s = targetCOM.variants[COMVariantID].GetDescription_After(targetCOM, this);
             UtilityEX.StringReplace(this, ref s);
             s = targetCOM.Replace(s);
+            s = keyReplace(s);
 
 
 
@@ -2773,6 +2840,15 @@ public abstract class ActionPackage
     /// </summary>
     /// <returns></returns>
     public abstract ActionPackage Copy();
+
+    public virtual void CollectCopy(ActionPackage ap)
+    {
+
+        foreach(var kvp in ap.keyReplaceDictionary)
+        {
+            this.keyReplaceDictionary.Add(kvp.Key, kvp.Value);
+        }
+    }
 
     public void ReEstablishParent(Job j)
     {

@@ -35,7 +35,8 @@
                         "displayName":"map_hallway",
                         "offsetX":-242.9,
                         "offsetY":228.3,
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"medbay_hallway_2",
@@ -44,7 +45,8 @@
                         "offsetY":228.3,
                         "connects": 
                         [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"medbay_hallway_3",
@@ -53,7 +55,8 @@
                         "offsetY":-205,
                         "connects": 
                         [ { "ID":"medbay_hallway_1", "cost":1.0  } ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"medbay_hallway_4",
@@ -63,7 +66,8 @@
                         "connects": 
                         [ { "ID":"medbay_hallway_2", "cost":1.0  },
                         { "ID":"medbay_hallway_3", "cost":1.0  } ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
                     },
                     {
                         "ID":"medbay_pharmacy",
@@ -83,7 +87,8 @@
                         "connects": 
                         [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
                         "furnitureIDs":["furniture_round_table_4","furniture_hospital_bed"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_Infirmary.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Infirmary.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_Infirmary_Night.jpg"
                     },
                     {
                         "ID":"medbay_med_exam_2",
@@ -93,7 +98,8 @@
                         "connects": 
                         [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
                         "furnitureIDs":["furniture_round_table_4","furniture_hospital_bed"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_Infirmary.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Infirmary.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_Infirmary_Night.jpg"
                     },
                     {
                         "ID":"medbay_cryo",
@@ -103,7 +109,8 @@
                         "connects": 
                         [ { "ID":"medbay_hallway_3", "cost":1.0  } ],
                         "furnitureIDs":["furniture_cryopod","furniture_cryopod","furniture_cryopod"],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg"
                     },
                     {
                         "ID":"medbay_shooting_range",
@@ -125,7 +132,8 @@
                         [ { "ID":"medbay_hallway_3", "cost":1.0  },
                         { "ID":"medbay_hallway_4", "cost":1.0  } ],
                         "furnitureIDs":["furniture_arena_spot","furniture_arena_spot" ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_Gym.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Gym.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_Gym_Night.jpg"
                     },
                     {
                         "ID":"medbay_changing_room",
@@ -136,7 +144,8 @@
                         [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
                         "furnitureIDs":["furniture_bathroom_set","furniture_shower"
                                     ,"furniture_bathroom_set","furniture_shower" ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },
                     {
                         "ID":"medbay_life_support",
@@ -176,7 +185,8 @@
                         "connects":
                         [ { "ID":"medbay_hallway_2", "cost":2.0  },
                         { "ID":"medbay_isolation_office", "cost":2.0  }],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor2.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor2.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_BuildingCorridor2_Night.jpg"
                     },
                     {
                         "ID":"medbay_isolation_office",
@@ -184,7 +194,8 @@
                         "offsetX":125,
                         "offsetY":79,
                         "furnitureIDs":["furniture_computer_terminal", "furniture_table_1_chair_1" ],
-                        "roomImagePath":"Media_UI_Scenario_Background/BG_InterrogationRoom.jpg"
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_InterrogationRoom.jpg",
+                        "roomImagePath_Inactive":"Media_UI_Scenario_Background/BG_InterrogationRoom_Night.jpg"
                     },
                     {
                         "ID":"medbay_isolation_room_1",

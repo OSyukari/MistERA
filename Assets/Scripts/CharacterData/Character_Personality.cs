@@ -16,9 +16,8 @@ public class Character_Personality_Index : I_IndexHasID, I_IndexMergeable, I_Nee
 
         foreach (Character_Personality o in this.list)
         {
-            //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
-            if (!ID_Dictionary.ContainsKey(o.ID)) ID_Dictionary[o.ID] = o;
-            else Debug.LogError($"error registering personality {o.ID} failed");
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o))  Debug.Log($"error registering personality {o.ID} failed");
         }
 
         foreach(var i in looselist)

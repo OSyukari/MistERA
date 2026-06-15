@@ -40,7 +40,11 @@ public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
         messages.Add("Registering Experiences with count " + list.Count);
 
         var ids = new Dictionary<string, ExperienceClass>();
-        foreach(var i in list) ids.Add(i.ExperienceID, i);
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.ExperienceID)) continue;
+            if (!ids.TryAdd(i.ExperienceID, i)) Debug.Log($"failed to add Index_Experiences id [{i.ExperienceID}] due to duplicate");
+        }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, ExperienceClass>(ids);
     }
 

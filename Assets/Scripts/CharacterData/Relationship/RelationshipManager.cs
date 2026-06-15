@@ -643,6 +643,15 @@ public class RelationshipManager
         var message = rel == null ? this.Personality.GetKOJOMessage(cleanedID, Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
             : this.Personality.GetKOJOMessage(isDoer, ep, rel);
         */
+        if ((message == null || message.message.Length < 1) && ep.targetCOM?.fallbackCOMID != "")
+        {
+            var fallbackCOM = scr_System_Serializer.current.GetByNameOrID_COM(ep.targetCOM.fallbackCOMID);
+            if (fallbackCOM != null)
+            {
+                kol.eventID = fallbackCOM.tooltipID;
+                message = Personality.GetKOJOMessage(kol);
+            }
+        }
         if (message != null && message.message.Length > 0)
         {
             if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);

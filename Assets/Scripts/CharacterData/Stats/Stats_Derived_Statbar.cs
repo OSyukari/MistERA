@@ -14,7 +14,11 @@ public class Stats_Derived_Extended_Index : I_IndexHasID, I_IndexMergeable
     {
         s.Add("Stats_Derived_Extended_Index : registering ID with list length [" + list.Count + "]");
 
-        foreach (Stats_Derived_Extended o in list) ID_Dictionary.Add(o.ID, o);
+        foreach (Stats_Derived_Extended o in list)
+        {
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Stats_Derived_Extended_Index id [{o.ID}] due to duplicate");
+        }
     }
 
     public void MergeWith(I_IndexMergeable list){

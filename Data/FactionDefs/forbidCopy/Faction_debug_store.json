@@ -10,6 +10,7 @@
                 "salesInventory":[
                     
                     { "matchByTags":["consumable","industrial","rarity_common"] },
+                    { "matchByTags":["AV"] },
                     { "matchByID":"raw_rice","nameOverwrite":"jp_convenience_store_rice_bag_5kg", "itemCount":5000, "countOverride":true },
                     { "matchByID":"currency_pyroxene","nameOverwrite":"jp_convenience_store_pyroxene_4800", "itemCount":4800, "countOverride":true },
                     { "matchByID":"consumable_drug_sleepingpill","nameOverwrite":"jp_convenience_store_otcsleepingpills_6pack", "itemCount":6, "countOverride":true },
@@ -191,5 +192,15 @@
                 ]
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "factionName_jp_debug_store":"DEBUG商店"
+            }
+        }
     }
 }

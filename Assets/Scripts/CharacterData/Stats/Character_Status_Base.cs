@@ -44,7 +44,8 @@ public class Index_Status : I_IndexHasID, I_SerializationCallbackReceiver, I_Ind
 
         foreach (Status_Base o in this.list)
         {
-            if (o.isValid) ID_Dictionary.Add(o.statusID, o);
+            if (!o.isValid || string.IsNullOrEmpty(o.statusID)) continue;
+            if (!ID_Dictionary.TryAdd(o.statusID, o)) Debug.Log($"failed to add Index_Status id [{o.statusID}] due to duplicate");
         }
     }
 

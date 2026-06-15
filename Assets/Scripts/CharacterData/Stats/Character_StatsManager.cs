@@ -221,19 +221,20 @@ public class StatsManager : I_StatsManager
     /// <summary>
     /// Cache the <string statID, object statEX> to save the search for the current session
     /// </summary>
-    [JsonIgnore] public List<Stats_Derived_Instance> list_statsDerived { get
+    [JsonIgnore] public Dictionary<string, Stats_Derived_Instance> list_statsDerived { get
         {
             if (_list_statDerived == null)
             {
-                _list_statDerived = new List<Stats_Derived_Instance>();
+                _list_statDerived = new Dictionary<string, Stats_Derived_Instance>();
                 foreach(var i in scr_System_Serializer.current.index_StatsDerived.list)
                 {
-                    if (Owner.hasStatKeyword(i.StatKeyword)) _list_statDerived.Add(i.Instantiate(this));
+                    if (Owner.hasStatKeyword(i.StatKeyword)) _list_statDerived.Add(i.ID, i.Instantiate(this));
                 }
             }
             return _list_statDerived;
         } }
-    protected List<Stats_Derived_Instance> _list_statDerived = null;
+
+    Dictionary<string, Stats_Derived_Instance> _list_statDerived = null;
 
     Dictionary<string, Stats_Derived_Extended_Instance> _statEX = new Dictionary<string, Stats_Derived_Extended_Instance>();
     public Stats_Derived_Extended_Instance GetStatEx(string statID)
@@ -327,17 +328,33 @@ public class StatsManager : I_StatsManager
 
     [JsonProperty] protected Stats_Base baseStat_STR = null, baseStat_CON = null, baseStat_PSY = null, baseStat_WIL = null;
     [JsonIgnore] public Stats_Base Strength { get {
-            if (baseStat_STR == null) baseStat_STR = new Stats_Base(this, "Strength");
+            if (baseStat_STR == null)
+            {
+                baseStat_STR = new Stats_Base(this, "Strength");
+                if (this.Owner.Template != null) this.baseStat_STR.SetValue(this.Owner.Template.stat_STR);
+            }
             return baseStat_STR; } }
     [JsonIgnore] public Stats_Base Constitution { get {
-            if (baseStat_CON == null) baseStat_CON = new Stats_Base(this, "Constitution");
+            if (baseStat_CON == null)
+            {
+                baseStat_CON = new Stats_Base(this, "Constitution");
+                if (this.Owner.Template != null) this.baseStat_CON.SetValue(this.Owner.Template.stat_CON);
+            }
             return baseStat_CON; } }
     [JsonIgnore] public Stats_Base Psyche { get {
-            if (baseStat_PSY == null) baseStat_PSY = new Stats_Base(this, "Psyche");
-            return baseStat_PSY; } }
+            if (baseStat_PSY == null)
+            {
+                baseStat_PSY = new Stats_Base(this, "Psyche");
+                if (this.Owner.Template != null) this.baseStat_PSY.SetValue(this.Owner.Template.stat_PSY);
+            }
+                return baseStat_PSY; } }
     [JsonIgnore] public Stats_Base Willpower { get {
-            if (baseStat_WIL == null) baseStat_WIL = new Stats_Base(this, "Willpower");
-            return baseStat_WIL; } }
+            if (baseStat_WIL == null)
+            {
+                baseStat_WIL = new Stats_Base(this, "Willpower");
+                if (this.Owner.Template != null) this.baseStat_WIL.SetValue(this.Owner.Template.stat_WIL);
+            }
+                return baseStat_WIL; } }
 
 
     /// <summary>
@@ -452,7 +469,7 @@ public class StatsManager : I_StatsManager
             }
         }
 
-        foreach (var i in list_statsDerived) i.ClearCache();
+        foreach (var i in list_statsDerived) i.Value.ClearCache();
 
         // force refresh StatsEx value to keep it valid
         foreach (var ex in StatsExtended) ex.ModValue(0f);
@@ -691,8 +708,7 @@ public class StatsManager : I_StatsManager
         //if (contexts == null) contexts = new List<string>();   
         if (contexts != null)
         {
-            contexts = Utility.Distinct(contexts);
-            contexts.Sort();
+            Utility.DistinctInPlace(contexts);
         }
 
         // Catch Stat Base
@@ -706,12 +722,12 @@ public class StatsManager : I_StatsManager
         Stats_Derived_Base statDerived = scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(statID);
         if (statDerived != null && Owner.hasStatKeyword(statDerived.StatKeyword))
         {
-            var statD = list_statsDerived.Find(x => x.ID == statID);
-            if (statD == null)
+            if (!list_statsDerived.TryGetValue(statID, out var statD))
             {
                 statD = statDerived.Instantiate(this);
-                list_statsDerived.Add(statD);
+                list_statsDerived.Add(statID, statD);
             }
+
             return statD.FinalValue(contexts);
         }
 
@@ -775,11 +791,10 @@ public class StatsManager : I_StatsManager
         Stats_Derived_Base statDerived = scr_System_Serializer.current.GetByNameOrID_StatsDerivedBase(statID);
         if (statDerived != null && Owner.hasStatKeyword(statDerived.StatKeyword))
         {
-            var statD = list_statsDerived.Find(x => x.ID == statID);
-            if (statD == null)
+            if (!list_statsDerived.TryGetValue(statID, out var statD))
             {
                 statD = statDerived.Instantiate(this);
-                list_statsDerived.Add(statD);
+                list_statsDerived.Add(statID, statD);
             }
             return statD;
         }

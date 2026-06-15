@@ -1,0 +1,152 @@
+{
+    "Items":{
+        "list":
+        [
+            {
+                "id":"item_gamecd_ic6",
+                "displayName":"Iron Core 6",
+                "Tags":["furniture_playVideoGames","videogame","industrial","rarity_common"],
+                "value":8800,
+                    "itemComps_Template":[
+                        {
+                            "compType":"ItemComponent_Knowledges",
+                            "comp_Knowledge":
+                            {
+                                "knowledgeIDs":[
+                                    "knowledge_game_ic6"
+                                ],
+                                "knowledgeRatePerMin":0.035
+                            }
+                        }
+                    ]
+            }
+
+        ]
+    },
+    "Knowledges":{
+        "list":[
+            {
+                "baseID":"knowledge_game_ic6",
+                "tags":["game","genre_scifi","genre_action","genre_mecha"],
+                "childrens":[
+                    {
+                        "baseID":"knowledge_game_ic6_world",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_ic6_world_megastructure" },
+                            { "baseID":"knowledge_game_ic6_world_rubicon" },
+                            { "baseID":"knowledge_game_ic6_world_coral" },
+                            { "baseID":"knowledge_game_ic6_world_fires" },
+                            { "baseID":"knowledge_game_ic6_world_ibis" },
+                            { "baseID":"knowledge_game_ic6_world_ice_worm" },
+                            {
+                                "baseID":"knowledge_game_ic6_world_factions",
+                                "capChildWeightPercent":5,
+                                "childrens":[
+                                    { "baseID":"knowledge_game_ic6_world_factions_arquebus" },
+                                    { "baseID":"knowledge_game_ic6_world_factions_balam" },
+                                    { "baseID":"knowledge_game_ic6_world_factions_pca" },
+                                    { "baseID":"knowledge_game_ic6_world_factions_liberation" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_ic6_mech",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_ic6_mech_lockon" },
+                            { "baseID":"knowledge_game_ic6_mech_engines" },
+                            { "baseID":"knowledge_game_ic6_mech_stagger" },
+                            { "baseID":"knowledge_game_ic6_mech_legs" },
+                            { "baseID":"knowledge_game_ic6_mech_weapons" },
+                            { "baseID":"knowledge_game_ic6_mech_generator" },
+                            { "baseID":"knowledge_game_ic6_mech_os" }
+                        ]
+                    },
+                    {
+                        "baseID":"knowledge_game_ic6_characters",
+                        "capChildWeightPercent":5,
+                        "childrens":[
+                            { "baseID":"knowledge_game_ic6_characters_621" },
+                            { "baseID":"knowledge_game_ic6_characters_walter" },
+                            {
+                                "baseID":"knowledge_game_ic6_characters_rusty",
+                                "entries":[
+                                    "knowledge_game_ic6_characters_rusty_0",
+                                    "knowledge_game_ic6_characters_rusty_1",
+                                    "knowledge_game_ic6_characters_rusty_2",
+                                    "knowledge_game_ic6_characters_rusty_3",
+                                    "knowledge_game_ic6_characters_rusty_4"
+                                ]
+                            },
+                            { "baseID":"knowledge_game_ic6_characters_ayre" },
+                            { "baseID":"knowledge_game_ic6_characters_iguazu" },
+                            { "baseID":"knowledge_game_ic6_characters_carla" },
+                            { "baseID":"knowledge_game_ic6_characters_allmind" },
+                            { "baseID":"knowledge_game_ic6_characters_michigan" },
+                            { "baseID":"knowledge_game_ic6_characters_chatty" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "ac6_reference":"《钢铁核心6》",
+                "item_gamecd_ic6":"%%ac6_reference%%",
+                "item_gamecd_ic6_tooltip":"Feed the fire.",
+                "knowledge_game_ic6":"%%ac6_reference%%相关知识",
+
+                "knowledge_game_ic6_world":"%%ac6_reference%%的世界观",
+                "knowledge_game_ic6_world_megastructure":"%%ac6_reference%%中的巨型建筑",
+                "knowledge_game_ic6_world_rubicon":"%%ac6_reference%%的卢比孔-III",
+                "knowledge_game_ic6_world_coral":"%%ac6_reference%%的coral",
+                "knowledge_game_ic6_world_fires":"%%ac6_reference%%的卢比孔之火",
+                "knowledge_game_ic6_world_ibis":"%%ac6_reference%%中的IBIS系列机甲",
+                "knowledge_game_ic6_world_ice_worm":"%%ac6_reference%%中的巨型冰虫",
+                "knowledge_game_ic6_world_factions":"%%ac6_reference%%的阵营势力",
+                "knowledge_game_ic6_world_factions_arquebus":"%%ac6_reference%%中的阿尔奎布斯集团",
+                "knowledge_game_ic6_world_factions_balam":"%%ac6_reference%%中的巴拉姆工业",
+                "knowledge_game_ic6_world_factions_pca":"%%ac6_reference%%中的行星封锁机构（PCA）",
+                "knowledge_game_ic6_world_factions_liberation":"%%ac6_reference%%中的卢比孔解放战线",
+
+                "knowledge_game_ic6_mech":"%%ac6_reference%%的机甲",
+                "knowledge_game_ic6_mech_lockon":"%%ac6_reference%%的机甲锁定系统",
+                "knowledge_game_ic6_mech_engines":"%%ac6_reference%%的机甲引擎",
+                "knowledge_game_ic6_mech_stagger":"%%ac6_reference%%的机甲硬直系统（ACS）",
+                "knowledge_game_ic6_mech_legs":"%%ac6_reference%%的机甲腿型",
+                "knowledge_game_ic6_mech_weapons":"%%ac6_reference%%的机甲武器装备",
+                "knowledge_game_ic6_mech_generator":"%%ac6_reference%%的机甲发电机与EN管理",
+                "knowledge_game_ic6_mech_os":"%%ac6_reference%%的机甲OS芯片强化",
+
+                "knowledge_game_ic6_characters":"%%ac6_reference%%的角色",
+                "knowledge_game_ic6_characters_621":"%%ac6_reference%%的621",
+                "knowledge_game_ic6_characters_walter":"%%ac6_reference%%的沃尔特",
+                "knowledge_game_ic6_characters_rusty":"%%ac6_reference%%的拉斯提",
+                "knowledge_game_ic6_characters_rusty_0":"You ready to climb the Wall?",
+                "knowledge_game_ic6_characters_rusty_1":"I won't miss.",
+                "knowledge_game_ic6_characters_rusty_2":"Are you here to bring us hope, or despair?",
+                "knowledge_game_ic6_characters_rusty_3":"You flew just out of reach...",
+                "knowledge_game_ic6_characters_rusty_4":"I'm counting on you, buddy.",
+                "knowledge_game_ic6_characters_ayre":"%%ac6_reference%%的艾尔",
+                "knowledge_game_ic6_characters_iguazu":"%%ac6_reference%%的伊瓜苏",
+                "knowledge_game_ic6_characters_carla":"%%ac6_reference%%的卡拉（热剂）",
+                "knowledge_game_ic6_characters_allmind":"%%ac6_reference%%的全知（ALLMIND）",
+                "knowledge_game_ic6_characters_michigan":"%%ac6_reference%%的密歇根",
+                "knowledge_game_ic6_characters_chatty":"%%ac6_reference%%的话匣子"
+            },
+            "en-us":
+            {
+                "item_gamecd_ic6":"Iron Core 6",
+                "item_gamecd_ic6_tooltip":"Feed the fire.",
+                "knowledge_game_ic6":"Knowledge on \"Iron Core 6\""
+            }
+        }
+    }
+}

@@ -29,7 +29,7 @@ public class MasterList
 
                 list.Add(CombatActions);
                 list.Add(CombatActionPresets);
-
+                list.Add(Knowledges);
                 list.Add(Experiences);
                 list.Add(Traits_Groups);
                 list.Add(Character_Origin_StartingOptions);
@@ -70,6 +70,7 @@ public class MasterList
     public Stats_Derived_Extended_Index StatEXs = new Stats_Derived_Extended_Index();
     public FindJobNodeRoot_Index FindJobNodeRoots = new FindJobNodeRoot_Index();
     public Index_Status Status = new Index_Status();
+    public Index_Knowledges Knowledges = new Index_Knowledges();
     public Index_Experiences Experiences = new Index_Experiences();
     public Character_Origin_Index Character_Origins = new Character_Origin_Index();
     public Character_Origin_startingOption_Index Character_Origin_StartingOptions = new Character_Origin_startingOption_Index();

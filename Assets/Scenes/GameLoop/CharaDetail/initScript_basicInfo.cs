@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 public class initScript_basicInfo : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class initScript_basicInfo : MonoBehaviour
 
     public RectTransform SkillsGrid;
     public scr_HoverableText viewExpButton;
+    public scr_HoverableText viewKnowledgeButton;
 
     public void InitData(Character_Trainable chara)
     {
@@ -110,7 +112,7 @@ public class initScript_basicInfo : MonoBehaviour
 
         var isDebug = scr_System_CampaignManager.current.DebugMode;
         // get stats grid
-        foreach (var statDerived in chara.Stats.list_statsDerived)
+        foreach (var statDerived in chara.Stats.list_statsDerived.Values.ToList())
         {
             if (statDerived.Parent.isNSFW) continue;
             if (!statDerived.Parent.isValidStatFor(chara.Stats)) continue;

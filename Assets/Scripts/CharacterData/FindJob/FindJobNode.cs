@@ -257,7 +257,7 @@ public class TryFindJobByIDNode : FindJobNode
             initialized = true;
         }
         if (internalShutdown) return false;
-        if (c.CurrentJob != null && !resetJob && (c.CurrentJob.hasActivePackge(c.RefID, targetID) || c.CurrentJob.allusableCOMIDs.Contains(targetID) && c.CurrentJob.hasActivePathing(c.RefID)))
+        if (c.CurrentJob != null && !resetJob && (c.CurrentJob.hasActivePackge(c.RefID, targetID) || c.CurrentJob.allusableCOM_Contains(targetID) && c.CurrentJob.hasActivePathing(c.RefID)))
         {
             return true;
         }

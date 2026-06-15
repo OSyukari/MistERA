@@ -54,6 +54,8 @@ public class ItemComponentTemplate
     // ItemComponent_Degradable
     public ItemComponentTemplate_Degradable comp_Degradable = null;
 
+    public ItemComponentTemplate_Knowledges comp_Knowledge = null;
+
     public ItemComponentTemplate_Furniture Comp_Furniture = null;
 
     public ItemComponentTemplate_Recorder Comp_Recorder = null;
@@ -78,6 +80,8 @@ public class ItemComponentTemplate
                 return new ItemComponent_Recorder(parent);
             case "ItemComponent_Records":
                 return new ItemComponent_Records(parent);
+            case "ItemComponent_Knowledges":
+                return new ItemComponent_Knowledges(parent);
             default:
                 return null;
 

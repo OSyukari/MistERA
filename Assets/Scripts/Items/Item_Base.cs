@@ -29,7 +29,8 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
         foreach (Item_Base o in this.list)
         {
             if (o.Tags.Contains("do_not_use")) continue;
-            ID_Dictionary.Add(o.ID, o);
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_Item_Base id [{o.ID}] due to duplicate");
         }
     }
     public Item_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
@@ -263,12 +264,19 @@ public class Item_Base
                     Masterlist_Items.Instance.AddCraftingRecipe(i.comp_Craftable.recipes); break;
                 case "ItemComponent_Harvestable":
                     Masterlist_Items.Instance.AddFarmRecipe(i.comp_Harvestable); break;
+                case "ItemComponent_Records":
+                    if (i.Comp_Records != null && i.Comp_Records.records != null && i.Comp_Records.records.RecordUID == "")
+                    {
+                        i.Comp_Records.records.RecordUID = this.id;
+                    }
+                    break;
                 default: break;
 
             }
 
             this.stackable = i.stackable && this.stackable;
         }
+
 
     }
 

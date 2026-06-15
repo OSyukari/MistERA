@@ -13,5 +13,8 @@ public interface I_Records
     public void ReadActorRecord(Dictionary<string, ActorRecord> recTable);
     public void RecordActor(Dictionary<int, ActorRecord> recTable);
     [JsonIgnore] public bool isValid { get; }
+
+    public bool IsRelevantActor(int i);
+    [JsonIgnore] public bool IsSingleActor{ get; }
 }
 

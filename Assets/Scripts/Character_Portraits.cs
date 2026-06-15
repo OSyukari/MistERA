@@ -208,6 +208,21 @@ public class PortraitManager
         }
     }
 
+
+    protected void GetValidPortraitWithHandler(List<string> keywords, in CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
+    {
+        if (handler == null || handler == Transparent || !handler.isValid() || !handler.isValidForBox(box) || (keywords.Count < 1 && handler.RequireContextKeys.Count > 0)
+            || !Utility.ListContainsStrict(keywords, handler.RequireContextKeys))
+        {
+            portrait = "";
+            icon = "";
+            return;
+        }
+
+        portrait = handler.PortraitPath(keywords);
+        icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
+    }
+
     public void ClearHandlerCache()
     {
         _cache_NeutralPortrait = null;
@@ -309,14 +324,29 @@ public class PortraitManager
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentPortrait != _cache_ActivityPortrait_path)
         {
-           if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_path}, is same? {box.currentHandler == _cache_ActivityPortrait}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_path}, is same? {box.currentHandler == _cache_ActivityPortrait}");
             box.currentHandler = _cache_ActivityPortrait;
             //box.currentPortrait = _cache_ActivityPortrait_path;
             box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
+            return;
+        }
+        else if (box.currentHandler != null && tags_active != null) 
+        {
+            GetValidPortraitWithHandler(tags_active, in _cache_ActivityPortrait, out var ppath, out var ipath, box);
+            if (ppath != "" && ppath != _cache_ActivityPortrait_path)
+            {
+                _cache_ActivityPortrait_path = ppath;
+                box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
+            }
+            else
+            {
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait ABORT 2 due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
+
+            }
         }
         else
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait ABORT due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait ABORT 1 due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
         }
 
     }

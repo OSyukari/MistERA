@@ -173,7 +173,8 @@
             "ID":"furniture_computer_terminal",
             "displayName":"终端",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":1,
+            "givesJob": [  { "comTags":["furniture", "computer"] }]
         },
         {
             "ID":"furniture_bookshelves",

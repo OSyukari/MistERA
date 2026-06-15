@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class scr_inputFieldLink : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class scr_inputFieldLink : MonoBehaviour
     public TMP_InputField self_inputfield;
     public TMP_Text self_placeholder;
     public TMP_Text self_text;
+    public Image selfBG;
 
 
     protected void Awake()
@@ -19,9 +21,11 @@ public class scr_inputFieldLink : MonoBehaviour
 
         var color = this.self_inputfield.colors;//.normalColor = 
         color.normalColor = setting.BackgroundColor_Transparent.Color;
-        color.selectedColor = setting.BackgroundColor_Transparent.Color;
 
-        this.self_inputfield.selectionColor = setting.BackgroundColor_Transparent.Color;
+        if (selfBG != null) selfBG.color = setting.BackgroundColor_Transparent.Color;
+
+        color.selectedColor = setting.BackgroundColor_Opaque.Color;
+        this.self_inputfield.selectionColor = setting.BackgroundColor_Opaque.Color;
     }
 
     public void Initialize(TextMeshProUGUI parent, string content="")

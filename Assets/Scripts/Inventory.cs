@@ -32,7 +32,7 @@ public class FactionInventory : Inventory
         this.ownerCache = FactionOwner;
     }
 
-    public int TickTokenItem(string tokenTag, int count)
+    public int TickTokenItem(string tokenTag, int count, Dictionary<string, int> tokenrecord = null)
     {
         if (count >= 0) return count;   // count is a negative number
         var cTemp = Math.Abs(count);
@@ -47,6 +47,11 @@ public class FactionInventory : Inventory
             count += modValue;
             foreach (string tag in i.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= modValue;
             cTemp -= modValue;
+            if (tokenrecord != null)
+            {
+                if (tokenrecord.ContainsKey(i.DisplayName)) tokenrecord[i.DisplayName] += modValue;
+                else tokenrecord[i.DisplayName] = modValue;
+            }
         }
 
         return count;
@@ -121,7 +126,7 @@ public class FactionInventory : Inventory
                 list.AddRange(temp);
                 var names = new List<string>();
                 foreach (var item in temp) names.Add(item.Print());
-                message.Add($"removed item {String.Join(",", names)}");
+                message.AddRange(names);
                 count -= removeCount;
             }
         }
@@ -381,6 +386,22 @@ public class Inventory
         if (list == null || list.Count < 1) return;
         foreach (var ii in list) AddItem(ii);
     }
+    public Item_Instance GetItem(string id)
+    {
+        if (id == "") return null;
+        foreach (var item in Contents)
+        {
+            if (item.BaseID != id) continue; //!= baseID) continue; // && !item.markForDelete) i += item.Count;
+            else if (item.markForDelete) continue;
+            return item;
+            /*
+            if (!item.isToken && !item.markForDelete) i += item.Count;
+            else if (item.isToken && !item.markForDelete) i += item.InnerCount;*/
+        }
+
+        //Debug.Log("Faction check item [" + baseID + "] count result [" + i + "]");
+        return null;
+    }
     public List<Item_Instance> GetItemByTag(string tag)
     {
         List<Item_Instance> results = new List<Item_Instance>();
@@ -525,7 +546,7 @@ public class Inventory
                 list.AddRange(temp);
                 var names = new List<string>();
                 foreach (var item in temp) names.Add(item.Print());
-                message.Add($"removed item {String.Join(",", names)}");
+                message.AddRange(names);
                 count -= removeCount;
             }
         }

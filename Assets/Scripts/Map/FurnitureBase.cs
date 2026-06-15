@@ -100,7 +100,8 @@ public class Index_FurnitureBase : I_IndexHasID, I_IndexMergeable, I_Serializati
 
         foreach (FurnitureBase o in this.list)
         {
-            if (o.isValid) ID_Dictionary.Add(o.ID, o);
+            if (!o.isValid || string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_FurnitureBase id [{o.ID}] due to duplicate");
         }
     }
 

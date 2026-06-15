@@ -42,7 +42,11 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
     public void RegisterAllID(List<string> s)
     {
         s.Add($"Index_Events : registering eventIDs with list length [{list.Count}]");
-        foreach (var i in list) ID_Dictionary.Add(i.ID, i);
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ID_Dictionary.TryAdd(i.ID, i)) Debug.Log($"failed to add Index_Events id [{i.ID}] due to duplicate");
+        }
     }
 
     public Event GetByID(string ID)

@@ -13,7 +13,7 @@
                 "itemComps_Template": [
                     {
                         "compType": "ItemComponent_Recorder",
-                        "comp_Recorder": {
+                        "Comp_Recorder": {
                             "storeItemID": "item_recording_camera_Tape",
                             "resultItemID": "item_recorded_camera_Tape",
                             "durationPerItem": 120,
@@ -40,7 +40,10 @@
                 ],
                 "itemComps_Template": [
                     {
-                        "compType": "ItemComponent_Records"
+                        "compType": "ItemComponent_Records",
+                        "Comp_Records":{
+                            "storeItemID": "item_recording_camera_Tape"
+                        }
                     }
                 ]
             }

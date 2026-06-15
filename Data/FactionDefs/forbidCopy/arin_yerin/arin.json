@@ -12,12 +12,12 @@
     "RequireContextKeys":["sex","dog"],
     "Variants":
     [    
-        {  "tagsMatch":["doer","rimjob"], "PortraitVariantData":["arin_yerin/arin.normal.dog_rimjob.png"] },
-        {  "tagsMatch":["receiver"], "PortraitVariantData":["arin_yerin/arin.nude.dog bestiality cumshot.png","arin_yerin/arin.nude.dog bestiality penetration.png","arin_yerin/arin.normal.Doggy style cumshot.webp"] }
+        {  "tagsMatch":["doer","rimjob"], "PortraitVariantData":["arin_yerin/assets/arin.normal.dog_rimjob.png"] },
+        {  "tagsMatch":["receiver"], "PortraitVariantData":["arin_yerin/assets/arin.nude.dog bestiality cumshot.png","arin_yerin/assets/arin.nude.dog bestiality penetration.png","arin_yerin/assets/arin.normal.Doggy style cumshot.webp"] }
     ],
 
-    "portrait_path":"arin_yerin/arin.png",
-    "icon_path":"arin_yerin/arin.png"
+    "portrait_path":"arin_yerin/assets/arin.png",
+    "icon_path":"arin_yerin/assets/arin.png"
 },
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
@@ -28,17 +28,17 @@
     "RequireContextKeys":["sex","doer"],
     "Variants":
     [    
-        {  "tagsMatch":["rimjob"], "PortraitVariantData":["arin_yerin/arin.normal.rimjob.webp","arin_yerin/arin.nude.rimjob.webp"] },
-        {  "tagsMatch":["handjob"], "PortraitVariantData":["arin_yerin/arin.normal.Handjob.webp"] },
-        {  "tagsMatch":["blowjob","boobjob"], "PortraitVariantData":["arin_yerin/arin.nude.fellatio.webp"] },
-        {  "tagsMatch":["blowjob"], "PortraitVariantData":["arin_yerin/arin.nude.fellatio.webp"] },   
-        {  "tagsMatch":["masturbate"], "PortraitVariantData":["arin_yerin/arin.nude.Fingering.webp"] },      
+        {  "tagsMatch":["rimjob"], "PortraitVariantData":["arin_yerin/assets/arin.normal.rimjob.webp","arin_yerin/assets/arin.nude.rimjob.webp"] },
+        {  "tagsMatch":["handjob"], "PortraitVariantData":["arin_yerin/assets/arin.normal.Handjob.webp"] },
+        {  "tagsMatch":["blowjob","boobjob"], "PortraitVariantData":["arin_yerin/assets/arin.nude.fellatio.webp"] },
+        {  "tagsMatch":["blowjob"], "PortraitVariantData":["arin_yerin/assets/arin.nude.fellatio.webp"] },   
+        {  "tagsMatch":["masturbate"], "PortraitVariantData":["arin_yerin/assets/arin.nude.Fingering.webp"] },      
         {  "tagsMatch":["cowgirl"], "PortraitVariantData":[] },      
         {  "tagsMatch":["cunnilingus"], "PortraitVariantData":[] }
         
     ],
-    "portrait_path":"arin_yerin/arin.png",
-    "icon_path":"arin_yerin/arin.png"
+    "portrait_path":"arin_yerin/assets/arin.png",
+    "icon_path":"arin_yerin/assets/arin.png"
 },
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
@@ -49,13 +49,13 @@
     "RequireContextKeys":["sex","receiver"],
     "Variants":
     [    
-        {  "tagsMatch":["doggy"], "PortraitVariantData":["arin_yerin/arin.nude.Doggy style cumshot.webp","arin_yerin/arin.nude.Doggy style.webp"] },   
-        {  "tagsMatch":["missionary"], "PortraitVariantData":["arin_yerin/arin.normal.Missionary position .webp","arin_yerin/arin.normal.Missionary position cumshot.webp"] },   
-        {  "tagsMatch":["cowgirl"], "PortraitVariantData":["arin_yerin/arin.nude.cowgirl cumshot.webp"] }
+        {  "tagsMatch":["doggy"], "PortraitVariantData":["arin_yerin/assets/arin.nude.Doggy style cumshot.webp","arin_yerin/assets/arin.nude.Doggy style.webp"] },   
+        {  "tagsMatch":["missionary"], "PortraitVariantData":["arin_yerin/assets/arin.normal.Missionary position .webp","arin_yerin/assets/arin.normal.Missionary position cumshot.webp"] },   
+        {  "tagsMatch":["cowgirl"], "PortraitVariantData":["arin_yerin/assets/arin.nude.cowgirl cumshot.webp"] }
     ],
 
-    "portrait_path":"arin_yerin/arin.png",
-    "icon_path":"arin_yerin/arin.png"
+    "portrait_path":"arin_yerin/assets/arin.png",
+    "icon_path":"arin_yerin/assets/arin.png"
 },
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
@@ -72,8 +72,8 @@
         
     ],
 
-    "portrait_path":"arin_yerin/arin.png",
-    "icon_path":"arin_yerin/arin.png"
+    "portrait_path":"arin_yerin/assets/arin.png",
+    "icon_path":"arin_yerin/assets/arin.png"
 },
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
@@ -90,8 +90,8 @@
         
     ],
 
-    "portrait_path":"arin_yerin/arin.png",
-    "icon_path":"arin_yerin/arin.png"
+    "portrait_path":"arin_yerin/assets/arin.png",
+    "icon_path":"arin_yerin/assets/arin.png"
 },
 {
     "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
@@ -101,17 +101,17 @@
 
     "Variants":
     [    
-        {  "tagsMatch":["admiring"], "PortraitVariantData":["arin_yerin/arin.normal.admiring.webp"] },
-        {  "tagsMatch":["happy"], "PortraitVariantData":["arin_yerin/arin.normal.admiring.webp"] },
-        {  "tagsMatch":["angry"], "PortraitVariantData":["arin_yerin/arin.normal.anger smile.webp","arin_yerin/arin.normal.angry.png"] },
-        {  "tagsMatch":["disappointed"], "PortraitVariantData":["arin_yerin/arin.normal.anger smile.webp","arin_yerin/arin.normal.angry.png","arin_yerin/arin.normal.bridling.webp"] },
-        {  "tagsMatch":["disgusted"], "PortraitVariantData":["arin_yerin/arin.normal.bridling.webp"] },
-        {  "tagsMatch":["annoyed"], "PortraitVariantData":["arin_yerin/arin.normal.anger smile.webp"] }
+        {  "tagsMatch":["admiring"], "PortraitVariantData":["arin_yerin/assets/arin.normal.admiring.webp"] },
+        {  "tagsMatch":["happy"], "PortraitVariantData":["arin_yerin/assets/arin.normal.admiring.webp"] },
+        {  "tagsMatch":["angry"], "PortraitVariantData":["arin_yerin/assets/arin.normal.anger smile.webp","arin_yerin/assets/arin.normal.angry.png"] },
+        {  "tagsMatch":["disappointed"], "PortraitVariantData":["arin_yerin/assets/arin.normal.anger smile.webp","arin_yerin/assets/arin.normal.angry.png","arin_yerin/assets/arin.normal.bridling.webp"] },
+        {  "tagsMatch":["disgusted"], "PortraitVariantData":["arin_yerin/assets/arin.normal.bridling.webp"] },
+        {  "tagsMatch":["annoyed"], "PortraitVariantData":["arin_yerin/assets/arin.normal.anger smile.webp"] }
         
     ],
 
-    "portrait_path":"arin_yerin/arin.png",
-    "icon_path":"arin_yerin/arin.png"
+    "portrait_path":"arin_yerin/assets/arin.png",
+    "icon_path":"arin_yerin/assets/arin.png"
 }
         ]
     },

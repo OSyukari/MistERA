@@ -900,6 +900,7 @@ public class scr_panel_COMmanager : scr_Menu
                     foreach (COM c in jobChara.allusableCOMs)
                     {
                         if (c.isHiddenParent || c.isHiddenChild) continue;
+                        if (c.hidden) continue;
 
                         //Debug.Log("Making Chara COM " + c.ID);
                         if (c.comTags.Contains("initSex") || c.comTags.Contains("endSex"))
@@ -937,8 +938,9 @@ public class scr_panel_COMmanager : scr_Menu
 
                     foreach (COM c in jPlayer.allusableCOMs)
                     {
-                       // if (c.ParentCOM != null) continue;
+                        // if (c.ParentCOM != null) continue;
 
+                        if (c.hidden) continue;
                         if (c.comTags.Contains("interaction") || c.comTags.Contains("action"))
                         {
                            // Debug.Log("Making Player COM " + c.ID);
@@ -958,6 +960,7 @@ public class scr_panel_COMmanager : scr_Menu
                     currentSexJob = jdebug;
                     foreach (COM c in jdebug.allusableCOMs)
                     {
+                        if (c.hidden) continue;
                         if (c.isHiddenParent || c.isHiddenChild) continue;
 
                         var getrect = GetGrid(c.CategoryLabel);
@@ -1594,8 +1597,11 @@ public class scr_panel_COMmanager : scr_Menu
             if (display) text.gameObject.SetActive(true);
             else text.gameObject.SetActive(false);
 
+
             if (display && returnVal)
             {
+                //tooltip = $"{text.Text.text}\n{tooltip}";
+
                 if (package.RequestRate * package.ResponseRate == 0)
                 {
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
@@ -1904,6 +1910,7 @@ public class scr_panel_COMmanager : scr_Menu
 
             if (display && returnVal)
             {
+                //tooltip = $"{text.Text.text}\n{tooltip}";
                 if (package.RequestRate * package.ResponseRate == 0)
                 {
                     tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";

@@ -163,9 +163,10 @@
         },
         {
             "ID":"com_interaction_talk",
-            "ActionPackageClass":"ActionPackage_Interaction",
+            "ActionPackageClass":"ActionPackage_Talk",
             "displayName":"com_interaction_talk_displayName_1",
             "timeScale":5,
+            "hidden":true,
             "comTags":["interaction","canbeignored","social"],
             "requirements":
             { 
@@ -206,6 +207,58 @@
                             "com_interaction_talk_begin_1",
                             "com_interaction_talk_begin_2",
                             "com_interaction_talk_begin_3"
+                        ]
+                    }
+                ]
+            },
+            "description_ongoing":{ "Entries":[{"texts":["com_interaction_talk_description_ongoing_1"]}], "keepLooking":false }
+        },
+        {
+            "fallbackCOMID":"com_interaction_talk",
+            "ID":"com_interaction_talk_topic",
+            "ActionPackageClass":"ActionPackage_Talk",
+            "displayName":"com_interaction_talk_displayName_1",
+            "timeScale":5,
+            "comTags":["interaction","canbeignored","social"],
+            "requirements":
+            { 
+                "_comment":"all interaction commands have a default interaction Energy cost that'll get added when executing package. Costs are deduced even if COM request failed.",
+                "_commen2":"interaction or not is getting detected on execution and it depends on doer and receiver state",
+                "requirement": { "doerCount":1 }
+            },
+            "variants":[
+                {
+                    "requirements":{ 
+                        "requirement":{ "receiverCount":1 }
+                    },
+                    "displayName":"com_interaction_talk_displayName_1"
+                },
+                {
+                    "requirements":{
+                        "requirement":{ "receiverCount":9 }
+                    },
+                    "displayName":"com_interaction_talk_displayName_2"
+                }
+            ],
+            "results": 
+            { "results_character":
+                [
+                    { 
+                        "entry_conditions": {  "applyToDoer":true, "applyToReceiver":true, "attitudeGTE":4 }, 
+                        "entry_results": { "type":"statMod_EN", "value":"1" } 
+                    }
+                ]
+            },
+            "AcceptanceCheck":{ "baseAcceptanceValue":5 },
+            "DifficultyCheck":{ "baseD20Check":10 },
+            "description_begin": {
+                "Entries": [
+                    {
+                        "keepLooking": false,
+                        "texts": [
+                            "com_interaction_talk_begin_1_topic",
+                            "com_interaction_talk_begin_2_topic",
+                            "com_interaction_talk_begin_3_topic"
                         ]
                     }
                 ]
@@ -338,8 +391,13 @@
                 "com_interaction_talk_begin_1": "$doer.firstname$有一搭没一搭地和$receiver.firstname$聊了起来",
                 "com_interaction_talk_begin_2": "$doer.firstname$漫不经心地和$receiver.firstname$聊了起来",
                 "com_interaction_talk_begin_3": "$doer.firstname$随意地和$receiver.firstname$聊着天",
+                "com_interaction_talk_begin_1_topic": "$doer.firstname$有一搭没一搭地和$receiver.firstname$聊起了$topic$",
+                "com_interaction_talk_begin_2_topic": "$doer.firstname$漫不经心地和$receiver.firstname$聊起了$topic$",
+                "com_interaction_talk_begin_3_topic": "$doer.firstname$随意地和$receiver.firstname$聊着$topic$",
                 "com_interaction_talk_displayName_1": "闲聊",
-                "com_interaction_talk_displayName_2": "大家一起闲聊",
+                "com_interaction_talk_displayName_1_topic": "聊$topic$",
+                "com_interaction_talk_displayName_2": "大家一起闲聊$topic$",
+                "com_interaction_talk_displayName_2_topic": "大家一起聊$topic$",
                 "com_interaction_talk_description_ongoing_1": "$doer.firstname$正在与$receiver.firstname$交谈",
 
                 "com_furniture_combat_sim_displayName_1":"模拟战斗",

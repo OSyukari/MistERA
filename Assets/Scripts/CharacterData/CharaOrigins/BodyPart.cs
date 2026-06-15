@@ -30,16 +30,20 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
 
         foreach (BodyPart_Base o in this.BodyPart_Base)
         {
-            //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary1.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_BodyPartBase bodypart id [{o.ID}] due to duplicate");
+            else{
             o.equipLayers = o.equipLayers.Distinct().ToList();
-            ID_Dictionary1.Add(o.ID, o);
+            }
         }
 
         foreach (BodyInternal_Base o in this.BodyInternal_Base)
         {
-            //Debug.Log("Character_Origin_Index : registering origin ["+o.ID+"] ");
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary2.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_BodyPartBase internal id [{o.ID}] due to duplicate");
+            else{
             o.equipLayers = o.equipLayers.Distinct().ToList();
-            ID_Dictionary2.Add(o.ID, o);
+            }
         }
 
         var keys = ID_Dictionary1.Keys.ToArray();

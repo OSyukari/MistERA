@@ -175,14 +175,17 @@ public class Character_Factions
             {
                 if (Owner.RefID == manager.RefID) continue;
 
-                if (returnValue){
-                    Owner.Relationships.IncreaseRelationshipWith(manager.RefID, RelationshipScoreType.Trust, 1);// FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, 1);
-                    HomeFactions[0].DailyReport.AddManageReport(Owner.FirstName+"'s trust toward "+manager.FirstName+" has increased by 1");
-                } 
-                else{
-                    Owner.Relationships.IncreaseRelationshipWith(manager.RefID, RelationshipScoreType.Trust, -1);
-                    HomeFactions[0].DailyReport.AddManageReport(Owner.FirstName+"'s trust toward "+manager.FirstName+" has decreased by 1", true);
-                }
+                var scoreinc = returnValue ? 1 : -1;
+                Owner.Relationships.IncreaseRelationshipWith(manager.RefID, RelationshipScoreType.Trust, scoreinc);// FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, 1);
+
+                var s = LocalizeDictionary.QueryThenParse("ui_management_overview_daily_trust")
+                    .Replace("$name$", Owner.FirstName)
+                    .Replace("$leader$", manager.FirstName)
+                    .Replace("$score$", LocalizeDictionary.QueryThenParse("relationship_trust"))
+                    .Replace("$count$", scoreinc.ToString("+0;-#"));
+
+                HomeFactions[0].DailyReport.AddManageReport(s, !returnValue);
+
             }
         }
         // else, no home faction, dont check it.

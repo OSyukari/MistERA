@@ -61,6 +61,19 @@ public class DescriptionCollector : I_Records
 
     public List<int> relevantActors = new List<int>();
 
+    public bool IsRelevantActor(int i)
+    {
+        return relevantActors.Contains(i);
+    }
+    [JsonIgnore]
+    public bool IsSingleActor
+    {
+        get
+        {
+            return relevantActors.Count == 1;
+        }
+    }
+
     public bool DirectlyRelated(Character_Trainable c)
     {
         return c == null || this.relevantActors.Count < 1 || this.relevantActors.Contains(c.RefID);

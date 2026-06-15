@@ -39,8 +39,8 @@ public class Index_EncounterGen : I_IndexHasID, I_IndexMergeable
 
         foreach (TeamTemplate o in this.list)
         {
-            // if (o.isValid)
-            ID_Dictionary.TryAdd(o.ID, o);
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_EncounterGen id [{o.ID}] due to duplicate");
         }
     }
 }
@@ -74,8 +74,8 @@ public class Index_CharGenTemplates : I_IndexHasID, I_IndexMergeable, I_NeedLate
 
         foreach (CharaTemplateGenerator o in this.list)
         {
-            // if (o.isValid)
-            ID_Dictionary.TryAdd(o.ID, o);
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_CharGenTemplates id [{o.ID}] due to duplicate");
         }
 
     }

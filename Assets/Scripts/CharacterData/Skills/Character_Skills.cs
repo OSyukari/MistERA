@@ -22,7 +22,8 @@ public class Index_CharaSkills : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
     {
         foreach (CharaSkill o in this.list)
         {
-            ID_Dictionary.Add(o.ID, o);
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_CharaSkills id [{o.ID}] due to duplicate");
         }
         s.Add("Index_CharaSkills initialized with " + list.Count + " elements");
     }

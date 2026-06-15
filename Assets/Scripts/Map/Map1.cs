@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine;
 
 
 [System.Serializable]
@@ -14,7 +15,8 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable
 
         foreach (MapPlan o in this.list)
         {
-            ID_Dictionary.Add(o.ID, o);
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MapPlan id [{o.ID}] due to duplicate");
         }
     }
     public MapPlan GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }

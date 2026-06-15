@@ -24,7 +24,11 @@ public class Stats_Derived_Base_Index : I_IndexHasID, I_IndexMergeable
     public void RegisterAllID(List<string> messages)
     {
         messages.Add("Stats_Derived_Base_Index : registering ID with list length [" + list.Count + "]");
-        foreach (Stats_Derived_Base o in list) ID_Dictionary.Add(o.ID, o);
+        foreach (Stats_Derived_Base o in list)
+        {
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Stats_Derived_Base_Index id [{o.ID}] due to duplicate");
+        }
     }
     public Stats_Derived_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
 

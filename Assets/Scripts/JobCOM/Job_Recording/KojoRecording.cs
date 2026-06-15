@@ -22,6 +22,15 @@ public class KojoRecording
         
     }
 
+    /// <summary>
+    /// tracks the iteminstance parent
+    /// </summary>
+    public int parentRecordingRef = -1;
+
+    /// <summary>
+    /// Unique ID that allows comparing whether 2 recording has same source
+    /// </summary>
+    public string RecordUID = "";
     public List<ActorRecord> ActorSettings = new List<ActorRecord>();
     public ActorRecord cameraman = null;
 
@@ -33,6 +42,7 @@ public class KojoRecording
             col.Value.RecordActor(rectemp);
         }
         ActorSettings = new List<ActorRecord>(rectemp.Values);
+        RecordUID = $"{DateTime.Now.Ticks}";
     }
 
     bool initialized = false;
@@ -78,7 +88,7 @@ public class KojoRecording
         } }
 
     [JsonProperty]
-    SortedDictionary<DateTime, MessageCollect> collect = new SortedDictionary<DateTime, MessageCollect>();
+    public SortedDictionary<DateTime, MessageCollect> collect = new SortedDictionary<DateTime, MessageCollect>();
 
     [JsonIgnore]
     public string DebugTool
@@ -97,6 +107,18 @@ public class KojoRecording
     }
 
     Dictionary<string, ActorRecord> _MessageCountByActor = new Dictionary<string, ActorRecord>();
+
+    [JsonIgnore]
+    public Dictionary<string, ActorRecord> MessageCountByActor
+    {
+        get
+        {
+            return _MessageCountByActor;
+        }
+    }
+
+
+
     List<DateTime> cached_datetime = null;
     [JsonIgnore]
     public List<string> ActorInfo
@@ -112,6 +134,8 @@ public class KojoRecording
             return info;
         }
     }
+
+
 
     /// <summary>
     /// Return next collect message (exclude current time)

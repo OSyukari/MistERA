@@ -86,8 +86,43 @@ public static class Utility
             else randW -= kvp.Value;
         }
         return current;
-
     }
+
+    public static T WeightedRandInDict<T>(Dictionary<T, double> dict, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        var total = dict.Values.Sum();
+        var randW = random.NextDouble() * total;
+
+        var current = default(T);
+        foreach (var kvp in dict)
+        {
+            current = kvp.Key;
+            if (randW <= kvp.Value) return kvp.Key;
+            else randW -= kvp.Value;
+        }
+        return current;
+    }
+
+    public static T WeightedRandInDict<T>(Dictionary<T, float> dict, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        var total = dict.Values.Sum();
+        var randW = (float)(random.NextDouble() * total);
+
+        var current = default(T);
+        foreach (var kvp in dict)
+        {
+            current = kvp.Key;
+            if (randW <= kvp.Value) return kvp.Key;
+            else randW -= kvp.Value;
+        }
+        return current;
+    }
+
+
+
+
     public static bool CompareValue(float value1, LogicalOperand operand, float value2)
     {
 
@@ -279,6 +314,23 @@ public static class Utility
         return result;
     }
 
+    public static void DistinctInPlace<T>(List<T> input, IEqualityComparer<T> comparer = null)
+    {
+        if (input == null || input.Count <= 1) return;
+        comparer = comparer ?? EqualityComparer<T>.Default;
+        for (int i = input.Count - 1; i > 0; i--)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (comparer.Equals(input[i], input[j]))
+                {
+                    input.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+    }
+
     public static T GetRandomElement<T>(List<T> list)
     {
         if (list == null || list.Count == 0)
@@ -286,6 +338,21 @@ public static class Utility
 
         int index = Random.Next(0, list.Count); // range: [0, Count - 1]
         return list[index];
+    }
+
+    public static KeyValuePair<TKey, TValue> GetRandomElement<TKey, TValue>(Dictionary<TKey, TValue> dict)
+    {
+        if (dict == null || dict.Count == 0)
+            return default;
+
+        int index = Random.Next(0, dict.Count);
+        int i = 0;
+        foreach (var kvp in dict)
+        {
+            if (i == index) return kvp;
+            i++;
+        }
+        return default;
     }
 
     public static int GetRandIndexFromListCount<T>(List<T> list)

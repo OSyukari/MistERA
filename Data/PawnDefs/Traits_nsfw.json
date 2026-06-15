@@ -473,6 +473,13 @@
             },
             "zh-cn":
             {
+                "trait_Singular_Masochist":"自虐狂",
+                "trait_Singular_Masochist_tooltip":"%%notimplemented%%",
+                "trait_Singular_Sadist":"施虐狂",
+                "trait_Singular_Sadist_tooltip":"%%notimplemented%%",
+
+
+
                 "traits_BODY":"身体特质",
 
                 "trait_Sensitivity_B":"B敏感度",

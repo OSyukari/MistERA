@@ -92,7 +92,7 @@
                     {
                         "trait_ID": "trait_SleepTiming_veryearly",
                         "trait_displayname": "Dawn Riser",
-                        "trait_score": 2,
+                        "trait_score": 0,
                         "trait_tooltip": "Wakeup offset +4h. Sleeps and wakes 4 hours earlier than default.",
                         "stat_modifiers": [
                             { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "4" }
@@ -101,7 +101,7 @@
                     {
                         "trait_ID": "trait_SleepTiming_early",
                         "trait_displayname": "Early Bird",
-                        "trait_score": 1,
+                        "trait_score": 0,
                         "trait_tooltip": "Wakeup offset +2h. Sleeps and wakes 2 hours earlier than default.",
                         "stat_modifiers": [
                             { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "2" }
@@ -117,7 +117,7 @@
                     {
                         "trait_ID": "trait_SleepTiming_late",
                         "trait_displayname": "Night Owl",
-                        "trait_score": -1,
+                        "trait_score": 0,
                         "trait_tooltip": "Wakeup offset -2h. Sleeps and wakes 2 hours later than default.",
                         "stat_modifiers": [
                             { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-2" }
@@ -126,7 +126,7 @@
                     {
                         "trait_ID": "trait_SleepTiming_verylate",
                         "trait_displayname": "Creature of the Night",
-                        "trait_score": -2,
+                        "trait_score": 0,
                         "trait_tooltip": "Wakeup offset -4h. Sleeps and wakes 4 hours later than default.",
                         "stat_modifiers": [
                             { "statID": "stats_derived_wakeupOffset", "modKey": "traitMod", "type": "addBase", "valueType": "number", "valueString": "-4" }

@@ -259,6 +259,11 @@ public class Job_Recording : Job, I_CanEndJob
                     desc.LoadActors(actorRefID);
                     this.m.AddMessage_After(desc, ParentRoom);
                 }
+                else
+                {
+                    // recycler need to recycle every removed item
+                    foreach(var item in consumeItems) scr_System_CampaignManager.current.Unregister(item);
+                }
             }
 
             if (!failed)

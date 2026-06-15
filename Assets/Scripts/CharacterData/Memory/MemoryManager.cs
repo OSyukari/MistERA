@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using QuikGraph.Predicates;
+using System.Linq;
 
 
 /// <summary>
@@ -80,13 +82,23 @@ public class MemoryManager
     //public SexLogManager SexLogManager;
 
     [JsonProperty] protected SortedList<long, Memory_Entry> entries = null;
-    [JsonIgnore] public List<Memory_Entry> Entries { get {
-            if (entries == null) entries = new SortedList<long, Memory_Entry>();
-            return new List<Memory_Entry>( entries.Values); } }
+
+    List<Memory_Entry> _Entries = null;
+    [JsonIgnore] public List<Memory_Entry> Entries 
+    { 
+        get {
+            if (_Entries == null)
+            {
+                if (entries == null) entries = new SortedList<long, Memory_Entry>();
+                _Entries = new List<Memory_Entry>(entries.Values);
+            }
+            return _Entries;
+        } 
+    }
     [JsonIgnore] public Memory_Entry Last { get {
 
             if (Entries == null || Entries.Count < 1) return null;
-            return entries.Values[Entries.Count - 1]; } }
+            return entries.Last().Value; } }
 
     private int ownerRef = -1;
     private Character_Trainable owner = null;
@@ -159,14 +171,15 @@ public class MemoryManager
     /// </summary>
     /// <param name="ap"></param>
     /// <returns></returns>
-    public bool MatchBlacklist(int roomRef, List<string> availableComID)
+    public bool MatchBlacklist(int roomRef, List<COM> availableComs)
     {
         if (roomRef == -1) return false;
         foreach (var b in Blacklist)
         {
             if (b.roomRef != roomRef) continue;
             if (b.comID == "") return true;
-            if (availableComID.Contains(b.comID)) return true;
+            foreach (var i in availableComs) if (i.ID == b.comID) return true;
+            //if (availableComID.Contains(b.comID)) return true;
         }
         return false;
     }
@@ -215,6 +228,9 @@ public class MemoryManager
         return String.Join(" | ", s1);
     }
 
+    List<int> rm_lust = new List<int>();
+    List<int> rm_mood = new List<int>();
+    List<int> rm_stress = new List<int>();
     /// <summary>
     /// Listing all recent [overrideMemoryCount] memory adjustment from newest to oldest<br/>
     /// Older memory adjustment intensity will be reduced by newer if newer has high opposite intensity
@@ -225,12 +241,13 @@ public class MemoryManager
     {
 
         if (overrideMemoryCount == -1) overrideMemoryCount = Owner.Stats.MemoryEntryCount;
-        List<int> rm_lust = new List<int>();
-        List<int> rm_mood = new List<int>();
-        List<int> rm_stress = new List<int>();
 
         if (recentMemoryCache == null)
         {
+            rm_lust.Clear();
+            rm_mood.Clear();
+            rm_stress.Clear();
+
             overrideMemoryCount = Math.Min(overrideMemoryCount, entries.Count);
             recentMemoryCache = new List<Stat_Modifier>();
             for (int i = entries.Count - 1; i >= 0; i--)
@@ -406,6 +423,7 @@ public class MemoryManager
 
     public void ClearCache()
     {
+        _Entries = null;
         if (recentMemoryCache != null) recentMemoryCache.Clear();
         recentMemoryCache = null;
         Owner.Stats.RefreshAttitude();
@@ -567,5 +585,8 @@ public class MemoryManager
             return this.Last;
         }
     }
+
+
+
 }
 

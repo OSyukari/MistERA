@@ -12,5 +12,9 @@ public class Room_Base
     public List<string> furnitureIDs = new List<string>();
     public bool noCleaning = false;
     public string roomImagePath = "";
+    public string roomImagePath_Inactive = "";
+    public bool roomImage_inactive_requireNight = true;
+    public bool roomImage_inactive_requireInactive = true;
+
     public RoomActivityState activityState = RoomActivityState.AlwaysActive;
 }

@@ -2,7 +2,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -33,6 +32,7 @@ public class StatModStorage
 
     float _value = 0f;
     bool _value_cached = false;
+    bool _tooltips_cached = false;
 
     int _baseKey = 0;
     bool _baseKey_cached = false;
@@ -50,55 +50,48 @@ public class StatModStorage
     }
 
     public float Value
-    { 
+    {
         get
         {
-            if (!_value_cached)
-            {
-                float valueCeiling = 0f, valueFloor = 0f;
-                //UpdateValues(addValue.Values.ToList(), ref baseVal, ref valueFloor, ref valueCeiling, true);
-
-                _value = CalcMods_Base(setValue.ContainsKey(baseKey) ? setValue[baseKey] : null,
-                                        addValue.ContainsKey(baseKey) ? addValue[baseKey] : null,
-                                        setMult.ContainsKey(baseKey) ? setMult[baseKey] : null,
-                                        addMult.ContainsKey(baseKey) ? addMult[baseKey] : null,
-                                        _tooltips);
-
-
-                foreach (var key in entriesID)
-                {
-                    if (key == baseKey) continue;
-                    var keymod = CalcMods(entriesNameRef.ContainsKey(key)? entriesNameRef[key] : Utility.GetStringByUniqueID(key),  
-                                            setValue.ContainsKey(key)? setValue[key] : null,
-                                            addValue.ContainsKey(key) ? addValue[key] : null,
-                                            setMult.ContainsKey(key) ? setMult[key] : null,
-                                            addMult.ContainsKey(key) ? addMult[key] : null,
-                                            _tooltips);
-                    if (keymod != 0)
-                    {
-                        _value += keymod;
-                        valueCeiling = Math.Max(keymod, valueCeiling);
-                        valueFloor = Math.Min(keymod, valueFloor);
-                        // addtooltip keymod
-                    }
-                }
-
-                if (isCapModded && (_value > valueCeiling || _value < valueFloor))
-                {
-                    _value = Mathf.Clamp(_value, valueFloor, valueCeiling);
-                }
-                if (!allowOvercap)
-                {
-                    _value = Mathf.Clamp(_value, statFloor, statCeiling);
-                }
-
-                _value = CalcMods_Final(ref _value, finalValue_override, addValue_final, finalMult_override, null, _tooltips);
-
-                _value_cached = true;
-
-            }
+            if (!_value_cached) Compute(null);
             return _value;
         } }
+
+    void Compute(List<string> tooltips)
+    {
+        float valueCeiling = 0f, valueFloor = 0f;
+
+        setValue.TryGetValue(baseKey, out var bsv);
+        addValue.TryGetValue(baseKey, out var bav);
+        setMult.TryGetValue(baseKey, out var bsm);
+        addMult.TryGetValue(baseKey, out var bam);
+        _value = CalcMods_Base(bsv, bav, bsm, bam, tooltips);
+
+        foreach (var key in entriesID)
+        {
+            if (key == baseKey) continue;
+            entriesNameRef.TryGetValue(key, out var keyName);
+            setValue.TryGetValue(key, out var ksv);
+            addValue.TryGetValue(key, out var kav);
+            setMult.TryGetValue(key, out var ksm);
+            addMult.TryGetValue(key, out var kam);
+            var keymod = CalcMods(keyName ?? Utility.GetStringByUniqueID(key), ksv, kav, ksm, kam, tooltips);
+            if (keymod != 0)
+            {
+                _value += keymod;
+                valueCeiling = Math.Max(keymod, valueCeiling);
+                valueFloor = Math.Min(keymod, valueFloor);
+            }
+        }
+
+        if (isCapModded && (_value > valueCeiling || _value < valueFloor))
+            _value = Mathf.Clamp(_value, valueFloor, valueCeiling);
+        if (!allowOvercap)
+            _value = Mathf.Clamp(_value, statFloor, statCeiling);
+
+        _value = CalcMods_Final(ref _value, finalValue_override, addValue_final, finalMult_override, null, tooltips);
+        _value_cached = true;
+    }
 
     public void SetBase(float val, float mult)
     {
@@ -116,12 +109,20 @@ public class StatModStorage
         else finalMult_override = null;
     }
 
+    float SumStatMods(List<Stat_Modifier> list)
+    {
+        float sum = 0f;
+        for (int i = 0; i < list.Count; i++)
+            sum += UtilityEX.StatValue(list[i], parent);
+        return sum;
+    }
+
     float CalcMods(string key, Stat_Modifier setval, List<Stat_Modifier> addval, Stat_Modifier setmul, List<Stat_Modifier> addmul, List<string> tooltips)
     {
         float setval_f = setval == null ? 0 : UtilityEX.StatValue(setval, parent);
-        float addval_f = addval == null || addval.Count < 1 ? 0 : addval.Sum(x=> UtilityEX.StatValue(x,parent));
+        float addval_f = addval == null || addval.Count < 1 ? 0 : SumStatMods(addval);
         float setmul_f = setmul == null ? 1 : UtilityEX.StatValue(setmul, parent);
-        float addmul_f = addmul == null || addmul.Count < 1 ? 0 : addmul.Sum(x=>UtilityEX.StatValue(x, parent));
+        float addmul_f = addmul == null || addmul.Count < 1 ? 0 : SumStatMods(addmul);
 
         var final = (setval_f + addval_f) * (setmul_f + addmul_f);
         if (final != 0 && tooltips != null) tooltips.Add($"{key}: {setval_f}{addval_f.ToString("+0;-#")} * {setmul_f}{addmul_f.ToString("+0;-#")}");
@@ -130,9 +131,9 @@ public class StatModStorage
     float CalcMods_Final(ref float value, Stat_Modifier setval, List<Stat_Modifier> addval, Stat_Modifier setmul, List<Stat_Modifier> addmul, List<string> tooltips)
     {
         float setval_f = setval == null ? finalValue_original : UtilityEX.StatValue(setval, parent);
-        float addval_f = addval == null || addval.Count < 1 ? 0 : addval.Sum(x => UtilityEX.StatValue(x, parent));
+        float addval_f = addval == null || addval.Count < 1 ? 0 : SumStatMods(addval);
         float setmul_f = setmul == null ? finalMult_original : UtilityEX.StatValue(setmul, parent);
-        float addmul_f = addmul == null || addmul.Count < 1 ? 0 : addmul.Sum(x => UtilityEX.StatValue(x, parent));
+        float addmul_f = addmul == null || addmul.Count < 1 ? 0 : SumStatMods(addmul);
 
         var prev = value;
         value = value * (setmul_f + addmul_f) + (setval_f + addval_f);
@@ -142,9 +143,9 @@ public class StatModStorage
     float CalcMods_Base(Stat_Modifier setval, List<Stat_Modifier> addval, Stat_Modifier setmul, List<Stat_Modifier> addmul, List<string> tooltips)
     {
         float setval_f = setval == null ? setValue_original : UtilityEX.StatValue(setval, parent);
-        float addval_f = addval == null || addval.Count < 1 ? 0 : addval.Sum(x => UtilityEX.StatValue(x, parent));
+        float addval_f = addval == null || addval.Count < 1 ? 0 : SumStatMods(addval);
         float setmul_f = setmul == null ? setMult_original : UtilityEX.StatValue(setmul, parent);
-        float addmul_f = addmul == null || addmul.Count < 1 ? 0 : addmul.Sum(x => UtilityEX.StatValue(x, parent));
+        float addmul_f = addmul == null || addmul.Count < 1 ? 0 : SumStatMods(addmul);
 
        // Debug.Log($"Getting basevalue {setval_f} {addval_f} {setmul_f} {addmul_f}\n baseval null? {setval == null} {setValue_original} {(setval == null ? "null" : UtilityEX.StatValue(setval, parent))}");
 
@@ -174,6 +175,7 @@ public class StatModStorage
         entriesID.Clear();
         entriesNameRef.Clear();
         _value_cached = false;
+        _tooltips_cached = false;
         foreach (var kvp in addValue) kvp.Value.Clear();
         addValue_final.Clear();
         finalValue_override = null;
@@ -187,6 +189,12 @@ public class StatModStorage
 
     public string Print()
     {
+        if (!_tooltips_cached)
+        {
+            _tooltips.Clear();
+            Compute(_tooltips);
+            _tooltips_cached = true;
+        }
         return String.Join("\n", _tooltips)+(extraTooltip.Count < 1 ? "" : "\n\n"+ String.Join("\n", extraTooltip));
     }
 
@@ -212,6 +220,7 @@ public class StatModStorage
         {
             MergeFinal(mod);
             _value_cached = false;
+            _tooltips_cached = false;
             return;
         }
         switch (mod.type)
@@ -222,6 +231,7 @@ public class StatModStorage
             case Stat_Modifier.StatMod_Type.addMult: AddToList(addMult, mod); break;
         }
         _value_cached = false;
+        _tooltips_cached = false;
     }
 
     void AddToList(Dictionary<int, List<Stat_Modifier>> dict, Stat_Modifier mod)

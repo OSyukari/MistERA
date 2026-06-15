@@ -14,6 +14,7 @@
                     {
                         "compType": "ItemComponent_Records",
                         "Comp_Records": {
+                            "storeItemID": "item_recording_camera_Tape",
                             "records": {
                                 "ActorSettings": [
                                     {

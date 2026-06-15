@@ -491,7 +491,11 @@ public class scr_System_CampaignManager : MonoBehaviour
             // RefID -1 no display
             // RefID -2 
             if (desc == null) return;
-            if (desc.VisibleTo(visible, null)) AddLog_Question_Record(desc, false, replaceStrings);
+            if (desc.VisibleTo(visible, null))
+            {
+                MessageLog log = LogManager.AddLog(new Message_Question_Record(desc, replaceStrings));
+                Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
+            }
         }
         else
         {
@@ -500,6 +504,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
+    public canvas_videoEdit Canvas_VideoEditor;
 
     /// <summary>
     /// RefID -1 no display
@@ -573,18 +578,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             }
         }
     }
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="parent"></param>
-    /// <param name="question"></param>
-    /// <param name="animate">whether on add line invoke a ui update</param>
-    public void AddLog_Question_Record(QuestionBoxCollector question, bool animate = false, Dictionary<string, string> replaceStrings = null)
-    {
-        //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
-        MessageLog log = LogManager.AddLog(new Message_Question_Record(question, replaceStrings));
-        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
-    }
+
     public bool shortenLogsPrint = true;
 
     public void NotifyEventEnd()

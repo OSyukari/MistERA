@@ -28,7 +28,7 @@ public abstract class ItemComponent_Base
 
     [JsonIgnore] public virtual bool Stackable { get { return true; } }
 
-    public void ReEstablishParent(string parentID, Item_Base parent)
+    public virtual void ReEstablishParent(string parentID, Item_Base parent)
     {
         this.parentID = parentID;
         this.parent = parent;

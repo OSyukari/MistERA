@@ -173,11 +173,19 @@ public class Index_ExperienceInitializer : I_IndexMergeable, I_IndexHasID
     {
         messages.Add("Registering ExperienceInitializers with count " + list.Count);
         var ids = new Dictionary<string, ExperienceInitializer>();
-        foreach (var i in list) ids[i.BaseID] = i;
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.BaseID)) continue;
+            if (!ids.TryAdd(i.BaseID, i)) Debug.Log($"failed to add Index_ExperienceInitializer id [{i.BaseID}] due to duplicate");
+        }
         _List = new ConcurrentDictionary<string, ExperienceInitializer>(ids);
 
         var ids2 = new Dictionary<string, ExperienceActor>();
-        foreach (var i in list_actor) ids2[i.ID] = i;
+        foreach (var i in list_actor)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ids2.TryAdd(i.ID, i)) Debug.Log($"failed to add Index_ExperienceInitializer actor id [{i.ID}] due to duplicate");
+        }
         _List_actor = new ConcurrentDictionary<string, ExperienceActor>(ids2);
 
     }

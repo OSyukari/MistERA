@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using Newtonsoft.Json;
 
 
 public class ActionPackage_ItemUse : ActionPackage
@@ -38,6 +38,18 @@ public class ActionPackage_ItemUse : ActionPackage
         get
         {
             return $"{(nameOverwrite != "" ? nameOverwrite : targetCOM != null ? (COMVariantID >= 0 ? targetCOM.DisplayName(COMVariantID) : targetCOM.DisplayName()) : " - ")} {ItemInstance.DisplayName}";
+        }
+    }
+
+    protected override void Execution(MessageCollect m = null)
+    {
+        base.Execution(m);
+        if (ItemInstance != null)
+        {
+            foreach (var actor in this.Actors)
+            {
+                UseItem(executeSuccessful, actor, ItemInstance, m);
+            }
         }
     }
 

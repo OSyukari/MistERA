@@ -24,6 +24,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
     public scr_roomBTN prefab_roomButton;
 
+
+
     //scr_Panel_Map parent;
 
     protected List<int> currentFloorIDs = new List<int>();
@@ -204,7 +206,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         currentFloorIDs.Clear();
         Utility.DestroyAllChildrenFrom( roomList);
         var pictureRect = picture.rectTransform;
-        Utility.DestroyAllChildrenFrom( pictureRect);
+        Utility.DestroyAllChildrenFrom( pictureRect, 1);
 
         if (scr_System_CentralControl.current.GetSprite(floor.FloorBase.imagePath, out var sprite))
         {
@@ -244,6 +246,28 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             }
         }
 
+
+        // --- AI GENERATED FLOOR LINE DRAW FUNCTION --- //
+
+        cachedPath = null;
+        connectionSegments = new List<(Vector2, Vector2, Color)>();
+        connectionPosLookup = new Dictionary<int, Vector2>();
+        foreach (var ri in floor.rooms)
+        {
+            connectionPosLookup[ri.RefID] = new Vector2(ri.Base.offsetX, ri.Base.offsetY);
+
+            if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
+            {
+                int connectedRef = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
+                Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
+                if (exit != null) connectionPosLookup[connectedRef] = new Vector2(exit.offsetX, exit.offsetY);
+            }
+        }
+
+        connectionLines.SetSegments(connectionSegments);
+
+        // --- END --- //
+
         ValidateAll();
     }
 
@@ -267,6 +291,43 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             ValidateAll();
         }
 
+    }
+
+
+    public override void ValidateAll()
+    {
+        base.ValidateAll();
+        DrawConnections();
+    }
+
+    // --- AI GENERATED FLOOR LINE DRAW FUNCTION --- //
+    public scr_mapLineRenderer connectionLines;
+    List<(Vector2 a, Vector2 b, Color c)> connectionSegments = new List<(Vector2, Vector2, Color)>();
+    Dictionary<int, Vector2> connectionPosLookup = new Dictionary<int, Vector2>();
+    IEnumerable<TaggedEdge<int, Door_Instance>> cachedPath = null;
+
+    private void DrawConnections()
+    {
+
+        // --- AI GENERATED FLOOR LINE DRAW FUNCTION --- //
+        if (connectionLines == null || floor == null) return;
+        if (path == cachedPath) return;
+
+        connectionSegments.Clear();
+        cachedPath = path;
+
+        if (path != null)
+        {
+            foreach (var e in path)
+            {
+                if (connectionPosLookup.TryGetValue(e.Source, out var posA) && connectionPosLookup.TryGetValue(e.Target, out var posB))
+                    connectionSegments.Add((posA, posB, Color.white));
+            }
+        }
+
+        connectionLines.SetSegments(connectionSegments);
+
+        // --- END --- //
     }
 
 

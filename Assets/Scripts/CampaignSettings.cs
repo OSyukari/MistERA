@@ -128,7 +128,11 @@ public class Index_CampaignSetting: I_IndexHasID, I_IndexMergeable, I_RemoveElem
         s.Add("Index_CampaignSetting : registering ID with list length [" + list.Count + "]");
 
         var ids = new Dictionary<string, CampaignSettings>();
-        foreach (var i in list) ids.Add(i.ID, i);
+        foreach (var i in list)
+        {
+            if (string.IsNullOrEmpty(i.ID)) continue;
+            if (!ids.TryAdd(i.ID, i)) Debug.Log($"failed to add Index_CampaignSetting id [{i.ID}] due to duplicate");
+        }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, CampaignSettings>(ids);
     }
 
