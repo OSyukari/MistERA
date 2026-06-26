@@ -253,7 +253,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public bool isPrisoner(int charaRef)
     {
-        if (charaGuestStatus[charaRef] == Manageable_GuestStatus.Prisoner) return true;
+        if (charaGuestStatus.TryGetValue(charaRef, out var status) && status == Manageable_GuestStatus.Prisoner) return true;
         return false;
     }
 

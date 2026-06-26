@@ -605,6 +605,7 @@
 "ui_map_floor_roomsList":"房间列表",
 "ui_map_floor_charaInRoom":"房间内成员",
 "ui_map_floorList":"楼层列表",
+"ui_map_floor_cancel":"取消移动",
 "ui_map_roomTooltip":"房间：$room$\n$furnitures$\n房间内物品：$items$\n房间内角色：$names$\n移动耗时 $time$分钟\n$roomActivityState$",
 
 "ui_update_elapsedTime":"经过$count$分钟",

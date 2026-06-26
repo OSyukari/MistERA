@@ -64,7 +64,16 @@
 
         "tooltip_kivotos_halo_effect":"光环：MP不会自然回复，获得等同于MP上限/2的全类型伤害减免。\n上述效果未实装",
 
+        "map_entrance":"门厅",
+        "map_frontdoor":"前门",
         "map_hallway":"走廊",
+        "map_balcony":"阳台",
+        "map_stairs":"楼梯",
+        "map_toilet":"厕所",
+        "map_livingroom":"客厅",
+        "map_shower":"浴室",
+        "map_kitchen":"厨房",
+        "map_laundry":"洗衣间",
         "map_singleSuite":"单人套房",
         "map_singleRoom":"单人房",
         "map_doubleRoom":"双人房",

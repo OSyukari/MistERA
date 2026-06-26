@@ -1,0 +1,72 @@
+{
+    "baseID": "TCoAaL_Char_Renee",
+    "Portrait": {
+        "portraitPriorityList": [
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "portrait_offset_x": 0,
+                "portrait_offset_y": 0,
+                "portrait_offset_size": 1.0,
+                "icon_offset_x": 0.0,
+                "icon_offset_y": 0.0,
+                "icon_offset_size": 0.8,
+                "portrait_path": "",
+                "icon_path": ""
+            }
+        ]
+    },
+    "Template": {
+        "Appearance": "Female",
+        "BodyType": "Default",
+        "stat_STR": 10,
+        "stat_CON": 8,
+        "stat_PSY": 9,
+        "stat_WIL": 13,
+        "personalityID": "personality_default",
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_C",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "Height": 163,
+        "Weight": 58,
+        "HWMultiplier": 0.36,
+        "traits": [
+            "trait_FatigueResistance_high",
+            "trait_PhysicalVitality_low",
+            "trait_SleepQuality_shallow",
+            "trait_AlcoholTolerance_good",
+            "trait_SelfEsteem_high",
+            "trait_MemoryRetention_high",
+            "trait_EnergyCapacity_low",
+            "trait_MentalFortitude_high",
+            "trait_GenderPreference_hetero"
+        ],
+        "initialRelationship": [
+            {
+                "baseID": "TCoAaL_Char_Andrew",
+                "initialBiologicalRelationship": "relationship_parent",
+                "initialBiologicalRelationship_isA": true
+            },
+            {
+                "baseID": "TCoAaL_Char_Ashley",
+                "initialBiologicalRelationship": "relationship_parent",
+                "initialBiologicalRelationship_isA": true
+            }
+        ],
+        "initialInventory": [],
+        "Skills": null
+    },
+    "firstName": "TCoAaL_Renee_firstname",
+    "middleName": "",
+    "lastName": "TCoAaL_Graves_lastname",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

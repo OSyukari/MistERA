@@ -1,0 +1,24 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "Jitaku_Katsuragi_lastname": "葛木",
+
+                "Jitaku_Shouko_firstname": "翔子",
+                "Jitaku_Sayaka_firstname": "纱耶香",
+                "Jitaku_Yuki_firstname": "由纪"
+            },
+            "en-us":
+            {
+                "Jitaku_Katsuragi_lastname": "Katsuragi",
+
+                "Jitaku_Shouko_firstname": "Shouko",
+                "Jitaku_Sayaka_firstname": "Sayaka",
+                "Jitaku_Yuki_firstname": "Yuki"
+            }
+        }
+    }
+}

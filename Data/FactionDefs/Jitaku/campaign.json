@@ -1,0 +1,101 @@
+{
+    "CampaignSettings":
+    {
+        "list":[
+        {
+            "ID":"campaign_jitaku_keibiin",
+            "displayName":"Homeguard",
+            "tooltip":"Home guard!",
+            "extraOptions":[
+                {
+                    "ID":"campaign_jitaku_keibiin_start_default",
+                    "displayName":"home guard",
+                    "tooltip":"123",
+                    "initializers":[
+                        {
+                            "initClass":"campaign_init_playerNameIDs",
+                            "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
+                        },
+                        {
+                            "initClass":"campaign_init_playerPortrait",
+                            "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":10,\"portrait_offset_y\":40,\"Variants\":[], \"portrait_path\":\"SchoolIcon/School_Icon_ETC.png\", \"icon_path\":\"SchoolIcon/School_Icon_ETC.png\",\"icon_offset_size\":0.25,\"icon_offset_x\":0,\"icon_offset_y\":0 }"]
+                        },
+                        {
+                            "initClass":"campaign_init_homefaction",
+                            "initArguments":["Katsuragi_Household","true", "true"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_root",
+                            "initArguments":["map_jitaku_keibiin","Katsuragi_Household"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_extra",
+                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+    },
+    "MapPlans":{
+        "list":
+        [
+            {
+                "ID":"map_jitaku_keibiin",
+                "z_rotation":0.0,
+                "initializeFaction":"Katsuragi_Household",
+                "setPrivateRoomOwner":true,
+                "mainExit": { "roomID": "jitaku_floor_1L_doorway", "exitCost": 5 },
+                "floors":[
+                    {
+                        "ID":"jitaku_floor_4ldk",
+                        "nameOverwrite":"Katsuragi_Household_Home",
+                        "Additional":[
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"jitaku_floor_2L_roomsingle1", "charaBaseID": [ "Jitaku_Yuki" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"jitaku_floor_2L_roomsingle2", "charaBaseID": [ "Jitaku_Sayaka" ] }
+                            },
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"jitaku_floor_2L_roomdouble", "charaBaseID": [ "Jitaku_Shouko" ] }
+                            },
+                            {
+                                "addClass":"map_init_playerLocation",
+                                "map_init_playerLocation":{ "roomID":"jitaku_floor_1L_room" }
+                            },
+                            {
+                                "addClass":"map_init_organization",
+                                "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
+                            }
+                        ]
+                    }
+                ],
+                "mealHours":[7, 12, 18],
+                "activeHoursStart":7,
+                "activeHoursEnd":22
+            }
+        ]
+}    ,
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "campaign_jitaku_keibiin": "自宅警备员",
+                "campaign_jitaku_keibiin_tooltip":"debug",
+                "campaign_jitaku_keibiin_start_default": "默认",
+                "campaign_jitaku_keibiin_start_default_tooltip":"debug debug"
+            },
+            "en-us":
+            {
+                
+            }
+        }
+    }
+}

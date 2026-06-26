@@ -31,11 +31,22 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     protected List<int> currentFloorIDs = new List<int>();
 
 
+    /// ANCHOR CONVERSION ///
+    private Vector2 ConvertOffset(float offsetX, float offsetY)
+    {
+        if (floor != null && floor.FloorBase.AnchorType == FloorCoordinateAnchor.TopLeft)
+            return new Vector2(offsetX - floor.FloorBase.floorWidth / 2f, floor.FloorBase.floorHeight / 2f - offsetY);
+        return new Vector2(offsetX, offsetY);
+    }
+    /// ANCHOR CONVERSION ///
+
     private void addExit(scr_roomBTN prefab, RectTransform parent, Floor_Base.FloorPlan_Exit exits, Floor_Instance targetFloor)
     {
         scr_roomBTN r2 = Instantiate(prefab);
         r2.SelfRect.SetParent(parent, false);
-        r2.SelfRect.anchoredPosition = new Vector2(exits.offsetX, exits.offsetY);
+        /// ANCHOR CONVERSION ///
+        r2.SelfRect.anchoredPosition = ConvertOffset(exits.offsetX, exits.offsetY);
+        /// ANCHOR CONVERSION ///
 
         r2.bgImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
 
@@ -60,7 +71,9 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     {
         scr_roomBTN r2 = Instantiate(prefab);
         r2.SelfRect.SetParent(parent, false);
-        r2.SelfRect.anchoredPosition = new Vector2(ri.Base.offsetX, ri.Base.offsetY);
+        /// ANCHOR CONVERSION ///
+        r2.SelfRect.anchoredPosition = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
+        /// ANCHOR CONVERSION ///
 
         r2.transform.rotation = Quaternion.identity;
 
@@ -89,7 +102,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         {
             btn.Initialize(this, new ButtonValidator_MoveRoom(this, ri, btn, true, ignorePathToggle));
             //btn.SetText(tempRefID.ToString());
-            btn.SetText(tempRefID + " - " + ri.DisplayNameShort);
+            btn.SetText(ri.DisplayNameShort);
             r2.bgImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
             r2.sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
@@ -254,14 +267,16 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         connectionPosLookup = new Dictionary<int, Vector2>();
         foreach (var ri in floor.rooms)
         {
-            connectionPosLookup[ri.RefID] = new Vector2(ri.Base.offsetX, ri.Base.offsetY);
+            /// ANCHOR CONVERSION ///
+            connectionPosLookup[ri.RefID] = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
 
             if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
             {
                 int connectedRef = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
                 Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
-                if (exit != null) connectionPosLookup[connectedRef] = new Vector2(exit.offsetX, exit.offsetY);
+                if (exit != null) connectionPosLookup[connectedRef] = ConvertOffset(exit.offsetX, exit.offsetY);
             }
+            /// ANCHOR CONVERSION ///
         }
 
         connectionLines.SetSegments(connectionSegments);

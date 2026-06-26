@@ -2,6 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 
+public enum FloorCoordinateAnchor
+{
+    Center,
+    TopLeft
+}
+
 public class Floor_Base
 {
     // awake register to list
@@ -11,6 +17,8 @@ public class Floor_Base
 
     public float floorWidth = 0f;
     public float floorHeight = 0f;
+
+    public FloorCoordinateAnchor AnchorType = FloorCoordinateAnchor.Center;
 
     public float resize = 1f;
 

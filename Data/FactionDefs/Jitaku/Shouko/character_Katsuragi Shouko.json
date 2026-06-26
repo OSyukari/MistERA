@@ -1,0 +1,69 @@
+{
+    "baseID": "Jitaku_Shouko",
+    "Portrait": {
+        "portraitPriorityList": [
+{
+    "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+    
+    "portrait_offset_x": 0,
+    "portrait_offset_y": -39,
+    "portrait_offset_size": 0.55,
+    
+    "icon_offset_x":-5,
+    "icon_offset_y":-150,
+    "icon_offset_size":0.3,
+
+    "portrait_path":"Jitaku/Shouko/neutral.webp",
+    "icon_path":"Jitaku/Shouko/neutral.webp"
+}
+
+        ]
+    },
+    "Template": {
+        "Appearance": "Female",
+        "stat_STR": 8,
+        "stat_CON": 10,
+        "stat_PSY": 13,
+        "stat_WIL": 8,
+        "personalityID": "personality_default",
+        "sensitivity_B": "trait_Sensitivity_B_supersensitive",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_G",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "Height": 158,
+        "Weight": 60,
+        "HWMultiplier": 0.38,
+        "traits": [
+            "trait_FatigueResistance_low",
+            "trait_MemoryRetention_high",
+            "trait_EnergyCapacity_low"
+        ],
+        "initialRelationship":[
+            {
+                "baseID":"Jitaku_Sayaka",
+                "initialBiologicalRelationship":"relationship_parent",
+                "initialBiologicalRelationship_isA":true
+            },
+            {
+                "baseID":"Jitaku_Yuki",
+                "initialBiologicalRelationship":"relationship_parent",
+                "initialBiologicalRelationship_isA":true
+            }
+        ],
+        "initialInventory": [],
+        "Skills": null
+    },
+    "firstName": "Jitaku_Shouko_firstname",
+    "middleName": "",
+    "lastName": "Jitaku_Katsuragi_lastname",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

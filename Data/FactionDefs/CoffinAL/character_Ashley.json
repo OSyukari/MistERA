@@ -1,0 +1,89 @@
+{
+    "baseID": "TCoAaL_Char_Ashley",
+    "Portrait": {
+        "portraitPriorityList": [
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "Variants": [
+                    { "tagsMatch": ["angry"],                       "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_01.png"] },
+                    { "tagsMatch": ["relaxed"],                     "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_02.png"] },
+                    { "tagsMatch": ["embarrassed", "awkward"],      "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_03.png"] },
+                    { "tagsMatch": ["scheming"],                    "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_05.png"] },
+                    { "tagsMatch": ["happy"],                       "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_06.png"] },
+                    { "tagsMatch": ["disappointed", "annoyed"],     "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_07.png"] },
+                    { "tagsMatch": ["sad"],                         "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_08.png"] },
+                    { "tagsMatch": ["scared"],                      "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_09.png"] },
+                    { "tagsMatch": ["admiring"],                    "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_10.png"] },
+                    { "tagsMatch": ["serious", "focused"],          "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_11.png"] },
+                    { "tagsMatch": ["shy"],                         "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_12.png"] },
+                    { "tagsMatch": ["hostile"],                     "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_13.png"] },
+                    { "tagsMatch": ["confident"],                   "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_14.png"] },
+                    { "tagsMatch": ["surprised", "hesitated"],      "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_15.png"] },
+                    { "tagsMatch": ["worry", "doubt", "thinking"],  "PortraitVariantData": ["TCoAaL_Ashley/1114165713342554/Ashley_01_16.png"] }
+                ],
+                "portrait_offset_x": 0,
+                "portrait_offset_y": -200,
+                "portrait_offset_size": 0.8,
+                "portrait_path": "TCoAaL_Ashley/1114165713342554/Ashley_01_04.png",
+
+                "icon_offset_x":5.5,
+                "icon_offset_y":-291,
+                "icon_offset_size":0.5,
+                "icon_path": "TCoAaL_Ashley/1114165713342554/Ashley_01_04.png"
+            }
+        ]
+    },
+    "Template": {
+        "Appearance": "Female",
+        "BodyType": "Default",
+        "stat_STR": 8,
+        "stat_CON": 9,
+        "stat_PSY": 14,
+        "stat_WIL": 8,
+        "personalityID": "personality_default",
+        "sensitivity_B": "trait_Sensitivity_B_sensitive",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_sensitive",
+        "sensitivity_V": "trait_Sensitivity_V_sensitive",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_C",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "Height": 160,
+        "Weight": 47,
+        "HWMultiplier": 0.29,
+        "traits": [
+            "trait_FatigueResistance_low",
+            "trait_SleepLength_more",
+            "trait_SleepTiming_late",
+            "trait_SelfEsteem_low",
+            "trait_MemoryRetention_veryhigh",
+            "trait_EnergyCapacity_high",
+            "trait_MentalFortitude_low",
+            "trait_GenderPreference_hetero"
+        ],
+        "initialRelationship": [
+            {
+                "baseID": "TCoAaL_Char_Renee",
+                "initialBiologicalRelationship": "relationship_parent",
+                "initialBiologicalRelationship_isA": false
+            },
+            {
+                "baseID": "TCoAaL_Char_Andrew",
+                "initialBiologicalRelationship": "relationship_sibling",
+                "initialBiologicalRelationship_isA": false
+            }
+        ],
+        "initialInventory": [],
+        "Skills": null
+    },
+    "firstName": "TCoAaL_Ashley_firstname",
+    "middleName": "",
+    "lastName": "TCoAaL_Graves_lastname",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

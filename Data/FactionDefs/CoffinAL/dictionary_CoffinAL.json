@@ -1,0 +1,18 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "TCoAaL_Graves_lastname": "格雷夫斯",
+                "TCoAaL_Renee_firstname": "蕾妮",
+                "TCoAaL_Andrew_firstname": "安德鲁",
+                "TCoAaL_Ashley_firstname": "艾希莉"
+            },
+            "en-us": {
+                "TCoAaL_Graves_lastname": "Graves",
+                "TCoAaL_Renee_firstname": "Renee",
+                "TCoAaL_Andrew_firstname": "Andrew",
+                "TCoAaL_Ashley_firstname": "Ashley"
+            }
+        }
+    }
+}

@@ -43,7 +43,7 @@ public class scr_bgImageSwapper : MonoBehaviour
         {
             var imagepath = room.Base.roomImagePath;
 
-            if (room.Base.roomImagePath_Inactive != "" && room.FactionOwner is Manageable)
+            if (room.FactionOwner is Manageable)
             {
                 var faction = room.FactionOwner as Manageable;
 
@@ -51,17 +51,19 @@ public class scr_bgImageSwapper : MonoBehaviour
                 {
 
                 }
-                else if (room.Base.roomImage_inactive_requireNight && faction.isWorldDay)
+                else if (room.ActivityState == RoomActivityState.AlwaysActive 
+                    || (room.ActivityState == RoomActivityState.DayOnly && faction.IsActiveHour())
+                    || (room.ActivityState == RoomActivityState.NightOnly && !faction.IsActiveHour()))
                 {
                     // active
+                    if (!faction.isWorldDay && room.Base.roomImagePath_Night != "") imagepath = room.Base.roomImagePath_Night;
+                    // else default
+
                 }
-                else if (room.Base.roomImage_inactive_requireInactive && faction.IsActiveHour())
+                else // inactive
                 {
-                    // active
-                }
-                else
-                {
-                    imagepath = room.Base.roomImagePath_Inactive;
+                    if (!faction.isWorldDay && room.Base.roomImagePath_Inactive_Night != "") imagepath = room.Base.roomImagePath_Inactive_Night;
+                    else imagepath = room.Base.roomImagePath_Inactive;
                 }
             }
             
