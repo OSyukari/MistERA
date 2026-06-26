@@ -1,8 +1,8 @@
 # MistEra Build
 
-迷雾Era的试玩build。请直接去[Release页](https://gitgud.io/OS74/mistera/-/releases/permalink/latest)下载最新的Package（已经build好的压缩包）
+迷雾Era的试玩build。请直接去[Gitgud Release页](https://gitgud.io/OS74/mistera/-/releases/permalink/latest)下载最新的Package（已经build好的压缩包）
 
-关于每版本实装的内容简介，请看[CHANGELOG.md](https://gitgud.io/OS74/mistera/-/blob/master/CHANGELOG.md)
+关于每版本实装的内容简介，请看[Gitgud changelog](https://gitgud.io/OS74/mistera/-/blob/master/CHANGELOG.md)或[Github changelog](https://github.com/lk-74/MistERA/blob/master/CHANGELOG.md)
 
 关于下版本将要实装的内容，请看[WIKI:预定实装机能](https://gitgud.io/OS74/mistera/-/wikis/release_plan)
 
