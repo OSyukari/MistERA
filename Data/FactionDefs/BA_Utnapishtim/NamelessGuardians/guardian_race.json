@@ -2,14 +2,14 @@
     "CharGenTemplates":
     {
         "list":[
-{
-    "ID":"nameless_guardian_type_f",
-    "targetBaseID":"nameless_guardian_type_f_template"
-},
-{
-    "ID":"nameless_guardian_type_m",
-    "targetBaseID":"nameless_guardian_type_m_template"
-}
+            {
+                "ID":"nameless_guardian_type_f",
+                "targetBaseIDs":["nameless_guardian_type_f_template"]
+            },
+            {
+                "ID":"nameless_guardian_type_m",
+                "targetBaseIDs":["nameless_guardian_type_m_template"]
+            }
         ]
     },
     "humanoid_Races":

@@ -45,11 +45,6 @@ public class ActionPackage_ItemUse_Recording : ActionPackage_ItemUse
         }
     }
 
-    public override bool Tick(ref List<int> actorList, int tickDuration = 1)
-    {
-        return base.Tick(ref actorList, tickDuration);
-        //return true;
-    }
 
     [JsonProperty] protected int elapsedTime = 0;
 

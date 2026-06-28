@@ -82,10 +82,9 @@ public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, 
 
         if (Gen_Dictionary.TryGetValue(id, out CharaTemplateGenerator gen))
         {
-            string fallback = gen.targetBaseIDs != null && gen.targetBaseIDs.Count > 0
-                ? gen.targetBaseIDs[0]
-                : gen.targetBaseID;
-            return GetByID(fallback);
+            return gen.targetBaseIDs != null && gen.targetBaseIDs.Count > 0
+                ? GetByID(gen.targetBaseIDs[0])
+                : null;
         }
         return null;
     }

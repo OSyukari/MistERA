@@ -294,7 +294,7 @@
         "list": [
             {
                 "ID": "goblin_victim_BD2_random_3star_female",
-                "targetBaseID": "BD2_random_3star_female",
+                "targetBaseIDs": ["BD2_random_3star_female"],
                 "basicExperienceOverride": [
                     "exp_collection_girl_hetero"
                 ],

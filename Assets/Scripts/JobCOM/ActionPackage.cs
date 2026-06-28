@@ -765,9 +765,10 @@ public abstract class ActionPackage
     /// <summary>
     /// Tick by 1 minute but with List of all actors in room <br/>
     /// Timestop && !canActInTimeStop will prevent this from ticking <br/>
-    /// doers.allUnconscious will prevent this from ticking
+    /// doers.allUnconscious will prevent this from ticking<br/><br/>
+    /// actorList is currently null
     /// </summary>
-    public virtual bool Tick(ref List<int> actorList, int tickDuration = 1)
+    public virtual bool Tick(List<int> actorList, int tickDuration = 1)
     {
         //Debug.Log("AP TICK for " + DisplayName);
         bool timeStop = DoerRefs.Count > 0;

@@ -29,34 +29,36 @@
     "portrait_offset_x": 6.858727,    "portrait_offset_y": -389.2971,    "portrait_offset_size": 0.55,
     "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
-"Variants":
-[
-    
-    {
-       
-      "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
-      "PortraitVariantData":["99"]
-    }, 
-    {  "tagsMatch":["curious"], "PortraitVariantData":["02","10"] },   
-    {  "tagsMatch":["happy"], "PortraitVariantData":["03"] },   
-    {  "tagsMatch":["awkward"], "PortraitVariantData":["04","07"] },  
-    {  "tagsMatch":["sorry"], "PortraitVariantData":["04","07","08","09"] },   
-    {  "tagsMatch":["serious"], "PortraitVariantData":["05","12","13","14"] },   
-    {  "tagsMatch":["disappointed"], "PortraitVariantData":["06"] }, 
-    {  "tagsMatch":["sad"], "PortraitVariantData":["06","08"] }, 
-    {  "tagsMatch":["doubt"], "PortraitVariantData":["08","09"] }, 
-    {  "tagsMatch":["worry"], "PortraitVariantData":["11"] },  
-    {  "tagsMatch":["confident"], "PortraitVariantData":["12","13"] },   
-    {  "tagsMatch":["hostile"], "PortraitVariantData":["14"] },   
-    {  "tagsMatch":["disgusted"], "PortraitVariantData":["14"] },   
-    {  "tagsMatch":["angry"], "PortraitVariantData":["15","16"] },   
-    {  "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },  
-    {
+    "Variants":
+    [
         
-     "Enable":false,
-    "PortraitVariantData":["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","99"]
-    }
-],
+        {
+        
+        "Conditions":[ { "$type":"PortraitManager+PortraitValidators, Assembly-CSharp",  "requireUnconscious":true } ],
+        "PortraitVariantData":["99"]
+        }, 
+        {  "tagsMatch":["hostile"], "PortraitVariantData":["14"] },
+        {  "tagsMatch":["disgusted"], "PortraitVariantData":["14"] },
+        {  "tagsMatch":["angry"], "PortraitVariantData":["15","16"] },
+        {  "tagsMatch":["disappointed"], "PortraitVariantData":["06"] },
+        {  "tagsMatch":["sad"], "PortraitVariantData":["06","08"] },
+        {  "tagsMatch":["awkward"], "PortraitVariantData":["04","07"] },
+        {  "tagsMatch":["doubt"], "PortraitVariantData":["08","09"] },
+        {  "tagsMatch":["worry"], "PortraitVariantData":["11"] },
+        {  "tagsMatch":["sorry"], "PortraitVariantData":["04","07","08","09"] },
+        {  "tagsMatch":["serious"], "PortraitVariantData":["05","12","13","14"] },
+        {  "tagsMatch":["confident"], "PortraitVariantData":["12","13"] },
+        {  "tagsMatch":["surprised"], "PortraitVariantData":["02","10"] },
+        {  "tagsMatch":["curious"], "PortraitVariantData":["02","10"] },
+        {  "tagsMatch":["happy"], "PortraitVariantData":["03"] },
+        {  "tagsMatch":["relaxed"], "PortraitVariantData":["99"] },
+        {
+            
+        "Enable":false,
+        "PortraitVariantData":["00","01","02","03","04","05","06","07","08","09","10","11","12","13","14","15","16","99"]
+        }
+    ],
+    "Disable":false,
 
     "icon_path":"Rin/Rin_Ark_Uniform_Icon.png",
 

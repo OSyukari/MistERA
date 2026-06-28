@@ -5,7 +5,7 @@
 {
     "ID":"creature_animal_cavebear",
     "title":"creature_animal_cavebear",
-    "targetBaseID":"creature_animal_bear_template",
+    "targetBaseIDs":["creature_animal_bear_template"],
     "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
     "Appearance":"Male"
 }

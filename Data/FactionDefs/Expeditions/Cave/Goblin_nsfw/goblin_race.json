@@ -5,7 +5,7 @@
 {
     "ID":"creature_goblin_club",
     "title":"creature_humanoid_goblin",
-    "targetBaseID":"creature_humanoid_goblin_template",
+    "targetBaseIDs":["creature_humanoid_goblin_template"],
     "str_var":3,"con_var":3, "psy_var":3,"wil_var":3,
     "useNameGen":true, "nameGen_firstName":"goblin",
     "Appearance":"Male",
@@ -16,7 +16,7 @@
 {
     "ID":"creature_goblin_slinger",
     "title":"creature_humanoid_goblin",
-    "targetBaseID":"creature_humanoid_goblin_template",
+    "targetBaseIDs":["creature_humanoid_goblin_template"],
     "str_var":3,"con_var":3, "psy_var":3,"wil_var":3,
     "useNameGen":true, "nameGen_firstName":"goblin",
     "Appearance":"Male",
@@ -27,7 +27,7 @@
 {
     "ID":"creature_hobgoblin_club",
     "title":"creature_humanoid_hobgoblin",
-    "targetBaseID":"creature_humanoid_hobgoblin_template",
+    "targetBaseIDs":["creature_humanoid_hobgoblin_template"],
     "str_var":4,"con_var":4, "psy_var":1,"wil_var":1,
     "useNameGen":true, "nameGen_firstName":"goblin",
     "Appearance":"Male",

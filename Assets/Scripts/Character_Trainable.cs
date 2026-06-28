@@ -21,7 +21,7 @@ public enum Character_BodyType
 
 
 [System.Serializable]
-public class Character_Trainable : ScriptableObject, I_Disposable
+public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 {
     public bool isTemporaryActor = false;
 
@@ -494,7 +494,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable
     protected CharaSafeTemplate _templateS = null;
     protected CharaTrainableTemplate _template = null;
     [JsonIgnore] public CharaTemplate Template
-    { get {
+    { 
+        get {
             if(_template == null && _templateS == null)
             {
                 //Debug.Log("Fetching Template data |" + this.BaseID + "|" + this.FileLocation+"|");

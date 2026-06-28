@@ -35,10 +35,10 @@ public class ActionPackage_LLM : ActionPackage
     MessageJSON innerJSON = null;
 
 
-    public override bool Tick(ref List<int> actorList, int tickDuration = 1)
+    public override bool Tick(List<int> actorList, int tickDuration = 1)
     {
         Debug.Log($"llm package ticked! currentDuration {this.Duration}, tick {tickDuration}, doers {String.Join(" ", DoerRefs)}, receivers {String.Join(" ", ReceiverRefs)}");
-        return base.Tick(ref actorList, tickDuration);
+        return base.Tick(actorList, tickDuration);
     }
 
     protected override bool PreEvaluate()

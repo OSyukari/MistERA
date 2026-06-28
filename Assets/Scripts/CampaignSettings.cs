@@ -6,9 +6,7 @@ using Newtonsoft.Json;
 public class CampaignSettings
 {
     public string ID = "";
-    [JsonProperty] protected string displayName;
     [JsonIgnore] public string DisplayName{get{ return LocalizeDictionary.QueryThenParse(ID);}}
-    [JsonProperty] protected string tooltip;
     [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID+"_tooltip"); } }
     public bool isAvailable = true;
     public string requireOriginID = "";
@@ -16,6 +14,9 @@ public class CampaignSettings
 
     public List<CampaignSettings_ExtraOptions> extraOptions = new List<CampaignSettings_ExtraOptions>();
     public List<string> tags = new List<string>();
+
+    public string forbidPCSelect = "";
+
     public CampaignSettings_ExtraOptions GetPreviousOption(CampaignSettings_ExtraOptions ex)
     {
         if (extraOptions.Contains(ex))
@@ -50,12 +51,12 @@ public class CampaignSettings
 public class CampaignSettings_ExtraOptions
 {
     public string ID = "";
-    [JsonProperty] protected string displayName = "";
     public List<string> tags = new List<string> ();
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID, displayName); } }
-    [JsonProperty] protected string tooltip = "";
-    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip); } }
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(ID); } }
+    [JsonIgnore] public string Tooltip { get { return LocalizeDictionary.QueryThenParse(ID + "_tooltip"); } }
     public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
+
+    public string forbidPCSelect = "";
 
 }
 

@@ -41,6 +41,16 @@
                 "inventoryOverride":[
 
                 ]
+            },
+            {
+                "ID":"nikke_random_unique",
+                "targetBaseIDs":["Campaign1_Nikke_Cinderella","Campaign1_Nikke_Dorothy"],
+                "str_var":2,"con_var":2, "psy_var":2, "wil_var":2, "wil_base":10, "psy_base":10,
+                "allowDuplicateID":false,
+                "Appearance":"Female",
+                "inventoryOverride":[
+
+                ]
             }
         ]
     }

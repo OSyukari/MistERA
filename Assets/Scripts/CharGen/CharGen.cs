@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 using System.Collections;
-using System.Linq;
 
 
 public enum NameCulture
@@ -133,8 +132,15 @@ public class NameGenerator
     }
 }
 
-public class CharaTemplateGenerator
+public interface I_CharaGen
 {
+
+}
+
+public class CharaTemplateGenerator : I_CharaGen
+{
+    public bool allowDuplicateID = true;
+
     public string ID = "";
     public string firstName = "", middleName = "", lastName = "";
 
@@ -146,15 +152,109 @@ public class CharaTemplateGenerator
     public string nameDisplayFormat = "";
     public string title = "";
 
+    public Character_Trainable GenerateChara(bool allowDuplicate = true)
+    {
+        if (childTemplates == null)
+        {
+            childTemplates = new List<I_CharaGen>();
+            foreach(var ID in targetBaseIDs)
+            {
+                var temp = scr_System_Serializer.current.MasterList.CharGenTemplates.GetByID(ID);
+                if (temp != null)
+                {
+                    childTemplates.Add(temp);
+                    continue;
+                }
+                var chara = scr_System_Serializer.current.index_Characters_Bases.GetChara(ID);
+                if (chara != null)
+                {
+                    childTemplates.Add(chara);
+                    continue;
+                }
+            }
+        }
+
+        allowDuplicate = allowDuplicate && this.allowDuplicateID;
+
+        Utility.ShuffleList(childTemplates);
+        foreach(var entry in childTemplates)
+        {
+            if (entry is Character_Trainable)
+            {
+                var c = entry as Character_Trainable;
+                if (c == null) continue;
+                if (!allowDuplicate && scr_System_CampaignManager.current.HasInstanceCharaWithBaseID(c.BaseID)) continue;
+                return ApplyTemplate(c);
+            }
+            else if (entry is CharaTemplateGenerator)
+            {
+                var g = entry as CharaTemplateGenerator;
+                var c = g.GenerateChara(allowDuplicate);
+                if (c == null) continue;
+                return ApplyTemplate(c);
+            }
+        }
+
+        return null;
+    }
+
+    protected Character_Trainable ApplyTemplate(Character_Trainable original_template)
+    {
+        var str = JsonConvert.SerializeObject(original_template, UtilityEX.SerializerSettings);
+        var template = JsonConvert.DeserializeObject<Character_Trainable>(str, UtilityEX.SerializerSettings);
+
+        // template.BaseID = ID;
+        if (title != "") template.Title = title;
+        template.Template.overrideInventory = inventoryOverride;
+        if (useNameGen)
+        {
+            scr_System_Serializer.current.MasterList.CharGenTemplates.GenerateNamesFor(template, Appearance, nameGen_firstName, nameGen_middleName, nameGen_lastName, nameDisplayFormat);
+        }
+        template.Template.SetGender(Appearance);
+        template.Template.stat_STR = (int)Utility.RandVariation(str_base == 0 ? template.Template.stat_STR : str_base, str_var);
+        template.Template.stat_CON = (int)Utility.RandVariation(con_base == 0 ? template.Template.stat_CON : con_base, con_var);
+        template.Template.stat_PSY = (int)Utility.RandVariation(psy_base == 0 ? template.Template.stat_PSY : psy_base, psy_var);
+        template.Template.stat_WIL = (int)Utility.RandVariation(wil_base == 0 ? template.Template.stat_WIL : wil_base, wil_var);
+
+        if (setHeight > 0) template.Template.Height = setHeight;
+        if (heightVariation > 0) template.Template.Height = (int)Utility.RandVariation(template.Template.Height, heightVariation);
+
+        if (setWeight > 0) template.Template.Weight = setWeight;
+        if (weightVariation > 0) template.Template.Weight = (int)Utility.RandVariation(template.Template.Weight, weightVariation);
+
+        if (basicExperienceOverride.Count > 0)
+        {
+            Debug.Log($"setting basic experience override: {String.Join(" ", basicExperienceOverride)}");
+            template.Template.basicExperience = basicExperienceOverride;
+        }
+        if (experienceOverride.Count > 0)
+        {
+            template.Template.initialExperiences.AddRange(experienceOverride);
+            Debug.Log($"adding basic experience override: {String.Join(" ", experienceOverride)}");
+        }
+
+        return template;
+    }
+
+
+    List<I_CharaGen> childTemplates = null;
+
     [JsonIgnore]
     public string TargetBaseID
     { get
         {
-            if (targetBaseIDs.Count > 0) return Utility.GetRandomElement(targetBaseIDs);
-            return targetBaseID;
+            if (targetBaseIDs.Count > 0)
+            {
+
+                if (allowDuplicateID) return Utility.GetRandomElement(targetBaseIDs);
+                else
+                {
+
+                }
+            }
+            return null;
         } }
 
-    public string targetBaseID = "";
     public List<string> targetBaseIDs = new List<string>();
     public bool allowInTraining = true;
 
@@ -175,8 +275,7 @@ public class CharaTemplateGenerator
             {
                 return scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(Utility.GetRandomElement(targetBaseIDs));
             }
-            if (_template == null) _template = scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(targetBaseID);
-            return _template;
+            return null;
         }
     }
 
@@ -185,7 +284,7 @@ public class CharaTemplateGenerator
     {
         get
         {
-            if ((targetBaseID == "" && targetBaseIDs.Count < 1) || this.Template == null) return null;
+            if (targetBaseIDs.Count < 1 || this.Template == null) return null;
             var template = Template.Copy();
             template.stat_STR = (int)Utility.RandVariation(str_base == 0 ? template.stat_STR : str_base, str_var);
             template.stat_CON = (int)Utility.RandVariation(con_base == 0 ? template.stat_CON : con_base, con_var);

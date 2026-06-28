@@ -40,6 +40,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
                 consoleCount = Math.Max(consoleCount - 1, 1);
                 if (consoleCount > 0) consoleInput.text = scr_System_CentralControl.current.allusedConsoleCommands[consoleCount - 1];
             }
+            consoleInput.caretPosition = consoleInput.text.Length;
         }
     }
 

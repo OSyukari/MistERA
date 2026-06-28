@@ -5,7 +5,7 @@
 {
     "ID":"village_huntsman_scythe",
     "title":"village_huntsman_scythe",
-    "targetBaseID":"village_huntsman_base",
+    "targetBaseIDs":["village_huntsman_base"],
     "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
     "useNameGen":true, "nameGen_firstName":"english",
     "Appearance":"Male",
@@ -17,7 +17,7 @@
 {
     "ID":"village_huntsman_cutlass",
     "title":"village_huntsman_cutlass",
-    "targetBaseID":"village_huntsman_base",
+    "targetBaseIDs":["village_huntsman_base"],
     "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
     "useNameGen":true, "nameGen_firstName":"english",
     "Appearance":"Male",
@@ -29,7 +29,7 @@
 {
     "ID":"village_huntsman_cleaver",
     "title":"village_huntsman_cleaver",
-    "targetBaseID":"village_huntsman_base",
+    "targetBaseIDs":["village_huntsman_base"],
     "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
     "useNameGen":true, "nameGen_firstName":"english",
     "Appearance":"Male",
@@ -41,7 +41,7 @@
 {
     "ID":"village_huntsman_axe_torch",
     "title":"village_huntsman_axe_torch",
-    "targetBaseID":"village_huntsman_base",
+    "targetBaseIDs":["village_huntsman_base"],
     "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
     "useNameGen":true, "nameGen_firstName":"english",
     "Appearance":"Male",

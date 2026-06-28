@@ -4,14 +4,34 @@
         "portraitPriorityList": [
             {
                 "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "Variants": [
+                    { "tagsMatch": ["pain"],         "PortraitVariantData": ["TCoAaL_Andrew/extended_pain_01.png"] },
+                    { "tagsMatch": ["scared"],       "PortraitVariantData": ["TCoAaL_Andrew/extended_fear_01.png"] },
+                    { "tagsMatch": ["fear"],         "PortraitVariantData": ["TCoAaL_Andrew/extended_fear_01.png"] },
+                    { "tagsMatch": ["angry"],        "PortraitVariantData": ["TCoAaL_Andrew/core_angry_01.png"] },
+                    { "tagsMatch": ["disappointed"], "PortraitVariantData": ["TCoAaL_Andrew/extended_disappointed_01.png"] },
+                    { "tagsMatch": ["awkward"],      "PortraitVariantData": ["TCoAaL_Andrew/extended_awkward_01.png"] },
+                    { "tagsMatch": ["sad"],          "PortraitVariantData": ["TCoAaL_Andrew/core_sad_01.png"] },
+                    { "tagsMatch": ["sorry"],        "PortraitVariantData": ["TCoAaL_Andrew/extended_sorry_01.png"] },
+                    { "tagsMatch": ["serious"],      "PortraitVariantData": ["TCoAaL_Andrew/core_serious_01.png"] },
+                    { "tagsMatch": ["focused"],      "PortraitVariantData": ["TCoAaL_Andrew/core_serious_01.png"] },
+                    { "tagsMatch": ["thinking"],     "PortraitVariantData": ["TCoAaL_Andrew/extended_thinking_01.png"] },
+                    { "tagsMatch": ["confident"],    "PortraitVariantData": ["TCoAaL_Andrew/extended_confident_01.png"] },
+                    { "tagsMatch": ["surprised"],    "PortraitVariantData": ["TCoAaL_Andrew/core_surprised_01.png"] },
+                    { "tagsMatch": ["shy"],          "PortraitVariantData": ["TCoAaL_Andrew/extended_shy_01.png"] },
+                    { "tagsMatch": ["happy"],        "PortraitVariantData": ["TCoAaL_Andrew/core_happy_01.png"] },
+                    { "tagsMatch": ["relaxed"],      "PortraitVariantData": ["TCoAaL_Andrew/core_relaxed_01.png"] },
+                    { "tagsMatch": ["resting"],      "PortraitVariantData": ["TCoAaL_Andrew/extended_resting_01.png"] },
+                    { "tagsMatch": ["sleeping"],     "PortraitVariantData": ["TCoAaL_Andrew/extended_sleeping_01.png"] }
+                ],
                 "portrait_offset_x": 0,
-                "portrait_offset_y": 0,
-                "portrait_offset_size": 1.0,
-                "icon_offset_x": 0.0,
-                "icon_offset_y": 0.0,
-                "icon_offset_size": 0.8,
-                "portrait_path": "",
-                "icon_path": ""
+                "portrait_offset_y": -210,
+                "portrait_offset_size": 0.8,
+                "portrait_path": "TCoAaL_Andrew/core_neutral_01.png",
+                "icon_offset_x": 11,
+                "icon_offset_y": -372,
+                "icon_offset_size": 0.6,
+                "icon_path": "TCoAaL_Andrew/core_neutral_01.png"
             }
         ]
     },

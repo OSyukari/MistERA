@@ -37,7 +37,11 @@ public class scr_MenuCanvas_NewGame : scr_Menu
     private scr_SelectableText playerName;
     private scr_HoverableText playerNameButton;
 
-
+    public void SetPlayerChar(string cs)
+    {
+        var c = scr_System_Serializer.current.MasterList.Character_Bases.GetChara(cs);
+        SetPlayerChar(c);
+    }
 
     public void SetPlayerChar(Character_Trainable c)
     {
@@ -126,7 +130,7 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
         ValidateAll();
         this.SetCurrentCampaign(scr_System_Serializer.current.MasterList.CampaignSettings.GetByID("campaign_starfarers"));
-        this.SetPlayerChar(null);
+        this.SetPlayerChar(c = null);
 
     }
 
@@ -174,6 +178,7 @@ public class scr_MenuCanvas_NewGame : scr_Menu
         currentCampaign = c;
         campaign_name.text = c.DisplayName;
 
+
         if (currentCampaign.extraOptions.Count > 0 && currentCampaign.extraOptions[0].ID != "")
         {
             SetCurrentCampaignOption(currentCampaign.extraOptions[0]);
@@ -183,6 +188,8 @@ public class scr_MenuCanvas_NewGame : scr_Menu
             this.currentCampaign_option = null;
             campaign_options.text = "-";
             campaign_descriptions.text = c.Tooltip;
+
+            SetPlayerChar(currentCampaign.forbidPCSelect);
         }
         // reset campaign options
         // set campaign text
@@ -194,6 +201,15 @@ public class scr_MenuCanvas_NewGame : scr_Menu
         campaign_options.text = ex.DisplayName;
 
         campaign_descriptions.text = currentCampaign.Tooltip + "\n\n" + ex.Tooltip;
+
+        if (currentCampaign_option.forbidPCSelect != "")
+        {
+            SetPlayerChar(currentCampaign_option.forbidPCSelect);
+        }
+        else
+        {
+            SetPlayerChar(currentCampaign.forbidPCSelect);
+        }
     }
 
     public void OpenCharaSelect(Action<Character_Trainable> a, string filterByOrigin = "")
@@ -232,7 +248,6 @@ public class scr_MenuCanvas_NewGame : scr_Menu
             {
                 parent.SetCurrentCampaign(scr_System_Serializer.current.MasterList.CampaignSettings.GetItemBefore(parent.currentCampaign));
             }
-
         }
     }
 
@@ -287,7 +302,18 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return true;
+            if (!string.IsNullOrEmpty( parent.currentCampaign?.forbidPCSelect) 
+                || !string.IsNullOrEmpty(parent.currentCampaign_option?.forbidPCSelect))
+            {
+                tooltip = $"character choice restricted by campaign";
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+
         }
 
         public void OnClickButton()
@@ -338,7 +364,6 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
         public override bool IsButtonValid()
         {
-
             if (parent.c == null)
             {
                 AddTooltip("No Player Character Selection\n");

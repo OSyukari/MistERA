@@ -1,0 +1,90 @@
+{
+    "CampaignSettings":
+    {
+        "list":[
+        {
+            "ID":"campaign_coffinAnL",
+            "extraOptions":[
+                {
+                    "ID":"campaign_coffinAnL_start_andrew",
+                    "forbidPCSelect":"TCoAaL_Char_Andrew",
+                    "initializers":[
+                        {
+                            "initClass":"campaign_init_homefaction",
+                            "initArguments":["CoffinAnL_Household","true", "true"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_root",
+                            "initArguments":["map_coffinanl","CoffinAnL_Household"]
+                        }
+                    ]
+                },
+                {
+                    "ID":"campaign_coffinAnL_start_leiley",
+                    "forbidPCSelect":"TCoAaL_Char_Ashley",
+                    "initializers":[
+                        {
+                            "initClass":"campaign_init_homefaction",
+                            "initArguments":["CoffinAnL_Household","true", "true"]
+                        },
+                        {
+                            "initClass":"campaign_init_map_root",
+                            "initArguments":["map_coffinanl","CoffinAnL_Household"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+    },
+    "MapPlans":{
+        "list":
+        [
+            {
+                "ID":"map_coffinanl",
+                "z_rotation":0.0,
+                "initializeFaction":"CoffinAnL_Household",
+                "setPrivateRoomOwner":true,
+                "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 5 },
+                "floors":[
+                    {
+                        "ID":"floor_2ldk_2floor_1",
+                        "nameOverwrite":"CoffinAnL_Household_Home",
+                        "Additional":[
+                            {
+                                "addClass":"map_init_placeChara",
+                                "map_init_placeChara":{ "roomID":"floor_2ldk_2floor_1_2L_room", "charaBaseID": [ "TCoAaL_Char_Andrew", "TCoAaL_Char_Ashley" ] }
+                            },
+                            {
+                                "addClass":"map_init_organization",
+                                "map_init_organization":{ "orgID":"CoffinAnL_Household", "addCharaToFaction":true, "setPrivateRoom":true }
+                            }
+                        ]
+                    }
+                ],
+                "mealHours":[7, 12, 18],
+                "activeHoursStart":7,
+                "activeHoursEnd":22
+            }
+        ]
+}    ,
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "campaign_coffinAnL": "二人的棺材",
+                "campaign_coffinAnL_tooltip":"以欠下巨额贷款的状态开始游戏。",
+                "campaign_coffinAnL_start_andrew": "%%TCoAaL_Andrew_firstname%%",
+                "campaign_coffinAnL_start_andrew_tooltip":"以%%TCoAaL_Andrew_firstname%%的身份开始游戏",
+                "campaign_coffinAnL_start_leiley": "%%TCoAaL_Ashley_firstname%%",
+                "campaign_coffinAnL_start_leiley_tooltip":"以%%TCoAaL_Ashley_firstname%%的身份开始游戏"
+            },
+            "en-us":
+            {
+                
+            }
+        }
+    }
+}

@@ -712,8 +712,11 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void FinalizeLog_Question(QuestionBoxCollector box, Room_Instance room)
     {
-        Debug.Log($"FinalizeLog_Question {(room == null ? "room null" : !room.HasRecording ? "no recording" : "recording...")}");
-        if (room != null && room.HasRecording) room.NotifyDescCollect(box);
+        if (room != null && room.HasRecording)
+        {
+            Debug.Log($"FinalizeLog_Question {(room == null ? "room null" : !room.HasRecording ? "no recording" : "recording...")}");
+            room.NotifyDescCollect(box);
+        }
     }
 
     public void AddLog_LLM(LLMRequest request)
@@ -822,9 +825,25 @@ public class scr_System_CampaignManager : MonoBehaviour
         else
         {
             // first validate package conflict
+            int validInsertIndex = 0;
+            var priority = p.PackagePriority;
+            var jobref = p.job?.RefID ?? -1;
+            bool insertPosFound = false;
             for (int i = registeredPackagesByRoom[p.RoomKey].Count - 1; i >= 0; i--)
             {
                 var currentP = registeredPackagesByRoom[p.RoomKey][i];
+
+                if (!insertPosFound)
+                {
+                    var cPriority = currentP.PackagePriority;
+                    int cJobRef = currentP.job?.RefID ?? -1;
+                    if (cPriority < priority || (cPriority == priority && cJobRef < jobref))
+                    {
+                        validInsertIndex = i + 1;
+                        insertPosFound = true;
+                    }
+                }
+
                 if (!ignoreConflict && currentP.Duration > 0 && UtilityEX.DetectConflict(currentP, p))
                 {
                     Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + $"]{currentP.PackagePriority} [" + p.COMVariantID + $"]{p.PackagePriority} avoidConflict?[" + (avoidConflict) + "]");
@@ -849,6 +868,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                         //registeredPackagesByRoom[p.RoomKey][i].NotifyInterrupted();
                         registeredPackagesByRoom[p.RoomKey].RemoveAt(i);
 
+                        if (validInsertIndex > i) validInsertIndex -= 1;
                     }
                 }
             }
@@ -867,7 +887,8 @@ public class scr_System_CampaignManager : MonoBehaviour
                 if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log($"CM RegisterAP: resuming package [{p.DisplayName}] ? {resume}");
                 p.isPaused = false;
             }
-            registeredPackagesByRoom[p.RoomKey].Add(p);
+            if (validInsertIndex >= registeredPackagesByRoom[p.RoomKey].Count) registeredPackagesByRoom[p.RoomKey].Add(p);
+            else registeredPackagesByRoom[p.RoomKey].Insert(validInsertIndex, p);
         }
         Map.dirtyCharaAPRef.Add(p);
     }
@@ -1212,87 +1233,116 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         int updateDuration = 1;
 
-        foreach (var kvpair_list in registeredPackagesByRoom)
+
+        // 1st pass 5 6 7 8
+        // 2nd pass 2 3 4
+        // 3rd pass 1
+        // 4th pass 0
+        for(int currentpass = 3; currentpass >= 0; currentpass--)
         {
-            var floor = Map.GetFloorByRoomRefID(kvpair_list.Key);
-
-            if (floor != null && ( true || kvpair_list.Value.Find(x=>x.actorRefs.Contains(0)) != null ))
+            foreach (var kvpair_list in registeredPackagesByRoom)
             {
-                // normal loop
-                updateDuration = 1;
-            }
-            else if (FullUpdate)
-            {
-                updateDuration = 3;
-            }
-            else
-            {
-                continue;
-            }
+                var floor = Map.GetFloorByRoomRefID(kvpair_list.Key);
 
-
-            List<ActionPackage> roomEffects = new List<ActionPackage>();
-            List<int> allActorsInRoom = CharaRefsInRoom(kvpair_list.Key);
-            List<int> freeActors = new List<int>(allActorsInRoom);
-            var list = kvpair_list.Value;
-
-            for (int i = list.Count - 1; i >= 0; i--)
-            {
-               // list.RemoveAt(list.Count);// -> used to launch a CTD error
-                //Debug.Log("list count " + i + " " + String.Join("|", list));
-                if (i >= list.Count) continue;  // list might get modified
-                ActionPackage p = list[i];
-                int roomKey = p.RoomKey;
-                int duration = p.Duration;
-                if (p is ActionPackage_LLM)
+                if (floor != null && (true || kvpair_list.Value.Find(x => x.actorRefs.Contains(0)) != null))
                 {
-                    Debug.Log("ticking llm package");
+                    // normal loop
+                    updateDuration = 1;
                 }
-                if (p.isPaused) continue;
-                if (p.Tick(ref freeActors, updateDuration))
+                else if (FullUpdate)
                 {
-                    // check package has room-wide effect
-                    // if yes, then add to list
-                    // add to roomEffects
+                    updateDuration = 3;
+                }
+                else
+                {
+                    continue;
+                }
 
-                    // finally remove from list
-                    if (p.Duration <= 0)
+                //List<ActionPackage> roomEffects = new List<ActionPackage>();
+                //List<int> allActorsInRoom = CharaRefsInRoom(kvpair_list.Key);
+                //List<int> freeActors = new List<int>(allActorsInRoom);
+                var list = kvpair_list.Value;
+
+                for (int i = list.Count - 1; i >= 0; i--)
+                {
+                    // list.RemoveAt(list.Count);// -> used to launch a CTD error
+                    //Debug.Log("list count " + i + " " + String.Join("|", list));
+                    if (i >= list.Count) continue;  // list might get modified
+
+                    ActionPackage p = list[i];
+
+
+                    if (currentpass == 3)
                     {
-                        if (duration > 1 && p.actorRefs.Contains(0))
-                        {   // player package has been refused, reevaluate
-                            totalUpdateTime -= (updateTime - 1);
-                            updateTime = 0;
+                        if (p.PackagePriority < AP_Priority.player_pathing) break;
+                        else if (p.PackagePriority > AP_Priority.player_interaction_special) continue;
+                    }
+                    else if (currentpass == 2)
+                    {
+                        if (p.PackagePriority < AP_Priority.npc_interaction) break;
+                        else if (p.PackagePriority > AP_Priority.npc_interaction_special) continue;
+                    }
+                    else if (currentpass == 1)
+                    {
+                        if (p.PackagePriority < AP_Priority.npc_pathing) break;
+                        else if (p.PackagePriority > AP_Priority.npc_pathing) continue;
+                    }
+                    else if (currentpass == 0)
+                    {
+                        if (p.PackagePriority < AP_Priority.npc_action) break;
+                        else if (p.PackagePriority > AP_Priority.npc_action) continue;
+                    }
+
+
+                    int roomKey = p.RoomKey;
+                    int duration = p.Duration;
+                    if (p is ActionPackage_LLM)
+                    {
+                        Debug.Log("ticking llm package");
+                    }
+                    if (p.isPaused) continue;
+                    if (p.Tick(null, updateDuration))
+                    {
+                        // check package has room-wide effect
+                        // if yes, then add to list
+                        // add to roomEffects
+
+                        // finally remove from list
+                        if (p.Duration <= 0)
+                        {
+                            if (duration > 1 && p.actorRefs.Contains(0))
+                            {   // player package has been refused, reevaluate
+                                totalUpdateTime -= (updateTime - 1);
+                                updateTime = 0;
+                            }
+
+                            if (p != null && roomKey != -1 && !executedPackagesByRoom.ContainsKey(p)) executedPackagesByRoom.Add(p, roomKey);
+                            kvpair_list.Value.Remove(p);// (p);
+
+                            //kvpair_list.Value.RemoveAt(i);
+
                         }
+                        else if (p is ActionPackage_PathTo && p.RoomKey != kvpair_list.Key)
+                        {
+                            // check if movement ap changed room
 
-                        if (p != null && roomKey != -1 && !executedPackagesByRoom.ContainsKey(p)) executedPackagesByRoom.Add(p, roomKey);
-                        kvpair_list.Value.Remove(p);// (p);
-                            
-                        //kvpair_list.Value.RemoveAt(i);
+                            kvpair_list.Value.Remove(p);// (p);
+                            detachedAPs.Add(p);
 
-                    }
-                    else if (p is ActionPackage_PathTo && p.RoomKey != kvpair_list.Key)
-                    {
-                        // check if movement ap changed room
-                        
-                        kvpair_list.Value.Remove(p);// (p);
-                        detachedAPs.Add(p);
-                        
-                    }
-                    else if (!p.isTemporaryAP)
-                    {
-                        Debug.Log($"package ticked and duration reset to {p.Duration}");
+                        }
+                        else if (!p.isTemporaryAP)
+                        {
+                            Debug.Log($"package ticked and duration reset to {p.Duration}");
+                        }
                     }
                 }
-            }
 
-            foreach (var p in roomEffects)
-            {
-                // if effect requiret not focus, send in allactorsinroom
-                // if not, send in freeactors
+                
             }
-
-            
         }
+
+
+
 
         foreach(var p in detachedAPs)
         {
@@ -1977,10 +2027,18 @@ public class scr_System_CampaignManager : MonoBehaviour
     Dictionary<int, Item_Instance> Index_ItemReferenceID;
     public List<Item_Instance> InstancedItems { get { return Index_ItemReferenceID.Values.ToList(); } }
 
+    /// <summary>
+    /// return first match
+    /// </summary>
+    /// <param name="baseID"></param>
+    /// <returns></returns>
     public Character_Trainable HasInstanceCharaWithBaseID(string baseID)
     {
-        var tempList = Index_referenceID.Values.ToList();
-        return tempList.Find(x => x.BaseID == baseID);
+        foreach(var kvp in Index_referenceID)
+        {
+            if (kvp.Value != null && kvp.Value.BaseID == baseID) return kvp.Value;
+        }
+        return null;
     }
     public Character_Trainable FindInstanceByID(int id)
     {
@@ -2309,48 +2367,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         return c;
     }
 
-    protected Character_Trainable GetCharaTemplate(string ID)
+
+    protected Character_Trainable GetCharaTemplate(string ID, bool allowDuplicate = false)
     {
         var genTemplate = scr_System_Serializer.current.MasterList.CharGenTemplates.GetByID(ID);
         if (genTemplate != null && genTemplate.TargetBaseID != "")
         {
-            Debug.Log($"CampaignManager: Instantiate request for [{ID}] found genTemplate, generating instead [{genTemplate.TargetBaseID}]");
-            var original_template = GetCharaTemplate(genTemplate.TargetBaseID);
-
-            var str = JsonConvert.SerializeObject(original_template, UtilityEX.SerializerSettings);
-            var template = JsonConvert.DeserializeObject<Character_Trainable>(str, UtilityEX.SerializerSettings);
-
-            // template.BaseID = ID;
-            if (genTemplate.title != "") template.Title = genTemplate.title;
-            template.Template.overrideInventory = genTemplate.inventoryOverride;
-            if (genTemplate.useNameGen)
-            {
-                scr_System_Serializer.current.MasterList.CharGenTemplates.GenerateNamesFor(template, genTemplate.Appearance, genTemplate.nameGen_firstName, genTemplate.nameGen_middleName, genTemplate.nameGen_lastName, genTemplate.nameDisplayFormat);
-            }
-            template.Template.SetGender(genTemplate.Appearance);
-            template.Template.stat_STR = (int)Utility.RandVariation(genTemplate.str_base == 0 ? template.Template.stat_STR : genTemplate.str_base, genTemplate.str_var);
-            template.Template.stat_CON = (int)Utility.RandVariation(genTemplate.con_base == 0 ? template.Template.stat_CON : genTemplate.con_base, genTemplate.con_var);
-            template.Template.stat_PSY = (int)Utility.RandVariation(genTemplate.psy_base == 0 ? template.Template.stat_PSY : genTemplate.psy_base, genTemplate.psy_var);
-            template.Template.stat_WIL = (int)Utility.RandVariation(genTemplate.wil_base == 0 ? template.Template.stat_WIL : genTemplate.wil_base, genTemplate.wil_var);
-
-            if (genTemplate.setHeight > 0) template.Template.Height = genTemplate.setHeight;
-            if (genTemplate.heightVariation > 0) template.Template.Height = (int)Utility.RandVariation(template.Template.Height, genTemplate.heightVariation);
-
-            if (genTemplate.setWeight > 0) template.Template.Weight = genTemplate.setWeight;
-            if (genTemplate.weightVariation > 0) template.Template.Weight = (int)Utility.RandVariation(template.Template.Weight, genTemplate.weightVariation);
-
-            if (genTemplate.basicExperienceOverride.Count > 0)
-            {
-                Debug.Log($"setting basic experience override: {String.Join(" ", genTemplate.basicExperienceOverride)}");
-                template.Template.basicExperience = genTemplate.basicExperienceOverride;
-            }
-            if (genTemplate.experienceOverride.Count > 0)
-            {
-                template.Template.initialExperiences.AddRange(genTemplate.experienceOverride);
-                Debug.Log($"adding basic experience override: {String.Join(" ", genTemplate.experienceOverride)}");
-            }
-
-            return template;
+            return genTemplate.GenerateChara();
             // operate on template
             //return template
         }
@@ -2661,6 +2684,21 @@ public static class WorldManager
                     {
                         foreach (string s in init.map_init_placeChara.charaBaseID)
                         {
+                            if (!init.map_init_placeChara.allowDuplicate)
+                            {
+                                // first find chara
+                                var c = scr_System_CampaignManager.current.FindRefIDByBaseID(s);
+                                if (c != null && c.Count > 0)
+                                {
+                                    var cc = scr_System_CampaignManager.current.FindInstanceByID(c[0]);
+                                    if (cc != null)
+                                    {
+                                        scr_System_CampaignManager.current.MoveCharacterTo(cc, r);
+                                        continue;
+                                    }
+                                }
+                            }
+
                             scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(s, r);
                         }
                     }

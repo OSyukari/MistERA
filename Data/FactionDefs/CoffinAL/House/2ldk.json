@@ -1,0 +1,186 @@
+{
+    
+"Floors": {
+        "list": [
+            {
+                "ID": "floor_2ldk_2floor_1",
+                "imagePath": "CoffinAL/House/2ldk.jpg",
+                "floorWidth": 1082,
+                "floorHeight": 992,
+                "AnchorType": "TopLeft",
+                "mapExit": "floor_2ldk_2floor_1_1L_frontDoor",
+                "rooms": [
+                    {
+                        "ID": "floor_2ldk_2floor_1_2L_kitchen",
+                        "displayName":"map_kitchen",
+                        "offsetX": 815,
+                        "offsetY": 510,
+                        "connects": [],
+                        "furnitureIDs": [
+                            "furniture_stove",
+                            "furniture_round_table_4",
+                            "furniture_marker_getmeal"
+                        ],
+                        "roomImagePath": "Jitaku/House/bgi-jk105饭厅d.png",
+                        "roomImagePath_Night": "Jitaku/House/bgi-jk105饭厅b.png",
+                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk105饭厅d.png",
+                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk105饭厅c.png"
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_2L_living",
+                        "displayName":"map_livingroom",
+                        "offsetX": 743,
+                        "offsetY": 752,
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_2L_kitchen",
+                                "cost": 1.0
+                            }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_sofa_3",
+                            "furniture_TV_flatscreen",
+                            "furniture_cafe_table_2"
+                        ],
+                        "roomImagePath": "Jitaku/House/bgi-jk104客厅d.png",
+                        "roomImagePath_Night": "Jitaku/House/bgi-jk104客厅b.png",
+                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk104客厅d.png",
+                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk104客厅c.png",
+                        "activityState": "DayOnly"
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_1L_laundry",
+                        "displayName":"map_laundry",
+                        "offsetX": 224,
+                        "offsetY": 646,
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_1L_hallway",
+                                "cost": 1.0
+                            }
+                        ],
+                        "roomImagePath": "Jitaku/House/bgi-jk108脱衣所d.png",
+                        "roomImagePath_Night": "Jitaku/House/bgi-jk108脱衣所b.png"
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_1L_bath",
+                        "displayName":"map_bath",
+                        "offsetX": 192,
+                        "offsetY": 797,
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_1L_laundry",
+                                "cost": 1.0
+                            }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bathtub",
+                            "furniture_shower"
+                        ],
+                        "roomImagePath": "Jitaku/House/bgi-jk120浴室d.png",
+                        "roomImagePath_Night": "Jitaku/House/bgi-jk120浴室b.png"
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_1L_toilet",
+                        "displayName":"map_toilet",
+                        "offsetX": 264,
+                        "offsetY": 474,
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_1L_hallway",
+                                "cost": 1.0
+                            }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bathroom_set"
+                        ],
+                        "roomImagePath": "Jitaku/House/bgi-jk107トイレd.png",
+                        "roomImagePath_Night": "Jitaku/House/bgi-jk107トイレb.png"
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_1L_room",
+                        "displayName":"map_doubleRoom",
+                        "offsetX": 188,
+                        "offsetY": 264,
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_1L_hallway",
+                                "cost": 1.0
+                            }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bed_single",
+                            "furniture_table_1_chair_1",
+                            "furniture_bookshelves",
+                            "furniture_computer_terminal"
+                        ],
+                        "roomImagePath": "Jitaku/House/bgi-jk112自室d.png",
+                        "roomImagePath_Night": "Jitaku/House/bgi-jk112自室b.png",
+                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk112自室d.png",
+                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk112自室c.png"
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_1L_frontDoor",
+                        "displayName":"map_frontdoor",
+                        "offsetX": 291,
+                        "offsetY": 935,
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_1L_hallway",
+                                "cost": 1.0
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_1L_hallway",
+                        "offsetX": 383,
+                        "offsetY": 725,
+                        "displayName":"map_hallway",
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg",
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_2L_kitchen",
+                                "cost": 2
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "floor_2ldk_2floor_1_2L_room",
+                        "offsetX": 873,
+                        "offsetY": 237,
+                        "displayName":"map_doubleRoom",
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_2L_kitchen",
+                                "cost": 1.0
+                            }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bed_single",
+                            "furniture_table_1_chair_1",
+                            "furniture_bookshelves"
+                        ],
+                        "roomImagePath": "Jitaku/House/bgi-jk114妹の部屋d.png",
+                        "roomImagePath_Night": "Jitaku/House/bgi-jk114妹の部屋b.png",
+                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk114妹の部屋d.png",
+                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk114妹の部屋c.png"
+                    },
+                    {
+                        "ID":"floor_2ldk_2floor_1_2L_balcony",
+                        "displayName":"map_balcony",
+                        "connects": [
+                            {
+                                "ID": "floor_2ldk_2floor_1_2L_living",
+                                "cost": 1.0
+                            }
+                        ],
+                        "offsetX":821,
+                        "offsetY":927,
+                        "roomImagePath": "Jitaku/House/bgi-jk118トイレd.png"
+                    }
+                ]
+            }
+        ]
+    } 
+}

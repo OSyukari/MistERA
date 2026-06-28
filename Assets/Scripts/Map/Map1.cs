@@ -141,6 +141,7 @@ public class MapPlan
         {
             public string roomID = "";
             public List<string> charaBaseID = new List<string>();
+            public bool allowDuplicate = false;
         }
 
 
