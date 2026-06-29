@@ -21,6 +21,8 @@ Assets/*
 !Assets/Scripts
 !Assets/Scenes
 
+**/forbidCopy
+**/forbidCopy.*
 
 *.webp
 *.png
