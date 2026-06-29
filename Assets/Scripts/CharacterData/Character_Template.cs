@@ -3,195 +3,45 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 
-public class Character_Trainable_SerializableTemplate_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonExisting
-{
-
-    public List<CharaSerializableTemplate_Base> list = new List<CharaSerializableTemplate_Base>();
-
-    Dictionary<string, CharaSerializableTemplate_Base> ID_Dictionary = new Dictionary<string, CharaSerializableTemplate_Base>();
-    Dictionary<string, CharaTemplateGenerator> Gen_Dictionary = new Dictionary<string, CharaTemplateGenerator>();
-    public CharaSerializableTemplate_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
-
-    public void RegisterGeneratorTemplate(string id, CharaTemplateGenerator gen)
-    {
-        this.Gen_Dictionary.Add(id, gen);
-    }
-    public void RegisterAllID(List<string> s)
-    {
-        s.Add("Index_CombatActions : registering ID with list length [" + list.Count + "]");
-
-        foreach (var o in this.list)
-        {
-            if (string.IsNullOrEmpty(o.baseID)) continue;
-            if (!ID_Dictionary.TryAdd(o.baseID, o)) Debug.Log($"failed to add Character_Trainable_SerializableTemplate_Index id [{o.baseID}] due to duplicate");
-        }
-
-    }
-
-    public void DelTemplate(CharaSerializableTemplate_Base t)
-    {
-        list.Remove(t);
-        ID_Dictionary.Remove(t.baseID);
-    }
-    public void SetTemplate(CharaSerializableTemplate_Base t)
-    {
-        if (ID_Dictionary.ContainsKey(t.baseID)) DelTemplate(ID_Dictionary[t.baseID]);
-        list.Add(t);
-        ID_Dictionary[t.baseID] = t;
-    }
-
-    public void MergeWith(I_IndexMergeable list)
-    {
-        var l = list as Character_Trainable_SerializableTemplate_Index;
-        if (l == null || l.list == null) return;
-        else
-        {
-            this.list.AddRange(l.list);
-        }
-    }
-
-    public CharaTemplate GetByCharaBaseID(string baseID)
-    {
-        if (Gen_Dictionary.ContainsKey(baseID))
-        {
-            return Gen_Dictionary[baseID].Get;
-        }
-        else
-        {
-            var findresult = GetByID(baseID);
-            return findresult == null ? null : findresult.GetTemplate;
-        }
-    }
-
-    public void RemoveNonExisting()
-    {
-        foreach(var temp in list)
-        {
-            temp.PurgeNonExistingData();
-        }
-    }
-
-    // Returns the serializable wrapper for a given baseID so callers can read
-    // parentTemplateID and experienceInitializerIDs without going through the
-    // resolved CharaTemplate. Falls through to the generator's targetBaseID when
-    // the ID belongs to a CharaTemplateGenerator rather than a direct wrapper.
-    public CharaSerializableTemplate_Base GetWrapperForBaseID(string id)
-    {
-        var wrapper = GetByID(id);
-        if (wrapper != null) return wrapper;
-
-        if (Gen_Dictionary.TryGetValue(id, out CharaTemplateGenerator gen))
-        {
-            return gen.targetBaseIDs != null && gen.targetBaseIDs.Count > 0
-                ? GetByID(gen.targetBaseIDs[0])
-                : null;
-        }
-        return null;
-    }
-}
-
-[System.Serializable]
+/// <summary>
+/// This is just an interface to share data with character_serializable and extract templatedata
+/// </summary>
 public abstract class CharaSerializableTemplate_Base
 {
     public string baseID = "";
-    public virtual CharaTemplate GetTemplate {get;set ;}
-    public virtual void PurgeNonExistingData()
-    {
-       // Debug.Log("CALLING VIRTUAL METHOD PurgeNonExistingData");
-    }
 
-    // Optional parent template ID for experience initializer inheritance.
-    // When set, the parent's resolved initializer IDs are prepended before this template's own.
-    public string parentTemplateID = "";
-    // IDs referencing ExperienceInitializer entries in MasterList.ExperienceInitializers.
-    public List<string> experienceInitializerIDs = new List<string>();
 }
 
-[System.Serializable]
+/// <summary>
+/// This is just an interface to share data with character_serializable and extract templatedata
+/// </summary>
 public class CharaSerializableTemplate_Safe : CharaSerializableTemplate_Base
 {
     public CharaSafeTemplate Template = null;
-    public override CharaTemplate GetTemplate 
-    { 
-        get {
-            var randTemplate = this.Generator == null ? null : this.Generator.Get;
-            if (randTemplate != null) return randTemplate as CharaSafeTemplate;
-            else return Template; } 
-        set {
-            if (this.Generator != null)
-            {
-                Debug.LogError("ERROR CANNOT SET RANDOM GENERATOR TEMPLATE");
-            }
-            else
-            {
-                Template = value as CharaSafeTemplate;
-            }
-        } 
-    }
-    public CharaTemplateGenerator Generator = null;
-    public override void PurgeNonExistingData()
-    {
-      //  Debug.Log($"CALLING override METHOD PurgeNonExistingData Character_SerializableSafe with entries {(Template == null ? "null" : Template.initialInventory.Count)}");
-        if (Template == null) return;
-        for (int i = Template.initialInventory.Count - 1; i >= 0; i--)
-        {
-            var inv = Template.initialInventory[i];
-            if (Masterlist_Items.GetByID(inv.ID) == null)
-            {
-             //   Debug.Log($"Removing inventoryEntry {(inv.ID)}");
-                Template.initialInventory.RemoveAt(i);
-            }
-
-        }
-    }
 }
-[System.Serializable]
+/// <summary>
+/// This is just an interface to share data with character_serializable and extract templatedata
+/// </summary>
 public class CharaSerializableTemplate_Trainable : CharaSerializableTemplate_Base
 {
     public CharaTrainableTemplate Template = null;
-    public override CharaTemplate GetTemplate
-    {
-        get
-        {
-            var randTemplate = this.Generator == null ? null : this.Generator.Get;
-            if (randTemplate != null) return randTemplate as CharaTrainableTemplate;
-            else return Template;
-        }
-        set
-        {
-            if (this.Generator != null)
-            {
-                Debug.LogError("ERROR CANNOT SET RANDOM GENERATOR TEMPLATE");
-            }
-            else
-            {
-                Template = value as CharaTrainableTemplate;
-            }
-        }
-    }
-    public CharaTemplateGenerator Generator = null;
-    public override void PurgeNonExistingData()
-    {
-      //  Debug.Log($"CALLING override METHOD PurgeNonExistingData Character_SerializableSafe with entries {(Template == null ? "null" : Template.initialInventory.Count)}");
-        if (Template == null) return;
-        for (int i = Template.initialInventory.Count - 1; i >= 0; i--)
-        {
-            var inv = Template.initialInventory[i];
-            if (Masterlist_Items.GetByID(inv.ID) == null)
-            {
-            //    Debug.Log($"Removing inventoryEntry {(inv.ID)}");
-                Template.initialInventory.RemoveAt(i);
-            }
-
-        }
-    }
-
 }
 
 
-[System.Serializable]
 public abstract class CharaTemplate
 {
+    [JsonIgnore]
+    public virtual string GetCharacterCard
+    {
+        get
+        {
+            return null;
+        }
+    }
+
+
+    [JsonIgnore] public string refID = "";
+
     public List<Skills> Skills = new List<Skills>();
     public int Height = 162;//cm
     public double HWMultiplier = 0.43;
@@ -200,7 +50,6 @@ public abstract class CharaTemplate
     public int stat_STR = 10, stat_CON = 10, stat_PSY = 10, stat_WIL = 10;
     public string personalityID = "personality_default";
     public string characterComment = "";
-    public string CharacterCard = "";
     public List<string> traits = new List<string>();
     [JsonIgnore]
     public virtual bool isMale
@@ -311,7 +160,16 @@ public class CharaTrainableTemplate : CharaTemplate
 
     public CharaTrainableTemplate() { }
 
-    public Character_BodyType BodyType = Character_BodyType.Default;
+    public Character_BodyType BodyType = Character_BodyType.Default; 
+    [JsonIgnore]
+    public override string GetCharacterCard
+    {
+        get
+        {
+            return CharacterCard;
+        }
+    }
+    public string CharacterCard = "";
 
     [JsonProperty] public string sensitivity_B = "trait_Sensitivity_B_default";
     [JsonProperty] public string sensitivity_M = "trait_Sensitivity_M_default";

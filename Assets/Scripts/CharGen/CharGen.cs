@@ -44,76 +44,6 @@ public class Index_EncounterGen : I_IndexHasID, I_IndexMergeable
     }
 }
 
-[System.Serializable]
-public class Index_CharGenTemplates : I_IndexHasID, I_IndexMergeable, I_NeedLateInitialize
-{
-    public List<CharaTemplateGenerator> list = new List<CharaTemplateGenerator>();
-    public Dictionary<NameCulture, NameGenerator> names = new Dictionary<NameCulture, NameGenerator>();
-
-    public void MergeWith(I_IndexMergeable list)
-    {
-        var l = list as Index_CharGenTemplates;
-        if (l == null) return;
-        else if (l.list == null) return;
-        else
-        {
-            this.list.AddRange(l.list);
-            foreach(var kvp in l.names)
-            {
-                if (this.names.ContainsKey(kvp.Key)) this.names[kvp.Key].MergeWith(kvp.Value);
-                else this.names.Add(kvp.Key, kvp.Value);
-            }
-        }
-    }
-    public CharaTemplateGenerator GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
-    Dictionary<string, CharaTemplateGenerator> ID_Dictionary = new Dictionary<string, CharaTemplateGenerator>();
-    public void RegisterAllID(List<string> s)
-    {
-        s.Add("Index_CombatActions : registering ID with list length [" + list.Count + "]");
-
-        foreach (CharaTemplateGenerator o in this.list)
-        {
-            if (string.IsNullOrEmpty(o.ID)) continue;
-            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_CharGenTemplates id [{o.ID}] due to duplicate");
-        }
-
-    }
-
-    public void LateInitialize()
-    {
-        foreach(var i in this.list)
-        {
-            if (i.Template == null) continue;
-            scr_System_Serializer.current.MasterList.CharacterTemplates.RegisterGeneratorTemplate(i.ID, i);
-        }
-    }
-
-    public void GenerateNamesFor(Character_Trainable c, Humanoid_GenderAppearance gender,  NameCulture firstname, NameCulture middleName,  NameCulture lastname, string displayFormat = "")
-    {
-        var fst = firstname == NameCulture.none || !names.ContainsKey(firstname) ? null : names[firstname];
-        //var mdl = middleName == NameCulture.none || !names.ContainsKey(middleName) ? null : names[middleName];
-        var lst = lastname == NameCulture.none || !names.ContainsKey(lastname) ? null : names[lastname];
-
-        if (fst != null)
-        {
-            var list_fst = gender == Humanoid_GenderAppearance.Female ? fst.firstname_female : fst.firstname_male;
-            c.FirstName = Utility.GetRandomElement(list_fst);
-        }
-        if (lst != null)
-        {
-            var list_lst = gender == Humanoid_GenderAppearance.Female ? lst.lastname_female : lst.lastname_male;
-            c.LastName = Utility.GetRandomElement(list_lst);
-        }
-        else
-        {
-            c.LastName = "";
-        }
-
-
-        if (displayFormat != "") c.nameDisplayFormat = displayFormat;
-
-    }
-}
 
 [System.Serializable]
 public class NameGenerator
@@ -159,7 +89,7 @@ public class CharaTemplateGenerator : I_CharaGen
             childTemplates = new List<I_CharaGen>();
             foreach(var ID in targetBaseIDs)
             {
-                var temp = scr_System_Serializer.current.MasterList.CharGenTemplates.GetByID(ID);
+                var temp = scr_System_Serializer.current.MasterList.Character_Bases.GetGeneratorByID(ID);
                 if (temp != null)
                 {
                     childTemplates.Add(temp);
@@ -208,7 +138,7 @@ public class CharaTemplateGenerator : I_CharaGen
         template.Template.overrideInventory = inventoryOverride;
         if (useNameGen)
         {
-            scr_System_Serializer.current.MasterList.CharGenTemplates.GenerateNamesFor(template, Appearance, nameGen_firstName, nameGen_middleName, nameGen_lastName, nameDisplayFormat);
+            scr_System_Serializer.current.MasterList.Character_Bases.GenerateNamesFor(template, Appearance, nameGen_firstName, nameGen_middleName, nameGen_lastName, nameDisplayFormat);
         }
         template.Template.SetGender(Appearance);
         template.Template.stat_STR = (int)Utility.RandVariation(str_base == 0 ? template.Template.stat_STR : str_base, str_var);
@@ -264,23 +194,9 @@ public class CharaTemplateGenerator : I_CharaGen
     public List<string> basicExperienceOverride = new List<string>();
     public List<string> experienceOverride = new List<string>();
 
-    CharaTemplate _template = null;
-
+    /*
     [JsonIgnore]
-    public CharaTemplate Template
-    {
-        get
-        {
-            if (targetBaseIDs.Count > 0)
-            {
-                return scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(Utility.GetRandomElement(targetBaseIDs));
-            }
-            return null;
-        }
-    }
-
-    [JsonIgnore]
-    public CharaTemplate Get
+    CharaTemplate Get
     {
         get
         {
@@ -311,5 +227,5 @@ public class CharaTemplateGenerator : I_CharaGen
             }
             return template;
         }
-    }
+    }*/
 }

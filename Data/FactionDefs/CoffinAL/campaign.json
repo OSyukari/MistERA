@@ -75,7 +75,7 @@
             "zh-cn":
             {
                 "campaign_coffinAnL": "二人的棺材",
-                "campaign_coffinAnL_tooltip":"以欠下巨额贷款的状态开始游戏。",
+                "campaign_coffinAnL_tooltip":"以欠下巨额贷款的状态开始游戏。\n%%wip_disabled%%",
                 "campaign_coffinAnL_start_andrew": "%%TCoAaL_Andrew_firstname%%",
                 "campaign_coffinAnL_start_andrew_tooltip":"以%%TCoAaL_Andrew_firstname%%的身份开始游戏",
                 "campaign_coffinAnL_start_leiley": "%%TCoAaL_Ashley_firstname%%",

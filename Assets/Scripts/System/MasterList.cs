@@ -40,7 +40,7 @@ public class MasterList
                 list.Add(Skills);
                 list.Add(Items);
                 list.Add(Status);
-                list.Add(CharacterTemplates);
+               // list.Add(CharacterTemplates);
                 list.Add(Character_RelationshipAttitudes);
                 list.Add(Character_Personalities);
                 list.Add(Character_Origins);    // need to be ordered later cuz require other list to be ready
@@ -48,13 +48,13 @@ public class MasterList
                 list.Add(Furnitures);
                 list.Add(Events);
                 list.Add(Character_Bases);
-                list.Add(CharGenTemplates);
+               // list.Add(CharGenTemplates);
                 list.Add(Encounters);
                 list.Add(ExplorationEvents);
                 list.Add(ExplorationFeatures);
                 list.Add(ExpeditionEntry);
                 list.Add(FindJobNodeRoots);
-                list.Add(ExperienceInitializers);
+                //list.Add(ExperienceInitializers);
             }
             return list;
         }
@@ -79,7 +79,7 @@ public class MasterList
     public Humanoid_RaceTemplate_Index humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
     public Index_CampaignSetting CampaignSettings = new Index_CampaignSetting();
     public Index_CharaSkills Skills = new Index_CharaSkills();
-    public Character_Trainable_SerializableTemplate_Index CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
+    //public Character_Trainable_SerializableTemplate_Index CharacterTemplates = new Character_Trainable_SerializableTemplate_Index();
     public Character_Personality_Index Character_Personalities = new Character_Personality_Index();
     public Index_CharaRelationshipAttitudes Character_RelationshipAttitudes = new Index_CharaRelationshipAttitudes();
     public Index_COM COMs = new Index_COM();
@@ -87,9 +87,9 @@ public class MasterList
 
     public Index_CombatActions CombatActions = new Index_CombatActions();
     public Index_CombatActionPresets CombatActionPresets = new Index_CombatActionPresets();
-    public Index_CharGenTemplates CharGenTemplates = new Index_CharGenTemplates();
+    //public Index_CharGenTemplates CharGenTemplates = new Index_CharGenTemplates();
     public Index_EncounterGen Encounters = new Index_EncounterGen();
-    public Index_ExperienceInitializer ExperienceInitializers = new Index_ExperienceInitializer();
+    //public Index_ExperienceInitializer ExperienceInitializers = new Index_ExperienceInitializer();
 
     public void InitializeLists(bool initCoreList = false)
     {

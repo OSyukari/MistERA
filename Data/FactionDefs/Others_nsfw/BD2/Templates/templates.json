@@ -1,7 +1,7 @@
 {
-"CharGenTemplates":
+    "Character_Bases":
     {
-        "list":[
+        "generators":[
             {
                 "ID":"BD2_random_3star_female",
                 "targetBaseIDs":[   "BD2_beatrice", "BD2_lydia",    "BD2_rigenette",

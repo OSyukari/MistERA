@@ -1,7 +1,7 @@
 {
-"CharGenTemplates":
+    "Character_Bases":
     {
-        "list":[
+        "generators":[
             {
                 "ID":"nikke_random_idoll",
                 "targetBaseIDs":["nikke_idoll_ocean","nikke_idoll_flower","nikke_idoll_sun"],
@@ -45,7 +45,7 @@
             {
                 "ID":"nikke_random_unique",
                 "targetBaseIDs":["Campaign1_Nikke_Cinderella","Campaign1_Nikke_Dorothy"],
-                "str_var":2,"con_var":2, "psy_var":2, "wil_var":2, "wil_base":10, "psy_base":10,
+                "str_var":2,"con_var":2, "psy_var":2, "wil_var":2, "wil_base":30, "psy_base":30,
                 "allowDuplicateID":false,
                 "Appearance":"Female",
                 "inventoryOverride":[

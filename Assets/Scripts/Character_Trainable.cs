@@ -1,7 +1,8 @@
+using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using UnityEngine;
 
 public enum Humanoid_GenderAppearance
@@ -213,34 +214,38 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         var baseExp = Template.basicExperience;
         var addonExps = Template.initialExperiences;
 
+        List<string> expInits = new List<string>();
+
         if (baseExp.Count > 0)
         {
             var rand = Utility.GetRandomElement(baseExp);
-            var expp = scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID(rand);
+            var expp = scr_System_Serializer.current.MasterList.Experiences.GetInitializerByID(rand);
             if (expp != null)
             {
-                Debug.Log($"adding exp {expp.BaseID}");
+                expInits.Add($"adding exp {expp.BaseID}");
                 expp.Execute(this);
             }
             else
             {
-                Debug.Log($"cannot find exp {rand}");
+                expInits.Add($"cannot find exp {rand}");
             }
         }
 
         foreach (var id in addonExps)
         {
-            var init = scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID(id);
+            var init = scr_System_Serializer.current.MasterList.Experiences.GetInitializerByID(id);
             if (init != null)
             {
-                Debug.Log($"adding exp {init.BaseID}");
+                expInits.Add($"adding exp {init.BaseID}");
                 init.Execute(this);
             }
             else
             {
-                Debug.Log($"cannot find exp {id}");
+                expInits.Add($"cannot find exp {id}");
             }
         }
+
+        Debug.Log($"Character {FirstName} spawned, expinits {expInits.Count}:\n{String.Join("\n", expInits)}");
 
         Skills.UpdateAllSkills(null);
     }
@@ -501,8 +506,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 //Debug.Log("Fetching Template data |" + this.BaseID + "|" + this.FileLocation+"|");
                 if (this.BaseID != "")
                 {
-                    if (scr_System_CentralControl.current.isSafeMode) _templateS = scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(BaseID) as CharaSafeTemplate;
-                    else _template = scr_System_Serializer.current.MasterList.CharacterTemplates.GetByCharaBaseID(BaseID) as CharaTrainableTemplate;
+                    if (scr_System_CentralControl.current.isSafeMode) _templateS = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(BaseID) as CharaSafeTemplate;
+                    else _template = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(BaseID) as CharaTrainableTemplate;
                   //  Debug.Log("Fetching template for " + this.BaseID+", result exist? "+ (_template != null));
                 }
                 else
@@ -574,7 +579,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         get
         {
-            if (this.Template != null) return this.Template.CharacterCard;
+            if (this.Template != null) return this.Template.GetCharacterCard;
             else return null;
         }
     }
@@ -2222,6 +2227,60 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
 {
     public List<Character_SerializableBase> baseCharacters = new List<Character_SerializableBase>();
 
+    Dictionary<string, CharaTemplate> templates = new Dictionary<string, CharaTemplate>();
+
+    public List<CharaTemplateGenerator> generators = new List<CharaTemplateGenerator>();
+
+    Dictionary<string, CharaTemplateGenerator> ID_generators = new Dictionary<string, CharaTemplateGenerator>();
+    
+    public Dictionary<NameCulture, NameGenerator> names = new Dictionary<NameCulture, NameGenerator>();
+
+    public CharaTemplate GetTemplateByID(string id) { return templates.TryGetValue(id, out var value) ? value : null; }
+
+    public CharaTemplateGenerator GetGeneratorByID(string id)
+    {
+        if (ID_generators.TryGetValue(id, out var value)) return value;
+        foreach(var vv in generators)
+        {
+            if (vv.ID == id)
+            {
+                ID_generators.Add(vv.ID, vv);
+                return vv;
+            }
+        }
+        return null;
+    }
+
+    public void GenerateNamesFor(Character_Trainable c, Humanoid_GenderAppearance gender, NameCulture firstname, NameCulture middleName, NameCulture lastname, string displayFormat = "")
+    {
+        var fst = firstname == NameCulture.none || !names.ContainsKey(firstname) ? null : names[firstname];
+        //var mdl = middleName == NameCulture.none || !names.ContainsKey(middleName) ? null : names[middleName];
+        var lst = lastname == NameCulture.none || !names.ContainsKey(lastname) ? null : names[lastname];
+
+        if (fst != null)
+        {
+            var list_fst = gender == Humanoid_GenderAppearance.Female ? fst.firstname_female : fst.firstname_male;
+            c.FirstName = Utility.GetRandomElement(list_fst);
+        }
+        if (lst != null)
+        {
+            var list_lst = gender == Humanoid_GenderAppearance.Female ? lst.lastname_female : lst.lastname_male;
+            c.LastName = Utility.GetRandomElement(list_lst);
+        }
+        else
+        {
+            c.LastName = "";
+        }
+
+
+        if (displayFormat != "") c.nameDisplayFormat = displayFormat;
+
+    }
+    public void SetTemplateNew(string id, CharaTemplate t)
+    {
+        templates[id] = t;
+    }
+
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Character_Base_Index;
@@ -2234,7 +2293,20 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         //Debug.Log("Merging with " + s);
         this.baseCharacters.AddRange(l.baseCharacters);
         this.baseCharacters.RemoveAll(x => x.baseID == null || x.baseID.Length < 1);
-        
+
+        foreach (var kvp in l.names)
+        {
+            if (this.names.ContainsKey(kvp.Key)) this.names[kvp.Key].MergeWith(kvp.Value);
+            else this.names.Add(kvp.Key, kvp.Value);
+        }
+
+        this.generators.AddRange(l.generators);
+
+    }
+
+    public void LateInitialize()
+    {
+
     }
 
     Dictionary <string, Character_SerializableBase> ID_Dictionary = new Dictionary<string, Character_SerializableBase>();
@@ -2246,6 +2318,12 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
             if (o.baseID == "") continue;
             if (!ID_Dictionary.ContainsKey(o.baseID)) ID_Dictionary[o.baseID] = o;
             else Debug.LogError($"Error registering allID in Character_Base_Index, {o.baseID} already registered");
+        }
+
+        foreach( var gen in this.generators)
+        {
+            if (string.IsNullOrEmpty(gen.ID)) continue;
+            if (!ID_generators.TryAdd(gen.ID, gen)) Debug.Log($"failed to add ID_generators id [{gen.ID}] due to duplicate");
         }
     }
 
@@ -2296,6 +2374,7 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
     {
         foreach(var c in baseCharacters)
         {
+            if (c.Portrait == null) continue;
             foreach(var p in c.Portrait.portraitPriorityList)
             {
                 p.Variants = null;

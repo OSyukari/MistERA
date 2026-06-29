@@ -62,12 +62,12 @@ public class ExpInitializer_Collection : ExperienceInitializer
 
     public void Execute(Character_Trainable character, ExperienceActor actorOverwrite = null)
     {
-        if (actorOverwrite == null) actorOverwrite = randActor.Count < 1 ? null : scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID_Actor( Utility.GetRandomElement(randActor));
+        if (actorOverwrite == null) actorOverwrite = randActor.Count < 1 ? null : scr_System_Serializer.current.MasterList.Experiences.GetByID_Actor( Utility.GetRandomElement(randActor));
 
         if (selectOne.Count > 0)
         {
             var select = Utility.WeightedRandInDict(selectOne);
-            var selected = scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID(select);
+            var selected = scr_System_Serializer.current.MasterList.Experiences.GetInitializerByID(select);
             if (selected != null) selected.Execute(character, actorOverwrite);
         }
 
@@ -75,7 +75,7 @@ public class ExpInitializer_Collection : ExperienceInitializer
         {
             if (Utility.Dice(1, 100) <= ss.Value)
             {
-                var selected = scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID(ss.Key);
+                var selected = scr_System_Serializer.current.MasterList.Experiences.GetInitializerByID(ss.Key);
                 if (selected != null) selected.Execute(character, actorOverwrite);
             }
         }
@@ -99,7 +99,7 @@ public class ExpInitializer_Single : ExperienceInitializer
 
     public void Execute(Character_Trainable character, ExperienceActor actorOverwrite = null)
     {
-        if ( actorOverwrite == null) actorOverwrite =  randActor.Count < 1 ? null : scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID_Actor(Utility.GetRandomElement(randActor));
+        if ( actorOverwrite == null) actorOverwrite =  randActor.Count < 1 ? null : scr_System_Serializer.current.MasterList.Experiences.GetByID_Actor(Utility.GetRandomElement(randActor));
 
         foreach (var entry in experienceEntries)
         {
@@ -123,7 +123,7 @@ public class ExpInitializer_Single : ExperienceInitializer
 
         foreach (var entry in firstExperienceEntries)
         {
-            var actorOverwrite2 = actorOverwrite != null ? actorOverwrite : entry.randActor.Count < 1 ? null : scr_System_Serializer.current.MasterList.ExperienceInitializers.GetByID_Actor(Utility.GetRandomElement(entry.randActor));
+            var actorOverwrite2 = actorOverwrite != null ? actorOverwrite : entry.randActor.Count < 1 ? null : scr_System_Serializer.current.MasterList.Experiences.GetByID_Actor(Utility.GetRandomElement(entry.randActor));
 
             var parts = character.Body.GetInternalsWithTags(entry.bodyPartTags);
             foreach (var part in parts)
@@ -143,67 +143,6 @@ public class ExpInitializer_Single : ExperienceInitializer
 
 public interface ExperienceInitializer
 {
-
-
     public void Execute(Character_Trainable character, ExperienceActor actorOverwrite = null);
     public string BaseID { get; }
-}
-
-[System.Serializable]
-public class Index_ExperienceInitializer : I_IndexMergeable, I_IndexHasID
-{
-    [JsonProperty] protected List<ExperienceInitializer> list = new List<ExperienceInitializer>();
-    protected ConcurrentDictionary<string, ExperienceInitializer> _List;
-
-    [JsonProperty] protected List<ExperienceActor> list_actor = new List<ExperienceActor>();
-    protected ConcurrentDictionary<string, ExperienceActor> _List_actor;
-
-    [JsonIgnore] public List<ExperienceInitializer> List => list;
-    [JsonIgnore] public List<ExperienceActor> ListActor => list_actor;
-
-    public void MergeWith(I_IndexMergeable other)
-    {
-        var l = other as Index_ExperienceInitializer;
-        if (l?.list == null) return;
-        this.list.AddRange(l.list);
-        this.list_actor.AddRange(l.list_actor);
-    }
-
-    public void RegisterAllID(List<string> messages)
-    {
-        messages.Add("Registering ExperienceInitializers with count " + list.Count);
-        var ids = new Dictionary<string, ExperienceInitializer>();
-        foreach (var i in list)
-        {
-            if (string.IsNullOrEmpty(i.BaseID)) continue;
-            if (!ids.TryAdd(i.BaseID, i)) Debug.Log($"failed to add Index_ExperienceInitializer id [{i.BaseID}] due to duplicate");
-        }
-        _List = new ConcurrentDictionary<string, ExperienceInitializer>(ids);
-
-        var ids2 = new Dictionary<string, ExperienceActor>();
-        foreach (var i in list_actor)
-        {
-            if (string.IsNullOrEmpty(i.ID)) continue;
-            if (!ids2.TryAdd(i.ID, i)) Debug.Log($"failed to add Index_ExperienceInitializer actor id [{i.ID}] due to duplicate");
-        }
-        _List_actor = new ConcurrentDictionary<string, ExperienceActor>(ids2);
-
-    }
-
-    public ExperienceInitializer GetByID(string id)
-    {
-        if (_List == null) return null;
-        _List.TryGetValue(id, out ExperienceInitializer result);
-        if (result == null)
-        {
-            Debug.LogError($"error cannot find ID {id}, list count {list.Count}");
-        }
-        return result;
-    }
-    public ExperienceActor GetByID_Actor(string id)
-    {
-        if (_List_actor == null) return null;
-        _List_actor.TryGetValue(id, out var result);
-        return result;
-    }
 }

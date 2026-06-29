@@ -1,6 +1,6 @@
 {
-    "ExperienceInitializers": {
-        "list": 
+    "Experiences": {
+        "exp_initializers": 
         [
             {
                 "$type":"ExpInitializer_Collection, Assembly-CSharp",
@@ -106,7 +106,7 @@
                 }
             }
         ],
-        "list_actor":[
+        "exp_initializers_actor":[
 
         ]
     },

@@ -1,6 +1,6 @@
 {
-  "ExperienceInitializers": {
-    "list": [
+    "Experiences": {
+        "exp_initializers":  [
       {
         "$type": "ExpInitializer_Single, Assembly-CSharp",
         "baseID": "basic_exp_virgin_pure",
@@ -1503,7 +1503,7 @@
         ]
       }
     ],
-    "list_actor": [
+    "exp_initializers_actor": [
 
             {
         "ID":"expinit_target_client_male_1",

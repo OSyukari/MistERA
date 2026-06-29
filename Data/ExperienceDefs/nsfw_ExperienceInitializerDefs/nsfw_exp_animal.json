@@ -1,6 +1,6 @@
 {
-  "ExperienceInitializers": {
-    "list_actor": [
+  "Experiences": {
+    "exp_initializers_actor": [
       {
         "ID":"expinit_target_dog_1",
         "displayName": "expinit_target_dog",

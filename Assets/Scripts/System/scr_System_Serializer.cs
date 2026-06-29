@@ -339,12 +339,13 @@ public class scr_System_Serializer : MonoBehaviour
             chara.baseID = filepath.Name;
             serialized_chara = JsonConvert.SerializeObject(chara, UtilityEX.SerializerSettings);
 
-            scr_System_Serializer.current.MasterList.Character_Bases.SetChara(chara);
+            MasterList.Character_Bases.SetChara(chara);
 
-            var template = new CharaSerializableTemplate_Safe();
-            template.baseID = filepath.Name;
-            template.Template = obj.Template as CharaSafeTemplate;
-            scr_System_Serializer.current.MasterList.CharacterTemplates.SetTemplate(template);
+           // var template2 = new CharaSafeTemplate();
+            //var template = new CharaSerializableTemplate_Safe();
+            //template.baseID = filepath.Name;
+            //template.Template = obj.Template as CharaSafeTemplate;
+            MasterList.Character_Bases.SetTemplateNew(filepath.Name, obj.Template as CharaSafeTemplate);
         }
         else
         {
@@ -356,10 +357,12 @@ public class scr_System_Serializer : MonoBehaviour
 
             scr_System_Serializer.current.MasterList.Character_Bases.SetChara(chara);
 
-            var template = new CharaSerializableTemplate_Trainable();
-            template.baseID = filepath.Name;
-            template.Template = obj.Template as CharaTrainableTemplate;
-            scr_System_Serializer.current.MasterList.CharacterTemplates.SetTemplate(template);
+            //var template = new chara
+            //var template = new CharaSerializableTemplate_Trainable();
+            //template.baseID = filepath.Name;
+            //template.Template = obj.Template as CharaTrainableTemplate;
+            //scr_System_Serializer.current.MasterList.Character_Bases.SetTemplate(template);
+            MasterList.Character_Bases.SetTemplateNew(filepath.Name, obj.Template as CharaTrainableTemplate);
         }
 
 
@@ -374,7 +377,6 @@ public class scr_System_Serializer : MonoBehaviour
         List<string> loadedFiles = new List<string>();
 
         var newIndex = MasterList.Character_Bases;
-        var newIndex2 = MasterList.CharacterTemplates;
         string path = DataPath;
 
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
@@ -387,6 +389,9 @@ public class scr_System_Serializer : MonoBehaviour
             {
                 if (safeMode)
                 {
+                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                    if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
+
                     bool skipped = false;
                     foreach (var s in nsfwKeywords)
                     {
@@ -399,12 +404,10 @@ public class scr_System_Serializer : MonoBehaviour
                     }
                     if (skipped) continue;
 
-                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
-                    if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
                     newIndex.baseCharacters.Add(i);
 
                     var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
-                    newIndex2.list.Add(ii);
+                    if (ii.Template != null) newIndex.SetTemplateNew(string.IsNullOrEmpty(ii.baseID) ? file.Name : ii.baseID, ii.Template);
                 }
                 else
                 {
@@ -413,7 +416,8 @@ public class scr_System_Serializer : MonoBehaviour
                     newIndex.baseCharacters.Add(i);
 
                     var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
-                    newIndex2.list.Add(ii);
+                    //newIndex.SetTemplate(ii);
+                    if (ii.Template != null) newIndex.SetTemplateNew(string.IsNullOrEmpty(ii.baseID) ? file.Name : ii.baseID, ii.Template);
                 }
                 loadedFiles.Add($"Reading json file {file.FullName}");
 
@@ -432,7 +436,6 @@ public class scr_System_Serializer : MonoBehaviour
 
 
         var newIndex = MasterList.Character_Bases;
-        var newIndex2 = MasterList.CharacterTemplates;
         string path = PresetPath;
 
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
@@ -463,8 +466,9 @@ public class scr_System_Serializer : MonoBehaviour
                     newIndex.baseCharacters.Add(i);
 
                     var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
-                    if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
-                    newIndex2.list.Add(ii);
+                    //if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
+                    //newIndex.SetTemplate(ii);
+                    if (ii.Template != null) newIndex.SetTemplateNew(string.IsNullOrEmpty(ii.baseID) ? file.Name : ii.baseID, ii.Template);
                 }
                 else
                 {
@@ -474,8 +478,9 @@ public class scr_System_Serializer : MonoBehaviour
                     newIndex.baseCharacters.Add(i);
 
                     var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
-                    if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
-                    newIndex2.list.Add(ii);
+                    //if (ii.baseID == "" || ii.baseID.Length < 1) ii.baseID = file.Name;
+                    //newIndex.SetTemplate(ii);
+                    if (ii.Template != null) newIndex.SetTemplateNew(string.IsNullOrEmpty(ii.baseID) ? file.Name : ii.baseID, ii.Template);
                 }
                 loadedFiles.Add($"Reading json file {file.FullName}");
 
@@ -506,7 +511,7 @@ public class scr_System_Serializer : MonoBehaviour
             {
                 foreach(var s in nsfwKeywords) 
                 {
-                    if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                    if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.FullName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
                     {
                         skipped = true;
                         skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
@@ -516,7 +521,7 @@ public class scr_System_Serializer : MonoBehaviour
             }
             else
             {
-                if (file.Name.Contains(safe, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(safe, StringComparison.InvariantCultureIgnoreCase))
+                if (file.Name.Contains(safe, StringComparison.InvariantCultureIgnoreCase) || file.FullName.Contains(safe, StringComparison.InvariantCultureIgnoreCase))
                 {
                     skippedFiles.Add($"Skipping file {file.Name} due to not in safeMode");
                     continue;
@@ -534,7 +539,8 @@ public class scr_System_Serializer : MonoBehaviour
         Debug.Log($"LoadDefs Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
     }
   
-    public List<string> nsfwKeywords = new List<string>() { "nsfw", "unsafe", "sex", "initSex", "endSex", "massage", "do_not_use" };
+    [NonSerialized]
+    public List<string> nsfwKeywords = new List<string>() { "nsfw", "unsafe", "sex", "initSex", "endSex", "massage", "do_not_use", "forbidCopy" };
 
     public Traits GetByNameOrID_Traits(string name_or_id)
     {

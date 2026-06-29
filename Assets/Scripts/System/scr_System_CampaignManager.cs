@@ -2370,7 +2370,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     protected Character_Trainable GetCharaTemplate(string ID, bool allowDuplicate = false)
     {
-        var genTemplate = scr_System_Serializer.current.MasterList.CharGenTemplates.GetByID(ID);
+        var genTemplate = scr_System_Serializer.current.MasterList.Character_Bases.GetGeneratorByID(ID);
         if (genTemplate != null && genTemplate.TargetBaseID != "")
         {
             return genTemplate.GenerateChara();

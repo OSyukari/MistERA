@@ -1,7 +1,7 @@
 {
-"CharGenTemplates":
+    "Character_Bases":
     {
-        "list":[
+        "generators":[
 {
     "ID":"village_huntsman_scythe",
     "title":"village_huntsman_scythe",

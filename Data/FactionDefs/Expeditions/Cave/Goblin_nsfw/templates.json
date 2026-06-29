@@ -1,6 +1,6 @@
 {
-    "ExperienceInitializers": {
-        "list": [
+    "Experiences": {
+        "exp_initializers":  [
             {
                 "$type": "ExpInitializer_Collection, Assembly-CSharp",
                 "baseID": "specific_exp_event_goblin_captive_collection",
@@ -277,7 +277,7 @@
             }
         ],
         
-        "list_actor": [
+        "exp_initializers_actor": [
             {
                 "ID":"expinit_target_goblin_1",
                 "displayName": "expinit_target_goblin",
@@ -290,8 +290,9 @@
             }
         ]
     },
-    "CharGenTemplates": {
-        "list": [
+    "Character_Bases":
+    {
+        "generators":[
             {
                 "ID": "goblin_victim_BD2_random_3star_female",
                 "targetBaseIDs": ["BD2_random_3star_female"],

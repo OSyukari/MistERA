@@ -1,0 +1,161 @@
+{
+    "_doc": {
+        "wombType values": ["Humanlike", "Animal", "Feline"],
+        "Humanlike": "menstrual cycle (human, elf, any humanoid with periods). Uses WombParams_Humanlike.",
+        "Animal":    "spontaneous estrus cycle (dog, fox — seasonally timed heat). Uses WombParams_Animal.",
+        "Feline":    "induced ovulators (cat, rabbit — ovulation triggered by climax/arousal). Uses WombParams_Feline.",
+        "menopause": "disabled per-character by setting noAging=true. The threshold below is when currentPower triggers it.",
+        "fertility":          "average viable eggs released per ovulation event (e.g. 1.0 = usually 1 egg, 5.5 = usually 5-6)",
+        "fertilizationChance":"base per-egg probability of conception given normal sperm (3.0 units). Scaled by Fertilize(Sperm).",
+        "phasedays_note":     "phase days must sum to cycleThreshold. Remainder after named phases = final phase (luteal / anestrus / interestrus)."
+    },
+
+    "races": {
+
+        "human": {
+            "wombType": "Humanlike",
+            "wombParams_humanlike": {
+                "_lifecycle": "puberty 12yr | menopause ~50yr | cycle 28d",
+                "_phases":    "menstrual 5d | follicular 7d | ovulation 2d | luteal 14d = 28d",
+                "pubertyThreshold":          4380,
+                "pubertyVariation":          0.10,
+                "cycleThreshold":            28,
+                "cycleVariation":            0.10,
+                "menstrualDays":             5,
+                "follicularDays":            7,
+                "ovulationDays":             2,
+                "ovulationPowerAverage":     1500000,
+                "ovulationPowerVariation":   300000,
+                "ovulationQuantityAverage":  730,
+                "ovulationQuantityVariation":200,
+                "fertility":                 1.0,
+                "fertilizationChance":       0.25,
+                "spermNormalAmount":         3.0,
+                "menopauseThreshold":        1000
+            }
+        },
+
+        "elf": {
+            "wombType": "Humanlike",
+            "wombParams_humanlike": {
+                "_lifecycle": "puberty 120yr | menopause ~500yr | cycle 28d",
+                "_phases":    "menstrual 5d | follicular 7d | ovulation 2d | luteal 14d = 28d",
+                "_notes":     "fertility 0.2 = only 20% chance of a viable egg per ovulation. fertilizationChance 0.15 stacks with that, making conception rare by design.",
+                "pubertyThreshold":          43800,
+                "pubertyVariation":          0.10,
+                "cycleThreshold":            28,
+                "cycleVariation":            0.10,
+                "menstrualDays":             5,
+                "follicularDays":            7,
+                "ovulationDays":             2,
+                "ovulationPowerAverage":     1500000,
+                "ovulationPowerVariation":   300000,
+                "ovulationQuantityAverage":  73,
+                "ovulationQuantityVariation":20,
+                "fertility":                 0.20,
+                "fertilizationChance":       0.15,
+                "spermNormalAmount":         3.0,
+                "menopauseThreshold":        1000
+            }
+        },
+
+        "catgirl": {
+            "wombType": "Feline",
+            "wombParams_feline": {
+                "_lifecycle": "puberty 4yr | menopause ~45yr | cycle 24d",
+                "_phases":    "proestrus 2d | estrus 7d | interestrus 15d = 24d",
+                "_notes":     "ovulation is induced — notifyClimax(>=0.7) or sustained arousal triggers it during estrus. No climax = no egg released that cycle.",
+                "pubertyThreshold":          1460,
+                "pubertyVariation":          0.15,
+                "cycleThreshold":            24,
+                "cycleVariation":            0.20,
+                "proestrusDays":             2,
+                "estrusDays":                7,
+                "ovulationPowerAverage":     800000,
+                "ovulationPowerVariation":   150000,
+                "ovulationQuantityAverage":  650,
+                "ovulationQuantityVariation":150,
+                "fertility":                 3.5,
+                "fertilizationChance":       0.70,
+                "spermNormalAmount":         3.0,
+                "climaxOvulationThreshold":  0.70,
+                "arousalDecayRate":          0.10,
+                "menopauseThreshold":        1000
+            }
+        },
+
+        "doggirl": {
+            "wombType": "Animal",
+            "wombParams_animal": {
+                "_lifecycle": "puberty 3yr | menopause ~40yr | cycle 210d (~2 heats/yr)",
+                "_phases":    "proestrus 9d | estrus 9d | diestrus 65d | anestrus 127d = 210d",
+                "_notes":     "spontaneous ovulation — egg releases on day 1 of estrus automatically. fertilizationChance 0.65 reflects canine biology.",
+                "pubertyThreshold":          1095,
+                "pubertyVariation":          0.15,
+                "cycleThreshold":            210,
+                "cycleVariation":            0.15,
+                "proestrusDays":             9,
+                "estrusDays":                9,
+                "diestrus":                  65,
+                "ovulationPowerAverage":     340000,
+                "ovulationPowerVariation":   70000,
+                "ovulationQuantityAverage":  3000,
+                "ovulationQuantityVariation":800,
+                "fertility":                 5.5,
+                "fertilizationChance":       0.65,
+                "spermNormalAmount":         3.0,
+                "menopauseThreshold":        1000
+            }
+        },
+
+        "foxgirl": {
+            "wombType": "Animal",
+            "wombParams_animal": {
+                "_lifecycle": "puberty 5yr | menopause ~35yr | cycle 365d (1 heat/yr)",
+                "_phases":    "proestrus 10d | estrus 3d | diestrus 52d | anestrus 300d = 365d",
+                "_notes":     "estrus is only 3 days — the fertile window is extremely narrow. Low cycleVariation (0.05) keeps the annual schedule tight, mirroring the real breeding season.",
+                "pubertyThreshold":          1825,
+                "pubertyVariation":          0.10,
+                "cycleThreshold":            365,
+                "cycleVariation":            0.05,
+                "proestrusDays":             10,
+                "estrusDays":                3,
+                "diestrus":                  52,
+                "ovulationPowerAverage":     161000,
+                "ovulationPowerVariation":   30000,
+                "ovulationQuantityAverage":  2000,
+                "ovulationQuantityVariation":500,
+                "fertility":                 4.5,
+                "fertilizationChance":       0.60,
+                "spermNormalAmount":         3.0,
+                "menopauseThreshold":        1000
+            }
+        },
+
+        "rabbitgirl": {
+            "wombType": "Feline",
+            "wombParams_feline": {
+                "_lifecycle": "puberty 2yr | menopause ~30yr | cycle 14d",
+                "_phases":    "proestrus 1d | estrus 10d | interestrus 3d = 14d",
+                "_notes":     "induced ovulator like cat, but threshold is 0.3 — almost any climax event triggers it. Arousal decays very slowly (0.02/day) so accumulated arousal also fires ovulation quickly. Estrus dominates the cycle (10/14 days ≈ 71%), meaning rabbitgirls are nearly always in heat.",
+                "pubertyThreshold":          730,
+                "pubertyVariation":          0.15,
+                "cycleThreshold":            14,
+                "cycleVariation":            0.15,
+                "proestrusDays":             1,
+                "estrusDays":                10,
+                "ovulationPowerAverage":     6250000,
+                "ovulationPowerVariation":   1000000,
+                "ovulationQuantityAverage":  5000,
+                "ovulationQuantityVariation":1000,
+                "fertility":                 6.0,
+                "fertilizationChance":       0.85,
+                "spermNormalAmount":         3.0,
+                "climaxOvulationThreshold":  0.30,
+                "arousalDecayRate":          0.02,
+                "menopauseThreshold":        1000
+            }
+        }
+
+    }
+}
