@@ -170,13 +170,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         OnMoveToRoom?.Invoke(r);
     }
 
-    [JsonIgnore] private Humanoid_Womb womb = null;
-    [JsonIgnore] public Humanoid_Womb Womb {
-        get { return womb; }
-        set { womb = value; }
-    }
-
-
     public void InitializeWithRefID(int refID)
     {
 
@@ -425,12 +418,147 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         //Debug.LogError($"{FirstName} notify food consumption {i.DisplayName}");
         this.timeSinceLastEat = 0;
     }
+
+    [JsonIgnore]
+    public bool HasMenstrualCycle
+    {
+        get
+        {
+            return wombs != null && wombs.Count > 0;
+        }
+    }
+
+    ReproductionTemplate _reproTemplate = null;
+    ReproductionTemplate ReproTemplate
+    {
+        get
+        {
+            if (_reproTemplate == null && HasMenstrualCycle && Race != null)
+            {
+                _reproTemplate = scr_System_Serializer.current.MasterList.humanoid_Races.GetReproduction(this.Race.ID);
+            }
+            return _reproTemplate;
+        }
+    }
+
+    public MenstruationState Menstruation = null;
+
+    protected void TickMenstruation()
+    {
+        if (!HasMenstrualCycle) return;
+        if (ReproTemplate == null) return;
+
+        // this variable will be replaced by a boolean getter
+        // that go though character's status to see if daily contraceptive is taken
+        bool stagesupressed = false;
+
+
+        // this variable will be replaced by a boolean getter
+        // that return true if every womb is in menopause
+        bool isOvumexhausted = false;
+
+        // this shouldnt be necessary. if this is empty, then on "add womb" stage this should have been initialized
+       /// if (Menstruation == null) Menstruation = new MenstruationState(ReproTemplate);
+
+        var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
+        Menstruation.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
+
+        if (ReproTemplate.hasEstrus && Menstruation.CycleStage == MenstruationStatus.Ovulation)
+        {
+            // leave this blank for now, I'll add this in the future
+        }
+    }
+
+
+
+    public class MenstruationState
+    {
+
+        [JsonProperty] float mc_cycleValue = 0f;
+        [JsonProperty] public MenstruationStatus CycleStage { get; private set; } = MenstruationStatus.PrePuberty;
+
+        public MenstruationState()
+        {
+
+        }
+        public MenstruationState(ReproductionTemplate template)
+        {
+            mc_cycleValue = template.pubertyThreshold;
+
+        }
+
+        private MenstruationStatus DetermineCyclePhase(ReproductionTemplate t, int day, bool suppressed)
+        {
+            int endPhase1 = t.menstrualDays - 1;
+            int endPhase2 = endPhase1 + t.follicularDays;
+            int endPhase3 = endPhase2 + t.ovulationDays;
+
+            if (day <= endPhase1) return MenstruationStatus.Rest;
+            if (day <= endPhase2) return MenstruationStatus.PreOvulation;
+            if (day <= endPhase3 && !suppressed)
+                return MenstruationStatus.Ovulation;
+            return MenstruationStatus.Rest;
+        }
+
+        public void Quickstart(ReproductionTemplate template, int age)
+        {
+            float effectivePuberty = Utility.getRandwithVariation(template.pubertyThreshold, template.pubertyVariation);
+            float totalDays = age * 365f;
+
+            if (totalDays < effectivePuberty)
+            {
+                mc_cycleValue = effectivePuberty - totalDays;
+                CycleStage = MenstruationStatus.PrePuberty;
+                return;
+            }
+
+            mc_cycleValue = UnityEngine.Random.Range(0f, template.cycleThreshold);
+            CycleStage = DetermineCyclePhase(template, (int)mc_cycleValue, false);
+        }
+
+        public void Tick(ReproductionTemplate template, bool ispregnant, bool suppressed, bool isOvumExhausted)
+        {
+            if (ispregnant)
+            {
+                CycleStage = MenstruationStatus.Pregnant;
+                return;
+            }
+
+            if (isOvumExhausted)
+            {
+                CycleStage = MenstruationStatus.None;
+                return;
+            }
+
+            if (CycleStage == MenstruationStatus.PrePuberty)
+            {
+                mc_cycleValue -= Utility.getRandwithVariation(1f, template.pubertyVariation);
+                if (mc_cycleValue > 0) return;
+                mc_cycleValue = 0f; // reinitialize for cycle use
+                // fall through to first cycle tick
+            }
+
+            mc_cycleValue += Utility.getRandwithVariation(1f, template.cycleVariation);
+            if (mc_cycleValue >= template.cycleThreshold)
+                mc_cycleValue = 0f;
+
+            CycleStage = DetermineCyclePhase(template, (int)mc_cycleValue, suppressed);
+        }
+    }
+
+
     private void Observer_GlobalDay(int updateOrder)
     {
         if (updateOrder != 2) return;
-        if (Womb != null)
+        if (HasMenstrualCycle)
         {
-            Womb.dayTick_Cycle();
+            TickMenstruation();
+
+            foreach (var wb in wombs)
+            {
+                /// notify result
+                wb.dayTick_Cycle(Menstruation.CycleStage);
+            }
         }
         
         if (Memory != null) Memory.DailyClear();
@@ -447,6 +575,20 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             {
                 foreach(var m in updateMessage) i.DailyReport.AddMiscRecord(m);
             }
+        }
+    }
+
+    List<BodyInternal_Womb> wombs = new List<BodyInternal_Womb>();
+    public void RegisterWomb(BodyInternal_Womb wb)
+    {
+        if (wb == null) return;
+        if (wombs.Contains(wb)) return;
+        wombs.Add(wb);
+
+        if (Menstruation == null)
+        {
+            Menstruation = new MenstruationState(ReproTemplate);
+            Menstruation.Quickstart(ReproTemplate, Age);
         }
     }
 
@@ -1456,33 +1598,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public void RestoreAll(bool regenerateBody = false)
     {
-        if (regenerateBody)
-        {
-            Body.AddMissing();
-            List<string> l = new List<string>();
-            l.Add("womb");
-            if (Body.HasBodyTag(new List<string>() { "womb" }) && this.womb == null)
-            {
-                switch (Race.ID)
-                {
-                    case "humanRace_elf":
-                    case "humanRace_angel":
-                        womb = new Womb_Elf(RefID, noAging);
-                        break;
-                    case "humanRace_demon":
-                    case "humanRace_beastkin_cat":
-                        womb = new Womb_Furry(RefID, noAging);
-                        break;
-                    default:
-                        womb = new Womb_Human(RefID, noAging);
-                        break;
-
-                }
-                
-            }
-        }
+        if (regenerateBody) Body.AddMissing();
         this.Stats.RestoreAll();
-
     }
 
 

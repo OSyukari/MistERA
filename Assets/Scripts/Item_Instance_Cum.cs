@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public class Item_Instance_Cum : Item_Instance
@@ -29,5 +30,11 @@ public class Item_Instance_Cum : Item_Instance
     /// USED FOR SERIALIZER DO NOT CALL THIS MANUALLY
     /// </summary>
     public Item_Instance_Cum() : base() { }
+
+    [JsonIgnore]
+    public double CumAmount { get
+        {
+            return GetComp_Ingestible().amount;
+        } }
 
 }

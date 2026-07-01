@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -80,6 +81,27 @@ public class ExpInitializer_Collection : ExperienceInitializer
             }
         }
     }
+
+    public void PurgeNonExisting()
+    {
+        var list_one = selectOne.Keys.ToList();
+        var list_each = selectEach.Keys.ToList();
+
+        foreach(var one in list_one)
+        {
+            if (scr_System_Serializer.current.index_Experiences.GetInitializerByID(one) == null)
+            {
+                list_one.Remove(one);
+            }
+        }
+        foreach (var each in list_each)
+        {
+            if (scr_System_Serializer.current.index_Experiences.GetInitializerByID(each) == null)
+            {
+                list_one.Remove(each);
+            }
+        }
+    }
 }
 public class ExperienceActor
 {
@@ -139,10 +161,16 @@ public class ExpInitializer_Single : ExperienceInitializer
 
         }
     }
+
+    public void PurgeNonExisting()
+    {
+        // do nothing
+    }
 }
 
 public interface ExperienceInitializer
 {
     public void Execute(Character_Trainable character, ExperienceActor actorOverwrite = null);
     public string BaseID { get; }
+    public void PurgeNonExisting();
 }

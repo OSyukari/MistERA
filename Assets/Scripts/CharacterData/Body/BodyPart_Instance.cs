@@ -86,6 +86,10 @@ public class BodyPart_Instance : I_CombatItem
             {
                 this.internals.Add(inter);
             }
+            if (inter.hasTag("womb"))
+            {
+
+            }
         }
 
         foreach (BodyEquipLayer i in equipLayers)

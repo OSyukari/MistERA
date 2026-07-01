@@ -6,6 +6,40 @@ using System.Threading;
 
 public static class Utility
 {
+
+    public static double getRandwithVariation(double average, double variationPercentile, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+
+        double min = average * (1.0 - variationPercentile);
+        double max = average * (1.0 + variationPercentile);
+
+        // Equivalent to Random.Range(min, max) for doubles
+        return min + (random.NextDouble() * (max - min));
+    }
+    public static float getRandwithVariation(float average, float variationPercentile, System.Random rand = null)
+    {
+        // Fallback to a thread-safe static random instance if none is provided
+        var random = rand == null ? Random : rand;
+
+        float min = average * (1.0f - variationPercentile);
+        float max = average * (1.0f + variationPercentile);
+
+        // Equivalent to Random.Range(min, max) using NextDouble() cast to float
+        return min + ((float)random.NextDouble() * (max - min));
+    }
+    public static int getRandwithVariation(int average, int variationInt, System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+
+        int min = average - variationInt;
+        int max = average + variationInt;
+
+        // System.Random.Next is exclusive of the upper bound.
+        // We add 1 to 'max' to make it inclusive, matching Unity's Random.Range(int, int).
+        return random.Next(min, max + 1);
+    }
+
     public static string WrapTextColor(string text, Color32 c)
     {
         return $"<color={HexCOLOR(c)}>{text}</color>";

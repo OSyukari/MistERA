@@ -3,21 +3,23 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 [System.Serializable]
-public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
+public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
 {
     [JsonProperty] protected List<Humanoid_Race> list = new List<Humanoid_Race>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race> _List;
-    [JsonIgnore] public List<Humanoid_Race> List { get { return list; } }
+
+
+    [JsonProperty] protected List<ReproductionTemplate> reproductionTemplates  = new List<ReproductionTemplate>();
+    protected System.Collections.Concurrent.ConcurrentDictionary<string, ReproductionTemplate> _List_reproductionTemplates;
+
 
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Humanoid_Race_Index;
         if (l == null) return;
-        else if (l.list == null) return;
-        else
-        {
-            this.list.AddRange(l.list);
-        }
+
+        if (l.list != null)  this.list.AddRange(l.list);
+        if (l.reproductionTemplates != null) this.reproductionTemplates.AddRange(l.reproductionTemplates);
     }
 
     public void RegisterAllID(List<string> a)
@@ -30,6 +32,15 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
             if (!ids.TryAdd(i.ID, i)) Debug.Log($"failed to add Humanoid_Race_Index id [{i.ID}] due to duplicate");
         }
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race>(ids);
+
+        var ids1 = new Dictionary<string, ReproductionTemplate>();
+        foreach (var i in reproductionTemplates)
+        {
+            if (string.IsNullOrEmpty(i.baseID)) continue;
+            if (!ids1.TryAdd(i.baseID, i)) Debug.Log($"failed to add Humanoid_Race_Index id [{i.baseID}] due to duplicate");
+        }
+        _List_reproductionTemplates = new System.Collections.Concurrent.ConcurrentDictionary<string, ReproductionTemplate>(ids1);
+
     }
 
     public Humanoid_Race GetItemBefore(Humanoid_Race o, bool playableOnly = true)
@@ -73,6 +84,24 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable
     {
         if (_List.TryGetValue(id, out Humanoid_Race result)) return result;
         return null;
+    }
+
+    public bool GetReproduction(string id, out ReproductionTemplate rarar)
+    {
+        if (_List_reproductionTemplates != null && _List_reproductionTemplates.TryGetValue(id, out rarar)) return true;
+        rarar = null;
+        return false;
+    }
+    public ReproductionTemplate GetReproduction(string id)
+    {
+        if (_List_reproductionTemplates != null && _List_reproductionTemplates.TryGetValue(id, out var vaoue)) return vaoue;
+        return null;
+    }
+
+    public void RemoveNSFW()
+    {
+        reproductionTemplates = null;
+        _List_reproductionTemplates = null;
     }
 }
 

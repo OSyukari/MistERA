@@ -18,6 +18,7 @@ public enum Ranking
 
 public class BodyInternal_Instance
 {
+    public BodyInternal_Womb womb = null;
 
     [JsonProperty] protected long firstExperience = 0, lastExperience = 0;
     [JsonProperty] protected string firstExpDesc = "", lastExpDesc = "";
@@ -283,6 +284,11 @@ public class BodyInternal_Instance
         this.ownerRefID = c.Owner.RefID;
 
         this.Parent = c;
+
+        if (this.womb != null)
+        {
+            Owner.RegisterWomb(this.womb);
+        }
     }
     public bool Initialize(string baseID, BodyPart_Instance c)
     {
@@ -317,6 +323,24 @@ public class BodyInternal_Instance
                 contentsIndex.Add(i.ToString()+"||"+j.ToString(), -1);
             }
         }
+
+        if (basePointer.tags.Contains("womb") && Parent.Owner.Race != null && scr_System_Serializer.current.MasterList.humanoid_Races.GetReproduction(Parent.Owner.Race.ID, out var template))
+        {
+            switch (template.Type)
+            {
+                case BodyInternal_Base_WombType.Human:
+                    this.womb = new Womb_Humanlike(this, template);
+                    Owner.RegisterWomb(this.womb);
+                    break;
+
+                case BodyInternal_Base_WombType.Feline:
+                    this.womb = new Womb_Feline(this, template);
+                    Owner.RegisterWomb(this.womb);
+                    break;
+
+            }
+        }
+
         return true;
     }
 
@@ -632,6 +656,16 @@ public class BodyInternal_Instance
             foreach (var i in this.Contains) if (i is Item_Instance_Cum && i.GetComp_Ingestible().amount > 0) return true;
             return false;
         } }
+
+    [JsonIgnore]
+    public bool ContainsPregnancy
+    {
+        get
+        {
+            if (this.Contains == null) return false;
+            return false;
+        }
+    }
     [JsonProperty] Dictionary<int, int> ContainedRefs_Delays = new Dictionary<int, int>();
     public float volume_capacity = 0;
     [JsonIgnore] public bool containsOverCapacity

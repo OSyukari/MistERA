@@ -20,7 +20,7 @@ public class ExperienceClass
 }
 
 [System.Serializable]
-public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByTag
+public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByTag, I_RemoveNonExisting
 {
     [JsonProperty] protected List<ExperienceClass> list = new List<ExperienceClass>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, ExperienceClass> _List;
@@ -30,8 +30,13 @@ public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
 
     [JsonProperty] protected List<ExperienceActor> exp_initializers_actor = new List<ExperienceActor>();
     protected ConcurrentDictionary<string, ExperienceActor> _exp_initializers_actor;
-
-
+    public void RemoveNonExisting()
+    {
+        foreach(var ii in exp_initializers)
+        {
+            ii.PurgeNonExisting();
+        }
+    }
 
     public ExperienceInitializer GetInitializerByID(string id)
     {
@@ -102,6 +107,5 @@ public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
     {
         this.list.RemoveAll(x => x.tags.Contains(tag));
     }
-
 }
 

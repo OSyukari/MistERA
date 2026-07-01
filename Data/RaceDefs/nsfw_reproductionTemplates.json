@@ -1,0 +1,183 @@
+{
+    "_doc": {
+        "type values": [
+            "Human",
+            "Feline"
+        ],
+        "Human": "menstrual cycle (human, elf). Phases: menstrual → follicular → ovulation → luteal (remainder).",
+        "Feline": "induced ovulator (cat, rabbit). Phases: proestrus (menstrualDays) → estrus/waiting (ovulationDays) → interestrus (remainder). follicularDays = 0. Ovulation only fires on NotifyClimax.",
+        "menopause": "disabled per-character by setting noAging=true. The threshold below is when currentPower triggers it.",
+        "fertility": "average viable eggs released per ovulation event (e.g. 1.0 = usually 1 egg, 5.5 = usually 5-6)",
+        "fertilizationChance": "base per-egg probability of conception given normal sperm (3.0 units). Scaled by Fertilize(cum).",
+        "phasedays_note": "menstrualDays + follicularDays + ovulationDays must be <= cycleThreshold. Remainder = final rest phase (luteal / diestrus+anestrus / interestrus)."
+    },
+    "humanoid_Races": {
+        "reproductionTemplates": [
+            {
+                "baseID": "humanRace_human",
+                "type": "Human",
+                "_lifecycle": "puberty 12yr | menopause ~50yr | cycle 28d",
+                "_phases": "menstrual 5d | follicular 7d | ovulation 2d | luteal 14d = 28d",
+                "pubertyThreshold": 4380,
+                "pubertyVariation": 0.10,
+                "cycleThreshold": 28,
+                "cycleVariation": 0.10,
+                "menstrualDays": 5,
+                "follicularDays": 7,
+                "ovulationDays": 2,
+                "ovulationPowerAverage": 1500000,
+                "ovulationPowerVariation": 300000,
+                "ovulationQuantityAverage": 730,
+                "ovulationQuantityVariation": 200,
+                "fertility": 1.0,
+                "fertilizationChance": 0.25,
+                "ovumLifespanMinutes": 1440
+            },
+            {
+                "baseID": "humanRace_elf",
+                "type": "Human",
+                "_lifecycle": "puberty 120yr | menopause ~500yr | cycle 28d",
+                "_phases": "menstrual 5d | follicular 7d | ovulation 2d | luteal 14d = 28d",
+                "_notes": "fertility 0.2 = only 20% chance of a viable egg per ovulation. fertilizationChance 0.15 stacks with that, making conception rare by design.",
+                "pubertyThreshold": 43800,
+                "pubertyVariation": 0.10,
+                "cycleThreshold": 28,
+                "cycleVariation": 0.10,
+                "menstrualDays": 5,
+                "follicularDays": 7,
+                "ovulationDays": 2,
+                "ovulationPowerAverage": 1500000,
+                "ovulationPowerVariation": 300000,
+                "ovulationQuantityAverage": 73,
+                "ovulationQuantityVariation": 20,
+                "fertility": 0.20,
+                "fertilizationChance": 0.15,
+                "ovumLifespanMinutes": 2880
+            },
+            {
+                "baseID": "humanRace_beastkin_cat",
+                "type": "Feline",
+                "_lifecycle": "puberty 4yr | menopause ~45yr | cycle 24d",
+                "_phases": "proestrus 2d (menstrualDays) | estrus 7d (ovulationDays) | interestrus 15d (remainder) = 24d",
+                "_notes": "induced ovulator — ovulation only fires on NotifyClimax (threshold 0.7) or sustained arousal during estrus.",
+                "pubertyThreshold": 1460,
+                "pubertyVariation": 0.15,
+                "cycleThreshold": 24,
+                "cycleVariation": 0.20,
+                "menstrualDays": 2,
+                "follicularDays": 0,
+                "ovulationDays": 7,
+                "ovulationPowerAverage": 800000,
+                "ovulationPowerVariation": 150000,
+                "ovulationQuantityAverage": 650,
+                "ovulationQuantityVariation": 150,
+                "fertility": 3.5,
+                "fertilizationChance": 0.70,
+                "ovumLifespanMinutes": 1440,
+                "hasEstrus": true
+            },
+            {
+                "baseID": "doggirl",
+                "type": "Human",
+                "_lifecycle": "puberty 3yr | menopause ~40yr | cycle 210d (~2 heats/yr)",
+                "_phases": "proestrus 9d (menstrualDays) | estrus 9d (ovulationDays) | rest 192d (remainder) = 210d",
+                "_notes": "spontaneous ovulation on entering estrus. Rest phase collapses diestrus (65d) + anestrus (127d) = 192d into one unnamed block.",
+                "pubertyThreshold": 1095,
+                "pubertyVariation": 0.15,
+                "cycleThreshold": 210,
+                "cycleVariation": 0.15,
+                "menstrualDays": 9,
+                "follicularDays": 0,
+                "ovulationDays": 9,
+                "ovulationPowerAverage": 340000,
+                "ovulationPowerVariation": 70000,
+                "ovulationQuantityAverage": 3000,
+                "ovulationQuantityVariation": 800,
+                "fertility": 5.5,
+                "fertilizationChance": 0.65,
+                "ovumLifespanMinutes": 4320
+            },
+            {
+                "baseID": "foxgirl",
+                "type": "Human",
+                "_lifecycle": "puberty 5yr | menopause ~35yr | cycle 365d (1 heat/yr)",
+                "_phases": "proestrus 10d (menstrualDays) | estrus 3d (ovulationDays) | rest 352d (remainder) = 365d",
+                "_notes": "estrus is only 3 days — fertile window is extremely narrow. Low cycleVariation (0.05) keeps the annual schedule tight. Rest phase collapses diestrus (52d) + anestrus (300d) = 352d.",
+                "pubertyThreshold": 1825,
+                "pubertyVariation": 0.10,
+                "cycleThreshold": 365,
+                "cycleVariation": 0.05,
+                "menstrualDays": 10,
+                "follicularDays": 0,
+                "ovulationDays": 3,
+                "ovulationPowerAverage": 161000,
+                "ovulationPowerVariation": 30000,
+                "ovulationQuantityAverage": 2000,
+                "ovulationQuantityVariation": 500,
+                "fertility": 4.5,
+                "fertilizationChance": 0.60,
+                "ovumLifespanMinutes": 2880
+            },
+            {
+                "baseID": "rabbitgirl",
+                "type": "Feline",
+                "_lifecycle": "puberty 2yr | menopause ~30yr | cycle 14d",
+                "_phases": "proestrus 1d (menstrualDays) | estrus 10d (ovulationDays) | interestrus 3d (remainder) = 14d",
+                "_notes": "induced ovulator like cat but climaxOvulationThreshold is 0.3 — almost any climax fires ovulation. Estrus dominates (10/14 days ≈ 71%), rabbitgirls are nearly always in heat.",
+                "pubertyThreshold": 730,
+                "pubertyVariation": 0.15,
+                "cycleThreshold": 14,
+                "cycleVariation": 0.15,
+                "menstrualDays": 1,
+                "follicularDays": 0,
+                "ovulationDays": 10,
+                "ovulationPowerAverage": 6250000,
+                "ovulationPowerVariation": 1000000,
+                "ovulationQuantityAverage": 5000,
+                "ovulationQuantityVariation": 1000,
+                "fertility": 6.0,
+                "fertilizationChance": 0.85,
+                "ovumLifespanMinutes": 720,
+                "hasEstrus": true,
+                "climaxOvulationThreshold": 60
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+
+"MenstruationStatus_None":"绝经期",
+"MenstruationStatus_PrePuberty":"经期前",
+"MenstruationStatus_Rest":"静止期",
+"MenstruationStatus_PreOvulation":"卵泡期",
+"MenstruationStatus_Ovulation":"排卵期",
+"MenstruationStatus_Ovulation_Estrus":"发情期",
+"MenstruationStatus_Pregnant":"妊娠中",
+"MenstruationStatus_Insemination":"已受精",
+
+"humanRace_human_MenstruationStatus_Rest":"月经期",
+"humanRace_elf_MenstruationStatus_Rest":"月事期",
+"humanRace_beastkin_cat_MenstruationStatus_Rest":"间情期",
+"doggirl_MenstruationStatus_Rest":"乏情期",
+"foxgirl_MenstruationStatus_Rest":"乏情期",
+"rabbitgirl_MenstruationStatus_Rest":"间情期"
+
+            },
+            "en-us":
+            {
+
+"MenstruationStatus_None":"Menopause",
+"MenstruationStatus_PrePuberty":"Pre-Puberty",
+"MenstruationStatus_Rest":"Rest",
+"MenstruationStatus_PreOvulation":"Follicular Phase",
+"MenstruationStatus_Ovulation":"Ovulation",
+"MenstruationStatus_Ovulation_Estrus":"In Heat",
+"MenstruationStatus_Pregnant":"Pregnant"
+            }
+        }
+    }
+}
