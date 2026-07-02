@@ -9,6 +9,8 @@
 "ui_currentSexJob_setDoer_tooltip": "将当前角色设定为指令执行者",
 "ui_currentSexJob_setReceiver_tooltip": "将当前角色设定为指令接受者",
 
+"ui_entry_reproductionCycles": "经期",
+
 "ui_entry_memory_description_cum_vagina_humanoid_base": "中出",
 "ui_entry_memory_description_cum_womb_humanoid_base": "子宫内中出",
 "ui_entry_memory_description_cum_anus_humanoid_base": "在肛内射精",

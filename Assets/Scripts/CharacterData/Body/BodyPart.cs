@@ -126,8 +126,16 @@ public class BodyPart_Base
             foreach (string s in childID)
             {
                 var part = CharaOrigins.Instance.BodyPartIndex.GetPartByID(s);
-                if (part == null) return false;
-                else if (part.sortOrder <= this.sortOrder) return false;
+                if (part == null)
+                {
+                    Debug.LogError($"Error cannot find bodypart {s}");
+                    return false;
+                }
+                else if (part.sortOrder <= this.sortOrder)
+                {
+                    Debug.LogError($"Error sortorder mismatch {part.ID} <= {this.ID}");
+                    return false;
+                }
             }
             return true;
         }

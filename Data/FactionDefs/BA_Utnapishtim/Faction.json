@@ -14,11 +14,11 @@
                     "initializers":[
                         {
                             "initClass":"campaign_init_playerNameIDs",
-                            "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
+                            "initArguments":["Campaign1_Sensei_Template"]
                         },
                         {
-                            "initClass":"campaign_init_playerPortrait",
-                            "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":10,\"portrait_offset_y\":40,\"Variants\":[], \"portrait_path\":\"SchoolIcon/School_Icon_ETC.png\", \"icon_path\":\"SchoolIcon/School_Icon_ETC.png\",\"icon_offset_size\":0.25,\"icon_offset_x\":0,\"icon_offset_y\":0 }"]
+                            "initClass":"campaign_init_playerPortrait_fromBaseID",
+                            "initArguments":["Campaign1_Sensei_Template"]
                         },
                         {
                             "initClass":"campaign_init_homefaction",
@@ -39,14 +39,14 @@
                     "tags":["nsfw"],
                     "displayName":"Debug",
                     "tooltip":"Start with extra debug NPC in party",
-                                            "initializers":[
+                        "initializers":[
                         {
                             "initClass":"campaign_init_playerNameIDs",
-                            "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
+                            "initArguments":["Campaign1_Sensei_Template"]
                         },
                         {
-                            "initClass":"campaign_init_playerPortrait",
-                            "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":10,\"portrait_offset_y\":40,\"Variants\":[], \"portrait_path\":\"SchoolIcon/School_Icon_ETC.png\", \"icon_path\":\"SchoolIcon/School_Icon_ETC.png\",\"icon_offset_size\":0.25,\"icon_offset_x\":0,\"icon_offset_y\":0 }"]
+                            "initClass":"campaign_init_playerPortrait_fromBaseID",
+                            "initArguments":["Campaign1_Sensei_Template"]
                         },
                         {
                             "initClass":"campaign_init_homefaction",
@@ -56,7 +56,6 @@
                             "initClass":"campaign_init_map_root",
                             "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
                         },
-
                         {
                             "initClass":"campaign_init_map_extra",
                             "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
@@ -312,7 +311,7 @@
                 "salesInventory":[
                     { "matchByID":"consumable_10pulls_ticket", "itemCount":1 }
                  ],
-                "managerBaseIDs":["PLAYER"],
+                "managerBaseIDs":["Campaign1_Sensei_Template"],
                 "workHours":[
                     { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
                     { "charaBaseID":"Campaign1_Char_Ako", "startHour":13,"endHour":18,"comID":"com_job_cleaning" },

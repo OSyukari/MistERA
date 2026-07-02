@@ -1,9 +1,10 @@
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.EventSystems;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 {
@@ -19,6 +20,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public RectTransform list_factionWork, list_assignCOM, list_CharaNeeds;
 
     public initScript_ManagementOverview overviewScript;
+
+    public Image background;
 
     public void InitializeWithArgument(Manageable targetFaction = null)
     {
@@ -36,7 +39,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             if (m != null && !factions.Contains(m)) factions.Add(m);
         }
 
-
         foreach (var i in factions)
         {
             if (i != null)
@@ -47,6 +49,19 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
     }
 
+    public IEnumerator loadbg(string a)
+    {
+        if (scr_System_CentralControl.current.GetSprite(a, out var sprite))
+        {
+            background.sprite = sprite;
+        }
+        else
+        {
+            Texture2D loaded = null;
+            yield return AssetsLoader.LoadTextureCoroutine(a, texture => loaded = texture);
+            background.sprite = scr_System_CentralControl.current.MakeSprite(a, loaded);
+        }
+    }
     protected override void Awake()
     {
         base.Awake();
@@ -62,12 +77,24 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     string homef, workf, otherf;
     string charaLocAP;
 
+    Coroutine co = null;
+
     public void LoadFactionData(Manageable m)
     {
         if (CurrentFaction != null && CurrentFaction == m) return;
         if (m == null) return;
 
         CurrentFaction = m;
+
+        if (false && m.backgroundIMG != "")
+        {
+            if (co != null)
+            {
+                StopCoroutine(co);
+                co = null;
+            }
+            co = StartCoroutine(loadbg(m.backgroundIMG));
+        }
 
         if (m is Manageable_HomeFaction) factionName.SetText(homef.Replace("$name$", m.FactionDisplayName), false, "management_faction_home_tooltip");
         else if (m is Manageable_WorkFaction) factionName.SetText(workf.Replace("$name$", m.FactionDisplayName), false, "management_faction_work_tooltip");

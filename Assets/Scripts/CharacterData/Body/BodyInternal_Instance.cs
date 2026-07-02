@@ -287,6 +287,7 @@ public class BodyInternal_Instance
 
         if (this.womb != null)
         {
+            womb.ReEstablishParent(this);
             Owner.RegisterWomb(this.womb);
         }
     }
@@ -326,15 +327,15 @@ public class BodyInternal_Instance
 
         if (basePointer.tags.Contains("womb") && Parent.Owner.Race != null && scr_System_Serializer.current.MasterList.humanoid_Races.GetReproduction(Parent.Owner.Race.ID, out var template))
         {
-            switch (template.Type)
+            switch (template.wombType)
             {
-                case BodyInternal_Base_WombType.Human:
-                    this.womb = new Womb_Humanlike(this, template);
+                case BodyInternal_Base_WombType.spontaneous:
+                    this.womb = new Womb_Spontaneous(this, template);
                     Owner.RegisterWomb(this.womb);
                     break;
 
-                case BodyInternal_Base_WombType.Feline:
-                    this.womb = new Womb_Feline(this, template);
+                case BodyInternal_Base_WombType.induced:
+                    this.womb = new Womb_Induced(this, template);
                     Owner.RegisterWomb(this.womb);
                     break;
 

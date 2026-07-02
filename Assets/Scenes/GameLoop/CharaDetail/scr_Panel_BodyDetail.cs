@@ -94,6 +94,14 @@ public class scr_Panel_BodyDetail : MonoBehaviour
         }
 
         //this.mostExp.gameObject.SetActive(false);
+
+        if (instance.womb != null)
+        {
+            description.gameObject.SetActive(true);
+            description.SetText(instance.womb.debugTooltip);
+        }
+        else description.gameObject.SetActive(false);
+
     }
     /*
     private void LoadImage()
@@ -108,7 +116,7 @@ public class scr_Panel_BodyDetail : MonoBehaviour
     public scr_HoverableText boxSize,  boxSensitivity;
     public scr_HoverableText boxVolume;
     public RectTransform box_Fuckable;
-    public RectTransform description;
+    public scr_HoverableText description;
 
     public scr_HoverableText firstExp, lastExp;
 }

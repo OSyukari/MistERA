@@ -392,6 +392,16 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         //each panel need to know what part from who its monitoring
         //internalDictionary = new Dictionary<BodyInternal_Instance, scr_Panel_BodyDetail>();
 
+        if (chara.HasMenstrualCycle)
+        {
+
+            initSexRecords.text_cycles.SetText( chara.ReproCycle.CycleName(chara));
+        }
+        else
+        {
+
+            initSexRecords.text_cycles.SetText("none", false, "", true);
+        }
 
         foreach (BodyPart_Instance b in chara.Body.Body)
         {

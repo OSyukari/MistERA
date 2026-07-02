@@ -1809,13 +1809,21 @@ public class scr_System_CampaignManager : MonoBehaviour
                 {
                     var target = FindInstanceByID(0);
                     target.BaseID = ini.initArguments[0];
-                    target.SetName(ini.initArguments[1],ini.initArguments[2],ini.initArguments[3],ini.initArguments[4]);
+                    //target.SetName(ini.initArguments[1],ini.initArguments[2],ini.initArguments[3],ini.initArguments[4]);
                 }
                 else if (ini.initClass == "campaign_init_playerPortrait")
                 {
                     PortraitManager.CharaPortrait cm = JsonConvert.DeserializeObject<PortraitManager.CharaPortrait>(ini.initArguments[0], UtilityEX.SerializerSettings);
                     Player.PortraitManager.Prepend(cm);
 
+                }
+                else if (ini.initClass == "campaign_init_playerPortrait_fromBaseID")
+                {
+                    var chara = scr_System_Serializer.current.MasterList.Character_Bases.GetByID(ini.initArguments[0]);
+                    if (chara != null && chara.Portrait != null && chara.Portrait.portraitPriorityList != null)
+                    {
+                        Player.PortraitManager.SetTemplate(chara);
+                    }
                 }
                 else if (ini.initClass == "campaign_init_map_root")
                 {
@@ -1827,6 +1835,10 @@ public class scr_System_CampaignManager : MonoBehaviour
                     Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
                     if (ini.initArguments[1] == "true"){
                         FindInstanceByID(0).FactionManager.SetHomeFaction(f.ID, ini.initArguments[2] == "true" ? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
+                    }
+                    if (ini.initArguments.Count >= 4)
+                    {
+                        f.backgroundIMG = ini.initArguments[3];
                     }
                 }
                 else if (ini.initClass == "campaign_init_productionOrder")
@@ -1921,6 +1933,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         Map.SerializationRebuilt();
         Map.UpdateRoomForceGreeting();
         ColdLoad = false;
+
+        Player.PortraitManager.ClearHandlerCache();
 
         UpdateScene();
         scr_System_Time.current.UpdateTime(0, 0, 0, 0, true);

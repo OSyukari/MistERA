@@ -13,6 +13,8 @@ public class initScript_Records : MonoBehaviour
     public labelGrid unlabeled_derivedStats;
     public labelGrid unlabeled_status;
 
+    public scr_HoverableText text_cycles;
+
     Dictionary<string, labelGrid> labeled = new Dictionary<string, labelGrid>();
 
     public RectTransform GetStatusGrid(string l)

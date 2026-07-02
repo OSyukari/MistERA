@@ -154,6 +154,8 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
     {
         if (this.m_TextMeshPro == null || this.m_TextMeshPro.text == null)
         {
+            // fallback
+            replaceText = text;
             return;
         }
         if (text == null) text = "";

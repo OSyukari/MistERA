@@ -1,0 +1,18 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "default": {
+"console_modstatderived_tooltip":"modstatderived [statbaseID] [value]",
+"console_spawnChara_tooltip":"spawnChara [str baseID]",
+"console_addItem_tooltip":"addItem [int targetRef] [string itemBaseID] [int count]",
+"console_modkojovariable_tooltip":"modkojovariable [int fromTargetRef] [int toTargetRef] [string varname] [bool isdaily] [int value]",
+"console_loadevent_tooltip":"loadevent [int targetRefID, -1 for null] [string eventId] [string eventLabel]",
+"console_modexperience_tooltip":"modexperience [string expBaseID] [int value]",
+"console_modrelationshipwith_tooltip":"modrelationshipwith [targetRefID] trust|fear|goodwill|badwill|desire [value]",
+"console_modpersonalityscore_tooltip":"modpersonalityscore pride|corruption|mood|stress|lust [value]"
+
+
+            }
+        }
+    }
+}

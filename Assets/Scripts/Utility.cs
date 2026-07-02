@@ -98,6 +98,7 @@ public static class UtilityEX
         new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Ignore,
             Converters = new JsonConverter[] { new JSON_SO_Converter<Character_Trainable>() }
         };
 
@@ -1327,7 +1328,27 @@ public static class UtilityEX
                     c.FactionManager.SetTempHomeFaction(addTofaction.ID, Manageable_GuestStatus.Prisoner);
                 }
                 break;
+            case "advwomb":
+                if (parsed.Count() >= 4)
+                {
+                    if (int.TryParse(parsed[1], out var adv_year) && int.TryParse(parsed[2], out var adv_month) && int.TryParse(parsed[3], out var adv_day))
+                    {
+                        var target = scr_System_CampaignManager.current.CurrentTarget;
+                        if (target == null)
+                        {
+                            Debug.LogError("error target null");
+                            break;
+                        }
+                        if (!target.HasMenstrualCycle)
+                        {
+                            Debug.LogError("error target has no mens cycle");
+                            break;
+                        }
 
+                        target.TickMenstruation_Debug(adv_year, adv_month, adv_day);
+                    }
+                }
+                break;
         }
 
         if (parsedSuccessful) Debug.Log(s);

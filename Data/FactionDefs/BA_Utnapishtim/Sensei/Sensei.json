@@ -1,0 +1,112 @@
+
+{
+    "baseID": "Campaign1_Sensei_Template",
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+                "charaReq":{
+                    "requireConscious":false,
+                    "requireAction":false,
+                    "requireMale":true
+                },
+                    
+                "portrait_offset_x": 20,    "portrait_offset_y": -235,    "portrait_offset_size": 0.9,
+                "icon_offset_x":0.0,            "icon_offset_y":-269,            "icon_offset_size":0.5,
+
+                "portrait_path":"BA_Utnapishtim/Sensei/Sensei_Male.png",
+                "icon_path":"BA_Utnapishtim/Sensei/Sensei_Male.png"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                    
+                "charaReq":{
+                    "requireConscious":false,
+                    "requireAction":false,
+                    "requireFemale":true
+                },
+                    
+                "portrait_offset_x": 20,    "portrait_offset_y": -235,    "portrait_offset_size": 0.9,
+                "icon_offset_x":0.0,            "icon_offset_y":-269,            "icon_offset_size":0.5,
+
+                "portrait_path":"BA_Utnapishtim/Sensei/Sensei_Female.png",
+                "icon_path":"BA_Utnapishtim/Sensei/Sensei_Female.png"
+            },
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                    
+                "portrait_offset_x": 10,    "portrait_offset_y": 40,    "portrait_offset_size": 1.0,
+                "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.25,
+
+                "portrait_path":"SchoolIcon/School_Icon_ETC.png",
+                "icon_path":"SchoolIcon/School_Icon_ETC.png"
+            }
+        ],
+        "CharaBanner":
+        {
+            "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+            "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 1.5,
+            "icon_offset_x":0.0, "icon_offset_y":0.0, "icon_offset_size":0.56,
+
+            "portrait_path":"Media_UI_Scenario_Background/BG_View_Schale.jpg",
+            "icon_path":"Media_UI_Scenario_Background/BG_View_Schale.jpg"
+
+        }
+    },
+    "Template": {
+      "Appearance": "Female",
+      "BodyType": "Default",
+      "stat_STR": 13,
+      "stat_CON": 12,
+      "stat_PSY": 11,
+      "stat_WIL": 14,
+      "personalityID": "personality_default",
+      "sensitivity_B": "trait_Sensitivity_B_sensitive",
+      "sensitivity_M": "trait_Sensitivity_M_default",
+      "sensitivity_C": "trait_Sensitivity_C_supersensitive",
+      "sensitivity_V": "trait_Sensitivity_V_sensitive",
+      "sensitivity_A": "trait_Sensitivity_A_default",
+      "size_B": "trait_Size_B_B",
+      "size_P": "trait_Size_P_none",
+      "size_V": "trait_Size_V_1",
+      "size_A": "trait_Size_A_1",
+      "Height":157,
+      "Weight":52,
+      "HWMultiplier":0.33,
+      "traits":[
+        "trait_SelfEsteem_low",
+        "trait_MemoryCapacity_high",
+        "trait_MemoryRetention_high",
+        "trait_CleanlinessTolerance_low",
+        "trait_MentalFortitude_high"
+      ],
+
+      "initialInventory":[
+            { "ID":"clothing_bluearchive_Navigator_Hat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Coat", "nameOverwrite":"clothing_bluearchive_Navigator_ShortCoat" },
+            { "ID":"clothing_bluearchive_Navigator_Glove" },
+            { "ID":"clothing_bluearchive_Navigator_Boot" },
+            { "ID":"clothing_skin_socks" },
+            { "ID":"clothing_skin_panty" },
+            { "ID":"clothing_skin_necklace", "nameOverwrite":"clothing_skin_neckribbon" },
+            { "ID":"clothing_skin_earring" },
+            { "ID":"clothing_skin_bra" },
+            { "ID":"firearm_handgun" }
+        ],
+        "characterComment":"Campaign1_students_charCard_comment",
+        "Skills": null
+    },
+    "firstName": "",
+    "middleName": "",
+    "lastName": "",
+    "title":"sensei",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_TraveleracrossGates",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_Magician",
+    "startingGift": "charOriginGift_none"
+  }
+    

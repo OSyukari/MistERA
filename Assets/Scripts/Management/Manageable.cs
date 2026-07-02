@@ -34,6 +34,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             this.salesCurrency = value.ID;
         }
     }
+    public string backgroundIMG = "";
     public void SetMainCurrency(string itemID)
     {
         var temp = scr_System_Serializer.current.GetByNameOrID_Item_Base(itemID);

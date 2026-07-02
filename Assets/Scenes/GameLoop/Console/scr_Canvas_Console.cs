@@ -1,9 +1,9 @@
+using Newtonsoft.Json;
 using System;
 using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -23,7 +23,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
     protected void Update()
     {
-        if (!isActive) return;
+        if (scr_System_CentralControl.current.isSafeMode) return;
         if (Input.GetKeyDown(KeyCode.BackQuote) )
         {
             ToggleDisplay();
@@ -93,13 +93,51 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
         }
 
-        isActive = !scr_System_CentralControl.current.isSafeMode;
+        foreach(var str in validConsoleCommands) MakeCommandButton(str);
 
-       // consoleCount = scr_System_CentralControl.current.allusedConsoleCommands.Count;
+#if UNITY_EDITOR
+        foreach(var str in devConsoleCommands) MakeCommandButton(str);
+#endif
+
+        ValidateAll();
+
+        // consoleCount = scr_System_CentralControl.current.allusedConsoleCommands.Count;
         // https://discussions.unity.com/t/submit-inputfield-when-enter-is-clicked/124549/8
     }
 
-    public bool isActive = false;
+
+    public RectTransform ConsoleButtonList;
+    public consoleEntry consolebtnprefab;
+    protected void MakeCommandButton(string s)
+    {
+        var btn = Instantiate(consolebtnprefab);
+        btn.selfRect.SetParent(ConsoleButtonList);
+
+        btn.selfButton.Initialize(this, new ButtonValidator_ConsoleButton(this, btn.selfButton, s));
+        btn.selfButton.SetText(s);
+        btn.selfButton.optionID = AssertUniqueHash(btn.selfButton.GetHashCode());
+        buttonsByID.Add(btn.selfButton.optionID, btn.selfButton);
+        validatorsByID.Add(btn.selfButton.optionID, btn.selfButton.Validator);
+
+    }
+
+    string[] validConsoleCommands = new string[]
+    {
+        "modstatderived",
+        "resetAllActorJobs",
+        "spawnChara",
+        "addItem",
+        "modkojovariable",
+        "loadevent",
+        "modexperience",
+        "modrelationshipwith",
+        "modpersonalityscore"
+    };
+
+    string[] devConsoleCommands = new string[]
+    {
+        "advwomb"
+    };
 
     protected void ActivateUI()
     {
@@ -108,6 +146,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         CurrentTarget = scr_System_CampaignManager.current.ConsoleTargetEX && scr_System_CampaignManager.current.CurrentTargetEX != null ? scr_System_CampaignManager.current.CurrentTargetEX : scr_System_CampaignManager.current.CurrentTarget;
         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(CurrentTarget.RefID);// scr_System_CampaignManager.current.CurrentRoom;
         targetName.SetText("CurrentTarget: " + (CurrentTarget == null ? "null" : $"{CurrentTarget.RefID} {CurrentTarget.FullName}, isImprisoned {CurrentTarget.isImprisoned} isRestrained {CurrentTarget.isRestrained}"));
+        
         baseID.SetText($"BaseID [{(CurrentTarget == null ? "null" :CurrentTarget.BaseID)}]");
         targetCurrentJob.SetText("CurrentJob: " + (CurrentTarget.CurrentJob == null ? "null" : CurrentTarget.CurrentJob.RefID + " " + CurrentTarget.CurrentJob.DisplayName + " " + (CurrentTarget.CurrentJob.ParentRoom == null ? "nullRoom" : CurrentTarget.CurrentJob.ParentRoom.RefID + " " + CurrentTarget.CurrentJob.ParentRoom.DisplayName)));
 
@@ -120,13 +159,24 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         portrait_combat.SetText($"Combat Portrait Tags [{(CurrentTarget == null ? "null" : String.Join(" ", CurrentTarget.PortraitManager.tags_combat))}]");
 
         blacklist.SetText($"Blacklist: {CurrentTarget.Memory.PrintBlacklist()}");
+
+        /*
+        foreach(var c in ConsoleButtonList.GetComponentsInChildren<scr_HoverableText>())
+        {
+            c.SetText(c.replaceText);
+        }*/
+
     }
+
+
 
     [SerializeField] public Character_Trainable CurrentTarget = null;
 
     protected override void Start()
     {
         base.Start();
+
+        ToggleDisplay(true);
     }
 
     public void ParseConsoleCommand(string command)
@@ -172,5 +222,31 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     }
 
 
-   public InputField consoleInput;
+    public InputField consoleInput;
+
+
+    public class ButtonValidator_ConsoleButton : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Console parent;
+        scr_SelectableText text;
+        string command;
+        public ButtonValidator_ConsoleButton(scr_Menu parent, scr_SelectableText text, string command) : base(parent)
+        {
+            this.parent = parent as scr_Canvas_Console;
+            this.text = text;
+            this.command = command;
+
+            this.tooltip = LocalizeDictionary.QueryThenParse($"console_{command}_tooltip");
+        }
+        public override bool IsButtonValid()
+        {
+            return true;
+        }
+        public void OnClickButton()
+        {
+            parent.consoleInput.text = command;
+            parent.consoleInput.caretPosition = parent.consoleInput.text.Length;
+        }
+    }
+
 }

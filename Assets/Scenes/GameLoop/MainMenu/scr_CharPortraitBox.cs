@@ -124,7 +124,9 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         if (template == null)
         {
+# if UNITY_EDITOR
             Debug.LogError("error serialized base null");
+#endif
             return false;
         }
         else

@@ -70,7 +70,7 @@ public abstract class CharaTemplate
     public List<string> basicExperience = new List<string>();
     public List<string> initialExperiences = new List<string>();
 
-    public abstract CharaTemplate Copy();
+    public abstract void Load(CharaTemplate t);
 
     public abstract void SetGender(Humanoid_GenderAppearance gender);
 
@@ -117,24 +117,21 @@ public class CharaSafeTemplate : CharaTemplate
         }
     }
 
-    public override CharaTemplate Copy()
+    public override void Load(CharaTemplate t)
     {
-        var newInstance = new CharaSafeTemplate();
-        newInstance.Appearance = Appearance;
-        newInstance.Skills = new List<Skills>();
-        if (this.Skills != null) newInstance.Skills.AddRange(this.Skills);
-        newInstance.Height = Height;
-        newInstance.Weight = Weight;
-        newInstance.stat_STR = stat_STR;
-        newInstance.stat_CON = stat_CON;
-        newInstance.stat_PSY = stat_PSY;
-        newInstance.stat_WIL = stat_WIL;
-        newInstance.personalityID = personalityID;
-        newInstance.initialInventory = new List<presetInventory>(initialInventory);
-        newInstance.initialRelationship = new List<RelationshipManager.presetRelationship>(initialRelationship);
-        newInstance.initialExperiences = new List<string>(initialExperiences);
-        newInstance.basicExperience = basicExperience;
-        return newInstance;
+        this.Appearance = t.Appearance;
+        this.Skills = new List<Skills>(t.Skills);
+        this.Height = t.Height;
+        this.Weight = t.Weight;
+        this.stat_STR = t.stat_STR;
+        this.stat_CON = t.stat_CON;
+        this.stat_PSY = t.stat_PSY;
+        this.stat_WIL = t.stat_WIL;
+        this.personalityID = t.personalityID;
+        this.initialInventory = new List<presetInventory>(t.initialInventory);
+        this.initialRelationship = new List<RelationshipManager.presetRelationship>(t.initialRelationship);
+        this.initialExperiences = new List<string>(t.initialExperiences);
+        this.basicExperience = t.basicExperience;
     }
 
     public override void SetGender(Humanoid_GenderAppearance gender)
@@ -310,28 +307,28 @@ public class CharaTrainableTemplate : CharaTemplate
     }
 
 
-    public override CharaTemplate Copy()
+    public override void Load(CharaTemplate t)
     {
-        var newInstance = new CharaTrainableTemplate();
-        newInstance.Appearance = Appearance;
-        newInstance.Skills = new List<Skills>();
-        if (this.Skills != null) newInstance.Skills.AddRange(this.Skills);
-        newInstance.Height = Height;
-        newInstance.Weight = Weight;
-        newInstance.stat_STR = stat_STR;
-        newInstance.stat_CON = stat_CON;
-        newInstance.stat_PSY = stat_PSY;
-        newInstance.stat_WIL = stat_WIL;
-        newInstance.personalityID = personalityID;
-        newInstance.initialInventory = new List<presetInventory>(initialInventory);
-        newInstance.initialRelationship = new List<RelationshipManager.presetRelationship>(initialRelationship);
-
-        newInstance.basicExperience = basicExperience;
-        newInstance.initialExperiences = new List<string>(initialExperiences);
-        newInstance.BodyType = BodyType;
 
 
 
-        return newInstance;
+
+
+       // this.BodyType = t.BodyType;
+
+        this.Appearance = t.Appearance;
+        this.Skills = new List<Skills>(t.Skills);
+        this.Height = t.Height;
+        this.Weight = t.Weight;
+        this.stat_STR = t.stat_STR;
+        this.stat_CON = t.stat_CON;
+        this.stat_PSY = t.stat_PSY;
+        this.stat_WIL = t.stat_WIL;
+        this.personalityID = t.personalityID;
+        this.initialInventory = new List<presetInventory>(t.initialInventory);
+        this.initialRelationship = new List<RelationshipManager.presetRelationship>(t.initialRelationship);
+        this.initialExperiences = new List<string>(t.initialExperiences);
+        this.basicExperience = t.basicExperience;
+
     }
 }

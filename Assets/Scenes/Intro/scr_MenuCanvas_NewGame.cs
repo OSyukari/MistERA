@@ -206,7 +206,7 @@ public class scr_MenuCanvas_NewGame : scr_Menu
         {
             SetPlayerChar(currentCampaign_option.forbidPCSelect);
         }
-        else
+        else if (currentCampaign.forbidPCSelect != "")
         {
             SetPlayerChar(currentCampaign.forbidPCSelect);
         }

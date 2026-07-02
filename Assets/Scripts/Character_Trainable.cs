@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
@@ -175,6 +176,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         this.referenceID = refID;
 
+        if (Template == null)
+        {
+            Debug.LogError("Error template null!");
+        }
         this.Appearance = Template.Appearance;
 
         //Debug.Log("Setting Appearance to " + this.Appearance);
@@ -264,7 +269,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         get
         {
-            return !this.Stats.isConsciousnessUnconscious && !isTimeStopped;
+            return (this.Stats == null || !this.Stats.isConsciousnessUnconscious) && !isTimeStopped;
         }
     }
     [JsonIgnore]
@@ -441,7 +446,51 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
 
-    public MenstruationState Menstruation = null;
+    public ReproductionCycle ReproCycle = null;
+
+    public void TickMenstruation_Debug(int year, int month, int day)
+    {
+        if (!HasMenstrualCycle) return;
+        if (ReproTemplate == null) return;
+
+        
+
+        int totalCycle = year * 365 + month * 30 + day;
+
+        for(int i = 0; i < totalCycle; i++)
+        {
+
+            // this variable will be replaced by a boolean getter
+            // that go though character's status to see if daily contraceptive is taken
+            bool stagesupressed = false;
+
+
+            // this variable will be replaced by a boolean getter
+            // that return true if every womb is in menopause
+            bool isOvumexhausted = false;
+
+            // this shouldnt be necessary. if this is empty, then on "add womb" stage this should have been initialized
+            /// if (Menstruation == null) Menstruation = new MenstruationState(ReproTemplate);
+
+            //var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
+            bool ispregnant = false;
+            ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
+
+            foreach (var wb in wombs)
+            {
+                /// notify result
+                wb.dayTick_Cycle(ReproCycle);
+            }
+        }
+
+        string debugmsg = $"{FirstName} advance cycle by {totalCycle} days, current stage {ReproCycle.CycleName(this)}";
+        foreach(var v in wombs)
+        {
+            debugmsg += $"\n{v.debugTooltip}";
+        }
+
+        Debug.Log(debugmsg);
+    }
 
     protected void TickMenstruation()
     {
@@ -458,93 +507,21 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         bool isOvumexhausted = false;
 
         // this shouldnt be necessary. if this is empty, then on "add womb" stage this should have been initialized
-       /// if (Menstruation == null) Menstruation = new MenstruationState(ReproTemplate);
+        /// if (Menstruation == null) Menstruation = new MenstruationState(ReproTemplate);
 
-        var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
-        Menstruation.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
+        //var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
+        bool ispregnant = false;
+        ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
 
+        /*
         if (ReproTemplate.hasEstrus && Menstruation.CycleStage == MenstruationStatus.Ovulation)
         {
             // leave this blank for now, I'll add this in the future
-        }
+        }*/
     }
 
 
 
-    public class MenstruationState
-    {
-
-        [JsonProperty] float mc_cycleValue = 0f;
-        [JsonProperty] public MenstruationStatus CycleStage { get; private set; } = MenstruationStatus.PrePuberty;
-
-        public MenstruationState()
-        {
-
-        }
-        public MenstruationState(ReproductionTemplate template)
-        {
-            mc_cycleValue = template.pubertyThreshold;
-
-        }
-
-        private MenstruationStatus DetermineCyclePhase(ReproductionTemplate t, int day, bool suppressed)
-        {
-            int endPhase1 = t.menstrualDays - 1;
-            int endPhase2 = endPhase1 + t.follicularDays;
-            int endPhase3 = endPhase2 + t.ovulationDays;
-
-            if (day <= endPhase1) return MenstruationStatus.Rest;
-            if (day <= endPhase2) return MenstruationStatus.PreOvulation;
-            if (day <= endPhase3 && !suppressed)
-                return MenstruationStatus.Ovulation;
-            return MenstruationStatus.Rest;
-        }
-
-        public void Quickstart(ReproductionTemplate template, int age)
-        {
-            float effectivePuberty = Utility.getRandwithVariation(template.pubertyThreshold, template.pubertyVariation);
-            float totalDays = age * 365f;
-
-            if (totalDays < effectivePuberty)
-            {
-                mc_cycleValue = effectivePuberty - totalDays;
-                CycleStage = MenstruationStatus.PrePuberty;
-                return;
-            }
-
-            mc_cycleValue = UnityEngine.Random.Range(0f, template.cycleThreshold);
-            CycleStage = DetermineCyclePhase(template, (int)mc_cycleValue, false);
-        }
-
-        public void Tick(ReproductionTemplate template, bool ispregnant, bool suppressed, bool isOvumExhausted)
-        {
-            if (ispregnant)
-            {
-                CycleStage = MenstruationStatus.Pregnant;
-                return;
-            }
-
-            if (isOvumExhausted)
-            {
-                CycleStage = MenstruationStatus.None;
-                return;
-            }
-
-            if (CycleStage == MenstruationStatus.PrePuberty)
-            {
-                mc_cycleValue -= Utility.getRandwithVariation(1f, template.pubertyVariation);
-                if (mc_cycleValue > 0) return;
-                mc_cycleValue = 0f; // reinitialize for cycle use
-                // fall through to first cycle tick
-            }
-
-            mc_cycleValue += Utility.getRandwithVariation(1f, template.cycleVariation);
-            if (mc_cycleValue >= template.cycleThreshold)
-                mc_cycleValue = 0f;
-
-            CycleStage = DetermineCyclePhase(template, (int)mc_cycleValue, suppressed);
-        }
-    }
 
 
     private void Observer_GlobalDay(int updateOrder)
@@ -557,7 +534,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             foreach (var wb in wombs)
             {
                 /// notify result
-                wb.dayTick_Cycle(Menstruation.CycleStage);
+                wb.dayTick_Cycle(ReproCycle);
             }
         }
         
@@ -582,13 +559,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     public void RegisterWomb(BodyInternal_Womb wb)
     {
         if (wb == null) return;
+        if (scr_System_CentralControl.current.isSafeMode) return;
         if (wombs.Contains(wb)) return;
         wombs.Add(wb);
 
-        if (Menstruation == null)
+        if (ReproCycle == null)
         {
-            Menstruation = new MenstruationState(ReproTemplate);
-            Menstruation.Quickstart(ReproTemplate, Age);
+            ReproCycle = ReproductionCycleUtility.MakeCycle(ReproTemplate);
+            if (ReproCycle != null) ReproCycle.Quickstart(ReproTemplate, Age, isDefaultAge);
         }
     }
 
@@ -643,28 +621,30 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     [JsonIgnore] public CharaTemplate Template
     { 
         get {
-            if(_template == null && _templateS == null)
+            if (scr_System_CentralControl.current.isSafeMode)
             {
-                //Debug.Log("Fetching Template data |" + this.BaseID + "|" + this.FileLocation+"|");
-                if (this.BaseID != "")
+                if (_templateS == null)
                 {
-                    if (scr_System_CentralControl.current.isSafeMode) _templateS = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(BaseID) as CharaSafeTemplate;
-                    else _template = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(BaseID) as CharaTrainableTemplate;
-                  //  Debug.Log("Fetching template for " + this.BaseID+", result exist? "+ (_template != null));
-                }
-                else
-                {
-
-                    if (scr_System_CentralControl.current.isSafeMode) _templateS = new CharaSafeTemplate();
-                    else
+                    _templateS = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateSafeByID(BaseID);
+                    if (_templateS == null)
                     {
-                        this._template = new CharaTrainableTemplate();
-                        this._template.GenderAppearance_Set(Humanoid_GenderAppearance.Female, true, true);
+                        Debug.LogError($"Error failed to find template id {BaseID}");
                     }
-                    Debug.Log("Instantiating new Template for " + this.RefID);
                 }
+                return _templateS;
             }
-            return _template == null ? _templateS : _template;
+            else
+            {
+                if (_template == null)
+                {
+                    _template = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(BaseID) as CharaTrainableTemplate;
+                    if (_template == null)
+                    {
+                        Debug.LogError($"Error failed to find template id {BaseID}");
+                    }
+                }
+                return _template;
+            }
     }
         set
         {
@@ -945,7 +925,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
 
-    [JsonIgnore] public int Age { get { return 22; } }
+    [JsonProperty]
+    protected int? age = null;
+
+    [JsonIgnore] public int Age { get { return isDefaultAge || age.Value <= 0 ? 22 : age.Value; } }
+    [JsonIgnore] public bool isDefaultAge { get { return age is null; } }
     [JsonProperty] private bool noAging = false;
 
     [JsonProperty] private DateTime birthday;
@@ -2344,7 +2328,8 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
 {
     public List<Character_SerializableBase> baseCharacters = new List<Character_SerializableBase>();
 
-    Dictionary<string, CharaTemplate> templates = new Dictionary<string, CharaTemplate>();
+    Dictionary<string, CharaTrainableTemplate> templates = new Dictionary<string, CharaTrainableTemplate>();
+    Dictionary<string, CharaSafeTemplate> templatesS = new Dictionary<string, CharaSafeTemplate>();
 
     public List<CharaTemplateGenerator> generators = new List<CharaTemplateGenerator>();
 
@@ -2352,7 +2337,40 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
     
     public Dictionary<NameCulture, NameGenerator> names = new Dictionary<NameCulture, NameGenerator>();
 
-    public CharaTemplate GetTemplateByID(string id) { return templates.TryGetValue(id, out var value) ? value : null; }
+    public CharaTrainableTemplate GetTemplateByID(string id) { 
+        if (templates.TryGetValue(id, out var value))
+        {
+            return value;
+        }
+        else
+        {
+            Debug.LogError($"Error GetTemplateByID {id}");
+            return null;
+        }
+    }
+    public CharaSafeTemplate GetTemplateSafeByID(string id)
+    {
+        if (templatesS.TryGetValue(id, out var value))
+        {
+            return value;
+        }
+        else
+        {
+            Debug.LogError($"Error GetTemplateSafeByID {id}");
+#if UNITY_EDITOR
+            var str = new List<string>();
+            foreach(var kvp in templatesS)
+            {
+                str.Add($"{kvp.Key}, {(kvp.Value == null ? "null" : "")}");
+            }
+
+            Debug.Log($"templatesS content {templatesS.Count}\n{String.Join("\n", str)}");
+
+
+#endif
+            return null;
+        }
+    }
 
     public CharaTemplateGenerator GetGeneratorByID(string id)
     {
@@ -2393,9 +2411,15 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         if (displayFormat != "") c.nameDisplayFormat = displayFormat;
 
     }
-    public void SetTemplateNew(string id, CharaTemplate t)
+    public void SetTemplate(string id, CharaTrainableTemplate t, bool log = false)
     {
         templates[id] = t;
+        if (log) Debug.Log($"setting custom template [{id}], value {(t == null? "null" : "exist")}");
+    }
+    public void SetTemplateSafe(string id, CharaSafeTemplate t, bool log = false)
+    {
+        templatesS[id] = t;
+        if (log) Debug.Log($"setting custom safe template [{id}], value {(t == null ? "null" : "exist")}");
     }
 
     public void MergeWith(I_IndexMergeable list)
@@ -2418,6 +2442,11 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         }
 
         this.generators.AddRange(l.generators);
+
+        foreach (var kvp in l.templates) if (!templates.ContainsKey(kvp.Key)) templates[kvp.Key] = kvp.Value;
+        foreach (var kvp in l.templatesS) if (!templatesS.ContainsKey(kvp.Key)) templatesS[kvp.Key] = kvp.Value;
+
+
 
     }
 

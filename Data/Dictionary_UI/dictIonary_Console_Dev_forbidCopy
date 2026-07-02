@@ -1,0 +1,10 @@
+{
+    "Dictionary": {
+        "Entries": {
+            "default": {
+"console_advwomb_tooltip":"advwomb [int value in year] [int value in month] [int value in day]\nrequire target"
+
+            }
+        }
+    }
+}

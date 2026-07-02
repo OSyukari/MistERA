@@ -34,12 +34,15 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
         _List = new System.Collections.Concurrent.ConcurrentDictionary<string, Humanoid_Race>(ids);
 
         var ids1 = new Dictionary<string, ReproductionTemplate>();
-        foreach (var i in reproductionTemplates)
+        if (reproductionTemplates != null)
         {
-            if (string.IsNullOrEmpty(i.baseID)) continue;
-            if (!ids1.TryAdd(i.baseID, i)) Debug.Log($"failed to add Humanoid_Race_Index id [{i.baseID}] due to duplicate");
+            foreach (var i in reproductionTemplates)
+            {
+                if (string.IsNullOrEmpty(i.baseID)) continue;
+                if (!ids1.TryAdd(i.baseID, i)) Debug.Log($"failed to add Humanoid_Race_Index id [{i.baseID}] due to duplicate");
+            }
+            _List_reproductionTemplates = new System.Collections.Concurrent.ConcurrentDictionary<string, ReproductionTemplate>(ids1);
         }
-        _List_reproductionTemplates = new System.Collections.Concurrent.ConcurrentDictionary<string, ReproductionTemplate>(ids1);
 
     }
 

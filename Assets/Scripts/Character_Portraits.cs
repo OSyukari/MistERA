@@ -16,6 +16,7 @@ public class PortraitManager
 
     Color _CharaBannerBG;
     bool colorInit = false;
+
     public void SetBGColor(UnityEngine.UI.Image image)
     {
         if (image == null) return;
@@ -170,6 +171,7 @@ public class PortraitManager
             return _transparent;    
         }
     }
+    List<string> newstr = new List<string>();
     protected void GetValidPortrait(List<string> keywords, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
     {
         handler = null;
@@ -186,6 +188,20 @@ public class PortraitManager
                 if (!i.isValid()) continue;
                 if (!i.isValidForBox(box)) continue;
                 if (keywords.Count < 1 && i.RequireContextKeys.Count > 0) continue;
+                if (i.charaReq != null)
+                {
+                    newstr.Clear();
+                    if (Owner == null || Owner.RefID == -1 || Owner.Stats == null)
+                    {
+                        Debug.Log($"portrait validation fail [{Owner == null} {(Owner == null || Owner.RefID == -1)} {(Owner == null || Owner.RefID == -1 || Owner.Stats == null)}]");
+                        continue;
+                    }
+                    else if (!CharaReqUtility.Validate(i.charaReq, ref newstr, Owner, out bool hardlock))
+                    {
+                        Debug.Log($"portrait validation fail [{String.Join("|", newstr)}]");
+                        continue;
+                    }
+                }
                 if (!Utility.ListContainsStrict(keywords, i.RequireContextKeys))
                 {
                     //Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
@@ -494,6 +510,8 @@ public class PortraitManager
             return "";
         }
 
+        public CharaReq charaReq = null;
+
         public List<string> RequireContextKeys = new List<string>();
         public virtual bool isValid() { return false; }
         public virtual bool isValidForBox(scr_CharPortraitBox box) { return true; }
@@ -571,6 +589,7 @@ public class PortraitManager
             newEntry.icon_path = this.icon_path;
             newEntry.Variants = this.Variants;
             newEntry.RequireContextKeys = this.RequireContextKeys;
+            newEntry.charaReq = this.charaReq;
 
             return newEntry;
         }
@@ -714,6 +733,7 @@ public class PortraitManager
             newEntry.icon_path = this.icon_path;
             newEntry.Variants = this.Variants;
             newEntry.RequireContextKeys = this.RequireContextKeys;
+            newEntry.charaReq = this.charaReq;
 
             return newEntry;
         }
@@ -925,6 +945,7 @@ public class PortraitManager
             newEntry.Variants = this.Variants;
             newEntry.RequireContextKeys = this.RequireContextKeys;
             newEntry.icon_path = this.icon_path;
+            newEntry.charaReq = this.charaReq;
             return newEntry;
         }
 

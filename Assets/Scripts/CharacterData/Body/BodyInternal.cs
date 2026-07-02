@@ -68,34 +68,3 @@ public class BodyInternal_Base
     public float volumeRatio = 0, visibleExpansionRatio = 1, maxExpansionRatio = 1;
 }
 
-public enum BodyInternal_Base_WombType
-{
-    Human,
-    Feline
-}
-
-/// <summary>
-/// Numbers initialized at default human values
-/// </summary>
-public class ReproductionTemplate
-{
-    public string baseID = "";
-    public BodyInternal_Base_WombType Type = BodyInternal_Base_WombType.Human;
-    public int pubertyThreshold = 4380;
-    public float pubertyVariation = 0.1f;
-    public int cycleThreshold = 28;
-    public float cycleVariation = 0.1f;
-    public int menstrualDays = 5;
-    public int follicularDays = 7;
-    public int ovulationDays = 2;
-    public int ovulationPowerAverage = 1500000;
-    public int ovulationPowerVariation = 300000;
-    public int ovulationQuantityAverage = 730;
-    public int ovulationQuantityVariation = 200;
-
-    public float fertility = 1.0f;
-    public int climaxOvulationThreshold = 100;
-    public float fertilizationChance = 0.25f;
-    public int   ovumLifespanMinutes = 1440;   // 24 hours (human default)
-    public bool hasEstrus = false;
-}
