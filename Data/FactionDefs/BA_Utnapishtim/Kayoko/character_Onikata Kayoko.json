@@ -94,7 +94,6 @@
       "size_A": "trait_Size_A_1",
       "Height":157,
       "Weight":52,
-      "HWMultiplier":0.33,
       "traits":[
         "trait_SelfEsteem_low",
         "trait_MemoryCapacity_high",

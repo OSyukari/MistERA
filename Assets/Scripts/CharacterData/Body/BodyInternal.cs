@@ -31,6 +31,9 @@ public class BodyInternal_Base
     public string firstExperienceDesc = "";
     public List<string> virginityLossTags = new List<string>();
 
+    public List<string> images_expansion = new List<string>();
+    public List<string> images_volume = new List<string>();
+
     public List<string> GetAllChildsID()
     {
         List<string> value = new List<string>();

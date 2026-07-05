@@ -198,7 +198,7 @@ public class PortraitManager
                     }
                     else if (!CharaReqUtility.Validate(i.charaReq, ref newstr, Owner, out bool hardlock))
                     {
-                        Debug.Log($"portrait validation fail [{String.Join("|", newstr)}]");
+                        //Debug.Log($"portrait validation fail [{String.Join("|", newstr)}]");
                         continue;
                     }
                 }

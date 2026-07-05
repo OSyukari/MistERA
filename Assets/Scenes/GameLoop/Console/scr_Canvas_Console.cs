@@ -95,9 +95,10 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
         foreach(var str in validConsoleCommands) MakeCommandButton(str);
 
-#if UNITY_EDITOR
-        foreach(var str in devConsoleCommands) MakeCommandButton(str);
-#endif
+        if (!scr_System_CentralControl.current.isSafeMode)
+        {
+            foreach (var str in devConsoleCommands) MakeCommandButton(str);
+        }
 
         ValidateAll();
 
@@ -136,7 +137,10 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
     string[] devConsoleCommands = new string[]
     {
-        "advwomb"
+        "advReproCycle",
+        "wombAddSpermByRef",
+        "wombAddSpermByID",
+        "ovulate"
     };
 
     protected void ActivateUI()

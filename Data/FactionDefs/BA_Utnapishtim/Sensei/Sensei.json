@@ -74,7 +74,6 @@
       "size_A": "trait_Size_A_1",
       "Height":157,
       "Weight":52,
-      "HWMultiplier":0.33,
       "traits":[
         "trait_SelfEsteem_low",
         "trait_MemoryCapacity_high",
@@ -99,11 +98,11 @@
         "characterComment":"Campaign1_students_charCard_comment",
         "Skills": null
     },
-    "firstName": "",
-    "middleName": "",
-    "lastName": "",
+    "firstName": "%%Campaign1_player_firstname%%",
+    "middleName": "%%Campaign1_player_middlename%%",
+    "lastName": "%%Campaign1_player_lastname%%",
     "title":"sensei",
-    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "nameDisplayFormat": "%%chara_fullname_firstToLast%%",
     "origin": "charOrigin_TraveleracrossGates",
     "race": "humanRace_human",
     "raceTemplate": "humanRaceAddon_Magician",

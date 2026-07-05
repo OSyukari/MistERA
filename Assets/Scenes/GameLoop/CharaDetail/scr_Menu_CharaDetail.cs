@@ -70,6 +70,14 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         currentTab = panel_basicInfo;
         InitializeBasicInfo();
 
+
+        if (!isSafeMode && chara != null && chara.HasMenstrualCycle)
+        {
+            GetButtonByID(213).SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_bodyexp_cycle")
+                .Replace("$cycle$", chara.ReproCycle.CycleName(chara)));
+        }
+
+
         ValidateAll();
     }
 
@@ -81,8 +89,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         selfRect = GetComponent<RectTransform>();
         this.currentTab = panel_basicInfo;
 
+        isSafeMode = scr_System_CentralControl.current.isSafeMode;
     }
-
+    bool isSafeMode = true;
     public override void Initialize()
     {
         base.Initialize();
@@ -125,10 +134,16 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                     button.Initialize(this, button_alwaysValid);break;
                 case -1: break;
 
-                //case 211: // Health tab contents
-                 //   button.Initialize(this, new button_ChangeHealthTab(this, button, healthTab_contents)); break;
-                //case 213: // health tab pregnancy
-                //    button.Initialize(this, new button_ChangeHealthTab(this, button, healthTab_pregnancy)); break;
+                case 211: // Health tab contents
+                    if (!isSafeMode) button.Initialize(this, new button_ChangeHealthTab(this, button, initSexRecords.HealthTab_Contents, false)); break;
+                case 213: // health tab pregnancy
+                    if (!isSafeMode)
+                    {
+                        button.Initialize(this, new button_ChangeHealthTab(this, button, initSexRecords.HealthTab_Pregnancy, true)); 
+                        
+
+                    }
+                    break;
                 default:
                     button.Initialize(this, button_alwaysValid); break;
             }
@@ -139,11 +154,14 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             }
 
         }
+
+        currentHealthTab = initSexRecords.HealthTab_Contents;
         // build all presetList
         ValidateAll();
 
         
     }
+
 
     public override void Notify(int optionID)
     {
@@ -370,7 +388,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         initScript_relations.InitializeData(this.chara, this);
     }
 
-    public RectTransform prefab_panel_BodyDetail;
     Dictionary<BodyInternal_Instance, scr_Panel_BodyDetail> internalDictionary = new Dictionary<BodyInternal_Instance, scr_Panel_BodyDetail>();
     Dictionary<int, BodyInternal_Instance> internalIndex = new Dictionary<int, BodyInternal_Instance>();
     List<BodyInternal_Instance> listInternal = new List<BodyInternal_Instance>();
@@ -378,7 +395,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     protected RectTransform currentTab;
     
 
-    public RectTransform sexRecord_internals_list;
     public initScript_Records initSexRecords;
     bool initialized_sexRecords = false;
     private void InitializeSexRecords()
@@ -391,17 +407,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
         //each panel need to know what part from who its monitoring
         //internalDictionary = new Dictionary<BodyInternal_Instance, scr_Panel_BodyDetail>();
-
-        if (chara.HasMenstrualCycle)
-        {
-
-            initSexRecords.text_cycles.SetText( chara.ReproCycle.CycleName(chara));
-        }
-        else
-        {
-
-            initSexRecords.text_cycles.SetText("none", false, "", true);
-        }
 
         foreach (BodyPart_Instance b in chara.Body.Body)
         {
@@ -420,17 +425,22 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         {
             internalIndex.Add(j, i);
 
-            RectTransform box = Instantiate(prefab_panel_BodyDetail);
-            box.SetParent(sexRecord_internals_list, false);
-            scr_Panel_BodyDetail scr = box.GetComponent<scr_Panel_BodyDetail>();
-            scr.InitializeWithArgument(this, j);
+            var box = Instantiate(initSexRecords.prefab_panel_internal);
+            box.selfRect.SetParent(initSexRecords.HealthTab_Contents, false);
+            box.InitializeWithArgument(this, j);
 
-            //internalDictionary.Add(i, scr);
             j++;
         }
 
-        if (initSexRecords != null) initSexRecords.Initialize(chara);
+        foreach(var womb in chara.wombs)
+        {
+            var box = Instantiate(initSexRecords.prefab_panel_womb);
+            box.selfRect.SetParent(initSexRecords.HealthTab_Pregnancy, false);
+            box.InitializeWithArgument(this, womb);
+        }
 
+        if (initSexRecords != null) initSexRecords.Initialize(chara);
+        
         initSexRecords.viewEXPBTN.SetExternalTooltip(String.Join("\n", chara.Skills.ExperiencesToString(true)));
 
         bool isdebug = scr_System_CampaignManager.current.DebugMode;
@@ -477,7 +487,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                 box.Validate();
             }
         }
-
     }
 
     protected void SaveImageTransform()
@@ -628,15 +637,18 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         RectTransform target;
         new scr_Menu_CharaDetail parent;
         scr_SelectableText text;
-        public button_ChangeHealthTab(scr_Menu_CharaDetail parent, scr_SelectableText text, RectTransform target) : base(parent)
+        bool ispreg = false;
+        public button_ChangeHealthTab(scr_Menu_CharaDetail parent, scr_SelectableText text, RectTransform target, bool isPreg) : base(parent)
         {
             this.parent = parent;
             this.text = text;
             this.target = target;
+            this.ispreg = isPreg;
         }
 
         public override bool IsButtonValid()
         {
+
 
             if (parent.currentHealthTab != target)
             {
@@ -651,6 +663,10 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                         target.gameObject.SetActive(true);
                 //foreach (scr_SelectableText s in filters) s.gameObject.SetActive(true);
             }
+
+            if (parent.chara == null) return false;
+            if (ispreg && parent.chara.wombs.Count < 1) return false;
+
             return true;
         }
 

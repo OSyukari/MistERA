@@ -35,6 +35,8 @@
       "size_P": "trait_Size_P_average",
       "size_V": "trait_Size_V_none",
       "size_A": "trait_Size_A_1",
+      "Height":175,
+      "Weight":83,
       "initialInventory":[
             { "ID":"clothing_inner_boots" },
             { "ID":"clothing_inner_shirt" },

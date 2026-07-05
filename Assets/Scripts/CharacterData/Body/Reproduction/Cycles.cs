@@ -7,29 +7,34 @@ using UnityEngine;
 public enum ReproductionCycleType
 {
     None,
-    Menstruation,
-    Estrus
+    Menstruation,   // fixed stages. ovulate on stage begin
+    Estrus,         // fixed stages, but ovulate on climax
+    Oviparous       // avian cyclic but can be stimulated accelerated (with natural behavior and with mating), and can be paused if low temp / low food
+                    // has continuous ovulation interval (1-2-4days) clutch size (3-5 4-8 1) averageClutchperyear (2-4, +, 1-2, continuous, 1)
 }
 
 public abstract class ReproductionCycle
 {
+
+    [JsonIgnore]
+    public abstract string CycleWombImageOverride
+    {
+        get;
+    }
+
     [JsonIgnore]
     public abstract bool ShouldClearOvum
     {
         get;
     }
 
-    [JsonIgnore]
-    public virtual bool ShouldOvulate
-    {
-        get;
-    }
+    /// <summary>
+    /// Return true if in ovulation possible or already ovulated phase
+    /// </summary>
+    [JsonIgnore] public abstract bool CanOvulate { get; }
+    public abstract void GetReproTemplateTooltip(Character_Trainable c, ReproductionTemplate t, List<string> tooltip);
+    public abstract int CurrentCycleRemaining(ReproductionTemplate t);
 
-    [JsonIgnore]
-    public abstract bool CanInduceOvulate
-    {
-        get;
-    }
 
     [JsonProperty] protected float cycleValue = 0f;
     public abstract void Tick(ReproductionTemplate template, bool ispregnant, bool suppressed, bool isOvumExhausted);
@@ -59,6 +64,15 @@ public abstract class ReproductionCycle
         get;
     }
 
+    [JsonIgnore]
+    public virtual bool isEstrus
+    {
+        get
+        {
+            return false;
+        }
+    }
+
     /// <summary>
     /// Called to move from prepub state to full cycle
     /// </summary>
@@ -78,6 +92,7 @@ public static class ReproductionCycleUtility
             case ReproductionCycleType.Estrus:
                 return new Cycles_Estrus(t);
             default:
+                Debug.LogError($"Error unimplemented Repro cyclce {t.cycleType}");
                 return null;
         }
     }

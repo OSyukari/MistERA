@@ -330,6 +330,13 @@ public static class Utility
         }
         return total;
     }
+
+    public static float NextFloat(System.Random rand = null)
+    {
+        var random = rand == null ? Random : rand;
+        return (float)random.NextDouble();
+    }
+
     public static List<T> Distinct<T>(List<T> input, IEqualityComparer<T> comparer = null)
     {
         if (input == null)

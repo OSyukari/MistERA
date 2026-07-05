@@ -1,0 +1,25 @@
+{
+    "Character_Bases": {
+        "generators": [
+            {
+                "ID": "Campaign1_86_Sirin",
+                "title": "Sirin",
+                "targetBaseIDs": [
+                    "Campaign1_86_Sirin_Template"
+                ],
+                "str_var": 2,
+                "con_var": 2,
+                "psy_var": 2,
+                "wil_var": 2,
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "Appearance": "Female",
+                "setHeight": 0,
+                "heightVariation": 5,
+                "setWeight": 0,
+                "weightVariation": 3,
+                "inventoryOverride": []
+            }
+        ]
+    }
+}

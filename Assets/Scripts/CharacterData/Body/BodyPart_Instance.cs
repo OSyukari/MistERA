@@ -76,7 +76,7 @@ public class BodyPart_Instance : I_CombatItem
         {
             if (s.Length < 1) continue;
             BodyInternal_Instance inter = new BodyInternal_Instance();
-            if (!inter.Initialize(s, this)) continue;
+            if (!inter.Initialize(c.BaseID, s, this)) continue;
             else if ((inter.hasTag("vagina") || inter.hasTag("womb") || inter.hasTag("urethra")) && !Owner.Template.isFemale) { }
             //else if (inter.hasTag("anus") && Owner.Template.Size_A.ID == "trait_Size_A_none") { }
             else if (inter.hasTag("penis") && !Owner.Template.isMale) { }
@@ -85,10 +85,38 @@ public class BodyPart_Instance : I_CombatItem
             else
             {
                 this.internals.Add(inter);
-            }
-            if (inter.hasTag("womb"))
-            {
 
+                if (inter.hasTag("womb") && Owner.Race != null)
+                {
+                    if (scr_System_Serializer.current.MasterList.humanoid_Races.GetReproduction(Owner.Race.ID, out var template))
+                    {
+                        switch (template.wombType)
+                        {
+                            case BodyInternal_Base_WombType.spontaneous:
+                                inter.womb = new Womb_Spontaneous(inter, template);
+                                break;
+
+                            case BodyInternal_Base_WombType.induced:
+                                inter.womb = new Womb_Induced(inter, template);
+                                break;
+                            case BodyInternal_Base_WombType.infertile:
+                                inter.womb = new Womb_Infertile(inter, null);
+                                break;
+                            default:
+                                Debug.LogError($"error unimplemented womb type {template.wombType}");
+                                inter.womb = new Womb_Infertile(inter, null);
+                                break;
+                        }
+                    }
+                    // else, has womb but no cycle
+                    else
+                    {
+                        inter.womb = new Womb_Infertile(inter, null);
+                    }
+                    inter.womb.ReEstablishParent(inter);
+                    Owner.RegisterWomb(inter.womb);
+
+                }
             }
         }
 

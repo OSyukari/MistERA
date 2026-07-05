@@ -38,6 +38,38 @@ public class BodyInternal_Instance
         } 
     }
 
+    [JsonIgnore]
+    public string Image
+    {
+        get
+        {
+            if (canContain && basePointer.images_volume.Count > 0)
+            {
+                var fillPercentage = this.ExpandedCapacityPercentage;
+                var maxcount = basePointer.images_volume.Count;
+                int index = (int)Math.Clamp(fillPercentage * maxcount, 0, maxcount - 1);
+
+                if (index == 0 && basePointer.images_expansion != null && basePointer.images_expansion.Count > 0)
+                {
+                    // use expansion image instead
+                }
+                else
+                {
+                    return basePointer.images_volume[index];
+                }
+                //return image based on fill percentage
+            }
+
+            var sklevel = ExpansionSkill == null ? 0 : ExpansionSkill.GetSkillLevel;
+            if (basePointer.images_expansion != null && basePointer.images_expansion.Count > 0)
+            {
+                sklevel = Math.Clamp(sklevel, 0, basePointer.images_expansion.Count - 1);
+                return basePointer.images_expansion[sklevel];
+            }
+            return "";
+        }
+    }
+
     public void UnequipByLayer(BodyEquipLayer filter, Revealing revealingScoreFilter = Revealing.Erotic)
     {
         foreach (var layer in this.equipLayers)
@@ -171,6 +203,11 @@ public class BodyInternal_Instance
     int expansion = 0;
     int cumStimulation = 1;
 
+    public void UpdateTimeHour()
+    {
+        if (this.womb != null) womb.HourTick();
+    }
+
     public void UpdateTimeMinute(TimeSpan t)
     {
         if (!this.canContain) return;
@@ -204,7 +241,7 @@ public class BodyInternal_Instance
                 {
                     comp.amount += amount * t.Minutes;
 
-                    foreach(var method in methods)
+                    foreach (var method in methods)
                     {
                         Digest(method, t, amount);
                     }
@@ -212,6 +249,7 @@ public class BodyInternal_Instance
                     if (comp.amount <= 0) delete.Add(content);
                 }
             }
+
         }
         foreach (Item_Instance item in delete)
         {
@@ -219,6 +257,8 @@ public class BodyInternal_Instance
             ContainedRefs_Delays.Remove(item.RefID);
             scr_System_CampaignManager.current.Unregister(item);
         }
+
+
 
         delete.Clear();
     }
@@ -263,9 +303,20 @@ public class BodyInternal_Instance
 
         if (lastInteactedRefs.Find(x=>x.Item1 == instance.Owner.RefID && x.Item2 == instance.baseID) == null) lastInteactedRefs.Add(new Tuple<int, string>(instance.Owner.RefID, instance.baseID));
         lastinteractedRefs_cache = null;
+        //if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum) Debug.Log($"[LogLastInteractedRef] {Owner?.FirstName}.{baseID} <- {instance.Owner.FirstName}.{instance.baseID}");
     }
     public void ClearLastInteractedRefs()
     {
+        if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum && lastInteactedRefs != null && lastInteactedRefs.Count > 0)
+        {
+            List<string> ss = new List<string>();
+            foreach(var i in lastInteactedRefs)
+            {
+                ss.Add($"{i.Item1} {i.Item2}");
+            }
+
+            Debug.Log($"[LogLastInteractedRef] {Owner?.FirstName}.{baseID} cleared, previously contains {ss.Count}\n{String.Join("\n", ss)}");
+        }
         if (lastInteactedRefs == null) lastInteactedRefs = new List<Tuple<int, string>>();
         lastInteactedRefs.Clear();
         lastinteractedRefs_cache = null;
@@ -291,12 +342,18 @@ public class BodyInternal_Instance
             Owner.RegisterWomb(this.womb);
         }
     }
-    public bool Initialize(string baseID, BodyPart_Instance c)
+    public bool Initialize(string npcBaseID, string baseID, BodyPart_Instance c)
     {
-        this.baseID = baseID;
         ReEstablishParent(c);
 
-        basePointer = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(baseID);
+        this.baseID = $"{npcBaseID}_{baseID}";
+        basePointer = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(this.baseID);
+        if (basePointer == null)
+        {
+            this.baseID = baseID;
+            basePointer = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(this.baseID);
+        }
+
         if (Base == null) return false;
 
         if (Base.depthRatio != 0)
@@ -322,23 +379,6 @@ public class BodyInternal_Instance
             foreach (BodyPartEquipSlot j in availableSlots)
             {
                 contentsIndex.Add(i.ToString()+"||"+j.ToString(), -1);
-            }
-        }
-
-        if (basePointer.tags.Contains("womb") && Parent.Owner.Race != null && scr_System_Serializer.current.MasterList.humanoid_Races.GetReproduction(Parent.Owner.Race.ID, out var template))
-        {
-            switch (template.wombType)
-            {
-                case BodyInternal_Base_WombType.spontaneous:
-                    this.womb = new Womb_Spontaneous(this, template);
-                    Owner.RegisterWomb(this.womb);
-                    break;
-
-                case BodyInternal_Base_WombType.induced:
-                    this.womb = new Womb_Induced(this, template);
-                    Owner.RegisterWomb(this.womb);
-                    break;
-
             }
         }
 
@@ -687,8 +727,17 @@ public class BodyInternal_Instance
     public float CumVolume
     { get
         {
-            return this.canFuck  && this.volume_capacity > 0 ? this.volume_capacity : 0;
+            return this.canCum && this.volume_capacity > 0 ? this.volume_capacity : 0;
         } }
+
+    [JsonIgnore]
+    public bool canCum
+    {
+        get
+        {
+            return hasTag("penis");
+        }
+    }
 
     [JsonIgnore]
     public bool isVisiblyExpanded
@@ -757,6 +806,23 @@ public class BodyInternal_Instance
         }
     }
 
+    [JsonIgnore]
+    public float MaxCapacityPercentage
+    {
+        get
+        {
+            return CurrentlyContained / MaxCapacity;
+        }
+    }
+    [JsonIgnore]
+    public float ExpandedCapacityPercentage
+    {
+        get
+        {
+            return CurrentlyContained / VisiblyExpandedCapacity;
+        }
+    }
+
     [JsonIgnore] public string Sensitivity
     {
         get
@@ -803,7 +869,7 @@ public class BodyInternal_Instance
     }
 
 
-    public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null)
+    public bool Ingest_(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null)
     {
         if (!this.canContain) return false;
         var comp = item.GetComp_Ingestible();
@@ -828,15 +894,58 @@ public class BodyInternal_Instance
         }
 
 
-        if (!forceFill)
+        if (!isCum || forceFill)
         {
-            if (!isCum || (RemainingExpandingCapacity >= comp.amount || comp.amount < 1))
+            IngestInternal(item, m);
+            return true;
+        }
+        else if(RemainingExpandingCapacity >= comp.amount || comp.amount < 1)
+        {
+            IngestInternal(item, m);
+            return true;
+        }
+        else
+        {
+            Debug.Log($"{Owner.CallName} {this.DisplayName} ingest {comp.amount} ml, RemainingExpandingCapacity {RemainingExpandingCapacity}, full capacity ingest");
+
+            if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>() { this };
+            else fillHistory.Add(this);
+
+            BodyInternal_Instance directionOut = (Base.tag_directionOut == "" || Base.tag_directionOut == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionOut);
+            BodyInternal_Instance directionIn = (Base.tag_directionIn == "" || Base.tag_directionIn == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionIn);
+
+            if (directionIn != null && directionIn != this && directionIn.canContain && !fillHistory.Contains(directionIn) && directionIn.Ingest(item, m, forceFill, fillHistory)) return true;
+            else if (RemainingMaxCapacity >= comp.amount)
             {
-                if (isCum) Debug.Log($"{Owner.CallName} {this.DisplayName} ingest {comp.amount} ml, RemainingExpandingCapacity {RemainingExpandingCapacity}, full capacity ingest");
                 IngestInternal(item, m);
                 return true;
             }
-            else if (RemainingExpandingCapacity >= 1)
+            else
+            {
+                if (RemainingMaxCapacity >= 1)
+                {
+                    var newcap = Math.Min(RemainingMaxCapacity, comp.amount);
+                    if (item is Item_Instance_Cum)
+                    {
+                        var cum = item as Item_Instance_Cum;
+                        Item_Instance_Cum newitem = WorldManager.Instantiate(cum.Owner, cum.nameOverwrite);
+                        newitem.CumAmount = newcap;
+                        IngestInternal(newitem, m);
+                    }
+                    else
+                    {
+                        Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
+                        newitem.GetComp_Ingestible().amount = newcap;
+                        IngestInternal(newitem, m);
+                    }
+                    comp.amount -= newcap;
+                }
+
+                if (directionOut != null && directionOut != this && directionOut.canContain && !fillHistory.Contains(directionOut) && directionOut.Ingest(item, m, forceFill, fillHistory)) return true;
+                else return false;
+            }
+            /*
+            if (RemainingExpandingCapacity >= 1)
             {
                 var newcap = Math.Min(RemainingExpandingCapacity, comp.amount);
                 if (item is Item_Instance_Cum)
@@ -853,56 +962,152 @@ public class BodyInternal_Instance
                     IngestInternal(newitem, m);
                 }
                 comp.amount -= newcap;
-            }
-            return false;
+                return false;
+            }*/
         }
-        else
+
+    }
+
+    // ── New ingest logic (standalone for testing, replaces Ingest once verified) ──────────────
+    // Non-cum: always ingests. Cum phases:
+    //   1. Fits in expanding capacity → ingest here.
+    //   2. Try directionIn (same expanding-capacity rule, recursive).
+    //   3. directionIn exhausted → fits in max capacity → ingest here.
+    //   4. Over max capacity → ingest here, push existing cum out via directionOut.
+    public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null)
+    {
+        if (!this.canContain) return false;
+        var comp = item.GetComp_Ingestible();
+
+        bool isCum = item is Item_Instance_Cum;
+        if (isCum)
         {
-            if (RemainingCapacity >= comp.amount || comp.amount < 1)
+            var com = item as Item_Instance_Cum;
+            if (!com.experienceTicked)
             {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.CallName} {this.DisplayName} ingest cum {comp.amount} ml, RemainingCapacity {RemainingCapacity}, full capacity ingest");
-                IngestInternal(item, m);
-                return true;
-            }
-
-            if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>() { this };
-            else fillHistory.Add(this);
-
-            BodyInternal_Instance directionOut = (Base.tag_directionOut == "" || Base.tag_directionOut == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionOut);
-            BodyInternal_Instance directionIn = (Base.tag_directionIn == "" || Base.tag_directionIn == "ext") ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionIn);
-
-            if (directionIn != null && directionIn != this && directionIn.canContain && !fillHistory.Contains(directionIn) && directionIn.Ingest(item, m, forceFill, fillHistory)) return true;
-            else if (RemainingMaxCapacity >= comp.amount)
-            {
-                IngestInternal(item, m);
-                return true;
-            }else
-            {
-                if (RemainingMaxCapacity >= 1)
+                com.experienceTicked = true;
+                AddExperience(comp.amount, new List<string>() { "cum" }, m);
+                if (cumStimulation != 0)
                 {
-                    var newcap = Math.Min(RemainingMaxCapacity, comp.amount);
-                    if (item is Item_Instance_Cum)
-                    {
-                        var cum = item as Item_Instance_Cum;
-                        Item_Instance_Cum newitem = WorldManager.Instantiate(cum.Owner, cum.nameOverwrite);
-                        newitem.GetComp_Ingestible().amount = newcap;
-                        IngestInternal(newitem, m);
-                    }
-                    else
-                    {
-                        Item_Instance newitem = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, item.Count);
-                        newitem.GetComp_Ingestible().amount = newcap;
-                        IngestInternal(newitem, m);
-                    }
-                    comp.amount -= newcap;
+                    string s = Sensitivity;
+                    if (s != "") Owner.Stats.AddOrModStatus(s, comp.amount * cumStimulation);
                 }
-
-                if (directionOut != null && directionOut != this && directionOut.canContain && !fillHistory.Contains(directionOut) && directionOut.Ingest(item, m, forceFill, fillHistory)) return true;
-                else return false;
             }
-            
+        }
+
+        // Non-cum and forced fills bypass all capacity checks.
+        if (!isCum)
+        {
+            IngestInternal(item, m);
+            return true;
+        }
+
+        // ── Cum routing ──────────────────────────────────────────────────────────
+        if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>() { this };
+        else if (!fillHistory.Contains(this)) fillHistory.Add(this);
+
+        // Phase 1: fits within expanding capacity.
+        if (RemainingExpandingCapacity >= comp.amount || comp.amount < 1)
+        {
+            IngestInternal(item, m);
+            return true;
+        }
+
+        // Phase 2: push inward, same expanding-capacity rule.
+        BodyInternal_Instance dirIn = (Base.tag_directionIn == "" || Base.tag_directionIn == "ext")
+            ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionIn);
+
+        if (dirIn != null && dirIn != this && dirIn.canContain && !fillHistory.Contains(dirIn))
+        {
+            if (dirIn.Ingest(item, m, false, fillHistory)) return true;
+        }
+
+        // Phase 3: directionIn chain exhausted — try max capacity.
+        if (RemainingMaxCapacity >= comp.amount)
+        {
+            IngestInternal(item, m);
+            return true;
+        }
+
+        // Phase 4: over max capacity — push existing cum out first, then ingest new load.
+        float overflow4 = comp.amount - RemainingMaxCapacity;
+        Debug.Log($"[Ingest] {Owner.CallName} {DisplayName}: over max capacity ({CurrentlyContained:F1}/{MaxCapacity:F1}), pushing {overflow4:F1}ml of existing cum out.");
+        PushCumOverflowOut(overflow4, m, fillHistory);
+        IngestInternal(item, m);
+        return true;
+    }
+
+    // Extracts amountToPush of existing cum from this organ and routes it outward via
+    // directionOut. Called BEFORE ingesting the new item so the new load is never displaced.
+    // Non-cum contents are never touched.
+    private void PushCumOverflowOut(float amountToPush, ExperienceLog m, List<BodyInternal_Instance> fillHistory)
+    {
+        if (amountToPush <= 0f) return;
+
+        BodyInternal_Instance dirOut = (Base.tag_directionOut == "" || Base.tag_directionOut == "ext")
+            ? null : Owner.Body.GetRandomInternalWithTag(Base.tag_directionOut);
+
+        if (dirOut == null || dirOut == this || !dirOut.canContain
+            || (fillHistory != null && fillHistory.Contains(dirOut))) return;
+
+        if (fillHistory == null) fillHistory = new List<BodyInternal_Instance>();
+        fillHistory.Add(dirOut);
+
+        float remaining = amountToPush;
+        while (remaining > 0f)
+        {
+            // Only push cum — other item types are never displaced.
+            Item_Instance_Cum sourceCum = null;
+            foreach (var content in Contains)
+            {
+                if (content is Item_Instance_Cum cum && cum.CumAmount > 0f)
+                {
+                    sourceCum = cum;
+                    break;
+                }
+            }
+            if (sourceCum == null) break;
+
+            float pushAmount = Math.Min(remaining, (float)sourceCum.CumAmount);
+
+            Item_Instance_Cum overflow_item = WorldManager.Instantiate(sourceCum.Owner, sourceCum.nameOverwrite);
+            overflow_item.CumAmount = pushAmount;
+            overflow_item.experienceTicked = true; // already counted when it first entered
+
+            sourceCum.CumAmount -= pushAmount;
+            if (sourceCum.CumAmount <= 0f)
+            {
+                ContainedRefs_Delays.Remove(sourceCum.RefID);
+                contains_cache = null;
+                scr_System_CampaignManager.current.Unregister(sourceCum);
+            }
+
+            remaining -= pushAmount;
+            dirOut.IngestAtMaxCapacity(overflow_item, m, fillHistory);
         }
     }
+
+    // Used by PushCumOverflowOut to route pushed cum through the directionOut chain.
+    // Accepts up to MaxCapacity; if still over, cascades further out.
+    // Does not re-tick experience — pushed items are already accounted for.
+    private void IngestAtMaxCapacity(Item_Instance item, ExperienceLog m, List<BodyInternal_Instance> fillHistory)
+    {
+        if (!this.canContain) return;
+        if (!fillHistory.Contains(this)) fillHistory.Add(this);
+
+        var comp = item.GetComp_Ingestible();
+        if (RemainingMaxCapacity >= comp.amount)
+        {
+            IngestInternal(item, m);
+            return;
+        }
+
+        // Still over max — push existing cum out first, then accept.
+        float overflow = comp.amount - RemainingMaxCapacity;
+        PushCumOverflowOut(overflow, m, fillHistory);
+        IngestInternal(item, m);
+    }
+    // ────────────────────────────────────────────────────────────────────────────
 
     protected void IngestInternal(Item_Instance i, ExperienceLog m = null)
     {
@@ -910,11 +1115,22 @@ public class BodyInternal_Instance
 
         if (comp != null && m != null && i is Item_Instance_Cum)
         {
-            var owner = (i as Item_Instance_Cum).Owner;
-            m.AppendClimaxMSG(owner.RefID,
-                LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_single")
-                    .Replace("$partname$", this.DisplayNameFull)
-                    .Replace("$amount$", $"{comp.amount.ToString("N0")}"));
+            var cum = (i as Item_Instance_Cum);
+            if (cum != null && cum.Owner != null)
+            {
+                m.AppendClimaxMSG(cum.Owner.RefID,
+                    LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_single")
+                        .Replace("$partname$", this.DisplayNameFull)
+                        .Replace("$amount$", $"{comp.amount.ToString("N0")}"));
+            }
+            else if (cum != null)
+            {
+                m.AppendClimaxMSG(owner.RefID,
+                    LocalizeDictionary.QueryThenParse("experience_sex_cumtainer_ownerless")
+                        .Replace("$partname$", this.DisplayNameFull)
+                        .Replace("$amount$", $"{comp.amount.ToString("N0")}")
+                        .Replace("$sourcename$", cum.DisplayName));
+            }
         }
 
         UtilityEX.ApplyOnConsume(this, comp.OnUseEffects);
@@ -931,7 +1147,18 @@ public class BodyInternal_Instance
             }
         }
 
-        if (i.Stackable)
+        if (i is Item_Instance_Cum)
+        {
+            var cum = i as Item_Instance_Cum;
+            foreach (var kvpair in Contains)
+            {
+                if (kvpair is Item_Instance_Cum && (kvpair as Item_Instance_Cum).Merge(cum))
+                {
+                    return;
+                }
+            }
+        }
+        else if (i.Stackable)
         {
            // Debug.Log("Tryingest item ["+i.DisplayName+"] stackable!");
             foreach(var kvpair in Contains)
@@ -971,7 +1198,15 @@ public class BodyInternal_Instance
 
     [JsonIgnore] public string DisplayName { get { return Base.DisplayName; } }
 
-    [JsonIgnore] public string DisplayNameFull { get { return OwnerName + "'s "+DisplayName; } }
+    string _displayNameFull = string.Empty;
+    [JsonIgnore] public string DisplayNameFull { get { 
+            if (_displayNameFull == string.Empty)
+            {
+                _displayNameFull = LocalizeDictionary.QueryThenParse("bodyPart_Fulldisplayname")
+                    .Replace("$name$", OwnerName)
+                    .Replace("$part$", DisplayName);
+            }
+            return _displayNameFull; } }
 
     [JsonIgnore] public string Tooltip
     {
@@ -985,6 +1220,8 @@ public class BodyInternal_Instance
     {
         return Base.tags.Contains(tag);
     }
+
+
     public bool hasAnyTag(List<string> tag)
     {
         return Utility.ListContainsLoose(Base.tags, tag);// Base.tags.Contains(tag);
@@ -1004,8 +1241,8 @@ public class BodyInternal_Instance
         }
         else
         {
-            Item_Instance cum = WorldManager.Instantiate(this.owner, owner.FirstName + "'s cum");
-            cum.GetComp_Ingestible().amount = amount;
+            Item_Instance_Cum cum = WorldManager.Instantiate(this.owner);
+            cum.CumAmount = amount;
 
             // Owner.Status.AddOrModStatus("chara_status_sex_climax_after", -120);
             //if (m != null) m.AddMessage(Owner.FirstName + " Cum [" + amount + "]ml !");

@@ -19,6 +19,10 @@ public class COM_Results
 
         if (!c.hasSleepNeed && p.targetCOM != null && p.targetCOM.comTags.Contains("sleep")) c.FullRest(1);
 
+        if (results_jobOwner != null) foreach (var result in results_jobOwner) ResultFactionUtility.Apply(result, job, c);
+
+        if (results_factionWide != null) foreach (var result in results_factionWide) ResultFactionUtility.Apply(result, job, p, evp, c);
+
     }
 
     // modify character internally (stat, experience, etc)
@@ -30,6 +34,8 @@ public class COM_Results
 
     public List<Result_Faction_Home> results_home = null;
     public List<Result_Faction_JobOwner> results_jobOwner = null;
+
+    public List<Result_FactionWide> results_factionWide = null;
 
     public List<Result_Room> results_room = null;
 }

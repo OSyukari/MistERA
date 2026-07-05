@@ -318,8 +318,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             case "canAct":
                 return Utility.CompareValue(canAct, operand, value);
             case "isInEstrus":  // check chara status depending on menstruation cycle, or if chara is drugged
-                Debug.Log(FirstName + " Comparevalue isInEstrus [" + false + "] [" + operand + "] [" + value + "]");
-                return Utility.CompareValue(false, operand, value);
+                //Debug.Log(FirstName + " Comparevalue isInEstrus [" + false + "] [" + operand + "] [" + value + "]");
+                return Utility.CompareValue(ReproCycle != null && ReproCycle.isEstrus, operand, value);
             case "climaxed":    // check if chara has climaxed in current postupdatetime
                // Debug.LogError(FirstName + " Comparevalue climaxed [" + this.Climaxing + "] [" + operand + "] [" + value + "]");
                 return Utility.CompareValue(this.Climaxing, operand, value); ;
@@ -429,16 +429,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         get
         {
-            return wombs != null && wombs.Count > 0;
+            return ReproCycle != null;
         }
     }
 
     ReproductionTemplate _reproTemplate = null;
-    ReproductionTemplate ReproTemplate
+    [JsonIgnore] public ReproductionTemplate ReproTemplate
     {
         get
         {
-            if (_reproTemplate == null && HasMenstrualCycle && Race != null)
+            if (_reproTemplate == null && Race != null)
             {
                 _reproTemplate = scr_System_Serializer.current.MasterList.humanoid_Races.GetReproduction(this.Race.ID);
             }
@@ -450,10 +450,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public void TickMenstruation_Debug(int year, int month, int day)
     {
-        if (!HasMenstrualCycle) return;
         if (ReproTemplate == null) return;
-
-        
+        if (ReproCycle == null) return;
 
         int totalCycle = year * 365 + month * 30 + day;
 
@@ -494,7 +492,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     protected void TickMenstruation()
     {
-        if (!HasMenstrualCycle) return;
+        if (ReproCycle == null) return;
         if (ReproTemplate == null) return;
 
         // this variable will be replaced by a boolean getter
@@ -555,7 +553,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
 
-    List<BodyInternal_Womb> wombs = new List<BodyInternal_Womb>();
+    [JsonIgnore] public List<BodyInternal_Womb> wombs = new List<BodyInternal_Womb>();
     public void RegisterWomb(BodyInternal_Womb wb)
     {
         if (wb == null) return;
@@ -2214,11 +2212,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
 
+    [JsonIgnore] public bool Deleted = false;
+
     /// <summary>
     /// Call when destroy
     /// </summary>
     public void DisposeInternal()
     {
+        Deleted = true;
         RemoveObservers();
         if (PortraitManager != null) PortraitManager.ClearInternal();
     }
@@ -2313,6 +2314,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         this.Memory.NotifyRoomUnregister(r);
     }
 
+    public string baseTemplateID = "";
 
     [JsonIgnore] public bool Debug_ForceDeepSleep = false;
 }

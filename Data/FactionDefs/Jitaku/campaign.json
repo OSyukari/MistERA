@@ -13,14 +13,6 @@
                     "tooltip":"123",
                     "initializers":[
                         {
-                            "initClass":"campaign_init_playerNameIDs",
-                            "initArguments":["PLAYER","%%Campaign1_player_firstname%%","%%Campaign1_player_middlename%%","%%Campaign1_player_lastname%%","%%Campaign1_player_nameDisplayFormat%%"]
-                        },
-                        {
-                            "initClass":"campaign_init_playerPortrait",
-                            "initArguments":["{ \"$type\":\"PortraitManager+CharaPortrait_Image, Assembly-CSharp\",\"portrait_offset_size\":1.0 ,\"portrait_offset_x\":10,\"portrait_offset_y\":40,\"Variants\":[], \"portrait_path\":\"SchoolIcon/School_Icon_ETC.png\", \"icon_path\":\"SchoolIcon/School_Icon_ETC.png\",\"icon_offset_size\":0.25,\"icon_offset_x\":0,\"icon_offset_y\":0 }"]
-                        },
-                        {
                             "initClass":"campaign_init_homefaction",
                             "initArguments":["Katsuragi_Household","true", "true"]
                         },

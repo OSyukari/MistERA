@@ -74,6 +74,7 @@
                 "experience_sex_cumtainer_prepend": "射精 $append$",
                 "experience_sex_cumtainer_none": "(体外 $amount$ml)",
                 "experience_sex_cumtainer_single": "($partname$ $amount$ml)",
+                "experience_sex_cumtainer_ownerless": "($partname$被注入了$amount$ml的$sourcename$)",
                 "experience_sex_climax": "绝顶",
                 "experience_sex_strong_climax": "$sensitivity$强绝顶$count$",
                 "experience_sex_strong_climax_1": "",

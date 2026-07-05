@@ -24,6 +24,7 @@ public class LocalizeDictionary : MonoBehaviour
 
     public static string QueryThenParse(string ID, string fallback = "")
     {
+        if (ID == "") return fallback;
         if (_cacheResult.ContainsKey(ID)) return _cacheResult[ID];
         var result = Instance.Index.QueryThenParse(ID, fallback);
         _cacheResult[ID] = result;

@@ -11,11 +11,14 @@ public class scr_Panel_BodyDetail : MonoBehaviour
     string bodyBaseID;
     string internalBaseID;
 
+    public int imageSize = 75;
+    public RectTransform selfRect;
 
     BodyInternal_Instance instance;
     public Image selfImage;
     scr_Menu_CharaDetail parent;
-    int referenceIndex;
+
+    public LayoutElement layout;
 
     protected void Awake()
     {
@@ -24,14 +27,11 @@ public class scr_Panel_BodyDetail : MonoBehaviour
     public void InitializeWithArgument(scr_Menu_CharaDetail parent, int referenceIndex)
     {
         this.parent = parent;
-        this.referenceIndex = referenceIndex;
 
         this.instance = parent.GetInternalwithIndex(referenceIndex);
 
         //boxName.text = "Body Part: "+instance.DisplayName;
         boxName.text = instance.DisplayName;
-
-        //image.gameObject.SetActive(false);
 
         // INCREASE SCROLL SPEED
 
@@ -75,7 +75,7 @@ public class scr_Panel_BodyDetail : MonoBehaviour
 
         instance.Draw_FirstExperience(firstExp);
         instance.Draw_LastExperience(lastExp);
-        
+
 
         if (instance.canContain && instance.volume_capacity > 0.01f)
         {
@@ -84,13 +84,22 @@ public class scr_Panel_BodyDetail : MonoBehaviour
 
             foreach (var i in instance.Contains)
             {
-                volumeTooltip.Add("name [" + i.DisplayName + "] amount [" + i.GetComp_Ingestible().amount + "]");
+                volumeTooltip.Add($"name [{i.DisplayName}] amount [{i.GetComp_Ingestible().amount.ToString("N1")}]");
                 totalVolume += i.GetComp_Ingestible().amount;
             }
 
-            
-            boxVolume.SetText($"Content: {totalVolume}ml / {instance.VolumeCapacity.ToString("N0")}ml|{instance.VisiblyExpandedCapacity.ToString("N0")}ml|{instance.MaxCapacity.ToString("N0")}ml");
+
+            boxVolume.SetText($"Content: {totalVolume.ToString("N1")}ml / {instance.VolumeCapacity.ToString("N0")}ml|{instance.VisiblyExpandedCapacity.ToString("N0")}ml|{instance.MaxCapacity.ToString("N0")}ml");
             if (volumeTooltip.Count > 0) boxVolume.SetExternalTooltip(String.Join("\n", volumeTooltip));
+        }
+        else if (instance.canCum)
+        {
+            boxVolume.SetText($"Cum Amount: {instance.CumVolume.ToString("N1")}ml");
+            boxVolume.SetExternalTooltip($"volume_capacity {instance.volume_capacity} | height {instance.Owner.Body.Height} / 100 * weight {instance.Owner.Body.Weight} * volumeRatio {instance.Base.volumeRatio}");
+        }
+        else
+        {
+            boxVolume.gameObject.SetActive(false);
         }
 
         //this.mostExp.gameObject.SetActive(false);
@@ -100,9 +109,60 @@ public class scr_Panel_BodyDetail : MonoBehaviour
             description.gameObject.SetActive(true);
             description.SetText(instance.womb.debugTooltip);
         }
-        else description.gameObject.SetActive(false);
+        else
+        {
 
+            description.gameObject.SetActive(false);
+        }
+
+        imagepath = instance.Image;
     }
+
+    string imagepath = "";
+
+    protected void Start()
+    {
+        if (imagepath != "")
+        {
+            layout.minHeight = imageSize + 5 + 5;
+            imageAnchor.gameObject.SetActive(true);
+            if (co != null)
+            {
+                StopCoroutine(co);
+                co = null;
+            }
+            co = StartCoroutine(loadImage(imagepath));
+        }
+        else
+        {
+            if (co != null)
+            {
+                StopCoroutine(co);
+                co = null;
+            }
+            layout.minHeight = 0;
+            imageAnchor.gameObject.SetActive(false);
+            textRect.sizeDelta = new Vector2(textRect.sizeDelta.x + imageSize, textRect.sizeDelta.y);
+        }
+    }
+
+    Coroutine co;
+
+    public IEnumerator loadImage(string a)
+    {
+        if (scr_System_CentralControl.current.GetSprite(a, out var sprite))
+        {
+            image.sprite = sprite;
+        }
+        else
+        {
+            Texture2D loaded = null;
+            yield return AssetsLoader.LoadTextureCoroutine(a, texture => loaded = texture);
+            image.sprite = scr_System_CentralControl.current.MakeSprite(a, loaded);
+        }
+    }
+
+
     /*
     private void LoadImage()
     {
@@ -111,11 +171,14 @@ public class scr_Panel_BodyDetail : MonoBehaviour
         else if (instance.hasTag("mouth")) LoadSprite(XraySprite.widget_oral1);
     }*/
 
+    public RectTransform imageAnchor;
     public Image image;
+    public RectTransform textRect;
+
+
     public TMP_Text boxName,  boxDepth;
     public scr_HoverableText boxSize,  boxSensitivity;
     public scr_HoverableText boxVolume;
-    public RectTransform box_Fuckable;
     public scr_HoverableText description;
 
     public scr_HoverableText firstExp, lastExp;

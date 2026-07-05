@@ -1,7 +1,93 @@
 using System.Collections.Generic;
+using UnityEngine;
+using static Result_FactionWide.Entry_Result;
 
 public static class ResultFactionUtility
 {
+
+    public static void Apply(Result_FactionWide result, Job job, ActionPackage ap, EvaluationPackage m, Character_Trainable c)
+    {
+        //if (result.entry_conditions != null && !ValidateCondition(result.entry_conditions, faction)) return;
+        if (result.entry_results == null) return;
+
+        if (result.entry_results.initiateRetailTrade != null)
+        {
+            var tr = result.entry_results.initiateRetailTrade;
+            Manageable from = null;
+            switch (tr.from)
+            {
+                case Result_FactionWide.targetScope.doer_home:
+                    foreach (var faction in c.FactionManager.HomeFactions)
+                    {
+                        if (from == null && from != faction) from = faction;
+                        break;
+                    }
+                    break;
+                case Result_FactionWide.targetScope.jobOwner:
+                    if (from == null && from != job.FactionOwner.Faction) from = job.FactionOwner.Faction;
+                    break;
+            }
+            if (from == null) return;
+
+            Manageable to = null;
+            switch (tr.to)
+            {
+                case Result_FactionWide.targetScope.doer_home:
+                    foreach (var faction in c.FactionManager.HomeFactions)
+                    {
+                        if (to == null && to != faction) to = faction;
+                        break;
+                    }
+                    break;
+                case Result_FactionWide.targetScope.jobOwner:
+                    if (to == null && to != job.FactionOwner.Faction) to = job.FactionOwner.Faction;
+                    break;
+            }
+            if (to == null) return;
+
+            scr_System_CampaignManager.current.StartRetailExchange(from, to);
+        }
+        
+        if (result.entry_results.initiateTake != null)
+        {
+
+            var tr = result.entry_results.initiateTake;
+            Manageable from = null;
+            switch (tr.from)
+            {
+                case Result_FactionWide.targetScope.doer_home:
+                    foreach (var faction in c.FactionManager.HomeFactions)
+                    {
+                        if (from == null && from != faction) from = faction;
+                        break;
+                    }
+                    break;
+                case Result_FactionWide.targetScope.jobOwner:
+                    if (from == null && from != job.FactionOwner.Faction) from = job.FactionOwner.Faction;
+                    break;
+            }
+            if (from == null) return;
+
+            Manageable to = null;
+            switch (tr.to)
+            {
+                case Result_FactionWide.targetScope.doer_home:
+                    foreach (var faction in c.FactionManager.HomeFactions)
+                    {
+                        if (to == null && to != faction) to = faction;
+                        break;
+                    }
+                    break;
+                case Result_FactionWide.targetScope.jobOwner:
+                    if (to == null && to != job.FactionOwner.Faction) to = job.FactionOwner.Faction;
+                    break;
+            }
+            if (to == null) return;
+
+            scr_System_CampaignManager.current.StartFactionExchange(from, to, false, false, false, true, "");
+        }
+    }
+
     public static void Apply(Result_Faction result, Job job, ActionPackage package, EvaluationPackage m, Character_Trainable c)
     {
         //Debug.Log("Validator_Result Apply on " + c.FirstName);

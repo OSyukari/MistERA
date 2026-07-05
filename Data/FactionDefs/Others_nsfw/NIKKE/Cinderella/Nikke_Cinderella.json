@@ -135,11 +135,12 @@
       "sensitivity_C": "trait_Sensitivity_C_default",
       "sensitivity_V": "trait_Sensitivity_V_default",
       "sensitivity_A": "trait_Sensitivity_A_default",
-      "size_B": "trait_Size_B_A",
+      "size_B": "trait_Size_B_F",
       "size_P": "trait_Size_P_none",
       "size_V": "trait_Size_V_1",
       "size_A": "trait_Size_A_1",
-      "Height":145,
+      "Height":173,
+      "Weight":62,
       "initialInventory":[
         
         ],

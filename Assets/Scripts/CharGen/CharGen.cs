@@ -163,6 +163,8 @@ public class CharaTemplateGenerator : I_CharaGen
             Debug.Log($"adding basic experience override: {String.Join(" ", experienceOverride)}");
         }
 
+        template.baseTemplateID = this.ID;
+
         return template;
     }
 
@@ -194,38 +196,4 @@ public class CharaTemplateGenerator : I_CharaGen
     public List<string> basicExperienceOverride = new List<string>();
     public List<string> experienceOverride = new List<string>();
 
-    /*
-    [JsonIgnore]
-    CharaTemplate Get
-    {
-        get
-        {
-            if (targetBaseIDs.Count < 1 || this.Template == null) return null;
-            var template = Template.Copy();
-            template.stat_STR = (int)Utility.RandVariation(str_base == 0 ? template.stat_STR : str_base, str_var);
-            template.stat_CON = (int)Utility.RandVariation(con_base == 0 ? template.stat_CON : con_base, con_var);
-            template.stat_PSY = (int)Utility.RandVariation(psy_base == 0 ? template.stat_PSY : psy_base, psy_var);
-            template.stat_WIL = (int)Utility.RandVariation(wil_base == 0 ? template.stat_WIL : wil_base, wil_var);
-            template.SetGender(Appearance);
-            
-            if (this.setHeight > 0) template.Height = this.setHeight;
-            if (this.heightVariation > 0) template.Height = (int)Utility.RandVariation(template.Height, this.heightVariation);
-
-            if (this.setWeight > 0) template.Weight = this.setWeight;
-            if (this.weightVariation > 0) template.Weight = (int)Utility.RandVariation(template.Weight, this.weightVariation);
-
-            if (this.inventoryOverride.Count > 0) template.initialInventory.AddRange(this.inventoryOverride);
-            if (this.basicExperienceOverride.Count > 0)
-            {
-                Debug.Log($"setting basic experience override: {String.Join(" ", this.basicExperienceOverride)}");
-                template.basicExperience = this.basicExperienceOverride;
-            }
-            if (this.experienceOverride.Count > 0)
-            {
-                template.initialExperiences.AddRange(this.experienceOverride);
-                Debug.Log($"adding basic experience override: {String.Join(" ", this.experienceOverride)}");
-            }
-            return template;
-        }
-    }*/
 }

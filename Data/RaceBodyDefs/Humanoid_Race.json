@@ -129,6 +129,43 @@
             "RaceType":["humanrace","playableRace"]
         },
         {
+            "ID": "humanRace_dragon",
+            "displayName": "Dragon",
+            "tooltip": "Very Powerful, long living, but with the least numbers, and the least motivation.\nSTR+6 CON+4 WIL+4 PSY-2",
+            "bodyPartRoot":"head_humanoid_base",
+            "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","stress","mood","lust","physical","memory"],
+            "stat_modifiers": [
+                {
+                    "statID":"Strength",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"6"
+                },
+                {
+                    "statID":"Constitution",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"4"
+                },
+                {
+                    "statID":"Psyche",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"-2"
+                },
+                {
+                    "statID":"Willpower",
+                    "modKey":"raceMod", "type":"addBase", "valueType":"number", "valueString":"4"
+                }
+            ],
+            "needs":[
+                {
+                    "ID":"food",
+                    "displayName":"food need",
+                    "tooltip":"tooltip",
+                    "statusDebuffID": "chara_status_malnourished",
+                    "consumeItemByTag": "food_meal",
+                    "requiresStatKeyword": "hunger",
+                    "overwritesNeedsIDs": []
+                }
+            ],
+            "RaceType":["humanrace","playableRace"]
+        },
+        {
             "ID": "humanRace_beastkin_cat",
             "displayName": "Beastkin - Cat",
             "tooltip": "Nimble, agile, but somewhat disinterested toward others.\nCON+1 PSY-1",

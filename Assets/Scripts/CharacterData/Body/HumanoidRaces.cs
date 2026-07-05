@@ -12,6 +12,19 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
     [JsonProperty] protected List<ReproductionTemplate> reproductionTemplates  = new List<ReproductionTemplate>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, ReproductionTemplate> _List_reproductionTemplates;
 
+    [JsonProperty] protected List<RacialFoetusTemplates> foetusTemplates = new List<RacialFoetusTemplates>();
+    protected System.Collections.Concurrent.ConcurrentDictionary<string, RacialFoetusTemplates> _List_babyTemplates;
+
+    public FoetusTemplates CollectValidFoetus(string raceID, string baseID)
+    {
+        if (_List_babyTemplates.TryGetValue(raceID, out var racial))
+        {
+            if (racial.foetusByBaseID.TryGetValue(baseID, out var byID)) return byID;
+            else return racial.racialTemplate;
+        }
+        return null;
+    }
+
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -20,6 +33,24 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
 
         if (l.list != null)  this.list.AddRange(l.list);
         if (l.reproductionTemplates != null) this.reproductionTemplates.AddRange(l.reproductionTemplates);
+        if (l.foetusTemplates != null)
+        {
+            bool merged = false;
+            foreach(var target in l.foetusTemplates)
+            {
+                merged = false;
+                foreach (var self in foetusTemplates)
+                {
+                    if (self.parentRaceID == target.parentRaceID)
+                    {
+                        self.MergeWith(target);
+                        merged = true;
+                        break;
+                    }
+                }
+                if (!merged) foetusTemplates.Add(target);
+            }
+        }
     }
 
     public void RegisterAllID(List<string> a)
@@ -42,6 +73,17 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
                 if (!ids1.TryAdd(i.baseID, i)) Debug.Log($"failed to add Humanoid_Race_Index id [{i.baseID}] due to duplicate");
             }
             _List_reproductionTemplates = new System.Collections.Concurrent.ConcurrentDictionary<string, ReproductionTemplate>(ids1);
+        }
+
+        var ids2 = new Dictionary<string, RacialFoetusTemplates>();
+        if (foetusTemplates != null)
+        {
+            foreach (var i in foetusTemplates)
+            {
+                if (string.IsNullOrEmpty(i.parentRaceID)) continue;
+                if (!ids2.TryAdd(i.parentRaceID, i)) Debug.Log($"failed to add Humanoid_Race_Index id [{i.parentRaceID}] due to duplicate");
+            }
+            _List_babyTemplates = new System.Collections.Concurrent.ConcurrentDictionary<string, RacialFoetusTemplates>(ids2);
         }
 
     }
@@ -105,6 +147,8 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
     {
         reproductionTemplates = null;
         _List_reproductionTemplates = null;
+        foetusTemplates = null;
+        _List_babyTemplates = null;
     }
 }
 

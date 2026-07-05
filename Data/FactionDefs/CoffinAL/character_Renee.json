@@ -54,7 +54,6 @@
         "size_A": "trait_Size_A_1",
         "Height": 163,
         "Weight": 58,
-        "HWMultiplier": 0.36,
         "traits": [
             "trait_FatigueResistance_high",
             "trait_PhysicalVitality_low",

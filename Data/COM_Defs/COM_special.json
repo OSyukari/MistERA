@@ -1,0 +1,72 @@
+{
+    "COMs": {
+        "list": [
+{
+    "ID": "com_special_retailTrade",
+    "ActionPackageClass": "ActionPackage_Interaction",
+    "displayName": "com_special_retailTrade_displayName_1",
+    "timeScale": 5,
+    "_baseAcceptanceValue": "actor will always accept when their own AI decide to go to sleep, so this value is only checked if they were invited by someone else to sleep. Currently they'll lose consciousness when touching bed, but in the future i would like to extend this command into masturbation sex command or straight up sex. Instead of making them unable to act for the whole duration, make it so they'll prefer to stay in bed but nothing stops them from having sex or toilet or wander into someone else's room. or make it so their sleep consciousness mod fluctuate",
+    "comTags": [
+        "furniture",
+        "retailTrade"
+    ],
+    "requirements": {
+        "requirement": {
+            "treatReceiverAsDoer": true
+        }
+    },
+    "results": {
+        "results_factionWide": [
+            {
+                "entry_results": {
+                    "initiateRetailTrade": { "from":"doer_home", "to":"jobOwner" }
+                }
+            }
+        ]
+    },
+    "variants": [
+        {
+            "requirements": {
+                "requirement": {
+                    "doerCount": 1
+                }
+            },
+            "displayName": "com_special_retailTrade_displayName_1"
+        },
+        {
+            "requirements": {
+                "requirement": {
+                    "doerCount": 99
+                }
+            },
+            "displayName": "com_special_retailTrade_displayName_1"
+        }
+    ],
+    "description_onComplete":
+    {
+        "Entries":[
+            {
+                "keepLooking":true,
+                "texts":[ "com_special_retailTrade_displayName_1" ]
+            }
+        ]
+    },
+    "description_begin":{ "Entries":[{"texts":["com_special_retailTrade_begin_1"]}], "keepLooking":false },
+    "description_ongoing":{ "Entries":[{"texts":["com_special_retailTrade_ongoing_1"]}], "keepLooking":false }
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"com_special_retailTrade_displayName_1":"浏览商品",
+"com_special_retailTrade_begin_1":"$doer.firstname$开始浏览商品",
+"com_special_retailTrade_ongoing_1":"$doer.firstname$正在浏览商品"
+            }
+        }
+    }
+}

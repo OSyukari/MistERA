@@ -5,16 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 
 
 public class Manageable : I_Disposable, I_IsJobGiver
 {
-
-    
-
-
-
     [JsonIgnore] public Manageable Faction { get { return this; } }
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
 
@@ -670,6 +666,27 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public ProductionOrder GetProductionOrdersByUID (string UID)
     {
         return ProductionOrders.Find(x=>x.Recipe.RecipeUID == UID);
+    }
+
+
+    public void AddTradeOrder_ImmediateResolve(Dictionary<ItemEntry, TradeOrder> trs)
+    {
+
+        foreach(var kvp in trs)
+        {
+            var trade = kvp.Value;
+            var count = trade.Count;
+            if (count < 1) continue;
+            if (!trade.ProcessOrder(out string text))
+            {
+                DailyReport.AddTradeWarning(text);
+                trade.TargetFaction.DailyReport.AddTradeWarning($"{FactionDisplayName} failed to process transaction: {text}");
+            }
+            else if (kvp.Key.innerStock > 0)
+            {
+                kvp.Key.innerStock = Math.Max(0, kvp.Key.innerStock - count);
+            }
+        }
     }
 
     public void AddTradeOrder(ItemEntry entry, ItemEntry costs, Manageable target, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
@@ -1946,10 +1963,17 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         [JsonIgnore] public Inventory targetInventory { get { return FactionOwner.Inventory; } }
 
-        public void AddCount(int i)
+        public void AddCount(int i, int? clampCeiling = null)
         {
-            this.count = Math.Max(count + i, 0);
             //this.count += i;
+            if (clampCeiling != null && clampCeiling.Value > 0)
+            {
+                this.count = Math.Clamp(count + i, 0, clampCeiling.Value);
+            }
+            else
+            {
+                this.count = Math.Max(count + i, 0);
+            }
         }
 
         public void SetCount(int i)
@@ -2387,7 +2411,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         this.JobPostsPresets.Add(new JobPostPreset(module));
     }
 
-    public void AddSalesInventory(MapPlan.SalesInventoryInit inventory)
+    protected void AddSalesInventory(MapPlan.SalesInventoryInit inventory)
     {
         this.salesInventory.AddEntry(inventory);
     }
@@ -2452,7 +2476,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
         protected Dictionary<string, ItemEntry> _cache = null;
-        [JsonIgnore] public List<ItemEntry> Inventory
+        [JsonIgnore] public Dictionary<string, ItemEntry> Inventory
         {
             get
             {
@@ -2464,11 +2488,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
                         foreach(var content in MapUtility.GetContent(entry))
                         {
                             var key = content.itemID + "|" + content.itemNameOverwrite + "|" + content.itemCount;
+                            content.innerStock = Utility.Dice(1, 5);
                             if (!_cache.ContainsKey(key)) _cache.Add(key, content);
                         }
                     }
                 }
-                return _cache.Values.ToList();
+                return _cache;
             }
         }
     }

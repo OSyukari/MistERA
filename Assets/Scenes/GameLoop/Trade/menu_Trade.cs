@@ -6,6 +6,28 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
+public class FactionTradeConfig
+{
+    public enum TradeType
+    {
+        Take,
+        Trade
+    }
+
+    // if trade, everything will go through value calculation and must be equal value to perform
+    // if take/steal, then no calculation performed
+    public TradeType tradeType = TradeType.Take;
+
+    // stealing or not will be determined by the command itself
+
+    // if true, allow transfer of character ownership
+    public bool allowChara = false;
+
+    //
+
+}
+
+
 public class menu_Trade : scr_Menu, IPointerClickHandler
 {
 
@@ -17,8 +39,14 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
     public bool allowTransfer = false;
     public bool allowChara = false;
 
+    // trade/take chara or request service from chara
     public scr_charaEntry prefab_chara;
+
+    // trade/take item
     public scr_itemEntry prefab_item;
+
+    // trade/take existing inventory
+    public scr_saleInventory prefab_saleInventory;
 
     public scr_HoverableText A_Name, B_Name;
     public RectTransform A_listRect, B_listRect;
@@ -50,6 +78,7 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
 
     List<scr_charaEntry> list_c = new List<scr_charaEntry>();
     List<scr_itemEntry> list_i = new List<scr_itemEntry>();
+    List<scr_saleInventory> list_s = new List<scr_saleInventory>();
 
     public string liberateEventID = "";
 
@@ -65,7 +94,7 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
     /// <param name="allowTransfer">AllowCharaTransfer</param>
     public void InitializeWithArgument(I_IsJobGiver a, I_IsJobGiver b, bool allowChara, bool allowHostile, bool allowKill, bool allowTransfer, string liberateEventID)
     {
-        list_c.Clear(); list_i.Clear();
+        list_c.Clear(); list_i.Clear(); list_s.Clear();
         this.liberateEventID = liberateEventID;
         this.a = a; this.b = b;
         this.allowTransfer = allowTransfer;
@@ -103,6 +132,7 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
 
         foreach(var i in a.Inventory.Contents)
         {
+            if (i.isToken) continue;
             var fab = Instantiate(prefab_item);
             fab.selfRect.SetParent(A_listRect, false);
             fab.InitItem(this, i, true, b.Inventory, a.Inventory);
@@ -112,6 +142,7 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
 
         foreach (var i in b.Inventory.Contents)
         {
+            if (i.isToken) continue;
             var fab = Instantiate(prefab_item);
             fab.selfRect.SetParent(B_listRect, false);
             fab.InitItem(this, i, false, a.Inventory, b.Inventory);
@@ -119,8 +150,23 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
             list_i.Add(fab);
         }
 
+        if (b.Faction != null && b.Faction.salesInventory != null)
+        {
+            foreach(var i in b.Faction.salesInventory.Inventory)
+            {
+                var fab = Instantiate(prefab_saleInventory);
+                fab.selfRect.SetParent(B_listRect, false);
+                fab.InitItem(this, i.Value, false, a.Inventory, b.Inventory);
+                fab.selfImage.color = color;
+                list_s.Add(fab);
+            }
+        }
+
         ValidateAll();
     }
+
+
+
 
 
     public scr_Menu_CharaDetail prefab_Canvas_CharaDetail;
@@ -178,6 +224,10 @@ public class menu_Trade : scr_Menu, IPointerClickHandler
         foreach (var c in list_c)
         {
             c.Resolve();
+        }
+        foreach(var s in list_s)
+        {
+            s.Resolve();
         }
     }
 

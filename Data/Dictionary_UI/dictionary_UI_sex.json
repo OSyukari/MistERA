@@ -54,6 +54,33 @@
 "tag_testicle": "睾丸",
 "tag_internal": "体内",
 
+"charaDetail_panel_bodyexp": "身体数据",
+"charaDetail_panel_bodyexp_content": "体内数据",
+"charaDetail_panel_bodyexp_cycle_none": "<link=\"charaDetail_panel_bodyexp_cycle_none_tooltip\">经期：无</link>",
+"charaDetail_panel_bodyexp_cycle_none_tooltip": "此角色没有怀孕能力",
+"charaDetail_panel_bodyexp_cycle": "经期：$cycle$",
+
+"charaDetail_panel_cycle_total": "总周期时长 $total$天",
+"charaDetail_panel_cycle_single": "$name$ $count$天",
+"charaDetail_panel_cycle_current": "当前经期预计持续 $count$天",
+"charaDetail_panel_cycle_current_none": "永久持续",
+"charaDetail_panel_cycle_ovumCount": "<link=\"charaDetail_panel_cycle_ovumCount_tooltip\">每周期排卵数 $count$</link>",
+"charaDetail_panel_cycle_ovumCount_tooltip": "未成功排卵时 排卵率会累计到下个周期",
+"charaDetail_panel_cycle_ovumFertility": "<link=\"charaDetail_panel_cycle_ovumFertility_tooltip\">卵子平均受孕率 $fertility$%</link>",
+"charaDetail_panel_cycle_ovumFertility_tooltip": "/每ml精液 每小时",
+
+"charaDetail_panel_womb_content": "内容物（共 $volume$ml）",
+
+"OvumState_Default": "待受精$count$",
+"OvumState_Fertilized": "待受精$count$",
+"charaDetail_panel_cycle_ovumLists": "卵子：$content$",
+"item_cum_print_amount": "$item$ $count$ml",
+"Item_Instance_Cum_nameOverwrite":"$name$的精液",
+"Item_Instance_Cum_fertChance_perHour":"每小时受孕率 $chance$%",
+
+"CalcFertility_notSameRace":"种族有别",
+"CalcFertility_notSharingTag":"种族差别巨大",
+
 "comManager_title_sex_participant": "[$doer$] 对 [$receiver$] 执行...",
 "comManager_title_sex_observer": "命令 [$doer$] 对 [$receiver$] 执行...",
 

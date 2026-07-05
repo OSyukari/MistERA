@@ -100,7 +100,6 @@
       "size_A": "trait_Size_A_1",
       "Height":153,
       "Weight":46,
-      "HWMultiplier":0.30,
       "traits":[
         "trait_FatigueResistance_low",
         "trait_SleepLength_more",

@@ -130,6 +130,7 @@ public class Character_Body
                 }
             }
         }*/
+        foreach (BodyInternal_Instance i in Internals) i.UpdateTimeHour();
     }
     public void UpdateTimeDay(TimeSpan t)
     {
@@ -511,9 +512,8 @@ public class Character_Body
         string climaxKeywords = "";
         string cumKeywords = "";
 
-#if UNITY_EDITOR
-        // if (Owner.Stats.SexStimulation.Severity >= 5) Debug.Log($"Checking climax on {Owner.FirstName}, {Owner.Stats.Climaxing == null} {!Stimulated} {isClimaxing()} {Owner.Stats.SexStimulation.Severity >= Owner.Stats.CumThreshold}");
-#endif
+        if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum && Owner.Stats.Climaxing != null && Stimulated) Debug.Log($"CheckClimax [{Owner.FirstName}] stimulated={Stimulated} climaxing={isClimaxing()} sexStim={Owner.Stats.SexStimulation.Severity} threshold={Owner.Stats.CumThreshold}");
+
         //if (scr_UpdateHandler.current.skipCurrentRoundClimaxCheck) return;
         if (Owner.Stats.Climaxing == null) return false;
         if (!Stimulated) return false;
@@ -549,13 +549,14 @@ public class Character_Body
                     // ADDLOG CLIMAX
                     float cumAmount = 0;
                     cumKeywords = "yes";
-                    if (part.canFuck && part.CumVolume > 0)
+                    if (part.CumVolume > 0)
                     {
                         cumAmount = part.CumVolume * (scr_System_CampaignManager.current.DebugMode ? 5 : 1);
                         cum = part.Cum(cumAmount, exp);
                     }
                     else
                     {
+                        //Debug.Log($"{Owner.FirstName} cannot cum, {part.DisplayName} volume {part.CumVolume}");
                         cum = null;
                     }
 
@@ -564,11 +565,17 @@ public class Character_Body
                         this.Cum = true;
 
                         // find valid container for cum
+
+                        if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum) Debug.Log($"[CumDebug] {Owner.FirstName} part={part.DisplayName} canFuck={part.canFuck} lastInteractedCount={part.LastInteactedRefs.Count} refs=[{string.Join(",", part.LastInteactedRefs.ConvertAll(x => x == null ? "NULL" : $"{x.Owner?.FirstName}.{x.baseID}"))}]");
+
                         List<BodyInternal_Instance> possiblecontainers = part.LastInteactedRefs.FindAll(x => x.canContain);
                         List<BodyInternal_Instance> possibleEmptyContainers = possiblecontainers.FindAll(x => !x.containsOverCapacity);
 
                         BodyInternal_Instance container = (possibleEmptyContainers.Count > 0 ? Utility.GetRandomElement(possibleEmptyContainers)
                                         : (possiblecontainers.Count > 0 ? Utility.GetRandomElement(possiblecontainers) : null));
+
+                        if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum) Debug.Log($"[CumDebug] {Owner.FirstName} containers={possiblecontainers.Count} emptyContainers={possibleEmptyContainers.Count} selectedContainer={container?.Owner?.FirstName}.{container?.baseID ?? "NONE (cum on ground)"}");
+
 
                         if (container != null)
                         {   // if valid bodyinternal container exist : Fucker != null && Fucker.canContain

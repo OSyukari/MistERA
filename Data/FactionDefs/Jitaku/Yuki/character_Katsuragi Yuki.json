@@ -37,7 +37,6 @@
         "size_A": "trait_Size_A_1",
         "Height": 157,
         "Weight": 50,
-        "HWMultiplier": 0.32,
         "traits": [
             "trait_MemoryCapacity_high",
             "trait_MemoryRetention_high",

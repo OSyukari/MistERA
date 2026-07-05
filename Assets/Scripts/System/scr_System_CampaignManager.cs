@@ -846,7 +846,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
                 if (!ignoreConflict && currentP.Duration > 0 && UtilityEX.DetectConflict(currentP, p))
                 {
-                    Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + $"]{currentP.PackagePriority} [" + p.COMVariantID + $"]{p.PackagePriority} avoidConflict?[" + (avoidConflict) + "]");
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + $"]{currentP.PackagePriority} [" + p.COMVariantID + $"]{p.PackagePriority} avoidConflict?[" + (avoidConflict) + "]");
                     if (avoidConflict)
                     {
                         if (scr_System_CentralControl.current.LogPrefs.DLog_APConflict) Debug.Log("CM registerAP detect conflict former[" + currentP.COMVariantID + "] [" + p.COMVariantID + "] avoidConflict?[" + (avoidConflict) + "], skipping");
@@ -1368,6 +1368,22 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         Index_JobReferenceID.Remove(j.RefID);
         specialUpdateJobs.Remove(j.RefID);
+        int jj = 0;
+        foreach(var kvp in registeredPackagesByRoom)
+        {
+            var list = kvp.Value;
+            for(int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].job == j)
+                {
+                    jj++;
+                    list.RemoveAt(i);
+                }
+            }
+        }
+#if UNITY_EDITOR
+        Debug.Log($"Job {j.RefID} purged, removed AP {jj}");
+#endif
     }
     public int Register(Job j, int forceRefID = -1)
     {
@@ -2502,7 +2518,17 @@ public class scr_System_CampaignManager : MonoBehaviour
         menu_Trade trade = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_FactionExchange.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<menu_Trade>();
         trade.InitializeWithArgument(fa, fb, allowChara, allowHostile, allowKill, allowTransfer, rescueEventID);
     }
+
+    public scr_Menu_RetailTrade prefab_RetailTrade;
+    public void StartRetailExchange(Manageable fa, Manageable fb)
+    {
+        //Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, source, forcePlayerInstance);
+        scr_Menu_RetailTrade trade = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_RetailTrade.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<scr_Menu_RetailTrade>();
+        trade.InitializeWithArgument(fa, fb, null);
+    }
 }
+
+
 
 public static class WorldManager
 {
@@ -2525,9 +2551,16 @@ public static class WorldManager
         return i;
     }
 
-    public static Item_Instance_Cum Instantiate(Character_Trainable owner, string nameOverwrite)
+    public static Item_Instance_Cum Instantiate(Character_Trainable owner, string nameOverwrite = "")
     {
         Item_Instance_Cum i = new Item_Instance_Cum(owner, nameOverwrite);
+        scr_System_CampaignManager.current.Register(i);
+        return i;
+    }
+
+    public static Item_Instance_Cum Instantiate (string raceid, string baseid, string templateid, string nameOverwrite = "")
+    {
+        Item_Instance_Cum i = new Item_Instance_Cum(raceid, baseid, templateid, nameOverwrite);
         scr_System_CampaignManager.current.Register(i);
         return i;
     }

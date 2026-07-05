@@ -77,7 +77,8 @@
                 "displayName":"frontdesk",
                 "recipe":[],
                 "furnitureSize":2,
-                "givesJob": [ { "comID":["jp_convenience_store_frontDesk"] } ]
+                "givesJob": [ { "comID":["jp_convenience_store_frontDesk"] },
+                                { "comTags":["furniture","retailTrade"] } ]
             },
             {
                 "ID":"furniture_marker_jp_convenience_store_storageCleaning",

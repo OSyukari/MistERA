@@ -87,6 +87,7 @@
         "stat_PSY": 15,
         "stat_WIL": 15,
         "Height":163,
+        "Weight":64,
         "personalityID": "personality_default",
         "sensitivity_B": "trait_Sensitivity_B_default",
         "sensitivity_M": "trait_Sensitivity_M_default",
@@ -121,7 +122,9 @@
             { "ID":"clothing_inner_shoes" },
             { "ID":"clothing_inner_hairpin" },
             { "ID":"clothing_skin_earring" }
-        ]
+        ],
+        "CharacterCard":"<Avantgarde_Amelie>\n[Character Profile: Amelie]\n\n-Physical Attributes\nHeight: 163cm\nBust: D cup (full, round)\nGender: Female\nRace: Human (Magician)\n\n-Appearance\nHair: Short blonde bob, cut just above the shoulders. A small hairpin on the right side.\nEyes: Clear blue, warm and expressive.\nFace: Soft, youthful features with slightly rosy cheeks. Appears late teens to early twenties.\nBody: Voluptuous hourglass figure. Large, round breasts with a defined waist, wide curvy hips, and full thighs. Overall a lush, soft feminine build — notably curvy without being heavy.\n\n-Clothing (default)\nSchool uniform: white shirt with red necktie, dark blazer, pleated skirt, ankle socks, black shoes.\nCasual: Dark turtleneck sweater with blue frilled midi-skirt.\nUnderwear: bra and panties.\nAccessories: hair clip, small earrings.\n\n-Alternative Costume\nVampire-themed outfit: dark cape with purple lining, pink garter belt and fishnet stockings, choker with pendant, black heels. Worn for special occasions.\n\n-Personality\nConfident and composed, with a warm sociable demeanor. High magical aptitude and strong mental resilience. Playful beneath her poised exterior, especially around close friends.\n\n-Background\nA traveler who crossed through one of the Gates into this world. Possesses innate magical ability that surfaced early. Currently studying alongside her close friends Elena, Hiyori, and Olivia.\n</Avantgarde_Amelie>",
+        "Skills": null
     },
     "characterComment":"from Avantgarde",
     "firstName": "Campaign2_Chara_Amelie_FirstName",

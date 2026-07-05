@@ -1328,7 +1328,7 @@ public static class UtilityEX
                     c.FactionManager.SetTempHomeFaction(addTofaction.ID, Manageable_GuestStatus.Prisoner);
                 }
                 break;
-            case "advwomb":
+            case "advReproCycle":
                 if (parsed.Count() >= 4)
                 {
                     if (int.TryParse(parsed[1], out var adv_year) && int.TryParse(parsed[2], out var adv_month) && int.TryParse(parsed[3], out var adv_day))
@@ -1348,6 +1348,91 @@ public static class UtilityEX
                         target.TickMenstruation_Debug(adv_year, adv_month, adv_day);
                     }
                 }
+                break;
+            case "wombAddSpermByRef":
+                if (parsed.Count() >= 4)
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("error target null");
+                        break;
+                    }
+                    if (target.wombs.Count < 1)
+                    {
+                        Debug.LogError("error target has no womb");
+                        break;
+                    }
+                    if (int.TryParse(parsed[1], out var amount) && int.TryParse(parsed[2], out var index) && int.TryParse(parsed[3], out var targetRef))
+                    {
+                        if (index < 0 || index >= target.wombs.Count) index = Utility.Dice(1, target.wombs.Count) - 1;
+                        var targetwb = target.wombs[index];
+                        var father = scr_System_CampaignManager.current.FindInstanceByID(targetRef);
+                        if (father != null)
+                        {
+                            var pp = father.Body.GetRandomInternalWithTag("penis");
+                            if (pp != null)
+                            {
+                                var cum = pp.Cum(amount);
+                                if (cum != null) targetwb.source.Ingest(cum, null, true);
+                                else Debug.LogError($"error {pp.DisplayNameFull} cannot cum");
+                            }
+                            else Debug.LogError($"error {father.FirstName} cannot cum");
+                        }
+                        else Debug.LogError($"error cannot find father ref {targetRef}");
+                    }
+                    else Debug.LogError("parsing argument");
+                }
+                break;
+            case "wombAddSpermByID":
+                if (parsed.Count() >= 6)
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("error target null");
+                        break;
+                    }
+                    if (target.wombs.Count < 1)
+                    {
+                        Debug.LogError("error target has no womb");
+                        break;
+                    }
+                    if (int.TryParse(parsed[1], out var amount) && int.TryParse(parsed[2], out var index))
+                    {
+                        if (index < 0 || index >= target.wombs.Count) index = Utility.Dice(1, target.wombs.Count) - 1;
+                        var targetwb = target.wombs[index];
+                        Item_Instance_Cum cum = WorldManager.Instantiate(parsed[3], parsed[4], parsed[5]);
+                        cum.CumAmount = amount;
+                        targetwb.source.Ingest(cum, null, true);
+                    }
+                    else
+                    {
+                        Debug.LogError("parsing argument");
+                        break;
+                    }
+                }
+                break;
+            case "ovulate":
+                if (parsed.Count() >= 1)
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("error target null");
+                        break;
+                    }
+                    if (target.wombs.Count < 1)
+                    {
+                        Debug.LogError("error target has no womb");
+                        break;
+                    }
+                    foreach(var womb in target.wombs)
+                    {
+                        womb.ovulation();
+                    }
+                }
+
                 break;
         }
 

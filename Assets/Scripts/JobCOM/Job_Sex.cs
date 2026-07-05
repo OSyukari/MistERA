@@ -158,7 +158,7 @@ public class Job_Sex_Group : Job
     }
     protected override List<COM> UpdateAllUsableCOMs()
     {
-        return scr_System_Serializer.current.index_COM.list.FindAll(x => x.comTags.Contains("sex"));
+        return scr_System_Serializer.current.index_COM.list.FindAll(x => x.comTags.Contains("sex") && !x.isHiddenParent);
     }
 
     [JsonProperty] protected int parentRoomID = -1;
@@ -302,7 +302,10 @@ public class Job_Sex_Group : Job
         }
         else
         {
-            return "error with chararef[" + charaRef + "] not present in job sex";
+#if UNITY_EDITOR
+            Debug.LogError($"error {scr_System_CampaignManager.current.FindInstanceByID(charaRef).FirstName} actorcount {this.actorRefID.Count} still registered? {scr_System_CampaignManager.current.FindJobInstanceByID(this.RefID) == this}");
+#endif
+            return "error with chararef[" + charaRef + "] not present in job sex, current actor in job ";
         }
     }
 

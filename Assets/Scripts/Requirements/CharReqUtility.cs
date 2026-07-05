@@ -155,10 +155,6 @@ public static class CharaReqUtility
                                 .Replace("$name$", c.FirstName));
             return false;
         }
-        if (q.requireMale)
-        {
-            Debug.Log($"{c.FirstName} ismale? {c.isMale}");
-        }
         if (q.requireMale && !c.isMale)
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMale")

@@ -696,12 +696,14 @@ public partial class EvaluationPackage : I_ResultStorage
     /// Result check success or failure will change initial attitude
     /// </summary>
     protected void RollResult(MessageCollect m = null)
-    {       
+    {
         int responseStep = (int)Memory_Response.None;
         if (response >= Memory_Response.Success) responseStep = response - Memory_Response.Failure;
         else if (response >= Memory_Response.CriticalFailure) responseStep = response - Memory_Response.Success;
         // increase initial attitude by steps in success
-        if (attitude_doer != Memory_Attitude.None) attitude_doer = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + responseStep));
+        // For sex: on failure the doer (active partner) still gets full pleasure — only receiver takes the penalty
+        bool skipDoerPenalty = Package is ActionPackage_Sex && responseStep < 0;
+        if (!skipDoerPenalty && attitude_doer != Memory_Attitude.None) attitude_doer = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_doer + responseStep));
         if (attitude_receiver != Memory_Attitude.None) attitude_receiver = (Memory_Attitude)Math.Max((int)Memory_Attitude.Hate, Math.Min((int)Memory_Attitude.Love, (int)attitude_receiver + responseStep));
     }
 
@@ -1726,6 +1728,7 @@ public partial class EvaluationPackage : I_ResultStorage
         body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure, ref pain);
 
         if (sourceBody != null) body.LogLastInteractedRef(sourceBody);
+        else if (scr_System_CentralControl.current.DLOG_NSFW.log_Cum && body.canFuck) Debug.Log($"[EP.Stimulate] {body.Owner?.FirstName}.{body.baseID} stimulated with sourceBody=NULL (no LogLastInteractedRef), source={source?.FirstName}");
 
         //pleasure -= (pain + expansion);
         var newTags = new List<string>(ownerTags);

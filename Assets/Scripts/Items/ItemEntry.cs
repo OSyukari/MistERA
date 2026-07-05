@@ -30,6 +30,8 @@ public class ItemEntry
 
     string _cache = "";
 
+    public int innerStock = 0;
+
     Item_Base _base = null;
     [JsonIgnore]
     public Item_Base BaseItem

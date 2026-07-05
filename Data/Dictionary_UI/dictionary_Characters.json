@@ -62,6 +62,7 @@
                 "bodyPart_base_feet": "足",
                 "bodyPart_internal_mouth": "嘴",
                 "bodyPart_internal_stomach": "胃",
+                "bodyPart_Fulldisplayname": "$name$的$part$",
 
                 "equip_slot_None": "-",
                 "equip_slot_Hand": "手",

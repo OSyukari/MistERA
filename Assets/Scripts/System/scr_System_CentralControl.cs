@@ -46,6 +46,13 @@ public class DebugLogSettings
     public bool DLog_Attitude = false;
 }
 
+
+[System.Serializable]
+public class DebugLogSettings_NSFW
+{
+    public bool log_Cum = false;
+}
+
 public class scr_System_CentralControl : MonoBehaviour
 {
 
@@ -57,6 +64,11 @@ public class scr_System_CentralControl : MonoBehaviour
     public static scr_System_CentralControl current;
     [SerializeField] protected ContentSettings _content = null;
     [SerializeField] protected DebugLogSettings _logPrefs = null;
+
+
+    [JsonIgnore]
+    [SerializeField]
+    public DebugLogSettings_NSFW DLOG_NSFW = new DebugLogSettings_NSFW();
 
     LLM_Setting _llmSetting = null;
     public LLM_Setting LLMSetting

@@ -1,5 +1,5 @@
 {
-    "baseID": "Campaign1_86_Lerche",
+    "baseID": "Campaign1_86_Sirin_Template",
     "Portrait":{
         "portraitPriorityList":[
             {
@@ -21,9 +21,9 @@
     "Template": {
       "Appearance": "Female",
       "BodyType": "Default",
-      "stat_STR": 14,
-      "stat_CON": 18,
-      "stat_PSY": 12,
+      "stat_STR": 10,
+      "stat_CON": 12,
+      "stat_PSY": 14,
       "stat_WIL": 12,
       "personalityID": "personality_default",
       "sensitivity_B": "trait_Sensitivity_B_default",
@@ -35,7 +35,8 @@
       "size_P": "trait_Size_P_none",
       "size_V": "trait_Size_V_1",
       "size_A": "trait_Size_A_1",
-      "Height":145,
+      "Height":160,
+      "Weight":46,
       "initialRelationship":[
             {
                 "baseID":"PLAYER",
@@ -56,7 +57,7 @@
         ],
       "Skills": null
     },
-    "firstName": "Campaign1_86_Lerche_firstname",
+    "firstName": "",
     "middleName": "",
     "lastName": "",
     "title":"Sirin",

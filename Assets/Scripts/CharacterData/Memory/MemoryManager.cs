@@ -95,10 +95,15 @@ public class MemoryManager
             return _Entries;
         } 
     }
+
+    [JsonProperty] protected long lastRef = long.MinValue;
+
     [JsonIgnore] public Memory_Entry Last { get {
 
-            if (Entries == null || Entries.Count < 1) return null;
-            return entries.Last().Value; } }
+            if (entries == null || entries.Count < 1) return null;
+            if (lastRef != long.MinValue && entries.TryGetValue(lastRef, out var value)) return value;
+            lastRef = entries.Last().Key;
+            return entries[lastRef]; } }
 
     private int ownerRef = -1;
     private Character_Trainable owner = null;
@@ -482,6 +487,7 @@ public class MemoryManager
         if (this.Last == null || !this.Last.TryMergeWith(entry))
         {
             this.entries.Add(entry.EndTime.Ticks, entry);
+            if (lastRef < entry.EndTime.Ticks) lastRef = entry.EndTime.Ticks;
             if (room.isNameDynamic) entry.roomNameOverride = room.DisplayName;
             ClearCache();
             return entry;
@@ -575,6 +581,7 @@ public class MemoryManager
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Memory) Debug.Log("memory new entry");
             this.entries.Add(entry.EndTime.Ticks, entry);
+            if (lastRef < entry.EndTime.Ticks) lastRef = entry.EndTime.Ticks;
             ClearCache();
             return entry;
         }

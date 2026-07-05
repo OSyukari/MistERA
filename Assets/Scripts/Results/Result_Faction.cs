@@ -7,6 +7,36 @@ public class Result_Faction_Home : Result_Faction
 
 }
 
+public class Result_FactionWide
+{
+    public Entry_Condition entry_conditions = null;
+    public Entry_Result entry_results = null;
+
+    public enum targetScope
+    {
+        none,
+        doer_home,
+        jobOwner
+    }
+
+    public class Entry_Condition
+    {
+
+    }
+
+
+    public class Entry_Result
+    {
+        public class InitiateTrade
+        {
+            public targetScope from = targetScope.none;
+            public targetScope to = targetScope.none;
+        }
+
+        public InitiateTrade initiateRetailTrade = null;
+        public InitiateTrade initiateTake = null;
+    }
+}
 
 public class Result_Faction_JobOwner : Result_Faction
 {   // this should be used for work factions (cuz they provide job so job necessarily have them as factionowner)
@@ -32,7 +62,6 @@ public class Result_Faction
 
     public class Entry_Result
     {
-
         public Result_TransferItem transferItem = null;
 
         public Result_Event startEvent = null;

@@ -1,0 +1,82 @@
+{
+    "Character_Bases":
+    {
+        "generators":[
+            {
+                "ID":"creature_animal_horse",
+                "title":"creature_animal_horse",
+                "targetBaseIDs":["creature_animal_horse_template"],
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "heightVariation": 9,
+                "weightVariation": 60,
+                "Appearance":"Male"
+            },
+            {
+                "ID":"creature_animal_pig",
+                "title":"creature_animal_pig",
+                "targetBaseIDs":["creature_animal_pig_template"],
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "heightVariation": 9,
+                "weightVariation": 20,
+                "Appearance":"Male"
+            },
+            {
+                "ID":"creature_animal_warg",
+                "title":"creature_animal_warg",
+                "targetBaseIDs":["creature_animal_warg_template"],
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "heightVariation": 10,
+                "weightVariation": 30,
+                "Appearance":"Male"
+            },
+            {
+                "ID":"creature_animal_bear",
+                "title":"creature_animal_cavebear",
+                "targetBaseIDs":["creature_animal_bear_template"],
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "heightVariation": 11,
+                "weightVariation": 75,
+                "Appearance":"Male"
+            },
+            {
+                "ID":"creature_animal_cavebear",
+                "title":"creature_animal_cavebear",
+                "targetBaseIDs":["creature_animal_bear_template"],
+                "str_base":28, "con_base":29, "psy_base":6, "wil_base":16,
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "setHeight":150, "heightVariation": 12,
+                "setWeight":800, "weightVariation": 160,
+                "Appearance":"Male"
+            }
+        ]
+    },
+        "Encounters":{
+        "list":[
+            { "ID":"bear_encounter_2", "frontline":[   "creature_animal_cavebear"] }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries": {
+            "zh-cn": {
+                "creature_animal_bear": "熊",
+                "creature_animal_cavebear": "穴熊",
+                "bear_encounter_1": "熊",
+                "bear_encounter_2": "穴熊",
+                "creature_animal_pig": "猪",
+                "creature_animal_horse": "马",
+                "creature_animal_warg": "座狼"
+            },
+            "en-us": {
+                "creature_animal_bear": "Bear",
+                "creature_animal_cavebear": "Cave Bear",
+                "bear_encounter_1": "Bear Encounter 1",
+                "bear_encounter_2": "Bear Encounter 2",
+                "creature_animal_pig": "Pig",
+                "creature_animal_horse": "Horse",
+                "creature_animal_warg": "Warg"
+            }
+        }
+    }
+    
+}

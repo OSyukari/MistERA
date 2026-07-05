@@ -20,14 +20,14 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
         foreach (var entry in sourceFaction.salesInventory.Inventory)
         {
             // TODO INSTANTIATE BUTTON
-            MakeRecipeButton(entry, sourceFaction, sourceFaction);
+            MakeRecipeButton(entry.Value, sourceFaction, sourceFaction);
         }
 
         foreach(var connect in sourceFaction.ConnectedFactions)
         {
             foreach(var entry in connect.salesInventory.Inventory)
             {
-                MakeRecipeButton(entry, sourceFaction, connect);
+                MakeRecipeButton(entry.Value, sourceFaction, connect);
             }
         }
         ValidateAll();

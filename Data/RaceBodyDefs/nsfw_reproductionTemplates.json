@@ -1,0 +1,389 @@
+{
+    "_doc": {
+        "type values": [
+            "spontaneous",
+            "induced"
+        ],
+        "menopause": "disabled per-character by setting noAging=true. The threshold below is when currentPower triggers it.",
+        "fertility": "average viable eggs released per ovulation event (e.g. 1.0 = usually 1 egg, 5.5 = usually 5-6)",
+        "fertilizationChance": "base per-egg probability of conception given normal sperm (3.0 units). Scaled by Fertilize(cum).",
+        "phasedays_note": "menstrualDays + follicularDays + ovulationDays must be <= cycleThreshold. Remainder = final rest phase (luteal / diestrus+anestrus / interestrus)."
+    },
+    "humanoid_Races": {
+        "foetusTemplates":
+        [
+{
+    "parentRaceID": "humanRace_human",
+    "racialTemplate":{
+        "offspring_templates":[
+
+        ],
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Default00.png",
+            "RJW - Womb/preg_human/Fetus_Default01.png",
+            "RJW - Womb/preg_human/Fetus_Default02.png",
+            "RJW - Womb/preg_human/Fetus_Default03.png",
+            "RJW - Womb/preg_human/Fetus_Default04.png",
+            "RJW - Womb/preg_human/Fetus_Default05.png"
+        ],
+        "images_multiplet":[
+            "RJW - Womb/preg_human/Fetus_Early00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default01_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default02_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default03_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default04_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default05_Multiplet_2.png"
+        ]
+    }
+},
+{
+    "parentRaceID": "creature_beastRace_animal",
+    "racialTemplate":{
+        "offspring_templates":[
+
+        ],
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Bovine00.png",
+            "RJW - Womb/preg_human/Fetus_Bovine01.png",
+            "RJW - Womb/preg_human/Fetus_Bovine02.png",
+            "RJW - Womb/preg_human/Fetus_Bovine03.png",
+            "RJW - Womb/preg_human/Fetus_Bovine04.png",
+            "RJW - Womb/preg_human/Fetus_Bovine05.png"
+        ]
+    },
+    "foetusByBaseID":
+    {
+        "creature_animal_horse_template":
+        {
+            "offspring_templates":[
+                "creature_animal_horse"
+            ],
+            "images":[
+                "RJW - Womb/preg_human/Fetus_Early00.png",
+                "RJW - Womb/preg_human/Fetus_S_Bovine00.png",
+                "RJW - Womb/preg_human/Fetus_S_Bovine01.png",
+                "RJW - Womb/preg_human/Fetus_S_Bovine02.png",
+                "RJW - Womb/preg_human/Fetus_S_Bovine03.png",
+                "RJW - Womb/preg_human/Fetus_S_Bovine04.png",
+                "RJW - Womb/preg_human/Fetus_S_Bovine05.png"
+            ]
+        },
+        "creature_animal_pig_template":
+        {
+            "offspring_templates":[
+                "creature_animal_pig"
+            ],
+            "images":[
+                "RJW - Womb/preg_human/Fetus_Early00.png",
+                "RJW - Womb/preg_human/Fetus_Pig00.png",
+                "RJW - Womb/preg_human/Fetus_Pig01.png",
+                "RJW - Womb/preg_human/Fetus_Pig02.png",
+                "RJW - Womb/preg_human/Fetus_Pig03.png",
+                "RJW - Womb/preg_human/Fetus_Pig04.png",
+                "RJW - Womb/preg_human/Fetus_Pig05.png"
+            ]
+        },
+        "creature_animal_bear_template":
+        {
+            "offspring_templates":[
+                "creature_animal_bear",
+                "creature_animal_cavebear"
+            ]
+        }
+    }
+    
+}
+        ],
+        "reproductionTemplates": [
+{
+    "baseID": "humanRace_human",
+    "wombType": "spontaneous",
+    "cycleType":"Menstruation",
+    "_lifecycle": "puberty 12yr | menopause ~50yr | cycle 28d",
+    "_phases": "menstrual 5d | follicular 7d | ovulation 2d | luteal 14d = 28d",
+    "pubertyThreshold": 4380,
+    "pubertyVariation": 0.10,
+    "cycleThreshold": 28,
+    "cycleVariation": 0.10,
+    "menstrualDays": 5,
+    "follicularDays": 7,
+    "ovulationDays": 2,
+    "ovulationPowerAverage": 1500000,
+    "ovulationPowerVariation": 300000,
+    "ovulationQuantityAverage": 730,
+    "ovulationQuantityVariation": 200,
+    "fertility": 1.0,
+    "fertilizationChance": 0.25,
+    "ovumLifespanMinutes": 1440
+},
+{
+    "baseID": "humanRace_elf",
+    "wombType": "spontaneous",
+    "cycleType":"Menstruation",
+    "_lifecycle": "puberty 120yr | menopause ~500yr | cycle 280d",
+    "_phases": "menstrual 50d | follicular 70d | ovulation 20d | luteal 140d = 280d",
+    "_notes": "fertility 0.2 = only 20% chance of a viable egg per ovulation. fertilizationChance 0.15 stacks with that, making conception rare by design.",
+    "pubertyThreshold": 43800,
+    "pubertyVariation": 0.10,
+    "cycleThreshold": 280,
+    "cycleVariation": 0.10,
+    "ageMultiplier":10,
+    "menstrualDays": 50,
+    "follicularDays": 70,
+    "ovulationDays": 20,
+    "ovulationPowerAverage": 1500000,
+    "ovulationPowerVariation": 300000,
+    "ovulationQuantityAverage": 73,
+    "ovulationQuantityVariation": 20,
+    "fertility": 0.20,
+    "fertilizationChance": 0.15,
+    "ovumLifespanMinutes": 14400
+},
+{
+    "baseID": "humanRace_angel",
+    "wombType": "spontaneous",
+    "cycleType":"Menstruation",
+    "_lifecycle": "puberty ~12yr | menopause ~50yr | cycle 35d",
+    "_phases": "menstrual 5d | follicular 9d | ovulation 2d | luteal 19d = 35d",
+    "_notes": "Celestial humanoids with human-equivalent lifespan (ageMultiplier 1). Cycle mirrors human Menstruation but is slightly longer and with modestly reduced fertility — divine grace makes conception a meaningful event rather than routine.",
+    "pubertyThreshold": 4380,
+    "pubertyVariation": 0.10,
+    "cycleThreshold": 35,
+    "cycleVariation": 0.10,
+    "ageMultiplier": 1,
+    "menstrualDays": 5,
+    "follicularDays": 9,
+    "ovulationDays": 2,
+    "ovulationPowerAverage": 1500000,
+    "ovulationPowerVariation": 300000,
+    "ovulationQuantityAverage": 580,
+    "ovulationQuantityVariation": 150,
+    "fertility": 0.85,
+    "fertilizationChance": 0.22,
+    "ovumLifespanMinutes": 1440
+},
+{
+    "baseID": "humanRace_demon",
+    "wombType": "spontaneous",
+    "cycleType":"Estrus",
+    "_lifecycle": "puberty ~6yr | menopause ~25yr | cycle 26d",
+    "_phases": "menstrual 4d | follicular 6d | ovulation 3d | luteal 13d = 26d",
+    "_notes": "Supernatural humanoids with half human lifespan (ageMultiplier 0.5) — they burn bright and fast. Shorter cycle and elevated fertility reflect their impulsive, lustful nature (WIL-1). Higher cycleVariation models their temperamental biology.",
+    "pubertyThreshold": 2190,
+    "pubertyVariation": 0.12,
+    "cycleThreshold": 26,
+    "cycleVariation": 0.15,
+    "ageMultiplier": 0.5,
+    "menstrualDays": 4,
+    "follicularDays": 6,
+    "ovulationDays": 3,
+    "ovulationPowerAverage": 1700000,
+    "ovulationPowerVariation": 400000,
+    "ovulationQuantityAverage": 850,
+    "ovulationQuantityVariation": 200,
+    "fertility": 1.2,
+    "fertilizationChance": 0.32,
+    "ovumLifespanMinutes": 1440
+},
+{
+    "baseID": "humanRace_dragon",
+    "wombType": "oviparous",
+    "cycleType": "Menstruation",
+    "_PLACEHOLDER_WARNING": "wombType 'oviparous_seasonal' does not exist in code yet. cycleType 'Menstruation' is reused — DetermineCyclePhase handles follicularDays:0 correctly (PreOvulation branch becomes dead code, jumping straight from Menstrual to Ovulation). Use racial dictionary overrides (e.g. 'humanRace_dragon_MenstruationStatus_Ovulation') to rename stages in UI.",
+    "_lifecycle": "puberty ~240yr | fertile lifespan ~1000yr | cycle 365d (annual breeding season)",
+    "_phases": "preBreeding 14d (Menstrual) | breedingSeason 21d (Ovulation) | quiescent 330d (Rest) = 365d",
+    "_impl_notes_eggs": "If fertilized during Ovulation stage: eggs undergo internal calcification over ~60d (womb state 'EggForming'). After calcification, womb transitions to 'ReadyToLay' and a LayEgg event fires. Eggs transfer to external incubation for ~60d before hatching. If Ovulation stage ends without fertilization, ova are reabsorbed silently and the cycle advances to Rest.",
+    "_impl_notes_states": "Replace the standard 'Pregnant' womb state with: 'EggForming' (internal calcification, ~60d) and 'ReadyToLay' (egg-laying imminent, triggers LayEgg event). UI strings and portrait conditions must be distinct from live-birth races.",
+    "_impl_notes_sperm": "Dragon ova are robust (ovumLifespanMinutes 10080 = 7d). Sperm lifespan should also be extended: implement a spermLifespanMultiplier field (suggested value 5.0) so that pre-season insemination can still fertilize eggs at the start of breedingSeason.",
+    "_impl_notes_clutch": "fertility 2.0 targets a clutch of ~2 eggs per season. fertilizationChance 0.85 is the per-egg probability given adequate sperm (3.0 units). Natural variation in ovulationQuantity and sperm power will produce clutches of 1-3.",
+    "_impl_notes_foetus": "A foetusTemplate for humanRace_dragon is not defined. Dragon offspring images (egg stages, not fetus stages) need to be created and registered under parentRaceID 'humanRace_dragon' in the foetusTemplates array.",
+    "pubertyThreshold": 87600,
+    "pubertyVariation": 0.10,
+    "cycleThreshold": 365,
+    "cycleVariation": 0.05,
+    "ageMultiplier": 20,
+    "menstrualDays": 14,
+    "follicularDays": 0,
+    "ovulationDays": 21,
+    "ovulationPowerAverage": 500000,
+    "ovulationPowerVariation": 100000,
+    "ovulationQuantityAverage": 2000,
+    "ovulationQuantityVariation": 500,
+    "fertility": 2.0,
+    "fertilizationChance": 0.85,
+    "ovumLifespanMinutes": 10080
+},
+{
+    "baseID": "humanRace_beastkin_cat",
+    "wombType": "induced",
+    "cycleType":"Estrus",
+    "_lifecycle": "puberty 4yr | menopause ~45yr | cycle 24d",
+    "_phases": "proestrus 2d (menstrualDays) | estrus 7d (ovulationDays) | interestrus 15d (remainder) = 24d",
+    "_notes": "induced ovulator — ovulation only fires on NotifyClimax (threshold 0.7) or sustained arousal during estrus.",
+    "pubertyThreshold": 1460,
+    "pubertyVariation": 0.15,
+    "cycleThreshold": 24,
+    "cycleVariation": 0.20,
+    "menstrualDays": 2,
+    "follicularDays": 0,
+    "ageMultiplier":0.9,
+    "ovulationDays": 7,
+    "ovulationPowerAverage": 800000,
+    "ovulationPowerVariation": 150000,
+    "ovulationQuantityAverage": 650,
+    "ovulationQuantityVariation": 150,
+    "fertility": 3.5,
+    "fertilizationChance": 0.70,
+    "ovumLifespanMinutes": 1440
+},
+{
+    "baseID": "doggirl",
+    "wombType": "spontaneous",
+    "cycleType":"Estrus",
+    "_lifecycle": "puberty 3yr | menopause ~40yr | cycle 210d (~2 heats/yr)",
+    "_phases": "proestrus 9d (menstrualDays) | estrus 9d (ovulationDays) | rest 192d (remainder) = 210d",
+    "_notes": "spontaneous ovulation on entering estrus. Rest phase collapses diestrus (65d) + anestrus (127d) = 192d into one unnamed block.",
+    "pubertyThreshold": 1095,
+    "pubertyVariation": 0.15,
+    "cycleThreshold": 210,
+    "cycleVariation": 0.15,
+    "menstrualDays": 9,
+    "follicularDays": 0,
+    "ovulationDays": 9,
+    "ageMultiplier":0.8,
+    "ovulationPowerAverage": 340000,
+    "ovulationPowerVariation": 70000,
+    "ovulationQuantityAverage": 3000,
+    "ovulationQuantityVariation": 800,
+    "fertility": 5.5,
+    "fertilizationChance": 0.65,
+    "ovumLifespanMinutes": 4320
+},
+{
+    "baseID": "foxgirl",
+    "wombType": "spontaneous",
+    "cycleType":"Estrus",
+    "_lifecycle": "puberty 5yr | menopause ~35yr | cycle 365d (1 heat/yr)",
+    "_phases": "proestrus 10d (menstrualDays) | estrus 3d (ovulationDays) | rest 352d (remainder) = 365d",
+    "_notes": "estrus is only 3 days — fertile window is extremely narrow. Low cycleVariation (0.05) keeps the annual schedule tight. Rest phase collapses diestrus (52d) + anestrus (300d) = 352d.",
+    "pubertyThreshold": 1825,
+    "pubertyVariation": 0.10,
+    "cycleThreshold": 365,
+    "cycleVariation": 0.05,
+    "menstrualDays": 10,
+    "follicularDays": 0,
+    "ageMultiplier":0.7,
+    "ovulationDays": 3,
+    "ovulationPowerAverage": 161000,
+    "ovulationPowerVariation": 30000,
+    "ovulationQuantityAverage": 2000,
+    "ovulationQuantityVariation": 500,
+    "fertility": 4.5,
+    "fertilizationChance": 0.60,
+    "ovumLifespanMinutes": 2880
+},
+{
+    "baseID": "rabbitgirl",
+    "wombType": "induced",
+    "cycleType":"Estrus",
+    "_lifecycle": "puberty 2yr | menopause ~30yr | cycle 14d",
+    "_phases": "proestrus 1d (menstrualDays) | estrus 10d (ovulationDays) | interestrus 3d (remainder) = 14d",
+    "_notes": "induced ovulator like cat but climaxOvulationThreshold is 0.3 — almost any climax fires ovulation. Estrus dominates (10/14 days ≈ 71%), rabbitgirls are nearly always in heat.",
+    "pubertyThreshold": 730,
+    "pubertyVariation": 0.15,
+    "cycleThreshold": 14,
+    "cycleVariation": 0.15,
+    "menstrualDays": 1,
+    "follicularDays": 0,
+    "ovulationDays": 10,
+    "ageMultiplier":0.6,
+    "ovulationPowerAverage": 6250000,
+    "ovulationPowerVariation": 1000000,
+    "ovulationQuantityAverage": 5000,
+    "ovulationQuantityVariation": 1000,
+    "fertility": 6.0,
+    "fertilizationChance": 0.85,
+    "ovumLifespanMinutes": 720,
+    "climaxOvulationThreshold": 60
+}
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"MenstruationStatus_None":"<link=\"MenstruationStatus_None_tooltip\">绝经期</link>",
+"MenstruationStatus_None_tooltip":"月经周期永久停止的阶段。",
+
+"MenstruationStatus_PrePuberty":"<link=\"MenstruationStatus_PrePuberty_tooltip\">经期前</link>",
+"MenstruationStatus_PrePuberty_tooltip":"性成熟前的阶段，月经周期尚未开始。",
+
+"MenstruationStatus_Menstrual":"<link=\"MenstruationStatus_Menstrual_tooltip\">月经期</link>",
+"MenstruationStatus_Menstrual_tooltip":"月经周期的第一阶段，子宫内膜脱落并随经血排出体外。",
+
+"MenstruationStatus_PreOvulation":"<link=\"MenstruationStatus_PreOvulation_tooltip\">卵泡期</link>",
+"MenstruationStatus_PreOvulation_tooltip":"月经结束后、排卵前的阶段，卵泡逐渐发育成熟。",
+
+"MenstruationStatus_Ovulation":"<link=\"MenstruationStatus_Ovulation_tooltip\">排卵期</link>",
+"MenstruationStatus_Ovulation_tooltip":"成熟卵子从卵巢排出，进入输卵管等待受精的阶段。",
+
+"MenstruationStatus_Rest":"<link=\"MenstruationStatus_Rest_tooltip\">黄体期</link>",
+"MenstruationStatus_Rest_tooltip":"排卵后至下次月经来临前的阶段。若未受孕，月经将随之而来。",
+
+"MenstruationStatus_Pregnant":"<link=\"MenstruationStatus_Pregnant_tooltip\">妊娠中</link>",
+"MenstruationStatus_Pregnant_tooltip":"卵子已受精并着床，处于妊娠状态。",
+
+"EstrusStatus_None":"<link=\"EstrusStatus_None_tooltip\">绝情期</link>",
+"EstrusStatus_None_tooltip":"发情周期永久终止的阶段。",
+
+"EstrusStatus_PrePuberty":"<link=\"EstrusStatus_PrePuberty_tooltip\">性未成熟</link>",
+"EstrusStatus_PrePuberty_tooltip":"性成熟前的阶段，发情周期尚未开始。",
+
+"EstrusStatus_Proestrus":"<link=\"EstrusStatus_Proestrus_tooltip\">前情期</link>",
+"EstrusStatus_Proestrus_tooltip":"发情周期的准备阶段，位于发情期来临之前。",
+
+"EstrusStatus_Estrus":"<link=\"EstrusStatus_Estrus_tooltip\">发情期</link>",
+"EstrusStatus_Estrus_tooltip":"发情周期的核心阶段，卵子准备就绪可供受精。",
+
+"EstrusStatus_Interestrus":"<link=\"EstrusStatus_Interestrus_tooltip\">间情期</link>",
+"EstrusStatus_Interestrus_tooltip":"两次发情期之间的休止阶段，等待下一个发情周期的开始。",
+
+"EstrusStatus_Pregnant":"<link=\"EstrusStatus_Pregnant_tooltip\">妊娠中</link>",
+"EstrusStatus_Pregnant_tooltip":"已成功受孕，处于妊娠状态。",
+
+"humanRace_dragon_MenstruationStatus_Menstrual":"<link=\"humanRace_dragon_MenstruationStatus_Menstrual_tooltip\">繁殖前期</link>",
+"humanRace_dragon_MenstruationStatus_Menstrual_tooltip":"繁殖季节来临前的准备阶段，身体逐渐进入繁殖状态。",
+
+"humanRace_dragon_MenstruationStatus_Rest":"<link=\"humanRace_dragon_MenstruationStatus_Rest_tooltip\">休眠期</link>",
+"humanRace_dragon_MenstruationStatus_Rest_tooltip":"繁殖季结束后的漫长休止阶段，生殖系统进入静止状态。"
+
+            },
+            "en-us":
+            {
+
+"MenstruationStatus_None":"Menopause",
+"MenstruationStatus_PrePuberty":"Pre-Puberty",
+"MenstruationStatus_Menstrual":"Menstrual Phase",
+"MenstruationStatus_PreOvulation":"Follicular Phase",
+"MenstruationStatus_Ovulation":"Ovulation",
+"MenstruationStatus_Rest":"Luteal Phase",
+"MenstruationStatus_Pregnant":"Pregnant",
+
+"EstrusStatus_None":"Infertile",
+"EstrusStatus_PrePuberty":"Pre-Puberty",
+"EstrusStatus_Proestrus":"Proestrus",
+"EstrusStatus_Estrus":"In Heat",
+"EstrusStatus_Interestrus":"Interestrus",
+"EstrusStatus_Pregnant":"Pregnant",
+
+"humanRace_dragon_MenstruationStatus_Menstrual":"Pre-Breeding",
+"humanRace_dragon_MenstruationStatus_Rest":"Dormant"
+            }
+        }
+    }
+}

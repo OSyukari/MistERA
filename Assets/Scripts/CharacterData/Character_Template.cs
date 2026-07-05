@@ -44,7 +44,6 @@ public abstract class CharaTemplate
 
     public List<Skills> Skills = new List<Skills>();
     public int Height = 162;//cm
-    public double HWMultiplier = 0.43;
     public int Weight = 70; //kg
     public Humanoid_GenderAppearance Appearance = Humanoid_GenderAppearance.Female;
     public int stat_STR = 10, stat_CON = 10, stat_PSY = 10, stat_WIL = 10;

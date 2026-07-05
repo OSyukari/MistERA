@@ -1,6 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class initScript_Records : MonoBehaviour
 {
@@ -13,24 +13,12 @@ public class initScript_Records : MonoBehaviour
     public labelGrid unlabeled_derivedStats;
     public labelGrid unlabeled_status;
 
-    public scr_HoverableText text_cycles;
+    public scr_panel_wombdata prefab_panel_womb;
+    public scr_Panel_BodyDetail prefab_panel_internal;
 
     Dictionary<string, labelGrid> labeled = new Dictionary<string, labelGrid>();
 
-    public RectTransform GetStatusGrid(string l)
-    {
-        Debug.LogError("error status grid removed");
-        return null;
-        if (labeled.ContainsKey(l))
-        {
-            labeled[l].NotifyInsert();
-            return labeled[l].selfRect;
-        }
-
-        unlabeled_status.NotifyInsert();
-        return unlabeled_status.selfRect;
-    }
-
+    public RectTransform HealthTab_Contents, HealthTab_Pregnancy;
 
     public RectTransform GetSkillsGrid(List<string> label)
     {
@@ -63,6 +51,8 @@ public class initScript_Records : MonoBehaviour
         unlabeled_trait.NotifyInsert();
         return unlabeled_trait.selfRect;
     }
+
+    int currentCycleRemaining = -1;
     public void Initialize(Character_Trainable c)
     {
 
@@ -75,6 +65,43 @@ public class initScript_Records : MonoBehaviour
         unlabeled_trait.Clear();
         unlabeled_skills.Clear();
         unlabeled_derivedStats.Clear();
+
+        if (c.ReproTemplate != null && c.ReproCycle != null)
+        {
+            // cycle type
+            // 
+            cycleRect.gameObject.SetActive(true);
+
+            cycle_total.SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_total")
+                .Replace("$total$", $"{c.ReproTemplate.cycleThreshold}"));
+
+            var title_tooltips = new List<string>();
+            c.ReproCycle.GetReproTemplateTooltip(c, c.ReproTemplate, title_tooltips);
+            cycle_total.SetExternalTooltip(String.Join("\n", title_tooltips));
+
+            currentCycleRemaining = c.ReproCycle.CurrentCycleRemaining(c.ReproTemplate);
+            cycle_current.SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_current")
+                .Replace("$count$", currentCycleRemaining == -1 ? "-" : $"{currentCycleRemaining}"), false, currentCycleRemaining == -1 ? "charaDetail_panel_cycle_current_none" : "" );
+
+            var ovucount = c.ReproTemplate.ovulationQuantityAverage * c.ReproTemplate.fertility / c.ReproTemplate.ovulationQuantityAverage;
+
+            cycle_ovum.SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_ovumCount")
+                .Replace("$count$", $"{ovucount}"));
+
+            cycle_fertility.SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_ovumFertility")
+                .Replace("$fertility$", $"{c.ReproTemplate.fertilizationChance}"));
+        }
+        else
+        {
+            cycleRect.gameObject.SetActive(false);
+        }
+
+        // each cycle duration
+        // total cycle duration
+        // current cycle remaining time
+        // approx ovum fertility and count
     }
 
+    public RectTransform cycleRect;
+    public scr_HoverableText cycle_total, cycle_current, cycle_ovum, cycle_fertility;
 }

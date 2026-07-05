@@ -41,6 +41,8 @@
       "size_P": "trait_Size_P_average",
       "size_V": "trait_Size_V_none",
       "size_A": "trait_Size_A_none",
+      "Height":165,
+      "Weight":220,
       "Skills": null
     },
     "firstName": "nameless_guardian_type_f_name",

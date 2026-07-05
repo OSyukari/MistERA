@@ -52,7 +52,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
     [JsonIgnore] public int Count { get { return count - markTokenUsed; } }
     [JsonIgnore] public int InnerCount { get { return count; } }
 
-    public bool canStackWith(Item_Instance item)
+    public virtual bool canStackWith(Item_Instance item)
     {
         if (this.isToken != item.isToken) return false;
         if (this.Stackable != item.Stackable) return false;
@@ -117,7 +117,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
     /// print name and count according to item type
     /// </summary>
     /// <returns></returns>
-    public string Print()
+    public virtual string Print()
     {
         if (this._cache_printfull == "") this._cache_printfull = isCurrency ?
                           LocalizeDictionary.QueryThenParse("management_jobpost_payout_currency")
@@ -134,7 +134,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         } }
     [JsonIgnore] public bool isCurrency { get { return this.Tags.Contains("item_money"); } }
 
-    string _cache_printfull = "";
+    protected string _cache_printfull = "";
 
     public string nameOverwrite = "";
     [JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();

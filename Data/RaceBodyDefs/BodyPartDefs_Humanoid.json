@@ -86,7 +86,23 @@
                 "volumeRatio":0.3, "visibleExpansionRatio":2, "maxExpansionRatio":4,
 
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
-                "virginityLossTags":["internal", "external"]
+                "virginityLossTags":["internal", "external"],
+                
+                "images_expansion":[
+                    "SSE_iWant_SLWidget/apropos2/oral0.png",
+                    "SSE_iWant_SLWidget/apropos2/oral1.png",
+                    "SSE_iWant_SLWidget/apropos2/oral2.png",
+                    "SSE_iWant_SLWidget/apropos2/oral3.png"
+                ],
+
+                "images_volume":[
+                    "SSE_iWant_SLWidget/apropos2/oral0.png",
+                    "SSE_iWant_SLWidget/apropos2/oral4.png",
+                    "SSE_iWant_SLWidget/apropos2/oral5.png",
+                    "SSE_iWant_SLWidget/apropos2/oral6.png",
+                    "SSE_iWant_SLWidget/apropos2/oral7.png",
+                    "SSE_iWant_SLWidget/apropos2/oral8.png"
+                ]
             },
             {
                 "id": "stomach_humanoid_base",
@@ -102,7 +118,18 @@
                 "sortOrder":1,
 
                 "sizeRatio":0.055, 
-                "volumeRatio":8.4,  "visibleExpansionRatio":2, "maxExpansionRatio":4
+                "volumeRatio":8.4,  "visibleExpansionRatio":2, "maxExpansionRatio":4,
+                "images_volume":[
+                    "SSE_iWant_SLWidget/fhu/oral_cum0.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum1.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum2.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum3.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum4.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum5.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum6.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum7.png",
+                    "SSE_iWant_SLWidget/fhu/oral_cum8.png"
+                ]
 
             },
             {
@@ -173,7 +200,21 @@
                 "exposedKojoID":"Exposed_Vagina",
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
                 "_comment":"v is hardcoded to double its depth when aroused",
-                "virginityLossTags":["penetration"]
+                "virginityLossTags":["penetration"],
+                "images_expansion":[
+                    "SSE_iWant_SLWidget/apropos2/vag0.png",
+                    "SSE_iWant_SLWidget/apropos2/vag1.png",
+                    "SSE_iWant_SLWidget/apropos2/vag2.png",
+                    "SSE_iWant_SLWidget/apropos2/vag3.png"
+                ],
+                "images_volume":[
+                    "SSE_iWant_SLWidget/apropos2/vag0.png",
+                    "SSE_iWant_SLWidget/apropos2/vag4.png",
+                    "SSE_iWant_SLWidget/apropos2/vag5.png",
+                    "SSE_iWant_SLWidget/apropos2/vag6.png",
+                    "SSE_iWant_SLWidget/apropos2/vag7.png",
+                    "SSE_iWant_SLWidget/apropos2/vag8.png"
+                ]
             },
             {
                 "id": "womb_humanoid_base",
@@ -192,7 +233,18 @@
                 "sortOrder":6,
                 "firstExperienceDesc":"%%bodyPart_internal_virgin_silent%%",
                 "virginityLossTags":["penetration"],
-                "maxSensitivityStatString":"stats_derived_maxSensitivity_W"
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_W",
+                "images_volume":[
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum0.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum1.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum2.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum3.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum4.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum5.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum6.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum7.png",
+                    "SSE_iWant_SLWidget/fhu/vaginal_cum8.png"
+                ]
             },
             {
                 "id": "guts_humanoid_base",
@@ -204,7 +256,18 @@
 
                 "sizeRatio":0.095, 
                 "volumeRatio":22, "visibleExpansionRatio":1.3, "maxExpansionRatio":2,
-                "sortOrder":8
+                "sortOrder":8,
+                "images_volume":[
+                    "SSE_iWant_SLWidget/fhu/anal_cum0.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum1.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum2.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum3.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum4.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum5.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum6.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum7.png",
+                    "SSE_iWant_SLWidget/fhu/anal_cum8.png"
+                ]
             },
             {
                 "id": "anus_humanoid_base",
@@ -226,7 +289,21 @@
 
                 "sortOrder":9,
                 "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
-                "virginityLossTags":["penetration"]
+                "virginityLossTags":["penetration"],
+                "images_expansion":[
+                    "SSE_iWant_SLWidget/apropos2/ass0.png",
+                    "SSE_iWant_SLWidget/apropos2/ass1.png",
+                    "SSE_iWant_SLWidget/apropos2/ass2.png",
+                    "SSE_iWant_SLWidget/apropos2/ass3.png"
+                ],
+                "images_volume":[
+                    "SSE_iWant_SLWidget/apropos2/ass0.png",
+                    "SSE_iWant_SLWidget/apropos2/ass4.png",
+                    "SSE_iWant_SLWidget/apropos2/ass5.png",
+                    "SSE_iWant_SLWidget/apropos2/ass6.png",
+                    "SSE_iWant_SLWidget/apropos2/ass7.png",
+                    "SSE_iWant_SLWidget/apropos2/ass8.png"
+                ]
             }
         ]
     }

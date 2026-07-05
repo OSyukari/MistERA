@@ -64,7 +64,8 @@
       "size_P": "trait_Size_P_none",
       "size_V": "trait_Size_V_1",
       "size_A": "trait_Size_A_1",
-      "Height":153,
+      "Height":165,
+      "Weight":55,
 
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },

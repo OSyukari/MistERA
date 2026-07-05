@@ -29,6 +29,7 @@
         "stat_PSY": 6,
         "stat_WIL": 9,
         "Height":240,
+        "Weight":180,
         "sensitivity_B": "trait_Sensitivity_B_default",
         "sensitivity_M": "trait_Sensitivity_M_default",
         "sensitivity_C": "trait_Sensitivity_C_default",
