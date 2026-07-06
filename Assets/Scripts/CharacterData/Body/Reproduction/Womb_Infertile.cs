@@ -1,5 +1,4 @@
-﻿using Mono.Cecil;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,16 +30,6 @@ public class Womb_Infertile : BodyInternal_Womb
     {
         
 
-    }
-
-    [JsonIgnore]
-    public override bool isPregnant
-    {
-        get
-        {
-            if (source == null) return false;
-            return source.ContainsPregnancy;
-        }
     }
 
     public override int ovulation()

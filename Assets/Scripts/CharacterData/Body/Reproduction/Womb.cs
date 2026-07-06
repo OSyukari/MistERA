@@ -47,9 +47,7 @@ public class Ovum : Item_Instance
         fertilizationChance  = template.fertilizationChance;
         Owner = owner;
     }
-
-
-
+    
     [JsonIgnore]
     public Character_Trainable Owner { get
         {
@@ -77,9 +75,6 @@ public class Ovum : Item_Instance
         this.State = OvumState.Fertilized;
         this.father = fertilizer;
 
-    }
-    public void MakeFoetus()
-    {
         var masterlist = scr_System_Serializer.current.MasterList.humanoid_Races;
         List<string> validtemplates = new List<string>();
 
@@ -125,9 +120,64 @@ public class Ovum : Item_Instance
             foetus.MergeWith(motherf);
             foetus.offspring_templates = motherops;
         }
+
+        State = OvumState.Fertilized;
+        this.lifespan = 0;
+    }
+
+    [JsonIgnore]
+    public string Image
+    {
+        get
+        {
+            if (State == OvumState.Fertilized) 
+            {
+                var ratio = lifespan / foetus.duration_fertilized;
+                var index = Math.Clamp( ratio * ReproductionUtility.fertilizedStages.Length, 0, ReproductionUtility.fertilizedStages.Length - 1);
+                return ReproductionUtility.fertilizedStages[index];
+            }
+            if (State == OvumState.Implanted)
+            {
+                return ReproductionUtility.egg_implanted;
+            }
+            if (State > OvumState.Implanted)
+            {
+                var ratio = lifespan / (foetus.duration_first + foetus.duration_second + foetus.duration_third);
+                var index = Math.Clamp( ratio * foetus.images.Count, 0, foetus.images.Count - 1);
+                return foetus.images[index];
+            }
+            return "";
+        }
     }
 
     [JsonProperty] protected FoetusTemplates foetus = null;
+
+    public void HourTick()
+    {
+        if (State == OvumState.Default) 
+        {
+            lifespan -= 60;
+            if (lifespan <= 0) State = OvumState.Aborted;
+            return;
+        }
+        // advance ovum stage
+        if (State >= OvumState.Fertilized)
+        {
+            if (foetus == null) State = OvumState.Aborted;
+            else
+            {
+                foetus.Advance(this);
+            }
+        }
+
+    }
+
+    public bool isOlderThan(Ovum ov)
+    {
+        if (ov == null) return true;
+        if (this.State != ov.State) return this.State > ov.State;
+        return this.lifespan > ov.lifespan;
+    }
 
     public OvumState State = OvumState.Default;
     [JsonIgnore] public int FertilizedStage
@@ -150,13 +200,22 @@ public class Ovum : Item_Instance
             return 0;
         }
     }
-    public enum OvumState
-    {
-        Default,
-        Fertilized,
-        Implanted,
-        Foetus
-    }
+
+}
+
+public enum OvumState
+{
+    Default,
+    Aborted,
+    Fertilized,
+    // created item in womb
+    Implanted,
+    // 1st to 3rd trimester are here to distinguish phase and apply different debuff
+    First_trimester,    
+    Second_trimester,
+    Third_trimester,
+    // giving birth
+    Final
 }
 
 // hourly update
@@ -219,8 +278,8 @@ public abstract class BodyInternal_Womb
             
             foreach(var egg in eggs)
             {
-                if (egg.State == Ovum.OvumState.Implanted) hasImplanted = true;
-                else if (egg.State == Ovum.OvumState.Fertilized)
+                if (egg.State == OvumState.Implanted) hasImplanted = true;
+                else if (egg.State == OvumState.Fertilized)
                 {
                     hasFertilized = Math.Max(hasFertilized, egg.FertilizedStage);
                 }
@@ -299,8 +358,13 @@ public abstract class BodyInternal_Womb
     {
         get
         {
-            if (source == null) return false;
-            return source.ContainsPregnancy;
+            // do this convolute query cuz we want to catch externally injected pregnancy too
+            if (eggs.Count > 0)
+            {
+                foreach (var i in eggs) if (i.State >= OvumState.Implanted) return true;
+            }
+
+            return false;
         }
     }
 
@@ -377,6 +441,15 @@ public abstract class BodyInternal_Womb
             if (isPregnant)
             {
                 //
+                Ovum oldest = null;
+                foreach(var egg in eggs)
+                {
+                    if (oldest == null) oldest = egg;
+                    else if (egg.isOlderThan(oldest)) oldest = egg;
+                }
+
+                var image = oldest == null ? "" : oldest.Image;
+                if (image != "") images_cache.Add(image);
             }
             else
             {
@@ -483,10 +556,10 @@ public abstract class BodyInternal_Womb
             for (int i = eggs.Count - 1; i >= 0; i--)
             {
                 var egg = eggs[i];
-                if (egg.State != Ovum.OvumState.Default) continue;
-                egg.lifespan -= 60;
-                if (egg.lifespan <= 0) eggs.RemoveAt(i);
-                else valideggs.Add(egg);
+                egg.HourTick();
+
+                if (egg.State == OvumState.Aborted) eggs.RemoveAt(i);
+                else if (egg.State == OvumState.Default) valideggs.Add(egg);
             }
         }
 

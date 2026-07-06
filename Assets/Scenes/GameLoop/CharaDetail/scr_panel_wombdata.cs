@@ -1,10 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using TMPro;
-using unity.libwebp.Interop;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -70,10 +67,10 @@ public class scr_panel_wombdata : MonoBehaviour
             foreach (var i in womb.eggs)
             {
                 // if ovum, compute fertility, lifespan, current status
-                if (i.State == Ovum.OvumState.Default) ovum_ready += 1;
-                else if (i.State == Ovum.OvumState.Fertilized) ovum_fertilized += 1;
-                else if (i.State == Ovum.OvumState.Implanted) ovum_foetus += 1;
-                else if (i.State == Ovum.OvumState.Foetus) ovum_foetus += 1;
+                if (i.State == OvumState.Default) ovum_ready += 1;
+                else if (i.State == OvumState.Fertilized) ovum_fertilized += 1;
+                else if (i.State == OvumState.Implanted) ovum_foetus += 1;
+                else if (i.State > OvumState.Implanted) ovum_foetus += 1;
             }
 
 
@@ -103,7 +100,7 @@ public class scr_panel_wombdata : MonoBehaviour
                     string warning = "";
                     foreach(var egg in womb.eggs)
                     {
-                        if (egg.State != Ovum.OvumState.Default) continue;
+                        if (egg.State != OvumState.Default) continue;
                         totalfert = womb.CalcFertility(cum, out var warn);
                         if (warn != "") warning = warn;
                         break;

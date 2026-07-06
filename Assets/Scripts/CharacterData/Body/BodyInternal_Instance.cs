@@ -698,15 +698,6 @@ public class BodyInternal_Instance
             return false;
         } }
 
-    [JsonIgnore]
-    public bool ContainsPregnancy
-    {
-        get
-        {
-            if (this.Contains == null) return false;
-            return false;
-        }
-    }
     [JsonProperty] Dictionary<int, int> ContainedRefs_Delays = new Dictionary<int, int>();
     public float volume_capacity = 0;
     [JsonIgnore] public bool containsOverCapacity

@@ -31,6 +31,13 @@ public class FoetusTemplates
     public List<string> images = new List<string>();
     public List<string> images_multiplet = new List<string>();
 
+    public int duration_fertilized = 10;
+    public int duration_implanted = 10;
+    public int duration_first = 10;
+    public int duration_second = 10;
+    public int duration_third = 10;
+
+
     public void MergeWith(FoetusTemplates f)
     {
         foreach(var i in f.offspring_templates)
@@ -42,5 +49,70 @@ public class FoetusTemplates
         if (this.images_multiplet.Count < 1 && f.images_multiplet.Count > 0) this.images_multiplet = f.images_multiplet;
 
     }
+
+    /// <summary>
+    /// ovum lifespan at 0 ticking up (1/hour) until hatch
+    /// </summary>
+    /// <param name="ovum"></param>
+    public virtual void Advance(Ovum ovum)
+    {
+        var currstage = ovum.State;
+        ovum.lifespan += 1;
+        if (currstage == OvumState.Fertilized && ovum.lifespan >= duration_fertilized)
+        {
+            AdvStage_Implanted(ovum);
+        }
+        if (currstage == OvumState.Implanted && ovum.lifespan >= duration_implanted)
+        {
+            AdvStage_First(ovum);
+        }
+        if (currstage == OvumState.First_trimester && ovum.lifespan >= duration_first)
+        {
+            AdvStage_Second(ovum);
+        }
+        if (currstage == OvumState.Second_trimester && ovum.lifespan >= (duration_first + duration_second))
+        {
+            AdvStage_Third(ovum);
+        }
+        if (currstage == OvumState.Third_trimester && ovum.lifespan >= (duration_first + duration_second + duration_third))
+        {
+            AdvStage_End(ovum);
+        }
+    }
+
+
+    public virtual void AdvStage_Implanted(Ovum ovum)
+    {
+        ovum.State = OvumState.Implanted;
+        ovum.lifespan = 0;
+    }
+    public virtual void AdvStage_First(Ovum ovum)
+    {
+        ovum.State = OvumState.First_trimester;
+    }
+    public virtual void AdvStage_Second(Ovum ovum)
+    {
+        ovum.State = OvumState.Second_trimester;
+    }
+    public virtual void AdvStage_Third(Ovum ovum)
+    {
+        ovum.State = OvumState.Third_trimester;
+    }
+    public virtual void AdvStage_End(Ovum ovum)
+    {
+        ovum.State = OvumState.Final;
+    }
+
 }
+public class Foetus_Foetus : FoetusTemplates
+{
+
+
+}
+public class Foetus_Egg : FoetusTemplates
+{
+
+
+}
+
 
