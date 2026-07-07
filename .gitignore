@@ -12,6 +12,7 @@
 !CHANGELOG.md
 !ci/*
 
+
 !Data/
 !Demo/
 
@@ -24,6 +25,7 @@ Assets/*
 **/forbidCopy
 **/forbidCopy.*
 
+*.yml
 *.webp
 *.png
 *.skel
