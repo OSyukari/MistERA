@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Zip the build directory
-        run: 7z a "MistEra-${{ github.ref_name }}.7z" ./MistEra_Demo -p"era"
+        run: 7z a "MistEra-${{ github.ref_name }}.7z" ${{ secrets.BUILD_DIR }} -p"${{ secrets.ZIP_PASSWORD }}"
 
       - name: Create GitHub Release and upload artifact
         uses: softprops/action-gh-release@v2
