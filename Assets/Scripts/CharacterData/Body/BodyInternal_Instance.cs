@@ -690,6 +690,17 @@ public class BodyInternal_Instance
             return contains_cache;
         }
     }
+
+    public bool HasContent(int i)
+    {
+        return ContainedRefs_Delays.ContainsKey(i);
+    }
+    public bool HasContent(Item_Instance i)
+    {
+        if (i == null) return false;
+        return ContainedRefs_Delays.ContainsKey(i.RefID);
+    }
+
     [JsonIgnore]
     public bool ContainsCum { get
         {

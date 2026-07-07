@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 public class RacialFoetusTemplates
 {
@@ -33,9 +33,15 @@ public class FoetusTemplates
 
     public int duration_fertilized = 10;
     public int duration_implanted = 10;
+    public float size_implanted = 10;
     public int duration_first = 10;
+    public float size_first = 10;
     public int duration_second = 10;
+    public float size_second = 10;
     public int duration_third = 10;
+    public float size_third = 10;
+    public float size_end = 10;
+    public float duration_randVariation = 0.1f;
 
 
     public void MergeWith(FoetusTemplates f)
@@ -102,7 +108,6 @@ public class FoetusTemplates
     {
         ovum.State = OvumState.Final;
     }
-
 }
 public class Foetus_Foetus : FoetusTemplates
 {

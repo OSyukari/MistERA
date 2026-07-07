@@ -18,6 +18,17 @@
         "offspring_templates":[
 
         ],
+        "duration_fertilized": 168,
+        "duration_implanted": 168,
+        "size_implanted": 0.001,
+        "duration_first": 1848,
+        "size_first": 0.5,
+        "duration_second": 2352,
+        "size_second": 45.0,
+        "duration_third": 2016,
+        "size_third": 900.0,
+        "size_end": 3300.0,
+        "duration_randVariation": 0.10,
         "images":[
             "RJW - Womb/preg_human/Fetus_Early00.png",
             "RJW - Womb/preg_human/Fetus_Default00.png",
@@ -44,6 +55,17 @@
         "offspring_templates":[
 
         ],
+        "duration_fertilized": 432,
+        "duration_implanted": 480,
+        "size_implanted": 0.001,
+        "duration_first": 2112,
+        "size_first": 0.5,
+        "duration_second": 2112,
+        "size_second": 500.0,
+        "duration_third": 2136,
+        "size_third": 15000.0,
+        "size_end": 40000.0,
+        "duration_randVariation": 0.05,
         "images":[
             "RJW - Womb/preg_human/Fetus_Early00.png",
             "RJW - Womb/preg_human/Fetus_Bovine00.png",
@@ -61,6 +83,17 @@
             "offspring_templates":[
                 "creature_animal_horse"
             ],
+            "duration_fertilized": 144,
+            "duration_implanted": 384,
+            "size_implanted": 0.001,
+            "duration_first": 2568,
+            "size_first": 0.5,
+            "duration_second": 2712,
+            "size_second": 600.0,
+            "duration_third": 2736,
+            "size_third": 20000.0,
+            "size_end": 50000.0,
+            "duration_randVariation": 0.05,
             "images":[
                 "RJW - Womb/preg_human/Fetus_Early00.png",
                 "RJW - Womb/preg_human/Fetus_S_Bovine00.png",
@@ -76,6 +109,17 @@
             "offspring_templates":[
                 "creature_animal_pig"
             ],
+            "duration_fertilized": 288,
+            "duration_implanted": 336,
+            "size_implanted": 0.001,
+            "duration_first": 816,
+            "size_first": 0.2,
+            "duration_second": 816,
+            "size_second": 15.0,
+            "duration_third": 816,
+            "size_third": 500.0,
+            "size_end": 1300.0,
+            "duration_randVariation": 0.08,
             "images":[
                 "RJW - Womb/preg_human/Fetus_Early00.png",
                 "RJW - Womb/preg_human/Fetus_Pig00.png",
@@ -91,7 +135,19 @@
             "offspring_templates":[
                 "creature_animal_bear",
                 "creature_animal_cavebear"
-            ]
+            ],
+            "_note": "embryonic diapause: fertilized blastocyst lies dormant ~150d before implanting. Active development is only ~60d.",
+            "duration_fertilized": 3600,
+            "duration_implanted": 168,
+            "size_implanted": 0.001,
+            "duration_first": 480,
+            "size_first": 0.05,
+            "duration_second": 480,
+            "size_second": 3.0,
+            "duration_third": 480,
+            "size_third": 50.0,
+            "size_end": 300.0,
+            "duration_randVariation": 0.15
         }
     }
     
