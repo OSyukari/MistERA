@@ -15,6 +15,8 @@ public enum ReproductionCycleType
 
 public abstract class ReproductionCycle
 {
+    [JsonIgnore]
+    public abstract bool isPregnant { get; }
 
     [JsonIgnore]
     public abstract string CycleWombImageOverride
@@ -35,9 +37,18 @@ public abstract class ReproductionCycle
     public abstract void GetReproTemplateTooltip(Character_Trainable c, ReproductionTemplate t, List<string> tooltip);
     public abstract int CurrentCycleRemaining(ReproductionTemplate t);
 
-
     [JsonProperty] protected float cycleValue = 0f;
+
+    /// <summary>
+    /// Tick once per day
+    /// </summary>
+    /// <param name="template"></param>
+    /// <param name="ispregnant"></param>
+    /// <param name="suppressed"></param>
+    /// <param name="isOvumExhausted"></param>
     public abstract void Tick(ReproductionTemplate template, bool ispregnant, bool suppressed, bool isOvumExhausted);
+
+    public abstract void Birth(bool ispregnant);
 
     public abstract string CycleName(Character_Trainable c);
 

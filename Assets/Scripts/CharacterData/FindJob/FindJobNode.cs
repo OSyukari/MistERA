@@ -2,13 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static Character_Trainable;
 
-[System.Serializable]
 public class FindJobNode
 {
     public string cooldownID = "";
@@ -22,6 +17,24 @@ public class FindJobNode
         return false;
     }
 
+    public PathfindHeuristic evaluationHeuristic = PathfindHeuristic.closest;
+
+    public PathingRoomFilter filter = new PathingRoomFilter()
+    {
+        skipPrivateRoom = false,
+        checkBlacklist = true,
+        searchJobList = false,
+        searchNonJobList = true
+    };
+
+    [JsonIgnore]
+    public virtual Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> Heuristic
+    {
+        get
+        {
+            return FactionUtility.GetHeuristic(evaluationHeuristic);
+        }
+    }
 }
 
 public class TryFindPartyExplorationJob : FindJobNode
@@ -90,9 +103,6 @@ public class TryFindRestNode : TryFindNonJobByTagNode
     public TryFindRestNode()
     {
         this.tag = "rest";
-        this.skipPrivate = false;
-        this.shortestPathOnly = true;
-        this.checkBlackList = true;
     }
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
@@ -115,7 +125,18 @@ public class TryFindRedressNode : TryFindJobByIDNode
 public class TryFindSleepNode : TryFindJobByIDNode
 {
     public TryFindSleepNode() : base("com_furniture_sleep")
-    { }
+    {
+        filter = FactionUtility.JobFilter_Sleep;
+    }
+
+    public override Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> Heuristic
+    {
+        get
+        {
+            return FactionUtility.Heuristic_Ownership_Medium;
+        }
+    }
+
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         if (!c.shouldSleep) return false;
@@ -246,13 +267,14 @@ public class TryFindJobByIDNode : FindJobNode
     {
         this.targetID = targetID;
     }
-
+    
     bool initialized = false;
     bool internalShutdown = false;
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         if (!initialized)
         {
+            if (targetID == "") targetID = filter.matchCOMID;
             internalShutdown = scr_System_Serializer.current.MasterList.COMs.GetByID(targetID) == null;
             initialized = true;
         }
@@ -264,7 +286,12 @@ public class TryFindJobByIDNode : FindJobNode
         var faction = FindInJobFaction ? currentJobFaction : currentLocaleFaction;
         if (faction != null)
         {
-            List<Job_Furniture> possibleJobs = faction.GetValidJobsByCOMID(c, targetID, s);
+            List<Job_Furniture> possibleJobs = faction.GetValidJobs_Heuristics(
+                Heuristic,
+                1,
+                c,
+                currentHour, filter, comIDOverride: targetID, s: s);
+
             if (possibleJobs != null && possibleJobs.Count > 0)
             {
                 Job job = possibleJobs[0];
@@ -279,13 +306,22 @@ public class TryFindJobByIDNode : FindJobNode
 
 public class TryFindPrivateRoomCleaning : FindJobNode
 {
-    string tag = "production_cleaning";
-    string comID = "com_job_cleaning";
+
+    new public PathingRoomFilter filter = new PathingRoomFilter()
+    {
+        matchCOMID = "com_job_cleaning",
+        matchCOMTag = "production_cleaning",
+        checkBlacklist = true,
+        skipPrivateRoom = false,
+        searchJobList = false,
+        searchNonJobList = true
+    };
+
 
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         // find cleaning job in current room and in self owned rooms
-        if (c.CurrentJob != null && !resetJob && c.CurrentJob.allusableCOMs.Find(x => x.ID == comID) != null)
+        if (c.CurrentJob != null && !resetJob && c.CurrentJob.allusableCOMs.Find(x => x.ID == filter.matchCOMID) != null)
         {
             return true;
         }
@@ -317,19 +353,23 @@ public class TryFindPrivateRoomCleaning : FindJobNode
                 }
             }
 
-            var result = currentLocaleFaction.GetValidJobsByCOMID(c, comID, s, true, true, restrictList);
+            var result = currentLocaleFaction.GetValidJobs_Heuristics(
+                FactionUtility.GetHeuristic(PathfindHeuristic.closest), 1,
+                c, currentHour, filter, restrictRoomList: restrictList, s: s);
+                
+               // currentLocaleFaction.GetValidJobsByCOMID(c, comID, s, true, true, restrictList);
             if (result != null && result.Count > 0) possibleCleaning.AddRange(result);
 
             if (possibleCleaning.Count < 1)
             {
-                if (s != null) s.Add($"No cleaning job found in {(currRoom == null ? "null" : currRoom.DisplayNameShort)}");
+                if (s != null) s.Add($"TryFindPrivateRoomCleaning: No cleaning job found in {(currRoom == null ? "null" : currRoom.DisplayNameShort)}");
                 return false;
             }
 
             Job job = Utility.GetRandomElement(possibleCleaning);
-            if (s != null) s.Add($"Changing job to tag [{tag}] " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]"));
+            if (s != null) s.Add($"TryFindPrivateRoomCleaning: Changing job to tag [{filter.matchCOMTag}] " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]"));
 
-            c.ChangeCurrentJob(job, "", tag);
+            c.ChangeCurrentJob(job, "", filter.matchCOMTag);
             if (c.CurrentJob != job) Debug.LogError($"Error in changing job from {(c.CurrentJob == null ? "null" : c.CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
 
             return true;
@@ -341,22 +381,19 @@ public class TryFindPrivateRoomCleaning : FindJobNode
 public class TryFindNonJobByTagNode : FindJobNode
 {
     public string tag = "";
-    public bool skipPrivate = false;
-    public bool shortestPathOnly = true;
-    public bool checkBlackList = true;
-
     public TryFindNonJobByTagNode() { }
-    public TryFindNonJobByTagNode(string tag, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true)
+    public TryFindNonJobByTagNode(string tag)
     {
         this.tag = tag;
-        this.skipPrivate = skipPrivate;
-        this.shortestPathOnly = shortestPathOnly;
-        this.checkBlackList = checkBlacklist;
     }
 
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
-        if (tag == "") return false;
+        if (tag == "")
+        {
+            tag = filter.matchCOMTag;
+            if (filter.matchCOMTag == "") return false;
+        }
         if (c.CurrentJob != null && !resetJob && c.CurrentJob.allusableCOMs.Find(x => x.comTags.Contains(tag)) != null)
         {
             return true;
@@ -365,9 +402,12 @@ public class TryFindNonJobByTagNode : FindJobNode
         {
             List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
 
-            possibleRecreations.AddRange(currentLocaleFaction.GetValidJobs_nonJob_byTags(c, currentHour, tag, s, skipPrivate, shortestPathOnly, checkBlackList));
+            possibleRecreations.AddRange(currentLocaleFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s));
 
-            if (possibleRecreations.Count < 1 && currentLocaleFaction != currentJobFaction) possibleRecreations.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(c, currentHour, tag, s, skipPrivate, shortestPathOnly, checkBlackList));
+            if (possibleRecreations.Count < 1 && currentLocaleFaction != currentJobFaction)
+            {
+                possibleRecreations.AddRange(currentJobFaction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, tagoverride: tag, s: s));
+            }
 
             if (possibleRecreations.Count < 1) return false;
 
@@ -408,7 +448,7 @@ public class TryFindScheduledJobNode : FindJobNode
                 //foreach (Manageable faction in FactionManager.Factions)
                 //{   // get closest schedule job
                 string ss = "";
-                List<Job_Furniture> possibleJobs = currentJobFaction.GetValidJobs_Jobs(c, currentHour, ref ss, true);
+                List<Job_Furniture> possibleJobs = currentJobFaction.GetValidJobs_Jobs(c, currentHour, ref ss);
                 if (possibleJobs != null && possibleJobs.Count > 0)
                 {
                     Job job = possibleJobs[0];

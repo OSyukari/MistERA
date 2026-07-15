@@ -32,7 +32,76 @@ public enum PartyAvailability
 public class Manageable_Party : I_IsJobGiver
 {
 
+    public List<Job_Furniture> GetValidJobs_Heuristics(
+        Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic,
+        int maxCount,
+        Character_Trainable chara,
+        int currentHour,
+        PathingRoomFilter filter,
+        string comIDOverride = "",
+        string tagoverride = "",
+        List<string> s = null,
+        List<int> restrictRoomList = null)
+    {
+        //Debug.Log("Begin getvalidRecreation");
 
+        List<Job_Furniture> possibleJobs;
+        string ss = " (" + ID + ")";
+        if (tagoverride == "") tagoverride = filter.matchCOMTag;
+        if (comIDOverride == "") comIDOverride = filter.matchCOMID;
+        if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tagoverride)) return new List<Job_Furniture>();
+        if (chara.Jail != null && chara.Jail.ownerJob != null)
+        {
+
+        }
+
+        if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, comIDOverride, tagoverride, filter.checkBlacklist) || possibleJobs == null || possibleJobs.Count < 1)
+        {
+            ss += $" found no valid [{tagoverride}] instances offered by Furnitures from chara[{chara.FirstName}] currenthour[{currentHour}], checkBlacklist[{filter.checkBlacklist}]";
+            if (s != null) s.Add(ss);
+            return new List<Job_Furniture>();
+        }
+
+
+        for (int i = possibleJobs.Count - 1; i >= 0; i--)
+        {
+            var j = possibleJobs[i];
+            if (filter.skipPrivateRoom && j.ParentRoom.isRoomPrivate)
+            {
+                ss += $"\n{j.DisplayName} removed due to room private {j.ParentRoom.isRoomPrivate} and skipprivate {filter.skipPrivateRoom}";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
+            if (restrictRoomList != null && (j.ParentRoom == null || !restrictRoomList.Contains(j.ParentRoom.RefID)))
+            {
+                ss += $"\n{j.DisplayName} removed due to room {(j.ParentRoom == null ? "null" : j.ParentRoom.RefID)} match with restrictRoomList {String.Join(" ", restrictRoomList)}";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
+            if (!FactionUtility.TryValidateInstances(j, chara))
+            {
+                ss += $"\n{j.DisplayName} removed due to chara {(chara.FirstName)} not passing validation check";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
+            ss += $"\n{j.DisplayName} in {j.ParentRoom.DisplayNameShort} passed all validation, get to ValidPaths";
+        }
+
+        //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
+
+        if (FactionUtility.GetValidPathsWithHeuristic(ref possibleJobs, chara, heuristic, maxCount, ref ss))
+        {
+            if (s != null) s.Add(ss);
+            return possibleJobs;
+        }
+        else
+        {
+            if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} no validpaths");
+            //Debug.Log("GetValidPaths failed after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
+            return new List<Job_Furniture>();
+        }
+
+    }
 
     [JsonProperty] protected int rallyJobID = -1;
     protected Job_MoveLocation _rallyJob = null;
@@ -186,58 +255,7 @@ public class Manageable_Party : I_IsJobGiver
         }
     }
 
-    public List<Job_Furniture> GetValidJobs_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true, List<int> restrictRoomList = null)
-    {
-        //Debug.Log("Begin getvalidRecreation");
 
-        List<Job_Furniture> possibleJobs;
-        string ss = " (" + ID + ")";
-        if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
-        if (chara.Jail != null && chara.Jail.ownerJob != null)
-        {
-
-        }
-        if (!FactionUtility.TryFindValidNonJobInstances(jobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
-        {
-            ss += $" found no valid [{tag}] instances offered by Furnitures from chara[{chara.FirstName}] currenthour[{currentHour}], checkBlacklist[{checkBlacklist}]";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-
-        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances");
-
-        if (skipPrivate)
-        {
-            possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
-        }
-        if (restrictRoomList != null)
-        {
-            possibleJobs.RemoveAll(x => x.ParentRoom == null || !restrictRoomList.Contains(x.ParentRoom.RefID));
-        }
-
-        if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
-        {
-            ss += $" cannot pass validate check for any of the {tag} job instances";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-
-        //if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} with {possibleJobs.Count} possible instances post validateall");
-
-        //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
-        if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
-        {
-            //Debug.Log("GetValidPaths success after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
-            return possibleJobs;
-        }
-        else
-        {
-            if (chara.isImprisoned) Debug.Log($"Prisoner {chara.CallName} no validpaths");
-            //Debug.Log("GetValidPaths failed after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
-            return new List<Job_Furniture>();
-        }
-
-    }
     [JsonProperty] protected int _recurringCooldown = 0;
     [JsonProperty] protected bool _recurringTicked = false;
     public void ExpeditionEnd()
@@ -552,32 +570,8 @@ public class Manageable_Party : I_IsJobGiver
         
     }
 
-    public List<Job_Furniture> GetValidJobs_Meal(Character_Trainable chara, int currentHour, List<string> s = null)
-    {
-        List<Job_Furniture> possibleJobs;
-        string ss = " (" + ID + ")";
-        if (!this.OwnerFaction.mealHours.Contains(currentHour)) return new List<Job_Furniture>();
 
-        if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", "food_meal", false))
-        {
-            ss += " found no valid [food_meal] instances offered by Furnitures";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-        else if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
-        {
-            ss += " cannot pass validate check for any of the Meal job instances";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-        else
-        {
-            if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
-            else return new List<Job_Furniture>();
-        }
-    }
-
-    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s, bool checkBlacklist = true)
+    public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s)
     {
         return new List<Job_Furniture>();
     }
@@ -647,122 +641,13 @@ public class Manageable_Party : I_IsJobGiver
         }
     }
 
-    public List<Job_Furniture> GetValidJobsByCOMID(Character_Trainable chara, string comID, List<string> s = null, bool allowJobPostSearch = true, bool allowNonJobPostSearch = true, List<int> restrictRoomList = null)
-    {
-        string ss = " (" + ID + ")";
 
-        List<Job_Furniture> possibleJobs;
-        COM targetCOM = scr_System_Serializer.current.GetByNameOrID_COM(comID);
-        if (targetCOM == null) return null;
-
-        if (targetCOM.comTags.Contains("job") && allowJobPostSearch)
-        {
-            if (!FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, null, chara, comID, false))
-            {
-                ss += " found no valid [" + comID + "] instances offered by Furnitures job";
-                if (s != null) s.Add(ss);
-                return null;
-            }
-        }
-        else if (allowNonJobPostSearch)
-        {
-            if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, comID, "", false))
-            {
-                ss += " found no valid [" + comID + "] instances offered by Furnitures nonjob";
-                if (s != null) s.Add(ss);
-                return null;
-            }
-        }
-        else
-        {
-            ss += " all job post search for [" + comID + "] are disabled, aborted";
-            if (s != null) s.Add(ss);
-            return null;
-        }
-
-
-        if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
-        {
-            ss += " cannot pass validate check for any of the offered [" + comID + "] job instances";
-            if (s != null) s.Add(ss);
-            return null;
-        }
-        else
-        {
-            if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
-            else return null;
-        }
-    }
-
-    public List<Job_Furniture> GetValidJobs_Sleep(Character_Trainable chara, int currentHour, List<string> s = null)
-    {
-        List<Job_Furniture> possibleJobs;
-        string ss = " (" + ID + ")";
-        if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "com_furniture_sleep", "", false))
-        {
-            ss += " found no valid [com_furniture_sleep] instances offered by Furnitures";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-        else if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
-        {
-            ss += " cannot pass validate check for any of the Sleep job instances";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-        else
-        {
-            if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss)) return possibleJobs;
-            else return new List<Job_Furniture>();
-        }
-    }
 
     [JsonIgnore]
     public Dictionary<int, List<int>> ManagedRooms { get { return this.managedRoomRefs; } }
     [JsonIgnore] public Dictionary<COM, List<Job_Furniture>> NonjobPosts { get { return this.nonjobPosts; } }
 
-    public List<Job_Furniture> GetValidJobs_nonJob_byTags(Character_Trainable chara, int currentHour, string tag, List<string> s = null, bool skipPrivate = false, bool shortestPathOnly = true, bool checkBlacklist = true, List<int> restrictRoomList = null)
-    {
-        //Debug.Log("Begin getvalidRecreation");
-        List<Job_Furniture> possibleJobs;
-        string ss = " (" + ID + ")";
-        if (scr_System_Serializer.current.nsfwKeywords.Contains(tag)) return new List<Job_Furniture>();
-        if (!FactionUtility.TryFindValidNonJobInstances(nonjobPosts, managedRoomRefs, out possibleJobs, chara, "", tag, checkBlacklist))
-        {
-            ss += $" found no valid tags [{tag}] instances offered by Furnitures from chara[" + chara.FirstName + "] currenthour[" + currentHour + "]";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-
-        if (skipPrivate)
-        {
-            possibleJobs.RemoveAll(x => x.ParentRoom.isRoomPrivate);
-        }
-        if (restrictRoomList != null)
-        {
-            possibleJobs.RemoveAll(x => x.ParentRoom == null || !restrictRoomList.Contains(x.ParentRoom.RefID));
-        }
-
-        if (!FactionUtility.TryValidateAllInstances(ref possibleJobs, chara))
-        {
-            ss += $" cannot pass validate check for any of the {tag} job instances";
-            if (s != null) s.Add(ss);
-            return new List<Job_Furniture>();
-        }
-
-
-        //bool result = FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly);
-        if (FactionUtility.GetValidPaths(ref possibleJobs, chara, ref ss, !shortestPathOnly))
-        {
-            //Debug.Log("GetValidPaths success after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
-            return possibleJobs;
-        }
-        else
-        {
-            //Debug.Log("GetValidPaths failed after " + (DateTime.Now - startTime).TotalNanoseconds + "ms");
-            return new List<Job_Furniture>();
-        }
-    }
+    
 
     public void NotifyFurnitureChange(Room_Instance room)
     {

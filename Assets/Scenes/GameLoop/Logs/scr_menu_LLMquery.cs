@@ -269,7 +269,7 @@ public class scr_menu_LLMQuery : scr_Menu
             else if (message.content_string != null && message.content_string.Length > 0 && message.animatedIndex < message.content_string.Length)
             {
                 //RectTransform msgbox = Instantiate(prefab_LogEntry);
-                Debug.Log("drawline");
+               // Debug.Log("drawline");
                 responseText.SetText(message.content_string);
                 message.animatedIndex = message.content_string.Length;
                 canAnimate = false;

@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using UnityEngine;
 
 public class RacialFoetusTemplates
 {
@@ -26,10 +28,30 @@ public class RacialFoetusTemplates
 
 public class FoetusTemplates
 {
+
+
     public List<string> offspring_templates = new List<string>();
 
     public List<string> images = new List<string>();
     public List<string> images_multiplet = new List<string>();
+
+
+    int _images_hash = -1;
+    [JsonIgnore]
+    public int images_hash
+    {
+        get
+        {
+            if (_images_hash == -1)
+            {
+                _images_hash = Utility.GetOrderDependentHash(images);
+            }
+            return _images_hash;
+        }
+    }
+
+
+    // size in kg
 
     public int duration_fertilized = 10;
     public int duration_implanted = 10;
@@ -42,10 +64,58 @@ public class FoetusTemplates
     public float size_third = 10;
     public float size_end = 10;
     public float duration_randVariation = 0.1f;
+    public int duration_labor = 720;
+    public int average_mother_HWMult = 0;
 
+    public float GetSizePerState(OvumState state)
+    {
+        switch (state)
+        {
+            case OvumState.Final: return size_end;
+            case OvumState.Third_trimester: return size_end;
+            case OvumState.Second_trimester: return size_third;
+            case OvumState.First_trimester: return size_second;
+            case OvumState.Implanted: return size_first;
+            default: return size_implanted;
+        }
+    }
+
+    /// <summary>
+    /// This function will take a float ratio (current labor time / foetusTemplate duration_labor), and return a chance of birth.
+    /// this function should have exponential growth, meaning,
+    /// low chance in the beginning (we want to leave some time for the mother to prepare for labor).
+    /// this chance will be checked once per hour for Final stage ovum.
+    /// </summary>
+    /// <param name="timelapsratio"></param>
+    /// <returns></returns>
+    public float GetBirthChance(float timelapsratio)
+    {
+        if (timelapsratio >= 1f) return 1f;
+        if (timelapsratio <= 0f) return 0f;
+        // Exponential-growth curve: near-zero early in labor, surging toward the end.
+        // k=5 keeps per-check chance below 4% for the first 30% of labor (preparation window),
+        // then rises to ~51% at 90% of duration, guaranteeing birth at ratio >= 1.
+        const float k = 5f;
+        float normalized = (Mathf.Exp(k * timelapsratio) - 1f) / (Mathf.Exp(k) - 1f);
+        return normalized * 0.85f;
+    }
 
     public void MergeWith(FoetusTemplates f)
     {
+        this.duration_fertilized = f.duration_fertilized;
+        this.duration_first = f.duration_first;
+        this.duration_implanted = f.duration_implanted;
+        this.duration_labor = f.duration_labor;
+        this.duration_randVariation = f.duration_randVariation;
+        this.duration_second = f.duration_second;
+        this.duration_third = f.duration_third;
+        this.size_end = f.size_end;
+        this.size_first = f.size_first;
+        this.size_implanted = f.size_implanted;
+        this.size_second = f.size_second;
+        this.size_third = f.size_third;
+        this.average_mother_HWMult = f.average_mother_HWMult;
+
         foreach(var i in f.offspring_templates)
         {
             if (!offspring_templates.Contains(i)) offspring_templates.Add(i);
@@ -63,7 +133,9 @@ public class FoetusTemplates
     public virtual void Advance(Ovum ovum)
     {
         var currstage = ovum.State;
-        ovum.lifespan += 1;
+
+        if (currstage != OvumState.Final) ovum.lifespan += 1;
+
         if (currstage == OvumState.Fertilized && ovum.lifespan >= duration_fertilized)
         {
             AdvStage_Implanted(ovum);
@@ -84,13 +156,77 @@ public class FoetusTemplates
         {
             AdvStage_End(ovum);
         }
+
+        // rescale foetus
+        if (ovum.foetusItem?.GetComp_Ingestible() != null && ovum.State >= OvumState.Implanted)
+        {
+            float size = size_implanted;
+            float t;
+            switch (ovum.State)
+            {
+                case OvumState.Implanted:
+                    t = Mathf.Clamp01((float)ovum.lifespan / duration_implanted);
+                    size = Mathf.Lerp(size_implanted, size_first, t);
+                    break;
+                case OvumState.First_trimester:
+                    t = Mathf.Clamp01((float)(ovum.lifespan - duration_implanted) / (duration_first - duration_implanted));
+                    size = Mathf.Lerp(size_first, size_second, t);
+                    break;
+                case OvumState.Second_trimester:
+                    t = Mathf.Clamp01((float)(ovum.lifespan - duration_first) / duration_second);
+                    size = Mathf.Lerp(size_second, size_third, t);
+                    break;
+                case OvumState.Third_trimester:
+                    t = Mathf.Clamp01((float)(ovum.lifespan - duration_first - duration_second) / duration_third);
+                    size = Mathf.Lerp(size_third, size_end, t);
+                    break;
+                case OvumState.Final:
+                    size = size_end;
+                    break;
+            }
+            ovum.foetusItem.GetComp_Ingestible().amount = size * 1.5f;
+        }
     }
 
 
     public virtual void AdvStage_Implanted(Ovum ovum)
     {
-        ovum.State = OvumState.Implanted;
-        ovum.lifespan = 0;
+        // try implant self
+        if (ovum == null || ovum.foetus == null || ovum.womb == null || ovum.womb.source == null
+            || ovum.womb.source.Owner == null || ovum.womb.source.Owner.ReproCycle.ShouldClearOvum)
+        {
+            ovum.State = OvumState.Aborted;
+        }
+        else if (ovum.father == null)
+        {
+            ovum.State = OvumState.Aborted;
+            Debug.Log("father null abort");
+        }
+        else
+        {
+
+            var foetusObject = WorldManager.Instantiate("item_foetus", $"{LocalizeDictionary.QueryThenParse(ovum.father.raceID)}'s foetus");
+            if (foetusObject == null || foetusObject.GetComp_Ingestible() == null)
+            {
+                ovum.State = OvumState.Aborted;
+                Debug.Log("father null abort");
+            }
+            else if (ovum.womb.source.Ingest(foetusObject, null, true))
+            {
+                foetusObject.GetComp_Ingestible().amount = ovum.foetus.size_implanted * 1.5f;
+                //ovum.womb.source.Ingest(foetusObject);
+                ovum.State = OvumState.Implanted;
+                ovum.foetusItem = foetusObject;
+                ovum.lifespan = 0;
+            }
+            else
+            {
+                ovum.State = OvumState.Aborted;
+                Debug.Log("ingest ovum fail");
+            }
+
+
+        }
     }
     public virtual void AdvStage_First(Ovum ovum)
     {

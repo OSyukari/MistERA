@@ -6,7 +6,22 @@ using System.Threading;
 
 public static class Utility
 {
+    public static int GetOrderDependentHash(List<string> list)
+    {
+        if (list == null) return 0;
 
+        int hash = 17; // A starting prime seed
+        for (int i = 0; i < list.Count; i++)
+        {
+            unchecked
+            {
+                // Multiplying the current hash by a prime (31) before adding 
+                // the next item ensures that order drastically changes the outcome.
+                hash = hash * 31 + (list[i]?.GetHashCode() ?? 0);
+            }
+        }
+        return hash;
+    }
     public static double getRandwithVariation(double average, double variationPercentile, System.Random rand = null)
     {
         var random = rand == null ? Random : rand;

@@ -62,15 +62,17 @@ public class scr_panel_wombdata : MonoBehaviour
         {
             int ovum_ready = 0;
             int ovum_fertilized = 0;
-            int ovum_foetus = 0;
+            int ovum_implanted = 0;
+            int ovum_foetus_count = 0;
+            int ovum_foetus_object = 0;
 
             foreach (var i in womb.eggs)
             {
                 // if ovum, compute fertility, lifespan, current status
                 if (i.State == OvumState.Default) ovum_ready += 1;
                 else if (i.State == OvumState.Fertilized) ovum_fertilized += 1;
-                else if (i.State == OvumState.Implanted) ovum_foetus += 1;
-                else if (i.State > OvumState.Implanted) ovum_foetus += 1;
+                else if (i.State == OvumState.Implanted) ovum_implanted += 1;
+                else if (i.State > OvumState.Implanted) ovum_foetus_count += 1;
             }
 
 
@@ -83,12 +85,19 @@ public class scr_panel_wombdata : MonoBehaviour
                 box.SelfRect.SetParent(itemGrid, false);
 
                 box.SetText(i.Print());
-                if (i is Ovum)
+                if (i.BaseID == "item_foetus")
                 {
                     // implanted ovum, growing
-                    ovum_foetus += 1;
+                    ovum_foetus_object += 1;
                     //box.SetText(i.DisplayName);
-                    box.SetExternalTooltip(i.Tooltip);
+                    foreach(var egg in womb.eggs)
+                    {
+                        if (egg.foetusItem == i)
+                        {
+                            box.SetExternalTooltip(egg.Tooltip);
+                        }
+                    }
+                    //box.SetExternalTooltip(i.Tooltip);
                 }
                 else if (i is Item_Instance_Cum)
                 {
@@ -98,15 +107,22 @@ public class scr_panel_wombdata : MonoBehaviour
                     var ttips = i.Tooltip;
                     float totalfert = 0;
                     string warning = "";
+                    string formula = "";
                     foreach(var egg in womb.eggs)
                     {
                         if (egg.State != OvumState.Default) continue;
-                        totalfert = womb.CalcFertility(cum, out var warn);
+                        totalfert = womb.CalcFertility(cum, out var warn, out formula);
                         if (warn != "") warning = warn;
                         break;
                     }
 
-                    box.SetExternalTooltip($"{i.Tooltip}{(i.Tooltip.Length > 0 ? "\n\n" : "")}{LocalizeDictionary.QueryThenParse("Item_Instance_Cum_fertChance_perHour").Replace("$chance$", (totalfert).ToString("N1"))}{(warning == "" ? "" : $" {LocalizeDictionary.QueryThenParse(warning)}")}");
+                    var finalttips = $"{i.Tooltip}{(i.Tooltip.Length > 0 ? "\n\n" : "")}{LocalizeDictionary.QueryThenParse("Item_Instance_Cum_fertChance_perHour").Replace("$chance$", (totalfert).ToString("N1"))}{(warning == "" ? "" : $" {LocalizeDictionary.QueryThenParse(warning)}")}";
+                    if (scr_System_CampaignManager.current.DebugMode)
+                    {
+                        finalttips += $"\n{formula}";
+                    }
+
+                    box.SetExternalTooltip(finalttips);
 
                 }
                 else
@@ -118,13 +134,22 @@ public class scr_panel_wombdata : MonoBehaviour
             }
 
             var ovtext = "";
-            if (ovum_ready > 0) ovtext += (ovtext.Length > 0 ? " " : "") + LocalizeDictionary.QueryThenParse("OvumState_Default").Replace("$count$", $"{ovum_ready}");
-            if (ovum_fertilized > 0) ovtext += (ovtext.Length > 0 ? " " : "") + LocalizeDictionary.QueryThenParse("OvumState_Fertilized").Replace("$count$", $"{ovum_fertilized}");
+            if (ovum_ready > 0) ovtext += (ovtext.Length > 0 ? " " : "") + LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_OvumState_Default").Replace("$count$", $"{ovum_ready}");
+            if (ovum_fertilized > 0) ovtext += (ovtext.Length > 0 ? " " : "") + LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_OvumState_Fertilized").Replace("$count$", $"{ovum_fertilized}");
+            if (ovum_implanted > 0) ovtext += (ovtext.Length > 0 ? " " : "") + LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_OvumState_Implanted").Replace("$count$", $"{ovum_implanted}");
+            if (ovum_foetus_count > 0) ovtext += (ovtext.Length > 0 ? " " : "") + LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_OvumState_Foetus").Replace("$count$", $"{ovum_foetus_count}");
             ovums.SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_cycle_ovumLists")
-                .Replace("$content$", ovtext.Length > 0 ? ovtext : LocalizeDictionary.QueryThenParse("none")));
+                .Replace("$content$", ovtext.Length > 0 ? ovtext : LocalizeDictionary.QueryThenParse("none"))
+                .Replace("$total$", $"{womb.eggs.Count}"));
+
+            string debug = $"{womb.source.VolumeCapacity.ToString("N0")}ml|{womb.source.VisiblyExpandedCapacity.ToString("N0")}ml|{womb.source.MaxCapacity.ToString("N0")}ml";
+            if (scr_System_CampaignManager.current.DebugMode && ovum_foetus_object != ovum_foetus_count)
+            {
+                debug += $"\nDiscrepancy between ovum count {ovum_foetus_count} and object count {ovum_foetus_object}";
+            }
 
             desc.SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_womb_content").Replace("$volume$", totalVolume.ToString($"N1")));
-            desc.SetExternalTooltip($"{womb.source.VolumeCapacity.ToString("N0")}ml|{womb.source.VisiblyExpandedCapacity.ToString("N0")}ml|{womb.source.MaxCapacity.ToString("N0")}ml");
+            desc.SetExternalTooltip(debug);
             //ovums.SetText($"Ovums: ready {ovum_ready} fertilized {ovum_fertilized} foetus {ovum_foetus}");
         }
         else

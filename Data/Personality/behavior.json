@@ -5,6 +5,10 @@
                 "ID": "behavior_default",
                 "nodes": [
                     {
+                        "$type": "TryFindBirthLocation, Assembly-CSharp",
+                        "Tags": [ "nsfw" ]
+                    },
+                    {
                         "$type": "TryFindRedressNode, Assembly-CSharp"
                     },
                     {
@@ -18,13 +22,17 @@
                     },
                     {
                         "$type": "TryFindJobByIDNode, Assembly-CSharp",
-                        "Tags": [
-                            "nsfw"
-                        ],
-                        "targetID": "com_furniture_restroom",
+                        "Tags": [ "nsfw" ],
                         "randomChance": 0.5,
                         "cooldownHours": 4,
-                        "cooldownID": "com_furniture_restroom"
+                        "cooldownID": "com_furniture_restroom",
+                        "filter": {
+                            "matchCOMID":"com_furniture_restroom",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":true,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     },
                     {
                         "$type": "TryFindScheduledJobNode, Assembly-CSharp"
@@ -37,9 +45,7 @@
                     },
                     {
                         "$type": "TryFindSexNode_Animal, Assembly-CSharp",
-                        "Tags": [
-                            "nsfw"
-                        ]
+                        "Tags": [ "nsfw" ]
                     },
                     {
                         "$type": "TryFindPrivateRoomCleaning, Assembly-CSharp"
@@ -49,17 +55,25 @@
                     },
                     {
                         "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
-                        "tag": "recreation",
-                        "skipPrivate": true,
-                        "shortestPathOnly": false,
-                        "checkBlackList": true
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "matchCOMTag":"recreation",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":true,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     },
                     {
                         "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
-                        "tag": "rest",
-                        "skipPrivate": false,
-                        "shortestPathOnly": true,
-                        "checkBlackList": false
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "matchCOMTag":"rest",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     }
                 ]
             }

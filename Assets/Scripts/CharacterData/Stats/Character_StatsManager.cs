@@ -120,6 +120,7 @@ public class StatsManager : I_StatsManager
             {
                 if (tr.SortType != Trait_Group_Type.SortedList && tr.SortType != Trait_Group_Type.UnsortedList) continue;
                 //if (tr.Type == Trait_Type.Body) continue;
+                if (tr.tags.Contains("do_not_use")) continue;
                 if (!tr.allowPopulate) continue;
                 var neutral = tr.getNeutralinGroup();
                 if (neutral == null) continue;

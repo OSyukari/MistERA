@@ -417,6 +417,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         this.Relationships.HourlyRefresh();
         //Debug.Log($"{FirstName} Observer_GlobalHour: conscious? {Stats.isConsciousnessUnconscious} sleep? {hasStatKeyword("sleep")} lastSleep {timeSinceLastSleep}, lastEat {timeSinceLastEat}");
     }
+    /// <summary>
+    /// Externally set timesincelastsleep to 0
+    /// </summary>
+    public void CapLastSleepTime()
+    {
+        if (timeSinceLastSleep > 23) timeSinceLastSleep = 23;
+    }
 
     public void NotifyFoodConsume(Item_Instance i)
     {
@@ -448,16 +455,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public ReproductionCycle ReproCycle = null;
 
-    public void TickMenstruation_Debug(int year, int month, int day)
+    public void TickMenstruation(int year = 0, int month = 0, int day = 1, bool log = false)
     {
-        if (ReproTemplate == null) return;
         if (ReproCycle == null) return;
+        if (ReproTemplate == null) return;
 
         int totalCycle = year * 365 + month * 30 + day;
-
-        for(int i = 0; i < totalCycle; i++)
+        for (int i = 0; i < totalCycle; i++)
         {
-
             // this variable will be replaced by a boolean getter
             // that go though character's status to see if daily contraceptive is taken
             bool stagesupressed = false;
@@ -470,8 +475,23 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             // this shouldnt be necessary. if this is empty, then on "add womb" stage this should have been initialized
             /// if (Menstruation == null) Menstruation = new MenstruationState(ReproTemplate);
 
-            //var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
-            bool ispregnant = false;
+            //bool ispregnant = false;
+
+            /*
+            if (ReproTemplate.hasEstrus && Menstruation.CycleStage == MenstruationStatus.Ovulation)
+            {
+                // leave this blank for now, I'll add this in the future
+            }*/
+            for (int j = 0; j < 24; j++)
+            {
+                foreach (var wb in wombs)
+                {
+                    /// notify result
+                    wb.HourTick();
+                }
+            }
+
+            var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
             ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
 
             foreach (var wb in wombs)
@@ -481,41 +501,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             }
         }
 
-        string debugmsg = $"{FirstName} advance cycle by {totalCycle} days, current stage {ReproCycle.CycleName(this)}";
-        foreach(var v in wombs)
+        if (log)
         {
-            debugmsg += $"\n{v.debugTooltip}";
+            string debugmsg = $"{FirstName} advance cycle by {totalCycle} days, current stage {ReproCycle.CycleName(this)}";
+            foreach (var v in wombs)
+            {
+                debugmsg += $"\n{v.debugTooltip}";
+            }
+
+            Debug.Log(debugmsg);
         }
-
-        Debug.Log(debugmsg);
-    }
-
-    protected void TickMenstruation()
-    {
-        if (ReproCycle == null) return;
-        if (ReproTemplate == null) return;
-
-        // this variable will be replaced by a boolean getter
-        // that go though character's status to see if daily contraceptive is taken
-        bool stagesupressed = false;
-
-
-        // this variable will be replaced by a boolean getter
-        // that return true if every womb is in menopause
-        bool isOvumexhausted = false;
-
-        // this shouldnt be necessary. if this is empty, then on "add womb" stage this should have been initialized
-        /// if (Menstruation == null) Menstruation = new MenstruationState(ReproTemplate);
-
-        //var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
-        bool ispregnant = false;
-        ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
-
-        /*
-        if (ReproTemplate.hasEstrus && Menstruation.CycleStage == MenstruationStatus.Ovulation)
-        {
-            // leave this blank for now, I'll add this in the future
-        }*/
     }
 
 
@@ -626,7 +621,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     _templateS = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateSafeByID(BaseID);
                     if (_templateS == null)
                     {
-                        Debug.LogError($"Error failed to find template id {BaseID}");
+                        _templateS = new CharaSafeTemplate();
+                        if (BaseID != "") Debug.LogError($"Error failed to find template id {BaseID}, initializing new");
                     }
                 }
                 return _templateS;
@@ -638,7 +634,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     _template = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(BaseID) as CharaTrainableTemplate;
                     if (_template == null)
                     {
-                        Debug.LogError($"Error failed to find template id {BaseID}");
+                        _template = new CharaTrainableTemplate();
+                        if (BaseID != "") Debug.LogError($"Error failed to find template id {BaseID}, initializing new");
                     }
                 }
                 return _template;
@@ -1382,52 +1379,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     }
 
-    public class NonJobSearchWrapper
-    {
-        public bool skipPrivate, shortestPathOnly, checkBlacklist;
-        public NonJobSearchWrapper(bool skipPrivate, bool shortestPathOnly, bool checkBlacklist) 
-        {
-            this.skipPrivate = skipPrivate;
-            this.shortestPathOnly = shortestPathOnly;
-            this.checkBlacklist = checkBlacklist;
-        }
-
-        public void Search(ref List<Job_Furniture> list, I_IsJobGiver faction, Character_Trainable c, int hour, string tag, List<string> s)
-        {
-            list.Clear();
-            list.AddRange(faction.GetValidJobs_nonJob_byTags(c, hour, tag, s, this.skipPrivate, this.shortestPathOnly, this.checkBlacklist));
-        }
-    }
-
-    protected bool TryFindNonJobByTag(bool resetJob, string tag, I_IsJobGiver currentJobFaction, int currentHour, ref string ss, bool log, List<string> s, NonJobSearchWrapper search)
-    {
-        if (CurrentJob != null && !resetJob && CurrentJob.allusableCOMs.Find(x => x.comTags.Contains(tag)) != null)
-        {
-            return true;
-        }
-        else if (currentJobFaction != null)
-        {
-            List<Job_Furniture> possibleRecreations = new List<Job_Furniture>();
-
-            //foreach (Manageable faction in FactionManager.HomeFactions)
-            //{
-            search.Search(ref possibleRecreations, currentJobFaction, this, currentHour, tag, s);
-            //possibleRecreations.AddRange(currentJobFaction.GetValidJobs_nonJob_byTags(this, currentHour, tag, s, true, false, true));
-            //    break;
-            //}
-            if (possibleRecreations.Count < 1) return false;
-
-            Job job = Utility.GetRandomElement(possibleRecreations);
-            if (log) ss += $"Changing job to tag [{tag}] " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]");
-
-            ChangeCurrentJob(job, "", tag);
-            if (CurrentJob != job) Debug.LogError($"Error in changing job from {(CurrentJob == null ? "null" : CurrentJob.RefID)} to {(job == null ? "null" : job.RefID)}");
-
-            return true;
-
-        }
-        return false;
-    }
 
     [JsonIgnore] public bool canEat { get {
             return this.hasStatKeyword("hunger") && this.Stats.GetStatValue("stats_derived_foodConsumption") >= 1 && timeSinceLastEat > 3; } }
@@ -2346,7 +2297,7 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         }
         else
         {
-            Debug.LogError($"Error GetTemplateByID {id}");
+            if (id != "") Debug.LogError($"Error GetTemplateByID {id}");
             return null;
         }
     }

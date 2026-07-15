@@ -110,6 +110,25 @@ public static class UtilityEX
             NullValueHandling = NullValueHandling.Ignore
         };
 
+
+    public static bool IsInLabor(Character_Trainable c)
+    {
+        if (scr_System_CentralControl.current.isSafeMode) return false;
+        if (c == null) return false;
+        if (c.ReproCycle == null) return false;
+        if (!c.ReproCycle.isPregnant) return false;
+        if (c.wombs == null || c.wombs.Count < 1) return false;
+        foreach (var w in c.wombs)
+        {
+            if (w.eggs == null || w.eggs.Count < 1) continue;
+            foreach (var egg in w.eggs)
+            {
+                if (egg.State != OvumState.Final) continue;
+                return true;
+            }
+        }
+        return false;
+    }
     public static SaveFileHolder ReadSaveHolder(FileInfo file)
     {
        using (var sr = new StreamReader(file.FullName))
@@ -1345,7 +1364,7 @@ public static class UtilityEX
                             break;
                         }
 
-                        target.TickMenstruation_Debug(adv_year, adv_month, adv_day);
+                        target.TickMenstruation(adv_year, adv_month, adv_day, true);
                     }
                 }
                 break;

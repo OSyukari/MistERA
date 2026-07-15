@@ -1,0 +1,373 @@
+{
+    "humanoid_Races":{
+        "foetusTemplates":
+        [
+{
+    "parentRaceID": "humanRace_human",
+    "racialTemplate":{
+        "offspring_templates":[
+            "humanRace_human_offspring_male",
+            "humanRace_human_offspring_female"
+        ],
+        "duration_fertilized": 168,
+        "duration_implanted": 168,
+        "size_implanted": 0.001,
+        "duration_first": 1848,
+        "size_first": 0.5,
+        "duration_second": 2352,
+        "size_second": 45.0,
+        "duration_third": 2016,
+        "size_third": 900.0,
+        "size_end": 3300.0,
+        "duration_randVariation": 0.10,
+        "duration_labor": 720,
+        "average_mother_HWMult": 9500,
+        "_note_labor": "720 min = ~12 h average first-birth labor (WHO data). average_mother_HWMult 9500 = ~165 cm × 58 kg typical adult human female. Fantasy races without their own foetusTemplate inherit this; their actual H×W in-game may differ, skewing canal_ratio. Suggested labor overrides when added: elf ×10 ageMultiplier → 7200 min; angel ×1 → 720 min; demon ×0.5 → 360 min; dragon egg-laying → 120 min; beastkin_cat → 360 min; doggirl → 480 min; foxgirl → 240 min; rabbitgirl → 90 min.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Default00.png",
+            "RJW - Womb/preg_human/Fetus_Default01.png",
+            "RJW - Womb/preg_human/Fetus_Default02.png",
+            "RJW - Womb/preg_human/Fetus_Default03.png",
+            "RJW - Womb/preg_human/Fetus_Default04.png",
+            "RJW - Womb/preg_human/Fetus_Default05.png"
+        ],
+        "images_multiplet":[
+            "RJW - Womb/preg_human/Fetus_Early00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default01_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default02_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default03_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default04_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default05_Multiplet_2.png"
+        ]
+    }
+},
+{
+    "parentRaceID": "humanRace_elf",
+    "_note": "ageMultiplier=10: all durations are 10× human. Pregnancy ~7.7 years, labor ~5 days. Baby comparable in size to a human newborn.",
+    "racialTemplate":{
+        "offspring_templates":[
+            "humanRace_elf_offspring_male",
+            "humanRace_elf_offspring_female"
+        ],
+        "duration_fertilized": 1680,
+        "duration_implanted": 1680,
+        "size_implanted": 0.001,
+        "duration_first": 18480,
+        "size_first": 0.5,
+        "duration_second": 23520,
+        "size_second": 45.0,
+        "duration_third": 20160,
+        "size_third": 900.0,
+        "size_end": 3300.0,
+        "duration_randVariation": 0.10,
+        "duration_labor": 7200,
+        "average_mother_HWMult": 8064,
+        "_note_average_mother_HWMult": "8064 = ~168 cm × 48 kg typical adult elf female.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Default00.png",
+            "RJW - Womb/preg_human/Fetus_Default01.png",
+            "RJW - Womb/preg_human/Fetus_Default02.png",
+            "RJW - Womb/preg_human/Fetus_Default03.png",
+            "RJW - Womb/preg_human/Fetus_Default04.png",
+            "RJW - Womb/preg_human/Fetus_Default05.png"
+        ],
+        "images_multiplet":[
+            "RJW - Womb/preg_human/Fetus_Early00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default01_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default02_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default03_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default04_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default05_Multiplet_2.png"
+        ]
+    }
+},
+{
+    "parentRaceID": "humanRace_angel",
+    "_note": "ageMultiplier=1: same timing as human. Slightly elevated WIL and PSY stats in offspring reflect celestial nature.",
+    "racialTemplate":{
+        "offspring_templates":[
+            "humanRace_angel_offspring_male",
+            "humanRace_angel_offspring_female"
+        ],
+        "duration_fertilized": 168,
+        "duration_implanted": 168,
+        "size_implanted": 0.001,
+        "duration_first": 1848,
+        "size_first": 0.5,
+        "duration_second": 2352,
+        "size_second": 45.0,
+        "duration_third": 2016,
+        "size_third": 900.0,
+        "size_end": 3300.0,
+        "duration_randVariation": 0.10,
+        "duration_labor": 720,
+        "average_mother_HWMult": 8692,
+        "_note_average_mother_HWMult": "8692 = ~164 cm × 53 kg typical adult angel female.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Default00.png",
+            "RJW - Womb/preg_human/Fetus_Default01.png",
+            "RJW - Womb/preg_human/Fetus_Default02.png",
+            "RJW - Womb/preg_human/Fetus_Default03.png",
+            "RJW - Womb/preg_human/Fetus_Default04.png",
+            "RJW - Womb/preg_human/Fetus_Default05.png"
+        ],
+        "images_multiplet":[
+            "RJW - Womb/preg_human/Fetus_Early00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default01_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default02_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default03_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default04_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default05_Multiplet_2.png"
+        ]
+    }
+},
+{
+    "parentRaceID": "humanRace_demon",
+    "_note": "ageMultiplier=0.5: all durations are 0.5× human. Pregnancy ~4.5 months, labor ~6 hours. Elevated STR/CON in offspring, lower WIL.",
+    "racialTemplate":{
+        "offspring_templates":[
+            "humanRace_demon_offspring_male",
+            "humanRace_demon_offspring_female"
+        ],
+        "duration_fertilized": 84,
+        "duration_implanted": 84,
+        "size_implanted": 0.001,
+        "duration_first": 924,
+        "size_first": 0.5,
+        "duration_second": 1176,
+        "size_second": 45.0,
+        "duration_third": 1008,
+        "size_third": 900.0,
+        "size_end": 3300.0,
+        "duration_randVariation": 0.12,
+        "duration_labor": 360,
+        "average_mother_HWMult": 8216,
+        "_note_average_mother_HWMult": "8216 = ~158 cm × 52 kg typical adult demon female.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Default00.png",
+            "RJW - Womb/preg_human/Fetus_Default01.png",
+            "RJW - Womb/preg_human/Fetus_Default02.png",
+            "RJW - Womb/preg_human/Fetus_Default03.png",
+            "RJW - Womb/preg_human/Fetus_Default04.png",
+            "RJW - Womb/preg_human/Fetus_Default05.png"
+        ],
+        "images_multiplet":[
+            "RJW - Womb/preg_human/Fetus_Early00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default01_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default02_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default03_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default04_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default05_Multiplet_2.png"
+        ]
+    }
+},
+{
+    "parentRaceID": "humanRace_dragon",
+    "_note": "Oviparous. Internal calcification ~64 days total before egg is laid. Stages model egg shell development: fertilized (zygote 4d) → implanted (egg beginning 20d) → first (calcification 30d) → second (hardening 10d) → third (pre-laying 10d) → Final (lay event). External incubation not modeled yet. Dragon images needed.",
+    "racialTemplate":{
+        "offspring_templates":[
+            "humanRace_dragon_offspring_male",
+            "humanRace_dragon_offspring_female"
+        ],
+        "duration_fertilized": 96,
+        "duration_implanted": 480,
+        "size_implanted": 0.001,
+        "duration_first": 720,
+        "size_first": 200.0,
+        "duration_second": 240,
+        "size_second": 3000.0,
+        "duration_third": 240,
+        "size_third": 7000.0,
+        "size_end": 10000.0,
+        "duration_randVariation": 0.05,
+        "duration_labor": 120,
+        "average_mother_HWMult": 12460,
+        "_note_average_mother_HWMult": "12460 = ~178 cm × 70 kg typical adult female dragonkin.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Default00.png",
+            "RJW - Womb/preg_human/Fetus_Default01.png",
+            "RJW - Womb/preg_human/Fetus_Default02.png",
+            "RJW - Womb/preg_human/Fetus_Default03.png",
+            "RJW - Womb/preg_human/Fetus_Default04.png",
+            "RJW - Womb/preg_human/Fetus_Default05.png"
+        ]
+    }
+},
+{
+    "parentRaceID": "humanRace_beastkin_cat",
+    "_note": "Induced ovulator. Gestation ~69 days total (2d fertilized + 4d implanted + 63d trimesters, 21d each). Smaller offspring than humans.",
+    "racialTemplate":{
+        "offspring_templates":[
+            "humanRace_beastkin_cat_offspring_male",
+            "humanRace_beastkin_cat_offspring_female"
+        ],
+        "duration_fertilized": 48,
+        "duration_implanted": 96,
+        "size_implanted": 0.001,
+        "duration_first": 504,
+        "size_first": 0.1,
+        "duration_second": 504,
+        "size_second": 5.0,
+        "duration_third": 504,
+        "size_third": 50.0,
+        "size_end": 150.0,
+        "duration_randVariation": 0.10,
+        "duration_labor": 360,
+        "average_mother_HWMult": 7110,
+        "_note_average_mother_HWMult": "7110 = ~158 cm × 45 kg typical adult female catkin.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Default00.png",
+            "RJW - Womb/preg_human/Fetus_Default01.png",
+            "RJW - Womb/preg_human/Fetus_Default02.png",
+            "RJW - Womb/preg_human/Fetus_Default03.png",
+            "RJW - Womb/preg_human/Fetus_Default04.png",
+            "RJW - Womb/preg_human/Fetus_Default05.png"
+        ],
+        "images_multiplet":[
+            "RJW - Womb/preg_human/Fetus_Early00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default00_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default01_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default02_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default03_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default04_Multiplet_2.png",
+            "RJW - Womb/preg_human/Fetus_Default05_Multiplet_2.png"
+        ]
+    }
+}
+        ]
+    },
+    "Character_Bases": {
+        "generators": [
+            {
+                "ID": "humanRace_human_offspring_male",
+                "targetBaseIDs": ["offspring_human_male"],
+                "allowDuplicateID": true,
+                "Appearance": "Male",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_human_offspring_female",
+                "targetBaseIDs": ["offspring_human_female"],
+                "allowDuplicateID": true,
+                "Appearance": "Female",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_elf_offspring_male",
+                "targetBaseIDs": ["offspring_elf_male"],
+                "allowDuplicateID": true,
+                "Appearance": "Male",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_elf_offspring_female",
+                "targetBaseIDs": ["offspring_elf_female"],
+                "allowDuplicateID": true,
+                "Appearance": "Female",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_angel_offspring_male",
+                "targetBaseIDs": ["offspring_angel_male"],
+                "allowDuplicateID": true,
+                "Appearance": "Male",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_angel_offspring_female",
+                "targetBaseIDs": ["offspring_angel_female"],
+                "allowDuplicateID": true,
+                "Appearance": "Female",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_demon_offspring_male",
+                "targetBaseIDs": ["offspring_demon_male"],
+                "allowDuplicateID": true,
+                "Appearance": "Male",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_demon_offspring_female",
+                "targetBaseIDs": ["offspring_demon_female"],
+                "allowDuplicateID": true,
+                "Appearance": "Female",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_dragon_offspring_male",
+                "targetBaseIDs": ["offspring_dragon_male"],
+                "allowDuplicateID": true,
+                "Appearance": "Male",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_dragon_offspring_female",
+                "targetBaseIDs": ["offspring_dragon_female"],
+                "allowDuplicateID": true,
+                "Appearance": "Female",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_beastkin_cat_offspring_male",
+                "targetBaseIDs": ["offspring_beastkin_cat_male"],
+                "allowDuplicateID": true,
+                "Appearance": "Male",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            },
+            {
+                "ID": "humanRace_beastkin_cat_offspring_female",
+                "targetBaseIDs": ["offspring_beastkin_cat_female"],
+                "allowDuplicateID": true,
+                "Appearance": "Female",
+                "useNameGen": true,
+                "nameGen_firstName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2
+            }
+        ]
+    }
+}

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using static LLMMessage;
 using static LLMUtils;
@@ -57,6 +58,11 @@ public class LLMRequest
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public ResponseFormatter_Claude output_config = null;
 
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public List<ResponseFormatter_Tools> tools = null;
+    public ResponseFormatter_ZAI_toolchoice tool_choice = null;
+
     public void LoadTemplate(LLMRequest req)
     {
         this.temperature = req.temperature;
@@ -96,6 +102,33 @@ public class LLMRequest
 
     }
 
+    public class ResponseFormatter_Tools
+    {
+
+    }
+
+    public class ResponseFormatter_ZAI_tools : ResponseFormatter_Tools
+    {
+
+        public class ResponseFormatter_ZAI_tools_2
+        {
+            public string name = "submit_response";
+            public string description = "Submit the complete structured game response. You MUST call this function with every required field populated; do not write the JSON in your text content.";
+            public LLMFormatSchema parameters = new LLMFormatSchema();
+        }
+
+        public string type = "function";
+        public ResponseFormatter_ZAI_tools_2 function = new ResponseFormatter_ZAI_tools_2();
+
+        public void ReplaceType(string a, string b)
+        {
+            if (this.function != null && this.function.parameters != null)
+            {
+                this.function.parameters.ReplaceType(a, b);
+            }
+        }
+    }
+
     public LLMRequest() { }
     public LLMRequest(bool initialize)
     {
@@ -118,6 +151,18 @@ public class LLMRequest
             this.format.schema = format.json_schema.schema;
         }
 
+    }
+
+
+    public class ResponseFormatter_ZAI_toolchoice
+    {
+        public class ResponseFormatter_ZAI_toolchoice2
+        {
+            public string name = "submit_response";
+        }
+
+        public string type = "function";
+        public ResponseFormatter_ZAI_toolchoice2 function = new ResponseFormatter_ZAI_toolchoice2();
     }
 
     public class ResponseFormatter
@@ -337,11 +382,57 @@ public class LLMMessage
     public string role;
     public string content;
 
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public List<ToolCall> tool_calls = null;
+
+    public class ToolCall
+    {
+        public string id;
+        public string type;
+        public FunctionCall function;
+    }
+    public class FunctionCall
+    {
+        public string name;
+        public string arguments;
+    }
+
     public LLMMessage() { }
     public LLMMessage(LLMMessage message)
     {
         this.role = message.role;
-        this.content = message.content;
+        this.content = message.content;// StripCodeFence(message.content);
+    }
+
+    static string StripCodeFence(string content)
+    {
+        if (string.IsNullOrEmpty(content)) return content;
+
+
+        MatchCollection matches = LLMUtils.regex_JSONWrapper.Matches(content);
+
+        foreach(var match in matches.ToList())
+        {
+            return match.Groups["jsonContent"].Value;
+        }
+        /*
+        int start = content.IndexOf("```json");
+        if (start < 0) return content;
+
+        int end = content.LastIndexOf("```");
+        if (end <= start) return content;
+
+        int lineStart = content.IndexOf('\n', start);
+        if (lineStart < 0 || lineStart >= end)
+        {
+            string body = content.Substring(start + 3, end - start - 3).Trim();
+            int jb = body.IndexOfAny(new[] { '{', '[' });
+            if (jb >= 0) body = body.Substring(jb);
+            return body;
+        }
+
+        return content.Substring(lineStart + 1, end - lineStart - 1).Trim();*/
+        return content;
     }
 
     MessageJSON json = null;
@@ -352,6 +443,11 @@ public class LLMMessage
     {
         if (json != null) return json;
 
+        if (string.IsNullOrEmpty(content) && tool_calls != null && tool_calls.Count > 0 && tool_calls[0].function != null)
+        {
+            content = tool_calls[0].function.arguments;
+        }
+
         try
         {
             json = JsonConvert.DeserializeObject<MessageJSON>(content);
@@ -359,10 +455,20 @@ public class LLMMessage
         }
         catch(Exception e)
         {
-            Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
-            json = new MessageJSON();
-            json.content_string = Utility.WrapTextColor($"ERROR failed to deserialize MessageJSON object, error code [{content}]", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
-            return json;
+            try
+            {
+                var str = StripCodeFence(content);
+                Debug.Log($"error failed to deserialize MessageJSON object, trying with strip bracket [{str}]");
+                json = JsonConvert.DeserializeObject<MessageJSON>(str);
+                json_serialized = json;
+            }
+            catch(Exception e2)
+            {
+                Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
+                json = new MessageJSON();
+                json.content_string = Utility.WrapTextColor($"ERROR failed to deserialize MessageJSON object, error code [{content}]", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+                return json;
+            }
         }
 
 
@@ -411,7 +517,7 @@ public class LLMMessage
 }
 public class MessageJSON
 {
-    public string think;
+    //public string think;
     public string summary;
     public string content_string;
     public List<MessageParagraph> content_blocks = new List<MessageParagraph>();
@@ -914,6 +1020,9 @@ public class LLM_WorldState
 
 public static class LLMUtils
 {
+
+    public static Regex regex_JSONWrapper = new Regex(@"```json(?<jsonContent>.*?)```", RegexOptions.Singleline);
+
     static void AddChild(ActionPackage ap, SerializedAP child, Dictionary<string, SerializedAP> tooltips)
     {
         if (child == null) return;
@@ -999,10 +1108,9 @@ public static class LLMUtils
                 {
                     if (ap.targetCOM.childCOMs.Count > 0)
                     {
-                        tooltips.Add(ap.targetCOM.DisplayName(), app);
-                        app.CommandName = null;
+                        if (tooltips.TryAdd(ap.targetCOM.DisplayName(), app)) app.CommandName = null;
                     }
-                    else tooltips.Add(ap.DescriptionText(chara.RefID, false), app);
+                    else tooltips.TryAdd(ap.DescriptionText(chara.RefID, false), app);
                 }
             }
             foreach (var ap in job.CachedPackages)

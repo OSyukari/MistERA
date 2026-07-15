@@ -9,149 +9,38 @@
         "fertilizationChance": "base per-egg probability of conception given normal sperm (3.0 units). Scaled by Fertilize(cum).",
         "phasedays_note": "menstrualDays + follicularDays + ovulationDays must be <= cycleThreshold. Remainder = final rest phase (luteal / diestrus+anestrus / interestrus)."
     },
+    "Items": 
+    {
+        "list": [
+            {
+                "id": "item_foetus",
+                "displayName": "foetus",
+                "Tags": [],
+                "value": 0,
+                "itemComps_Template":[
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "stackable": false,
+                        "comp_Ingestible": {
+                            "ingestMethod": [
+                            {
+                                "bodyTags": "womb",
+                                "ingestionMsgString":"is pregnant with $itemname$"
+                            }
+                        ],
+                        "amount": 0
+                        }
+                    }
+                ]
+            }
+
+        ]
+    },
     "humanoid_Races": {
         "foetusTemplates":
         [
-{
-    "parentRaceID": "humanRace_human",
-    "racialTemplate":{
-        "offspring_templates":[
 
-        ],
-        "duration_fertilized": 168,
-        "duration_implanted": 168,
-        "size_implanted": 0.001,
-        "duration_first": 1848,
-        "size_first": 0.5,
-        "duration_second": 2352,
-        "size_second": 45.0,
-        "duration_third": 2016,
-        "size_third": 900.0,
-        "size_end": 3300.0,
-        "duration_randVariation": 0.10,
-        "images":[
-            "RJW - Womb/preg_human/Fetus_Early00.png",
-            "RJW - Womb/preg_human/Fetus_Default00.png",
-            "RJW - Womb/preg_human/Fetus_Default01.png",
-            "RJW - Womb/preg_human/Fetus_Default02.png",
-            "RJW - Womb/preg_human/Fetus_Default03.png",
-            "RJW - Womb/preg_human/Fetus_Default04.png",
-            "RJW - Womb/preg_human/Fetus_Default05.png"
-        ],
-        "images_multiplet":[
-            "RJW - Womb/preg_human/Fetus_Early00_Multiplet_2.png",
-            "RJW - Womb/preg_human/Fetus_Default00_Multiplet_2.png",
-            "RJW - Womb/preg_human/Fetus_Default01_Multiplet_2.png",
-            "RJW - Womb/preg_human/Fetus_Default02_Multiplet_2.png",
-            "RJW - Womb/preg_human/Fetus_Default03_Multiplet_2.png",
-            "RJW - Womb/preg_human/Fetus_Default04_Multiplet_2.png",
-            "RJW - Womb/preg_human/Fetus_Default05_Multiplet_2.png"
-        ]
-    }
-},
-{
-    "parentRaceID": "creature_beastRace_animal",
-    "racialTemplate":{
-        "offspring_templates":[
 
-        ],
-        "duration_fertilized": 432,
-        "duration_implanted": 480,
-        "size_implanted": 0.001,
-        "duration_first": 2112,
-        "size_first": 0.5,
-        "duration_second": 2112,
-        "size_second": 500.0,
-        "duration_third": 2136,
-        "size_third": 15000.0,
-        "size_end": 40000.0,
-        "duration_randVariation": 0.05,
-        "images":[
-            "RJW - Womb/preg_human/Fetus_Early00.png",
-            "RJW - Womb/preg_human/Fetus_Bovine00.png",
-            "RJW - Womb/preg_human/Fetus_Bovine01.png",
-            "RJW - Womb/preg_human/Fetus_Bovine02.png",
-            "RJW - Womb/preg_human/Fetus_Bovine03.png",
-            "RJW - Womb/preg_human/Fetus_Bovine04.png",
-            "RJW - Womb/preg_human/Fetus_Bovine05.png"
-        ]
-    },
-    "foetusByBaseID":
-    {
-        "creature_animal_horse_template":
-        {
-            "offspring_templates":[
-                "creature_animal_horse"
-            ],
-            "duration_fertilized": 144,
-            "duration_implanted": 384,
-            "size_implanted": 0.001,
-            "duration_first": 2568,
-            "size_first": 0.5,
-            "duration_second": 2712,
-            "size_second": 600.0,
-            "duration_third": 2736,
-            "size_third": 20000.0,
-            "size_end": 50000.0,
-            "duration_randVariation": 0.05,
-            "images":[
-                "RJW - Womb/preg_human/Fetus_Early00.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine00.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine01.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine02.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine03.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine04.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine05.png"
-            ]
-        },
-        "creature_animal_pig_template":
-        {
-            "offspring_templates":[
-                "creature_animal_pig"
-            ],
-            "duration_fertilized": 288,
-            "duration_implanted": 336,
-            "size_implanted": 0.001,
-            "duration_first": 816,
-            "size_first": 0.2,
-            "duration_second": 816,
-            "size_second": 15.0,
-            "duration_third": 816,
-            "size_third": 500.0,
-            "size_end": 1300.0,
-            "duration_randVariation": 0.08,
-            "images":[
-                "RJW - Womb/preg_human/Fetus_Early00.png",
-                "RJW - Womb/preg_human/Fetus_Pig00.png",
-                "RJW - Womb/preg_human/Fetus_Pig01.png",
-                "RJW - Womb/preg_human/Fetus_Pig02.png",
-                "RJW - Womb/preg_human/Fetus_Pig03.png",
-                "RJW - Womb/preg_human/Fetus_Pig04.png",
-                "RJW - Womb/preg_human/Fetus_Pig05.png"
-            ]
-        },
-        "creature_animal_bear_template":
-        {
-            "offspring_templates":[
-                "creature_animal_bear",
-                "creature_animal_cavebear"
-            ],
-            "_note": "embryonic diapause: fertilized blastocyst lies dormant ~150d before implanting. Active development is only ~60d.",
-            "duration_fertilized": 3600,
-            "duration_implanted": 168,
-            "size_implanted": 0.001,
-            "duration_first": 480,
-            "size_first": 0.05,
-            "duration_second": 480,
-            "size_second": 3.0,
-            "duration_third": 480,
-            "size_third": 50.0,
-            "size_end": 300.0,
-            "duration_randVariation": 0.15
-        }
-    }
-    
-}
         ],
         "reproductionTemplates": [
 {

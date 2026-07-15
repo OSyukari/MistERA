@@ -55,8 +55,11 @@ public abstract class scr_Menu : MonoBehaviour
         this.buttonsByID = new Dictionary<int, scr_SelectableText>();
         validatorsByID = new Dictionary<int, ButtonValidator>();
 
-        foreach(Image i in background_solid) i.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Opaque.Color;
-        foreach (Image i in background_transparent) i.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+        if (scr_System_CentralControl.current != null)
+        {
+            foreach(Image i in background_solid) i.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Opaque.Color;
+            foreach (Image i in background_transparent) i.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
+        }
 
     }
 

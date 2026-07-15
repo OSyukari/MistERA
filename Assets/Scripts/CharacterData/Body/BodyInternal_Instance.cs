@@ -99,6 +99,15 @@ public class BodyInternal_Instance
         }
     }
 
+    [JsonIgnore]
+    public bool isPregnant
+    {
+        get
+        {
+            return womb != null && womb.isPregnant;
+        }
+    }
+
     public bool NotifySexExperience(bool hasPermission, string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
     {
         this.lastExperience = Owner.Memory.Last.EndTime.Ticks;
@@ -768,7 +777,12 @@ public class BodyInternal_Instance
     {
         get
         {
-            return VolumeCapacity > 0 ? this.VolumeCapacity * Base.maxExpansionRatio : 0;
+            var basecap = VolumeCapacity > 0 ? this.VolumeCapacity * Base.maxExpansionRatio : 0;
+            if (isPregnant)
+            {
+                basecap += womb.GetVolumeMod();
+            }
+            return basecap;
         }
     }
 
@@ -870,7 +884,7 @@ public class BodyInternal_Instance
         Owner.Skills.CheckExperienceGain(tags, amount, m);
     }
 
-
+    /*
     public bool Ingest_(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null)
     {
         if (!this.canContain) return false;
@@ -946,7 +960,7 @@ public class BodyInternal_Instance
                 if (directionOut != null && directionOut != this && directionOut.canContain && !fillHistory.Contains(directionOut) && directionOut.Ingest(item, m, forceFill, fillHistory)) return true;
                 else return false;
             }
-            /*
+            
             if (RemainingExpandingCapacity >= 1)
             {
                 var newcap = Math.Min(RemainingExpandingCapacity, comp.amount);
@@ -965,10 +979,10 @@ public class BodyInternal_Instance
                 }
                 comp.amount -= newcap;
                 return false;
-            }*/
+            }
         }
 
-    }
+    }*/
 
     // ── New ingest logic (standalone for testing, replaces Ingest once verified) ──────────────
     // Non-cum: always ingests. Cum phases:
@@ -1136,9 +1150,11 @@ public class BodyInternal_Instance
         }
 
         UtilityEX.ApplyOnConsume(this, comp.OnUseEffects);
+        var method = comp == null ? null : comp.GetIngestMethod(this.Base.tags);
         if (comp != null)
         {
-            string key = comp.isLiquid ? Base.memory_ingest_liquid : Base.memory_ingest_solid;
+            string key = method != null && method.ingestionMsgString != "" ? method.ingestionMsgString :
+                    comp.isLiquid ? Base.memory_ingest_liquid : Base.memory_ingest_solid;
             if (key != "")
             {
                 string memstring = LocalizeDictionary.QueryThenParse(key);
@@ -1175,9 +1191,8 @@ public class BodyInternal_Instance
             }
         }
 
-        ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method = comp.ingestMethod.Find(x => this.hasTag(x.bodyTags));
        // if (!contain.ContainsKey(kvp.Key)) DigestDelays.Add(kvp.Key, Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
-        this.ContainedRefs_Delays.Add(i.RefID, (int)Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
+        this.ContainedRefs_Delays.Add(i.RefID, method == null ? 0 : (int)Utility.RandVariation(method.digestDelay, method.digestDelayVariation));
         contains_cache = null;
     }
 

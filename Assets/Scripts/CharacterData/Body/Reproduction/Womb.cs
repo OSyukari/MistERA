@@ -53,16 +53,19 @@ public abstract class BodyInternal_Womb
             bool hasImplanted = false;
             int hasFertilized = -1;
             int hasRelease = -1;
+            bool hasDefault = false;
             
             foreach(var egg in eggs)
             {
-                if (egg.State == OvumState.Implanted) hasImplanted = true;
+                if (egg.State > OvumState.Implanted || egg.State == OvumState.Aborted) continue;
+                else if (egg.State == OvumState.Implanted) hasImplanted = true;
                 else if (egg.State == OvumState.Fertilized)
                 {
                     hasFertilized = Math.Max(hasFertilized, egg.FertilizedStage);
                 }
                 else
                 {
+                    hasDefault = true;
                     hasRelease = Math.Max(hasRelease, egg.ReleaseStage);
                 }
             }
@@ -76,17 +79,14 @@ public abstract class BodyInternal_Womb
             {
                 return ReproductionUtility.releaseStages[Math.Clamp(hasRelease, 0, ReproductionUtility.releaseStages.Count() - 1)];
             }
-            else if (eggs.Count > 0)
+            else if (hasDefault)
             {
                 // else if has egg and has cum, fertilizing
                 if (source.ContainsCum) return Utility.GetRandomElement(ReproductionUtility.fertilizingStages);
                 else return ReproductionUtility.egg_active;
             }
-            else
-            {
-                if (source.Owner.ReproCycle != null && source.Owner.ReproCycle.CanOvulate) return ReproductionUtility.ovary_active;
-                else return "";
-            }
+            else if (source.Owner.ReproCycle != null && source.Owner.ReproCycle.CanOvulate) return ReproductionUtility.ovary_active;
+            else return "";
         }
     }
 
@@ -97,25 +97,30 @@ public abstract class BodyInternal_Womb
     protected int fertilizedEggs = 0;       // eggs successfully fertilized
 
     string notsamerace = "CalcFertility_notSameRace";
-    public float CalcFertility(Item_Instance_Cum cum, out string calcResult)
+    public float CalcFertility(Item_Instance_Cum cum, out string calcResult, out string formula)
     {
         calcResult = "";
+        formula = "cum null";
         if (cum == null) return 0f;
         var fertility = this.BaseTemplate.fertilizationChance * cum.CumAmount;
+        formula = $"basetemplate chance {this.BaseTemplate.fertilizationChance.ToString("N2")} * amount {cum.CumAmount.ToString("N2")}";
         if (cum.raceID != source.Owner.Race.ID)
         {
             fertility *= 0.25f;
             calcResult = notsamerace;
-        }
-        var tags_mother = source.Owner.Race.RaceType;
-        if (cum.race != null && cum.race.RaceType.Count > 0 && tags_mother.Count > 0 && Utility.ListContainsLoose(cum.race.RaceType, tags_mother))
-        {
-            // allow minimum
-        }
-        else
-        {
-            calcResult = notsamerace;
-            fertility = 0;
+            formula += $" * not same race {0.25}";
+
+            var tags_mother = source.Owner.Race.RaceType;
+            if (cum.race != null && cum.race.RaceType.Count > 0 && tags_mother.Count > 0 && Utility.ListContainsLoose(cum.race.RaceType, tags_mother))
+            {
+                // allow minimum
+            }
+            else
+            {
+                formula += $" * not sharing keyword force set to {0}";
+                calcResult = notsamerace;
+                fertility = 0;
+            }
         }
         return (float)fertility;
     }
@@ -203,15 +208,19 @@ public abstract class BodyInternal_Womb
     public void ReEstablishParent(BodyInternal_Instance source)
     {
         this.source = source;
+        foreach (var egg in eggs) egg.womb = this;
     }
 
     List<string> images_cache = new List<string>();
+    bool defaultImage = false;
+
     [JsonIgnore]
     public List<string> GetImages
     {
         get
         {
             images_cache.Clear();
+            defaultImage = false;
             if (source == null || source.Owner == null)
             {
                 return images_cache;
@@ -219,22 +228,27 @@ public abstract class BodyInternal_Womb
             if (isPregnant)
             {
                 //
-                Ovum oldest = null;
-                foreach(var egg in eggs)
+                Ovum oldest = ReproductionUtility.GetOldestOvum(this);
+                if (oldest != null && oldest.State <= OvumState.Implanted) oldest = null;
+                bool multiplet = oldest == null ? false : eggs.FindAll(x => x.foetus.images_hash == oldest.foetus.images_hash).Count > 1;
+                var image = oldest == null ? "" : oldest.GetImage(multiplet);
+                if (image == "")
                 {
-                    if (oldest == null) oldest = egg;
-                    else if (egg.isOlderThan(oldest)) oldest = egg;
+                    image = ReproductionUtility.defaultWombPath;
+                    defaultImage = true;
                 }
-
-                var image = oldest == null ? "" : oldest.Image;
-                if (image != "") images_cache.Add(image);
+                images_cache.Add(image);
             }
             else
             {
                 var v =  source.Owner.ReproCycle == null ? "" : source.Owner.ReproCycle.CycleWombImageOverride;
-                if (v == "") v = ReproductionUtility.defaultWombPath;
-                if (v != "") images_cache.Add(v);
+                if (v == "")  v = ReproductionUtility.defaultWombPath;
+                images_cache.Add(v);
 
+                defaultImage = true;
+            }
+            if (defaultImage)
+            {
                 var fill = source.MaxCapacityPercentage;
 
                 if (fill == 0 || fill < float.Epsilon)
@@ -249,6 +263,7 @@ public abstract class BodyInternal_Womb
                     images_cache.Add(ReproductionUtility.cumOverlays[index]);
                 }
             }
+
             return images_cache;
         }
     }
@@ -313,7 +328,13 @@ public abstract class BodyInternal_Womb
 
         if (cycle.CurrentStatus == currentStatus) return;
 
-        if (cycle.ShouldClearOvum) eggs.Clear();
+        if (cycle.ShouldClearOvum)
+        {
+            for(int i = eggs.Count - 1; i >= 0; i--)
+            {
+                if (eggs[i].State < OvumState.Implanted) eggs.RemoveAt(i);
+            }
+        }
 
         currentStatus = cycle.CurrentStatus;
     }
@@ -328,41 +349,58 @@ public abstract class BodyInternal_Womb
     public virtual void HourTick()
     {
         valideggs.Clear();
+        if (eggs == null) eggs = new List<Ovum>();
 
-        if (eggs.Count > 0)
+        for (int i = eggs.Count - 1; i >= 0; i--)
         {
-            for (int i = eggs.Count - 1; i >= 0; i--)
+            var egg = eggs[i];
+            if (egg == null)
             {
-                var egg = eggs[i];
-                egg.HourTick(this);
-
-                if (egg.State == OvumState.Aborted) eggs.RemoveAt(i);
-                else if (egg.State == OvumState.Default) valideggs.Add(egg);
+                eggs.RemoveAt(i);
+                continue;
             }
+            egg.HourTick(this);
+
+            if (egg.State == OvumState.Aborted)
+            {
+                Debug.Log($"egg state aborted, null foetus? {egg.foetus == null}, discarding");
+                eggs.RemoveAt(i);
+            }
+            else if (egg.State == OvumState.Default && !valideggs.Contains(egg)) valideggs.Add(egg);
         }
+        
 
         // pregnancy check
         if (valideggs.Count > 0)
         {
             cumweightdict.Clear();
             cumfertdict.Clear();
+            if (source == null)
+            {
+                Debug.LogError($"error source null in womb");
+                return;
+            }
             foreach(var item in source.Contains)
             {
                 if (item is Item_Instance_Cum)
                 {
                     var cum = item as Item_Instance_Cum;
+                    if (cum == null) continue;
                     cumweightdict.Add(cum, cum.CumAmount);
-                    cumfertdict.Add(cum, CalcFertility(cum, out var result));
+                    cumfertdict.Add(cum, CalcFertility(cum, out var result, out var formula));
                 }
             }
 
             foreach(var egg in valideggs)
             {
-                var selectedcum = Utility.WeightedRandInDict(cumfertdict);
-                var fert = cumfertdict[selectedcum];
-
+                var selectedcum = Utility.WeightedRandInDict(cumweightdict);
+                if (selectedcum == null || !cumfertdict.ContainsKey(selectedcum)) continue; 
+                float fert = cumfertdict[selectedcum];
+                if (!scr_System_CampaignManager.current.DebugMode) fert *= 0.01f;  // fert chance is in percentage, need to convert
                 if (fert <= 0) continue;
-                if (Utility.NextFloat() > fert) continue;
+                var randflaot = Utility.NextFloat();
+                Debug.Log($"fert chance roll {randflaot.ToString("N2")} > {fert.ToString("N2")} ? continue : fertilize");
+                if (randflaot > fert) continue;
                 // we have a hit
                 egg.Fertilize(selectedcum);
             }
@@ -375,6 +413,41 @@ public abstract class BodyInternal_Womb
     public virtual void NotifyClimax(float climaxIntensity, ReproductionCycle cycle)
     { 
     
+    }
+
+
+
+    FoetusTemplates _default_foetus = null;
+    [JsonIgnore] public FoetusTemplates default_foetus
+    {
+        get
+        {
+            if (_default_foetus == null && source != null && source.Owner != null)
+            {
+                _default_foetus = scr_System_Serializer.current.MasterList.humanoid_Races.CollectValidFoetus(source.Owner.Race.ID, source.Owner.BaseID);
+            }
+            return _default_foetus;
+        }
+    }
+    Dictionary<OvumState, float> cached_GetVolumeMod = new Dictionary<OvumState, float>();
+
+    public float GetVolumeMod()
+    {
+        // no natural cycle, body not fit for preg, no scaling
+        if (BaseTemplate == null) return 0;
+        OvumState maxstage = OvumState.Default;
+        if (cached_GetVolumeMod.TryGetValue(maxstage, out var value)) return value;
+
+        foreach (var egg in eggs) if (egg.State > maxstage) maxstage = egg.State;
+        if (maxstage < OvumState.Implanted) return 0;
+        var fertRoof = (int)Math.Ceiling(BaseTemplate.fertility);
+
+        if (default_foetus == null) return 0;
+        else 
+        {
+            cached_GetVolumeMod[maxstage] = default_foetus.GetSizePerState(maxstage) * fertRoof;
+            return cached_GetVolumeMod[maxstage];
+        }
     }
 
     // ── Fertilization ──────────────────────────────────────────────────────
@@ -396,13 +469,13 @@ public abstract class BodyInternal_Womb
         accumulateOvuPower += ovuPower * BaseTemplate.fertility / BaseTemplate.ovulationQuantityAverage;
         while (accumulateOvuPower > 1.0f)
         {
-            eggs.Add(new Ovum(source.Owner, BaseTemplate));
+            eggs.Add(new Ovum(this, source.Owner, BaseTemplate));
             accumulateOvuPower -= 1f;
             isOvumRelease = true;
         }
         if (accumulateOvuPower > 0f && UnityEngine.Random.Range(0f, 1f) < accumulateOvuPower)
         {
-            eggs.Add(new Ovum(source.Owner, BaseTemplate));
+            eggs.Add(new Ovum(this, source.Owner, BaseTemplate));
             isOvumRelease = true;
             accumulateOvuPower = 0f;
         }
@@ -436,7 +509,13 @@ public class Womb_Spontaneous : BodyInternal_Womb
     {
         if (cycle.CurrentStatus == currentStatus) return;
         else if (cycle.CanOvulate) ovulation();
-        else if (cycle.ShouldClearOvum) eggs.Clear();
+        else if (cycle.ShouldClearOvum)
+        {
+            for (int i = eggs.Count - 1; i >= 0; i--)
+            {
+                if (eggs[i].State < OvumState.Implanted) eggs.RemoveAt(i);
+            }
+        }
 
         currentStatus = cycle.CurrentStatus;
     }

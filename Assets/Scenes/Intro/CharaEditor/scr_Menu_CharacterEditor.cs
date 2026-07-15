@@ -447,8 +447,16 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         }
         if (trait == null)
         {
-            Debug.Log("Critical Error in PopulateTraits_Spectrum_GroupList, character contains trait null");
-            return;
+
+            if (group.SortType != Trait_Group_Type.SortedList && group.SortType != Trait_Group_Type.UnsortedList) return;
+            //if (tr.Type == Trait_Type.Body) continue;
+            if (group.tags.Contains("do_not_use")) return;
+            if (!group.allowPopulate) return;
+            var neutral = group.getNeutralinGroup();
+            if (neutral == null) return;
+
+            Character.Stats.AddTrait(neutral);
+            trait = neutral;
         }
 
         var box = Instantiate(prefab_trait_spectrum);

@@ -10,17 +10,20 @@ public class scr_errorCatcher : scr_Menu
     public CanvasGroup selfGroup;
     public scr_SelectableText button_copy;
 
+    public RectTransform childObject;
+
     protected override void Start()
     {
         Application.logMessageReceived += MessageReceive;
+        //childObject.gameObject.SetActive(true);
+        base.Start();
     }
 
-
-    protected override void Awake()
+    protected override void OnEnable()
     {
-        base.Awake();
-        this.m_Canvas.overrideSorting = true;
+        base.OnEnable();
     }
+
 
     public override void Initialize()
     {

@@ -2,7 +2,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-"ui_debug_tooltip2":"6. 全局射精量X5",
+"ui_debug_tooltip2":"6. 全局射精量X5\n7. 怀孕率*100%",
                 
 "ui_currentSexJob_swapTargets": "< 交换对象 >",
 "ui_currentSexJob_swapTargets_tooltip": "互换当前选择的指令执行和接受对象",
@@ -71,9 +71,22 @@
 
 "charaDetail_panel_womb_content": "内容物（共 $volume$ml）",
 
-"OvumState_Default": "待受精$count$",
-"OvumState_Fertilized": "待受精$count$",
-"charaDetail_panel_cycle_ovumLists": "卵子：$content$",
+"charaDetail_panel_cycle_OvumState_Default": "待受精$count$",
+"charaDetail_panel_cycle_OvumState_Fertilized": "已受精$count$",
+"charaDetail_panel_cycle_OvumState_Implanted": "已着床$count$",
+"charaDetail_panel_cycle_OvumState_Foetus": "胎儿$count$",
+
+"OvumState_Implanted":"已着床",
+"OvumState_First_trimester":"初期",
+"OvumState_Second_trimester":"中期",
+"OvumState_Third_trimester":"晚期",
+"OvumState_Final":"临产",
+
+"chara_currentjob_labor":"临产中",
+"chara_currentjob_labor_assist":"辅助临产中",
+
+
+"charaDetail_panel_cycle_ovumLists": "卵子 $total$：$content$",
 "item_cum_print_amount": "$item$ $count$ml",
 "Item_Instance_Cum_nameOverwrite":"$name$的精液",
 "Item_Instance_Cum_fertChance_perHour":"每小时受孕率 $chance$%",

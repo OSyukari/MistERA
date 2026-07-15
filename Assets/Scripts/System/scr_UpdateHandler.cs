@@ -4,9 +4,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
+using static LLMRequest;
+using static LLMRequest.ResponseFormatter_Tools;
 
 public enum LLMStatus
 {
@@ -185,10 +188,34 @@ public class scr_UpdateHandler : MonoBehaviour
 
             s.top_p = null;
         }
-        else if (baseUrl.Contains("deepseek.com"))
+        else if (baseUrl.Contains("api.z.ai") || baseUrl.Contains("deepseek.com"))
         {
+            // GLM & DeepSeek: neither honors response_format json_schema, so enforce the schema via function calling instead.
+            // Both are OpenAI-compatible and use max_tokens (not max_completion_tokens).
             s.max_completion_tokens = null;
-            s.response_format.ReplaceType("int", "integer");
+            if (s.max_tokens == null) s.max_tokens = 512;
+            s.top_k = null;
+
+            var formatter = new ResponseFormatter_ZAI_tools();
+            // move the real schema from response_format into the tool's parameters (these providers enforce via tools, not response_format)
+            if (s.response_format != null && s.response_format.json_schema != null && s.response_format.json_schema.schema != null)
+            {
+                formatter.function.parameters = s.response_format.json_schema.schema;
+            }
+            formatter.ReplaceType("int", "integer");
+            formatter.function.parameters.Purge();
+            s.tools = new List<ResponseFormatter_Tools> { formatter };
+
+            // z.ai only supports tool_choice "auto"; DeepSeek can force the function call.
+            if (baseUrl.Contains("deepseek.com"))
+            {
+                s.tool_choice = new ResponseFormatter_ZAI_toolchoice();
+            }
+
+            // nudge the model to call the tool instead of emitting JSON text (GLM/DeepSeek only; json_schema providers are unaffected)
+            s.messages.Add(new LLMMessage { role = "user", content = "Submit your complete response ONLY by calling the submit_response function with all required fields populated. Do not output JSON in text." });
+
+            s.response_format = null;
         }
         else if (baseUrl.Contains("api.openai.com"))
         {

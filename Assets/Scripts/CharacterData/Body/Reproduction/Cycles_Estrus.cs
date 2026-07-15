@@ -11,7 +11,8 @@ public enum EstrusStatus
     Proestrus,      // first quiet phase before heat
     Estrus,         // in heat — receptive to mating; ovulation fires on NotifyClimax
     Interestrus,    // quiet phase after heat
-    Pregnant
+    Pregnant,
+    PostPregnancy
 }
 
 
@@ -53,7 +54,14 @@ public class Cycles_Estrus : ReproductionCycle
             return CycleStage == EstrusStatus.Estrus;
         }
     }
-
+    [JsonIgnore]
+    public override bool isPregnant
+    {
+        get
+        {
+            return CycleStage == EstrusStatus.Pregnant;
+        }
+    }
     public Cycles_Estrus(ReproductionTemplate template)
     {
         cycleValue = template.pubertyThreshold;
@@ -75,7 +83,22 @@ public class Cycles_Estrus : ReproductionCycle
         if (day <= endEstrus && !suppressed) return EstrusStatus.Estrus;
         return EstrusStatus.Interestrus;
     }
-
+    /// <summary>
+    /// Reverse of DetermineCyclePhase. Take a stage index, and set cycleValue appropriately.
+    /// Should only cover stages handled by DetermineCyclePhase.
+    /// </summary>
+    /// <param name="stageIndex">Cycle status converted to int to allow abstract inheritance.</param>
+    protected void SetCycle(ReproductionTemplate t, EstrusStatus status)
+    {
+        CycleStage = status;
+        cycleValue = status switch
+        {
+            EstrusStatus.Proestrus    => 0,
+            EstrusStatus.Estrus       => t.menstrualDays,
+            EstrusStatus.Interestrus  => t.menstrualDays + t.ovulationDays,
+            _ => cycleValue
+        };
+    }
     public override int CurrentCycleRemaining(ReproductionTemplate t)
     {
         if (CycleStage == EstrusStatus.None || CycleStage == EstrusStatus.Pregnant)
@@ -101,7 +124,8 @@ public class Cycles_Estrus : ReproductionCycle
     public override string CycleName(Character_Trainable c)
     {
         if (_cache_raceprefix == string.Empty) _cache_raceprefix = c.Race.ID;
-        return CycleName(c, CycleStage);
+        var oldestov = CycleStage == EstrusStatus.Pregnant ? ReproductionUtility.GetOldestOvum(c) : null;
+        return CycleName(c, CycleStage) + (oldestov != null ? $" {LocalizeDictionary.QueryThenParse($"OvumState_{oldestov.State}")}" : "");
     }
     string CycleName(Character_Trainable c, EstrusStatus es)
     {
@@ -141,6 +165,15 @@ public class Cycles_Estrus : ReproductionCycle
             return;
         }
 
+        if (CycleStage == EstrusStatus.PostPregnancy)
+        {
+            // recovery
+            cycleValue -= 1;
+            if (cycleValue > 0) return;
+            // on birth set stage to 
+            SetCycle(template, EstrusStatus.Interestrus);
+        }
+
         if (CycleStage == EstrusStatus.PrePuberty)
         {
             cycleValue -= Utility.getRandwithVariation(1f, template.pubertyVariation);
@@ -156,4 +189,12 @@ public class Cycles_Estrus : ReproductionCycle
         CycleStage = DetermineCyclePhase(template, (int)cycleValue, suppressed);
     }
 
+    public override void Birth(bool isStillPregnant)
+    {
+        if (!isStillPregnant)
+        {
+            CycleStage = EstrusStatus.PostPregnancy;
+            cycleValue = 3;
+        }
+    }
 }

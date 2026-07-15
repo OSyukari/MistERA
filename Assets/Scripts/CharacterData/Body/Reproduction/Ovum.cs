@@ -6,7 +6,7 @@ using System;
 using UnityEngine.UIElements;
 
 
-public class Ovum : Item_Instance
+public class Ovum
 {
     public float ovumPower = 0;
     public float fertility = 0;
@@ -18,7 +18,7 @@ public class Ovum : Item_Instance
 
     public Ovum() { }
 
-    public Ovum(Character_Trainable owner, ReproductionTemplate template)
+    public Ovum(BodyInternal_Womb womb, Character_Trainable owner, ReproductionTemplate template)
     {
         // TODO more codes on ovum
 
@@ -32,7 +32,7 @@ public class Ovum : Item_Instance
 
         Determining gender and race? random from parent race. check if they restrict gender though
          */
-
+        this.womb = womb;
 
         lifespan = template.ovumLifespanMinutes;
         totalLifespan = template.ovumLifespanMinutes;
@@ -63,15 +63,9 @@ public class Ovum : Item_Instance
 
     public Item_Instance_Cum father = null;
 
-    public override bool canStackWith(Item_Instance item)
-    {
-        return base.canStackWith(item);
-    }
-
     public void Fertilize(Item_Instance_Cum fertilizer)
     {
         // if fertilized, store father ref
-        this.State = OvumState.Fertilized;
         this.father = fertilizer;
 
         var masterlist = scr_System_Serializer.current.MasterList.humanoid_Races;
@@ -98,13 +92,16 @@ public class Ovum : Item_Instance
             if (Owner.baseTemplateID != "" && !motherops.Contains(Owner.baseTemplateID))
             {
                 var template = scr_System_Serializer.current.MasterList.Character_Bases.GetGeneratorByID(Owner.baseTemplateID);
-                if (template != null && template.allowDuplicateID) fatherops.Add(Owner.baseTemplateID);
+                if (template != null && template.allowDuplicateID) motherops.Add(Owner.baseTemplateID);
             }
         }
 
         var total = fatherops.Count + motherops.Count;
-        if (total < 1) return;
-
+        if (total < 1)
+        {
+            Debug.LogError($"error fertilization failed, father {fatherf != null} {fatherops.Count} mother {motherf != null} {motherops.Count}");
+            return;
+        }
         foetus = new FoetusTemplates();
         var diceroll = Utility.Dice(1, fatherops.Count + motherops.Count);
 
@@ -125,31 +122,45 @@ public class Ovum : Item_Instance
     }
 
     [JsonIgnore]
-    public string Image
+    public string Tooltip
     {
         get
         {
-            if (State == OvumState.Fertilized)
-            {
-                var ratio = lifespan / foetus.duration_fertilized;
-                var index = Math.Clamp(ratio * ReproductionUtility.fertilizedStages.Length, 0, ReproductionUtility.fertilizedStages.Length - 1);
-                return ReproductionUtility.fertilizedStages[index];
-            }
-            if (State == OvumState.Implanted)
-            {
-                return ReproductionUtility.egg_implanted;
-            }
-            if (State > OvumState.Implanted)
-            {
-                var ratio = lifespan / (foetus.duration_first + foetus.duration_second + foetus.duration_third);
-                var index = Math.Clamp(ratio * foetus.images.Count, 0, foetus.images.Count - 1);
-                return foetus.images[index];
-            }
-            return "";
+            return $"state {this.State}\nlifespan {lifespan}\nsize {(foetusItem == null ? "0" : $"{foetusItem.GetComp_Ingestible().amount}")}\nmaxsize {(foetus == null ? "0" : $"{foetus.size_end}")}";
         }
     }
 
-    [JsonProperty] protected FoetusTemplates foetus = null;
+    public string GetImage(bool hasMultiplet)
+    {
+        if (State == OvumState.Fertilized)
+        {
+            var ratio = lifespan / foetus.duration_fertilized;
+            var index = Math.Clamp(ratio * ReproductionUtility.fertilizedStages.Length, 0, ReproductionUtility.fertilizedStages.Length - 1);
+            return ReproductionUtility.fertilizedStages[index];
+        }
+        if (State == OvumState.Implanted)
+        {
+            return ReproductionUtility.egg_implanted;
+        }
+        if (State > OvumState.Implanted)
+        {
+            float ratio = (float)lifespan / (float)(foetus.duration_first + foetus.duration_second + foetus.duration_third);
+
+            if (hasMultiplet && foetus.images_multiplet?.Count > 0)
+            {
+                var index = (int)Math.Clamp(ratio * foetus.images_multiplet.Count, 0, foetus.images_multiplet.Count - 1);
+                return foetus.images_multiplet[index];
+            }
+            else
+            {
+                var index = (int)Math.Clamp(ratio * foetus.images.Count, 0, foetus.images.Count - 1);
+                return foetus.images[index];
+            }
+        }
+        return "";
+    }
+
+    [JsonProperty] public FoetusTemplates foetus = null;
 
     public void HourTick(BodyInternal_Womb wb)
     {
@@ -202,6 +213,11 @@ public class Ovum : Item_Instance
             }
             return _foetusItem;
         }
+        set
+        {
+            _foetusItem = value;
+            foetusItemRef = value == null ? -1 : value.RefID;
+        }
     }
     public bool isOlderThan(Ovum ov)
     {
@@ -233,6 +249,7 @@ public class Ovum : Item_Instance
         }
     }
 
+    [JsonIgnore] public BodyInternal_Womb womb; // injected
 }
 
 public enum OvumState

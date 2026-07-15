@@ -315,15 +315,19 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             case 2: // claude anthropic
                 scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.anthropic.com/v1/messages";
                 scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.anthropic.com/v1/models";
-                break;            /*
+                break;
             case 3: // openai
                 scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.openai.com/v1/chat/completions";
                 scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.openai.com/v1/models";
                 break;
-            case 3: // deepseek
+            case 4: // z.ai coding plan
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.z.ai/api/coding/paas/v4/chat/completions";
+                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.z.ai/api/coding/paas/v4/models";
+                break;
+            case 5: // deepseek
                 scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.deepseek.com/chat/completions";
                 scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.deepseek.com/models";
-                break;*/
+                break;
             default:
                 break;
 

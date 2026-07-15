@@ -5,8 +5,93 @@ using System;
 using System.Linq;
 using Newtonsoft.Json;
 
+public class PathingRoomFilter
+{
+    /// <summary>
+    /// if true, will verify against blacklist and skip if match
+    /// </summary>
+    public bool checkBlacklist = true;
+
+    /// <summary>
+    /// if true, skip private rooms
+    /// </summary>
+    public bool skipPrivateRoom = false;
+
+    public bool searchJobList = true;
+    public bool searchNonJobList = true;
+
+    public string matchCOMID = "";
+    public string matchCOMTag = "";
+
+}
+
+public enum PathfindHeuristic
+{
+    custom,
+    closest,
+    random,
+    ownership_Strict,   // only allow in owned room
+    ownership_Medium    // allow in unowned with preference to owned
+}
+
+
 public static class FactionUtility
 {
+
+    public static Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> GetHeuristic(PathfindHeuristic heuristic)
+    {
+        switch (heuristic)
+        {
+            case PathfindHeuristic.closest: return Heuristic_Distance;
+            case PathfindHeuristic.ownership_Strict: return Heuristic_Ownership_Strict;
+            case PathfindHeuristic.ownership_Medium: return Heuristic_Ownership_Medium;
+            default: return Heuristic_Random;
+        }
+    }
+
+
+    public static PathingRoomFilter JobFilter_Sleep = new PathingRoomFilter()
+    {
+        skipPrivateRoom = false,
+        matchCOMID = "com_furniture_sleep",
+        checkBlacklist = false,
+        searchJobList = false,
+        searchNonJobList = true
+    };
+    public static float Heuristic_Ownership_Strict(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
+    {
+        if (cache.TryGetValue(j.RefID, out float cached))
+            return cached;
+
+        var room = j.ParentRoom;
+        var owners = room.FactionOwner?.RoomOwners(room.RefID) ?? new List<int>();
+
+        float d;
+        if (owners.Contains(c.RefID)) d = 4f;
+        else return 0f;
+
+        float result = -d;
+        cache[j.RefID] = result;
+        return result;
+    }
+
+    public static float Heuristic_Ownership_Medium(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
+    {
+        if (cache.TryGetValue(j.RefID, out float cached))
+            return cached;
+
+        var room = j.ParentRoom;
+        var owners = room.FactionOwner?.RoomOwners(room.RefID) ?? new List<int>();
+
+        float d;
+        if (owners.Contains(c.RefID)) d = 4f;
+        else if (owners.Count == 0) d = 2f;
+        else return 0f;
+
+        float result = -d;
+        cache[j.RefID] = result;
+        return result;
+    }
 
     public static bool isFactionHostile(I_IsJobGiver a, I_IsJobGiver b)
     {
@@ -26,7 +111,6 @@ public static class FactionUtility
 
         if (finalA == null || finalB == null) return false;
         return finalA.ID == finalB.ID;
-
     }
 
     public static void SendImprisonEvent(Manageable faction, Character_Trainable c)
@@ -82,7 +166,7 @@ public static class FactionUtility
                 if (checkBlacklist && c.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMs))
                 {
                    // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job blacklisted");
-                    if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
+                    //if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to blacklist match");
                     continue;
                 }
                 else if (!post.ValidateActor(c, key))
@@ -90,7 +174,7 @@ public static class FactionUtility
                    // if (post.ParentRoom.RefID == prisonRefID) Debug.LogError($"Error {c.CallName} jail job ValidateActor Fail on {post.DisplayName} {String.Join("|", post.allusableCOMStrings)}");
                     continue;
                 }
-                else if (post.ParentRoom.isRoomPrivate && !managedRoomRefs[post.ParentRoom.RefID].Contains(c.RefID) && charaRoom != post.ParentRoom)
+                else if (post.ParentRoom.isRoomPrivate && managedRoomRefs.TryGetValue(post.ParentRoom.RefID, out var owners) && owners.Count > 0 && !owners.Contains(c.RefID) && charaRoom != post.ParentRoom)
                 {
                     //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job isRoomPrivate Fail");
                     continue;
@@ -122,6 +206,12 @@ public static class FactionUtility
         return list.Count > 0;
     }
 
+
+    public static PathingRoomFilter JobFilter = new PathingRoomFilter()
+    {
+        checkBlacklist = true
+
+    };
 
     public static bool TryFindValidJobInstances(Dictionary<COM, List<Job_Furniture>> jobs, out List<Job_Furniture> list, Dictionary<int, List<int>> managedRoomRefs, Character_Trainable c, Manageable.HourlySchedule schedule, bool checkBlacklist)
     {
@@ -205,6 +295,11 @@ public static class FactionUtility
         return list.Count > 0;
     }
 
+    public static bool TryValidateInstances(Job_Furniture list, Character_Trainable doer)
+    {
+        return list.ValidateActor(doer);
+    }
+
     public static bool GetValidPaths(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, ref string s, bool randInsteadofShortest = false)
     {
         string ss = "";
@@ -256,5 +351,54 @@ public static class FactionUtility
             if (s != null) s += ss;
             return false;
         }
+    }
+
+    public static bool GetValidPathsWithHeuristic(ref List<Job_Furniture> possibleJobs, Character_Trainable chara, Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic, int returnCount, ref string s)
+    {
+        if (possibleJobs.Count == 0)
+        {
+            if (s != null) s += " possibleJobs.Count <= 0";
+            return false;
+        }
+
+        Dictionary<int, float> cachedResult = new Dictionary<int, float>();
+
+        var tiers = possibleJobs
+            .GroupBy(job => heuristic(job, chara, cachedResult))
+            .OrderBy(g => g.Key)
+            .Take(returnCount);
+
+        possibleJobs = tiers.SelectMany(g => g).ToList();
+
+        if (possibleJobs.Count > 0)
+            return true;
+
+        if (s != null) s += " no jobs selected by heuristic";
+        return false;
+    }
+
+    public static float Heuristic_Random(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
+    {
+        return Utility.NextFloat();
+    }
+
+    public static float Heuristic_Distance(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
+    {
+        int roomId = j.ParentRoom.RefID;
+        if (cache.TryGetValue(roomId, out float cached))
+            return cached;
+
+        var map = scr_System_CampaignManager.current.Map;
+
+        if (map.FindRoomByChara(c.RefID)?.RefID == roomId)
+        {
+            cache[roomId] = 0f;
+            return 0f;
+        }
+
+        var paths = map.FilterValidPathsOptimized(c, new List<int> { roomId }, false);
+        float distance = paths.Count > 0 ? (float)paths.Keys.First() : float.MaxValue;
+        cache[roomId] = distance;
+        return distance;
     }
 }

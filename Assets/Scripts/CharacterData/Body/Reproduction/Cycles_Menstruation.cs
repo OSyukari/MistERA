@@ -12,7 +12,8 @@ public enum MenstruationStatus
     PreOvulation,   // follicular — building toward ovulation
     Ovulation,      // spontaneous ovulation; egg(s) released
     Rest,           // final quiet phase (luteal / diestrus+anestrus)
-    Pregnant
+    Pregnant,
+    PostPregnancy   // post pregnancy recovery state
 }
 
 
@@ -36,6 +37,12 @@ public class Cycles_Menstruation : ReproductionCycle
             return "";
         }
     }
+
+    [JsonIgnore]
+    public override bool isPregnant { get {
+            return CycleStage == MenstruationStatus.Pregnant;
+        } }
+
     public Cycles_Menstruation(ReproductionTemplate template)
     {
         cycleValue = template.pubertyThreshold;
@@ -56,6 +63,24 @@ public class Cycles_Menstruation : ReproductionCycle
         if (day <= endPhase3 && !suppressed) return MenstruationStatus.Ovulation;
         return MenstruationStatus.Rest;
     }
+    /// <summary>
+    /// Reverse of DetermineCyclePhase. Take a stage index, and set cycleValue appropriately.
+    /// Should only cover stages handled by DetermineCyclePhase.
+    /// </summary>
+    /// <param name="stageIndex">Cycle status converted to int to allow abstract inheritance.</param>
+    protected void SetCycle(ReproductionTemplate t, MenstruationStatus status)
+    {
+        CycleStage = status;
+        cycleValue = status switch
+        {
+            MenstruationStatus.Menstrual    => 0,
+            MenstruationStatus.PreOvulation => t.menstrualDays,
+            MenstruationStatus.Ovulation    => t.menstrualDays + t.follicularDays,
+            MenstruationStatus.Rest         => t.menstrualDays + t.follicularDays + t.ovulationDays,
+            _ => cycleValue
+        };
+    }
+
 
     public override int CurrentCycleRemaining(ReproductionTemplate t)
     {
@@ -98,6 +123,18 @@ public class Cycles_Menstruation : ReproductionCycle
         if (remain > 0) tooltip.Add(template.Replace("$name$", CycleName(c, MenstruationStatus.Rest))
                                                      .Replace("$count$", $"{remain}"));
     }
+
+    public override void Birth(bool isStillPregnant)
+    {
+        if (!isStillPregnant)
+        {
+            CycleStage = MenstruationStatus.PostPregnancy;
+            cycleValue = 3;
+        }
+    }
+
+
+
     public override void Tick(ReproductionTemplate template, bool ispregnant, bool suppressed, bool isOvumExhausted)
     {
         if (ispregnant)
@@ -110,6 +147,15 @@ public class Cycles_Menstruation : ReproductionCycle
         {
             CycleStage = MenstruationStatus.None;
             return;
+        }
+
+        if (CycleStage == MenstruationStatus.PostPregnancy)
+        {
+            // recovery
+            cycleValue -= 1;
+            if (cycleValue > 0) return;
+            // on birth set stage to 
+            SetCycle(template, MenstruationStatus.Rest);
         }
 
         if (CycleStage == MenstruationStatus.PrePuberty)
@@ -142,7 +188,8 @@ public class Cycles_Menstruation : ReproductionCycle
     public override string CycleName(Character_Trainable c)
     {
         if (_cache_raceprefix == string.Empty) _cache_raceprefix = c.Race.ID;
-        return CycleName(c, CycleStage);
+        var oldestov = CycleStage == MenstruationStatus.Pregnant ? ReproductionUtility.GetOldestOvum(c) : null;
+        return CycleName(c, CycleStage) + (oldestov != null ? $" {LocalizeDictionary.QueryThenParse($"OvumState_{oldestov.State}")}" : "");
     }
     string CycleName(Character_Trainable c, MenstruationStatus es)
     {

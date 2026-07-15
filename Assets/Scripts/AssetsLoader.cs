@@ -21,6 +21,8 @@ public class AssetsLoader
         var fullPath = $"file://{scr_System_Serializer.current.GetFullPath(path)}";
         string extension = Path.GetExtension(path).ToLower();
 
+        //Debug.Log($"loadtex path {path} FULLPATH {fullPath}");
+
         using (UnityWebRequest uwr = UnityWebRequest.Get(fullPath))
         {
             yield return uwr.SendWebRequest();

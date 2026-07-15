@@ -185,6 +185,14 @@ public class Job : IDisposable, I_Disposable
         }
         return false;
     }
+    public bool HasAvailableCOMwithCOMTags(string tags)
+    {
+        foreach (var i in allusableCOMs)
+        {
+            if (i.comTags.Contains( tags)) return true;
+        }
+        return false;
+    }
 
     protected virtual List<COM> UpdateAllUsableCOMs()
     {
@@ -890,7 +898,7 @@ public class Job : IDisposable, I_Disposable
 
     public List<int> actorJobComplete = new List<int>();
     public List<int> actorRemove = new List<int>();
-    public bool hasActorCompletedJob(int refID)
+    public virtual bool hasActorCompletedJob(int refID)
     {
          return actorJobComplete.Contains(refID); 
     }

@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -15,12 +16,32 @@ public class Humanoid_Race_Index : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW
     [JsonProperty] protected List<RacialFoetusTemplates> foetusTemplates = new List<RacialFoetusTemplates>();
     protected System.Collections.Concurrent.ConcurrentDictionary<string, RacialFoetusTemplates> _List_babyTemplates;
 
-    public FoetusTemplates CollectValidFoetus(string raceID, string baseID)
+    public FoetusTemplates CollectValidFoetus(string raceID, string baseID, bool debugLog = false)
     {
         if (_List_babyTemplates.TryGetValue(raceID, out var racial))
         {
-            if (racial.foetusByBaseID.TryGetValue(baseID, out var byID)) return byID;
-            else return racial.racialTemplate;
+            if (racial.foetusByBaseID.TryGetValue(baseID, out var byID))
+            {
+                if (debugLog)
+                {
+                    var value = JsonConvert.SerializeObject(byID, UtilityEX.SerializerSettings);
+                    Debug.Log($"CollectValidFoetus found baseID {baseID} : {value}");
+                }
+                return byID;
+            }
+            else
+            {
+                if (racial.racialTemplate != null)
+                {
+                    var value = JsonConvert.SerializeObject(racial.racialTemplate, UtilityEX.SerializerSettings);
+                    Debug.Log($"CollectValidFoetus using racialTemplate {raceID} : {value}");
+                }
+                else
+                {
+                    Debug.Log($"CollectValidFoetus fail null racialTemplate");
+                }
+                return racial.racialTemplate;
+            }
         }
         return null;
     }

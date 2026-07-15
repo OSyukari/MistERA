@@ -6,7 +6,6 @@
                 "SelfValidator":{
                     "chara_conditions":[
                         {"parameters":["excludePlayer"]},
-                        {"parameters":["isRoomOwner","true"]},
                         {"parameters":["canMove","true"]}
                     ],
                     "room_conditions":[

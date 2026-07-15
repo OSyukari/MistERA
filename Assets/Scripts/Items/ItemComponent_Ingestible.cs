@@ -21,6 +21,7 @@ public class ItemComponentTemplate_Ingestible
         public int digestDelayVariation = 0;
         public float amountMod = 0;
         public string giveStatus = "";
+        public string ingestionMsgString = "";
 
         public Ingestible_IngestMethod Copy()
         {
@@ -141,6 +142,18 @@ public class ItemComponent_Ingestible : ItemComponent_Base
                 _ingestMethod.AddRange(ingestMethod_addons);
             }
             return _ingestMethod; } }
+
+    public ItemComponentTemplate_Ingestible.Ingestible_IngestMethod GetIngestMethod(List<string> tags)
+    {
+        foreach(var i in ingestMethod)
+        {
+            if (string.IsNullOrEmpty(i.bodyTags) != (tags == null || tags.Count < 1)) continue;
+            else if (string.IsNullOrEmpty(i.bodyTags)) return i;
+            else if (tags.Contains(i.bodyTags)) return i;
+        }
+        return null;
+    }
+
     //public string giveStatus { get { return CompTemplate.comp_Ingestible.giveStatus; } }
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.OnUseEffect> OnUseEffects { get { return CompTemplate.comp_Ingestible.OnUseEffects; } }
 
