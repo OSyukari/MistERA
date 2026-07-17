@@ -126,21 +126,14 @@ public class TryFindSleepNode : TryFindJobByIDNode
 {
     public TryFindSleepNode() : base("com_furniture_sleep")
     {
-        filter = FactionUtility.JobFilter_Sleep;
-    }
 
-    public override Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> Heuristic
-    {
-        get
-        {
-            return FactionUtility.Heuristic_Ownership_Medium;
-        }
     }
 
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
+        //Debug.LogError($"{c.FirstName} should sleep? {c.shouldSleep}");
         if (!c.shouldSleep) return false;
-        //else Debug.Log(c.FirstName+ " should sleep!");
+       // else Debug.LogError(c.FirstName+ " should sleep!");
         return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
     }
 }
@@ -268,8 +261,8 @@ public class TryFindJobByIDNode : FindJobNode
         this.targetID = targetID;
     }
     
-    bool initialized = false;
-    bool internalShutdown = false;
+    protected bool initialized = false;
+    protected bool internalShutdown = false;
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         if (!initialized)
@@ -306,17 +299,6 @@ public class TryFindJobByIDNode : FindJobNode
 
 public class TryFindPrivateRoomCleaning : FindJobNode
 {
-
-    new public PathingRoomFilter filter = new PathingRoomFilter()
-    {
-        matchCOMID = "com_job_cleaning",
-        matchCOMTag = "production_cleaning",
-        checkBlacklist = true,
-        skipPrivateRoom = false,
-        searchJobList = false,
-        searchNonJobList = true
-    };
-
 
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
@@ -458,6 +440,10 @@ public class TryFindScheduledJobNode : FindJobNode
                     c.ChangeCurrentJob(job, targetID);
 
                     return true;
+                }
+                else if (currentJobFaction == null)
+                {
+                   if (s != null) s.Add($"TryFindScheduledJobNode {currentJobFaction.FactionDisplayName} {(currentJobFaction is Manageable)}: failed to get possiblejobs: \n{ss}");
                 }
                 // }
             }

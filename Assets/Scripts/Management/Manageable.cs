@@ -17,6 +17,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public List<int> mealHours = new List<int>();
     [JsonProperty] protected string salesCurrency = "";
     protected Item_Base _currency = null;
+
+    public List<Ovum> managedChilds = new List<Ovum>();
+
     [JsonIgnore] public Item_Base Currency
     {
         get

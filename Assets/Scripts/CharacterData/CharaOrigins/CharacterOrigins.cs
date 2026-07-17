@@ -134,7 +134,7 @@ public class Character_Origin_startingOption_Index : I_IndexHasID, I_IndexMergea
 
     public void RegisterAllID(List<string> s)
     {
-        s.Add("Character_Origin_startingOption_Index : registering ID with list length [" + list.Count + "]");
+        if (s != null)  s.Add("Character_Origin_startingOption_Index : registering ID with list length [" + list.Count + "]");
         var ids = new Dictionary<string, Character_Origin_startingOption>();
         foreach (var i in list)
         {

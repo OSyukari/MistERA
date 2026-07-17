@@ -397,8 +397,9 @@
         },
         {
             "statusID":"chara_status_sleep_deprived",
+            "allowNaturalRemoval":true,
             "variationMode": {  } ,
-            "_comments":"status gained when sleep is disrupted or insufficient, it will go away when character sleep (hardcoded interaction)",
+            "_comments":"status gained when sleep is disrupted or insufficient, duration = half the missing minutes, expires while awake",
             "variants":[
                 {
                     "displayable":false,  

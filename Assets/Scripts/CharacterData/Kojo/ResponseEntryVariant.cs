@@ -130,6 +130,8 @@ public partial class ResponseEntry
                     if (!forbidPortaitDisplay)
                     {
                         returnV2.portraitTags.AddRange(extraPortraitTags);
+                        returnV2.portraitTags.AddRange(kol.SelfTags);
+                        returnV2.portraitTags.AddRange(kol.targetTags);
                         if (useActiveTags) returnV2.portraitTags.AddRange(kol.Owner.PortraitManager.GetOwnerActionTagsByPriority());
                         returnV2.portraitTags = Utility.Distinct(returnV2.portraitTags);
                     }
@@ -204,6 +206,8 @@ public partial class ResponseEntry
                     if (!forbidPortaitDisplay)
                     {
                         returnV2.portraitTags.AddRange(extraPortraitTags);
+                        returnV2.portraitTags.AddRange(selfTags);
+                        returnV2.portraitTags.AddRange(targetTags);
                         if (useActiveTags) returnV2.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
                         returnV2.portraitTags = Utility.Distinct(returnV2.portraitTags);
                     }

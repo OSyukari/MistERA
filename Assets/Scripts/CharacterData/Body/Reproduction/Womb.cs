@@ -343,13 +343,17 @@ public abstract class BodyInternal_Womb
     Dictionary<Item_Instance_Cum, float> cumweightdict = new Dictionary<Item_Instance_Cum, float>();
     Dictionary<Item_Instance_Cum, float> cumfertdict = new Dictionary<Item_Instance_Cum, float>();
 
+    public List<Ovum> birthEV = new List<Ovum>();
+    bool accelerateBirth = false;
     /// <summary>
     /// Check egg fertility, if possible
     /// </summary>
-    public virtual void HourTick()
+    public virtual void HourTick(bool forceBirth = false)
     {
         valideggs.Clear();
         if (eggs == null) eggs = new List<Ovum>();
+
+        birthEV.Clear();
 
         for (int i = eggs.Count - 1; i >= 0; i--)
         {
@@ -361,7 +365,32 @@ public abstract class BodyInternal_Womb
             }
             egg.HourTick(this);
 
-            if (egg.State == OvumState.Aborted)
+            if (egg.State == OvumState.Final)
+            {
+                if (forceBirth)
+                {
+                    Debug.Log("force birth");
+                    birthEV.Add(egg);
+                }
+                else if (egg.totalLifespan == 0)
+                {
+                    Debug.LogError("error egg totalLifespan 0 force birth");
+                    birthEV.Add(egg);
+                }
+                else 
+                {
+                    var chance = ReproductionUtility.GetBirthChancePerHour(egg.lifespan / egg.totalLifespan);
+                    var roll = Utility.NextFloat();
+                    Debug.LogError($"birth chance check {egg.lifespan} / {egg.totalLifespan} = {chance} , {roll} <= {chance} ? {roll <= chance}");
+                    if (roll <= chance) birthEV.Add(egg);
+                }
+
+            }
+            else if (egg.State == OvumState.Final_RequireHelp)
+            {
+
+            }
+            else if (egg.State == OvumState.Aborted)
             {
                 Debug.Log($"egg state aborted, null foetus? {egg.foetus == null}, discarding");
                 eggs.RemoveAt(i);
@@ -405,6 +434,38 @@ public abstract class BodyInternal_Womb
                 egg.Fertilize(selectedcum);
             }
         }
+    }
+
+    public void GiveBirthTo(Character_Trainable owner, List<Ovum> ovums, Manageable faction, ExperienceLog log = null)
+    {
+        //
+        foreach (var o in ovums)
+        {
+            this.eggs.Remove(o);
+            if (o.foetusItem != null)
+            {
+                var item = o.foetusItem;
+                if (!this.source.ExtractContent(item.RefID))
+                {
+                    Debug.LogError("Error failed to extract foetus item");
+                }
+                o.foetusItem = null;
+                scr_System_CampaignManager.current.Unregister(item);
+                owner.Skills.CheckExperienceGain(new List<string>() { "birth" },
+                    new List<string>(),
+                    1,
+                    true, log
+                    );
+            }
+        }
+        if (faction != null)
+        {
+            foreach(var o in ovums)
+            {
+                faction.managedChilds.Add(o);
+            }
+        }
+        ovums.Clear();
     }
 
     // ── External notifications — hook to your arousal / climax systems ─────

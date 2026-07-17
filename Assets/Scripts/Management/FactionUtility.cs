@@ -159,7 +159,7 @@ public static class FactionUtility
                     else if (post.ParentRoom.ActivityState == RoomActivityState.NightOnly && !isactive) { }
                     else
                     {
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to activehours setting mismatch");
+                       // if (scr_System_CentralControl.current.LogPrefs.DLog_Update) Debug.Log($"{c.FirstName}: find com {comID}, job {post.DisplayName} in room {post.ParentRoom.DisplayName} skipped due to activehours setting mismatch");
                         continue;
                     }
                 }
@@ -209,7 +209,9 @@ public static class FactionUtility
 
     public static PathingRoomFilter JobFilter = new PathingRoomFilter()
     {
-        checkBlacklist = true
+        checkBlacklist = true,
+        searchJobList = true,
+        searchNonJobList = false
 
     };
 

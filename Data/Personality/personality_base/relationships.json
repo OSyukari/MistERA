@@ -1,0 +1,41 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            { "ID": "personality_base", "Entry": { "ID": "relationship_friend_propose",  "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_friend_set",      "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_friend_refuse",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_friend_refused",  "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_friend_break",    "variants": [{ "responses": [] }] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bff_propose",     "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bff_set",         "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bff_refuse",      "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bff_refused",     "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bff_break",       "variants": [{ "responses": [] }] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bully_propose",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bully_set",       "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bully_refuse",    "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bully_refused",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_bully_break",     "variants": [{ "responses": [] }] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "relationship_rival_propose",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_rival_set",       "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_rival_refuse",    "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_rival_refused",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_rival_break",     "variants": [{ "responses": [] }] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "relationship_couple_propose",  "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_couple_set",      "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_couple_refuse",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_couple_refused",  "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_couple_break",    "variants": [{ "responses": [] }] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "relationship_marriage_propose", "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_marriage_set",     "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_marriage_refuse",  "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_marriage_refused", "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "relationship_marriage_break",   "variants": [{ "responses": [] }] } }
+        ]
+    }
+}

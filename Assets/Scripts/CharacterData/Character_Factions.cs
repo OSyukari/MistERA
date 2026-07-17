@@ -760,11 +760,11 @@ public class Character_Factions
         int listMax = consecutiveSleepHours.Max();
         int sleepHours = Owner.Stats.SleepHours;
 
-        if(extraDebug) s.Add("Required Sleep hours [" + sleepHours + "]");
+        if(extraDebug && s != null) s.Add("Required Sleep hours [" + sleepHours + "]");
 
-        if (consecutiveRestHour < sleepHours) s.Add(Utility.WrapTextColor("Does not have enough freetime for a full rest", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color) );
-        else if (extraDebug) s.Add("Max Consecutive free hours [" + consecutiveRestHour + "] listMax ["+ listMax+ "] indexOflistMax [" + Array.IndexOf(consecutiveSleepHours, consecutiveSleepHours.Max()).ToString() + "]");
-        if (extraDebug) s.Add("\n"+String.Join(" ", consecutiveSleepHours));
+        if (consecutiveRestHour < sleepHours && s != null) s.Add(Utility.WrapTextColor("Does not have enough freetime for a full rest", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color) );
+        else if (extraDebug && s != null) s.Add("Max Consecutive free hours [" + consecutiveRestHour + "] listMax ["+ listMax+ "] indexOflistMax [" + Array.IndexOf(consecutiveSleepHours, consecutiveSleepHours.Max()).ToString() + "]");
+        if (extraDebug && s != null) s.Add("\n"+String.Join(" ", consecutiveSleepHours));
 
         // if we dont have enough consecutive time, we wipe everything and everytime character rest it falls dead sleep
         return new Tuple<int[], int>(consecutiveSleepHours, consecutiveRestHour);

@@ -1,0 +1,51 @@
+{
+    "FindJobNodeRoots": {
+        "list": [
+            {
+                "ID": "behavior_animal",
+                "nodes": [
+                    {
+                        "$type": "TryFindBirthLocation, Assembly-CSharp",
+                        "Tags": [ "nsfw" ]
+                    },
+                    {
+                        "$type": "TryFindSleepNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindMealNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindPartyExplorationJob, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindScheduledJobNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryChangeLocaleNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindRestNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindSexNode_Animal, Assembly-CSharp",
+                        "Tags": [ "nsfw" ]
+                    },
+                    {
+                        "$type": "TryStayInJailNode, Assembly-CSharp"
+                    },
+                    {
+                        "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "matchCOMTag": "rest",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

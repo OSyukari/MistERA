@@ -29,7 +29,7 @@ public class AssetsLoader
 
             if (uwr.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError("Error loading texture: " + uwr.error);
+                Debug.LogError($"Error loading texture: [{uwr.error}] on [{fullPath}]");
                 onComplete?.Invoke(null); 
                 yield break;
             }

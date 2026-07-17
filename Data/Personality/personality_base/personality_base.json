@@ -1,0 +1,209 @@
+{
+    "Character_Personalities": {
+        "list": [
+            {
+                "id": "personality_base",
+                "displayName": "Base (Humanoid)",
+                "maxPrideValue": 100,
+                "behaviorID": "behavior_default",
+                "pride_increase": {
+                    "High": { "mods": [{ "selfTags":[], "comTags":["job"] }] },
+                    "Low":  { "mods": [{ "selfTags":[], "comTags":["social"] }] }
+                },
+                "pride_decrease": {
+                    "High":   { "mods": [{ "selfTags":["imprisoned"], "comTags":[] }] },
+                    "Medium": { "mods": [{ "selfTags":["raped"], "comTags":["unsafe"] }] },
+                    "Low": {
+                        "mods": [
+                            { "selfTags":["restrained"], "comTags":[] },
+                            { "selfTags":["raped","penetration"], "comTags":["unsafe"] }
+                        ]
+                    },
+                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1 }] }
+                },
+                "entries_list": [
+                    {
+                        "ID": "Descriptor",
+                        "variants": [
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                                "responses": []
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
+                                "responses": []
+                            },
+                            {
+                                "forbidPortaitDisplay": true,
+                                "requirement": { "selfTags": ["job"] },
+                                "responses": []
+                            },
+                            {
+                                "forbidPortaitDisplay": true,
+                                "requirement": { "selfTags": ["rest"] },
+                                "responses": []
+                            },
+                            {
+                                "forbidPortaitDisplay": true,
+                                "requirement": { "selfTags": ["recreation"] },
+                                "responses": []
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "Greeting",
+                        "interruptSelfJob": true,
+                        "interruptTargetJob": true,
+                        "variants": [
+                            {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER",
+                                    "requireKojoVariable": {
+                                        "isDailyVariable": false,
+                                        "variableID": "ALWAYSFALSE",
+                                        "checkExistOnly": true,
+                                        "value": 1
+                                    }
+                                },
+                                "responses": [],
+                                "results": [
+                                    { "modifyKojoVariables": { "isDailyVariable": false, "variableID": "firstMeeting",    "isSetValue": false, "value": 1 } },
+                                    { "modifyKojoVariables": { "isDailyVariable": true,  "variableID": "dailyGreeting",   "isSetValue": false, "value": 1 } }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "DailyGreeting",
+                        "interruptSelfJob": true,
+                        "interruptTargetJob": true,
+                        "variants": [
+                            {
+                                "requirement": { "targetBaseID": "PLAYER", "requireSelfAction": false, "requireTargetAction": true },
+                                "responses": [],
+                                "selfEventCall": "Descriptor",
+                                "keepLooking": true
+                            },
+                            {
+                                "requirement": { "selfTags": ["privacy"], "requireTargetAction": false, "requireEPSuccess": false },
+                                "forbidPortaitDisplay": true
+                            },
+                            {
+                                "requirement": {
+                                    "requireKojoVariable": { "isDailyVariable": true, "variableID": "ALWAYSFALSE", "checkExistOnly": true, "value": 1 }
+                                },
+                                "responses": [],
+                                "keepLooking": true
+                            },
+                            {
+                                "requirement": {
+                                    "requireKojoVariable": { "isDailyVariable": true, "variableID": "dailyGreeting", "checkExistOnly": true, "value": 0 }
+                                },
+                                "responses": [],
+                                "results": [
+                                    { "modifyKojoVariables": { "isDailyVariable": true, "variableID": "dailyGreeting", "isSetValue": false, "value": 1 } }
+                                ],
+                                "keepLooking": true
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "Interrupt",
+                        "interruptSelfJob": true,
+                        "variants": [
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "lte", "value": 0.9 }
+                                },
+                                "forbidPortaitDisplay": true,
+                                "selfEventCall": "DisruptSleep",
+                                "keepLooking": true
+                            },
+                            {
+                                "requirement": { "selfTags": ["privacy"], "requireTargetAction": false, "requireSelfAction": true, "requireEPSuccess": false },
+                                "responses": [],
+                                "useActiveTags": true,
+                                "extraPortraitTags": ["blush","angry","disgusted","sorry"],
+                                "results": [{ "launchEvent": { "eventID": "RequestLeave_PrivateAction", "eventLabel": "", "reverseTargets": false } }]
+                            },
+                            {
+                                "requirement": { "requireNotInCooldownID": "Interrupt_Reaction", "requireTargetAction": false, "targetTags": ["unsafe"], "allowRecording": true },
+                                "forbidPortaitDisplay": true,
+                                "responses": [],
+                                "results": [{ "addCooldownID": "Interrupt_Reaction", "addCooldownDuration": 2 }]
+                            },
+                            {
+                                "requirement": { "targetTags": ["job"] },
+                                "forbidPortaitDisplay": true,
+                                "responses": [],
+                                "results": [{ "launchEvent": { "eventID": "RequestJoin", "eventLabel": "", "reverseTargets": false, "targetKeyword": "evTarget" } }]
+                            },
+                            {
+                                "requirement": { "selfTags": ["job"], "targetTags": ["recreation"] },
+                                "forbidPortaitDisplay": true,
+                                "responses": []
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "DisruptSleep",
+                        "variants": [
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","timestop"] },
+                                "responses": []
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } },
+                                "responses": []
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.2 } }]
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "targetTags": ["sex","penetration"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
+                                "responses": []
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"] },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.3 } }]
+                            },
+                            {
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "OnNightAssaultSuccess",
+                        "debugLogging": true,
+                        "variants": [
+                            { "responses": [], "keepLooking": true }
+                        ]
+                    },
+                    {
+                        "ID": "OnNightAssaultFailure",
+                        "debugLogging": true,
+                        "variants": [
+                            { "responses": [], "keepLooking": true }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

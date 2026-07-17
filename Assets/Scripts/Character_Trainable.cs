@@ -1,8 +1,6 @@
 using Newtonsoft.Json;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
@@ -398,21 +396,23 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
             // Recover chara based on sleep efficiency ?
         }
+        /*
         else if (party != null && party.isActive && party.SleepHours.Contains(currentHour))
         {
             timeSinceLastSleep = 0;
-        }
+        }*/
         else if (hasStatKeyword("sleep"))
         {
             timeSinceLastSleep += 1;
             var sleephours = Stats.SleepHours;
             if (timeSinceLastSleep > Math.Max(24, sleephours * 2))
             {
-                if (sleephours > 0) Stats.AddOrModStatus("chara_status_sleep_deprived", (sleephours * 60)*1.2f);
+                if (sleephours > 0) Stats.AddOrModStatus("chara_status_sleep_deprived", (sleephours * 60)*1.2f, (int)((sleephours * 60)*0.6f));
             }
         }
 
         this.Body.UpdateTimeHour(t);
+        this.TickWomb();
         timeSinceLastEat = Math.Min(24, timeSinceLastEat + 1);
         this.Relationships.HourlyRefresh();
         //Debug.Log($"{FirstName} Observer_GlobalHour: conscious? {Stats.isConsciousnessUnconscious} sleep? {hasStatKeyword("sleep")} lastSleep {timeSinceLastSleep}, lastEat {timeSinceLastEat}");
@@ -455,12 +455,27 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public ReproductionCycle ReproCycle = null;
 
+    public void TickWomb(bool forcebirth = false)
+    {
+        if (this.wombs == null || this.wombs.Count < 1) return;
+        bool birth = false;
+        foreach (var wb in wombs)
+        {
+            /// notify result
+            wb.HourTick(forcebirth);
+            if (wb.birthEV.Count > 0) birth = true;
+        }
+        if (birth) NotifyBirth();
+    }
+
+
     public void TickMenstruation(int year = 0, int month = 0, int day = 1, bool log = false)
     {
         if (ReproCycle == null) return;
         if (ReproTemplate == null) return;
 
         int totalCycle = year * 365 + month * 30 + day;
+        bool birth = false;
         for (int i = 0; i < totalCycle; i++)
         {
             // this variable will be replaced by a boolean getter
@@ -482,14 +497,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             {
                 // leave this blank for now, I'll add this in the future
             }*/
-            for (int j = 0; j < 24; j++)
-            {
-                foreach (var wb in wombs)
-                {
-                    /// notify result
-                    wb.HourTick();
-                }
-            }
+            for (int j = 0; j < 24; j++) TickWomb();
+            
 
             var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
             ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
@@ -514,7 +523,82 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
 
 
+    public void NotifyBirth()
+    {
+        Manageable targetf = null;
+        List<string> names = new List<string>();
 
+        if (FactionManager.CurrentActiveParty != null)
+        {
+            targetf = FactionManager.CurrentActiveParty.FactionOwnerRoot;
+        }
+        else if (FactionManager.Faction_Home_Temporary != null && FactionManager.Faction_Home_Temporary.isPrisoner(RefID))
+        {
+            targetf = FactionManager.Faction_Home_Temporary;
+        }
+        else
+        {
+            targetf = FactionManager.Faction_Home;
+        }
+
+        var ev = new EventInstance(this, "PregnancyEnd_Birth", "");
+        ev.AppendStrings.Add("babyname", new List<string>());
+        List<Action> birth = new List<Action>();
+
+
+        if (targetf == null)
+        {
+            ev.AppendStrings.Add("outcome", new List<string>() { "the baby is lost" });
+        }
+        else if (targetf.isPlayerRelatedFaction)
+        {
+            ev.AppendStrings.Add("outcome", new List<string>() { $"the baby is taken by {targetf.FactionDisplayName}" });
+        }
+        else
+        {
+            ev.AppendStrings.Add("outcome", new List<string>() { $"the baby taken by {targetf.FactionDisplayName}" });
+            targetf = null;
+        }
+
+        ev.AppendStrings.Add("roomname", new List<string>() { (CurrentRoom == null ? "somewhere" : CurrentRoom.DisplayName) });
+
+        bool haspreg = false;
+        foreach (var wb in wombs)
+        {
+            if (wb.birthEV.Count > 0)
+            {
+                foreach (var egg in wb.birthEV)
+                {
+                    names.Add(egg.foetusItem.DisplayName);
+                    haspreg = true;
+                    ev.AppendStrings["babyname"].Add(egg.foetusItem.DisplayName);
+                }
+                wb.GiveBirthTo(this, wb.birthEV, targetf, ev.message.exp);
+            }
+        }
+
+        ev.AppendStrings.Add("count", new List<string>() { $"{names.Count}" });
+
+        // add memory entry
+        var mem_desc = LocalizeDictionary.QueryThenParse("memory_entry_givebirth")
+            .Replace("$count$", $"{names.Count}");
+        var memInst_2 = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, String.Join("\n", names));
+        var memEntry_2 = Memory.AddEntry(memInst_2, new List<string>() { "forbidMerge" });
+        memEntry_2.entryDescription = mem_desc;
+        memEntry_2.disableRoomName = false;
+
+        // add experience
+        if (targetf != null) targetf.DailyReport.AddMiscRecord(
+            LocalizeDictionary.QueryThenParse("faction_report_givebirth")
+                .Replace("$count$", $"{names.Count}")
+                .Replace("$name$", FirstName)
+                .Replace($"room", CurrentRoom == null ? LocalizeDictionary.QueryThenParse("location_unknown") : CurrentRoom.DisplayName), names);
+
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+
+        var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
+        ReproCycle.Birth(ispregnant);
+    }
 
 
     private void Observer_GlobalDay(int updateOrder)
@@ -586,6 +670,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     [JsonProperty] protected int timeSinceLastSleep = 0;
     [JsonProperty] protected int timeSinceLastEat = 24;
+    [JsonProperty] public int ScheduledSleepMissingMinutes = 0;
     private void Observer_GlobalDay_0(int updateOrder)
     {
         if (updateOrder != 0) return;
@@ -1412,27 +1497,39 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             if (this.Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived") > 0) return true;
             var sleephours = Stats.SleepHours;
+            var returnval = hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
+            //if (!returnval && RefID > 0) Debug.LogError($"{FirstName} cannot sleep! hasSleepNeed {hasSleepNeed}, sleephours > 0 {sleephours > 0}, timeSinceLastSleep {timeSinceLastSleep} > sleephours {sleephours} = {timeSinceLastSleep > sleephours}");
             return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours ;
         }
     }
     [JsonIgnore] public bool shouldSleep { get
         {
-            if (needSleep) return true;
-            if (!canSleep) return false;
+            if (needSleep)
+            {
+                //if (RefID > 0) Debug.Log($"{FirstName} need sleep!");
+                return true;
+            }
+            if (!canSleep)
+            {
+                //if (RefID > 0) Debug.Log($"{FirstName} cannot sleep!");
+                return false;
+            }
 
             // Party override: while in an ongoing expedition, the party sleep window is authoritative.
             // Personal schedule is bypassed; NPC sleeps iff the party window says so (and canSleep).
             var party = this.FactionManager.CurrentParty;
 
-            if (party != null && party.isActive)
+            if (party != null &&  (party.isActive || party.Room.RoomChara.Contains(this)))
             {
                 int currentHour = scr_System_Time.current.getCurrentTime().Hour;
+               // if (RefID > 0) Debug.Log($"{FirstName} should sleep in party? {party.SleepHours.Contains(currentHour)} = current {currentHour} in [{String.Join(" ", party.SleepHours)}]");
                 return party.SleepHours.Contains(currentHour);
             }
 
             if (this.FactionManager.HasSleepSchedule)
             {
                 var v = GetJobPost();
+               // if (RefID > 0) Debug.Log($"{FirstName} should sleep in schedule? {v != null && v.comIDs.Contains("com_furniture_sleep")}");
                 return v != null && v.comIDs.Contains("com_furniture_sleep");
             }
             else
@@ -1963,51 +2060,50 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
 
-    public int Sleep()
+    private int ComputeSleepWindowMinutes()
     {
-        var tired = Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived");
-
-        int sleepHour;
-        if (tired > 0)
+        var now = scr_System_Time.current.getCurrentTime();
+        int currentHour = now.Hour;
+        int currentMinute = now.Minute;
+        var party = this.FactionManager.CurrentParty;
+        if (party != null && (party.isActive || party.Room.RoomChara.Contains(this)))
         {
-            // Case 1: resuming interrupted sleep — use remaining duration stored in sleep_deprived severity
-            sleepHour = (int)Math.Ceiling(Math.Min(Stats.SleepHours * 60, tired));
+            int minutes = 0;
+            for (int i = 0; i < Stats.SleepHours; i++)
+            {
+                if (party.SleepHours.Contains((currentHour + i) % 24))
+                    minutes += i == 0 ? (60 - currentMinute) : 60;
+                else
+                    break;
+            }
+            return minutes;
         }
         else
         {
-            int currentHour = scr_System_Time.current.getCurrentTime().Hour;
-
-            // Case 4: party-aligned sleep — wake exactly when the party's sleep window ends
-            var party = this.FactionManager.CurrentParty;
-            if (party != null && party.isActive)
+            int minutes = 0;
+            for (int i = 0; i < Stats.SleepHours; i++)
             {
-                sleepHour = (int)Math.Ceiling(Stats.SleepHours * 60f);
-            }
-            else
-            {
-                // Count consecutive scheduled sleep hours starting from the current hour
-                int scheduledSleepMinutes = 0;
-                for (int i = 0; i < 24; i++)
-                {
-                    var post = GetJobPost((currentHour + i) % 24);
-                    if (post != null && post.comIDs.Contains("com_furniture_sleep"))
-                        scheduledSleepMinutes += 60;
-                    else
-                        break;
-                }
-
-                if (scheduledSleepMinutes > 0)
-                {
-                    // Case 2: sleeping during scheduled hours — sleep until the scheduled window ends
-                    sleepHour = scheduledSleepMinutes;
-                }
+                var post = GetJobPost((currentHour + i) % 24);
+                if (post != null && post.comIDs.Contains("com_furniture_sleep"))
+                    minutes += i == 0 ? (60 - currentMinute) : 60;
                 else
-                {
-                    // Case 3: off-schedule sleep — sleep for the character's normal sleep need
-                    sleepHour = (int)Math.Ceiling(Stats.SleepHours * 60f);
-                }
+                    break;
             }
+            return minutes;
         }
+    }
+
+    public int Sleep()
+    {
+        var tired = Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived");
+        int windowMinutes = ComputeSleepWindowMinutes();
+
+        int personalNeedMinutes = tired > 0
+            ? (int)(Math.Min(Stats.SleepHours * 60, tired))
+            : (int)(Stats.SleepHours * 60);
+
+        int sleepHour = windowMinutes > 0 ? Math.Min(personalNeedMinutes, windowMinutes) : personalNeedMinutes;
+        ScheduledSleepMissingMinutes = Math.Max(0, personalNeedMinutes - sleepHour);
 
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
         Stats.RemoveStatusByStringMatch("chara_status_sleep_deprived");
@@ -2411,7 +2507,7 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
     Dictionary <string, Character_SerializableBase> ID_Dictionary = new Dictionary<string, Character_SerializableBase>();
     public void RegisterAllID(List<string> s)
     {
-        s.Add("Character_Base_Index : registering ID with list length [" + baseCharacters.Count + "]");
+        if (s != null) s.Add("Character_Base_Index : registering ID with list length [" + baseCharacters.Count + "]");
         foreach (Character_SerializableBase o in this.baseCharacters)
         {
             if (o.baseID == "") continue;

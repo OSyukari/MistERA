@@ -35,7 +35,7 @@ public class TryFindBirthLocation : FindJobNode
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         // temporarily disable to avoid permanent behavior lock
-        return false;
+        // return false;
 
 
 
@@ -97,12 +97,28 @@ public class TryFindBirthLocation : FindJobNode
             return false;
         }
 
-        var job = new Job_GiveBirth(c.RefID, furniture);
-        scr_System_CampaignManager.current.Register(job);
-        // Register calls Job_GiveBirth.Register which calls c.ChangeCurrentJob
+        // find job
+        var job = scr_System_CampaignManager.current.GetSpecialTrackedJob(c, MatchJob);
+        if (job != null)
+        {   // go back to the previously created job
+            c.ChangeCurrentJob(job);
+            if (s != null) s.Add($"TryFindBirthLocation: resuming previous birth job at [{furniture.DisplayName}]");
+            return true;
+        }
+        else
+        {
+            job = new Job_GiveBirth(c.RefID, furniture);
+            scr_System_CampaignManager.current.Register(job);
+            // Register calls Job_GiveBirth.Register which calls c.ChangeCurrentJob
 
-        if (s != null) s.Add($"TryFindBirthLocation: birth at [{furniture.DisplayName}] desirability [{desirability}]");
-        return true;
+            if (s != null) s.Add($"TryFindBirthLocation: birth at [{furniture.DisplayName}] desirability [{desirability}]");
+            return true;
+        }
+    }
+
+    bool MatchJob(Job j)
+    {
+        return j is Job_GiveBirth;
     }
 
     // ── Candidate collection ───────────────────────────────────────────────

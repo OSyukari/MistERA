@@ -140,7 +140,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "advReproCycle",
         "wombAddSpermByRef",
         "wombAddSpermByID",
-        "ovulate"
+        "ovulate",
+        "forceBirth"
     };
 
     protected void ActivateUI()

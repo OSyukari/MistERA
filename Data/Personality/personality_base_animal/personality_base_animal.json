@@ -1,0 +1,164 @@
+{
+    "Character_Personalities": {
+        "list": [
+            {
+                "id": "personality_base_animal",
+                "displayName": "Base (Animal)",
+                "maxPrideValue": 100,
+                "behaviorID": "behavior_animal",
+                "pride_increase": {},
+                "pride_decrease": {
+                    "High": { "mods": [{ "selfTags":["imprisoned"], "comTags":[] }] },
+                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1 }] }
+                },
+                "entries_list": [
+                    {
+                        "ID": "Greeting",
+                        "interruptSelfJob": true,
+                        "interruptTargetJob": true,
+                        "variants": [
+                            {
+                                "requirement": {
+                                    "targetBaseID": "PLAYER",
+                                    "requireKojoVariable": {
+                                        "isDailyVariable": false,
+                                        "variableID": "ALWAYSFALSE",
+                                        "checkExistOnly": true,
+                                        "value": 1
+                                    }
+                                },
+                                "responses": []
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "DailyGreeting",
+                        "interruptSelfJob": true,
+                        "interruptTargetJob": true,
+                        "variants": [
+                            {
+                                "requirement": {
+                                    "selfTags": ["privacy"],
+                                    "requireTargetAction": false,
+                                    "requireEPSuccess": false
+                                },
+                                "forbidPortaitDisplay": true
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "Interrupt",
+                        "interruptSelfJob": true,
+                        "variants": [
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "requireSelfStatusValue": {
+                                        "statusID": "chara_status_sleeping",
+                                        "operand": "lte",
+                                        "value": 0.9
+                                    }
+                                },
+                                "forbidPortaitDisplay": true,
+                                "selfEventCall": "DisruptSleep",
+                                "keepLooking": true
+                            },
+                            {
+                                "requirement": {
+                                    "requireNotInCooldownID": "Interrupt_Reaction",
+                                    "requireTargetAction": false,
+                                    "targetTags": ["unsafe"],
+                                    "allowRecording": true
+                                },
+                                "forbidPortaitDisplay": true,
+                                "responses": [],
+                                "results": [
+                                    { "addCooldownID": "Interrupt_Reaction", "addCooldownDuration": 2 }
+                                ]
+                            },
+                            {
+                                "requirement": {
+                                    "targetTags": ["job"]
+                                },
+                                "forbidPortaitDisplay": true,
+                                "responses": [],
+                                "results": [
+                                    {
+                                        "launchEvent": {
+                                            "eventID": "RequestJoin",
+                                            "eventLabel": "",
+                                            "reverseTargets": false,
+                                            "targetKeyword": "evTarget"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "ID": "DisruptSleep",
+                        "variants": [
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": ["sleeping", "timestop"]
+                                },
+                                "responses": []
+                            },
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": ["sleeping", "pain"],
+                                    "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 }
+                                },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
+                            },
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": ["sleeping"],
+                                    "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 }
+                                },
+                                "responses": []
+                            },
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": ["sleeping", "pain"],
+                                    "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 }
+                                },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.2 } }]
+                            },
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": ["sleeping"],
+                                    "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 }
+                                },
+                                "responses": []
+                            },
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": ["sleeping", "pain"]
+                                },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.3 } }]
+                            },
+                            {
+                                "requirement": {
+                                    "requireSelfAction": false,
+                                    "selfTags": ["sleeping"]
+                                },
+                                "responses": [],
+                                "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}

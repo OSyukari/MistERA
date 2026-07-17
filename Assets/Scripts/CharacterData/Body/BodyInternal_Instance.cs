@@ -214,7 +214,8 @@ public class BodyInternal_Instance
 
     public void UpdateTimeHour()
     {
-        if (this.womb != null) womb.HourTick();
+        // update from owner main
+        //if (this.womb != null) womb.HourTick();
     }
 
     public void UpdateTimeMinute(TimeSpan t)
@@ -232,7 +233,7 @@ public class BodyInternal_Instance
             if (methods.Count > 0)
             {
                 float amount = methods[0].digestSpeed;
-                if (ContainedRefs_Delays[content.RefID] > 0)
+                if (ContainedRefs_Delays.TryGetValue(content.RefID, out var value) && value > 0)
                 {
                     int timeTick = Math.Min((int)t.Minutes, ContainedRefs_Delays[content.RefID]);
                     ContainedRefs_Delays[content.RefID] -= timeTick;
@@ -704,6 +705,18 @@ public class BodyInternal_Instance
     {
         return ContainedRefs_Delays.ContainsKey(i);
     }
+
+    public bool ExtractContent(int i)
+    {
+        if (ContainedRefs_Delays.TryGetValue(i, out var item))
+        {
+            ContainedRefs_Delays.Remove(i);
+            contains_cache = null;
+            return true;
+        }
+        else return false;
+    }
+
     public bool HasContent(Item_Instance i)
     {
         if (i == null) return false;

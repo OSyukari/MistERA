@@ -80,25 +80,7 @@ public class FoetusTemplates
         }
     }
 
-    /// <summary>
-    /// This function will take a float ratio (current labor time / foetusTemplate duration_labor), and return a chance of birth.
-    /// this function should have exponential growth, meaning,
-    /// low chance in the beginning (we want to leave some time for the mother to prepare for labor).
-    /// this chance will be checked once per hour for Final stage ovum.
-    /// </summary>
-    /// <param name="timelapsratio"></param>
-    /// <returns></returns>
-    public float GetBirthChance(float timelapsratio)
-    {
-        if (timelapsratio >= 1f) return 1f;
-        if (timelapsratio <= 0f) return 0f;
-        // Exponential-growth curve: near-zero early in labor, surging toward the end.
-        // k=5 keeps per-check chance below 4% for the first 30% of labor (preparation window),
-        // then rises to ~51% at 90% of duration, guaranteeing birth at ratio >= 1.
-        const float k = 5f;
-        float normalized = (Mathf.Exp(k * timelapsratio) - 1f) / (Mathf.Exp(k) - 1f);
-        return normalized * 0.85f;
-    }
+
 
     public void MergeWith(FoetusTemplates f)
     {
@@ -134,7 +116,7 @@ public class FoetusTemplates
     {
         var currstage = ovum.State;
 
-        if (currstage != OvumState.Final) ovum.lifespan += 1;
+        if (currstage < OvumState.Final) ovum.lifespan += 1;
 
         if (currstage == OvumState.Fertilized && ovum.lifespan >= duration_fertilized)
         {
@@ -242,7 +224,23 @@ public class FoetusTemplates
     }
     public virtual void AdvStage_End(Ovum ovum)
     {
-        ovum.State = OvumState.Final;
+
+        if (ReproductionUtility.CanDeliverSafely(ovum.womb, ovum, out var totalLifespan, out var painLevel))
+        {
+            // set normal delivery and 
+            ovum.State = OvumState.Final;
+            ovum.lifespan = 0;
+            ovum.totalLifespan = totalLifespan;
+
+            // add status pain TODO
+        }
+        else
+        {
+            ovum.State = OvumState.Final_RequireHelp;
+            ovum.lifespan = 0;
+            ovum.totalLifespan = totalLifespan;
+            // block delivery?
+        }
     }
 }
 public class Foetus_Foetus : FoetusTemplates

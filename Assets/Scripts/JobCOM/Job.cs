@@ -25,6 +25,7 @@ public interface I_Disposable
 /// </summary>
 public class Job : IDisposable, I_Disposable
 {
+
     [JsonIgnore] public virtual bool MemoryEntrySoftMerge { get { return false; } }
     [JsonIgnore] public virtual string DisplayName
     {
@@ -46,15 +47,6 @@ public class Job : IDisposable, I_Disposable
         get
         {
             return null;
-        }
-    }
-
-    [JsonIgnore]
-    public virtual bool RequireAdditionalLastUpdate
-    {
-        get
-        {
-            return false;
         }
     }
 

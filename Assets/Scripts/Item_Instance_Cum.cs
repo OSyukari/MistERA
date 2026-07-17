@@ -23,6 +23,15 @@ public class Item_Instance_Cum : Item_Instance
         }
     }
 
+    [JsonIgnore]
+    public string FatherName
+    { get
+        {
+            if (Owner != null) return Owner.FirstName;
+            else if (race != null) return race.DisplayName;
+            else return "unknown";
+        } }
+
     public bool Merge(Item_Instance item)
     {
         if (!(item is Item_Instance_Cum)) return false;

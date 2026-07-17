@@ -871,8 +871,9 @@ public class StatsManager : I_StatsManager
                     else if (curr.BaseRef.statusID == "chara_status_sleeping")
                     {
                         refresh = true;
-                        // remove sleep special
-                        Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", curr.duration);
+                        float totalMissing = curr.duration + Owner.ScheduledSleepMissingMinutes;
+                        Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", totalMissing, (int)(totalMissing * 0.5f));
+                        Owner.ScheduledSleepMissingMinutes = 0;
                         Debug.Log($"status {curr.ID} severity at 0 while duration still at {curr.duration}, replacing with chara_status_sleep_deprived");
                         Owner.WakeUp(false);
                     }
@@ -900,6 +901,11 @@ public class StatsManager : I_StatsManager
                         else if (curr.BaseRef.statusID == "chara_status_sleeping")
                         {
                             Owner.FullRest();
+                            if (Owner.ScheduledSleepMissingMinutes > 0)
+                            {
+                                Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", Owner.ScheduledSleepMissingMinutes, (int)(Owner.ScheduledSleepMissingMinutes * 0.5f));
+                                Owner.ScheduledSleepMissingMinutes = 0;
+                            }
                             Owner.WakeUp(false);
                             refresh = true;
                         }

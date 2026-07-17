@@ -179,9 +179,14 @@ public class Ovum
                 foetus.Advance(this);
             }
         }
+        else if (State == OvumState.Final_RequireHelp)
+        {
+            // stuck, require help
+        }
         else if (State == OvumState.Final)
         {
-            // dont do anything
+            // foetus no longer advance
+            lifespan += 60; // was reset to 0 when state change
         }
         else if (State > OvumState.Fertilized)
         {
@@ -198,6 +203,20 @@ public class Ovum
         }
 
     }
+
+    string _ovumname = null;
+    [JsonIgnore]
+    public string OvumName
+    { get
+        {
+            if (_ovumname == null)
+            {
+                _ovumname = LocalizeDictionary.QueryThenParse("ovum_finalName")
+                    .Replace("$mother$", Owner.FirstName)
+                    .Replace("$father$", father.FatherName);
+            }
+            return _ovumname;
+        } }
 
 
     [JsonProperty] protected int foetusItemRef = -1;
@@ -264,5 +283,6 @@ public enum OvumState
     Second_trimester,
     Third_trimester,
     // giving birth
-    Final
+    Final,
+    Final_RequireHelp
 }

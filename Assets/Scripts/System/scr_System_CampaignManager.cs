@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using static UnityEngine.UI.GridLayoutGroup;
 public class scr_System_CampaignManager_Serializable
@@ -941,6 +942,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     }
 
+
+
     public void NotifyRoomSpecialUpdate(Room_Instance r)
     {
         if (!specialUpdateRooms.Contains(r)) specialUpdateRooms.Add(r);
@@ -1402,7 +1405,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         Index_JobReferenceID.Add(forceRefID, j);
         j.Register(forceRefID);
 
-        if (j.RequireAdditionalLastUpdate) specialUpdateJobs.Add(j.RefID);
+        if (j is I_RequireSpecialTracker) specialUpdateJobs.Add(j.RefID);
         //Debug.Log("Registering job " + j.RefID);
         //index_JobReferenceIDCache = null;
         //Index_JobReferenceID.Add(j.RefID, j);
@@ -1410,6 +1413,22 @@ public class scr_System_CampaignManager : MonoBehaviour
         //if (j.actorRefID.Contains(0)) NotifyPlayerJobChange(j.RefID, j);
 
         return j.RefID;
+    }
+
+    public Job GetSpecialTrackedJob(Character_Trainable c, Func<Job, bool> validator)
+    {
+        foreach(var i in specialUpdateJobs)
+        {
+            if (Index_JobReferenceID.TryGetValue(i, out var job))
+            {
+                var jj = job as I_RequireSpecialTracker;
+                if (jj == null) continue;
+                if (!jj.MatchTracker(c)) continue;
+                if (!validator(job)) continue;
+                return job;
+            }
+        }
+        return null;
     }
 
     Dictionary<int, ExpeditionInstance> Index_ExpeditionInstances = new Dictionary<int, ExpeditionInstance>();

@@ -1,0 +1,155 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning_Begin", "variants": [
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["relaxed","leaning","confident","smug","excited","happy"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused","neutral","serious","thinking","calm","observation"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning_Tryjoin",      "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning_Joined",        "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning_Join_Refused",  "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning_Join", "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning_Ongoing",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning_Interrupt", "variants": [
+                { "extraPortraitTags": ["fear","trembling"],       "useActiveTags": false, "requirement": { "requireSelfAttitudeKey": "Fear" },    "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Badwill" },  "extraPortraitTags": ["disgusted","disappointed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Goodwill" }, "extraPortraitTags": ["happy","excited","surprised"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Desire" },   "extraPortraitTags": ["shy"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_cleaning", "interruptSelfJob": true, "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] },
+                { "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] }
+            ] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop_Begin", "variants": [
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["relaxed","leaning","confident","smug","excited","happy"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused","neutral","serious","thinking","calm","observation"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop_Tryjoin",     "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop_Joined",       "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop_Join_Refused", "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop_Join", "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop_Ongoing",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop_Interrupt", "variants": [
+                { "extraPortraitTags": ["fear","trembling"],       "useActiveTags": false, "requirement": { "requireSelfAttitudeKey": "Fear" },    "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Badwill" },  "extraPortraitTags": ["disgusted","disappointed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Goodwill" }, "extraPortraitTags": ["happy","excited","surprised"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Desire" },   "extraPortraitTags": ["shy"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_cultivate_crop", "interruptSelfJob": true, "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] },
+                { "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] }
+            ] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain_Begin", "variants": [
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["relaxed","leaning","confident","smug","excited","happy"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused","neutral","serious","thinking","calm","observation"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain_Tryjoin",     "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain_Joined",       "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain_Join_Refused", "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain_Join", "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain_Ongoing",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain_Interrupt", "variants": [
+                { "extraPortraitTags": ["fear","trembling"],       "useActiveTags": false, "requirement": { "requireSelfAttitudeKey": "Fear" },    "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Badwill" },  "extraPortraitTags": ["disgusted","disappointed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Goodwill" }, "extraPortraitTags": ["happy","excited","surprised"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Desire" },   "extraPortraitTags": ["shy"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_farm_maintain", "interruptSelfJob": true, "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] },
+                { "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] }
+            ] } },
+
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking_Begin", "variants": [
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["relaxed","leaning","confident","smug","excited","happy"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "requireMaster": true, "requireSelfNotMaster": true, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused","neutral","serious","thinking","calm","observation"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking_Tryjoin",     "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking_Joined",       "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking_Join_Refused", "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking_Join", "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Neutral" }, "extraPortraitTags": ["apology","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["troubled","angry","disgust"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfForced": true }, "extraPortraitTags": ["fear","trembling","tearful","pain"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking_Ongoing",   "variants": [{ "responses": [] }] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking_Interrupt", "variants": [
+                { "extraPortraitTags": ["fear","trembling"],       "useActiveTags": false, "requirement": { "requireSelfAttitudeKey": "Fear" },    "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Badwill" },  "extraPortraitTags": ["disgusted","disappointed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Goodwill" }, "extraPortraitTags": ["happy","excited","surprised"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeKey": "Desire" },   "extraPortraitTags": ["shy"], "useActiveTags": false, "responses": [] },
+                { "extraPortraitTags": ["focused"], "useActiveTags": false, "responses": [] }
+            ] } },
+            { "ID": "personality_base", "Entry": { "ID": "com_job_production_cooking", "interruptSelfJob": true, "variants": [
+                { "requirement": { "requireEPFailure": true }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["apology","shy","gentle"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["apology","awkward","busy","uninterested","cold","tired","distant"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] },
+                { "variants": [
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["happy","excited","surprised","intrigued","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraPortraitTags": ["frustrated","pouting","complaining","glare","teary","doubt","bored","annoyed","disappointed"], "useActiveTags": false, "responses": [] }
+            ] } }
+
+        ]
+    }
+}

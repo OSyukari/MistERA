@@ -8,8 +8,12 @@ using Newtonsoft.Json;
 /// <summary>
 /// TODO: THIS JOB IS NOT ACTUALLY USING THE ATTACHED FURNITURE. FOR CONSISTENCY SAKE, NEED TO FIX THIS.
 /// </summary>
-public class Job_GiveBirth : Job
+public class Job_GiveBirth : Job, I_RequireSpecialTracker
 {
+    public bool MatchTracker(Character_Trainable c)
+    {
+        return c != null && c.RefID == laborerRefID;
+    }
 
     /*
     Usage procedure:
@@ -71,6 +75,8 @@ public class Job_GiveBirth : Job
         if (assistantRefs != null) this.assistantRefIDs = new List<int>(assistantRefs);
     }
 
+
+
     // ── Job overrides ──────────────────────────────────────────────────────
 
     [JsonIgnore] public override string DisplayName =>
@@ -91,6 +97,20 @@ public class Job_GiveBirth : Job
     public override bool IsActorValid(int doerRefID)
     {
         return doerRefID == laborerRefID || assistantRefIDs.Contains(doerRefID);
+    }
+
+    public override void AddActor(int charaRef, string priorityCOMID = "", string priorityCOMTag = "")
+    {
+        base.AddActor(charaRef, priorityCOMID, priorityCOMTag);
+        // When an actor rejoins, reset the retry counter on any paused previous packages
+        // so ReregisterPackages gives them a fresh window instead of expiring them immediately.
+        foreach (var p in packages_previous)
+        {
+            if (p.actorRefs.Contains(charaRef) && p.isPaused)
+            {
+                if (Utility.ListContainsStrict(this.actorRefID, p.actorRefs)) p.isPaused = false;
+            } 
+        }
     }
 
     public override void Register(int id)
@@ -137,7 +157,7 @@ public class Job_GiveBirth : Job
 
     public override bool hasActorCompletedJob(int refID)
     {
-        return actorJobComplete.Contains(refID) && RefID != laborerRefID;
+        return actorJobComplete.Contains(refID) && refID != laborerRefID;
     }
 
     public override bool UpdateActorPackage(Character_Trainable c, out string ss)

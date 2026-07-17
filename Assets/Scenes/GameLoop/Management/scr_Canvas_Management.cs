@@ -817,7 +817,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             //, parent.transform.parent.GetComponent<RectTransform>()
-            Debug.Log($"parent null? {(parent == null)} parent canvas null? {(parent == null || parent.prefab_Canvas_CharaDetail == null)}");
+            //Debug.Log($"parent null? {(parent == null)} parent canvas null? {(parent == null || parent.prefab_Canvas_CharaDetail == null)}");
             scr_Menu_CharaDetail detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_CharaDetail).GetComponent<scr_Menu_CharaDetail>();
             detail.InitializeWithArgument(parent.currentChara.RefID);
 

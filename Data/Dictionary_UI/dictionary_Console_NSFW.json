@@ -5,7 +5,8 @@
 "console_advReproCycle_tooltip":"advReproCycle [int value in year] [int value in month] [int value in day]\nrequire target\nadvance target cycle days and notify womb\nwill also call 24 * days times hour tick",
 "console_wombAddSpermByID_tooltip":"wombAddSpermByID [int amount] [int wombIndex] [str raceID] [str baseID] [str templateID]\nrequire target",
 "console_wombAddSpermByRef_tooltip":"wombAddSpermByRef [int amount] [int wombIndex] [int refID]\nrequire target",
-"console_ovulate_tooltip":"require target"
+"console_ovulate_tooltip":"require target",
+"console_forceBirth_tooltip": "require target"
             }
         }
     }

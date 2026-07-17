@@ -18,7 +18,7 @@ public enum PrideLevel
 [System.Serializable]
 public class RelationshipManager
 {
-    [JsonProperty] protected string _personalityID = "personality_default";
+    [JsonProperty] protected string _personalityID = "personality_base";
     protected Character_Personality _personality = null;
 
     [JsonIgnore]

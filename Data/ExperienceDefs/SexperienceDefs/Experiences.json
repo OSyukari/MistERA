@@ -27,6 +27,8 @@
         "_comment":"this exists to inform player that they've caused pain instead of pleasure."
     },
 
+    {  "ExperienceID":"experience_birth", "tags":["nsfw"], "CountTotal":true,"DisplayAmountString":" times", "RequiredOwnerTags":["birth"] },
+
     {  "ExperienceID":"experience_sex_C", "tags":["nsfw"], "CountTotal":true,"DisplayAmountString":"", "RequiredOwnerTags":["human","chara_status_sex_C","pleasure"] },
     {  "ExperienceID":"experience_sex_C_climax", "tags":["nsfw"], "RequiredOwnerTags":["human","chara_status_sex_C","climax"] },
 
@@ -179,7 +181,9 @@
                 "experience_nonhuman_RankDisplayName": "异种奸成瘾",
                 "experience_pain": "苦痛经验",
                 "experience_pain_pleasure": "苦痛快乐经验",
-                "experience_abnormal": "异常经验"
+                "experience_abnormal": "异常经验",
+
+                "experience_birth":"生育经验"
             },
             "en-us":
             {

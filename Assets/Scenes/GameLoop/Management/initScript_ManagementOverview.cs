@@ -206,6 +206,18 @@ public class initScript_ManagementOverview : MonoBehaviour
         RefreshActiveHours();
 
         activeHoursChange.SetText("");
+
+        if (m.managedChilds.Count < 1) managedBabyRect.gameObject.SetActive(false);
+        else
+        {
+            managedBabyRect.gameObject.SetActive(true);
+            managedBabyList.SetText($"{m.managedChilds.Count}");
+
+            var names = new List<string>();
+            foreach (var i in m.managedChilds) names.Add(i.OvumName);
+
+            managedBabyList.SetExternalTooltip(String.Join("\n", names));
+        }
     }
 
     bool _activeHours_init = false;
@@ -243,4 +255,7 @@ public class initScript_ManagementOverview : MonoBehaviour
     {
         activeHoursCurrent.SetText(m.ActivityStateString);
     }
+
+    public RectTransform managedBabyRect;
+    public scr_HoverableText managedBabyList;
 }

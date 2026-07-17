@@ -301,6 +301,10 @@
 "EstrusStatus_Pregnant":"<link=\"EstrusStatus_Pregnant_tooltip\">妊娠中</link>",
 "EstrusStatus_Pregnant_tooltip":"已成功受孕，处于妊娠状态。",
 
+"EstrusStatus_PostPregnancy":"<link=\"Status_PostPregnancy_tooltip\">产后</link>",
+"MenstruationStatus_PostPregnancy":"<link=\"Status_PostPregnancy_tooltip\">产后</link>",
+"Status_PostPregnancy_tooltip":"分娩后的恢复期",
+
 "humanRace_dragon_MenstruationStatus_Menstrual":"<link=\"humanRace_dragon_MenstruationStatus_Menstrual_tooltip\">繁殖前期</link>",
 "humanRace_dragon_MenstruationStatus_Menstrual_tooltip":"繁殖季节来临前的准备阶段，身体逐渐进入繁殖状态。",
 

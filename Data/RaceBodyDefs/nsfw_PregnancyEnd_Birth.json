@@ -1,0 +1,67 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "PregnancyEnd_Birth",
+                "SelfValidator":{
+
+                },
+                "TargetValidators":[
+                    {
+                        "refkeys":["witness"],
+                        "minTargetCount":0,
+                        "baseScope":"AllCharaInSelfRoom_ExcludeSelf"
+                    }
+                ],
+                "events":[
+                    
+{
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+    "options":[
+        {   
+            "option": "silent branch after successful interrupts",
+            "Results": [ 
+                { "Type":"FlushMessageExpAll" }
+            ] 
+        }
+    ],
+    "isLast": true
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+    "line": "PregnancyEnd_Birth_EV01"
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+    "line": "$outcome$"
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+    "options":[
+        {   
+            "option": "silent branch after successful interrupts",
+            "Results": [ 
+                { "Type":"FlushMessageExpAll" }
+            ] 
+        }
+    ],
+    "isLast": true
+}
+                ]
+            }
+        ]
+    },
+"Dictionary":
+    {
+"Entries":
+        {
+            "zh-cn":
+            {
+                "location_unknown":"某处",
+                "memory_entry_givebirth":"诞下了$count$胎",
+                "faction_report_givebirth":"$name$在$room$诞下了$count$胎",
+                "PregnancyEnd_Birth_EV01":"$self.name$在$roomname$诞下了$count$胎：$babyname$\n$witness.name$目击了全过程"
+            }
+        }
+    }
+}

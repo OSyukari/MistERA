@@ -10,9 +10,19 @@ public interface I_CanEndJob
     public void EndJob() { }
 }
 
-
-public class Job_Recording : Job, I_CanEndJob
+public interface I_RequireSpecialTracker
 {
+    public bool MatchTracker(Character_Trainable c);
+}
+
+public class Job_Recording : Job, I_CanEndJob, I_RequireSpecialTracker
+{
+
+    public bool MatchTracker(Character_Trainable c)
+    {
+        return c != null && c.RefID == _cameramanRef;
+    }
+
     public override void OnAfterDeserialize()
     {
         base.OnAfterDeserialize();
@@ -135,14 +145,7 @@ public class Job_Recording : Job, I_CanEndJob
         if (message == null) return;
         currentRecording.AddCollector(message, timestamp);
     }
-    [JsonIgnore]
-    public override bool RequireAdditionalLastUpdate
-    {
-        get
-        {
-            return true;
-        }
-    }
+
 
     public override void Register(int id)
     {

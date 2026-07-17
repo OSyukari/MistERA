@@ -47,7 +47,7 @@ public abstract class CharaTemplate
     public int Weight = 70; //kg
     public Humanoid_GenderAppearance Appearance = Humanoid_GenderAppearance.Female;
     public int stat_STR = 10, stat_CON = 10, stat_PSY = 10, stat_WIL = 10;
-    public string personalityID = "personality_default";
+    public string personalityID = "personality_base";
     public string characterComment = "";
     public List<string> traits = new List<string>();
     [JsonIgnore]

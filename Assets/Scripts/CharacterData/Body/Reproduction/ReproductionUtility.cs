@@ -118,6 +118,23 @@ public static class ReproductionUtility
         return true;
     }
 
+    // Exponential steepness: keeps per-hour chance below ~4 % for the first 30 % of labor,
+    // then surges — ~51 % at t=0.9, guaranteed at t>=1.
+    const float BIRTH_CURVE_K = 5f;
+
+    /// <summary>
+    /// Per-hour probability of birth given linear labor progress t ∈ [0, 1],
+    /// where t = minutes_elapsed / labor_duration.
+    /// Returns 0 at t=0, grows exponentially, and is guaranteed (1.0) at t≥1.
+    /// </summary>
+    public static float GetBirthChancePerHour(float t)
+    {
+        if (t >= 1f) return 1f;
+        if (t <= 0f) return 0f;
+        float normalized = (Mathf.Exp(BIRTH_CURVE_K * t) - 1f) / (Mathf.Exp(BIRTH_CURVE_K) - 1f);
+        return normalized * 0.85f;
+    }
+
 
     public static string[] cumOverlays = new string[]
     {

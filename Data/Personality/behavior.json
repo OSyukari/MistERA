@@ -6,19 +6,46 @@
                 "nodes": [
                     {
                         "$type": "TryFindBirthLocation, Assembly-CSharp",
-                        "Tags": [ "nsfw" ]
+                        "Tags": [ "nsfw" ],
+                        "_comment":"hardcoded job search behavior"
                     },
                     {
-                        "$type": "TryFindRedressNode, Assembly-CSharp"
+                        "$type": "TryFindRedressNode, Assembly-CSharp",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     },
                     {
-                        "$type": "TryFindSleepNode, Assembly-CSharp"
+                        "$type": "TryChangeLocaleNode, Assembly-CSharp"
                     },
                     {
-                        "$type": "TryFindMealNode, Assembly-CSharp"
+                        "$type": "TryFindSleepNode, Assembly-CSharp",
+                        "evaluationHeuristic":"ownership_Medium",
+                        "filter": {
+                            "matchCOMID":"com_furniture_sleep",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     },
                     {
-                        "$type": "TryFindPartyExplorationJob, Assembly-CSharp"
+                        "$type": "TryFindMealNode, Assembly-CSharp",
+                        "evaluationHeuristic":"random",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
+                    },
+                    {
+                        "$type": "TryFindPartyExplorationJob, Assembly-CSharp",
+                        "_comment":"hardcoded job search behavior"
                     },
                     {
                         "$type": "TryFindJobByIDNode, Assembly-CSharp",
@@ -26,29 +53,40 @@
                         "randomChance": 0.5,
                         "cooldownHours": 4,
                         "cooldownID": "com_furniture_restroom",
+                        "evaluationHeuristic":"closest",
                         "filter": {
                             "matchCOMID":"com_furniture_restroom",
                             "checkBlacklist": true,
-                            "skipPrivateRoom":true,
+                            "skipPrivateRoom":false,
                             "searchJobList":false,
                             "searchNonJobList":true
                         }
                     },
                     {
-                        "$type": "TryFindScheduledJobNode, Assembly-CSharp"
+                        "$type": "TryFindScheduledJobNode, Assembly-CSharp",
+                        "_comment":"hardcoded job search parameter"
                     },
                     {
-                        "$type": "TryChangeLocaleNode, Assembly-CSharp"
+                        "$type": "TryFindRestNode, Assembly-CSharp",
+                        "evaluationHeuristic":"random",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     },
                     {
-                        "$type": "TryFindRestNode, Assembly-CSharp"
-                    },
-                    {
-                        "$type": "TryFindSexNode_Animal, Assembly-CSharp",
-                        "Tags": [ "nsfw" ]
-                    },
-                    {
-                        "$type": "TryFindPrivateRoomCleaning, Assembly-CSharp"
+                        "$type": "TryFindPrivateRoomCleaning, Assembly-CSharp",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "matchCOMID":"com_job_cleaning",
+                            "matchCOMTag":"production_cleaning",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     },
                     {
                         "$type": "TryStayInJailNode, Assembly-CSharp"

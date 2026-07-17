@@ -1368,6 +1368,23 @@ public static class UtilityEX
                     }
                 }
                 break;
+            case "forceBirth":
+                if (parsed.Count() >= 4)
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("error target null");
+                        break;
+                    }
+                    if (target.wombs == null || target.wombs.Count < 1)
+                    {
+                        Debug.LogError("error target has no womb");
+                        break;
+                    }
+                    target.TickWomb(true);
+                }
+                break;
             case "wombAddSpermByRef":
                 if (parsed.Count() >= 4)
                 {

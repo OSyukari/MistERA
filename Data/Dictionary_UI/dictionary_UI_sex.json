@@ -17,6 +17,12 @@
 "ui_entry_memory_description_cum_mouth_humanoid_base": "在口内射精",
 "ui_entry_memory_description_cum_stomach_humanoid_base": "深喉射精",
 
+"ovum_itemName": "$race$胎儿",
+"ovum_finalName": "$mother$与$father$的婴孩",
+
+"management_faction_managedBaby": "<link=management_faction_managedBaby_tooltip>养育婴孩数：</link>",
+"management_faction_managedBaby_tooltip": "婴孩不消耗食物，但每天都需要安排人花时间照顾（暂时未实装）",
+
 "ui_entry_memory_description_creampie": "被$target$$cum_verb$了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
 "ui_entry_memory_description_creampie_nopermission": "被$target$无许可$cum_verb$了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
 "ui_entry_memory_description_cum": "射精了$elem1$次，共射出了$elem2$ml的精液||1||$amount$",
