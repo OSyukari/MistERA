@@ -52,6 +52,22 @@
                 { "displayName":"chara_status_consciousness_m1", "threshold":0.9 },
                 { "displayName":"chara_status_consciousness_0", "displayable":false, "threshold":1.0 }
             ]
+        },
+        {
+            "statusID":"chara_status_pain",
+            "noDisplay":false,
+            "stringFormat":"N0",
+            "constant":true,
+            "_comment":"summation_capmod: severity is the winning contributor's own (clamped) SeverityIndex, not a raw copy - so thresholds here are plain index slots 0..4, one per level this StatusEx can display, independent of any contributor's own raw severity scale.",
+            "variationMode": { "variationType":"summation_capmod", "stringData":"chara_status_pain_" },
+            "variants":[
+                { "displayable":false, "threshold":0 },
+                { "displayable":false, "threshold":1 },
+                { "displayName":"chara_status_pain_1", "threshold":2 },
+                { "displayName":"chara_status_pain_2", "tags":["needRest"], "threshold":3 },
+                { "displayName":"chara_status_pain_3", "tags":["needRest","consciousness_reduced"], "threshold":4 },
+                { "displayName":"chara_status_pain_4", "tags":["consciousness_unconscious"], "threshold":5 }
+            ]
         }
     ]
     },
@@ -185,8 +201,10 @@
             ]
         },
         {
-            "statusID":"chara_status_pain",
-            "variationMode": { 
+            "statusID":"chara_status_pain_sex",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "variationMode": {
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
                     "baseValue":0,
@@ -196,72 +214,233 @@
             "variantThresholdModStat":"stats_derived_painSensitivity",
             "variants":[
                 {
-                    "displayable":false,  
+                    "displayable":false,
                     "threshold":0
                 },
                 {
-                    "displayable":false,  
+                    "displayable":false,
                     "threshold":5
                 },
                 {
-                    "displayName":"chara_status_pain_1",
                     "threshold":25,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"-1"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"-1"
                         }
                     ]
                 },
                 {
-                    "displayName":"chara_status_pain_2",
                     "threshold":50,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"-1"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"-1"
                         },
                         {
                             "statID":"chara_status_stress",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"-1"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"-1"
                         },
                         {
                             "statID":"chara_status_consciousness",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"-0.05"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"-0.05"
                         },
                         {
                             "statID":"stats_derived_sleepNeed",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"1"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"1"
                         },
                         {
                             "statID":"stats_derived_sleepDepth",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"1"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"1"
                         }
                     ]
                 },
                 {
-                    "displayName":"chara_status_pain_3",
                     "threshold":1000,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"-2"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"-2"
                         },
                         {
                             "statID":"chara_status_stress",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"-2"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"-2"
                         },
                         {
                             "statID":"chara_status_consciousness",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"-0.10"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"-0.10"
                         },
                         {
                             "statID":"stats_derived_sleepNeed",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"2"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"2"
                         },
                         {
                             "statID":"stats_derived_sleepDepth",
-                            "modKey":"chara_status_pain", "type":"setBase", "valueType":"number", "valueString":"2"
+                            "modKey":"chara_status_pain_sex", "type":"setBase", "valueType":"number", "valueString":"2"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pain_physical",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "variationMode": {
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":0.2
+                }
+            } ,
+            "variantThresholdModStat":"stats_derived_painSensitivity",
+            "variants":[
+                {
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayable":false,
+                    "threshold":5
+                },
+                {
+                    "threshold":25,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "threshold":50,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-0.05"
+                        },
+                        {
+                            "statID":"stats_derived_sleepNeed",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"stats_derived_sleepDepth",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "threshold":1000,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-0.10"
+                        },
+                        {
+                            "statID":"stats_derived_sleepNeed",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"stats_derived_sleepDepth",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"2"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pain_birth",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "variationMode": {
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":0.02
+                }
+            } ,
+            "variantThresholdModStat":"stats_derived_painSensitivity",
+            "variants":[
+                {
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayable":false,
+                    "threshold":5
+                },
+                {
+                    "threshold":25,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "threshold":50,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"-0.10"
+                        },
+                        {
+                            "statID":"stats_derived_sleepNeed",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"stats_derived_sleepDepth",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "threshold":1000,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"-0.25"
+                        },
+                        {
+                            "statID":"stats_derived_sleepNeed",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"2"
+                        },
+                        {
+                            "statID":"stats_derived_sleepDepth",
+                            "modKey":"chara_status_pain_birth", "type":"setBase", "valueType":"number", "valueString":"2"
                         }
                     ]
                 }
@@ -270,22 +449,52 @@
         {
             "statusID":"chara_status_analgesic",
             "displayName":"Analgesic Status",
+            "_comment":"stats_derived_painSensitivity is semantically pain TOLERANCE despite its name (see its tooltip: lower means more intense pain) - Status_Instance.VariantThresholdMod multiplies pain thresholds by it, so a HIGHER value means more raw severity is needed to reach a given pain tier. addMult here is therefore positive, not negative. decaySpeed 0.3/min: a typical OTC analgesic (ibuprofen/acetaminophen-class) relieves pain for roughly 4-6 real-world hours per dose, so a full-strength dose (severity 100) decays to 0 in ~333 min (~5.5h); a more moderate dose (severity 80, e.g. from consumable_medicine_analgesic) clears in ~267 min (~4.4h), landing inside that range.",
+            "variationMode": {
+                "baselineVariation":{
+                    "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                    "baseValue":0,
+                    "decaySpeed":0.3
+                }
+            },
             "variants":[
                 {
-                    "displayable":false,  
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayable":false,
                     "threshold":25
                 },
                 {
                     "displayName":"chara_status_analgesic_1",
-                    "threshold":50
+                    "threshold":50,
+                    "stat_modifiers":[
+                        {
+                            "statID":"stats_derived_painSensitivity",
+                            "modKey":"chara_status_analgesic", "type":"addBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
                 },
                 {
                     "displayName":"chara_status_analgesic_2",
-                    "threshold":75
+                    "threshold":75,
+                    "stat_modifiers":[
+                        {
+                            "statID":"stats_derived_painSensitivity",
+                            "modKey":"chara_status_analgesic", "type":"addBase", "valueType":"number", "valueString":"5"
+                        }
+                    ]
                 },
                 {
                     "displayName":"chara_status_analgesic_3",
-                    "threshold":100
+                    "threshold":100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"stats_derived_painSensitivity",
+                            "modKey":"chara_status_analgesic", "type":"addBase", "valueType":"number", "valueString":"10"
+                        }
+                    ]
                 }
             ]
         },
@@ -505,14 +714,20 @@
 "chara_status_cryosleep":"冷冻睡眠",
 
 "chara_status_analgesic":"麻醉",
+"chara_status_analgesic_tooltip":"降低对疼痛的敏感度",
 "chara_status_analgesic_1":"%%chara_status_analgesic%%：弱",
 "chara_status_analgesic_2":"%%chara_status_analgesic%%：中",
 "chara_status_analgesic_3":"%%chara_status_analgesic%%：强",
 
 "chara_status_pain":"疼痛",
+"chara_status_pain_tooltip":"强或更高的疼痛会让角色无法行动",
 "chara_status_pain_1":"%%chara_status_pain%%：弱",
 "chara_status_pain_2":"%%chara_status_pain%%：中",
-"chara_status_pain_3":"%%chara_status_pain%%：强"
+"chara_status_pain_3":"%%chara_status_pain%%：强",
+"chara_status_pain_4":"%%chara_status_pain%%：休克",
+"chara_status_pain_sex":"%%chara_status_pain%%（性）",
+"chara_status_pain_physical":"%%chara_status_pain%%（外伤）",
+"chara_status_pain_birth":"%%chara_status_pain%%（分娩）"
 
             },
             "en-us":
@@ -560,8 +775,6 @@
 "chara_status_sleeping_2":"Sleeping",
 "chara_status_sleeping_3":"Deep Sleep",
 
-"chara_status_fatigue":"Fatigue",
-
 "chara_status_cryosleep":"Cryosleep",
 
 "chara_status_analgesic":"Analgesic",
@@ -572,7 +785,10 @@
 "chara_status_pain":"Pain",
 "chara_status_pain_1":"%%chara_status_pain%%: Weak",
 "chara_status_pain_2":"%%chara_status_pain%%: Medium",
-"chara_status_pain_3":"%%chara_status_pain%%: Strong"
+"chara_status_pain_3":"%%chara_status_pain%%: Strong",
+"chara_status_pain_sex":"%%chara_status_pain%% (Sex)",
+"chara_status_pain_physical":"%%chara_status_pain%% (Physical)",
+"chara_status_pain_birth":"%%chara_status_pain%% (Birth)"
             }
         }
     }

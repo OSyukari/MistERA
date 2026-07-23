@@ -1,0 +1,122 @@
+{
+    "_doc": {
+        "purpose": "Fertility-increasing medication (real-world analogue: clomiphene citrate / letrozole). Both raise FSH so a follicle that would otherwise stall matures and ovulates. Modeled here as a temporary multiplier on the fertility side of reproduction, driven by a decaying status applied by an ingestible pill.",
+        "mother_effect": "stats_derived_fertilityMultiplier on the mother scales accumulateOvuPower in BodyInternal_Womb.ovulation() (Womb.cs) - more/likelier eggs released per ovulation.",
+        "father_effect": "stats_derived_fertilityMultiplier on the father (read off the Item_Instance_Cum owner) scales BodyInternal_Womb.CalcFertility() (Womb.cs) - higher per-egg conception chance.",
+        "neutral_default": "Default value is 1.0 (no modifiers) so any character never given the status/item behaves exactly as before this feature was added."
+    },
+    "Stats_Derived_Bases": {
+        "list": [
+            {
+                "id": "stats_derived_fertilityMultiplier",
+                "statKeyword": "",
+                "displayName": "Fertility Multiplier",
+                "tooltip": "Multiplies fertility-related odds: mother's egg-release count/chance during ovulation, and father's per-egg conception chance. 1.0 = normal, unaffected.",
+                "_note": "statKeyword left empty on purpose so this resolves on every character (male or female) - both parents need it.",
+                "valueBase": {
+                    "baseValue_value": 1.0,
+                    "baseValue_mult": 1.0,
+                    "finalMod_value": 0.0,
+                    "finalMod_mult": 1.0,
+                    "valueFloor": 0.0,
+                    "valueCeiling": 999.0
+                }
+            }
+        ]
+    },
+    "Status": {
+        "list": [
+            {
+                "statusID": "chara_status_fertility_boost",
+                "_comment": "Applied by consumable_medicine_fertility. Severity spikes near 100 on dose, then decays naturally back to 0 over about 6 in-game days, tapering the fertility bonus down through the tiers below as it fades.",
+                "variationMode": {
+                    "baselineVariation": {
+                        "$type": "Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                        "baseValue": 0,
+                        "decaySpeed": 0.012,
+                        "_decaySpeed_note": "severity/minute. ~100 severity / 0.012 per min =~ 8300 min =~ 5.8 days to fully decay."
+                    }
+                },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    {
+                        "displayName": "chara_status_fertility_boost_1",
+                        "threshold": 50,
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_fertilityMultiplier", "modKey": "chara_status_fertility_boost", "type": "addBase", "valueType": "number", "valueString": "0.25" }
+                        ]
+                    },
+                    {
+                        "displayName": "chara_status_fertility_boost_2",
+                        "threshold": 75,
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_fertilityMultiplier", "modKey": "chara_status_fertility_boost", "type": "addBase", "valueType": "number", "valueString": "0.5" }
+                        ]
+                    },
+                    {
+                        "displayName": "chara_status_fertility_boost_3",
+                        "threshold": 100,
+                        "stat_modifiers": [
+                            { "statID": "stats_derived_fertilityMultiplier", "modKey": "chara_status_fertility_boost", "type": "addBase", "valueType": "number", "valueString": "1.0" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Items": {
+        "list": [
+            {
+                "id": "consumable_medicine_fertility",
+                "displayName": "Fertility Tablet",
+                "tooltip": "An oral fertility medication. Encourages the body to mature and release eggs more readily for several days after taking it.",
+                "Tags": ["consumable","industrial","rarity_common", "medicine","additive"],
+                "value": 80,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "_note": "Plausible oral-tablet pacing (unlike consumable_medicine_analgesic's intentionally fast debug numbers): ~1hr onset, digests over ~10min once absorption starts, dose sized to push chara_status_fertility_boost to ~100 severity (top tier) immediately.",
+                            "ingestMethod": [
+                                {
+                                    "bodyTags": "stomach",
+                                    "digestSpeed": -3,
+                                    "digestDelay": 60,
+                                    "digestDelayVariation": 15,
+                                    "amountMod": 3.33,
+                                    "giveStatus": "chara_status_fertility_boost"
+                                }
+                            ],
+                            "amount": 30
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "stats_derived_fertilityMultiplier": "Fertility Multiplier",
+                "stats_derived_fertilityMultiplier_tooltip": "Multiplies fertility-related odds: egg-release count/chance during ovulation, and per-egg conception chance. 1.0 = normal.",
+
+                
+
+                "consumable_medicine_fertility": "Fertility Tablet"
+            },
+            "zh-cn": {
+                "stats_derived_fertilityMultiplier": "生育力",
+                "stats_derived_fertilityMultiplier_tooltip": "影响生育相关的几率：排卵时的排卵数量/几率，以及每颗卵子的受孕几率。1.0 为正常值。",
+
+                "chara_status_fertility_boost_1": "生育力提升（低）",
+                "chara_status_fertility_boost_2": "生育力提升（中）",
+                "chara_status_fertility_boost_3": "生育力提升（高）",
+
+                "chara_status_fertility_boost_tooltip":"%%stats_derived_fertilityMultiplier%%：%%stats_derived_fertilityMultiplier_tooltip%%",
+
+                "consumable_medicine_fertility": "促孕药片",
+                "consumable_medicine_fertility_tooltip": "口服药物。服用后数日内，会增强生育能力\n%%stats_derived_fertilityMultiplier%%：%%stats_derived_fertilityMultiplier_tooltip%%"
+            }
+        }
+    }
+}

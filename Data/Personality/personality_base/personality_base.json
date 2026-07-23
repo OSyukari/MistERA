@@ -124,7 +124,7 @@
                                 "requirement": { "selfTags": ["privacy"], "requireTargetAction": false, "requireSelfAction": true, "requireEPSuccess": false },
                                 "responses": [],
                                 "useActiveTags": true,
-                                "extraPortraitTags": ["blush","angry","disgusted","sorry"],
+                                "extraSelfPortraitTags": ["blush","angry","disgusted","sorry"],
                                 "results": [{ "launchEvent": { "eventID": "RequestLeave_PrivateAction", "eventLabel": "", "reverseTargets": false } }]
                             },
                             {

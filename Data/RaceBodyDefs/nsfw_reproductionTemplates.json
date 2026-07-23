@@ -49,6 +49,7 @@
     "cycleType":"Menstruation",
     "_lifecycle": "puberty 12yr | menopause ~50yr | cycle 28d",
     "_phases": "menstrual 5d | follicular 7d | ovulation 2d | luteal 14d = 28d",
+    "_cycleStatusIDs_note": "indexed by MenstruationStatus: None=0, PrePuberty=1, Menstrual=2, PreOvulation=3, Ovulation=4, Rest=5, Pregnant=6, PostPregnancy=7",
     "pubertyThreshold": 4380,
     "pubertyVariation": 0.10,
     "cycleThreshold": 28,
@@ -62,7 +63,12 @@
     "ovulationQuantityVariation": 200,
     "fertility": 1.0,
     "fertilizationChance": 0.25,
-    "ovumLifespanMinutes": 1440
+    "ovumLifespanMinutes": 1440,
+    "cycleStatusIDs": ["", "", "chara_status_pms_menstrual", "", "", "chara_status_pms_luteal", "", ""],
+    "_pregnancyStatusIDs_note": "indexed by OvumState: Default=0, Aborted=1, Fertilized=2, Implanted=3, First_trimester=4, Second_trimester=5, Third_trimester=6, Final=7, Final_RequireHelp=8",
+    "pregnancyStatusIDs": ["", "", "", "", "chara_status_pregnancy_t1", "chara_status_pregnancy_t2", "chara_status_pregnancy_t3", "", ""],
+    "_postpartumDays_note": "real-world minimum recovery (~6 weeks) before the cycle resumes, driven by the mother's own hormonal cycle rather than the womb/foetus",
+    "postpartumDays": 42
 },
 {
     "baseID": "humanRace_elf",
@@ -85,7 +91,13 @@
     "ovulationQuantityVariation": 20,
     "fertility": 0.20,
     "fertilizationChance": 0.15,
-    "ovumLifespanMinutes": 14400
+    "ovumLifespanMinutes": 14400,
+    "_cycleStatusIDs_note": "indexed by MenstruationStatus: None=0, PrePuberty=1, Menstrual=2, PreOvulation=3, Ovulation=4, Rest=5, Pregnant=6, PostPregnancy=7. Uses elf-specific PMS statuses (raised thresholds - see Chara_Status_nsfw.json) since the human ones would leave elves symptomatic for most of their much longer luteal/menstrual phases",
+    "cycleStatusIDs": ["", "", "chara_status_pms_menstrual_elf", "", "", "chara_status_pms_luteal_elf", "", ""],
+    "_pregnancyStatusIDs_note": "indexed by OvumState: Default=0, Aborted=1, Fertilized=2, Implanted=3, First_trimester=4, Second_trimester=5, Third_trimester=6, Final=7, Final_RequireHelp=8. T1 uses the elf-specific nausea status (day-level noise instead of hour-level); T2/T3 reuse the shared human statuses for now",
+    "pregnancyStatusIDs": ["", "", "", "", "chara_status_pregnancy_t1_elf", "chara_status_pregnancy_t2", "chara_status_pregnancy_t3", "", ""],
+    "_postpartumDays_note": "scaled by ageMultiplier (10x human) to match elf's 10x-slower hormonal pacing everywhere else in this template",
+    "postpartumDays": 420
 },
 {
     "baseID": "humanRace_angel",
@@ -108,7 +120,13 @@
     "ovulationQuantityVariation": 150,
     "fertility": 0.85,
     "fertilizationChance": 0.22,
-    "ovumLifespanMinutes": 1440
+    "ovumLifespanMinutes": 1440,
+    "_cycleStatusIDs_note": "indexed by MenstruationStatus: None=0, PrePuberty=1, Menstrual=2, PreOvulation=3, Ovulation=4, Rest=5, Pregnant=6, PostPregnancy=7. Same phase shape and timescale as human, so reuses the shared statuses directly",
+    "cycleStatusIDs": ["", "", "chara_status_pms_menstrual", "", "", "chara_status_pms_luteal", "", ""],
+    "_pregnancyStatusIDs_note": "indexed by OvumState: Default=0, Aborted=1, Fertilized=2, Implanted=3, First_trimester=4, Second_trimester=5, Third_trimester=6, Final=7, Final_RequireHelp=8. Foetus durations match human 1:1 (ageMultiplier 1), so reuses the shared statuses directly",
+    "pregnancyStatusIDs": ["", "", "", "", "chara_status_pregnancy_t1", "chara_status_pregnancy_t2", "chara_status_pregnancy_t3", "", ""],
+    "_postpartumDays_note": "same 6-week recovery as human (ageMultiplier 1)",
+    "postpartumDays": 42
 },
 {
     "baseID": "humanRace_demon",
@@ -131,7 +149,12 @@
     "ovulationQuantityVariation": 200,
     "fertility": 1.2,
     "fertilizationChance": 0.32,
-    "ovumLifespanMinutes": 1440
+    "ovumLifespanMinutes": 1440,
+    "_cycleStatusIDs_note": "intentionally left unconfigured (empty = feature off): Estrus is modeled on animal heat cycles, not menstruation - real estrus-cycle animals don't shed a uterine lining or get a hormonal PMS-equivalent, so the human PMS statuses don't have a biological analogue here. Revisit with heat-appropriate content (anticipation/restlessness during Proestrus, possibly frustration if Estrus passes unmated) instead of reusing chara_status_pms_*.",
+    "_pregnancyStatusIDs_note": "indexed by OvumState: Default=0, Aborted=1, Fertilized=2, Implanted=3, First_trimester=4, Second_trimester=5, Third_trimester=6, Final=7, Final_RequireHelp=8. Foetus durations are 0.5x human (ageMultiplier 0.5, ~35d/49d/42d trimesters). Gestation discomfort isn't tied to the menstrual mechanism the way PMS is, so reusing the shared statuses here is fine",
+    "pregnancyStatusIDs": ["", "", "", "", "chara_status_pregnancy_t1", "chara_status_pregnancy_t2", "chara_status_pregnancy_t3", "", ""],
+    "_postpartumDays_note": "scaled by ageMultiplier (0.5x human) to match demon's faster hormonal pacing",
+    "postpartumDays": 21
 },
 {
     "baseID": "humanRace_dragon",
@@ -182,7 +205,12 @@
     "ovulationQuantityVariation": 150,
     "fertility": 3.5,
     "fertilizationChance": 0.70,
-    "ovumLifespanMinutes": 1440
+    "ovumLifespanMinutes": 1440,
+    "_cycleStatusIDs_note": "intentionally left unconfigured (empty = feature off): Estrus is modeled on animal heat cycles, not menstruation - real estrus-cycle animals don't shed a uterine lining or get a hormonal PMS-equivalent, so the human PMS statuses don't have a biological analogue here. Revisit with heat-appropriate content (anticipation/restlessness during Proestrus, possibly frustration if Estrus passes unmated) instead of reusing chara_status_pms_*.",
+    "_pregnancyStatusIDs_note": "indexed by OvumState: Default=0, Aborted=1, Fertilized=2, Implanted=3, First_trimester=4, Second_trimester=5, Third_trimester=6, Final=7, Final_RequireHelp=8. Foetus trimesters are ~17d/21d/21d (~69d total gestation). Gestation discomfort isn't tied to the menstrual mechanism the way PMS is, so reusing the shared statuses here is fine",
+    "pregnancyStatusIDs": ["", "", "", "", "chara_status_pregnancy_t1", "chara_status_pregnancy_t2", "chara_status_pregnancy_t3", "", ""],
+    "_postpartumDays_note": "scaled by ageMultiplier (0.9x human)",
+    "postpartumDays": 38
 },
 {
     "baseID": "doggirl",

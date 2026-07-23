@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for templates.json. Holds en-us entries for the expinit_target_goblin* labels. 'Reeking' reused verbatim from expinit_target_male_penis_stinky (same zh-cn adjective, 恶臭) for consistency between the two."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "expinit_target_goblin": "Goblin",
+                "expinit_target_goblin_penis": "Reeking Goblin Cock"
+            }
+        }
+    }
+}

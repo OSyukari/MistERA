@@ -35,7 +35,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "question":"event_caveGoblinEncounter_event_ev01",
     "options":[
         {   
@@ -71,7 +71,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_combat_scare",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "question":"event_caveGoblinEncounter_event_ev02",
     "options":[
         {   
@@ -88,7 +88,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare_end",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "event_caveGoblinEncounter_event_ev03",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
@@ -96,7 +96,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_scare_chase",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "event_caveGoblinEncounter_event_ev04",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-2"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
@@ -125,7 +125,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_ambush",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "event_caveGoblinEncounter_event_ev05",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-1"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
@@ -134,7 +134,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_combat",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "event_caveGoblinEncounter_event_ev06",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "nextEntryLabel":"br_combat_start"

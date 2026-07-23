@@ -1,0 +1,52 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for item_gamecd_ic6.json. Holds en-us entries for the knowledge_game_ic6_* flavor-text cluster.",
+        "naming_convention": "Per user decision 2026-07-22: faction/character/location names are parody-renamed in the same light spirit as the title itself (Armored Core 6 -> Iron Core 6), not translated to their real official localizations. See name_consistency.md for the full substitution table. The five knowledge_game_ic6_characters_rusty_N quotes were already written in English directly in the zh-cn source (official VO lines quoted as-is) - copied verbatim, not retranslated. '621' is kept unchanged (a plain numeric callsign, not a proprietary name).",
+        "ac6_reference_note": "Critical: 'ac6_reference' itself needed an en-us entry too, distinct from item_gamecd_ic6 (which hardcodes 'Iron Core 6' directly rather than using the token). Every knowledge_game_ic6_* entry below embeds %%ac6_reference%%, so without this entry the token would render literally as 'ac6_reference' in English builds instead of resolving."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "ac6_reference": "Iron Core 6",
+
+                "knowledge_game_ic6_world": "The world of %%ac6_reference%%",
+                "knowledge_game_ic6_world_megastructure": "The megastructures in %%ac6_reference%%",
+                "knowledge_game_ic6_world_rubicon": "Rubellite-III in %%ac6_reference%%",
+                "knowledge_game_ic6_world_coral": "Choral in %%ac6_reference%%",
+                "knowledge_game_ic6_world_fires": "The Rubellite Fires in %%ac6_reference%%",
+                "knowledge_game_ic6_world_ibis": "The IRIS-series mechs in %%ac6_reference%%",
+                "knowledge_game_ic6_world_ice_worm": "The Giant Frost Wyrm in %%ac6_reference%%",
+                "knowledge_game_ic6_world_factions": "The factions of %%ac6_reference%%",
+                "knowledge_game_ic6_world_factions_arquebus": "The Culverin Group in %%ac6_reference%%",
+                "knowledge_game_ic6_world_factions_balam": "Balaam Industries in %%ac6_reference%%",
+                "knowledge_game_ic6_world_factions_pca": "The Planetary Blockade Authority (PBA) in %%ac6_reference%%",
+                "knowledge_game_ic6_world_factions_liberation": "The Rubellite Liberation Front in %%ac6_reference%%",
+
+                "knowledge_game_ic6_mech": "The mechs of %%ac6_reference%%",
+                "knowledge_game_ic6_mech_lockon": "The mech lock-on system in %%ac6_reference%%",
+                "knowledge_game_ic6_mech_engines": "Mech engines in %%ac6_reference%%",
+                "knowledge_game_ic6_mech_stagger": "The mech stagger system (ACS) in %%ac6_reference%%",
+                "knowledge_game_ic6_mech_legs": "Mech leg types in %%ac6_reference%%",
+                "knowledge_game_ic6_mech_weapons": "Mech weapons and equipment in %%ac6_reference%%",
+                "knowledge_game_ic6_mech_generator": "Mech generators and EN management in %%ac6_reference%%",
+                "knowledge_game_ic6_mech_os": "Mech OS chip tuning in %%ac6_reference%%",
+
+                "knowledge_game_ic6_characters": "Characters of %%ac6_reference%%",
+                "knowledge_game_ic6_characters_621": "621 in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_walter": "Walder in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_rusty": "Rusten in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_rusty_0": "You ready to climb the Wall?",
+                "knowledge_game_ic6_characters_rusty_1": "I won't miss.",
+                "knowledge_game_ic6_characters_rusty_2": "Are you here to bring us hope, or despair?",
+                "knowledge_game_ic6_characters_rusty_3": "You flew just out of reach...",
+                "knowledge_game_ic6_characters_rusty_4": "I'm counting on you, buddy.",
+                "knowledge_game_ic6_characters_ayre": "Eyre in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_iguazu": "Iguassu in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_carla": "Carly (Coolant) in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_allmind": "OMNIMIND in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_michigan": "Michigen in %%ac6_reference%%",
+                "knowledge_game_ic6_characters_chatty": "Chatty in %%ac6_reference%%"
+            }
+        }
+    }
+}

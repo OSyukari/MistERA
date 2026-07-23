@@ -107,7 +107,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_choice",
-        "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+        "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "question":"exp_event_Utnapishtim_crumblingFloor_MIA_ev01",
     "options":[
         {   
@@ -125,7 +125,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_avoid",
-        "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+        "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev02",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
@@ -133,7 +133,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_mia",
-        "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+        "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev03",
     "Results":[
         { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},

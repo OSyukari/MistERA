@@ -114,8 +114,34 @@
                     }
                 }
             ]
+        },
+        {
+            "id":"consumable_medicine_analgesic",
+            "displayName":"Analgesic Tablet",
+            "tooltip":"A fast-acting painkiller. Takes effect almost immediately and is fully absorbed within minutes.",
+            "_debug_note":"digestSpeed/digestDelay are set unrealistically fast for debug/testing convenience - real oral analgesics take ~20-60min to absorb, not minutes. Total dose delivered (amount*amountMod=80) is tuned for chara_status_analgesic's decay (see Chara_Status.json) and should be kept when retiming this to real-world absorption speed.",
+            "Tags":["consumable","medicine","rarity_common"],
+            "value":50,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Ingestible",
+                    "comp_Ingestible":{
+                        "ingestMethod":[
+                            {
+                                "bodyTags":"stomach",
+                                "digestSpeed": -5,
+                                "digestDelay":5,
+                                "digestDelayVariation":2,
+                                "amountMod":4,
+                                "giveStatus":"chara_status_analgesic"
+                            }
+                        ],
+                        "amount":20
+                    }
+                }
+            ]
         }
-        
+
     ]
     },
     "Dictionary":
@@ -126,16 +152,18 @@
             {
                 "consumable_fruit_tomato": "番茄",
                 "consumable_fruit_potato": "土豆",
-                "consumable_meat_mealworm": "肉虫"
+                "consumable_meat_mealworm": "肉虫",
+                "consumable_medicine_analgesic": "止痛药"
 
             },
             "en-us":
             {
   "consumable_fruit_tomato": "Tomato",
   "consumable_fruit_potato": "Potato",
-  "consumable_meat_mealworm": "Mealworm"
+  "consumable_meat_mealworm": "Mealworm",
+  "consumable_medicine_analgesic": "Analgesic Tablet"
             }
         }
     }
-    
+
 }

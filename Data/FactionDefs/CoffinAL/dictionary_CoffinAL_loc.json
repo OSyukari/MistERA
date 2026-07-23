@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary_CoffinAL.json.",
+        "factionName_CoffinAnL_Household_note": "Confirmed via the sibling key TCoAaL_Graves_lastname (格雷夫斯 -> already translated 'Graves' in this same file) that Andrew/Ashley's surname is Graves - so the household name is 'Graves Household'. Resolves the open item noted in name_consistency.md."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "factionName_CoffinAnL_Household": "Graves Household"
+            }
+        }
+    }
+}

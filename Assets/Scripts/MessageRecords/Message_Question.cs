@@ -19,12 +19,13 @@ public class Message_Question : MessageLog
         return false;
     }
     Event.EventEntry.EventEntry_Question question;
-    public Message_Question(PortraitManager portraitRef, List<string> tags, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(portraitRef, time, parent)
+    public Message_Question(PortraitManager portraitRef, I_hasPortrait handler, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(portraitRef, time, parent)
     {
-        this.tagsOverride = tags;
+        this.tagsOverride_self = handler.SelfPortraitTag;
+        this.tagsOverride_target = handler.TargetPortraitTag;
         this.question = question;
     }
-    public Message_Question(List<Character_Trainable> charas, List<string> tags, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(charas, tags, time, parent)
+    public Message_Question(List<Character_Trainable> charas, I_hasPortrait handler, EventInstance parent, Event.EventEntry.EventEntry_Question question, DateTime time = default) : base(charas, handler, time, parent)
     {
         this.question = question;
     }
@@ -59,12 +60,13 @@ public class Message_InputField : MessageLog
         return false;
     }
     Event.EventEntry.EventEntry_InputField question;
-    public Message_InputField(PortraitManager portraitRef, List<string> tags, EventInstance parent, Event.EventEntry.EventEntry_InputField question, DateTime time = default) : base(portraitRef, time, parent)
+    public Message_InputField(PortraitManager portraitRef, I_hasPortrait handler, EventInstance parent, Event.EventEntry.EventEntry_InputField question, DateTime time = default) : base(portraitRef, time, parent)
     {
-        this.tagsOverride = tags;
+        this.tagsOverride_self = handler.SelfPortraitTag;
+        this.tagsOverride_target = handler.TargetPortraitTag;
         this.question = question;
     }
-    public Message_InputField(List<Character_Trainable> charas, List<string> tags, EventInstance parent, Event.EventEntry.EventEntry_InputField question, DateTime time = default) : base(charas, tags, time, parent)
+    public Message_InputField(List<Character_Trainable> charas, I_hasPortrait handler, EventInstance parent, Event.EventEntry.EventEntry_InputField question, DateTime time = default) : base(charas, handler, time, parent)
     {
         this.question = question;
     }

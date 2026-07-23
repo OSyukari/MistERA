@@ -73,13 +73,13 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         if (this.isCurrentTargetBox && vm == ViewMode.View_Room) ReadCurrentChar(scr_System_CampaignManager.current.CurrentTargetRef, false);
     }
 
-    private void ReadCurrentLogImage(PortraitManager id, List<string> tags)
+    private void ReadCurrentLogImage(PortraitManager id, I_hasPortrait handler)
     {
         //Debug.Log("ReadCurrentChar");
         if (id == null) return;
         else if (!this.gameObject.activeInHierarchy) return;
         else if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Logs) return;
-        else CheckCharaChange(id, tags);
+        else CheckCharaChange(id, handler);
     }
 
     private void ReadCurrentChar(int id, bool foceUpdate)
@@ -172,7 +172,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         
     }
 
-    private void CheckCharaChange(PortraitManager newPortrait, List<string> tags = null)
+    private void CheckCharaChange(PortraitManager newPortrait, I_hasPortrait handler = null)
     {
         //spineRect.gameObject.SetActive(false);
         //picture.gameObject.SetActive(true);
@@ -188,7 +188,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
                 {
                     portrait.DrawBanner(this);
                 }
-                else portrait.DrawPortrait(this, tags);
+                else portrait.DrawPortrait(this, handler);
             }
         }
         else

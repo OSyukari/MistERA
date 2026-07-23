@@ -13,7 +13,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush"
                             ],
                             "useActiveTags": false,
@@ -35,7 +35,7 @@
                             "requirement": {
                                 "requireSelfForced": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling",
                                 "tearful",
@@ -57,7 +57,7 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush"
                             ],
                             "useActiveTags": false,
@@ -74,7 +74,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "relaxed",
                                 "leaning",
                                 "happy"
@@ -110,7 +110,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "apology",
                                         "shy"
                                     ],
@@ -129,7 +129,7 @@
                                 }
                             ],
                             "_comment": "2.3.2 不友好拒绝 NPC未执行行为时，他人邀请…",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "troubled",
                                 "angry",
                                 "disgust"
@@ -155,7 +155,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised"
@@ -172,7 +172,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "pouting",
                                 "doubt"
                             ],
@@ -193,7 +193,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised"
@@ -210,7 +210,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "pouting",
                                 "doubt"
                             ],
@@ -299,7 +299,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Neutral"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "apology",
                                         "shy"
                                     ],
@@ -315,7 +315,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "troubled",
                                 "angry",
                                 "disgust"
@@ -335,7 +335,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush",
                                 "affectionate"
                             ],
@@ -354,7 +354,7 @@
                             "requirement": {
                                 "requireSelfForced": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling",
                                 "tearful",
@@ -372,7 +372,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush"
                             ],
                             "useActiveTags": false,
@@ -416,7 +416,7 @@
                     "ID": "com_furniture_playVideoGames_Interrupt",
                     "variants": [
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
@@ -440,7 +440,7 @@
                             "requirement": {
                                 "requireSelfAttitudeKey": "Badwill"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "disgusted",
                                 "disappointed"
                             ],
@@ -461,7 +461,7 @@
                             "requirement": {
                                 "requireSelfAttitudeKey": "Goodwill"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "happy",
                                 "excited",
                                 "surprised"
@@ -483,7 +483,7 @@
                             "requirement": {
                                 "requireSelfAttitudeKey": "Desire"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "shy"
                             ],
                             "useActiveTags": false,
@@ -500,7 +500,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "focused"
                             ],
                             "useActiveTags": false,

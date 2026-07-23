@@ -45,7 +45,7 @@
                         "extraScopeArguments":["party"],
                         "chara_conditions":[
                             {"parameters":["NonPlayerFactionChara"]},
-                            {"parameters":["HasBaseID","creature_animal_cavebear"]},
+                            {"parameters":["HasActorKeyword","bear"]},
                             {"parameters":["HasFactionID","AlwaysHostile"]}
                         ],
                         "minTargetCount":1,

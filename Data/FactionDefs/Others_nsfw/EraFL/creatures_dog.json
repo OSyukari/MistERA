@@ -1,0 +1,34 @@
+
+{
+    "baseID": "creature_animal_dog_template",
+    "Template":{
+        "Appearance": "Male",
+        "BodyType": "Default",
+        "stat_STR": 14,
+        "stat_CON": 15,
+        "stat_PSY": 4,
+        "stat_WIL": 9,
+        "Height":65,
+        "Weight":35,
+        "personalityID": "personality_base_animal",
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_AAA",
+        "size_P": "trait_Size_P_big",
+        "size_V": "trait_Size_V_none",
+        "size_A": "trait_Size_A_1",
+        "initialRelationship":[
+        ]
+    },
+    "firstName": "creature_animal_dog",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "creature_beastRace_dog",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

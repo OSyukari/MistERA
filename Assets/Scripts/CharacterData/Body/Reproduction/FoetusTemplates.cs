@@ -227,12 +227,11 @@ public class FoetusTemplates
 
         if (ReproductionUtility.CanDeliverSafely(ovum.womb, ovum, out var totalLifespan, out var painLevel))
         {
-            // set normal delivery and 
+            // set normal delivery and
             ovum.State = OvumState.Final;
             ovum.lifespan = 0;
             ovum.totalLifespan = totalLifespan;
-
-            // add status pain TODO
+            if (painLevel > 0) ovum.Owner?.Stats.AddOrModStatus("chara_status_pain_birth", painLevel);
         }
         else
         {

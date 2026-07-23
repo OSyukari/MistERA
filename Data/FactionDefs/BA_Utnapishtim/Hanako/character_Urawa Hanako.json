@@ -3,16 +3,16 @@
   "baseID": "Campaign1_Char_Hanako",
   "Portrait":{
       "portraitPriorityList":[
-{
-  "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
-      
-  "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 0.56,
-  "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
+      {
+        "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+            
+        "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 0.56,
+        "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
-  "RequireContextKeys":["combat"],
-  "random_portrait_folder":"Hanako_combat",
-  "icon_path":"Hanako/Hanako_Ark_Uniform_Icon.png"
-},
+        "RequireSelfContextKeys":["combat"],
+        "random_portrait_folder":"Hanako_combat",
+        "icon_path":"Hanako/Hanako_Ark_Uniform_Icon.png"
+      },
         {
             "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 

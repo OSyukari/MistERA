@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Stats_Derived.json. Holds en-us entries for the housekeeping-related derived stats.",
+        "stamina_tooltip_note": "zh-cn source replaced its trailing %%notimplemented%% with a reference to %%chara_status_fatigue%% (now translated as 'Stamina' this session, see Chara_Status_loc.json). Stale en-us entry (still ending in %%notimplemented%%) removed from Stats_Derived.json and replaced here."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "stats_derived_extended_stamina_tooltip": "Consumed when performing physical labor\nMaximum is %%stats_base_Constitution%%*10 + other modifiers\nRecovers via sleep or rest\nWhen Stamina is too low, character enters a fatigued state - see the %%chara_status_fatigue%% status for details",
+
+                "stats_derived_cleaningThreshold": "Cleaning Threshold",
+                "stats_derived_cleaningThreshold_tooltip": "This value determines how dirty a room must get before the character decides to clean it - the lower it is, the more diligently they clean.\nDefault 3, minimum 2",
+                "stats_derived_cleanlinessSensitivity": "Mess Tolerance",
+                "stats_derived_cleanlinessSensitivity_tooltip": "This value (a multiplier) determines how much mess a character can tolerate in a room - the higher it is, the less tolerant.\nDefault 1.0",
+                "stats_derived_wakeupOffset": "Sleep Schedule",
+                "stats_derived_wakeupOffset_tooltip": "Whether the character wakes up on time or stays up late, default 0 (on time).\nWhen this value is above 0, the character goes to bed and wakes up early; below 0, they go to bed and wake up late."
+            }
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for campaign.json. Holds en-us entries for the 'Two-Person Coffin' (二人的棺材) campaign start options."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "campaign_coffinAnL": "Two-Person Coffin",
+                "campaign_coffinAnL_tooltip": "Start the game already saddled with a massive loan.\n%%wip_disabled%%",
+                "campaign_coffinAnL_start_andrew": "%%TCoAaL_Andrew_firstname%%",
+                "campaign_coffinAnL_start_andrew_tooltip": "Start the game as %%TCoAaL_Andrew_firstname%%",
+                "campaign_coffinAnL_start_leiley": "%%TCoAaL_Ashley_firstname%%",
+                "campaign_coffinAnL_start_leiley_tooltip": "Start the game as %%TCoAaL_Ashley_firstname%%"
+            }
+        }
+    }
+}

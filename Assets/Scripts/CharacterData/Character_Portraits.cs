@@ -172,7 +172,7 @@ public class PortraitManager
         }
     }
     List<string> newstr = new List<string>();
-    protected void GetValidPortrait(List<string> keywords, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
+    protected void GetValidPortrait(List<string> keywords, List<string> keywords_target, out CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
     {
         handler = null;
         portrait = "";
@@ -187,7 +187,8 @@ public class PortraitManager
             {
                 if (!i.isValid()) continue;
                 if (!i.isValidForBox(box)) continue;
-                if (keywords.Count < 1 && i.RequireContextKeys.Count > 0) continue;
+                if ((keywords == null || keywords.Count < 1) && i.RequireSelfContextKeys.Count > 0) continue;
+                if ((keywords_target == null || keywords_target.Count < 1) && i.RequireTargetContextKeys.Count > 0) continue;
                 if (i.charaReq != null)
                 {
                     newstr.Clear();
@@ -202,12 +203,17 @@ public class PortraitManager
                         continue;
                     }
                 }
-                if (!Utility.ListContainsStrict(keywords, i.RequireContextKeys))
+                if (!Utility.ListContainsStrict(keywords, i.RequireSelfContextKeys))
                 {
                     //Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
                     continue;
                 }
-                portrait = i.PortraitPath(keywords);
+                if (!Utility.ListContainsStrict(keywords_target, i.RequireTargetContextKeys))
+                {
+                    //Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
+                    continue;
+                }
+                portrait = i.PortraitPath(keywords);    // DOES NOT CHECK TARGET
                 icon = i.IconPath(keywords) != "" ? i.IconPath(keywords) : portrait;
 
                 if (portrait == "" || icon == "") continue;
@@ -225,10 +231,13 @@ public class PortraitManager
     }
 
 
-    protected void GetValidPortraitWithHandler(List<string> keywords, in CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
+    protected void GetValidPortraitWithHandler(List<string> keywords, List<string> target, in CharaPortrait handler, out string portrait, out string icon, scr_CharPortraitBox box = null)
     {
-        if (handler == null || handler == Transparent || !handler.isValid() || !handler.isValidForBox(box) || (keywords.Count < 1 && handler.RequireContextKeys.Count > 0)
-            || !Utility.ListContainsStrict(keywords, handler.RequireContextKeys))
+        if (handler == null || handler == Transparent || !handler.isValid() || !handler.isValidForBox(box) 
+            || (keywords.Count < 1 && handler.RequireSelfContextKeys.Count > 0)
+            || !Utility.ListContainsStrict(keywords, handler.RequireSelfContextKeys)
+            || (target.Count < 1 && handler.RequireTargetContextKeys.Count > 0)
+            || !Utility.ListContainsStrict(target, handler.RequireTargetContextKeys))
         {
             portrait = "";
             icon = "";
@@ -268,7 +277,7 @@ public class PortraitManager
     {
         if (_cache_NeutralPortrait == null)
         {
-            GetValidPortrait(new List<string>(), out _cache_NeutralPortrait, out _cache_NeutralPortrait_path, out _cache_NeutralPortrait_icon);
+            GetValidPortrait(new List<string>(), null, out _cache_NeutralPortrait, out _cache_NeutralPortrait_path, out _cache_NeutralPortrait_icon);
             tags_neutral.Clear();
         }
         if (box.currentHandler != _cache_NeutralPortrait || box.currentPortrait != _cache_NeutralPortrait_path)
@@ -280,17 +289,23 @@ public class PortraitManager
         }
     }
 
-    public void CollectAllTags(ref List<string> s)
+    public void CollectAllTags(List<string> s, List<string> s2)
     {
         foreach(var portrait in this.portraitPriorityList)
         {
-            s.AddRange(portrait.RequireContextKeys);
+            s.AddRange(portrait.RequireSelfContextKeys);
+            s2.AddRange(portrait.RequireTargetContextKeys);
             foreach(var variant in portrait.Variants)
             {
                 s.AddRange(variant.tagsMatch);
+                // tagsMatch is only ever checked against selfTags (see GetValidPortrait), but the same tag can
+                // legitimately show up as a targetTag at runtime (eg. act/role tags shared between doer and
+                // receiver), so it's a valid hint for s2 too.
+                s2.AddRange(variant.tagsMatch);
             }
         }
-        s = Utility.Distinct(s);
+        Utility.DistinctInPlace(s);
+        Utility.DistinctInPlace(s2);
     }
 
 
@@ -301,7 +316,7 @@ public class PortraitManager
     {
         if (_cache_CombatPortrait == null || forceRefresh)
         {
-            GetValidPortrait(new List<string>() { "combat" }, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon, box);
+            GetValidPortrait(new List<string>() { "combat" }, null, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon, box);
             tags_combat = new List<string>() { "combat" };
         }
         if (box.currentHandler != _cache_CombatPortrait || box.currentPortrait != _cache_CombatPortrait_path)
@@ -315,7 +330,7 @@ public class PortraitManager
     {
         if (_cache_CombatPortrait == null || forceRefresh)
         {
-            GetValidPortrait(new List<string>() { "combat" }, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon);
+            GetValidPortrait(new List<string>() { "combat" }, null, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon);
             tags_combat = new List<string>() { "combat" };
         }
         if (box.currentHandler != _cache_CombatPortrait || box.currentIcon != _cache_CombatPortrait_icon)
@@ -328,15 +343,38 @@ public class PortraitManager
     protected CharaPortrait _cache_ActivityPortrait = null;
     protected string _cache_ActivityPortrait_path = "";
     protected string _cache_ActivityPortrait_icon = "";
-    protected void DrawActivityPortrait(scr_CharPortraitBox box, List<string> tags = null, bool forceRefresh = false, bool lowPriority = false)
+    /// <summary>
+    /// Draws the "current activity" portrait shown in the CurrentTarget box. Tag source depends on the call path:
+    /// <br/>- handler != null (a dialogue/message line just fired, eg. from Log_TrySetChara): forces a refresh and adopts
+    ///   that message's own SelfPortraitTag/TargetPortraitTag as the new tags_active/tags_active_target pair.
+    /// <br/>- handler == null and tags_active is already populated (left over from a previous handler-driven call, or a
+    ///   previous fresh collect below): reuse tags_active/tags_active_target as-is. Does NOT re-collect and does NOT
+    ///   wipe the paired target tags - they must survive together, since they describe the same moment.
+    /// <br/>- handler == null and tags_active is empty (nothing cached yet, eg. first draw or cache was cleared):
+    ///   collect fresh from Owner's currently active job/interaction - self tags via GetOwnerActionTagsByPriority,
+    ///   partner tags via GetOwnerActionTargetTagsByPriority.
+    /// <br/>Note: tags_active/tags_active_target and the _cache_ActivityPortrait* fields are shared with drawActivityIcon
+    /// (same Owner, same "current activity"), so either code path can populate or invalidate them for the other.
+    /// </summary>
+    protected void DrawActivityPortrait(scr_CharPortraitBox box, I_hasPortrait handler = null, bool forceRefresh = false, bool lowPriority = false)
     {
         //Debug.Log($"{Owner.CallName} DrawActivityPortrait");
-        forceRefresh = tags != null;
+        forceRefresh = handler != null;
         if (_cache_ActivityPortrait == null || forceRefresh)
         {
-            if (tags == null) tags = tags_active.Count > 0 ? tags_active : GetOwnerActionTagsByPriority();
-            GetValidPortrait(tags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon, box);
-            tags_active = tags;
+            if (handler != null)
+            {
+                tags_active = handler.SelfPortraitTag;
+                tags_active_target = handler.TargetPortraitTag;
+            }
+            else if (tags_active.Count < 1)
+            {
+                tags_active = GetOwnerActionTagsByPriority();
+                tags_active_target = GetOwnerActionTargetTagsByPriority();
+            }
+            // else: reuse the already-cached tags_active/tags_active_target pair as-is
+
+            GetValidPortrait(tags_active, tags_active_target, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon, box);
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentPortrait != _cache_ActivityPortrait_path)
         {
@@ -348,7 +386,7 @@ public class PortraitManager
         }
         else if (box.currentHandler != null && tags_active != null) 
         {
-            GetValidPortraitWithHandler(tags_active, in _cache_ActivityPortrait, out var ppath, out var ipath, box);
+            GetValidPortraitWithHandler(tags_active, tags_active_target, in _cache_ActivityPortrait, out var ppath, out var ipath, box);
             if (ppath != "" && ppath != _cache_ActivityPortrait_path)
             {
                 _cache_ActivityPortrait_path = ppath;
@@ -385,15 +423,44 @@ public class PortraitManager
         return result;
     }
 
-    [JsonIgnore] public List<string> tags_neutral = new List<string>(), tags_active = new List<string>(), tags_combat = new List<string>();
+    /// <summary>
+    /// Same as GetOwnerActionTagsByPriority, but for Owner's current interaction partner(s) instead of Owner itself.
+    /// Feeds the targetTags side of portrait matching for the active-job (non-dialogue) draw path.
+    /// </summary>
+    public List<string> GetOwnerActionTargetTagsByPriority()
+    {
+        var result = new List<string>();
+        if (Owner.InteractionJob.isActive)
+        {
+            Owner.InteractionJob.GetActorAPTargetTags(Owner.RefID, result);
+        }
+        if (Owner.CurrentJob != null)
+        {
+            Owner.CurrentJob.GetActorAPTargetTags(Owner.RefID, result);
+        }
+        result = result.Distinct().ToList();
+        return result;
+    }
+
+    [JsonIgnore] public List<string> tags_neutral = new List<string>(), tags_neutral_target = new List<string>(), tags_active = new List<string>(), tags_active_target = new List<string>(), tags_combat = new List<string>(), tags_combat_target = new List<string>();
+    /// <summary>
+    /// Draws the character icon (world map / room list, no dialogue involvement - there is no "handler" input here).
+    /// Unlike DrawActivityPortrait, this always collects fresh self/target tags from Owner's currently active job
+    /// whenever _cache_ActivityPortrait is null - it never reuses a stale tags_active from a previous call, since an
+    /// icon box has no message-driven tags to prefer over the live job state. Note _cache_ActivityPortrait and
+    /// tags_active/tags_active_target are shared with DrawActivityPortrait: whichever draw call runs first after a
+    /// cache invalidation repopulates these fields for both.
+    /// </summary>
     protected void drawActivityIcon(scr_CharIconBox box)
     {
         //Debug.Log($"{Owner.CallName} drawActivityIcon");
         if (_cache_ActivityPortrait == null)
         {
             var tags = GetOwnerActionTagsByPriority();
-            GetValidPortrait(tags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon);
+            var targetTags = GetOwnerActionTargetTagsByPriority();
+            GetValidPortrait(tags, targetTags, out _cache_ActivityPortrait, out _cache_ActivityPortrait_path, out _cache_ActivityPortrait_icon);
             tags_active = tags;
+            tags_active_target = targetTags;
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentIcon != _cache_ActivityPortrait_icon)
         {
@@ -414,10 +481,10 @@ public class PortraitManager
         }
     }
 
-    public void DrawPortrait(scr_CharPortraitBox box, List<string> tags = null)
+    public void DrawPortrait(scr_CharPortraitBox box, I_hasPortrait handler = null)
     {
         if (box.isCurrentTargetEXBox) DrawNeutralPortrait(box);
-        else if (box.isCurrentTargetBox) DrawActivityPortrait(box, tags);
+        else if (box.isCurrentTargetBox) DrawActivityPortrait(box, handler);
         else
         {
             DrawNeutralPortrait(box);
@@ -512,7 +579,8 @@ public class PortraitManager
 
         public CharaReq charaReq = null;
 
-        public List<string> RequireContextKeys = new List<string>();
+        public List<string> RequireSelfContextKeys = new List<string>();
+        public List<string> RequireTargetContextKeys = new List<string>();
         public virtual bool isValid() { return false; }
         public virtual bool isValidForBox(scr_CharPortraitBox box) { return true; }
         public virtual IEnumerator DrawIcon(scr_CharIconBox iconBox, string pathOverride)
@@ -588,7 +656,8 @@ public class PortraitManager
             newEntry.Disable = this.Disable;
             newEntry.icon_path = this.icon_path;
             newEntry.Variants = this.Variants;
-            newEntry.RequireContextKeys = this.RequireContextKeys;
+            newEntry.RequireSelfContextKeys = this.RequireSelfContextKeys;
+            newEntry.RequireTargetContextKeys = this.RequireTargetContextKeys;
             newEntry.charaReq = this.charaReq;
 
             return newEntry;
@@ -732,7 +801,8 @@ public class PortraitManager
             newEntry.Disable = this.Disable;
             newEntry.icon_path = this.icon_path;
             newEntry.Variants = this.Variants;
-            newEntry.RequireContextKeys = this.RequireContextKeys;
+            newEntry.RequireSelfContextKeys = this.RequireSelfContextKeys;
+            newEntry.RequireTargetContextKeys = this.RequireTargetContextKeys;
             newEntry.charaReq = this.charaReq;
 
             return newEntry;
@@ -943,7 +1013,8 @@ public class PortraitManager
             newEntry.AllowXAxisFlip = this.AllowXAxisFlip;
             newEntry.Disable = this.Disable;
             newEntry.Variants = this.Variants;
-            newEntry.RequireContextKeys = this.RequireContextKeys;
+            newEntry.RequireSelfContextKeys = this.RequireSelfContextKeys;
+            newEntry.RequireTargetContextKeys = this.RequireTargetContextKeys;
             newEntry.icon_path = this.icon_path;
             newEntry.charaReq = this.charaReq;
             return newEntry;

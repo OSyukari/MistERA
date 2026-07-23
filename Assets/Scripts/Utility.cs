@@ -296,6 +296,27 @@ public static class UtilityEX
         }
     }
 
+    /// <summary>
+    /// Deterministic pseudo-random value in [-1, 1], stable for a given (seed, bucket) pair.
+    /// Used by RandomVariation_Noise so a status's random "texture" differs per-instance (via seed)
+    /// and re-rolls over time (via bucket) without needing any external RNG state.
+    /// </summary>
+    public static float DeterministicNoise(int seed, int bucket)
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 31 + seed;
+            hash = hash * 31 + bucket;
+            // xorshift-style mix so nearby seeds/buckets don't produce correlated output
+            hash ^= hash << 13;
+            hash ^= hash >> 17;
+            hash ^= hash << 5;
+            uint normalized = unchecked((uint)hash);
+            return (normalized / (float)uint.MaxValue) * 2f - 1f;
+        }
+    }
+
     public static bool AreMemoryTagsMergeable(List<string> newTags, List<string> lastTags)
     {
         if (newTags.Contains("forbidMerge") || lastTags.Contains("forbidMerge")) return false;
@@ -1069,7 +1090,8 @@ public static class UtilityEX
     }
 
     /// <summary>
-    /// Only get actor's current status (such as sleeping, timestopped, etc)
+    /// Get actor's current status (such as sleeping, timestopped, etc), plus static per-actor keyword tags
+    /// (Character_Trainable.ActorKeywords: template actorKeyword + race RaceType).
     /// <br/> for current actions, call another function
     /// </summary>
     /// <param name="tags"></param>
@@ -1082,7 +1104,8 @@ public static class UtilityEX
         {
             tags.Add(tag.ToString());
         }
-        if (scr_System_Time.current.TimeResume && !c.CanActInTimeStop) tags.Add("timeResume"); 
+        tags.AddRange(c.ActorKeywords);
+        if (scr_System_Time.current.TimeResume && !c.CanActInTimeStop) tags.Add("timeResume");
         else if(c.isTimeStopped) tags.Add("timestop");
         if (c.isSleeping) {
             tags.Add("sleeping");
@@ -1247,6 +1270,47 @@ public static class UtilityEX
                     string evID = parsed[2];
                     string evLbl = parsed.Count() >= 4 ? parsed[3] : "";
                     scr_UpdateHandler.current.EventHandler.StartEvent(eventTarget, evID, evLbl, true);
+                }
+                else
+                {
+                    Debug.LogError($"parse console command {parsed[0]} error");
+                }
+                break;
+            case "ingestItem":
+                if (parsed.Count() >= 3 && parsed[1] != "" && parsed[2] != "")
+                {
+                    var item = scr_System_Serializer.current.GetByNameOrID_Item_Base(parsed[1]);
+                    if (item == null)
+                    {
+                        Debug.LogError($"ingestItem: cannot find item [{parsed[1]}]");
+                    }
+                    else if (scr_System_CampaignManager.current.CurrentTarget == null)
+                    {
+                        Debug.LogError($"ingestItem: require currentTarget");
+                    }
+                    else if(parsed[2] != "" && scr_System_CampaignManager.current.CurrentTarget.Body.HasBodyTag(new List<string>() { parsed[2] }))
+                    {
+                        Character_Trainable chara = scr_System_CampaignManager.current.CurrentTarget;
+                        Item_Instance i = WorldManager.Instantiate(item.id, item.displayName);
+
+                        if (chara == null)
+                        {
+                            Debug.LogError($"ingestItem: null character");
+                        }
+                        else if (i == null)
+                        {
+                            Debug.LogError($"ingestItem: null item");
+                        }
+                        else if (!chara.Body.ConsumeIngestible(i, parsed[2]))
+                        {
+                            scr_System_CampaignManager.current.Unregister(i);
+                            Debug.LogError($"ingestItem: [{chara.FirstName}] fail to ingest [{i.DisplayName}]");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"ingestItem: fail to locate ingestTag [{parsed[2]}]");
+                    }
                 }
                 else
                 {
@@ -1497,17 +1561,11 @@ public static class UtilityEX
 
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="source"></param>
-    /// <param name="stats"></param>
     /// <param name="storage"></param>
     /// <param name="list"></param>
-    /// <param name="record"></param>
-    /// <param name="valueFloor"></param>
-    /// <param name="valueCeiling"></param>
-    /// <param name="capModded">Restrict valueFloor and valueCeiling to the max magnitude of every single mod, used for mood related.</param>
-    /// <param name="allowOvercap">Allow value calculation to ge above min or max cap during calculation stage, will only take effect if capModded == false<br/>true: will only clamp value after all calculations<br/>false: will clamp after every step</param>
     /// <returns></returns>
     public static float ParseStatMods(object source, StatModStorage storage, List<Stat_Modifier> list)
     {

@@ -81,9 +81,9 @@ public class FactionInventory : Inventory
                     return result;
                 }
             }
-            if (source != null && this.FactionOwner != null && this.FactionOwner.Faction != null && this.FactionOwner.Faction.mealManager != null)
+            if (source != null && this.FactionOwner != null && this.FactionOwner.Faction != null && this.FactionOwner.Faction.MealManager != null)
             {
-                var meal = this.FactionOwner.Faction.mealManager;
+                var meal = this.FactionOwner.Faction.MealManager;
                 if (meal.CheckAdditives(source, results[0], results[0].GetComp_Ingestible()))
                 {
                     //

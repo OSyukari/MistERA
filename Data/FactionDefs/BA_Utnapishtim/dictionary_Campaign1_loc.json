@@ -1,0 +1,21 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary_Campaign1.json. Holds en-us entries for the map_* room-name labels."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "map_entrance": "Entrance Hall",
+                "map_frontdoor": "Front Door",
+                "map_livingroom": "Living Room",
+                "map_kitchen": "Kitchen",
+                "map_bath": "Bathroom",
+                "map_shower": "Shower Room",
+                "map_toilet": "Toilet",
+                "map_laundry": "Laundry Room",
+                "map_balcony": "Balcony",
+                "map_stairs": "Stairs"
+            }
+        }
+    }
+}

@@ -471,8 +471,12 @@ public class scr_System_CampaignManager : MonoBehaviour
             purged = purged.Replace("\n", "");
             if (purged.Length < 1)
             {
-                Debug.Log($"skipping empty message? {desc.message.Length} {desc.message_excludeRelated.Length}\nMessage: {desc.message}\nM_Excluded: {desc.message_excludeRelated}");
+                Debug.Log($"skipping empty message? {desc.message.Length} {desc.message_excludeRelated.Length}\nMessage: {desc.message}\nM_Excluded: {desc.message_excludeRelated}\nDirectly Related to {(visible == null ? "null" : visible.FirstName)} ? {desc.DirectlyRelated(visible)}, desc actors [{String.Join(" ", desc.relevantActors)}]");
                 return;
+            }
+            else
+            {
+                //Debug.LogError($"{scr_System_Time.current.getCurrentTime()}: AddLog {desc.message}, {desc.message_excludeRelated}");
             }
             var log = LogManager.AddLog(desc, visible, replaceStrings);
             if (log != null) Observer_MessageLogs?.Invoke(log, animate);
@@ -609,13 +613,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.Log($"AddLog_Line parsed content: {content}");
         if (line.portraitRefKey == "self" && instance.Self != null && instance.Self.RefID != 0)
         {
-            var msglog = new Message_Text(instance.Self, line.portraitTagsOverride, content, rA, "", default, instance);
+            var msglog = new Message_Text(instance.Self, line, content, rA, "", default, instance);
             //msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
         else if (instance.Targets.TryGetValue(line.portraitRefKey, out var targetrefs))
         {
-            var msglog = new Message_Text(targetrefs, line.portraitTagsOverride, null, "", default, instance);
+            var msglog = new Message_Text(targetrefs, line, null, "", default, instance);
             msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
@@ -646,7 +650,8 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 foreach (var c in export) desc.AddPortraitRef(c.RefID);
             }
-            desc.displayTagsOverride.AddRange(log.tagsOverride);
+            desc.displayTagsOverride_Self.AddRange(log.tagsOverride_self);
+            desc.displayTagsOverride_Target.AddRange(log.tagsOverride_target);
             desc.message = content;
 
             instance.Self.CurrentRoom.NotifyDescCollect(desc);
@@ -668,17 +673,17 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (question.portraitRefKey == "self")
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"AddLog_Question Self {parent.Self.RefID}");
-            log = LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager,question.portraitTagsOverride,  parent, question));
+            log = LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager,question,  parent, question));
         }
         else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
         {
-            log = LogManager.AddLog(new Message_Question(targetrefs, question.portraitTagsOverride, parent, question));
+            log = LogManager.AddLog(new Message_Question(targetrefs, question, parent, question));
         }
         else
         {
             Debug.Log("null AddLog_Question portraitref");
             PortraitManager portraitRef = null;
-            log = LogManager.AddLog(new Message_Question(portraitRef, question.portraitTagsOverride, parent, question));
+            log = LogManager.AddLog(new Message_Question(portraitRef, question, parent, question));
         }
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
@@ -695,17 +700,17 @@ public class scr_System_CampaignManager : MonoBehaviour
         if (question.portraitRefKey == "self")
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"AddLog_Question Self {parent.Self.RefID}");
-            log = LogManager.AddLog(new Message_InputField(parent.Self == null ? null : parent.Self.PortraitManager, question.portraitTagsOverride, parent, question));
+            log = LogManager.AddLog(new Message_InputField(parent.Self == null ? null : parent.Self.PortraitManager, question, parent, question));
         }
         else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
         {
-            log = LogManager.AddLog(new Message_InputField(targetrefs, question.portraitTagsOverride, parent, question));
+            log = LogManager.AddLog(new Message_InputField(targetrefs, question, parent, question));
         }
         else
         {
             Debug.Log("null AddLog_Question portraitref");
             PortraitManager portraitRef = null;
-            log = LogManager.AddLog(new Message_InputField(portraitRef, question.portraitTagsOverride, parent, question));
+            log = LogManager.AddLog(new Message_InputField(portraitRef, question, parent, question));
         }
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
@@ -736,29 +741,29 @@ public class scr_System_CampaignManager : MonoBehaviour
     public event Action<MessageLog, bool> Observer_MessageLogs;
 
 
-    public event Action<PortraitManager, List<string>> Observer_LogsCharaChange;
-    public void Log_TrySetChara(PortraitManager refID, List<string> keywords)
+    public event Action<PortraitManager, I_hasPortrait> Observer_LogsCharaChange;
+    public void Log_TrySetChara(PortraitManager refID, I_hasPortrait handler)
     {
         bool debug = scr_System_CentralControl.current.LogPrefs.DLog_Portraits;
         //if (debug) Debug.Log($"Log_TrySetChara {(refID == null ? "null" : refID.Owner.FirstName )}, tags {String.Join("|", keywords)}");
         if (LogManager.SetLogChara(refID, true))
         {
-            if (debug)  Debug.Log($"Log_TrySetChara TRUE {(refID == null ? "null" : refID.Owner.FirstName)}, tags {String.Join("|", keywords)}");
-            Observer_LogsCharaChange?.Invoke(refID, keywords);
+            if (debug)  Debug.Log($"Log_TrySetChara TRUE {(refID == null ? "null" : refID.Owner.FirstName)}, tags [{String.Join("|", handler.SelfPortraitTag)}] [{String.Join("|", handler.TargetPortraitTag)}]");
+            Observer_LogsCharaChange?.Invoke(refID, handler);
         }
         else if (debug)
         {
-            Debug.Log($"Log_TrySetChara FAILED {(refID == null ? "null" : refID.Owner.FirstName)}, tags {String.Join("|", keywords)}");
+            Debug.Log($"Log_TrySetChara FAILED {(refID == null ? "null" : refID.Owner.FirstName)}, tags [{String.Join("|", handler.SelfPortraitTag)}] [{String.Join("|", handler.TargetPortraitTag)}]");
         }
     }
-    public PortraitManager Log_TrySetChara(List<Character_Trainable> list, List<string> keywords)
+    public PortraitManager Log_TrySetChara(List<Character_Trainable> list, I_hasPortrait handler)
     {
         LogManager.SetLogChara(list, true, out var selected);
         if (selected != null)
         {
             //if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log("Log_TrySetChara true " + selected.Owner.CallName);
             //Debug.Log($"Invoking logs change chara on {selected.Owner.CallName} with tags {String.Join("|", keywords)}");
-            Observer_LogsCharaChange?.Invoke(selected, keywords);
+            Observer_LogsCharaChange?.Invoke(selected, handler);
         }
         return selected;
     }
@@ -1313,8 +1318,8 @@ public class scr_System_CampaignManager : MonoBehaviour
                         // finally remove from list
                         if (p.Duration <= 0)
                         {
-                            if (duration > 1 && p.actorRefs.Contains(0))
-                            {   // player package has been refused, reevaluate
+                            if (duration != 1 && p.actorRefs.Contains(0))
+                            {   // player package has been refused or externally interrupted (e.g. InterruptAP from an event like childbirth), reevaluate
                                 totalUpdateTime -= (updateTime - 1);
                                 updateTime = 0;
                             }
@@ -1707,6 +1712,8 @@ public class scr_System_CampaignManager : MonoBehaviour
     public List<Character_Trainable> CharaInCurrentRoom { get {
             return Map.GetRoomByRef(currentRoomRef).RoomChara;
         } }
+
+    [JsonIgnore]
     public List<int> CharaRefInCurrentRoom
     {
         get
@@ -2410,9 +2417,13 @@ public class scr_System_CampaignManager : MonoBehaviour
             {   // add to inv
                 c.Inventory.Remove(i);
             }
-            
+
 
         }
+
+        // the equips above can add stat modifiers that raise max values after
+        // InitializeWithRefID's RestoreAll; fill statbars to their settled maxes
+        c.RestoreAll();
         return c;
     }
 

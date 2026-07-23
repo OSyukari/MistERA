@@ -23,7 +23,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -42,7 +42,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -75,7 +75,7 @@
                             "requirement": {
                                 "requirePermission": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -99,7 +99,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -118,7 +118,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -157,7 +157,7 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -183,7 +183,7 @@
                                     "timestop"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -215,7 +215,7 @@
                                             "justWokenUp"
                                         ]
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sorry",
                                         "disgusted",
                                         "disappointed",
@@ -230,7 +230,7 @@
                                             "requirement": {
                                                 "requirePermission": true
                                             },
-                                            "extraPortraitTags": [
+                                            "extraSelfPortraitTags": [
                                                 "sorry",
                                                 "disgusted",
                                                 "disappointed",
@@ -265,7 +265,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -289,7 +289,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -310,7 +310,7 @@
                                 }
                             ],
                             "_comment": "2.2.4 指令失败拒绝 骑乘位素股 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust",
                                 "surprised",
@@ -339,7 +339,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -364,7 +364,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -387,7 +387,7 @@
                                 }
                             ],
                             "_comment": "2.2.8 玩家专用 刚睡醒时的 骑乘位素股 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -423,7 +423,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -445,7 +445,7 @@
                                 }
                             ],
                             "_comment": "2.2.5 ($self$) 骑乘位素股 结果正面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -471,7 +471,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -494,7 +494,7 @@
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 骑乘位素股 结果负面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",

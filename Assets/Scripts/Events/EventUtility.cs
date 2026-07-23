@@ -352,16 +352,11 @@ public static class EventUtility
                     foreach (var f in c.FactionManager.Factions) if (f.ID == r.parameters[1]) return true;
                 }
                 return false;
-            case "HasBaseID":
+            case "HasActorKeyword":
                 if (r.parameters.Count >= 2)
                 {
-                   // Debug.Log($"{c.CallName} HasBaseID or containsBaseID [{r.parameters[1]}] [{c.BaseID}]");
-                    return c.BaseID == r.parameters[1] || c.BaseID.Contains(r.parameters[1]);
-                }
-                else
-                {
-
-                    Debug.Log($"{c.CallName} does NOT hav ebaseID [{r.parameters[1]}], actualID [{c.BaseID}]");
+                    if (c.ActorKeywords.Contains(r.parameters[1])) return true;
+                    else Debug.Log($"{c.CallName} does NOT HasActorKeyword [{r.parameters[1]}], keywords [{String.Join(" ", c.ActorKeywords)}]");
                 }
                 return false;
             case "NonPlayerFactionChara":
@@ -1061,7 +1056,6 @@ public static class EventUtility
 #endif
                         var joblists = new List<Job>();
                         queryPackages = scr_System_CampaignManager.current.GetExistingPackages(owner.Self, true, true, true);
-                        //Debug.Log($"found relevant package {queryPackages.Count}");
                         if (exec.arguments[2] != "") queryPackages = queryPackages.FindAll(x => UtilityEX.MatchAPbyType(x, exec.arguments[2]));
 #if UNITY_EDITOR
                         if (debug) Debug.Log($"found relevant package {queryPackages.Count}");
@@ -1073,7 +1067,7 @@ public static class EventUtility
                             if (!joblists.Contains(package.job)) joblists.Add(package.job);
                         }
 
-                        if (bool.TryParse(exec.arguments[1], out bool autoExit))
+                        if (bool.TryParse(exec.arguments[1], out bool autoExit) && autoExit)
                         {
                             foreach (var j in joblists)
                             {
@@ -1114,7 +1108,7 @@ public static class EventUtility
                                     package.DisablePackage();
                                 }
 
-                                if (bool.TryParse(exec.arguments[1], out bool autoExit))
+                                if (bool.TryParse(exec.arguments[1], out bool autoExit) && autoExit)
                                 {
                                     foreach (var j in joblists)
                                     {

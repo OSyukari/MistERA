@@ -1,0 +1,630 @@
+{
+    "Status":{
+        "list":[
+        {
+            "statusID":"chara_status_pms_luteal",
+            "_comment":"severity is set directly each day from cycle progress through the Rest/luteal phase (ticks up 0->100); no decay",
+            "variants":[
+                {
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayable":false,
+                    "threshold":30
+                },
+                {
+                    "displayName":"chara_status_pms_1",
+                    "threshold":60,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pms_2",
+                    "threshold":100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pms_menstrual",
+            "_comment":"range is -100..0 instead of 0..100: severity is set daily via SetStatusSeverityRatio(progress), so a -100..0 range naturally 'ticks down' (strongest at progress 0, none at progress 1) with no separate direction flag needed. -100 = worst (start of Menstrual), 0 = no effect (end of Menstrual). No decay.",
+            "variants":[
+                {
+                    "displayName":"chara_status_pms_2",
+                    "threshold":-100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pms_2",
+                    "threshold":-60,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pms_1",
+                    "threshold":-30,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "displayable":false,
+                    "threshold":0
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pms_luteal_elf",
+            "_comment":"elf standalone: same mechanic as chara_status_pms_luteal (severity set daily from progress through Rest, ticks up 0->100), but thresholds pushed much higher — elf luteal phase is ~140 days, so noticeable symptoms are confined to roughly the last ~25% of it instead of the last ~70%",
+            "variants":[
+                {
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayable":false,
+                    "threshold":75
+                },
+                {
+                    "displayName":"chara_status_pms_1",
+                    "threshold":90,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pms_2",
+                    "threshold":100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pms_menstrual_elf",
+            "_comment":"elf standalone, range -100..0 (see chara_status_pms_menstrual for why): same raised thresholds as chara_status_pms_luteal_elf — elf Menstrual phase is ~50 days, but physical bleeding-phase discomfort is confined to roughly the first ~12 days, not the whole 50",
+            "variants":[
+                {
+                    "displayName":"chara_status_pms_2",
+                    "threshold":-100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pms_2",
+                    "threshold":-90,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pms_1",
+                    "threshold":-75,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pms", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "displayable":false,
+                    "threshold":0
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pain_chara_status_pms_menstrual",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "variantThresholdModStat":"stats_derived_painSensitivity",
+            "_comment":"Pain companion, synced by Character_Trainable.TickCyclePhaseStatus via StatsManager.SyncPainCompanion: severity = abs(chara_status_pms_menstrual's own Severity). Tied thresholds -100,-60,-30,0 (severe,severe,mild,hidden) put the worse tier on the INCLUSIVE (<=) side of each boundary on the signed axis; abs() flips which side of <= a boundary value lands on, so the hidden/mild and mild/severe cutoffs here are set 0.01 below the true abs boundary (29.99/59.99, not 30/60) to keep exact boundary hits (e.g. day 2 of a 5-day phase = severity -60 = abs 60) classified the same as the tied status. First variant threshold is 0 (not the lowest real cutoff) so SeveritySet's floor (variants[0].threshold) can't clamp a legitimately-low severity up into the display range.",
+            "variants":[
+                { "displayable":false, "threshold":0 },
+                { "displayable":false, "threshold":29.99 },
+                {
+                    "threshold":59.99,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_menstrual", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                },
+                {
+                    "threshold":100,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_menstrual", "type":"setBase", "valueType":"number", "valueString":"-1" },
+                        { "statID":"chara_status_stress", "modKey":"chara_status_pain_chara_status_pms_menstrual", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pain_chara_status_pms_menstrual_elf",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "variantThresholdModStat":"stats_derived_painSensitivity",
+            "_comment":"Same mechanism as chara_status_pain_chara_status_pms_menstrual, scaled to chara_status_pms_menstrual_elf's own thresholds (-100,-90,-75,0) via abs() -> 0,75,90,100, with the same 0.01 boundary-inversion offset (74.99/89.99) - see that entry's comment.",
+            "variants":[
+                { "displayable":false, "threshold":0 },
+                { "displayable":false, "threshold":74.99 },
+                {
+                    "threshold":89.99,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_menstrual_elf", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                },
+                {
+                    "threshold":100,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_menstrual_elf", "type":"setBase", "valueType":"number", "valueString":"-1" },
+                        { "statID":"chara_status_stress", "modKey":"chara_status_pain_chara_status_pms_menstrual_elf", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pain_chara_status_pms_luteal",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "variantThresholdModStat":"stats_derived_painSensitivity",
+            "_comment":"Pain companion, synced by Character_Trainable.TickCyclePhaseStatus via StatsManager.SyncPainCompanion: severity = abs(chara_status_pms_luteal's own Severity). Tied is already 0..100 ascending (thresholds 0,30,60,100: hidden,hidden,mild,severe) in the SAME direction as this companion, so unlike the menstrual-shaped companions no boundary offset is needed - both sides agree at every exact threshold. First variant threshold is 0 (not 30) so SeveritySet's floor (variants[0].threshold) can't clamp a legitimately-low severity up into the display range.",
+            "variants":[
+                { "displayable":false, "threshold":0 },
+                { "displayable":false, "threshold":30 },
+                {
+                    "threshold":60,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_luteal", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                },
+                {
+                    "threshold":100,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_luteal", "type":"setBase", "valueType":"number", "valueString":"-1" },
+                        { "statID":"chara_status_stress", "modKey":"chara_status_pain_chara_status_pms_luteal", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pain_chara_status_pms_luteal_elf",
+            "noDisplay":true,
+            "stringFormat":"N0",
+            "variantThresholdModStat":"stats_derived_painSensitivity",
+            "_comment":"Same mechanism as chara_status_pain_chara_status_pms_luteal, scaled to chara_status_pms_luteal_elf's own thresholds (0,75,90,100) - no boundary offset needed, same reasoning.",
+            "variants":[
+                { "displayable":false, "threshold":0 },
+                { "displayable":false, "threshold":75 },
+                {
+                    "threshold":90,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_luteal_elf", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                },
+                {
+                    "threshold":100,
+                    "stat_modifiers":[
+                        { "statID":"chara_status_mood", "modKey":"chara_status_pain_chara_status_pms_luteal_elf", "type":"setBase", "valueType":"number", "valueString":"-1" },
+                        { "statID":"chara_status_stress", "modKey":"chara_status_pain_chara_status_pms_luteal_elf", "type":"setBase", "valueType":"number", "valueString":"-1" }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pregnancy_t1",
+            "_comment":"range is -100..0 instead of 0..100: severity is set daily via SetStatusSeverityRatio(progress), so a -100..0 range naturally 'ticks down' (worst at the start of First_trimester, easing by the end) with no separate direction flag needed. A RandomVariation_Noise layer adds day-to-day texture on top, re-rolling every 4 in-game hours, seeded per-instance so it differs per character",
+            "variationMode": {
+                "randomVariation": {
+                    "$type":"Status_Base+RandomVariation_Noise, Assembly-CSharp",
+                    "cycleLen": 240,
+                    "intensityMod": 15
+                }
+            },
+            "variants":[
+                {
+                    "displayName":"chara_status_pregnancy_2",
+                    "threshold":-100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pregnancy_2",
+                    "threshold":-60,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pregnancy_1",
+                    "threshold":-30,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "displayable":false,
+                    "threshold":0
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pregnancy_t1_elf",
+            "_comment":"elf standalone, range -100..0 (see chara_status_pregnancy_t1): identical severity curve and thresholds to chara_status_pregnancy_t1, but the RandomVariation_Noise re-rolls once every in-game day (1440 min) instead of every 4 hours - 'some days are better/worse' rather than 'some hours are better/worse', since a single elf pregnancy day is a much smaller fraction of the ~700-day trimester than a human day is",
+            "variationMode": {
+                "randomVariation": {
+                    "$type":"Status_Base+RandomVariation_Noise, Assembly-CSharp",
+                    "cycleLen": 1440,
+                    "intensityMod": 15
+                }
+            },
+            "variants":[
+                {
+                    "displayName":"chara_status_pregnancy_2",
+                    "threshold":-100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pregnancy_2",
+                    "threshold":-60,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pregnancy_1",
+                    "threshold":-30,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "displayable":false,
+                    "threshold":0
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pregnancy_t2",
+            "_comment":"severity set daily from progress through Second_trimester (ticks up 0->100), mild positive mood only - the relatively easier 'honeymoon phase'",
+            "variants":[
+                {
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayable":false,
+                    "threshold":50
+                },
+                {
+                    "displayName":"chara_status_pregnancy_t2_1",
+                    "threshold":100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "statusID":"chara_status_pregnancy_t3",
+            "_comment":"severity set daily from progress through Third_trimester (ticks up 0->100: growing discomfort as due date approaches)",
+            "variants":[
+                {
+                    "displayable":false,
+                    "threshold":0
+                },
+                {
+                    "displayable":false,
+                    "threshold":30
+                },
+                {
+                    "displayName":"chara_status_pregnancy_1",
+                    "threshold":60,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.10"
+                        }
+                    ]
+                },
+                {
+                    "displayName":"chara_status_pregnancy_2",
+                    "threshold":100,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pregnancy", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"stats_derived_energy_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_stamina_max",
+                            "modKey":"finalMod", "type":"addMult", "valueType":"number", "valueString":"-0.25"
+                        }
+                    ]
+                }
+            ]
+        }
+
+
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+
+"chara_status_pms_luteal": "经前期紧张",
+"chara_status_pms_luteal_tooltip": "在排卵后的黄体期内随天数推移逐渐增强，黄体期结束时达到最高。数值越高，心情和精力/体力下降越多，压力上升。",
+
+"chara_status_pms_menstrual": "经期不适",
+"chara_status_pms_menstrual_tooltip": "在经期开始时最强，并随经期推移逐渐减弱。数值越高，心情和精力/体力下降越多，压力上升。",
+
+"chara_status_pms_luteal_elf": "经前期紧张（精灵）",
+"chara_status_pms_luteal_elf_tooltip": "精灵的黄体期长达约140天，因此明显症状只会在黄体期的最后约四分之一才会出现，此前大部分时间没有感觉。",
+
+"chara_status_pms_menstrual_elf": "经期不适（精灵）",
+"chara_status_pms_menstrual_elf_tooltip": "精灵的经期长达约50天，但身体不适只集中在经期开始后的头十余天，之后大部分时间没有感觉。",
+
+"chara_status_pms": "经前综合症",
+"chara_status_pms_1": "%%chara_status_pms%%：轻微",
+"chara_status_pms_2": "%%chara_status_pms%%：严重",
+
+"chara_status_pain_chara_status_pms_menstrual": "%%chara_status_pain%%（经期）",
+"chara_status_pain_chara_status_pms_menstrual_elf": "%%chara_status_pain%%（经期，精灵）",
+"chara_status_pain_chara_status_pms_luteal": "%%chara_status_pain%%（经前紧张）",
+"chara_status_pain_chara_status_pms_luteal_elf": "%%chara_status_pain%%（经前紧张，精灵）",
+
+"chara_status_pregnancy_t1": "孕吐",
+"chara_status_pregnancy_t1_tooltip": "妊娠初期。在孕早期内每天的强度由当天进度决定（开始时最强，孕早期结束时减弱），并叠加随机波动，因人而异，时好时坏。",
+
+"chara_status_pregnancy_t1_elf": "孕吐（精灵）",
+"chara_status_pregnancy_t1_elf_tooltip": "精灵妊娠初期。强度曲线与人类相同，但随机波动改为每天重投一次而非每四小时一次——精灵会感觉「有些天特别难受，有些天还好」，而不是「一天之内时好时坏」。",
+
+"chara_status_pregnancy_t2": "孕期稳定期",
+"chara_status_pregnancy_t2_tooltip": "妊娠中期，通常是孕期中相对轻松的阶段，心情略有提升。",
+
+"chara_status_pregnancy_t3": "孕晚期不适",
+"chara_status_pregnancy_t3_tooltip": "妊娠后期。随孕晚期推移逐渐加重的身体负担和不适。",
+
+"chara_status_pregnancy": "孕期不适",
+"chara_status_pregnancy_1": "%%chara_status_pregnancy%%：轻微",
+"chara_status_pregnancy_2": "%%chara_status_pregnancy%%：严重",
+"chara_status_pregnancy_t2_1": "%%chara_status_pregnancy_t2%%：良好"
+
+            },
+            "en-us":
+            {
+
+"chara_status_pms_luteal": "Premenstrual Tension",
+"chara_status_pms_luteal_tooltip": "Grows day by day through the luteal phase following ovulation, peaking right before the next period. Higher severity lowers Mood and Energy/Stamina, and raises Stress.",
+
+"chara_status_pms_menstrual": "Menstrual Discomfort",
+"chara_status_pms_menstrual_tooltip": "Strongest at the onset of bleeding, then fades day by day over the course of the Menstrual phase. Higher severity lowers Mood and Energy/Stamina, and raises Stress.",
+
+"chara_status_pms_luteal_elf": "Premenstrual Tension (Elf)",
+"chara_status_pms_luteal_elf_tooltip": "Elven luteal phases run ~140 days, so noticeable symptoms are confined to roughly the last quarter of it — mostly symptom-free before that.",
+
+"chara_status_pms_menstrual_elf": "Menstrual Discomfort (Elf)",
+"chara_status_pms_menstrual_elf_tooltip": "Elven Menstrual phases run ~50 days, but the physical discomfort is concentrated in the first dozen or so days, not the whole phase.",
+
+"chara_status_pms": "PMS",
+"chara_status_pms_1": "%%chara_status_pms%%: Mild",
+"chara_status_pms_2": "%%chara_status_pms%%: Severe",
+
+"chara_status_pain_chara_status_pms_menstrual": "%%chara_status_pain%% (Menstrual)",
+"chara_status_pain_chara_status_pms_menstrual_elf": "%%chara_status_pain%% (Menstrual, Elf)",
+"chara_status_pain_chara_status_pms_luteal": "%%chara_status_pain%% (PMS)",
+"chara_status_pain_chara_status_pms_luteal_elf": "%%chara_status_pain%% (PMS, Elf)",
+
+"chara_status_pregnancy_t1": "Morning Sickness",
+"chara_status_pregnancy_t1_tooltip": "Early pregnancy. Daily severity is set from progress through the first trimester (strongest at the start, easing off by the end), with a random day-to-day wobble on top that differs per character.",
+
+"chara_status_pregnancy_t1_elf": "Morning Sickness (Elf)",
+"chara_status_pregnancy_t1_elf_tooltip": "Elven first trimester. Same severity curve as human, but the random wobble re-rolls once a day instead of every 4 hours — some days are just worse than others, rather than fluctuating hour to hour.",
+
+"chara_status_pregnancy_t2": "Pregnancy Stability",
+"chara_status_pregnancy_t2_tooltip": "Mid-pregnancy — usually the easiest stretch of the pregnancy, with a modest mood lift.",
+
+"chara_status_pregnancy_t3": "Late Pregnancy Discomfort",
+"chara_status_pregnancy_t3_tooltip": "Late pregnancy. Physical burden and discomfort that grows as the third trimester progresses.",
+
+"chara_status_pregnancy": "Pregnancy Discomfort",
+"chara_status_pregnancy_1": "%%chara_status_pregnancy%%: Mild",
+"chara_status_pregnancy_2": "%%chara_status_pregnancy%%: Severe",
+"chara_status_pregnancy_t2_1": "%%chara_status_pregnancy_t2%%: Good"
+
+            }
+        }
+    }
+}

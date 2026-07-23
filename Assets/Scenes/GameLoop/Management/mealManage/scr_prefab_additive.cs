@@ -51,7 +51,7 @@ public class scr_prefab_additive : MonoBehaviour
 
         bool hasentry = false;
         // foreach
-        foreach (var add in faction.mealManager.GetAdditivesUsing(item.ID))
+        foreach (var add in faction.MealManager.GetAdditivesUsing(item.ID))
         {
             MakePrefab(add);
             hasentry = true;
@@ -86,7 +86,7 @@ public class scr_prefab_additive : MonoBehaviour
 
     public void DeletePrefab(scr_add_instance add)
     {
-        faction.mealManager.RemoveAdditive(add.Entry);
+        faction.MealManager.RemoveAdditive(add.Entry);
 
         if (trackedButtons.TryGetValue(add.Entry, out var list))
         {
@@ -119,7 +119,7 @@ public class scr_prefab_additive : MonoBehaviour
 
         public void OnClickButton()
         {
-            var fab = parent.faction.mealManager.AddAdditive(prefab.item.ID, 0);
+            var fab = parent.faction.MealManager.AddAdditive(prefab.item.ID, 0);
             prefab.MakePrefab(fab);
         }
     }

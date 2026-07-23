@@ -28,4 +28,36 @@ public class ReproductionTemplate
     public int climaxOvulationThreshold = 100;
     public float fertilizationChance = 0.25f;
     public int ovumLifespanMinutes = 1440;   // 24 hours (human default)
+
+    /// <summary>
+    /// Days spent in PostPregnancy recovery before the cycle resumes (Rest / Interestrus).
+    /// Driven by the mother's own hormonal cycle, not by the womb or foetus - real-world minimum
+    /// is ~6 weeks (42 days) regardless of species/race pregnancy length.
+    /// </summary>
+    public int postpartumDays = 42;
+
+    /// <summary>
+    /// Sparse, index-based: indexed by the cycle's CurrentStatus (its phase enum cast to int).
+    /// "" or out-of-range = no status configured for that phase. Most entries are expected to stay empty.
+    /// </summary>
+    public List<string> cycleStatusIDs = new List<string>();
+
+    public string GetCycleStatusID(int phaseIndex)
+    {
+        if (phaseIndex < 0 || phaseIndex >= cycleStatusIDs.Count) return "";
+        return cycleStatusIDs[phaseIndex] ?? "";
+    }
+
+    /// <summary>
+    /// Sparse, index-based: indexed by (int)OvumState. "" or out-of-range = no status for that
+    /// pregnancy stage. Most entries are expected to stay empty (only First/Second/Third_trimester
+    /// are typically populated).
+    /// </summary>
+    public List<string> pregnancyStatusIDs = new List<string>();
+
+    public string GetPregnancyStatusID(int stateIndex)
+    {
+        if (stateIndex < 0 || stateIndex >= pregnancyStatusIDs.Count) return "";
+        return pregnancyStatusIDs[stateIndex] ?? "";
+    }
 }

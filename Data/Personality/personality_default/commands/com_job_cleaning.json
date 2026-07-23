@@ -12,7 +12,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "relaxed",
                                 "leaning",
                                 "confident",
@@ -33,7 +33,7 @@
                             "requirement": {
                                 "requireSelfForced": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling",
                                 "tearful",
@@ -49,7 +49,7 @@
                         {
                             "requireMaster": true,
                             "requireSelfNotMaster": true,
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush"
                             ],
                             "useActiveTags": false,
@@ -60,7 +60,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "focused",
                                 "neutral",
                                 "serious",
@@ -138,7 +138,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Neutral"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "apology",
                                         "shy"
                                     ],
@@ -150,7 +150,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "troubled",
                                 "angry",
                                 "disgust"
@@ -166,7 +166,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush",
                                 "affectionate"
                             ],
@@ -181,7 +181,7 @@
                             "requirement": {
                                 "requireSelfForced": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling",
                                 "tearful",
@@ -195,7 +195,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush"
                             ],
                             "useActiveTags": false,
@@ -230,7 +230,7 @@
                     "ID": "com_job_cleaning_Interrupt",
                     "variants": [
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
@@ -250,7 +250,7 @@
                                 "requireSelfAttitudeKey": "Badwill"
                             },
                             "_comment": "2.2.2 态度：恶意 有他人登场",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "disgusted",
                                 "disappointed"
                             ],
@@ -265,7 +265,7 @@
                             "requirement": {
                                 "requireSelfAttitudeKey": "Goodwill"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "happy",
                                 "excited",
                                 "surprised"
@@ -283,7 +283,7 @@
                                 "requireSelfAttitudeKey": "Desire"
                             },
                             "_comment": "2.2.4 态度：欲望 有他人登场",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "shy"
                             ],
                             "useActiveTags": false,
@@ -295,7 +295,7 @@
                         },
                         {
                             "_comment": "2.2.5 态度：普通 有他人登场",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "focused"
                             ],
                             "useActiveTags": false,
@@ -324,7 +324,7 @@
                                         "requireSelfAttitudeGTE": "Like"
                                     },
                                     "_comment": "2.3.1 友好拒绝 NPC未执行行为时，他人邀请…",
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "apology",
                                         "shy",
                                         "gentle"
@@ -336,7 +336,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "apology",
                                 "awkward",
                                 "busy",
@@ -361,7 +361,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
@@ -378,7 +378,7 @@
                                 }
                             ],
                             "_comment": "2.5.4 成功（负面反馈）行动结束结果",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "frustrated",
                                 "pouting",
                                 "complaining",
@@ -401,7 +401,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "happy",
                                         "excited",
                                         "surprised",
@@ -419,7 +419,7 @@
                                 }
                             ],
                             "_comment": "2.5.2 失败且负面反馈",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "frustrated",
                                 "pouting",
                                 "complaining",

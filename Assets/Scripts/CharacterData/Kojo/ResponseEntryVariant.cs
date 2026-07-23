@@ -38,7 +38,8 @@ public partial class ResponseEntry
         public bool requireSelfNotMaster = false;
 
         public List<string> tags = new List<string>();
-        public List<string> extraPortraitTags = new List<string>();
+        public List<string> extraSelfPortraitTags = new List<string>();
+        public List<string> extraTargetPortraitTags = new List<string>();
         public bool useActiveTags = false;
         public bool forbidPortaitDisplay = false;
         public Requirement requirement = new Requirement();
@@ -117,8 +118,11 @@ public partial class ResponseEntry
 
             var target = scr_System_CampaignManager.current.CurrentTarget;
             var player = scr_System_CampaignManager.current.Player;
+            bool ownerInPlayerRoom = kol.Owner != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(kol.Owner.RefID);
+            bool targetInPlayerRoom = kol.Target != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(kol.Target.RefID);
             if (hideWhenNotFocused && !kol.isPlayerInvolved &&
-                kol.Owner != target && kol.Target != target && kol.Owner != player && kol.Target != player && !scr_UpdateHandler.current.isLastUpdate())
+                kol.Owner != target && kol.Target != target && kol.Owner != player && kol.Target != player && !scr_UpdateHandler.current.isLastUpdate() &&
+                !ownerInPlayerRoom && !targetInPlayerRoom)
             {
                 if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(kol.Owner.FirstName + " kojo text skipped, no display");
             }
@@ -129,11 +133,13 @@ public partial class ResponseEntry
                     returnV2 = new MessageCollect_KojoEntry(forbidPortaitDisplay ? -1 : kol.Owner.RefID);
                     if (!forbidPortaitDisplay)
                     {
-                        returnV2.portraitTags.AddRange(extraPortraitTags);
-                        returnV2.portraitTags.AddRange(kol.SelfTags);
-                        returnV2.portraitTags.AddRange(kol.targetTags);
-                        if (useActiveTags) returnV2.portraitTags.AddRange(kol.Owner.PortraitManager.GetOwnerActionTagsByPriority());
-                        returnV2.portraitTags = Utility.Distinct(returnV2.portraitTags);
+                        returnV2.selfPortraitTag.AddRange(extraSelfPortraitTags);
+                        returnV2.targetPortraitTag.AddRange(extraTargetPortraitTags);
+                        returnV2.selfPortraitTag.AddRange(kol.SelfTags);
+                        returnV2.targetPortraitTag.AddRange(kol.TargetTags);
+                        if (useActiveTags) returnV2.selfPortraitTag.AddRange(kol.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        Utility.DistinctInPlace(returnV2.selfPortraitTag);
+                        Utility.DistinctInPlace(returnV2.targetPortraitTag);
                     }
                     returnV2.message = result;
 
@@ -193,8 +199,11 @@ public partial class ResponseEntry
             }
             var target = scr_System_CampaignManager.current.CurrentTarget;
             var player = scr_System_CampaignManager.current.Player;
+            bool ownerInPlayerRoom = rel.Owner != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(rel.Owner.RefID);
+            bool targetInPlayerRoom = rel.Target != null && scr_System_CampaignManager.current.isCharaVisibleToPlayer(rel.Target.RefID);
             if (hideWhenNotFocused && !isPlayerInvolved &&
-                rel.Owner != target && rel.Target != target && rel.Owner != player && rel.Target != player)
+                rel.Owner != target && rel.Target != target && rel.Owner != player && rel.Target != player &&
+                !ownerInPlayerRoom && !targetInPlayerRoom)
             {
                 if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log(rel.Owner.FirstName + " kojo text skipped, no display");
             }
@@ -205,11 +214,15 @@ public partial class ResponseEntry
                     returnV2 = new MessageCollect_KojoEntry(forbidPortaitDisplay ? -1 : rel.Owner.RefID);
                     if (!forbidPortaitDisplay)
                     {
-                        returnV2.portraitTags.AddRange(extraPortraitTags);
-                        returnV2.portraitTags.AddRange(selfTags);
-                        returnV2.portraitTags.AddRange(targetTags);
-                        if (useActiveTags) returnV2.portraitTags.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
-                        returnV2.portraitTags = Utility.Distinct(returnV2.portraitTags);
+                        returnV2.selfPortraitTag.AddRange(extraSelfPortraitTags);
+                        returnV2.targetPortraitTag.AddRange(extraTargetPortraitTags);
+                        returnV2.selfPortraitTag.AddRange(selfTags);
+                        returnV2.targetPortraitTag.AddRange(targetTags);
+
+                        if (useActiveTags) returnV2.selfPortraitTag.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+
+                        Utility.DistinctInPlace(returnV2.selfPortraitTag);
+                        Utility.DistinctInPlace(returnV2.targetPortraitTag);
                     }
                     returnV2.message = result;
 
@@ -231,6 +244,7 @@ public partial class ResponseEntry
         protected bool isValid(KojoCollector kol)
         {
             if (requireSelfOnly && kol.targetRef != -1 && kol.targetRef != kol.selfRef) return false;
+            if (!requireSelfOnly && kol.targetRef != -1 && kol.targetRef == kol.selfRef) return false;
             if (requireCOMStrongVariant && (!kol.hasPackageData || !kol.isStrongP)) return false;
             if (requireSelfDoer && kol.doerRef != kol.selfRef) return false;
             if (requireSelfReceiver)
@@ -258,7 +272,7 @@ public partial class ResponseEntry
 
             List<string> ttips = new List<string>();
 
-            if (!requirement.Validate(kol.Owner, kol.Target, kol.SelfTags, kol.targetTags, kol, kol.Relation, out var hadlock)) return false;
+            if (!requirement.Validate(kol.Owner, kol.Target, kol.SelfTags, kol.TargetTags, kol, kol.Relation, out var hadlock)) return false;
 
             return true;
         }
@@ -269,6 +283,7 @@ public partial class ResponseEntry
             if (rel != null)
             {
                 if (requireSelfOnly && rel.Owner != rel.Target) return false;
+                if (!requireSelfOnly && rel.Owner == rel.Target) return false;
             }
 
             if (ep != null && rel != null)
@@ -537,11 +552,17 @@ public partial class ResponseEntry
                 }
                 public bool Validate(Character_Trainable chara)
                 {
-                    var status = chara.Stats.GetStatusByStringMatch(statusID);
-                    if (checkExistOnly) return status != null;
-                    if (status == null) return false;
-                    if (checkSeverityIndex) return Utility.CompareValue(status.SeverityIndex, operand, value);
-                    else return Utility.CompareValue(status.Severity, operand, value);
+                    // Exact hits first: a substring match could silently resolve an aggregate
+                    // id (e.g. chara_status_pain) to one of its sub-statuses (chara_status_pain_sex)
+                    var status = chara.Stats.FindStatusByExactID(statusID);
+                    var statusEx = status != null ? null : chara.Stats.FindStatusEXByExactID(statusID);
+                    if (status == null && statusEx == null) status = chara.Stats.GetStatusByStringMatch(statusID);
+                    if (status == null && statusEx == null) statusEx = chara.Stats.GetStatusEXByStringMatch(statusID);
+
+                    if (checkExistOnly) return status != null || statusEx != null;
+                    if (status == null && statusEx == null) return false;
+                    if (checkSeverityIndex) return Utility.CompareValue(status != null ? status.SeverityIndex : statusEx.SeverityIndex, operand, value);
+                    else return Utility.CompareValue(status != null ? status.Severity : statusEx.Severity, operand, value);
                 }
             }
 

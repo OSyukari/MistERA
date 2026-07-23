@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_OvulationTrigger.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "consumable_medicine_ovulation_trigger": "Ovulation Trigger Tablet",
+
+                "chara_status_ovulation_trigger_tooltip": "Forces the character into ovulation at the next cycle check. Yields priority to contraceptive medication."
+            }
+        }
+    }
+}

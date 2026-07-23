@@ -40,6 +40,8 @@ public class ExperienceLog
         var stats = PrintContent_Stats();
         if (stats.Length > 0) desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{stats}";
 
+        desc.message_excludeRelated = desc.message;
+
         desc.LoadActors(this.relevantActorRefs);
         Clear();
 

@@ -230,7 +230,7 @@ public class scr_menu_LLMQuery : scr_Menu
 
         var c = scr_System_CampaignManager.current.FindInstanceByID(s.portraitRefID);
         if (s.portraitTags.Count < 1 && scr_System_CampaignManager.current.Player == c) c = null;
-        Message_Text text = new Message_Text(c, s.portraitTags, s.content_text, false);
+        Message_Text text = new Message_Text(c, s, s.content_text, false);
         text.animateAllOverride = true;
         text.Draw(false, box, prefab_LogLine);
     }

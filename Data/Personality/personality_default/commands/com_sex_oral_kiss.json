@@ -13,7 +13,7 @@
                             "requirement": {
                                 "requirePermission": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "climax"
@@ -38,7 +38,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "climax"
@@ -73,7 +73,7 @@
                             "requirement": {
                                 "requirePermission": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "closed_eyes",
@@ -115,7 +115,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "surprised",
@@ -140,7 +140,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "fear",
@@ -191,7 +191,7 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "sleeping",
@@ -233,7 +233,7 @@
                                     "timestop"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "doll",
@@ -282,7 +282,7 @@
                                             "justWokenUp"
                                         ]
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sorry",
                                         "disgusted",
                                         "disappointed",
@@ -297,7 +297,7 @@
                                             "requirement": {
                                                 "requirePermission": true
                                             },
-                                            "extraPortraitTags": [
+                                            "extraSelfPortraitTags": [
                                                 "sorry",
                                                 "disgusted",
                                                 "disappointed",
@@ -336,7 +336,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -367,7 +367,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -386,7 +386,7 @@
                                 }
                             ],
                             "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust",
                                 "surprised",
@@ -415,7 +415,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "kiss",
                                         "love",
@@ -447,7 +447,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "kiss",
                                         "love",
@@ -477,7 +477,7 @@
                                 }
                             ],
                             "_comment": "2.2.8",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "sleep",
@@ -509,7 +509,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "kiss",
                                         "love",
@@ -539,7 +539,7 @@
                                 }
                             ],
                             "_comment": "2.2.5 亲吻 结果正面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "blush",
@@ -568,7 +568,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "kiss",
                                 "angry",
@@ -586,7 +586,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "kiss",
                                         "pain",

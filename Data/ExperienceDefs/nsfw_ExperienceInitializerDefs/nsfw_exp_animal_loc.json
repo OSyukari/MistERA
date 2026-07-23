@@ -1,0 +1,15 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_exp_animal.json. Holds en-us entries for the expinit_target_dog* labels."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "expinit_target_dog": "Dog",
+                "expinit_target_dog_shepherd": "German Shepherd",
+                "expinit_target_dog_wandering": "Stray Dog",
+                "expinit_target_dog_penis": "Dog Cock"
+            }
+        }
+    }
+}

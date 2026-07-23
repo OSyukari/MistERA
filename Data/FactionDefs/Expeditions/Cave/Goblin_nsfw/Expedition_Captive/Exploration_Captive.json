@@ -97,7 +97,7 @@
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "br_trade",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "question": "expedition_cave_goblin_captive_rescue_event_ev01",
@@ -159,7 +159,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_abort",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "line": "expedition_cave_goblin_captive_rescue_event_ev02",
@@ -177,7 +177,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_lootEnd",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "line": "expedition_cave_goblin_captive_rescue_event_ev03",

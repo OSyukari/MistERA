@@ -1,0 +1,21 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Chara_Status.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes.",
+        "chara_status_fatigue_note": "zh-cn source for chara_status_fatigue was renamed from 疲劳 (Fatigue) to 体力 (Stamina) - the status is now named after the Stamina resource it tracks (see stats_derived_extended_stamina, also 'Stamina') rather than the negative condition. The stale 'Fatigue' en-us entry was removed from Chara_Status.json and replaced here."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_fatigue": "Stamina",
+                "chara_status_fatigue_1": "%%chara_status_fatigue%%: Full",
+                "chara_status_fatigue_2": "%%chara_status_fatigue%%: Tired",
+                "chara_status_fatigue_3": "%%chara_status_fatigue%%: Exhausted",
+                "chara_status_fatigue_tooltip": "This value is the character's current %%stats_derived_extended_stamina%% as a percentage. When it drops too low, the character becomes fatigued, lowering Mood.",
+
+                "chara_status_analgesic_tooltip": "Lowers sensitivity to pain.",
+                "chara_status_pain_4": "%%chara_status_pain%%: Shock",
+                "chara_status_pain_tooltip": "Strong pain or higher renders the character unable to act."
+            }
+        }
+    }
+}

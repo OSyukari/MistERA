@@ -1003,8 +1003,6 @@
 
 "ui_management_production_addProduction":"Add Production",
 "ui_management_production_addProduction_tooltip":"Production orders are evaluated in priority order (from top to bottom)",
-"ui_management_production_addTrade":"Add Trade",
-"ui_management_production_addTrade_tooltip":"Trade Order will require different currency based on which Faction it's dealing with.",
 
 "ui_management_production_jobPostDesc": "$comName$ has $count$ possible jobposts",
 "ui_management_production_jobAssigned": "Assigned daily work hours: $hours$",
@@ -1251,8 +1249,6 @@
 
 "ui_ap_join_success":"$names$ joined successfully",
 "ui_ap_join_fail":"$names$ failed to join",
-
-"ui_map_roomTooltip":"Room: $room$\n$furnitures$\nItems: $items$\nCharacters: $names$\nTravel time $time$ min",
 
 
 

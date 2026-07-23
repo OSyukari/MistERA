@@ -573,6 +573,13 @@ public class scr_panel_COMmanager : scr_Menu
                    button.gameObject.SetActive(false); 
 #endif
                     break;
+                case -7413:  //analgesic
+#if UNITY_EDITOR
+                    button.Initialize(this, new ButtonValidator_IngestItemDebug(this, button, "consumable_medicine_analgesic", "stomach"));
+#else
+                   button.gameObject.SetActive(false); 
+#endif
+                    break;
                 case -7411:  //add trash in room
 #if UNITY_EDITOR
                     button.Initialize(this, new ButtonValidator_DebugAddItemToRoom(this, button, "item_trash"));

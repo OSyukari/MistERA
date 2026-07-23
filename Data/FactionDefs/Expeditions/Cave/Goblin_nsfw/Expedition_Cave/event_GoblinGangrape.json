@@ -28,7 +28,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
     "label":"br_active_choice",
-    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "question":"event_goblin_gangRape_event_ev01",
     "options":[
         {   
@@ -54,7 +54,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_event",
-    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "event_goblin_gangRape_event_ev02",
     "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
     "isLast": true
@@ -69,7 +69,7 @@
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
     "label": "br_combat_combat",
-    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
     "line": "event_goblin_gangRape_event_ev04",
     "Results":[ { "Type":"ModStatEXValue" , "arguments":["enemy","stats_derived_extended_hp","-2"]},
                 { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
@@ -110,7 +110,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_hasenemy",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
                     "line": "event_goblin_gangRape_rescue_event_ev01"
                 },
                 {
@@ -134,7 +134,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                     "label":"br_victims",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
                     "question":"event_goblin_gangRape_rescue_event_ev02",
                     "options":[
                         {     
@@ -210,7 +210,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_hasLiberate",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
                     "line": "event_goblin_gangRape_rescuedChara_liberate_event_ev01"
                 },
                 {
@@ -222,7 +222,7 @@
                 {
                     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                     "label": "br_hasRescue",
-                    "portraitRefKey":"party", "portraitTagsOverride":["serious"],
+                    "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
                     "line": "event_goblin_gangRape_rescuedChara_rescue_event_ev01"
                 },
                 {

@@ -111,8 +111,7 @@
             "DifficultyCheck":{ "baseD20Check":0 },
 
             "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_1"]}], "keepLooking":false },
-            "description_after":{ "Entries":[{"texts":[""]}], "keepLooking":false },
-            "description_remove":{ "Entries":[{"texts":[""]}], "keepLooking":false },
+            "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_1"]}], "keepLooking":false },
             "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_1"]}], "keepLooking":false }
         },
         {
@@ -239,6 +238,8 @@
                 "com_interaction_initiateSex_displayName_6": "轮奸",
                 "com_interaction_initiateSex_displayName_7": "时停轮奸",
                 "com_interaction_initiateSex_displayName_8": "睡眠轮奸",
+
+
                 "com_interaction_endOngoingSex": "结束性交",
                 "com_interaction_endOngoingSex_displayName_0": "结束自慰",
                 "com_interaction_endOngoingSex_displayName_1": "结束做爱",
@@ -258,8 +259,9 @@
                 "com_special_initSex_timestop_start": "时停奸",
                 "com_special_initSex_timestop_end": "结束时奸",
 
-                "com_interaction_initiateSex_description_begin_1": "$doer.firstname$推倒了$receiver.firstname$",
-                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$推倒了$receiver.firstname$"
+                "com_interaction_initiateSex_description_onComplete_1":"$doer.firstname$推倒了$receiver.firstname$",
+                "com_interaction_initiateSex_description_begin_1": "$doer.firstname$尝试推倒$receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$正在尝试推倒$receiver.firstname$"
 
 
             },

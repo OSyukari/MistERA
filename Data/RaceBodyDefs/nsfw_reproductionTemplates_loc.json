@@ -1,0 +1,32 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_reproductionTemplates.json. Holds en-us entries for the Menstruation-type and Estrus-type reproduction cycle stage descriptions."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "MenstruationStatus_PrePuberty_tooltip": "The stage before sexual maturity, when the menstrual cycle has not yet begun.",
+                "MenstruationStatus_Menstrual_tooltip": "The first stage of the menstrual cycle, in which the uterine lining sheds and is expelled with the menstrual blood.",
+                "MenstruationStatus_PreOvulation_tooltip": "The stage after menstruation ends and before ovulation, during which the follicle gradually matures.",
+                "MenstruationStatus_Ovulation_tooltip": "The stage in which a mature egg is released from the ovary and enters the fallopian tube to await fertilization.",
+                "MenstruationStatus_Rest_tooltip": "The stage from ovulation until the next period arrives. If conception doesn't occur, menstruation follows.",
+                "MenstruationStatus_Pregnant_tooltip": "The egg has been fertilized and implanted; currently pregnant.",
+                "MenstruationStatus_None_tooltip": "The stage in which the menstrual cycle has permanently stopped.",
+                "MenstruationStatus_PostPregnancy": "<link=\"Status_PostPregnancy_tooltip\">Postpartum</link>",
+
+                "EstrusStatus_PrePuberty_tooltip": "The stage before sexual maturity, when the estrus cycle has not yet begun.",
+                "EstrusStatus_Proestrus_tooltip": "The preparatory stage of the estrus cycle, just before estrus begins.",
+                "EstrusStatus_Estrus_tooltip": "The core stage of the estrus cycle, when eggs are ready for fertilization.",
+                "EstrusStatus_Interestrus_tooltip": "The resting stage between two estrus periods, awaiting the start of the next estrus cycle.",
+                "EstrusStatus_Pregnant_tooltip": "Successfully conceived; currently pregnant.",
+                "EstrusStatus_None_tooltip": "The stage in which the estrus cycle has permanently ended.",
+                "EstrusStatus_PostPregnancy": "<link=\"Status_PostPregnancy_tooltip\">Postpartum</link>",
+
+                "Status_PostPregnancy_tooltip": "The recovery period after giving birth.",
+
+                "humanRace_dragon_MenstruationStatus_Menstrual_tooltip": "The preparatory stage before the breeding season arrives; the body gradually enters a breeding state.",
+                "humanRace_dragon_MenstruationStatus_Rest_tooltip": "The long resting stage after the breeding season ends; the reproductive system becomes dormant."
+            }
+        }
+    }
+}

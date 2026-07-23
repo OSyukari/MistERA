@@ -1,0 +1,15 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_PregnancyEnd_Birth.json. Holds en-us entries for the birth-event/memory/report strings."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "location_unknown": "Somewhere",
+                "PregnancyEnd_Birth_EV01": "$self.name$ gave birth to $count$ babies in $roomname$: $babyname$\n$witness.name$ witnessed the whole thing",
+                "memory_entry_givebirth": "Gave birth to $count$ babies",
+                "faction_report_givebirth": "$name$ gave birth to $count$ babies in $room$"
+            }
+        }
+    }
+}

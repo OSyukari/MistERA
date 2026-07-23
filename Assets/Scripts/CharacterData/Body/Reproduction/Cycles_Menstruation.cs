@@ -52,7 +52,7 @@ public class Cycles_Menstruation : ReproductionCycle
     {
         CycleStage = MenstruationStatus.Menstrual;
     }
-    private MenstruationStatus DetermineCyclePhase(ReproductionTemplate t, int day, bool suppressed)
+    private MenstruationStatus DetermineCyclePhase(ReproductionTemplate t, int day)
     {
         int endPhase1 = t.menstrualDays - 1;
         int endPhase2 = endPhase1 + t.follicularDays;
@@ -60,7 +60,7 @@ public class Cycles_Menstruation : ReproductionCycle
 
         if (day <= endPhase1) return MenstruationStatus.Menstrual;
         if (day <= endPhase2) return MenstruationStatus.PreOvulation;
-        if (day <= endPhase3 && !suppressed) return MenstruationStatus.Ovulation;
+        if (day <= endPhase3) return MenstruationStatus.Ovulation;
         return MenstruationStatus.Rest;
     }
     /// <summary>
@@ -105,6 +105,30 @@ public class Cycles_Menstruation : ReproductionCycle
             return t.cycleThreshold - day + 1;
         }
     }
+    public override float CurrentPhaseProgress(ReproductionTemplate t)
+    {
+        if (CycleStage == MenstruationStatus.None || CycleStage == MenstruationStatus.Pregnant
+            || CycleStage == MenstruationStatus.PrePuberty || CycleStage == MenstruationStatus.PostPregnancy)
+            return 0f;
+
+        var day = (int)cycleValue;
+        int endPhase1 = t.menstrualDays - 1;
+        int endPhase2 = endPhase1 + t.follicularDays;
+        int endPhase3 = endPhase2 + t.ovulationDays;
+
+        int phaseStart, phaseEnd;
+        if (day <= endPhase1) { phaseStart = 0; phaseEnd = endPhase1; }
+        else if (day <= endPhase2) { phaseStart = endPhase1 + 1; phaseEnd = endPhase2; }
+        else if (day <= endPhase3) { phaseStart = endPhase2 + 1; phaseEnd = endPhase3; }
+        else { phaseStart = endPhase3 + 1; phaseEnd = t.cycleThreshold - 1; }
+
+        int phaseLength = phaseEnd - phaseStart + 1;
+        if (phaseLength <= 0) return 0f;
+
+        float progress = (float)(day - phaseStart + 1) / phaseLength;
+        return Math.Max(0f, Math.Min(1f, progress));
+    }
+
     string template = null;
     public override void GetReproTemplateTooltip(Character_Trainable c, ReproductionTemplate t, List<string> tooltip)
     {
@@ -124,18 +148,18 @@ public class Cycles_Menstruation : ReproductionCycle
                                                      .Replace("$count$", $"{remain}"));
     }
 
-    public override void Birth(bool isStillPregnant)
+    public override void Birth(bool isStillPregnant, ReproductionTemplate template)
     {
         if (!isStillPregnant)
         {
             CycleStage = MenstruationStatus.PostPregnancy;
-            cycleValue = 3;
+            cycleValue = template != null ? template.postpartumDays : 3;
         }
     }
 
 
 
-    public override void Tick(ReproductionTemplate template, bool ispregnant, bool suppressed, bool isOvumExhausted)
+    public override void Tick(ReproductionTemplate template, bool ispregnant, bool pillActive, bool emergencyActive, bool induceOvulationActive, bool isOvumExhausted)
     {
         if (ispregnant)
         {
@@ -154,7 +178,7 @@ public class Cycles_Menstruation : ReproductionCycle
             // recovery
             cycleValue -= 1;
             if (cycleValue > 0) return;
-            // on birth set stage to 
+            // on birth set stage to
             SetCycle(template, MenstruationStatus.Rest);
         }
 
@@ -166,11 +190,36 @@ public class Cycles_Menstruation : ReproductionCycle
             // fall through to first cycle tick
         }
 
+        // Daily contraceptive: caught only once the cycle naturally reaches Rest (nothing left
+        // to interrupt that cycle at that point) - held there at 0 progress for as long as taken.
+        if (pillActive && CycleStage == MenstruationStatus.Rest)
+        {
+            SetCycle(template, MenstruationStatus.Rest);
+            return;
+        }
+        else if (emergencyActive && CycleStage == MenstruationStatus.PreOvulation)
+        {
+
+            // Emergency contraceptive: only relevant during the stage immediately preceding ovulation
+            // (PreOvulation/follicular) - not Menstrual, which is too early to be the thing this is guarding
+            // against. Duration of effect is carried entirely by the status's own decay (JSON-tunable, ~4-6
+            // days by default) rather than any hardcoded day count here - every day the status is active,
+            // that day's advance is simply skipped (not rewound to a stage boundary, which would scale
+            // unpredictably with template-defined stage lengths across races). No effect once Ovulation has
+            // begun or passed, and no effect during Menstrual.
+            return;
+        }
+        else if (induceOvulationActive && CanForceOvulate)
+        {
+            SetCycle(template, MenstruationStatus.Ovulation);
+            return;
+        }
+
         cycleValue += Utility.getRandwithVariation(1f, template.cycleVariation);
         if (cycleValue >= template.cycleThreshold)
             cycleValue = 0f;
 
-        CycleStage = DetermineCyclePhase(template, (int)cycleValue, suppressed);
+        CycleStage = DetermineCyclePhase(template, (int)cycleValue);
     }
 
     [JsonIgnore]
@@ -181,6 +230,14 @@ public class Cycles_Menstruation : ReproductionCycle
 
     [JsonIgnore]
     public override bool CanOvulate => CycleStage == MenstruationStatus.Ovulation;
+
+    [JsonIgnore]
+    public override bool CanForceOvulate =>
+        CycleStage != MenstruationStatus.None &&
+        CycleStage != MenstruationStatus.PrePuberty &&
+        CycleStage != MenstruationStatus.Pregnant &&
+        CycleStage != MenstruationStatus.PostPregnancy;
+
 
 
     string _cache_raceprefix = string.Empty;

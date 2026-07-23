@@ -3,7 +3,119 @@
         "foetusTemplates":
         [
 {
-    "parentRaceID": "creature_beastRace_animal",
+    "parentRaceID": "creature_beastRace_horse",
+    "racialTemplate":{
+        "offspring_templates":[
+            "creature_animal_horse"
+        ],
+        "duration_fertilized": 144,
+        "duration_implanted": 384,
+        "size_implanted": 0.001,
+        "duration_first": 2568,
+        "size_first": 0.5,
+        "duration_second": 2712,
+        "size_second": 600.0,
+        "duration_third": 2736,
+        "size_third": 20000.0,
+        "size_end": 50000.0,
+        "duration_randVariation": 0.05,
+        "duration_labor": 40,
+        "average_mother_HWMult": 69750,
+        "_note_avg": "69750 = ~155 cm × 450 kg typical mare. Verify against actual creature character template H×W.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_S_Bovine00.png",
+            "RJW - Womb/preg_human/Fetus_S_Bovine01.png",
+            "RJW - Womb/preg_human/Fetus_S_Bovine02.png",
+            "RJW - Womb/preg_human/Fetus_S_Bovine03.png",
+            "RJW - Womb/preg_human/Fetus_S_Bovine04.png",
+            "RJW - Womb/preg_human/Fetus_S_Bovine05.png"
+        ]
+    },
+    "foetusByBaseID": {}
+},
+{
+    "parentRaceID": "creature_beastRace_pig",
+    "racialTemplate":{
+        "offspring_templates":[
+            "creature_animal_pig"
+        ],
+        "duration_fertilized": 288,
+        "duration_implanted": 336,
+        "size_implanted": 0.001,
+        "duration_first": 816,
+        "size_first": 0.2,
+        "duration_second": 816,
+        "size_second": 15.0,
+        "duration_third": 816,
+        "size_third": 500.0,
+        "size_end": 1300.0,
+        "duration_randVariation": 0.08,
+        "duration_labor": 180,
+        "average_mother_HWMult": 18000,
+        "_note_avg": "18000 = ~100 cm × 180 kg typical sow. Verify against actual creature character template H×W.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_human/Fetus_Pig00.png",
+            "RJW - Womb/preg_human/Fetus_Pig01.png",
+            "RJW - Womb/preg_human/Fetus_Pig02.png",
+            "RJW - Womb/preg_human/Fetus_Pig03.png",
+            "RJW - Womb/preg_human/Fetus_Pig04.png",
+            "RJW - Womb/preg_human/Fetus_Pig05.png"
+        ]
+    },
+    "foetusByBaseID": {}
+},
+{
+    "parentRaceID": "creature_beastRace_dog",
+    "racialTemplate":{
+        "offspring_templates":[
+            "creature_animal_dog"
+        ],
+        "duration_fertilized": 96,
+        "duration_implanted": 312,
+        "size_implanted": 0.001,
+        "duration_first": 368,
+        "size_first": 0.1,
+        "duration_second": 368,
+        "size_second": 4.0,
+        "duration_third": 368,
+        "size_third": 80.0,
+        "size_end": 450.0,
+        "duration_randVariation": 0.06,
+        "duration_labor": 300,
+        "average_mother_HWMult": 1800,
+        "_note_avg": "1800 = ~60 cm x 30 kg typical female large-breed dog. Verify against actual creature character template H×W."
+    },
+    "foetusByBaseID": {}
+},
+{
+    "parentRaceID": "creature_beastRace_bear",
+    "racialTemplate":{
+        "offspring_templates":[
+            "creature_animal_bear",
+            "creature_animal_cavebear"
+        ],
+        "_note": "embryonic diapause: fertilized blastocyst lies dormant ~150d before implanting. Active development is only ~60d.",
+        "duration_fertilized": 3600,
+        "duration_implanted": 168,
+        "size_implanted": 0.001,
+        "duration_first": 480,
+        "size_first": 0.05,
+        "duration_second": 480,
+        "size_second": 3.0,
+        "duration_third": 480,
+        "size_third": 50.0,
+        "size_end": 300.0,
+        "duration_randVariation": 0.15,
+        "duration_labor": 60,
+        "average_mother_HWMult": 15950,
+        "_note_avg": "15950 = ~110 cm × 145 kg typical female brown bear. Verify against actual creature character template H×W."
+    },
+    "foetusByBaseID": {}
+},
+{
+    "parentRaceID": "creature_beastRace_warg",
     "racialTemplate":{
         "offspring_templates":[
 
@@ -21,7 +133,7 @@
         "duration_randVariation": 0.05,
         "duration_labor": 180,
         "average_mother_HWMult": 70000,
-        "_note_avg": "70000 = ~140 cm × 500 kg typical large bovine female. Verify against actual creature character template H×W.",
+        "_note_avg": "70000 = ~140 cm × 500 kg typical large bovine female. Verify against actual creature character template H×W. Warg never had a dedicated foetus template before this migration; this generic placeholder is carried forward unchanged.",
         "images":[
             "RJW - Womb/preg_human/Fetus_Early00.png",
             "RJW - Womb/preg_human/Fetus_Bovine00.png",
@@ -32,90 +144,7 @@
             "RJW - Womb/preg_human/Fetus_Bovine05.png"
         ]
     },
-    "foetusByBaseID":
-    {
-        "creature_animal_horse_template":
-        {
-            "offspring_templates":[
-                "creature_animal_horse"
-            ],
-            "duration_fertilized": 144,
-            "duration_implanted": 384,
-            "size_implanted": 0.001,
-            "duration_first": 2568,
-            "size_first": 0.5,
-            "duration_second": 2712,
-            "size_second": 600.0,
-            "duration_third": 2736,
-            "size_third": 20000.0,
-            "size_end": 50000.0,
-            "duration_randVariation": 0.05,
-            "duration_labor": 40,
-            "average_mother_HWMult": 69750,
-            "_note_avg": "69750 = ~155 cm × 450 kg typical mare. Verify against actual creature character template H×W.",
-            "images":[
-                "RJW - Womb/preg_human/Fetus_Early00.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine00.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine01.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine02.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine03.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine04.png",
-                "RJW - Womb/preg_human/Fetus_S_Bovine05.png"
-            ]
-        },
-        "creature_animal_pig_template":
-        {
-            "offspring_templates":[
-                "creature_animal_pig"
-            ],
-            "duration_fertilized": 288,
-            "duration_implanted": 336,
-            "size_implanted": 0.001,
-            "duration_first": 816,
-            "size_first": 0.2,
-            "duration_second": 816,
-            "size_second": 15.0,
-            "duration_third": 816,
-            "size_third": 500.0,
-            "size_end": 1300.0,
-            "duration_randVariation": 0.08,
-            "duration_labor": 180,
-            "average_mother_HWMult": 18000,
-            "_note_avg": "18000 = ~100 cm × 180 kg typical sow. Verify against actual creature character template H×W.",
-            "images":[
-                "RJW - Womb/preg_human/Fetus_Early00.png",
-                "RJW - Womb/preg_human/Fetus_Pig00.png",
-                "RJW - Womb/preg_human/Fetus_Pig01.png",
-                "RJW - Womb/preg_human/Fetus_Pig02.png",
-                "RJW - Womb/preg_human/Fetus_Pig03.png",
-                "RJW - Womb/preg_human/Fetus_Pig04.png",
-                "RJW - Womb/preg_human/Fetus_Pig05.png"
-            ]
-        },
-        "creature_animal_bear_template":
-        {
-            "offspring_templates":[
-                "creature_animal_bear",
-                "creature_animal_cavebear"
-            ],
-            "_note": "embryonic diapause: fertilized blastocyst lies dormant ~150d before implanting. Active development is only ~60d.",
-            "duration_fertilized": 3600,
-            "duration_implanted": 168,
-            "size_implanted": 0.001,
-            "duration_first": 480,
-            "size_first": 0.05,
-            "duration_second": 480,
-            "size_second": 3.0,
-            "duration_third": 480,
-            "size_third": 50.0,
-            "size_end": 300.0,
-            "duration_randVariation": 0.15,
-            "duration_labor": 60,
-            "average_mother_HWMult": 15950,
-            "_note_avg": "15950 = ~110 cm × 145 kg typical female brown bear. Verify against actual creature character template H×W."
-        }
-    }
-    
+    "foetusByBaseID": {}
 }
         ]
     }

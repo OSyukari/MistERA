@@ -59,7 +59,8 @@
                         "requiresStatKeyword": "hunger",
                         "overwritesNeedsIDs": []
                     }
-                ]
+                ],
+                "RaceType":["humanoid", "goblin"]
             }
             
         ]

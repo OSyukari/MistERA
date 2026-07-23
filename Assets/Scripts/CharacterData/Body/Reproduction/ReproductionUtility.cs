@@ -8,6 +8,12 @@ using UnityEngine;
 
 public static class ReproductionUtility
 {
+    public static string status_pills_daily = "chara_status_contraceptive_daily";
+    public static string status_pills_emergency = "chara_status_contraceptive_emergency";
+    public static string status_pills_induceovulation = "chara_status_ovulation_trigger";
+
+    public static string stat_fertility_mult = "stats_derived_fertilityMultiplier";
+
 
     public static Ovum GetOldestOvum(BodyInternal_Womb w)
     {

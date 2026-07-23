@@ -104,6 +104,11 @@ public abstract class BodyInternal_Womb
         if (cum == null) return 0f;
         var fertility = this.BaseTemplate.fertilizationChance * cum.CumAmount;
         formula = $"basetemplate chance {this.BaseTemplate.fertilizationChance.ToString("N2")} * amount {cum.CumAmount.ToString("N2")}";
+
+        var fatherFertilityMult = cum.Owner != null ? cum.Owner.Stats.GetStatValue(ReproductionUtility.stat_fertility_mult) : 1f;
+        fertility *= fatherFertilityMult;
+        formula += $" * father fertility mult {fatherFertilityMult.ToString("N2")}";
+
         if (cum.raceID != source.Owner.Race.ID)
         {
             fertility *= 0.25f;
@@ -348,7 +353,7 @@ public abstract class BodyInternal_Womb
     /// <summary>
     /// Check egg fertility, if possible
     /// </summary>
-    public virtual void HourTick(bool forceBirth = false)
+    public virtual void HourTick(bool forceBirth = false, bool forbidBirth = false)
     {
         valideggs.Clear();
         if (eggs == null) eggs = new List<Ovum>();
@@ -365,7 +370,7 @@ public abstract class BodyInternal_Womb
             }
             egg.HourTick(this);
 
-            if (egg.State == OvumState.Final)
+            if (egg.State == OvumState.Final && !forbidBirth)
             {
                 if (forceBirth)
                 {
@@ -384,7 +389,6 @@ public abstract class BodyInternal_Womb
                     Debug.LogError($"birth chance check {egg.lifespan} / {egg.totalLifespan} = {chance} , {roll} <= {chance} ? {roll <= chance}");
                     if (roll <= chance) birthEV.Add(egg);
                 }
-
             }
             else if (egg.State == OvumState.Final_RequireHelp)
             {
@@ -527,7 +531,8 @@ public abstract class BodyInternal_Womb
 
         if (!noAging) currentPower -= (int)ovuPower;
 
-        accumulateOvuPower += ovuPower * BaseTemplate.fertility / BaseTemplate.ovulationQuantityAverage;
+        var motherFertilityMult = source.Owner.Stats.GetStatValue(ReproductionUtility.stat_fertility_mult);
+        accumulateOvuPower += ovuPower * BaseTemplate.fertility / BaseTemplate.ovulationQuantityAverage * motherFertilityMult;
         while (accumulateOvuPower > 1.0f)
         {
             eggs.Add(new Ovum(this, source.Owner, BaseTemplate));

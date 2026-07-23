@@ -107,7 +107,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_victory",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
@@ -173,7 +173,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_victory_hasVictim",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
@@ -183,7 +183,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_lootEnd",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",
@@ -194,7 +194,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_noLootEnd",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "_comment": "change event flag if quest related, then open trade menu and allow looting on enemy or allow looting specific loots",

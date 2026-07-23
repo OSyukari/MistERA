@@ -15,7 +15,7 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "sleeping",
@@ -41,7 +41,7 @@
                                     "timestop"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doll",
@@ -65,7 +65,7 @@
                             "requireSelfOnly": true,
                             "useActiveTags": false,
                             "_comment": "2.2.1 独自一人 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "blush",
@@ -93,7 +93,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sorry",
                                         "tired",
                                         "shy",
@@ -118,7 +118,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "awkward",
                                         "surprised",
                                         "shy",
@@ -140,7 +140,7 @@
                                 }
                             ],
                             "_comment": "2.4.4 指令失败拒绝 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "disgusted",
                                 "surprised",
@@ -172,7 +172,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -198,7 +198,7 @@
                                     "requirement": {
                                         "requireSelfForced": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "scared",
@@ -222,7 +222,7 @@
                                 }
                             ],
                             "_comment": "2.4.1 结果正面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "blush",

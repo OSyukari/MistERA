@@ -50,6 +50,7 @@ public abstract class CharaTemplate
     public string personalityID = "personality_base";
     public string characterComment = "";
     public List<string> traits = new List<string>();
+    public List<string> actorKeyword = new List<string>();
     [JsonIgnore]
     public virtual bool isMale
     {

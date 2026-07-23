@@ -1,0 +1,35 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for com_recording_edit.json. Holds en-us entries for the recording-editor command/UI."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_recording_edit_displayName_1": "Edit Recording",
+                "com_recording_edit_displayName_1_EXTEND": "Edit Recording: $name$",
+                "com_recording_edit_displayName_2": "Edit Recording Together",
+                "com_recording_edit_displayName_2_EXTEND": "Edit Recording Together: $name$",
+                "com_recording_edit_displayName_begin_1": "$doer.firstname$ starts editing a recording",
+                "com_recording_edit_displayName_ongoing_1": "$doer.firstname$ is editing a recording",
+                "com_recording_edit_displayName_variant_begin_1": "$doer.firstname$ starts editing $name$'s recording",
+                "com_recording_edit_displayName_variant_ongoing_1": "$doer.firstname$ is editing $name$'s recording",
+
+                "recording_edit_canvas_title": "Edit Recording:",
+                "recording_edit_canvas_abort": "Discard Edits",
+                "recording_edit_canvas_confirm": "Save Edits",
+                "recording_edit_canvas_export": "Save as New Recording",
+                "recording_edit_canvas_preview": "Preview Recording Contents",
+                "recording_edit_canvas_edit_title": "Editable Options",
+                "recording_edit_canvas_resetAllfilters": "Reset Changes",
+
+                "recording_edit_canvas_actor_filter_include": "...everything related to this character",
+                "recording_edit_canvas_actor_filter_only": "...only what's related to this character",
+                "recording_edit_canvas_actor_filterAP": "Delete Action Records",
+                "recording_edit_canvas_actor_filterMSG": "Delete Message Records",
+                "recording_edit_canvas_actor_nameOverwrite": "<link=\"recording_edit_canvas_actor_nameOverwrite_tooltip\">Playing As:</link>",
+                "recording_edit_canvas_actor_nameOverwrite_tooltip": "Lets you change the character's displayed name",
+                "recording_edit_canvas_actor_originalName": "Actor: $name$"
+            }
+        }
+    }
+}

@@ -30,6 +30,13 @@ public class Cycles_Estrus : ReproductionCycle
     [JsonIgnore]
     public override bool CanOvulate => CycleStage == EstrusStatus.Estrus;
 
+    [JsonIgnore]
+    public override bool CanForceOvulate =>
+        CycleStage != EstrusStatus.None &&
+        CycleStage != EstrusStatus.PrePuberty &&
+        CycleStage != EstrusStatus.Pregnant &&
+        CycleStage != EstrusStatus.PostPregnancy;
+
     public Cycles_Estrus()
     {
 
@@ -74,13 +81,13 @@ public class Cycles_Estrus : ReproductionCycle
 
 
 
-    private EstrusStatus DetermineCyclePhase(ReproductionTemplate t, int day, bool suppressed)
+    private EstrusStatus DetermineCyclePhase(ReproductionTemplate t, int day)
     {
         int endProestrus = t.menstrualDays - 1;
         int endEstrus    = endProestrus + t.ovulationDays;  // follicularDays is always 0 for Estrus type
 
         if (day <= endProestrus) return EstrusStatus.Proestrus;
-        if (day <= endEstrus && !suppressed) return EstrusStatus.Estrus;
+        if (day <= endEstrus) return EstrusStatus.Estrus;
         return EstrusStatus.Interestrus;
     }
     /// <summary>
@@ -134,6 +141,28 @@ public class Cycles_Estrus : ReproductionCycle
             LocalizeDictionary.QueryThenParse($"EstrusStatus_{es}"));
     }
 
+    public override float CurrentPhaseProgress(ReproductionTemplate t)
+    {
+        if (CycleStage == EstrusStatus.None || CycleStage == EstrusStatus.Pregnant
+            || CycleStage == EstrusStatus.PrePuberty || CycleStage == EstrusStatus.PostPregnancy)
+            return 0f;
+
+        var day = (int)cycleValue;
+        int endProestrus = t.menstrualDays - 1;
+        int endEstrus = endProestrus + t.ovulationDays;  // follicularDays is always 0 for Estrus type
+
+        int phaseStart, phaseEnd;
+        if (day <= endProestrus) { phaseStart = 0; phaseEnd = endProestrus; }
+        else if (day <= endEstrus) { phaseStart = endProestrus + 1; phaseEnd = endEstrus; }
+        else { phaseStart = endEstrus + 1; phaseEnd = t.cycleThreshold - 1; }
+
+        int phaseLength = phaseEnd - phaseStart + 1;
+        if (phaseLength <= 0) return 0f;
+
+        float progress = (float)(day - phaseStart + 1) / phaseLength;
+        return Math.Max(0f, Math.Min(1f, progress));
+    }
+
     string template = null;
 
     public override void GetReproTemplateTooltip(Character_Trainable c, ReproductionTemplate t,List<string> tooltip)
@@ -151,7 +180,7 @@ public class Cycles_Estrus : ReproductionCycle
                                                      .Replace("$count$", $"{remain}"));
     }
 
-    public override void Tick(ReproductionTemplate template, bool ispregnant, bool suppressed, bool isOvumExhausted)
+    public override void Tick(ReproductionTemplate template, bool ispregnant, bool pillActive, bool emergencyActive, bool induceOvulationActive, bool isOvumExhausted)
     {
         if (ispregnant)
         {
@@ -170,7 +199,7 @@ public class Cycles_Estrus : ReproductionCycle
             // recovery
             cycleValue -= 1;
             if (cycleValue > 0) return;
-            // on birth set stage to 
+            // on birth set stage to
             SetCycle(template, EstrusStatus.Interestrus);
         }
 
@@ -182,19 +211,39 @@ public class Cycles_Estrus : ReproductionCycle
             // fall through to first cycle tick
         }
 
+        // Daily contraceptive: caught only once the cycle naturally reaches Interestrus (nothing
+        // left to interrupt that cycle at that point) - held there at 0 progress for as long as taken.
+        if (pillActive && CycleStage == EstrusStatus.Interestrus)
+        {
+            SetCycle(template, EstrusStatus.Interestrus);
+            return;
+        }
+
+        // Emergency contraceptive: only Proestrus qualifies as "precedes ovulation" for Estrus-type
+        // races, since follicularDays is always 0 here. See Cycles_Menstruation.cs for full rationale.
+        else if (emergencyActive && CycleStage == EstrusStatus.Proestrus)
+        {
+            return;
+        }
+        else if (induceOvulationActive && CanForceOvulate)
+        {
+            SetCycle(template, EstrusStatus.Estrus);
+            return;
+        }
+
         cycleValue += Utility.getRandwithVariation(1f, template.cycleVariation);
         if (cycleValue >= template.cycleThreshold)
             cycleValue = 0f;
 
-        CycleStage = DetermineCyclePhase(template, (int)cycleValue, suppressed);
+        CycleStage = DetermineCyclePhase(template, (int)cycleValue);
     }
 
-    public override void Birth(bool isStillPregnant)
+    public override void Birth(bool isStillPregnant, ReproductionTemplate template)
     {
         if (!isStillPregnant)
         {
             CycleStage = EstrusStatus.PostPregnancy;
-            cycleValue = 3;
+            cycleValue = template != null ? template.postpartumDays : 3;
         }
     }
 }

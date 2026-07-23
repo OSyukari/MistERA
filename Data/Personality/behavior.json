@@ -68,7 +68,7 @@
                     },
                     {
                         "$type": "TryFindRestNode, Assembly-CSharp",
-                        "evaluationHeuristic":"random",
+                        "evaluationHeuristic":"closest",
                         "filter": {
                             "checkBlacklist": true,
                             "skipPrivateRoom":false,

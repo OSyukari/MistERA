@@ -1,0 +1,35 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary_Intro.json. Holds en-us entries for the char_editor_selectTrait_* character-creation trait-selection screen."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "char_editor_selectTrait_cancel": "Cancel Changes",
+                "char_editor_selectTrait_confirm": "Confirm & Save",
+                "char_editor_selectTrait_none": "None",
+
+                "char_editor_selectTrait_single": "<link=\"char_editor_selectTrait_single_tooltip\">Uncategorized Trait</link>",
+                "char_editor_selectTrait_single_tooltip": "This type of trait doesn't conflict with other traits.",
+                "char_editor_selectTrait_spectrum": "<link=\"char_editor_selectTrait_spectrum_tooltip\">Spectrum Trait</link>",
+                "char_editor_selectTrait_spectrum_tooltip": "Only one trait from the same spectrum can be selected (pick 1).",
+
+                "char_editor_selectTrait_CON": "<link=\"char_editor_selectTrait_CON_tooltip\">%%stats_base_Constitution%% Traits - Total Stat Adjustment</link>",
+                "char_editor_selectTrait_CON_tooltip": "%%stats_base_Constitution_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+                "char_editor_selectTrait_Constitution_scoreError": "%%stats_base_Constitution%% traits' total score cannot exceed this attribute's stat adjustment ($score$)",
+
+                "char_editor_selectTrait_PSY": "<link=\"char_editor_selectTrait_PSY_tooltip\">%%stats_base_Psyche%% Traits - Total Stat Adjustment</link>",
+                "char_editor_selectTrait_PSY_tooltip": "%%stats_base_Psyche_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+                "char_editor_selectTrait_Psyche_scoreError": "%%stats_base_Psyche%% traits' total score cannot exceed this attribute's stat adjustment ($score$)",
+
+                "char_editor_selectTrait_STR": "<link=\"char_editor_selectTrait_STR_tooltip\">%%stats_base_Strength%% Traits - Total Stat Adjustment</link>",
+                "char_editor_selectTrait_STR_tooltip": "%%stats_base_Strength_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+                "char_editor_selectTrait_Strength_scoreError": "%%stats_base_Strength%% traits' total score cannot exceed this attribute's stat adjustment ($score$)",
+
+                "char_editor_selectTrait_WIL": "<link=\"char_editor_selectTrait_WIL_tooltip\">%%stats_base_Willpower%% Traits - Total Stat Adjustment</link>",
+                "char_editor_selectTrait_WIL_tooltip": "%%stats_base_Willpower_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
+                "char_editor_selectTrait_Willpower_scoreError": "%%stats_base_Willpower%% traits' total score cannot exceed this attribute's stat adjustment ($score$)"
+            }
+        }
+    }
+}

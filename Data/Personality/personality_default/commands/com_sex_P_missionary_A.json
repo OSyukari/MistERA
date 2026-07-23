@@ -22,7 +22,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "missionary",
@@ -37,7 +37,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -66,7 +66,7 @@
                             "requirement": {
                                 "requirePermission": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -86,7 +86,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -101,7 +101,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -136,7 +136,7 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -158,7 +158,7 @@
                                     "timestop"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -186,7 +186,7 @@
                                             "justWokenUp"
                                         ]
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sorry",
                                         "disgusted",
                                         "disappointed",
@@ -201,7 +201,7 @@
                                             "requirement": {
                                                 "requirePermission": true
                                             },
-                                            "extraPortraitTags": [
+                                            "extraSelfPortraitTags": [
                                                 "sorry",
                                                 "disgusted",
                                                 "disappointed",
@@ -228,7 +228,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -248,7 +248,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -265,7 +265,7 @@
                                 }
                             ],
                             "_comment": "2.2.4 指令失败拒绝 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust",
                                 "surprised",
@@ -290,7 +290,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "missionary",
@@ -311,7 +311,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "missionary",
@@ -330,7 +330,7 @@
                                 }
                             ],
                             "_comment": "2.2.8 玩家专用 刚睡醒时的 正面位A口上文 （无论结果好坏）",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -362,7 +362,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "missionary",
@@ -380,7 +380,7 @@
                                 }
                             ],
                             "_comment": "2.2.5 ($self$) 正面位A 结果正面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -402,7 +402,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "missionary",
@@ -421,7 +421,7 @@
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 正面位A 结果负面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "missionary",
@@ -449,86 +449,86 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_P_missionary_A_Climax_1": "($self$) 正面位A 高潮 口上文",
-                "com_sex_P_missionary_A_Climax_2": "$self$的眼神瞬间涣散，双手死死抓着床单，背部弓起：\"啊！不行！有什么要来了！哈啊——太深了——♡\"",
-                "com_sex_P_missionary_A_Climax_3": "$self$浑身猛地痉挛，括约肌剧烈收缩着绞紧了异物：\"去了！前面和后面都要坏掉了！！老公……啊啊啊！！♡\"",
-                "com_sex_P_missionary_A_Climax_4": "$self$明明在哭泣，身体却诚实地迎来了高潮，整个人颤抖不已：\"不……不要！这种事……为什么会舒服……呜呜呜……啊啊！！♡\"",
-                "com_sex_P_missionary_A_Climax_5": "$self$咬破了嘴唇也无法抑制那声浪叫，羞耻感让她的脸涨得通红：\"住手……要丢人了……被弄得……啊！去了！！♡\"",
-                "com_sex_P_missionary_A_Begin_1": "$self$咬着嘴唇，顺从地抬起双腿架在$target$肩膀上：\"如果是这种地方……只要你轻一点的话……\"",
-                "com_sex_P_missionary_A_Begin_2": "$self$：\"嗯……虽然后面还是有点怕，但如果是你想做的话……进来吧。\"",
-                "com_sex_P_missionary_A_Begin_3": "$self$瞪大了眼睛，身体僵硬得不知所措：\"诶？等、等等……这真的是在做……那种事吗？\"",
-                "com_sex_P_missionary_A_Begin_4": "$self$抓住床单的手指有些泛白：\"这种关系做这个……是不是太超过了……但如果是$target$的话……\"",
-                "com_sex_P_missionary_A_Begin_5": "$self$浑身颤抖着，不敢看对方的眼睛：\"我、我知道了……请不要伤害我……如果是那里的话……\"",
-                "com_sex_P_missionary_A_Begin_6": "$self$闭上眼睛，绝望地放弃了抵抗：\"只要听话就可以了吧……求求你，快点结束……\"",
-                "com_sex_P_missionary_A_1": "$self$在睡梦中皱起了眉头，发出一声难受的低吟：\"嗯……痛……\"",
-                "com_sex_P_missionary_A_2": "$self$无意识地扭动着腰肢想要逃避异物感，但很快又沉沉睡去，呼吸变得粗重起来。",
-                "com_sex_P_missionary_A_3": "（$self$保持着静止的姿势，眼神空洞地凝视着前方，丝毫没有察觉到后穴正被侵犯的事实）",
-                "com_sex_P_missionary_A_4": "（随着每一次抽插，$self$静止的身体被动地摇晃着，除此之外没有任何反应）",
-                "com_sex_P_missionary_A_5": "$self$猛地惊醒，下意识地想要挣脱：\"痛！你在干什么？！快出去！\"",
-                "com_sex_P_missionary_A_6": "$self$用力推着$target$的胸膛：\"不行！那样会受伤的！趁我睡觉偷袭也太过分了！\"",
-                "com_sex_P_missionary_A_7": "$self$尖叫着试图踢开对方：\"呀！！你在干什么！变态！滚出去！！\"",
-                "com_sex_P_missionary_A_8": "$self$惊恐地抓挠着$target$的手臂：\"疯了吗？！这是犯罪！！放开我！！\"",
-                "com_sex_P_missionary_A_9": "$self$夹紧了双腿，脸上露出为难的神色：\"不行……今天那边状态不太好，会痛的。\"",
-                "com_sex_P_missionary_A_10": "$self$推开了$target$的手：\"不仅是脏……而且真的很痛啊，换个地方好不好？\"",
-                "com_sex_P_missionary_A_11": "$self$尴尬地笑着往后退了一步：\"哈哈，这个玩笑有点开大了吧？我们只是朋友啊。\"",
-                "com_sex_P_missionary_A_12": "$self$：\"这种事还是留给你的女朋友吧，$target$。我可不想屁股痛一整天。\"",
-                "com_sex_P_missionary_A_13": "$self$像看垃圾一样看着$target$：\"别用那种恶心的眼神看我，离我远点。\"",
-                "com_sex_P_missionary_A_14": "$self$：\"你有病吗？居然想做这种事，信不信我报警？\"",
-                "com_sex_P_missionary_A_15": "$self$迷迷糊糊地睁开眼，随即发出一声闷哼：\"嗯？！什、什么时候……啊……既然已经进来了……那就继续吧……\"",
-                "com_sex_P_missionary_A_16": "$self$：\"哈啊……趁我睡觉做这种坏事……既然把人家弄醒了，就要负责到底哦……\"",
-                "com_sex_P_missionary_A_17": "$self$醒来时发觉异样，却意外地没有反抗：\"嗯……？居然趁着这种时候……呵，胆子不小嘛……那就让我看看你的本事。\"",
-                "com_sex_P_missionary_A_18": "$self$：\"哈啊……本来想生气的……但这感觉……好像也不赖……继续……\"",
-                "com_sex_P_missionary_A_19": "$self$醒来发现现状，恐惧让她不敢发声，只能咬着手背忍耐：\"呜……（不可以反抗……反抗的话会更惨……）\"",
-                "com_sex_P_missionary_A_20": "$self$流着泪默默承受着冲击：\"我醒了……我不会叫的……求你轻一点……\"",
-                "com_sex_P_missionary_A_21": "$self$瘫软在床上，额头上满是汗水却带着笑意：\"虽然一开始很痛，但后面……感觉好像变得奇怪了……\"",
-                "com_sex_P_missionary_A_22": "$self$搂住$target$的脖子，在耳边轻喘：\"这就是你不肯停下的理由吗？确实……还不坏。\"",
-                "com_sex_P_missionary_A_23": "$self$整理着凌乱的衣服，眼神有些躲闪：\"这算什么啊……明明不该这样的……为什么身体会……\"",
-                "com_sex_P_missionary_A_24": "$self$咬着嘴唇看了$target$一眼：\"这次就当是个秘密……但如果你技术不好的话，绝对没有下次。\"",
-                "com_sex_P_missionary_A_25": "$self$捂着肚子蜷缩成一团，眼角挂着泪痕：\"好痛……即使结束了肚子还是好涨……下次绝对不行了。\"",
-                "com_sex_P_missionary_A_26": "$self$有些生气地背过身去：\"一点都不舒服，只感觉要裂开了……你太粗暴了。\"",
-                "com_sex_P_missionary_A_27": "$self$抱着膝盖缩在墙角，身体还在不住地抽搐：\"滚开……别碰我……好恶心……\"",
-                "com_sex_P_missionary_A_28": "$self$面无表情地穿上衣服，声音冷得像冰：\"如果不希望我让你身败名裂，以后就别出现在我面前。\""
+                "com_sex_P_missionary_A_Climax_1": "$self$腰猛地往前挺，整根没入那紧窄的菊穴，低吼着射了进去。\n\n滚烫的精液接连灌进深处，掐着对方的腰不肯退出来，直到射干净才喘着气停下。",
+                "com_sex_P_missionary_A_Climax_2": "$self$的眼神瞬间涣散，双手死死抓着床单，背弓起。\n\n\"啊！不行！有什么要来了！哈啊——太深了——♡\"\n\n菊穴疯狂地绞紧肉棒，连前面的小穴都跟着不住地抽缩。",
+                "com_sex_P_missionary_A_Climax_3": "$self$浑身猛地痉挛，菊穴死命收紧绞紧了肉棒。\n\n\"去了！前面和后面都要坏掉了！！老公……啊啊啊！！♡\"\n\n她掐着$target$的肩，腰不受控地往上顶，把两处都送到他手里。",
+                "com_sex_P_missionary_A_Climax_4": "$self$明明在哭，身体却诚实地迎来了高潮，整个人抖个不停。\n\n\"不……不要！这种事……为什么会舒服……呜呜呜……啊啊！！♡\"\n\n菊穴痉挛着绞紧肉棒，把强来的快感全吞了下去。",
+                "com_sex_P_missionary_A_Climax_5": "$self$咬破了嘴唇也压不住那声浪叫，羞耻得脸涨红。\n\n\"住手……要丢人了……被弄得……啊！去了！！♡\"\n\n菊穴不受控地咬着肉棒，淫液从前面的小穴溢出来。",
+                "com_sex_P_missionary_A_Begin_1": "$self$咬着嘴唇，顺从地抬起双腿架在$target$肩膀上。\n\n\"如果是这种地方……只要你轻些的话……\"\n\n她别过脸，菊穴却不自觉地缩了缩，既紧张又隐约期待。",
+                "com_sex_P_missionary_A_Begin_2": "$self$深吸了口气，伸手扒开自己。\n\n\"嗯……虽然后面还是有点怕，但如果是你想做的话……进来吧。\"\n\n菊穴被缓缓撑开时她皱紧了眉，却咬着牙没让他停。",
+                "com_sex_P_missionary_A_Begin_3": "$self$瞪大了眼，身体僵得不知所措。\n\n\"诶？等、等等……这真的是在做……那种事吗？\"\n\n菊穴被抵住的时候她慌得想缩，却被按住了腰。",
+                "com_sex_P_missionary_A_Begin_4": "$self$抓着床单的手指有些泛白。\n\n\"这种关系做这个……是不是太超过了……但如果是$target$的话……\"\n\n她闭上眼由着他撑开菊穴，胀意让她忍不住低吟。",
+                "com_sex_P_missionary_A_Begin_5": "$self$浑身颤抖着，不敢看对方的眼睛。\n\n\"我、我知道了……请不要伤害我……如果是那里的话……\"\n\n她僵硬地趴好，菊穴绷得死紧，眼泪无声地往下掉。",
+                "com_sex_P_missionary_A_Begin_6": "$self$闭上眼，绝望地放弃了抵抗。\n\n\"只要听话就可以了吧……求求你，轻些……\"\n\n她把脸埋进枕头，由着肉棒强行撑开紧窄的菊穴，疼得直抽气。",
+                "com_sex_P_missionary_A_1": "$self$在睡梦里皱起眉，发出难受的低吟。\n\n\"嗯……痛……\"\n\n菊穴被撑开的异物感让她无意识地缩了缩腰，却没醒过来。",
+                "com_sex_P_missionary_A_2": "$self$无意识地扭着腰想逃避异物感，但很快又沉沉睡去。\n\n呼吸变得粗重，菊穴却本能地夹紧了正在侵犯她的肉棒。",
+                "com_sex_P_missionary_A_3": "$self$保持着静止的姿势，眼神空洞地凝视前方，丝毫没察觉到菊穴正被侵犯。\n\n凝固的时间里，只有那紧窄的菊穴被动地被撑开，媚肉裹紧入侵者却挤不出半点声响。",
+                "com_sex_P_missionary_A_4": "随着每次抽插，$self$静止的身子被动地前后晃，除此之外没有任何反应。\n\n被撑开的菊穴维持着张开的形状，肉棒整根没入又整根抽出，她却连睫毛都没动。",
+                "com_sex_P_missionary_A_5": "$self$猛地惊醒，下意识想挣脱。\n\n\"痛！你在干什么？！快出去！\"\n\n她并拢腿往后缩，菊穴火辣辣地疼，眼泪瞬间涌出来。",
+                "com_sex_P_missionary_A_6": "$self$用力推着$target$的胸膛。\n\n\"不行！那样会受伤的！趁我睡觉偷袭也太过分了！\"\n\n她护着身后，警惕地盯着他，把腿并得死紧。",
+                "com_sex_P_missionary_A_7": "$self$尖叫着想踢开对方。\n\n\"呀！！你在干什么！变态！滚出去！！\"\n\n她胡乱抓着身边的东西砸过去，只想赶紧逃。",
+                "com_sex_P_missionary_A_8": "$self$惊恐地抓挠着$target$的手臂。\n\n\"疯了吗？！这是犯罪！！放开我!!\"\n\n她拼命挣扎，指甲在他手臂上留下几道红痕。",
+                "com_sex_P_missionary_A_9": "$self$夹紧了双腿，脸上露出为难的神色。\n\n\"不行……今天那边状态不太好，会痛的。\"\n\n她歉意地拍拍他的手，把身子侧过去。",
+                "com_sex_P_missionary_A_10": "$self$推开$target$的手。\n\n\"不仅是脏……而且真的很痛啊，换个地方好不好？\"\n\n她皱着眉往后挪，显然对后面没兴趣。",
+                "com_sex_P_missionary_A_11": "$self$尴尬地笑着往后退。\n\n\"哈哈，这个玩笑有点开大了吧？我们只是朋友啊。\"\n\n她不动声色地拉开距离，把被子扯过来挡着。",
+                "com_sex_P_missionary_A_12": "$self$摆摆手。\n\n\"这种事还是留给你的女朋友吧，$target$。我可不想屁股痛到明天。\"\n\n她笑着起身，明显把这当成了玩笑。",
+                "com_sex_P_missionary_A_13": "$self$用看垃圾般的眼神看着$target$。\n\n\"别用那种恶心的眼神看我，离我远点。\"\n\n她冷冷地推开他，连多看几眼都嫌脏。",
+                "com_sex_P_missionary_A_14": "$self$冷下脸。\n\n\"你有病吗？居然想做这种事，信不信我报警？\"\n\n她抓起手机，眼神里满是威胁。",
+                "com_sex_P_missionary_A_15": "$self$迷迷糊糊睁开眼，随即发出闷哼。\n\n\"嗯？！什、什么时候……啊……既然已经进来了……那就继续吧……\"\n\n她回头看了眼，脸上泛红，菊穴却没让他退出来。",
+                "com_sex_P_missionary_A_16": "$self$懒洋洋地趴着没动。\n\n\"哈啊……趁我睡觉做这种坏事……既然把人家弄醒了，就要负责到底哦……\"\n\n她主动抬了抬腰，由着他在后面慢慢动。",
+                "com_sex_P_missionary_A_17": "$self$醒来发觉异样，却意外地没反抗。\n\n\"嗯……？居然趁着这种时候……呵，胆子不小嘛……那就让我看看你的本事。\"\n\n她撑起身子回头瞥他，菊穴反倒主动夹了夹。",
+                "com_sex_P_missionary_A_18": "$self$咬着唇，神色复杂。\n\n\"哈啊……本来想生气的……但这感觉……倒也不赖……继续……\"\n\n她把腰沉得更低，由着肉棒在菊穴里缓缓研磨。",
+                "com_sex_P_missionary_A_19": "$self$醒来发现现状，恐惧让她不敢发声，只能咬着手背忍耐。\n\n\"呜……（不可以反抗……反抗的话会更惨……）\"\n\n她僵着身子趴好，由着菊穴被撑开，眼泪无声地往下淌。",
+                "com_sex_P_missionary_A_20": "$self$流着泪默默承受着冲击。\n\n\"我醒了……我不会叫的……求你轻些……\"\n\n她死死攥着床单，菊穴被磨得生疼，却不敢挣扎。",
+                "com_sex_P_missionary_A_21": "$self$趴在那儿喘着，腰肢随着抽插的节奏轻轻摆动，脸上泛起红晕。\n\n\"哈啊……起初好痛……现在……倒没那么难受了……\"\n\n菊穴被撑开后渐渐适应了，反倒绞出些怪异的快感，她忍不住哼出声。",
+                "com_sex_P_missionary_A_22": "$self$回头看$target$，眼神里多了丝迷离。\n\n\"嗯……后面这种……还挺舒服的……再深些……\"\n\n她主动把腰沉低，菊穴把肉棒吮得紧紧的，催着他别停。",
+                "com_sex_P_missionary_A_23": "$self$别过脸不敢看$target$，身子却在顶弄下发着烫。\n\n\"这算什么啊……明明不该这样的……为什么身体会……\"\n\n菊穴不受控地绞紧肉棒，连她自己都分不清那是疼还是舒服了。",
+                "com_sex_P_missionary_A_24": "$self$咬着唇偷看$target$，脸红得厉害。\n\n\"……居然……并不讨厌……\"\n\n她没让他停下来，菊穴反倒诚实得更紧地裹住了肉棒。",
+                "com_sex_P_missionary_A_25": "$self$趴着没怎么动，眉头微皱，偶尔才跟着哼几声。\n\n\"嗯……还是有点……撑得难受……你慢些好不好？\"\n\n这段她始终没能适应，菊穴绷得紧紧的，怎么也找不到舒服的感觉。",
+                "com_sex_P_missionary_A_26": "$self$敷衍地随着节奏晃，神色淡淡的。\n\n\"……还行吧，就是有点……胀……\"\n\n这段对她来说没什么滋味，菊穴被磨得发酸，她甚至悄悄分了神。",
+                "com_sex_P_missionary_A_27": "$self$皱着眉把脸埋进手臂，身子随着撞击被动地前后晃。\n\n\"……你别顶那么深……好难受……\"\n\n干涩紧绷的菊穴被反复碾磨，她咬着下唇忍着，巴不得这段赶紧翻篇。",
+                "com_sex_P_missionary_A_28": "$self$面无表情地承受着撞击，眼神冷得发寒。\n\n\"……你要干就快点。\"\n\n这段她连哼都懒得哼，菊穴被磨得难受，由着身子被撞，心思早飞到别处去了。"
             },
             "en-us": {
-                "com_sex_P_missionary_A_Climax_1": "($self$) Anal Missionary A Climax Dialogue",
-                "com_sex_P_missionary_A_Climax_2": "$self$'s eyes lose focus as her hands grip the sheets tight, her back arching: \"Ah! No! Something's coming! Haaah— it's too deep—♡\"",
-                "com_sex_P_missionary_A_Climax_3": "$self$ spasms violently, her sphincter contracting hard around the intrusion: \"I'm cumming! You're breaking me, front and back!! Hubby... Aaaah!!♡\"",
-                "com_sex_P_missionary_A_Climax_4": "Despite her tears, $self$'s body betrays her with an orgasm, trembling all over: \"No... Don't! How can this... feel good... Uuu... Aaah!!♡\"",
-                "com_sex_P_missionary_A_Climax_5": "$self$ bites her lip till it bleeds but can't suppress the moan, her face flushed with shame: \"Stop it... I'm so embarrassed... Being used like this... Ah! I'm cumming!!♡\"",
-                "com_sex_P_missionary_A_Begin_1": "$self$ bites her lip and obediently lifts her legs onto $target$'s shoulders: \"If it's there... just please be gentle...\"",
-                "com_sex_P_missionary_A_Begin_2": "$self$: \"Nn... I'm still a bit scared of doing it there, but if it's what you want... come inside.\"",
-                "com_sex_P_missionary_A_Begin_3": "$self$ eyes widen, her body freezing in confusion: \"Eh? W-wait... are we really doing... that?\"",
-                "com_sex_P_missionary_A_Begin_4": "$self$ grips the bedsheets, knuckles turning white: \"Isn't doing it there a bit too much for us...? But if it's you, $target$...\"",
-                "com_sex_P_missionary_A_Begin_5": "$self$ trembles, unable to meet your gaze: \"I-I understand... Please don't hurt me... If it has to be there...\"",
-                "com_sex_P_missionary_A_Begin_6": "$self$ closes her eyes, giving up all resistance in despair: \"I just have to be obedient, right... Please, finish quickly...\"",
-                "com_sex_P_missionary_A_1": "$self$ frowns in her sleep, letting out a pained moan: \"Nn... hurts...\"",
-                "com_sex_P_missionary_A_2": "$self$ unconsciously twists her hips to escape the foreign sensation, but soon falls back into a deep sleep, her breathing growing heavy.",
-                "com_sex_P_missionary_A_3": "($self$ remains frozen in position, staring vacantly ahead, completely unaware that her anus is being violated)",
-                "com_sex_P_missionary_A_4": "(With every thrust, $self$'s frozen body rocks passively, showing no other reaction)",
-                "com_sex_P_missionary_A_5": "$self$ jolts awake, instinctively trying to break free: \"Ouch! What are you doing?! Get out!\"",
-                "com_sex_P_missionary_A_6": "$self$ pushes hard against $target$'s chest: \"No! You'll hurt me! Attacking me while I sleep is too much!\"",
-                "com_sex_P_missionary_A_7": "$self$ screams, trying to kick you away: \"Kya!! What do you think you're doing! Pervert! Get out!!\"",
-                "com_sex_P_missionary_A_8": "$self$ scratches at $target$'s arm in terror: \"Are you crazy?! This is a crime!! Let go of me!!\"",
-                "com_sex_P_missionary_A_9": "$self$ clamps her legs shut, looking troubled: \"No... my condition isn't great down there today, it'll hurt.\"",
-                "com_sex_P_missionary_A_10": "$self$ pushes $target$'s hand away: \"It's not just dirty... it really hurts. Can't we use somewhere else?\"",
-                "com_sex_P_missionary_A_11": "$self$ laughs awkwardly and steps back: \"Haha, this joke is going a bit far, right? We're just friends.\"",
-                "com_sex_P_missionary_A_12": "$self$: \"Save that stuff for your girlfriend, $target$. I don't want a sore butt all day.\"",
-                "com_sex_P_missionary_A_13": "$self$ looks at $target$ like he's trash: \"Don't look at me with those disgusting eyes. Stay away from me.\"",
-                "com_sex_P_missionary_A_14": "$self$: \"Are you sick in the head? Trying to do something like that... believe me, I'll call the police.\"",
-                "com_sex_P_missionary_A_15": "$self$ opens her eyes groggily, then lets out a muffled grunt: \"Nn?! W-when did you... Ah... Well, since you're already inside... carry on...\"",
-                "com_sex_P_missionary_A_16": "$self$: \"Haaah... Doing bad things while I sleep... Since you woke me up, you'd better take responsibility...\"",
-                "com_sex_P_missionary_A_17": "$self$ wakes up to the strange sensation but surprisingly doesn't resist: \"Nn...? Taking advantage of a time like this... Heh, you've got guts... Show me what you've got then.\"",
-                "com_sex_P_missionary_A_18": "$self$: \"Haaah... I wanted to be mad... but this feeling... isn't too bad... continue...\"",
-                "com_sex_P_missionary_A_19": "$self$ wakes to the situation, too terrified to speak, biting her hand to endure: \"Uuu... (I can't resist... resisting will make it worse...)\"",
-                "com_sex_P_missionary_A_20": "$self$ sheds tears as she silently bears the impact: \"I'm awake... I won't scream... please, just be gentle...\"",
-                "com_sex_P_missionary_A_21": "$self$ collapses on the bed, forehead sweaty but smiling: \"It hurt at first, but then... it started feeling kind of strange...\"",
-                "com_sex_P_missionary_A_22": "$self$ wraps her arms around $target$'s neck, panting in his ear: \"Is this why you wouldn't stop? It's actually... not bad.\"",
-                "com_sex_P_missionary_A_23": "$self$ tidies her messy clothes, avoiding eye contact: \"What was that... it shouldn't be like this... why did my body...\"",
-                "com_sex_P_missionary_A_24": "$self$ bites her lip and glances at $target$: \"Let's keep this a secret... but if your technique sucks next time, there won't be a next time.\"",
-                "com_sex_P_missionary_A_25": "$self$ curls up holding her stomach, tears in the corners of her eyes: \"It hurts... my stomach feels so full even after it's over... absolutely not doing that again.\"",
-                "com_sex_P_missionary_A_26": "$self$ turns her back angrily: \"It didn't feel good at all, it just felt like I was splitting apart... you were too rough.\"",
-                "com_sex_P_missionary_A_27": "$self$ hugs her knees in the corner, body still twitching: \"Get away... don't touch me... disgusting...\"",
-                "com_sex_P_missionary_A_28": "$self$ puts on her clothes expressionlessly, voice cold as ice: \"If you don't want me to ruin your life, never show your face in front of me again.\""
+                "com_sex_P_missionary_A_Climax_1": "$self$ thrusts deep into that tight hole to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",
+                "com_sex_P_missionary_A_Climax_2": "$self$'s gaze goes instantly hazy, hands clawing the sheets, back arching.\n\n\"Ah! No! Something's coming! Haa—too deep—♡\"\n\nHer ass clenches the cock frantically, even her pussy in front fluttering along.",
+                "com_sex_P_missionary_A_Climax_3": "$self$'s whole body spasms, her ass clamping the cock for all it's worth.\n\n\"Cumming! Both front and back are gonna break!! Hubby... aaahhh!!♡\"\n\nShe grips $target$'s shoulders, hips lifting beyond her control, offering both holes to him.",
+                "com_sex_P_missionary_A_Climax_4": "$self$ is clearly crying, yet her body honestly climaxes, shaking nonstop.\n\n\"No... don't! Why does this... feel good... uuu... aaah!!♡\"\n\nHer ass spasms and clenches the cock, swallowing all the forced pleasure.",
+                "com_sex_P_missionary_A_Climax_5": "$self$ bites through her lip but can't suppress the lewd cry, flushing scarlet with shame.\n\n\"Stop... I'm gonna lose it... being made to... ah! Cumming!!♡\"\n\nHer ass clamps the cock beyond her control, slick overflowing from her pussy in front.",
+                "com_sex_P_missionary_A_Begin_1": "$self$ bites her lip and obediently lifts her legs onto $target$'s shoulders.\n\n\"If it's there... as long as you're gentle...\"\n\nShe turns her face away, her ass clenching on its own—nervous yet faintly expectant.",
+                "com_sex_P_missionary_A_Begin_2": "$self$ takes a breath and reaches back to spread herself.\n\n\"Mm... I'm still a bit scared of the back, but if you really want to... go ahead.\"\n\nShe furrows her brow as her ass is slowly stretched open, but grits her teeth and doesn't make him stop.",
+                "com_sex_P_missionary_A_Begin_3": "$self$'s eyes go wide, her body stiffening at a loss.\n\n\"Eh? W-wait... are we really doing... that?\"\n\nWhen her ass is nudged she flinches to shrink away, but he pins her hips.",
+                "com_sex_P_missionary_A_Begin_4": "$self$'s fingers on the sheets go pale.\n\n\"Doing this in our relationship... isn't it too much... but if it's you, $target$...\"\n\nShe closes her eyes and lets him stretch her ass open, the fullness drawing a low moan.",
+                "com_sex_P_missionary_A_Begin_5": "$self$ trembles, not daring to meet the other's eyes.\n\n\"I-I understand... please don't hurt me... if it's there...\"\n\nShe stiffly gets into position, ass clenched tight, tears falling silently.",
+                "com_sex_P_missionary_A_Begin_6": "$self$ closes her eyes, giving up resistance in despair.\n\n\"As long as I obey, right... please, be gentle...\"\n\nShe buries her face in the pillow, letting the cock force her tight ass open, gasping in pain.",
+                "com_sex_P_missionary_A_1": "$self$ frowns in her sleep, letting out a pained whimper.\n\n\"Mm... hurts...\"\n\nThe foreign stretch at her ass makes her hips shrink back unconsciously, but she doesn't wake.",
+                "com_sex_P_missionary_A_2": "$self$ twists her hips unconsciously to escape the intrusion, but soon sinks back into deep sleep.\n\nHer breathing grows heavy, yet her ass instinctively clamps the cock violating her.",
+                "com_sex_P_missionary_A_3": "$self$ holds her still pose, staring blankly ahead, utterly unaware her ass is being violated.\n\nIn the frozen time, only that tight ass is passively stretched open, the pliant flesh gripping the intruder without a sound.",
+                "com_sex_P_missionary_A_4": "With each thrust, $self$'s still body sways passively back and forth—no other reaction at all.\n\nHer stretched ass holds its open shape; the cock buries to the hilt then draws fully out, yet she doesn't even flicker an eyelash.",
+                "com_sex_P_missionary_A_5": "$self$ wakes with a start, instinctively trying to break free.\n\n\"Ow! What are you doing?! Get out!\"\n\nShe clamps her legs and shrinks back, her ass burning, tears springing at once.",
+                "com_sex_P_missionary_A_6": "$self$ shoves hard at $target$'s chest.\n\n\"No! That'll hurt! Sneaking up on me in my sleep is too much!\"\n\nShe guards her backside, watching him warily, legs clamped tight.",
+                "com_sex_P_missionary_A_7": "$self$ screams, trying to kick the other off.\n\n\"Aah!! What are you doing! Pervert! Get out!!\"\n\nShe grabs whatever's at hand to throw, just wanting to escape.",
+                "com_sex_P_missionary_A_8": "$self$ claws frantically at $target$'s arm.\n\n\"Are you crazy?! This is a crime!! Let go!!\"\n\nShe thrashes desperately, nails leaving red marks on his arm.",
+                "com_sex_P_missionary_A_9": "$self$ clamps her legs together, looking troubled.\n\n\"No... it's not in good shape back there today, it'll hurt.\"\n\nShe apologetically pats his hand and turns onto her side.",
+                "com_sex_P_missionary_A_10": "$self$ pushes $target$'s hand away.\n\n\"It's not just dirty... it really hurts. How about somewhere else?\"\n\nShe frowns and shifts back, clearly uninterested in the back.",
+                "com_sex_P_missionary_A_11": "$self$ laughs awkwardly, backing away.\n\n\"Haha, this joke's gone a bit far, hasn't it? We're just friends.\"\n\nShe subtly puts distance between them and pulls the blanket up to cover herself.",
+                "com_sex_P_missionary_A_12": "$self$ waves it off.\n\n\"Save that for your girlfriend, $target$. I don't want my butt aching till tomorrow.\"\n\nShe gets up with a smile, clearly amused and playing along.",
+                "com_sex_P_missionary_A_13": "$self$ eyes $target$ with the look reserved for garbage.\n\n\"Don't look at me with those disgusting eyes, get away from me.\"\n\nShe coldly pushes him off, finding even looking at him dirty.",
+                "com_sex_P_missionary_A_14": "$self$'s face goes cold.\n\n\"Are you sick? Actually wanting to do that—believe me, I'll call the cops?\"\n\nShe picks up her phone, her eyes full of threat.",
+                "com_sex_P_missionary_A_15": "$self$ opens her eyes groggily, letting out a muffled groan.\n\n\"Mm?! Wh-when did you... ah... since it's already in... then keep going...\"\n\nShe glances back, face flushing, but doesn't make him pull out of her ass.",
+                "com_sex_P_missionary_A_16": "$self$ lies lazily in place without moving.\n\n\"Haa... doing this dirty thing while I slept... since you woke me, you'd better take responsibility...\"\n\nShe lifts her hips on her own, letting him move slowly from behind.",
+                "com_sex_P_missionary_A_17": "$self$ wakes to the intrusion but, surprisingly, doesn't resist.\n\n\"Mm...? At a time like this... heh, you've got nerve... let's see what you can do.\"\n\nShe props herself up and glances back, her ass even clenching on purpose.",
+                "com_sex_P_missionary_A_18": "$self$ bites her lip, expression conflicted.\n\n\"Haa... I wanted to be mad... but this feeling... isn't half bad... keep going...\"\n\nShe sinks her hips lower, letting the cock grind slowly in her ass.",
+                "com_sex_P_missionary_A_19": "$self$ wakes to find what's happening; fear keeps her silent, and she can only bite the back of her hand and endure.\n\n\"Uu... (I can't fight back... it'll be worse if I do...)\"\n\nShe stiffly holds position, letting her ass be stretched open, tears falling silently.",
+                "com_sex_P_missionary_A_20": "$self$ silently endures the pounding, eyes brimming.\n\n\"I'm awake... I won't scream... please, be gentle...\"\n\nShe grips the sheets tight, her ass chafed raw, not daring to struggle.",
+                "com_sex_P_missionary_A_21": "$self$ lies there panting, hips swaying lightly to the thrusts, a flush on her face.\n\n\"Haa... it hurt so much at first... now... it's not so bad...\"\n\nHer ass adapts after being stretched, and strange pleasure threads through the grip; she can't help moaning.",
+                "com_sex_P_missionary_A_22": "$self$ looks back at $target$, her gaze gaining a hazy edge.\n\n\"Mm... this back way... is actually pretty good... deeper...\"\n\nShe sinks her hips lower on her own, her ass sucking the cock tight, urging him not to stop.",
+                "com_sex_P_missionary_A_23": "$self$ turns her face away, not daring to look at $target$, her body running hot under the pounding.\n\n\"What is this... it shouldn't be like this... why is my body...\"\n\nHer ass clamps the cock beyond her control, and she can't even tell anymore if it's pain or pleasure.",
+                "com_sex_P_missionary_A_24": "$self$ bites her lip, sneaking a glance at $target$, flushed badly.\n\n\"...I actually... don't hate it...\"\n\nShe doesn't make him stop; her ass honestly wraps the cock even tighter.",
+                "com_sex_P_missionary_A_25": "$self$ lies mostly still, brow faintly furrowed, only humming along now and then.\n\n\"Mm... it's still a bit... uncomfortably stretched... can you slow down?\"\n\nShe never quite adapts this round; her ass stays clenched tight, unable to find anything that feels good.",
+                "com_sex_P_missionary_A_26": "$self$ goes through the motions of swaying to the rhythm, expression flat.\n\n\"...It's fine, just a bit... sore...\"\n\nThis round doesn't do much for her; her ass aches from the friction, and she even drifts.",
+                "com_sex_P_missionary_A_27": "$self$ frowns, burying her face in her arms, her body swaying passively with the impacts.\n\n\"...Don't go so deep... it's awful...\"\n\nHer dry, clenched ass is ground repeatedly; she bites her lip through it, wishing this stretch would just pass.",
+                "com_sex_P_missionary_A_28": "$self$ takes the pounding expressionlessly, eyes ice-cold.\n\n\"...If you're gonna do it, hurry up.\"\n\nShe can't even be bothered to moan this round, her ass chafing uncomfortably; she lets her body be jolted, her mind already somewhere else."
             }
         }
     }

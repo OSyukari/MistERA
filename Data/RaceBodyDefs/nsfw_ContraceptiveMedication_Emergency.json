@@ -1,0 +1,78 @@
+{
+    "_doc": {
+        "purpose": "Emergency (post-coital) contraceptive pill (real-world analogue: levonorgestrel / ulipristal acetate). Delays or blocks the LH surge if taken before ovulation; has no effect once ovulation has occurred. Modeled as a presence-only status (no stat_modifiers) checked once per day by Cycles_Menstruation/Cycles_Estrus.",
+        "mechanic": "Only relevant during the stage immediately preceding ovulation (PreOvulation/follicular for Menstruation-type, Proestrus for Estrus-type) - not Menstrual, which is too early for this to be the scenario being addressed, and not Ovulation/Estrus or later, matching real-world 'ineffective once taken on the day of the LH peak'. Every day this status is active and the cycle is in that stage, that day's cycle advance is simply skipped (held at the exact day it was on, not jumped to any stage boundary) - see Cycles_Menstruation.cs/Cycles_Estrus.cs Tick(). Unlike the daily pill, the '~4-6 day' real-world delay figure is NOT a hardcoded C# value - it's entirely carried by this status's own decaySpeed below, so it can be retuned per-item or influenced by other effects without touching code.",
+        "decay_reasoning": "decaySpeed tuned so ~50 severity (one dose, clamped to the top variant) decays to 0 in ~5 days (7200 min): the midpoint of the real-world range (median ~2 days for levonorgestrel, ~6 days for ulipristal acetate to ovulation once dosed in the late follicular phase), modeled here as a single unified item rather than two separate real-world drugs.",
+        "neutral_default": "Default value is severity 0 (status absent) so any character never given the item behaves exactly as before this feature was added."
+    },
+    "Status": {
+        "list": [
+            {
+                "statusID": "chara_status_contraceptive_emergency",
+                "_comment": "Applied by consumable_medicine_contraceptive_emergency. Severity spikes near 50 on dose, then decays naturally back to 0 over about 5 in-game days if not redosed.",
+                "variationMode": {
+                    "baselineVariation": {
+                        "$type": "Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                        "baseValue": 0,
+                        "decaySpeed": 0.00694,
+                        "_decaySpeed_note": "severity/minute. ~50 severity / 0.00694 per min =~ 7200 min =~ 5 days to fully decay."
+                    }
+                },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    {
+                        "displayName": "chara_status_contraceptive_emergency_1",
+                        "threshold": 50,
+                        "_note": "No stat_modifiers - this status is only ever queried for presence (severity > 0) by ReproductionCycle."
+                    }
+                ]
+            }
+        ]
+    },
+    "Items": {
+        "list": [
+            {
+                "id": "consumable_medicine_contraceptive_emergency",
+                "displayName": "Emergency Contraceptive Pill",
+                "tooltip": "A single high-dose oral contraceptive tablet. Taken after the fact, it delays ovulation for several days if the cycle hasn't ovulated yet - it does nothing once ovulation has already occurred.",
+                "Tags": ["consumable","industrial","rarity_common", "medicine","additive"],
+                "value": 120,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "_note": "Single larger dose than the daily pill, absorbed a bit faster for urgent use (~1hr onset vs ~1.5hr), dose sized to push chara_status_contraceptive_emergency to its 50-severity ceiling (20*3=60 delivered, comfortably clamps to 50).",
+                            "ingestMethod": [
+                                {
+                                    "bodyTags": "stomach",
+                                    "digestSpeed": -3,
+                                    "digestDelay": 60,
+                                    "digestDelayVariation": 15,
+                                    "amountMod": 3,
+                                    "giveStatus": "chara_status_contraceptive_emergency"
+                                }
+                            ],
+                            "amount": 20
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_contraceptive_emergency_1": "Emergency Contraceptive",
+
+                "consumable_medicine_contraceptive_emergency": "Emergency Contraceptive Pill"
+            },
+            "zh-cn": {
+                "chara_status_contraceptive_emergency_1": "紧急避孕",
+                "chara_status_contraceptive_emergency_tooltip": "该角色的排卵周期会被暂时性地延后",
+
+                "consumable_medicine_contraceptive_emergency": "紧急避孕药",
+                "consumable_medicine_contraceptive_emergency_tooltip": "单次高剂量口服避孕药。在即将排卵前服用，会在药效持续的数日内延迟排卵；若已经排卵则无效。"
+            }
+        }
+    }
+}

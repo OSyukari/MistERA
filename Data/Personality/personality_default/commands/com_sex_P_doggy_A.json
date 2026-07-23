@@ -23,7 +23,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "doggy",
@@ -39,7 +39,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -69,7 +69,7 @@
                             "requirement": {
                                 "requirePermission": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -90,7 +90,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -106,7 +106,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -142,7 +142,7 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -166,7 +166,7 @@
                                     "timestop"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -195,7 +195,7 @@
                                             "justWokenUp"
                                         ]
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sorry",
                                         "disgusted",
                                         "disappointed",
@@ -210,7 +210,7 @@
                                             "requirement": {
                                                 "requirePermission": true
                                             },
-                                            "extraPortraitTags": [
+                                            "extraSelfPortraitTags": [
                                                 "sorry",
                                                 "disgusted",
                                                 "disappointed",
@@ -239,7 +239,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -260,7 +260,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -278,7 +278,7 @@
                                 }
                             ],
                             "_comment": "2.2.4 指令失败拒绝 被后背位A 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust",
                                 "surprised",
@@ -304,7 +304,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "doggy",
@@ -326,7 +326,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "doggy",
@@ -346,7 +346,7 @@
                                 }
                             ],
                             "_comment": "2.2.8 玩家专用 刚睡醒时的 被后背位A 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -379,7 +379,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "doggy",
@@ -397,7 +397,7 @@
                                 }
                             ],
                             "_comment": "2.2.5 ($self$) 被后背位A 结果正面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",
@@ -420,7 +420,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "doggy",
@@ -440,7 +440,7 @@
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 被后背位A 结果负面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "doggy",

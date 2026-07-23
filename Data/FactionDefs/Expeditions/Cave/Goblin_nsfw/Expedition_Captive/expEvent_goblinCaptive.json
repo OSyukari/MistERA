@@ -70,8 +70,8 @@
                                         },
                                         {
                                             "parameters": [
-                                                "HasBaseID",
-                                                "creature_humanoid_goblin"
+                                                "HasActorKeyword",
+                                                "goblin"
                                             ]
                                         },
                                         {

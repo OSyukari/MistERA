@@ -223,6 +223,17 @@ public partial class EvaluationPackage : I_ResultStorage
         else if (this.ReceiverRef == refID) return this.ReceiverSelfTag;
         else return new List<string>();
     }
+
+    /// <summary>
+    /// Tags describing the OTHER participant in this EP relative to refID (i.e. what refID's interaction partner is doing/experiencing).
+    /// Mirrors GetActorEPTags but resolves to the counterpart role instead of refID's own role.
+    /// </summary>
+    public List<string> GetActorEPTargetTags(int refID)
+    {
+        if (this.DoerRef == refID) return this.ReceiverTargetTag;
+        else if (this.ReceiverRef == refID) return this.DoerTargetTag;
+        else return new List<string>();
+    }
     [JsonIgnore]
     public Memory_Attitude ReceiverAttitude
     {
@@ -1764,7 +1775,7 @@ public partial class EvaluationPackage : I_ResultStorage
         {
             var newTags2 = new List<string>(newTags);
             newTags2.Add("pain");
-            body.Owner.Stats.AddOrModStatus("chara_status_pain", (float)pain);
+            body.Owner.Stats.AddOrModStatus("chara_status_pain_sex", (float)pain);
             body.Owner.Skills.CheckExperienceGain(newTags2, isDoer ? ReceiverTargetTag : DoerTargetTag, (float)pain, isDoer, m.exp);
         }
         if (expansion > 0)

@@ -49,7 +49,6 @@ public class StatusEx_Base
     public bool constant = false;
     public string stringFormat = "N1";
     public string DeferredTooltipStatusEXID = "";
-    public bool allowOvercap = false;
     public bool capModded = false;
     [JsonIgnore] public bool isValid
     {
@@ -83,7 +82,8 @@ public class StatusEx_Base
         None = 0,
         summation,
   //      condition,
-        statModifiers
+        statModifiers,
+        summation_capmod
     }
 
     public Variations variationMode = null;
@@ -152,7 +152,7 @@ public class StatusEx_Instance : I_CacheValues
     public void ReEstablishParent(I_StatsManager stats)
     {
         this.owner = stats;
-        storage = new StatModStorage(owner, 0, 1, 0, 1, -999,999, this.BaseRef.capModded, this.BaseRef.allowOvercap);
+        storage = new StatModStorage(owner, 0, 1, 0, 1, -999,999, this.BaseRef.capModded);
     }
 
     [JsonProperty] protected float severity = 0;
@@ -190,10 +190,25 @@ public class StatusEx_Instance : I_CacheValues
         text.SetExternalTooltip(tooltip);
     }
 
+    int _cacheVersion = -1;
+    /// <summary>
+    /// Lazily drop the cached compute when the owner's modifier universe changed since it ran.
+    /// </summary>
+    void SyncCacheVersion()
+    {
+        if (owner == null) return;
+        if (_cacheVersion != owner.StatModsVersion)
+        {
+            _cacheVersion = owner.StatModsVersion;
+            _cached = false;
+        }
+    }
+
     [JsonIgnore] public float Severity
     {
         get
         {
+            SyncCacheVersion();
             if (!_cached) ClearCache();
             var first = BaseRef.variants[0];
             var last = BaseRef.variants[BaseRef.variants.Count - 1];
@@ -202,11 +217,30 @@ public class StatusEx_Instance : I_CacheValues
         }
     }
 
+    [JsonIgnore] readonly List<string> _extraTooltips = new List<string>();
+    [JsonIgnore] bool _extraTooltipsDirty = false;
+    [JsonIgnore] readonly List<Stat_Modifier> _modScratch = new List<Stat_Modifier>();
+
     [JsonIgnore] public string ModString
     {
         get
         {
+            SyncCacheVersion();
             if (!_cached) ClearCache();
+            if (_extraTooltipsDirty)
+            {
+                _extraTooltips.Clear();
+                foreach (var inst in owner.FindStatusByID(BaseRef.variationMode.stringData))
+                {
+                    // A source currently sitting in a non-displayable ("no effect") variant has
+                    // nothing to report. Checked via the variant flag rather than raw Severity==0,
+                    // since capmod sources report their own SeverityIndex, not a comparable number —
+                    // their "worst" tier is not guaranteed to sit at severity>0.
+                    if (!inst.SeverityDisplayable) continue;
+                    _extraTooltips.Add($"{inst.BaseRef.DisplayName} {inst.Severity.ToString(inst.BaseRef.stringFormat)}");
+                }
+                _extraTooltipsDirty = false;
+            }
             return $"{storage.Print()} -> {storage.Value}";
         }
     }
@@ -229,17 +263,50 @@ public class StatusEx_Instance : I_CacheValues
             storage.Reset();
             float i = severity;
             storage.SetBase(i, 1);
-            List<string> s = new List<string>();
 
             List<Status_Instance> listSI = owner.FindStatusByID(BaseRef.variationMode.stringData);
             foreach (var inst in listSI)
             {
                 i += inst.Severity;
-                s.Add(inst.ID + " " + inst.Severity);
             }
             storage.SetFinalOverride(i, 1);
-            storage.SetExternalTooltip(s);
+            // tooltip strings are built lazily in ModString when UI reads them
+            _extraTooltipsDirty = true;
+            storage.SetExternalTooltip(_extraTooltips);
 
+            _cached = true;
+        }
+        else if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.summation_capmod)
+        {
+            // Reports the single worst contributor's SeverityIndex — not a sum, and not a raw-severity
+            // copy (contributors live on unrelated/signed scales). SeverityIndex is comparable across
+            // sources because it's a position on each source's own ladder; this StatusEx takes that
+            // position and displays purely from ITS OWN variant data at the (clamped) index — it does
+            // not borrow the winning source's own labels/tags. This only works if this StatusEx's own
+            // variant list is comprehensive enough to describe every level any contributor can reach
+            // (none..shock/unconscious etc); the clamp below is a safety net, not the intended path.
+            storage.Reset();
+            storage.SetBase(0, 1);
+
+            Status_Instance winner = null;
+            int winnerIndex = 0;
+            foreach (var inst in owner.FindStatusByID(BaseRef.variationMode.stringData))
+            {
+                if (!inst.SeverityDisplayable) continue;
+                int index = inst.SeverityIndex;
+                if (winner == null || index > winnerIndex)
+                {
+                    winner = inst;
+                    winnerIndex = index;
+                }
+            }
+
+            int clampedIndex = winner == null ? 0 : Math.Clamp(winnerIndex, 0, BaseRef.variants.Count - 1);
+            storage.SetFinalOverride(clampedIndex, 1);
+            _extraTooltipsDirty = true;
+            storage.SetExternalTooltip(_extraTooltips);
+
+            _capmodIndexOverride = clampedIndex;
             _cached = true;
         }
         else if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.statModifiers)
@@ -251,17 +318,23 @@ public class StatusEx_Instance : I_CacheValues
             severity = initialValue;
             storage.SetBase(initialValue, 1);
 
-            var list = new List<Stat_Modifier>();
-            list.AddRange(owner.GetModifiers(this, BaseRef.statusID));
-            if (BaseRef.constant && BaseRef.noDisplay && BaseRef.capModded && owner.Owner.Relationships != null) list.AddRange(owner.Owner.Relationships.GetMoodlet(BaseRef.statusID));
+            _modScratch.Clear();
+            owner.GetModifiers(_modScratch, this, BaseRef.statusID);
+            if (BaseRef.constant && BaseRef.noDisplay && BaseRef.capModded && owner.Owner.Relationships != null) _modScratch.AddRange(owner.Owner.Relationships.GetMoodlet(BaseRef.statusID));
 
-            float finalResult = UtilityEX.ParseStatMods(this, storage, list);
+            float finalResult = UtilityEX.ParseStatMods(this, storage, _modScratch);
             storage.SetFinalOverride(finalResult, 1);
 
             _cached = true;
         }
-        _severityIndex = -1;
+        // capmod's index is set directly from the winner selection above; every other type re-derives
+        // it lazily from its own thresholds via UpdateIndex()
+        if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.summation_capmod)
+            _severityIndex = _capmodIndexOverride;
+        else _severityIndex = -1;
     }
+
+    [JsonIgnore] int _capmodIndexOverride = 0;
 
     [JsonIgnore] public string SeverityDisplayName
     {
@@ -284,10 +357,12 @@ public class StatusEx_Instance : I_CacheValues
 
 
     protected int _severityIndex = -1;
-    protected int SeverityIndex
+    public int SeverityIndex
     {
         get
         {
+            SyncCacheVersion();
+            if (!_cached) ClearCache();
             if (_severityIndex == -1) _severityIndex = UpdateIndex();
             return _severityIndex;
         }

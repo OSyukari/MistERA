@@ -170,6 +170,16 @@ public class Stat_Modifier
     float _valueFloat = 0f;
 
     /// <summary>
+    /// Mutates a script-owned numeric modifier without allocating. valueString is left stale by design.
+    /// </summary>
+    public void SetNumber(float value)
+    {
+        this.valueType = Stat_Modifier_Type.number;
+        this._valueFloat = value;
+        this.init = true;
+    }
+
+    /// <summary>
     /// Only use this when creating statMod by script
     /// </summary>
     /// <param name="vType"></param>

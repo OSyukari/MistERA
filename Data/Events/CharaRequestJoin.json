@@ -167,7 +167,7 @@
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "br_choice",
                         "portraitRefKey": "self",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "curious"
                         ],
                         "question": "event_RequestJoin_Job_ev01",
@@ -227,7 +227,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_refuse",
                         "portraitRefKey": "self",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "awkward",
                             "disappointed"
                         ],
@@ -276,7 +276,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_join",
                         "portraitRefKey": "self",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "happy",
                             "confident"
                         ],

@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Traits.json. Holds en-us entries for the trait_AlcoholTolerance_* variant tooltips."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "trait_AlcoholTolerance_verybad_tooltip": "%%trait_AlcoholTolerance_tooltip%%\nGets drunk after just a small sip",
+                "trait_AlcoholTolerance_bad_tooltip": "%%trait_AlcoholTolerance_tooltip%%\nGets drunk more easily",
+                "trait_AlcoholTolerance_good_tooltip": "%%trait_AlcoholTolerance_tooltip%%\nNot easily drunk",
+                "trait_AlcoholTolerance_verygood_tooltip": "%%trait_AlcoholTolerance_tooltip%%\nVery hard to get drunk",
+                "trait_AlcoholTolerance_insensitive_tooltip": "%%trait_AlcoholTolerance_tooltip%%\nDoes not react to alcohol at all"
+            }
+        }
+    }
+}

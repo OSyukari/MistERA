@@ -132,7 +132,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "loadevent",
         "modexperience",
         "modrelationshipwith",
-        "modpersonalityscore"
+        "modpersonalityscore",
+        "ingestItem"
     };
 
     string[] devConsoleCommands = new string[]

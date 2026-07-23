@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for COM_daily.json. Holds en-us entries for the topic-based talk interaction variants. Tense/style matched to the already-translated non-topic siblings (com_interaction_talk_begin_1/2/3, displayName_2) in the same file."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_interaction_talk_begin_1_topic": "$doer.firstname$ started chatting with $receiver.firstname$ about $topic$ without much focus",
+                "com_interaction_talk_begin_2_topic": "$doer.firstname$ started chatting with $receiver.firstname$ about $topic$ nonchalantly",
+                "com_interaction_talk_begin_3_topic": "$doer.firstname$ casually chatted with $receiver.firstname$ about $topic$",
+                "com_interaction_talk_displayName_1_topic": "Chat about $topic$",
+                "com_interaction_talk_displayName_2_topic": "Chat Together about $topic$"
+            }
+        }
+    }
+}

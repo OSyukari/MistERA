@@ -544,11 +544,11 @@
             "en-us": {
                 "trait_FatigueResistance": "Fatigue Resistance",
                 "trait_FatigueResistance_tooltip": "At what stamina percentage physical output starts degrading.",
-                "trait_FatigueResistance_low": "%%trait_FatigueResistance%%: Quick to Tire",
+                "trait_FatigueResistance_low": "%%trait_FatigueResistance%%: Low",
                 "trait_FatigueResistance_low_tooltip": "%%trait_FatigueResistance_tooltip%%\nFatigues at 55% stamina instead of the default 40%.",
                 "trait_FatigueResistance_default": "%%trait_FatigueResistance%%: Default",
                 "trait_FatigueResistance_default_tooltip": "%%trait_FatigueResistance_tooltip%%\nFatigues at 40% stamina (default).",
-                "trait_FatigueResistance_high": "%%trait_FatigueResistance%%: Gritty",
+                "trait_FatigueResistance_high": "%%trait_FatigueResistance%%: High",
                 "trait_FatigueResistance_high_tooltip": "%%trait_FatigueResistance_tooltip%%\nFatigues at 25% stamina instead of the default 40%.",
 
                 "trait_PhysicalVitality": "Physical Vitality",

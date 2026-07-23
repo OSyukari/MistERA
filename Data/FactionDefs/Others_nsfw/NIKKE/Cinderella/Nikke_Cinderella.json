@@ -8,7 +8,7 @@
     "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
     "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
 
-    "RequireContextKeys":["sex","doer"],
+    "RequireSelfContextKeys":["sex","doer"],
     "Variants":
     [    
         {  "tagsMatch":["rimjob"], "PortraitVariantData":["cinderella_after/237.webp","cinderella_after/238.webp","cinderella_after/239.webp"] },
@@ -31,7 +31,7 @@
     "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
     "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
 
-    "RequireContextKeys":["sex","receiver"],
+    "RequireSelfContextKeys":["sex","receiver"],
     "Variants":
     [    
         {  "tagsMatch":["doggy"], "PortraitVariantData":["cinderella_after/169.webp","cinderella_after/170.webp",  "cinderella_after/171.webp"] },   
@@ -47,7 +47,7 @@
     "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
     "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
 
-    "RequireContextKeys":["sex"],
+    "RequireSelfContextKeys":["sex"],
     "Variants":
     [    
         {  "tagsMatch":["cum"], "PortraitVariantData":["cinderella_after/164.webp","cinderella_after/165.webp"] },
@@ -70,7 +70,7 @@
     "icon_offset_y":0.0,
 "icon_offset_size":1.13,
 
-    "RequireContextKeys":["combat"],
+    "RequireSelfContextKeys":["combat"],
     "icon_path":"Cinderella/si_c511_00_s.png",
   "Variants":
   [  

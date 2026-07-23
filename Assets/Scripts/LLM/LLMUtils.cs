@@ -497,12 +497,17 @@ public class LLMMessage
     }
 
     
-    public class MessageParagraph
+    public class MessageParagraph : I_hasPortrait
     {
         public string content_text;
         public int portraitRefID = -1;
         public List<string> portraitTags = new List<string>();
         public string CommandID;
+
+        [JsonIgnore]
+        public List<string> SelfPortraitTag { get { return portraitTags; } }
+        [JsonIgnore]
+        public List<string> TargetPortraitTag { get { return new List<string>(); } }
     }
 
     public class MessageJSON_blocks
@@ -751,6 +756,7 @@ public class LLM_WorldState
         //public Dictionary<string, string> schedule = null;
         public string LorebookEntry = null;
         public List<string> ValidPortraitTags = new List<string>();
+        public List<string> ValidPortraitTags_target = new List<string>();
 
         public class RelationshipStorage
         {
@@ -908,7 +914,7 @@ public class LLM_WorldState
 
                 if (c.PortraitManager != null)
                 {
-                    c.PortraitManager.CollectAllTags(ref this.ValidPortraitTags);
+                    c.PortraitManager.CollectAllTags(ValidPortraitTags, ValidPortraitTags_target);
                 }
             
             }

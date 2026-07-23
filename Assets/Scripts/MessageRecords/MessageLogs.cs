@@ -7,6 +7,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+public interface I_hasPortrait
+{
+    [JsonIgnore]
+    public List<string> SelfPortraitTag { get; }
+    [JsonIgnore]
+    public List<string> TargetPortraitTag { get; }
+}
+
 
 /// <summary>
 /// Not serialized. Everything contained in this manager is thrown away.
@@ -226,15 +234,16 @@ public class Message_Text : MessageLog
         if (messages != null) this.Messages = messages;
         this.tooltip = tooltip;
     }
-    public Message_Text(List<Character_Trainable> charas,List<string> tags,  List<Message> messages = null, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(charas, tags, time, parentEvent)
+    public Message_Text(List<Character_Trainable> charas, I_hasPortrait handler,  List<Message> messages = null, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(charas, handler, time, parentEvent)
     {
         if (messages != null) this.Messages = messages;
         this.tooltip = tooltip;
     }
-    public Message_Text(Character_Trainable chara, List<string> tags, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , tags, time, parentEvent)
+    public Message_Text(Character_Trainable chara, I_hasPortrait handler, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , handler, time, parentEvent)
     {
-        this.tagsOverride = tags;
-        if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
+        this.tagsOverride_self = handler == null ? new List<string>() : handler.SelfPortraitTag;
+        this.tagsOverride_target = handler == null ? new List<string>() : handler.TargetPortraitTag;
+        if (tagsOverride_self != null && tagsOverride_self.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride_self)}");
 
         AddMessage(messages, rA);
         this.tooltip = tooltip;
@@ -252,7 +261,8 @@ public class Message_Text : MessageLog
     {
         var chara = scr_System_CampaignManager.current.FindInstanceByID(m.PortraitRefID);
         this.PortraitRef = chara == null ? null : chara.PortraitManager;
-        this.tagsOverride = m.portraitTags;
+        this.tagsOverride_self = m.selfPortraitTag;
+        this.tagsOverride_target = m.targetPortraitTag;
 
         //if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
 
@@ -287,7 +297,8 @@ public class Message_Text : MessageLog
         if (replaceStrings != null) foreach (var kvp in replaceStrings) msg = msg.Replace(kvp.Key, kvp.Value);
         AddMessage(msg, rightAlign);
         this.tooltip = desc.tooltip;
-        this.tagsOverride = desc.displayTagsOverride;
+        this.tagsOverride_self = desc.displayTagsOverride_Self;
+        this.tagsOverride_target = desc.displayTagsOverride_Target;
 
         //if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
 
@@ -302,7 +313,7 @@ public class Message_Text : MessageLog
         get 
         {
             if (this.Messages.Any(x => !x.rightAlign)) return true;
-            return (multipleChara.Count > 0 || PortraitRef != null) && tagsOverride.Count > 0;
+            return (multipleChara.Count > 0 || PortraitRef != null) && SelfPortraitTag != null && SelfPortraitTag.Count > 0;
         } 
     }
     /// <summary>
@@ -418,7 +429,7 @@ public class Message_LLMQuery : MessageLog
 
     public Message_LLMQuery(PortraitManager portraitRef, List<string> tags, LLMRequest request, DateTime time = default) : base(portraitRef, time, null)
     {
-        this.tagsOverride = tags;
+        this.tagsOverride_self = tags;
         this.request = request;
     }
 
@@ -453,7 +464,7 @@ public class Message_LLMQuery : MessageLog
 
 }
 
-public abstract class MessageLog
+public abstract class MessageLog : I_hasPortrait
 {
     public bool displayed = false;
     public bool autoAnimate = false;
@@ -474,7 +485,8 @@ public abstract class MessageLog
 
     public PortraitManager PortraitRef = null;
     public List<Character_Trainable> multipleChara = new List<Character_Trainable>();
-    public List<string> tagsOverride = new List<string>();
+    public List<string> tagsOverride_self = new List<string>();
+    public List<string> tagsOverride_target = new List<string>();
     public abstract bool DisplaPortrait { get; }
     public bool WaitForPortrait
     {
@@ -496,11 +508,12 @@ public abstract class MessageLog
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();
     }
-    public MessageLog(List<Character_Trainable> multipleChara, List<string> tagsOverride, DateTime time = default, EventInstance parentEvent = null)
+    public MessageLog(List<Character_Trainable> multipleChara, I_hasPortrait handler, DateTime time = default, EventInstance parentEvent = null)
     {
         multipleChara.RemoveAll(x => x == null);
         this.multipleChara = multipleChara;
-        this.tagsOverride = tagsOverride;
+        this.tagsOverride_self = handler.SelfPortraitTag;
+        this.tagsOverride_target = handler.TargetPortraitTag;
         this.parentEvent = parentEvent;
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();
@@ -521,7 +534,8 @@ public abstract class MessageLog
         else return false;
        // else Debug.Log("Skipped drawing!");
     }
-
+    [JsonIgnore] public List<string> SelfPortraitTag { get { return this.tagsOverride_self; } }
+    [JsonIgnore] public List<string> TargetPortraitTag { get { return this.tagsOverride_target; } }
     public bool ForceDraw()
     {
         if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits)
@@ -530,10 +544,10 @@ public abstract class MessageLog
 
         }
         
-        if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, tagsOverride);
+        if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, this);
         else if (this.multipleChara.Count > 0)
         {
-            var result = scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, tagsOverride);
+            var result = scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, this);
             if (result == null) return false;
             else return result.Owner.RefID != 0;
         }

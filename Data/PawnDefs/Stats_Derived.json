@@ -379,7 +379,6 @@
                 "stats_derived_extended_energy": "Energy",
                 "stats_derived_extended_energy_tooltip": "Consumed when performing social, mental, and focused tasks\nMaximum is %%stats_base_Willpower%%*10 + other modifiers\nRecovers via sleep or rest\nWhen Energy is too low, character mood decreases, %%notimplemented%%",
                 "stats_derived_extended_stamina": "Stamina",
-                "stats_derived_extended_stamina_tooltip": "Consumed when performing physical labor\nMaximum is %%stats_base_Constitution%%*10 + other modifiers\nRecovers via sleep or rest\nWhen Stamina is too low, character enters a fatigued state, %%notimplemented%%",
 
                 "stats_derived_hp_max": "Max HP",
                 "stats_derived_hp_max_tooltip": "%%stats_derived_extended_hp_tooltip%%",

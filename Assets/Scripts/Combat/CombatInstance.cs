@@ -874,6 +874,7 @@ public class CombatInstance
 
         var hpdmg = Mathf.Ceil(-amount - posDmg);
         stat.HP.ModValue(hpdmg);
+        if (hpdmg < 0) stat.AddOrModStatus("chara_status_pain_physical", -hpdmg);
         ActorStats[target.RefID].Reset(this);
         from.AddFinalMessage(LocalizeDictionary.QueryThenParse("ActionResult_tooltip_receiveDamage")
             .Replace("$self$", GetName(target.RefID))

@@ -157,7 +157,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonIgnore] public int NightStartHour => HasDayNight ? (activeHoursEnd + 1) % 24 : 0;
     [JsonIgnore] public int NightEndHour => HasDayNight ? (activeHoursStart - 1) % 24 : 0;
 
-    public MealManager mealManager = new MealManager();
+
+    [JsonProperty] protected MealManager meal = null;
+    [JsonIgnore] public MealManager MealManager 
+    { get
+        {
+            if (meal == null) meal = new MealManager(this);
+            return meal;
+        }
+    }
+
 
     public bool isMealHourAt(int hour)
     {
@@ -382,7 +391,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         
         Inventory.UpdateTimeMinute(t);
-        mealManager.OnTimeUpdate(t);
+        MealManager.OnTimeUpdate(t);
 
     }
     
@@ -2193,7 +2202,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         foreach (var p in TradeOrders) p.ReEstablishParent(this);
         if (this.managedRoomRefs != null) foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
         if (this.Inventory != null) this.Inventory.ReEstablishParent(this);
-        if (this.mealManager != null) mealManager.ReEstablishParent(this);
+        if (this.MealManager != null) MealManager.ReEstablishParent(this);
 
         foreach (var p in this.SubFactions) p.ReEstablishParent(this);
 

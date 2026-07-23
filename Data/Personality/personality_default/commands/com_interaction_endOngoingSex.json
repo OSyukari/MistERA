@@ -25,7 +25,7 @@
                                         }
                                     },
                                     "useActiveTags": false,
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -47,7 +47,7 @@
                                             "value": "3"
                                         }
                                     ],
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -62,7 +62,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
                                 "sleeping",
@@ -94,7 +94,7 @@
                                         }
                                     },
                                     "useActiveTags": false,
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -109,7 +109,7 @@
                                     "keepLooking": true
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver"
                             ],
@@ -132,7 +132,7 @@
                                             "value": "3"
                                         }
                                     ],
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -147,7 +147,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver"
                             ],
@@ -174,7 +174,7 @@
                                         }
                                     },
                                     "useActiveTags": false,
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -198,7 +198,7 @@
                                             }
                                         ]
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -213,7 +213,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver"
                             ],
@@ -240,7 +240,7 @@
                                         }
                                     },
                                     "useActiveTags": false,
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -263,7 +263,7 @@
                                             "value": 3
                                         }
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -285,7 +285,7 @@
                                             "value": "3"
                                         }
                                     ],
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -300,7 +300,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver"
                             ],
@@ -313,7 +313,7 @@
                         },
                         {
                             "requirement": {
-                                "requirePermission": true
+                                "requirePermission": false
                             },
                             "variants": [
                                 {
@@ -327,7 +327,7 @@
                                         }
                                     },
                                     "useActiveTags": false,
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -350,7 +350,7 @@
                                             "value": 3
                                         }
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -372,7 +372,7 @@
                                             "value": "3"
                                         }
                                     ],
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
                                         "love",
@@ -387,7 +387,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver"
                             ],
@@ -406,82 +406,82 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_interaction_endOngoingSex_Sleeping_Semen_1": "$self$翻身时感到一股温热粘稠的液体顺着大腿内侧滑落，这种异样的触感让她在睡梦中不安地蹭了蹭腿，嘴里嘟囔着听不清的梦话，却并不知道那是一大滩浓稠的精液。",
-                "com_interaction_endOngoingSex_Sleeping_Semen_2": "随着$self$的呼吸，从两腿之间溢出的白色浊液已经浸透了身下的床单。她在这个充满石楠花气味的被窝里睡得毫无防备，浑然不知自己体内已经被灌得满满当当。",
-                "com_interaction_endOngoingSex_Sleeping_Satisfied_1": "$self$在一阵从未体验过的美妙余韵中翻了个身，嘴角还挂着甜腻的笑意。梦里的触感太过真实，以至于醒来时大腿根部还在微微抽搐。她迷迷糊糊地把脸埋进枕头，试图抓住那稍纵即逝的快感尾巴，丝毫没有察觉到床单上那片濡湿的痕迹。",
-                "com_interaction_endOngoingSex_Sleeping_Satisfied_2": "$self$发出了一声满足的嘤咛，身体像猫一样蜷缩起来。虽然意识还在沉睡，但身体深处那股仿佛被填满的充实感让她睡得格外香甜，连呼吸都带着几分情欲未消的潮热。",
-                "com_interaction_endOngoingSex_Sleeping_Normal_1": "$self$只是皱了皱眉，感觉下半身有些莫名其妙的凉意，下意识地扯过被子盖住了身体。沉重的睡意很快淹没了这点细微的不适，她调整了一个舒服的姿势，呼吸再次变得绵长而均匀。",
-                "com_interaction_endOngoingSex_Sleeping_Normal_2": "$self$在睡梦中无意识地并拢了双腿，眉头微微舒展。刚才那种仿佛有异物入侵的奇怪感觉消失了，取而代之的是一种沉沉的疲惫感，让她根本不想睁开眼睛确认状况。",
-                "com_interaction_endOngoingSex_TimeStop_Semen_1": "在静止的时间里，液体本该停止流动，但$self$的小腹却因为被灌入了过量的异物而微微隆起。在那紧闭的腿根深处，浓稠的白浊已经积蓄到了极限，正无视重力规则地在那紧窄的肉壁间挤压，只等时间流动的那一秒，就会如决堤般从裙底喷涌而出。",
-                "com_interaction_endOngoingSex_TimeStop_Semen_2": "尽管$self$的内裤已经被重新穿好，但布料的纤维已经因吸收了过多满溢的精液而变得半透明。那股湿热沉重的液体填满了她体内的每一寸空隙，沉甸甸地坠在她的耻骨之间，随时准备在时间恢复的瞬间，给她带来一场毁灭性的羞耻洗礼。",
-                "com_interaction_endOngoingSex_TimeStop_Normal_1": "$self$依旧保持着原本的姿势僵立在原地，眼皮都没有眨动一下。然而如果仔细观察，会发现原本整洁的衣领下透出一抹不自然的潮红，胸口的起伏被强行定格，但皮肤表面却覆盖着一层细密的汗珠，仿佛刚刚经历了一场剧烈的运动。",
-                "com_interaction_endOngoingSex_TimeStop_Normal_2": "$self$手中的文件还停留在翻页的那一瞬间，神情专注而平静。唯有她的双腿因为刚才被强行分开太久，此刻即便被摆回了并拢的姿势，肌肉依然处于某种奇怪的僵硬状态，膝盖处有着几道未消退的指痕，在静止的时空里显得触目惊心。",
-                "com_interaction_endOngoingSex_TimeStop_Normal_3": "$self$就像一尊精美的蜡像，连发丝飘动的角度都纹丝未动。但在那看起来毫无破绽的衣物遮蔽下，私处的软肉因为过度摩擦而处于充血肿胀的状态，那里的温度高得吓人，在这凝固的时间里独自滚烫着。",
-                "com_interaction_endOngoingSex_Masturbation_Satisfied_1": "$self$浑身瘫软地躺在床上，手指上还沾着亮晶晶的液体。刚才的高潮来得猛烈而彻底，让她的大脑一片空白。虽然房间里只有她一个人，但那种自我给予的快乐已经足够让她心满意足地睡个好觉。",
-                "com_interaction_endOngoingSex_Masturbation_Satisfied_2": "$self$抽出玩具扔在一边，大口大口地呼吸着新鲜空气。汗水打湿了她的刘海，她看着天花板，嘴角勾起一抹慵懒的笑。不需要男人，她依然能让自己爽上天。",
-                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_1": "$self$有些烦躁地把手从裙底抽出来，无论怎么弄都差了那么一点感觉。那种空虚感像个无底洞，越是想要填满就越是觉得寂寞。她把脸埋进枕头里，发出了一声挫败的叹息。",
-                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_2": "$self$看着自己湿漉漉的手指，心里涌起一股难以言喻的悲哀。仅仅是这种程度的刺激根本无法平息体内的躁动，反而让那种渴望被填满的欲望变得更加强烈。",
-                "com_interaction_endOngoingSex_Forced_Semen_1": "$self$绝望地看着对方离开的背影，而自己还得独自处理这满身的狼藉。那个混蛋留在她体内的东西太多了，多到她根本合不拢腿，稍微一动就会有令人作呕的液体涌出来，提醒着她刚才被当作精液容器的事实。",
-                "com_interaction_endOngoingSex_Forced_Semen_2": "$self$机械地用纸巾擦拭着大腿，但那源源不断的白浊依然从红肿的穴口溢出。她一边擦一边干呕，那种被彻底填满、弄脏的感觉让她觉得自己从里到外都散发着一股洗不掉的腥臭味。",
-                "com_interaction_endOngoingSex_Forced_Satisfied_1": "$self$瘫软在凌乱的床褥间，眼神空洞地盯着天花板，身体却还在因为刚才的高潮而时不时抽搐一下。泪水早已干涸在眼角，她羞耻地发现，比起被侵犯的恐惧，此刻占据大脑的竟然是那股难以启齿的满足感。",
-                "com_interaction_endOngoingSex_Forced_Satisfied_2": "$self$咬着嘴唇，试图遮掩住喉咙里那声尚未散去的呻吟。尽管理智在尖叫着拒绝，但身体却背叛了意志，在那粗暴的对待下诚实地达到了顶峰。她无力地垂下手，不想去面对这个因为快感而彻底堕落的自己。",
-                "com_interaction_endOngoingSex_Forced_Normal_1": "$self$像个破布娃娃一样被扔在一边，身上布满了青紫色的淤痕。那种被当作排泄工具使用的屈辱感让她浑身发抖，下身的撕裂痛楚时刻提醒着她刚才经历了什么，而对方早已提上裤子转身离去。",
-                "com_interaction_endOngoingSex_Forced_Normal_2": "$self$蜷缩在角落里，双手死死抱住膝盖。体内没有一丝快感，只有干涩的摩擦带来的火辣痛楚。她把脸埋进膝盖，听着对方整理衣物的声音，感觉自己像是一块被嚼烂后吐掉的口香糖。",
-                "com_interaction_endOngoingSex_Consensual_Semen_1": "$self$有些苦恼地夹着腿走向浴室，嘴里虽然在抱怨'你怎么弄了这么多在里面啊'，但眉眼间却带着一丝羞涩的笑意。那一地蜿蜒的痕迹不仅没有让她生气，反而成了两人亲密的证明。",
-                "com_interaction_endOngoingSex_Consensual_Semen_2": "$self$拿过毛巾想要擦拭，却发现那股热流怎么也止不住。'$target$，你这次是不是太夸张了点……'她红着脸嗔怪道，看着那满溢而出的爱液，心里泛起一股奇异的满足感。",
-                "com_interaction_endOngoingSex_Consensual_Pain_1": "$self$皱着眉头把$target$伸过来的手拍开，翻身背对着他。'别碰我，疼死了。'她没好气地抱怨道，下身传来的不适感让她此刻心情极差，完全不想理会对方的温存。",
-                "com_interaction_endOngoingSex_Consensual_Pain_2": "$self$一边穿衣服一边揉着被捏痛的手臂，脸上的表情冷若冰霜。'下次如果是这种水准，就别来找我了。'她冷冷地丢下这句话，径直走出了房间，连头都没回。",
-                "com_interaction_endOngoingSex_Consensual_Satisfied_1": "$self$懒洋洋地趴在$target$的胸口，手指在对方的锁骨上画着圈。刚刚那场激烈的欢爱耗尽了她所有的力气，现在的她只想在这温暖的怀抱里多赖一会儿，享受这份身心交融后的宁静余韵。",
-                "com_interaction_endOngoingSex_Consensual_Satisfied_2": "$self$在$target$穿衣服的时候从背后抱住了对方，脸颊贴在那宽阔的背上蹭了蹭。'下次还要这么用力哦……'她小声嘟囔着，语气里满是撒娇和依恋，显然对刚才的表现食髓知味。",
-                "com_interaction_endOngoingSex_Consensual_Desire_1": "$self$看着已经在穿裤子的$target$，有些失落地抿了抿嘴。身体里的火还没完全熄灭，对方却已经结束了。她只能默默地拉过被子盖住自己，心里盘算着等会儿是不是该去浴室自己解决一下。",
-                "com_interaction_endOngoingSex_Consensual_Desire_2": "$self$轻轻叹了口气，虽然嘴上说着'辛苦了'，但眼神却依然有些幽怨地飘向$target$的下半身。那种不上不下的感觉实在太难受了，让她在这一刻对枕边人产生了一丝微妙的嫌弃。",
-                "com_interaction_endOngoingSex_NoConsent_Semen_1": "$self$惊恐地发现即使穿好了内裤，那黏腻的感觉依然存在。这下麻烦大了，要是被别人发现她带着这种东西去上班……她焦急地在洗手间里处理着，心里把那个不知节制的家伙骂了一万遍。",
-                "com_interaction_endOngoingSex_NoConsent_Semen_2": "$self$感觉那股热流顺着大腿流了下来，差点弄脏了她的职业装。'你是疯了吗？射在里面让我怎么清理！'她压低声音怒吼道，对于这种可能留下证据的行为感到异常愤怒和恐慌。",
-                "com_interaction_endOngoingSex_NoConsent_Pain_1": "$self$狠狠地瞪了$target$一眼，用力擦了擦嘴角。'简直是灾难。'她低声咒骂了一句，对自己竟然同意和这种人发生关系感到无比恶心和后悔。现在的她只想赶紧回家洗个澡，把这糟糕的记忆冲刷干净。",
-                "com_interaction_endOngoingSex_NoConsent_Pain_2": "$self$面无表情地穿上外套，眼神里满是轻蔑。'作为同事你很优秀，但在这方面……以后还是保持距离吧。'她毫不留情地给出了差评，那种冷漠的态度瞬间拉开了两人的距离。",
-                "com_interaction_endOngoingSex_NoConsent_Satisfied_1": "$self$有些慌乱地整理着凌乱的衣领，脸上还带着尚未褪去的潮红。哪怕心里知道这不对，但刚才那种背德的快感确实让她爽到了极点。她不敢看$target$的眼睛，只能低头匆匆说了句'忘掉刚才的事'。",
-                "com_interaction_endOngoingSex_NoConsent_Satisfied_2": "$self$背靠着门板大口喘息，试图平复剧烈的心跳。这次越界的行为意外地合拍，让她在事后的贤者时间里既感到后悔，又隐隐期待着下一次的错误。",
-                "com_interaction_endOngoingSex_NoConsent_Desire_1": "$self$迅速地扣好扣子，脸上恢复了平时的冷淡。既然只是一次意外的冲动，没爽到也就没必要纠缠。她像没事人一样整理好裙摆，仿佛刚才那个赤身裸体的人根本不是她。'以后别再提这件事了。'",
-                "com_interaction_endOngoingSex_NoConsent_Desire_2": "$self$有些尴尬地避开了$target$的视线，空气中弥漫着一种说不出的别扭。既然双方都没有得到想要的结果，那这场荒唐的闹剧就该到此为止。她拿起包，头也不回地离开了现场。"
+                "com_interaction_endOngoingSex_Sleeping_Semen_1": "$self$翻身时，股间滑下几股温热黏稠的液体，顺着大腿内侧淌到床单上。\n\n她在睡梦中不安地蹭了蹭腿，嘴里嘟囔着听不清的梦话，并不知道那是从小穴里溢出来的精液。\n\n被用到发软的小穴合不拢，还有更多浊白正慢慢往外渗。",
+                "com_interaction_endOngoingSex_Sleeping_Semen_2": "随着$self$的呼吸，从两腿间溢出的浊白已经把身下的床单洇湿好几片。\n\n她在这个沾满腥气的被窝里睡得毫无防备，浑然不知自己体内已经被灌得满满当当。\n\n小腹沉甸甸地坠着，腿根黏腻得难受，却只在梦里皱了皱眉。",
+                "com_interaction_endOngoingSex_Sleeping_Satisfied_1": "$self$在从未有过的余韵里翻了个身，嘴角还挂着甜腻的笑。\n\n梦里的触感太过真实，以至于大腿根部到现在还在微微抽搐。\n\n她迷迷糊糊把脸埋进枕头，想抓住那阵快感的尾巴，丝毫没察觉床单上那片濡湿的痕迹。",
+                "com_interaction_endOngoingSex_Sleeping_Satisfied_2": "$self$发出满足的嘤咛，身子蜷了起来。\n\n意识还在沉睡，身体深处那股被填满的充实感却让她睡得格外香甜，连呼吸都带着几分情欲未消的潮热。\n\n小穴时不时抽缩几下，把残留的余韵慢慢消化掉。",
+                "com_interaction_endOngoingSex_Sleeping_Normal_1": "$self$只是皱了皱眉，感觉下半身有些莫名其妙的凉意，下意识扯过被子盖住了身体。\n\n沉重的睡意很快淹没了这点细微的不适。\n\n她换了个舒服的姿势，呼吸重新变得绵长均匀。",
+                "com_interaction_endOngoingSex_Sleeping_Normal_2": "$self$在睡梦里无意识地并拢了双腿，眉头微微舒展开。\n\n刚才那种有什么东西进来过的奇怪感觉消失了，取而代之的是沉沉的疲惫，让她根本不想睁眼确认。\n\n她翻了个身，又沉沉睡了过去。",
+                "com_interaction_endOngoingSex_TimeStop_Semen_1": "在静止的时间里，液体本该停止流动，可$self$的小腹却因为被灌了太多而微微隆起。\n\n紧闭的腿根深处，浓稠的浊白已经积到极限，无视重力在那紧窄的小穴里挤压。\n\n只等时间重新流动的瞬间，就会从裙底哗地涌出来。",
+                "com_interaction_endOngoingSex_TimeStop_Semen_2": "尽管$self$的内裤已经重新穿好，布料却因为吸了太多溢出来的精液而变得半透明。\n\n那股湿热沉重的东西填满了她体内每寸空隙，沉甸甸地坠在耻骨之间。\n\n随时准备在时间恢复的瞬间，给她兜头浇下满身羞耻。",
+                "com_interaction_endOngoingSex_TimeStop_Normal_1": "$self$依旧保持着原本的姿势僵立在原地，连眼皮都没眨。\n\n可若仔细看，整洁的衣领下透出几抹不自然的潮红，胸口起伏被强行定格，皮肤上却覆着密密的汗珠，汗味里混着那股事后的腥气。\n\n只是这凝固的世界里，谁也察觉不到。",
+                "com_interaction_endOngoingSex_TimeStop_Normal_2": "$self$手里的文件还停在翻页的瞬间，神情专注平静。\n\n唯有她的双腿因为被分开得太久，此刻就算被摆回并拢的姿势，肌肉仍僵得发僵，膝盖上还留着几道没消退的指痕。\n\n裙摆下的小穴也没能合拢，被用开的媚肉维持着张开的形状。",
+                "com_interaction_endOngoingSex_TimeStop_Normal_3": "$self$僵在那儿，连发丝飘动的角度都没变。\n\n可在那看似毫无破绽的衣物遮蔽下，小穴的软肉因为被过度磨弄而肿着，那里的温度烫得吓人。\n\n在这凝固的时间里，那股燥热独自滚着，无处发散。",
+                "com_interaction_endOngoingSex_Masturbation_Satisfied_1": "$self$浑身瘫软地躺在床上，手指上还沾着亮晶晶的淫液。\n\n刚才的高潮来得又猛又彻底，把她脑子冲得发白。\n\n房间里只剩她自己，可这种自己给自己的快乐已经够她心满意足地睡个好觉了。",
+                "com_interaction_endOngoingSex_Masturbation_Satisfied_2": "$self$抽出玩具随手丢开，大口大口地喘着气。\n\n汗水把刘海都打湿了，她盯着天花板，嘴角勾起懒洋洋的笑。\n\n小穴还在不自觉地连连缩着，把余韵慢慢磨完。",
+                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_1": "$self$有些烦躁地把手从裙底抽出来，怎么弄都差那么点感觉。\n\n那种空虚填不满，越想填就越觉得寂寞。\n\n她把脸埋进枕头，发出挫败的叹息，腿间还湿着，却怎么也爽不到。",
+                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_2": "$self$看着自己湿淋淋的手指，心里涌起难言的憋闷。\n\n就这点刺激根本压不住体内的燥，反而让那种渴望被填满的欲望烧得更旺。\n\n她烦躁地并拢腿磨了磨，最终还是放弃了。",
+                "com_interaction_endOngoingSex_Forced_Semen_1": "$self$绝望地看着那个人离开的背影，自己却还得独自收拾这满身的狼藉。\n\n留在她体内的东西太多了，多到她根本合不拢腿，随便动动就有令人作呕的液体涌出来。\n\n浊白顺着大腿往下淌，时刻提醒着她刚才被当成精液容器用了个彻底。",
+                "com_interaction_endOngoingSex_Forced_Semen_2": "$self$机械地用纸巾擦着大腿，可那源源不断的浊白还是从红肿的小穴口溢出来。\n\n她边擦边干呕，那种被填满、被弄脏的感觉让她觉得自己从里到外都散着股洗不掉的腥臭。\n\n纸巾用掉好几张，却怎么也擦不干净。",
+                "com_interaction_endOngoingSex_Forced_Satisfied_1": "$self$瘫在凌乱的床褥间，眼神空洞地盯着天花板，身子却还因为刚才的高潮时不时抽搐几下。\n\n眼泪早干在眼角，她羞耻地发现，比起被侵犯的恐惧，此刻占满脑子的竟是那股说不出口的满足。\n\n小穴还在不自觉地绞着空气，回味着那阵强来的快感。",
+                "com_interaction_endOngoingSex_Forced_Satisfied_2": "$self$咬着嘴唇，想遮住喉咙里那声还没散去的呻吟。\n\n理智在尖叫着拒绝，身体却背叛了意志，在那番粗暴对待下诚实地到了顶。\n\n她无力地垂下手，不想面对这个因为快感而彻底塌陷的自己。",
+                "com_interaction_endOngoingSex_Forced_Normal_1": "$self$被丢到角落里，身上布满青紫的淤痕。\n\n被当成发泄工具用的屈辱让她浑身发抖，下身撕裂的痛楚时刻提醒着她刚才经历了什么。\n\n那个人却早已提上裤子转身走了，连头都没回。",
+                "com_interaction_endOngoingSex_Forced_Normal_2": "$self$蜷缩在角落，双手死死抱住膝盖。\n\n体内没有半点快感，只有干涩摩擦带来的火辣辣的痛。\n\n她把脸埋进膝盖，听着对方整理衣物的动静，恨不得把自己缩进墙里。",
+                "com_interaction_endOngoingSex_Consensual_Semen_1": "$self$夹着腿别扭地往浴室走，嘴里抱怨着。\n\n\"你怎么弄了这么多在里面啊……\"\n\n可眉眼间却带着羞涩的笑，腿根蜿蜒淌下来的痕迹没让她生气，反倒成了两人亲密的证明。",
+                "com_interaction_endOngoingSex_Consensual_Semen_2": "$self$拿过毛巾想擦，却发现那股热流怎么也止不住。\n\n\"$target$，你这次是不是太夸张了点……\"\n\n她红着脸嗔怪，看着那满溢出来的精液混着自己的爱液，心里反倒泛起奇异的满足。",
+                "com_interaction_endOngoingSex_Consensual_Pain_1": "$self$皱着眉把$target$伸过来的手拍开，翻身背对着他。\n\n\"别碰我，疼死了。\"\n\n下身传来的不适让她此刻心情极差，半点不想理会对方的温存。",
+                "com_interaction_endOngoingSex_Consensual_Pain_2": "$self$边穿衣服边揉着被捏痛的手臂，脸上冷若冰霜。\n\n\"下次要是这种水准，就别来找我了。\"\n\n她冷冷丢下这句话，径直走出房间，连头都没回。",
+                "com_interaction_endOngoingSex_Consensual_Satisfied_1": "$self$懒洋洋地趴在$target$胸口，手指在对方锁骨上画着圈。\n\n刚才那场激烈的欢爱耗尽了她所有力气，现在她只想在这温暖的怀里多赖会儿。\n\n小穴还含着没全退出来的肉棒，时不时满足地缩几下，舍不得这阵交融的余韵。",
+                "com_interaction_endOngoingSex_Consensual_Satisfied_2": "$self$趁$target$穿衣服时从背后抱住他，脸颊贴上那宽阔的背蹭了蹭。\n\n\"下次还要这么用力哦……\"\n\n她小声嘟囔，语气满是撒娇和依恋，显然对刚才的表现食髓知味。",
+                "com_interaction_endOngoingSex_Consensual_Desire_1": "$self$看着已经在提裤子的$target$，有些失落地抿了抿嘴。\n\n身体里的火还没全灭，对方却已经结束了。\n\n她只能默默拉过被子盖住自己，盘算着等会儿是不是该去浴室自己接着弄。",
+                "com_interaction_endOngoingSex_Consensual_Desire_2": "$self$轻轻叹了口气，嘴上说着\"辛苦了\"，眼神却幽幽地飘向$target$的下半身。\n\n那种不上不下的感觉实在太难受，让她这会儿对枕边人生出几分微妙的嫌弃。\n\n腿间还空落落地渴着，怎么也填不满。",
+                "com_interaction_endOngoingSex_NoConsent_Semen_1": "$self$惊恐地发现，就算穿好了内裤，那股黏腻的感觉还是止不住。\n\n这下麻烦大了，要是被人发现她带着这东西去上班……\n\n她在洗手间里手忙脚乱地处理着，心里把那个不知节制的家伙骂了无数遍。",
+                "com_interaction_endOngoingSex_NoConsent_Semen_2": "$self$感觉那股热流顺着大腿流下来，差点弄脏了她的职业装。\n\n\"你疯了吗？射在里面让我怎么清理！\"\n\n她压低声音怒吼，对这种可能留下把柄的行为又气又慌。",
+                "com_interaction_endOngoingSex_NoConsent_Pain_1": "$self$狠狠瞪了$target$，用力擦了擦嘴角。\n\n\"简直是灾难。\"\n\n她低声咒骂，对自己竟和这种人做了感到无比恶心后悔，现在只想赶紧回家洗个澡，把这糟糕的记忆冲掉。",
+                "com_interaction_endOngoingSex_NoConsent_Pain_2": "$self$面无表情地穿好外套，眼里满是轻蔑。\n\n\"作为同事你很优秀，可这方面……以后还是保持距离吧。\"\n\n她毫不留情地甩下差评，那股冷漠瞬间把两人的距离拉得老远。",
+                "com_interaction_endOngoingSex_NoConsent_Satisfied_1": "$self$有些慌乱地整理着凌乱的衣领，脸上还带着没褪去的潮红。\n\n哪怕心里清楚这不对，可刚才那阵背德的快感确实让她爽到了顶。\n\n她不敢看$target$的眼睛，只低头匆匆说了句\"忘掉刚才的事\"。",
+                "com_interaction_endOngoingSex_NoConsent_Satisfied_2": "$self$背靠着门板大口喘着，想压下狂跳的心。\n\n这次越界竟然意外地合拍，让她在事后的清醒里既后悔，又隐隐盼着再犯同样的错。\n\n腿根还湿着，提醒她刚才发生的都是真的。",
+                "com_interaction_endOngoingSex_NoConsent_Desire_1": "$self$飞快地扣好扣子，脸上恢复了平日的冷淡。\n\n既然只是次意外的冲动，又没爽到，那就没必要纠缠。\n\n她若无其事地整理好裙摆，全当刚才那个赤身裸体的人不是自己。\"以后别再提这件事了。\"",
+                "com_interaction_endOngoingSex_NoConsent_Desire_2": "$self$有些尴尬地避开$target$的视线，空气里弥漫着说不出的别扭。\n\n既然双方都没得到想要的结果，那这场荒唐的闹剧就到此为止。\n\n她拿起包，头也不回地离开了现场。"
             },
             "en-us": {
-                "com_interaction_endOngoingSex_Sleeping_Semen_1": "As $self$ turned over, she felt a warm, sticky liquid sliding down her inner thigh. This strange sensation made her fidget restlessly in her sleep, mumbling unintelligible words, unaware that it was a large puddle of thick semen.",
-                "com_interaction_endOngoingSex_Sleeping_Semen_2": "With each breath $self$ took, the white cloudy fluid overflowing from between her legs had already soaked the sheets beneath her. Sleeping defenselessly in a bed filled with the scent of chestnut flowers, she was completely oblivious to the fact that she had been filled to the brim inside.",
-                "com_interaction_endOngoingSex_Sleeping_Satisfied_1": "$self$ turned over in a lingering wave of pleasure she had never experienced before, a sweet smile still hanging on her lips. The touch in her dream was so real that her inner thighs were still twitching slightly upon waking. She buried her face in the pillow in a daze, trying to catch the tail end of that fleeting pleasure, completely unaware of the wet patch on the sheet.",
-                "com_interaction_endOngoingSex_Sleeping_Satisfied_2": "$self$ let out a satisfied whimper, curling up like a cat. Although her consciousness was still asleep, the feeling of fullness deep inside her body made her sleep exceptionally soundly, her breathing still carrying the heat of unresolved passion.",
-                "com_interaction_endOngoingSex_Sleeping_Normal_1": "$self$ simply frowned, feeling an inexplicable chill on her lower body, and instinctively pulled the blanket over herself. The heavy drowsiness quickly drowned out this slight discomfort; she adjusted to a comfortable position, her breathing becoming long and even again.",
-                "com_interaction_endOngoingSex_Sleeping_Normal_2": "$self$ unconsciously pressed her legs together in her sleep, her brow unknitting slightly. The strange sensation of foreign intrusion from earlier had vanished, replaced by a heavy exhaustion that made her unwilling to even open her eyes to check the situation.",
-                "com_interaction_endOngoingSex_TimeStop_Semen_1": "In the frozen time, liquids should have stopped flowing, but $self$'s lower abdomen bulged slightly from being filled with an excessive amount of foreign matter. Deep between her tightly closed thighs, the thick white fluid had accumulated to its limit, pressing against the narrow fleshy walls in defiance of gravity, waiting only for the second time flowed again to gush out from under her skirt like a bursting dam.",
-                "com_interaction_endOngoingSex_TimeStop_Semen_2": "Although $self$'s panties had been put back on, the fabric fibers had turned semi-transparent from absorbing too much of the overflowing semen. The hot, heavy liquid filled every inch of space inside her, hanging heavily between her pubic bones, ready to bring her a devastating baptism of shame the moment time resumed.",
-                "com_interaction_endOngoingSex_TimeStop_Normal_1": "$self$ remained frozen in her original posture, not even blinking an eyelid. However, a closer look revealed an unnatural flush beneath her tidy collar; the rise and fall of her chest were forcibly paused, yet her skin was covered in a fine layer of sweat, as if she had just undergone intense exercise.",
-                "com_interaction_endOngoingSex_TimeStop_Normal_2": "$self$'s hand still held the document at the moment of turning the page, her expression focused and calm. Only her legs, having been forcibly spread for too long, remained in a strange state of muscle stiffness even now that they were placed back together; several finger marks on her knees had not yet faded, looking shocking in the still space-time.",
-                "com_interaction_endOngoingSex_TimeStop_Normal_3": "$self$ was like an exquisite wax figure, even the angle of her floating hair remained unmoved. But hidden under her seemingly flawless clothes, the soft flesh of her private parts was swollen and congested from excessive friction, the temperature there frighteningly high, burning alone in this solidified time.",
-                "com_interaction_endOngoingSex_Masturbation_Satisfied_1": "$self$ lay limp on the bed, her fingers still coated in glistening fluid. The climax just now had been intense and thorough, leaving her mind blank. Although she was alone in the room, that self-given pleasure was enough for her to sleep contentedly.",
-                "com_interaction_endOngoingSex_Masturbation_Satisfied_2": "$self$ tossed the toy aside, gulping down fresh air. Sweat matted her bangs as she looked at the ceiling, a lazy smile curling her lips. She didn't need a man; she could still send herself to heaven.",
-                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_1": "$self$ pulled her hand out from under her skirt with some irritation; no matter what she did, it just felt lacking. That emptiness was like a bottomless pit; the more she tried to fill it, the lonelier she felt. She buried her face in the pillow, letting out a frustrated sigh.",
-                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_2": "$self$ looked at her wet fingers, an indescribable sadness welling up in her heart. This level of stimulation was simply unable to quell the restlessness within her body; instead, it made the desire to be filled even stronger.",
-                "com_interaction_endOngoingSex_Forced_Semen_1": "$self$ looked despairingly at the retreating figure, knowing she had to deal with this mess alone. That bastard had left too much inside her; so much that she couldn't close her legs, and the slightest movement would cause nauseating liquid to surge out, reminding her of the fact that she had just been used as a semen container.",
-                "com_interaction_endOngoingSex_Forced_Semen_2": "$self$ mechanically wiped her thighs with a tissue, but the endless stream of white fluid continued to spill from her swollen opening. She retched as she wiped, feeling completely filled and dirty, as if she were emitting an unassailable stench from the inside out.",
-                "com_interaction_endOngoingSex_Forced_Satisfied_1": "$self$ lay limp among the messy bedding, staring blankly at the ceiling, her body still twitching occasionally from the recent orgasm. Tears had long dried at the corners of her eyes, and she shamefully discovered that occupying her mind now, more than the fear of violation, was an unspeakable sense of satisfaction.",
-                "com_interaction_endOngoingSex_Forced_Satisfied_2": "$self$ bit her lip, trying to cover the moan that hadn't yet dissipated in her throat. Although her reason screamed refusal, her body betrayed her will, honestly reaching its peak under that rough treatment. She let her hand drop weakly, unwilling to face this version of herself that had completely fallen due to pleasure.",
-                "com_interaction_endOngoingSex_Forced_Normal_1": "$self$ was tossed aside like a rag doll, her body covered in purple bruises. The humiliation of being used as a tool for relief made her tremble all over, the tearing pain below reminding her every moment of what she had just endured, while the other person had already pulled up his pants and turned to leave.",
-                "com_interaction_endOngoingSex_Forced_Normal_2": "$self$ curled up in the corner, clutching her knees tightly. There was not a shred of pleasure within her body, only the burning pain brought by dry friction. She buried her face in her knees, listening to the sound of the other person arranging their clothes, feeling like a piece of gum that had been chewed up and spat out.",
-                "com_interaction_endOngoingSex_Consensual_Semen_1": "$self$ walked to the bathroom with some difficulty, keeping her legs together. Although she complained, 'Why did you put so much inside,' there was a hint of a shy smile in her eyes. The winding trail on the floor didn't make her angry; instead, it became proof of their intimacy.",
-                "com_interaction_endOngoingSex_Consensual_Semen_2": "$self$ grabbed a towel to wipe, only to find the flow of heat wouldn't stop. '$target$, did you go a bit overboard this time...' she chided with a blushing face, looking at the overflowing love juices, a strange sense of satisfaction rising in her heart.",
-                "com_interaction_endOngoingSex_Consensual_Pain_1": "$self$ frowned and slapped $target$'s hand away, turning her back to him. 'Don't touch me, it hurts like hell,' she complained grumpily. The discomfort from below put her in a terrible mood, making her completely unwilling to respond to his tenderness.",
-                "com_interaction_endOngoingSex_Consensual_Pain_2": "$self$ rubbed her pinched arm while dressing, her expression frosty. 'If this is your standard, don't come looking for me next time,' she dropped coldly, walking straight out of the room without looking back.",
-                "com_interaction_endOngoingSex_Consensual_Satisfied_1": "$self$ lay lazily on $target$'s chest, tracing circles on his collarbone with her finger. The intense lovemaking just now had drained all her energy; right now, she just wanted to linger in this warm embrace a bit longer, enjoying the peaceful afterglow of physical and mental blending.",
-                "com_interaction_endOngoingSex_Consensual_Satisfied_2": "$self$ hugged $target$ from behind as he dressed, nuzzling her cheek against his broad back. 'Do it that hard next time too...' she mumbled softly, her tone full of coquettishness and attachment, clearly having developed a taste for his performance.",
-                "com_interaction_endOngoingSex_Consensual_Desire_1": "$self$ pursed her lips in disappointment as she watched $target$ putting on his pants. The fire in her body hadn't been fully extinguished, yet he was already finished. She could only silently pull the blanket over herself, calculating whether she should go to the bathroom and finish it herself later.",
-                "com_interaction_endOngoingSex_Consensual_Desire_2": "$self$ sighed softly. Although she said 'good work,' her eyes still drifted somewhat resentfully toward $target$'s lower half. That unfinished feeling was too uncomfortable, causing her to feel a subtle disdain for her bed partner in that moment.",
-                "com_interaction_endOngoingSex_NoConsent_Semen_1": "$self$ discovered with horror that even after putting on her panties, that sticky feeling remained. This was big trouble; if someone found out she went to work carrying this stuff... She anxiously cleaned herself in the restroom, cursing that intemperate guy ten thousand times in her heart.",
-                "com_interaction_endOngoingSex_NoConsent_Semen_2": "$self$ felt the warm flow slide down her thigh, nearly soiling her business suit. 'Are you crazy? How am I supposed to clean this up when you shoot inside!' she roared in a low voice, feeling unusually angry and panicked about this act that could leave evidence.",
-                "com_interaction_endOngoingSex_NoConsent_Pain_1": "$self$ glared fiercely at $target$, wiping the corner of her mouth hard. 'absolute disaster.' she cursed under her breath, feeling incredibly disgusted and regretful that she had agreed to have relations with such a person. Right now, she just wanted to go home and shower, washing away this terrible memory.",
-                "com_interaction_endOngoingSex_NoConsent_Pain_2": "$self$ put on her coat with a blank expression, her eyes full of disdain. 'As a colleague, you're excellent, but in this regard... let's keep our distance in the future.' She gave a merciless bad review, that cold attitude instantly widening the gap between them.",
-                "com_interaction_endOngoingSex_NoConsent_Satisfied_1": "$self$ flusteredly arranged her messy collar, her face still flushed. Even knowing this was wrong, the immoral pleasure just now had indeed thrilled her to the peak. She didn't dare look into $target$'s eyes, only lowering her head and hurriedly saying, 'Forget about what just happened.'",
-                "com_interaction_endOngoingSex_NoConsent_Satisfied_2": "$self$ leaned against the door panel, panting heavily, trying to calm her racing heart. This boundary-crossing act was unexpectedly compatible, making her feel both regretful in the post-clarity time and vaguely looking forward to the next mistake.",
-                "com_interaction_endOngoingSex_NoConsent_Desire_1": "$self$ quickly buttoned up, her face returning to its usual coldness. Since it was just an accidental impulse and she didn't get off, there was no need to dwell on it. She arranged her skirt as if nothing had happened, as if the naked person just now wasn't her at all. 'Don't mention this again.'",
-                "com_interaction_endOngoingSex_NoConsent_Desire_2": "$self$ awkwardly avoided $target$'s gaze, an indescribable awkwardness permeating the air. Since neither side got the result they wanted, this ridiculous farce should end here. She picked up her bag and left the scene without looking back."
+                "com_interaction_endOngoingSex_Sleeping_Semen_1": "As $self$ turns over, warm sticky fluid slides from her crotch, trailing down her inner thigh onto the sheet.\n\nShe shifts her legs restlessly in her sleep, mumbling something unintelligible, unaware it's semen leaking from her pussy.\n\nHer used, softened pussy won't close, and more of the cloudy white keeps seeping out.",
+                "com_interaction_endOngoingSex_Sleeping_Semen_2": "With each of $self$'s breaths, the cloudy fluid overflowing from between her legs has soaked patch after patch of the sheet beneath her.\n\nShe sleeps defenselessly in bedding thick with the musky smell, oblivious that she's been filled to the brim inside.\n\nHer lower belly hangs heavy, her thighs sticky and uncomfortable—yet she only frowns in her dream.",
+                "com_interaction_endOngoingSex_Sleeping_Satisfied_1": "$self$ rolls over in an afterglow she's never felt before, a sweet smile still on her lips.\n\nThe touch in the dream was so real her inner thighs are still twitching faintly.\n\nShe buries her face in the pillow in a daze, chasing the tail of that pleasure, not noticing the wet patch on the sheet.",
+                "com_interaction_endOngoingSex_Sleeping_Satisfied_2": "$self$ lets out a satisfied whimper, curling up.\n\nHer mind is still asleep, but the fullness deep inside lets her sleep soundly, her breathing still carrying the heat of unspent lust.\n\nHer pussy twitches now and then, working through the lingering aftershocks.",
+                "com_interaction_endOngoingSex_Sleeping_Normal_1": "$self$ only frowns, feeling an inexplicable chill on her lower half, and instinctively drags the blanket over herself.\n\nHeavy drowsiness quickly swamps that faint discomfort.\n\nShe shifts to a comfortable position, her breathing going long and even again.",
+                "com_interaction_endOngoingSex_Sleeping_Normal_2": "$self$ presses her legs together unconsciously in her sleep, her brow easing.\n\nThe odd feeling that something had pushed inside her is gone, replaced by a heavy exhaustion that makes her refuse to open her eyes.\n\nShe rolls over and sinks back into deep sleep.",
+                "com_interaction_endOngoingSex_TimeStop_Semen_1": "In frozen time, liquid should stop flowing—yet $self$'s lower belly bulges slightly from being pumped too full.\n\nDeep between her tightly shut thighs, the thick cloudy fluid has pooled to its limit, pressing against her narrow pussy in defiance of gravity.\n\nThe second time flows again, it'll gush out from under her skirt in a rush.",
+                "com_interaction_endOngoingSex_TimeStop_Semen_2": "Though $self$'s panties have been put back on, the fabric has gone half-transparent from soaking up too much overflow.\n\nThe hot, heavy fluid fills every inch of space inside her, hanging heavy between her pubic bones.\n\nReady, the instant time resumes, to drench her in shame.",
+                "com_interaction_endOngoingSex_TimeStop_Normal_1": "$self$ stays frozen in her original pose, not even blinking.\n\nBut look closer: an unnatural flush shows beneath her tidy collar, her chest's rise and fall paused mid-motion, her skin coated in fine sweat that smells faintly of after-sex.\n\nOnly, in this frozen world, no one can notice.",
+                "com_interaction_endOngoingSex_TimeStop_Normal_2": "$self$'s hand still holds the document at the moment of turning the page, her expression focused and calm.\n\nOnly her legs, spread too long, stay stiff even now that they've been pressed back together, a few finger-marks still on her knees.\n\nUnder her skirt her pussy hasn't closed either—the pliant flesh holds its pried-open shape.",
+                "com_interaction_endOngoingSex_TimeStop_Normal_3": "$self$ stands frozen, even the angle of her hair unchanged.\n\nBeneath her seemingly flawless clothes, the soft flesh of her pussy is swollen from being rubbed too much, the heat there frighteningly high.\n\nIn this congealed time that burn rolls on alone, with nowhere to go.",
+                "com_interaction_endOngoingSex_Masturbation_Satisfied_1": "$self$ lies limp on the bed, her fingers still slick and glistening.\n\nThe climax just now hit hard and thorough, whiting out her mind.\n\nWith only herself in the room, that self-given pleasure is enough to let her sleep content.",
+                "com_interaction_endOngoingSex_Masturbation_Satisfied_2": "$self$ pulls the toy out and tosses it aside, gulping air.\n\nSweat has matted her bangs; she stares at the ceiling, a lazy smile on her lips.\n\nHer pussy still clenches on its own, slowly working through the aftershocks.",
+                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_1": "$self$ pulls her hand out from under her skirt in irritation—no matter what, it's just short of the feeling.\n\nThe emptiness won't fill; the more she tries, the lonelier it gets.\n\nShe buries her face in the pillow with a frustrated sigh, still wet between the legs, unable to get off.",
+                "com_interaction_endOngoingSex_Masturbation_Unsatisfied_2": "$self$ looks at her dripping fingers, an unspeakable frustration welling up.\n\nThis little stimulation can't tamp down the heat in her; if anything, the craving to be filled burns hotter.\n\nShe grinds her legs together in annoyance, then finally gives up.",
+                "com_interaction_endOngoingSex_Forced_Semen_1": "$self$ watches the retreating back in despair, knowing she has to deal with this mess alone.\n\nHe left too much inside her—so much she can't close her legs, and any movement sends nauseating fluid surging out.\n\nCloudy white runs down her thighs, a constant reminder that she was just used as a semen container.",
+                "com_interaction_endOngoingSex_Forced_Semen_2": "$self$ mechanically wipes her thighs with tissues, but the endless white keeps spilling from her swollen pussy.\n\nShe gags as she wipes, the feeling of being filled and soiled making her reek of a stench she can't wash out.\n\nShe goes through tissue after tissue, yet it never comes clean.",
+                "com_interaction_endOngoingSex_Forced_Satisfied_1": "$self$ lies limp among the tangled bedding, staring blankly at the ceiling, her body twitching now and then from the orgasm.\n\nTears have long dried at her eyes, and to her shame she finds that what fills her head now—more than the fear of being violated—is an unspeakable satisfaction.\n\nHer pussy still clenches at nothing, savoring the forced pleasure.",
+                "com_interaction_endOngoingSex_Forced_Satisfied_2": "$self$ bites her lip, trying to muffle the moan that hasn't faded from her throat.\n\nHer reason screams refusal, but her body betrayed her, honestly peaking under the rough treatment.\n\nShe lets her hand drop, unwilling to face this version of herself, collapsed from pleasure.",
+                "com_interaction_endOngoingSex_Forced_Normal_1": "$self$ is tossed aside, her body mottled with bruises.\n\nThe humiliation of being used as a release tool makes her tremble, the tearing ache below reminding her every moment of what she just endured.\n\nThe man has already pulled up his pants and walked off, without a glance back.",
+                "com_interaction_endOngoingSex_Forced_Normal_2": "$self$ curls up in the corner, hugging her knees tight.\n\nThere's no pleasure in her, only the burning sting of dry friction.\n\nShe buries her face in her knees, listening to him straighten his clothes, wishing she could shrink into the wall.",
+                "com_interaction_endOngoingSex_Consensual_Semen_1": "$self$ walks awkwardly to the bathroom, legs pressed together, grumbling.\n\n\"Why did you put so much inside...\"\n\nBut there's a shy smile in her eyes; the trail winding down her thighs doesn't anger her—instead it's proof of how close they were.",
+                "com_interaction_endOngoingSex_Consensual_Semen_2": "$self$ grabs a towel to wipe, only to find the heat won't stop.\n\n\"$target$, weren't you a bit much this time...\"\n\nShe chides with a blush, watching his semen overflow mixed with her own slick, a strange satisfaction rising in her.",
+                "com_interaction_endOngoingSex_Consensual_Pain_1": "$self$ frowns and slaps $target$'s hand away, turning her back to him.\n\n\"Don't touch me, it hurts.\"\n\nThe discomfort below puts her in a foul mood, unwilling to accept any of his tenderness.",
+                "com_interaction_endOngoingSex_Consensual_Pain_2": "$self$ rubs her pinched arm as she dresses, her face frosty.\n\n\"If this is your standard, don't come to me next time.\"\n\nShe drops the line coldly and walks out without looking back.",
+                "com_interaction_endOngoingSex_Consensual_Satisfied_1": "$self$ lies lazily on $target$'s chest, tracing circles on his collarbone.\n\nThat intense lovemaking drained all her strength; now she only wants to linger in this warm embrace.\n\nHer pussy still holds the cock that hasn't fully pulled out, clenching in satisfied little pulses, reluctant to end the union.",
+                "com_interaction_endOngoingSex_Consensual_Satisfied_2": "While $target$ dresses, $self$ hugs him from behind, nuzzling her cheek against his broad back.\n\n\"Be that rough next time too...\"\n\nShe mumbles, her tone full of coyness and attachment, clearly having acquired a taste for it.",
+                "com_interaction_endOngoingSex_Consensual_Desire_1": "$self$ watches $target$ already pulling up his pants, pursing her lips in disappointment.\n\nThe fire in her body hasn't gone out, yet he's already done.\n\nShe can only drag the blanket over herself, calculating whether to slip to the bathroom and finish herself off.",
+                "com_interaction_endOngoingSex_Consensual_Desire_2": "$self$ sighs softly, saying \"good work\" while her eyes drift resentfully to $target$'s lower half.\n\nThat unfinished feeling is unbearable, leaving her with a faint disdain for her partner in this moment.\n\nHer legs still ache, empty and wanting, impossible to fill.",
+                "com_interaction_endOngoingSex_NoConsent_Semen_1": "$self$ realizes in horror that even with her panties back on, the sticky feeling won't stop.\n\nThis is big trouble—if anyone found out she went to work carrying this...\n\nShe scrambles to clean up in the restroom, cursing that reckless guy ten thousand times over.",
+                "com_interaction_endOngoingSex_NoConsent_Semen_2": "$self$ feels the warm flow slide down her thigh, nearly staining her business suit.\n\n\"Are you insane? How am I supposed to clean this when you come inside!\"\n\nShe hisses, furious and panicked about an act that could leave evidence.",
+                "com_interaction_endOngoingSex_NoConsent_Pain_1": "$self$ glares at $target$, wiping the corner of her mouth hard.\n\n\"Absolute disaster.\"\n\nShe mutters the curse, sickened and regretful that she did this with someone like him—now she just wants to go home and shower the awful memory away.",
+                "com_interaction_endOngoingSex_NoConsent_Pain_2": "$self$ puts on her coat expressionlessly, her eyes full of contempt.\n\n\"As a colleague you're excellent, but in this... let's keep our distance from now on.\"\n\nShe delivers the merciless review, her coldness widening the gap between them in an instant.",
+                "com_interaction_endOngoingSex_NoConsent_Satisfied_1": "$self$ flusteredly fixes her rumpled collar, her face still flushed.\n\nKnowing it's wrong, the immoral thrill still got her to the peak.\n\nShe doesn't dare meet $target$'s eyes, only mumbling \"forget what just happened.\"",
+                "com_interaction_endOngoingSex_NoConsent_Satisfied_2": "$self$ leans against the door, panting hard, trying to calm her racing heart.\n\nThis crossing of the line was unexpectedly compatible, leaving her both regretful in the afterglow and secretly hoping for the next mistake.\n\nHer thighs are still wet, proof that it all really happened.",
+                "com_interaction_endOngoingSex_NoConsent_Desire_1": "$self$ buttons up fast, her face returning to its usual coldness.\n\nSince it was just an impulsive slip and she didn't get off, there's no need to dwell.\n\nShe smooths her skirt, brushing the whole thing off, pretending the naked girl just now wasn't her. \"Don't bring this up again.\"",
+                "com_interaction_endOngoingSex_NoConsent_Desire_2": "$self$ awkwardly avoids $target$'s gaze, an indescribable awkwardness in the air.\n\nSince neither got what they wanted, this ridiculous farce should end here.\n\nShe grabs her bag and leaves without looking back."
             }
         }
     }

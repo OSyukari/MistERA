@@ -33,6 +33,16 @@ public class Job_Furniture : Job
         if (this.Container != null) Container.Tick();
     }
 
+    /// <summary>
+    /// One Job_Furniture instance is shared by every actor using the furniture, who may be doing entirely
+    /// unrelated things (e.g. two actors resting in the same bed independently). Scope log messages to just
+    /// this AP's own actors instead of the furniture's whole cumulative actor roster.
+    /// </summary>
+    public override List<int> GetLogRelevantActors(ActionPackage ap)
+    {
+        return ap.actorRefs;
+    }
+
     [JsonIgnore] public override string DisplayName
     {
         get

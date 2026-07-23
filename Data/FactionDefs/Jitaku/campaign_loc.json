@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for campaign.json. Holds en-us entries for the 'Home Security Guard' (自宅警备员, NEET/shut-in joke) campaign start option.",
+        "note": "campaign_jitaku_keibiin_start_default_tooltip and campaign_jitaku_keibiin_tooltip are literally 'debug debug' / 'debug' in the zh-cn source (placeholder text, not yet written) - kept verbatim rather than invented."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "campaign_jitaku_keibiin": "Home Security Guard",
+                "campaign_jitaku_keibiin_tooltip": "debug",
+                "campaign_jitaku_keibiin_start_default": "Default",
+                "campaign_jitaku_keibiin_start_default_tooltip": "debug debug"
+            }
+        }
+    }
+}

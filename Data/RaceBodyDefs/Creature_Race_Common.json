@@ -1,62 +1,8 @@
 {
-    "humanoid_Races":
-    {
-        "list": [
-            {
-                "ID": "creature_beastRace_animal",
-                "bodyPartRoot":"head_beast_base",
-                "_comment1":"statkeyword determine what stat_derived and stat_derived_extended are generated",
-                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
-                "_comment2":"provide new template for basevalue",
-                "needs":[
-                    {
-                        "ID":"food",
-                        "displayName":"food need",
-                        "tooltip":"tooltip",
-                        "statusDebuffID": "chara_status_malnourished",
-                        "consumeItemByTag": "food_meal",
-                        "requiresStatKeyword": "hunger",
-                        "overwritesNeedsIDs": []
-                    }
-                ]
-            }
-
-        ]
-    },
     "BodyPartBases":
     {
         "BodyPart_Base":
         [
-            {
-                "id": "head_beast_base",
-                "displayName":"%%bodyPart_base_head%%",
-                "tooltip":"An {0}'s head.",
-                "AvailableSlots":["Hair", "Face", "Eyes"],
-                "childID":["body_beast_base"],
-                "internalID":["mouth_beast_base"],
-                "tags":["head"],
-                "sortOrder":0,
-                "NaturalDefense":
-                {
-                    "integrity":4,
-                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
-                }
-            },
-            {
-                "id": "body_beast_base",
-                "displayName":"",
-                "tooltip":"An {0}'s body.",
-                "AvailableSlots":["Neck","Torso"],
-                "childID":["frontleg_beast_base","frontleg_beast_base","hindleg_beast_base","hindleg_beast_base"],
-                "internalID":["stomach_beast_base","anus_beast_base","penis_beast_base","guts_beast_base"],
-                "tags":["torso","lower"],
-                "sortOrder":1,
-                "NaturalDefense":
-                {
-                    "integrity":4,
-                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
-                }
-            },
             {
                 "id": "frontleg_beast_base",
                 "displayName":"",
@@ -138,36 +84,6 @@
                 "virginityLossTags":["penetration"]
             },
             {
-                "id": "creature_animal_bear_template_penis_beast_base",
-                "displayName":"%%bodyPart_internal_penis%%",
-                "tooltip":"An {0}'s penis.",
-                "equipLayers":["Skin"],
-                "tags":["nsfw","penis","testicle","external"],
-                "sensitivityClassString":"C",
-                "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
-                "sortOrder":7,
-                "sizeRatio":0.1,
-                "depthRatio":0.2,
-                "volumeRatio":0.003,
-                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
-                "virginityLossTags":["penetration"]
-            },
-            {
-                "id": "creature_animal_pig_template_penis_beast_base",
-                "displayName":"%%bodyPart_internal_penis%%",
-                "tooltip":"An {0}'s penis.",
-                "equipLayers":["Skin"],
-                "tags":["nsfw","penis","testicle","external"],
-                "sensitivityClassString":"C",
-                "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
-                "sortOrder":7,
-                "sizeRatio":0.1,
-                "depthRatio":0.2,
-                "volumeRatio":2.750,
-                "firstExperienceDesc":"%%bodyPart_internal_virgin%%",
-                "virginityLossTags":["penetration"]
-            },
-            {
                 "id": "guts_beast_base",
                 "displayName":"%%bodyPart_internal_guts%%",
                 "tooltip":"An {0}'s guts.",
@@ -205,21 +121,14 @@
         {
             "zh-cn":
             {
-                
-"creature_beastRace_animal":"动物",
 "natural_armor":"天生护甲",
 "natural_armor_part":"$part$天生护甲"
-
             },
             "en-us":
             {
-
-"creature_beastRace_animal":"Animal",
 "natural_armor":"Natural Armor",
 "natural_armor_part":"$part$ Natural Armor"
-
             }
         }
     }
-    
 }

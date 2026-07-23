@@ -10,7 +10,7 @@
                             "requirement": {
                                 "requirePermission": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "closed_eyes",
                                 "blush",
                                 "affectionate"
@@ -29,7 +29,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush"
                             ],
                             "useActiveTags": false,
@@ -42,7 +42,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "fear",
                                 "trembling"
                             ],
@@ -70,7 +70,7 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sleeping",
                                 "relaxed"
                             ],
@@ -90,7 +90,7 @@
                                     "timestop"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "doll",
                                 "empty",
                                 "silence",
@@ -114,7 +114,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -136,7 +136,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -155,7 +155,7 @@
                                 }
                             ],
                             "_comment": "2.2.4 指令失败拒绝 被捏脸蛋 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust",
                                 "surprised",
@@ -187,7 +187,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "love",
                                         "happy",
                                         "relaxed"
@@ -203,7 +203,7 @@
                                 }
                             ],
                             "_comment": "2.2.5 ($self$) 被捏脸蛋 结果正面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "blush",
                                 "shy",
                                 "surprised",
@@ -223,7 +223,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "pain",
                                         "bored",
                                         "doubt",
@@ -240,7 +240,7 @@
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 被捏脸蛋 结果负面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "cry",
                                 "glare",

@@ -188,6 +188,14 @@ public class CombatStatManager : I_StatsManager
         InitializePresets();
     }
 
+    int _statModsVersion = 0;
+    // include the parent's version so changes to the character's permanent modifiers propagate
+    // to this manager's copied stat instances as well
+    [JsonIgnore] public int StatModsVersion { get { return _statModsVersion + (Parent == null ? 0 : Parent.StatModsVersion); } }
+    public void NotifyStatModsChanged()
+    {
+        _statModsVersion++;
+    }
 
     /// <summary>
     /// Add to combat modifiers specific to this manager and do not touch original
@@ -207,6 +215,7 @@ public class CombatStatManager : I_StatsManager
 
             modifiers_combat.Add(mod_instance);
         }
+        NotifyStatModsChanged();
     }
 
     protected Stats_Base baseStat_STR = null, baseStat_CON = null, baseStat_PSY = null, baseStat_WIL = null;
@@ -214,6 +223,7 @@ public class CombatStatManager : I_StatsManager
     public void Reset(CombatInstance inst, bool fullReset = false)
     {
         this.modifiers_combat.Clear();
+        NotifyStatModsChanged();
 
         // foreach stat in parent, make copy and reassign parent to this, else their stat query wont work properly
         this.baseStat_STR = Parent.Strength.Copy(this);
@@ -293,33 +303,35 @@ public class CombatStatManager : I_StatsManager
     {
         return Owner.hasStatKeyword(statKeyword);
     }
-    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
+    public void GetModifiers(List<Stat_Modifier> results, Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
     {
-        return GetModifiers(statID, contexts, !forbidStatus, false);
+        GetModifiers(results, statID, contexts, !forbidStatus, false);
     }
-    public List<Stat_Modifier> GetModifiers(Stats_Base obj, string statID, List<string> contexts = null)
+    public void GetModifiers(List<Stat_Modifier> results, Stats_Base obj, string statID, List<string> contexts = null)
     {
-        return GetModifiers(statID, contexts, false, false);
+        GetModifiers(results, statID, contexts, false, false);
     }
 
-    public List<Stat_Modifier> GetModifiers(StatusEx_Instance obj, string statID, List<string> contexts = null)
+    public void GetModifiers(List<Stat_Modifier> results, StatusEx_Instance obj, string statID, List<string> contexts = null)
     {
-        return GetModifiers(statID, contexts, true, true);
+        GetModifiers(results, statID, contexts, true, true);
     }
 
     protected List<Stat_Modifier> modifiers_combat = new List<Stat_Modifier>();
 
     protected Character_Trainable owner = null;
 
-    protected List<Stat_Modifier> GetModifiers(string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true)
+    /// <summary>
+    /// Appends matching modifiers into <paramref name="results"/>. Caller owns and clears the list.
+    /// </summary>
+    protected void GetModifiers(List<Stat_Modifier> results, string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true)
     {
-        List<Stat_Modifier> list = new List<Stat_Modifier>();
         foreach (var mod in Parent.Modifiers)
         {
             if (mod.statID != statID) continue;
             else
             {
-                list.Add(mod);
+                results.Add(mod);
             }
         }
 
@@ -329,7 +341,7 @@ public class CombatStatManager : I_StatsManager
             if (mod.statID != statID) continue;
             else
             {
-                list.Add(mod);
+                results.Add(mod);
             }
         }
 
@@ -338,23 +350,23 @@ public class CombatStatManager : I_StatsManager
             if (mod.statID != statID) continue;
             else
             {
-                list.Add(mod);
+                results.Add(mod);
             }
         }
 
         // and grab status modifiers
-        if (!checkStatusInstance) return list;
+        if (!checkStatusInstance) return;
 
         foreach (var status in StatusInstances)
         {
             foreach (var severityMod in status.SeverityModifiers)
             {
                 if (severityMod.statID != statID) continue;
-                else list.Add(severityMod);
+                else results.Add(severityMod);
             }
         }
 
-        if (!checkMemory) return list;
+        if (!checkMemory) return;
 
         if (Owner.Memory != null)
         {
@@ -362,10 +374,9 @@ public class CombatStatManager : I_StatsManager
             foreach (var mod in temp)
             {
                 if (mod.statID != statID) continue;
-                else list.Add(mod);
+                else results.Add(mod);
             }
         }
-        return list;
     }
 
     public string OwnerName()

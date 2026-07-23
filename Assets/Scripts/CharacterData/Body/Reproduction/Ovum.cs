@@ -238,6 +238,36 @@ public class Ovum
             foetusItemRef = value == null ? -1 : value.RefID;
         }
     }
+    /// <summary>
+    /// Progress (0-1) through the current OvumState only, mirroring the same phase-boundary math
+    /// FoetusTemplates.Advance() already uses for its size lerp. Returns 0 for states with no
+    /// well-defined single-phase length (Default/Aborted/Fertilized/Final/Final_RequireHelp).
+    /// </summary>
+    public float CurrentPhaseProgress()
+    {
+        if (foetus == null) return 0f;
+
+        float t;
+        switch (State)
+        {
+            case OvumState.Implanted:
+                t = (float)lifespan / foetus.duration_implanted;
+                break;
+            case OvumState.First_trimester:
+                t = (float)(lifespan - foetus.duration_implanted) / (foetus.duration_first - foetus.duration_implanted);
+                break;
+            case OvumState.Second_trimester:
+                t = (float)(lifespan - foetus.duration_first) / foetus.duration_second;
+                break;
+            case OvumState.Third_trimester:
+                t = (float)(lifespan - foetus.duration_first - foetus.duration_second) / foetus.duration_third;
+                break;
+            default:
+                return 0f;
+        }
+        return Math.Max(0f, Math.Min(1f, t));
+    }
+
     public bool isOlderThan(Ovum ov)
     {
         if (ov == null) return true;

@@ -1,0 +1,48 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for item_gamecd_DS3.json. Holds en-us entries for the knowledge_game_DS3_* flavor-text cluster.",
+        "naming_convention": "Per user decision 2026-07-22: character/boss/location names are parody-renamed in the same light spirit as the title itself (Dark Souls 3 -> Deep Soul 3), not translated to their real official localizations. See name_consistency.md for the full substitution table. The four knowledge_game_DS3_characters_firekeeper_N quotes were already written in English directly in the zh-cn source (official VO lines quoted as-is) - copied verbatim, not retranslated.",
+        "ds3_reference_note": "Critical: 'ds3_reference' itself needed an en-us entry too, distinct from item_gamecd_DS3 (which hardcodes 'Deep Soul 3' directly rather than using the token). Every knowledge_game_DS3_* entry below embeds %%ds3_reference%%, so without this entry the token would render literally as 'ds3_reference' in English builds instead of resolving."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "ds3_reference": "Deep Soul 3",
+
+                "knowledge_game_DS3_world": "The world of %%ds3_reference%%",
+                "knowledge_game_DS3_world_lothric": "The Kingdom of Lothaire in %%ds3_reference%%",
+                "knowledge_game_DS3_world_undead_curse": "The Curse of the Undead in %%ds3_reference%%",
+                "knowledge_game_DS3_world_age_of_fire": "The Age of Fire in %%ds3_reference%%",
+                "knowledge_game_DS3_world_ringed_city": "The Circled City in %%ds3_reference%%",
+                "knowledge_game_DS3_world_painted_world": "The Painted World of Arianne in %%ds3_reference%%",
+
+                "knowledge_game_DS3_mechanics": "The game mechanics of %%ds3_reference%%",
+                "knowledge_game_DS3_mechanics_estus": "The Radiant Flask in %%ds3_reference%%",
+                "knowledge_game_DS3_mechanics_bonfire": "The bonfires in %%ds3_reference%%",
+                "knowledge_game_DS3_mechanics_weaponart": "Weapon Arts in %%ds3_reference%%",
+                "knowledge_game_DS3_mechanics_hollow": "Hollowing in %%ds3_reference%%",
+                "knowledge_game_DS3_mechanics_invade": "The invasion and cooperation system in %%ds3_reference%%",
+
+                "knowledge_game_DS3_characters": "Characters of %%ds3_reference%%",
+                "knowledge_game_DS3_characters_ashen_one": "The Cindered One in %%ds3_reference%%",
+                "knowledge_game_DS3_characters_firekeeper": "The Ember Warden in %%ds3_reference%%",
+                "knowledge_game_DS3_characters_firekeeper_0": "Ashen one, hearest thou my voice, still?",
+                "knowledge_game_DS3_characters_firekeeper_1": "I tend to the flame, and tend to thee.",
+                "knowledge_game_DS3_characters_firekeeper_2": "Are you in search of your lord's remain?",
+                "knowledge_game_DS3_characters_firekeeper_3": "One day, tiny sprites will dance around a bonfire.",
+                "knowledge_game_DS3_characters_sulyvahn": "Bishop Sulyvhan in %%ds3_reference%%",
+                "knowledge_game_DS3_characters_gael": "Bondsman Knight Gael in %%ds3_reference%%",
+                "knowledge_game_DS3_characters_siegward": "Siegmund of Catalina in %%ds3_reference%%",
+                "knowledge_game_DS3_characters_patches": "Stitches in %%ds3_reference%%",
+                "knowledge_game_DS3_characters_greirat": "Greirot the Burglar in %%ds3_reference%%",
+
+                "knowledge_game_DS3_bosses": "Bosses of %%ds3_reference%%",
+                "knowledge_game_DS3_bosses_abyss_watchers": "The Void Watchers in %%ds3_reference%%",
+                "knowledge_game_DS3_bosses_yhorm": "Yorm the Colossus in %%ds3_reference%%",
+                "knowledge_game_DS3_bosses_aldrich": "Aldric in %%ds3_reference%%",
+                "knowledge_game_DS3_bosses_twin_princes": "The Twin Princes of Lothaire in %%ds3_reference%%",
+                "knowledge_game_DS3_bosses_soul_of_cinder": "The Cinder of Soul in %%ds3_reference%%"
+            }
+        }
+    }
+}

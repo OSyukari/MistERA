@@ -31,7 +31,8 @@ public class DescriptionCollector : I_Records
             else return portraitRefs;
         }
     }
-    public List<string> displayTagsOverride = new List<string>();
+    public List<string> displayTagsOverride_Self = new List<string>();
+    public List<string> displayTagsOverride_Target = new List<string>();
     public bool autoAnimate = false;
 
 
@@ -112,11 +113,14 @@ public class DescriptionCollector : I_Records
         if (kojo.message.Length > 0)
         {
             this.message += $"{(message.Length > 0 ? "\n" : "")}{kojo.message}";
-            //this.message_excludeRelated += $"{(message_excludeRelated.Length > 0 ? "\n" : "")}{kojo.message}";
+            this.message_excludeRelated += $"{(message_excludeRelated.Length > 0 ? "\n" : "")}{kojo.message}";
         }
         
-        this.displayTagsOverride.AddRange(kojo.portraitTags);
-        this.displayTagsOverride = Utility.Distinct(displayTagsOverride);
+        this.displayTagsOverride_Self.AddRange(kojo.selfPortraitTag);
+        Utility.DistinctInPlace(displayTagsOverride_Self);
+
+        this.displayTagsOverride_Target.AddRange(kojo.targetPortraitTag);
+        Utility.DistinctInPlace(displayTagsOverride_Target);
 
         this.relevantActors.AddRange(kojo.relevantActors);
         this.relevantActors = Utility.Distinct(relevantActors);

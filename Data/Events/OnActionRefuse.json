@@ -64,7 +64,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
         "label":"br_choice",
-        "portraitRefKey":"evTarget", "portraitTagsOverride":["sorry"],
+        "portraitRefKey":"evTarget", "portraitSelfTagsOverride":["sorry"],
         "question":"event_OnAPRefuse_ev01",
         "options":[
             {   
@@ -82,7 +82,7 @@
     {
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_end",
-        "portraitRefKey":"evTarget", "portraitTagsOverride":["sorry","awkward"],
+        "portraitRefKey":"evTarget", "portraitSelfTagsOverride":["sorry","awkward"],
         "isLast":true,
         "line": "event_OnAPRefuse_ev02",
         "Results": [ {"Type":"ExecuteCallback","arguments":["failCallback"]} ] 
@@ -91,7 +91,7 @@
         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
         "label": "br_push",
         "line": "event_OnAPRefuse_ev03",
-        "portraitRefKey":"evTarget", "portraitTagsOverride":["surprised","worry"],
+        "portraitRefKey":"evTarget", "portraitSelfTagsOverride":["surprised","worry"],
         "nextEntryLabel":"br_push_ops"
     },
     {

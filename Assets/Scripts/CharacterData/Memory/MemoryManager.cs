@@ -43,7 +43,7 @@ public class MemoryManager
 
             furnitureLock = c.FurnitureLockRef;
             var pleasure = c.Stats.SexStimulation;
-            var pain = c.Stats.FindStatusByExactID("chara_status_pain");
+            var pain = c.Stats.Pain;
             pleasureSeverity = pleasure == null ? 0 : (int)pleasure.Severity;
             painSeverity = pain == null ? 0 : (int)pain.Severity;
         }

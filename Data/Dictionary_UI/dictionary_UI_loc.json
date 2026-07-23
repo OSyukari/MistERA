@@ -1,0 +1,66 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary_UI.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes.",
+        "addTrade_note": "zh-cn source added the (batch-lot procurement) qualifier and a <link=...> tooltip wrapper. The stale 'Add Trade' / unwrapped tooltip en-us entries were removed from dictionary_UI.json and replaced here. Kept parallel wording with the sibling ui_management_production_retailTrade (still untranslated) so both read consistently once that one is done.",
+        "roomTooltip_note": "zh-cn source added a trailing $roomActivityState$ line. The stale (5-line) en-us entry was removed from dictionary_UI.json and replaced here with the 6-line version."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "ui_map_roomTooltip": "Room: $room$\n$furnitures$\nItems: $items$\nCharacters: $names$\nTravel time $time$ min\n$roomActivityState$",
+
+                "ui_management_production_addTrade": "<link=ui_management_production_addTrade_tooltip>Add Trade Order (Wholesale)</link>",
+                "ui_management_production_addTrade_tooltip": "Trade orders charge different currencies depending on which faction you're trading with.\nWholesale orders settle at the end of each day, with no purchase limit.",
+
+                "charaDetail_panel_knowledges": "<link=\"charaDetail_panel_knowledges_tooltips\">View Knowledge</link>",
+                "charaDetail_panel_knowledges_tooltips": "Lists all of this character's knowledge\n",
+
+                "ui_management_production_retailTrade": "<link=ui_management_production_retailTrade_tooltip>Add Trade Order (Retail)</link>",
+                "ui_management_production_retailTrade_tooltip": "Trade orders charge different currencies depending on which faction you're trading with.\nRetail orders settle immediately on purchase confirmation, but have a daily purchase cap (resets each day).",
+                "ui_management_production_retailTrade_confirm": "Confirm Trade",
+                "ui_management_production_retailTrade_none": "No orders need to be settled",
+                "ui_management_production_retailTrade_cannotparse": "Cannot complete the deal due to missing specific items",
+                "ui_management_production_retailTrade_missing": "Missing $name$x$count$ (have $owned$)",
+                "ui_management_production_retailTrade_valid": "Pay $name$x$count$ (have $owned$)",
+                "ui_management_production_Trade_buyCount": "Purchase Amount",
+                "ui_management_production_Trade_stock": "Stock Amount",
+
+                "ui_management_overview_daily_failure": "Lacking Resource: $name$",
+                "ui_management_overview_daily_skill": "$name$'s $skill$ leveled up $prev$ -> $now$",
+                "ui_management_overview_daily_trust": "$name$'s $score$ toward $leader$: $count$",
+                "ui_management_overview_dailyconsume": "Daily resource consumption:\n$daily$\n",
+                "ui_management_overview_dailyProduction": "Production resource change ($count$)",
+                "ui_management_overview_external": "$name$ is currently at $location$",
+
+                "ui_debug_tooltip": "When this option is enabled,\n1. Additional data that shouldn't normally be shown is displayed (for debugging convenience)\n2. The player can sleep at any time\n3. Player-executed commands don't consume Stamina or Energy\n4. Combat can be ended instantly with a chosen outcome\n5. Prisoners cannot refuse any command\n6. Conversations will always pick a chat topic\n%%ui_debug_tooltip2%%",
+                "ui_entry_traits_tooltip": "Character traits. Significantly affects the character's %%ui_entry_derivedStats%%.",
+                "ui_map_floor_cancel": "Cancel Movement",
+
+                "ui_room_roomState": "Room Status:",
+                "ui_room_roomActivityState_AlwaysActive": "",
+                "ui_room_roomActivityState_DayOnly": "Day Only ($start$ - $end$)",
+                "ui_room_roomActivityState_NightOnly": "Night Only ($start$ - $end$)",
+
+                "room_CleaningStatus": "Room Cleanliness: $status$",
+                "room_CleaningStatus_None": "No Cleaning Needed",
+                "room_CleaningStatus_Clean": "Clean",
+                "room_CleaningStatus_Normal": "Barely Clean",
+                "room_CleaningStatus_Dirty": "Dirty",
+                "room_CleaningStatus_Very_Dirty": "Extremely Dirty",
+
+                "faction_activityState_alwaysActive": "24-Hour Active",
+                "faction_activityState_activeHours": "Active hours are $start$ - $end$",
+                "faction_activityState_set_start": "Start Time:",
+                "faction_activityState_set_end": "End Time:",
+
+                "management_faction_activeHours": "<link=management_faction_activeHours_tooltip>Active Hours:</link>",
+                "management_faction_activeHours_tooltip": "Can also be thought of as the day/night split.\nCharacters treat the start of the active hours as the morning of a new day, and schedule their routine and sleep around that.\nNPC sandbox behavior may also be affected by the day/night distinction.\nIf set to 24-hour active, characters default to treating 6 AM as morning when scheduling their day.",
+                "management_faction_activeHours_updatenotice_new": "Setting updated!",
+                "management_faction_activeHours_updatenotice_invalidinput": "Setting failed! (Unrecognized number)",
+                "management_faction_activeHours_updatenotice_invalidnumber": "Setting failed! (Invalid time value)",
+                "management_faction_mealHours": "<link=management_faction_mealHours_tooltip>Meal Hours:</link>",
+                "management_faction_mealHours_tooltip": "During this time window, NPCs will head to the dining room to eat.\nFor non-player factions, meal times are fixed.\nFor the player faction, meal times can be adjusted, but there must be meals in the inventory, and the 【%%com_furniture_mealPrep_displayName%%】 command must be scheduled on the 【%%ui_management_tab_jobs%%】 page before NPCs will start eating."
+            }
+        }
+    }
+}

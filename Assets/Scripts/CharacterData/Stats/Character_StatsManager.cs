@@ -6,9 +6,9 @@ using UnityEngine;
 
 public interface I_StatsManager
 {
-    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false);
-    public List<Stat_Modifier> GetModifiers(Stats_Base obj, string statID, List<string> contexts = null);
-    public List<Stat_Modifier> GetModifiers(StatusEx_Instance obj, string statID, List<string> contexts = null);
+    public void GetModifiers(List<Stat_Modifier> results, Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false);
+    public void GetModifiers(List<Stat_Modifier> results, Stats_Base obj, string statID, List<string> contexts = null);
+    public void GetModifiers(List<Stat_Modifier> results, StatusEx_Instance obj, string statID, List<string> contexts = null);
 
     /// <summary>
     /// Owner should not be publicly accessible <br/>
@@ -36,6 +36,13 @@ public interface I_StatsManager
     public Character_Trainable Owner { get; }
     public void RestoreAll();
 
+    /// <summary>
+    /// Monotonic counter, incremented whenever the modifier universe changes (modifier add/rebuild,
+    /// status add/remove, status variant crossing). Stat caches store the version they were computed
+    /// at and lazily self-invalidate on mismatch.
+    /// </summary>
+    [JsonIgnore] public int StatModsVersion { get; }
+    public void NotifyStatModsChanged();
 }
 
 public class StatsManager : I_StatsManager
@@ -155,6 +162,17 @@ public class StatsManager : I_StatsManager
         if (_statusInstances.TryGetValue(statID, out var value)) return value;
         else return null;
     }
+    int _statModsVersion = 0;
+    [JsonIgnore] public int StatModsVersion { get { return _statModsVersion; } }
+    /// <summary>
+    /// Bump-only (no recompute), so it is safe to call from anywhere, including mid-computation
+    /// and from inside RefreshAllStats' statbar loop. Stale caches recompute lazily on next read.
+    /// </summary>
+    public void NotifyStatModsChanged()
+    {
+        _statModsVersion++;
+    }
+
     public void SetStatusSeverity(string statusID, float severity)
     {
         var instance = FindStatusByExactID(statusID);
@@ -167,6 +185,22 @@ public class StatsManager : I_StatsManager
         {
             AddStatus(statusID, severity);
         }
+    }
+
+    /// <summary>
+    /// Set severity to a 0-1 position along the status' own [variants[0], variants[last]] threshold
+    /// range, so the caller doesn't need to know or care whether that status is scaled 0-100, -100-0,
+    /// etc. Creates the status (at ratio 0) first if it doesn't exist yet.
+    /// </summary>
+    public void SetStatusSeverityRatio(string statusID, float ratio)
+    {
+        var instance = FindStatusByExactID(statusID);
+        if (instance == null)
+        {
+            AddStatus(statusID, 0f);
+            instance = FindStatusByExactID(statusID);
+        }
+        instance?.SeverityRatioSet(ratio);
     }
 
     public StatusEx_Instance FindStatusEXByExactID(string statID)
@@ -257,6 +291,29 @@ public class StatsManager : I_StatsManager
         foreach (var i in list_statsExtended) i.ReEstablishParent(chara.Stats);
         if (this._statusInstancesEx != null) foreach (var i in _statusInstancesEx) i.Value.ReEstablishParent(chara.Stats);
 
+        // Save migration: status definitions can move between the Status and StatusEX lists
+        // across versions (e.g. chara_status_pain), but instances are serialized per save.
+        if (this._statusInstances != null)
+        {
+            var orphans = new List<string>();
+            foreach (var i in _statusInstances) if (scr_System_Serializer.current.GetByNameOrID_Status_Base(i.Key) == null) orphans.Add(i.Key);
+            foreach (var key in orphans)
+            {
+                Debug.Log($"Dropping status [{key}] from {chara.FullName}: no Status_Base definition (removed or moved to StatusEX)");
+                _statusInstances.Remove(key);
+            }
+            if (orphans.Count > 0) ClearStatusInstanceCache();
+        }
+
+        foreach (var statusEX in scr_System_Serializer.current.index_StatusEX.list)
+        {
+            if (!_statusInstancesEx.ContainsKey(statusEX.statusID))
+            {
+                _statusInstancesEx.Add(statusEX.statusID, statusEX.Instantiate(this));
+                ClearStatusEXCache();
+            }
+        }
+
         this.RefreshTraits();
         this.RefreshAllStats(true);
     }
@@ -283,6 +340,7 @@ public class StatsManager : I_StatsManager
         foreach (var statusEX in scr_System_Serializer.current.index_StatusEX.list)
         {
             //Debug.Log("adding statusEx " + statusEX.statusID + " to chara " + Owner.FullName+" on list isNull? "+(statusInstancesEx == null));
+            if (_statusInstancesEx.ContainsKey(statusEX.statusID)) continue; // ReEstablishParent may have added it already
             var ss = statusEX.Instantiate(this);
             _statusInstancesEx.Add(ss.ID, ss);
         }
@@ -470,6 +528,7 @@ public class StatsManager : I_StatsManager
             }
         }
 
+        NotifyStatModsChanged();
         foreach (var i in list_statsDerived) i.Value.ClearCache();
 
         // force refresh StatsEx value to keep it valid
@@ -586,29 +645,31 @@ public class StatsManager : I_StatsManager
     protected List<Stat_Modifier> modifiers_temporary = new List<Stat_Modifier>();
     public List<Stat_Modifier> Modifiers_Temporary { get { return this.modifiers_temporary; } }
 
-    public List<Stat_Modifier> GetModifiers(Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
+    public void GetModifiers(List<Stat_Modifier> results, Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
     {
-        return GetModifiers(statID, contexts, !forbidStatus, false);
+        GetModifiers(results, statID, contexts, !forbidStatus, false);
     }
-    public List<Stat_Modifier> GetModifiers(Stats_Base obj, string statID, List<string> contexts = null)
+    public void GetModifiers(List<Stat_Modifier> results, Stats_Base obj, string statID, List<string> contexts = null)
     {
-        return GetModifiers(statID, contexts, false, false);
-    }
-
-    public List<Stat_Modifier> GetModifiers(StatusEx_Instance obj, string statID, List<string> contexts = null)
-    {
-        return GetModifiers(statID, contexts, true, true, obj.BaseRef.constant && obj.BaseRef.capModded && obj.BaseRef.noDisplay);
+        GetModifiers(results, statID, contexts, false, false);
     }
 
-    protected List<Stat_Modifier> GetModifiers(string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true, bool checkRelationships = false)
+    public void GetModifiers(List<Stat_Modifier> results, StatusEx_Instance obj, string statID, List<string> contexts = null)
     {
-        List<Stat_Modifier> list = new List<Stat_Modifier>();
+        GetModifiers(results, statID, contexts, true, true, obj.BaseRef.constant && obj.BaseRef.capModded && obj.BaseRef.noDisplay);
+    }
+
+    /// <summary>
+    /// Appends matching modifiers into <paramref name="results"/>. Caller owns and clears the list.
+    /// </summary>
+    protected void GetModifiers(List<Stat_Modifier> results, string statID, List<string> contexts = null, bool checkStatusInstance = true, bool checkMemory = true, bool checkRelationships = false)
+    {
         foreach (var mod in modifiers)
         {
             if (mod.statID != statID) continue;
             else
             {
-                list.Add(mod);
+                results.Add(mod);
             }
         }
 
@@ -618,21 +679,23 @@ public class StatsManager : I_StatsManager
             if (mod.statID != statID) continue;
             else
             {
-                list.Add(mod);
+                results.Add(mod);
             }
         }
 
         // and grab status modifiers
-        if (!checkStatusInstance) return list;
 
         foreach (var status in StatusInstances)
         {
+            if (!checkStatusInstance && status.hasThresholdMod) continue;
             foreach (var severityMod in status.SeverityModifiers)
             {
                 if (severityMod.statID != statID) continue;
-                else list.Add(severityMod);
+                else results.Add(severityMod);
             }
         }
+        
+
 
         if (checkMemory)
         {
@@ -642,7 +705,7 @@ public class StatsManager : I_StatsManager
                 foreach (var mod in temp)
                 {
                     if (mod.statID != statID) continue;
-                    else list.Add(mod);
+                    else results.Add(mod);
                 }
             }
         }
@@ -659,12 +722,10 @@ public class StatsManager : I_StatsManager
                 foreach (var mod in temp)
                 {
                     if (mod.statID != statID) continue;
-                    else list.Add(mod);
+                    else results.Add(mod);
                 }
             }
         }*/
-
-        return list;
     }
 
 
@@ -691,6 +752,7 @@ public class StatsManager : I_StatsManager
 
             modifiers.Add(mod_instance);
         }
+        NotifyStatModsChanged();
     }
 
     /// <summary>
@@ -971,12 +1033,12 @@ public class StatsManager : I_StatsManager
     }
 
 
-    private Status_Instance _pain = null;
-    [JsonIgnore] public Status_Instance Pain
+    private StatusEx_Instance _pain = null;
+    [JsonIgnore] public StatusEx_Instance Pain
     {
         get
         {
-            if (_pain == null) _pain = FindStatusByExactID("chara_status_pain");
+            if (_pain == null) _pain = FindStatusEXByExactID("chara_status_pain");
             return _pain;
         }
     }
@@ -990,8 +1052,19 @@ public class StatsManager : I_StatsManager
         }
     }
 
-    [JsonIgnore] public bool isConsciousnessUnconscious { get { return Consciousness.Tags.Contains("consciousness_unconscious"); } }
-    [JsonIgnore] public bool isConsciousnessReduced { get { return Consciousness.Tags.Contains("consciousness_reduced") || Consciousness.Tags.Contains("consciousness_unconscious"); } }
+    public bool hasStatusEXTag(string s)
+    {
+        foreach(var i in statusInstancesEx)
+        {
+            if (i.Tags.Contains(s)) return true;
+        }
+        return false;
+    }
+
+
+
+    [JsonIgnore] public bool isConsciousnessUnconscious { get { return hasStatusEXTag(StatsUtility.Stat_Tag_Unconscious); } }
+    [JsonIgnore] public bool isConsciousnessReduced { get { return hasStatusEXTag(StatsUtility.Stat_Tag_ConsReduced) || hasStatusEXTag(StatsUtility.Stat_Tag_Unconscious); } }
 
     private StatusEx_Instance consciousness = null;
 
@@ -1085,6 +1158,38 @@ public class StatsManager : I_StatsManager
 
     }
 
+    public void RemoveStatusByExactID(string statusID)
+    {
+        if (!this._statusInstances.Remove(statusID)) return;
+        ClearStatusInstanceCache();
+        UpdateStatus();
+    }
+
+    /// <summary>
+    /// Keeps an optional "pain companion" status (chara_status_pain_&lt;tiedStatusID&gt;) in lockstep
+    /// with a tied status, using the tied status' own |Severity|. Cycle statuses author their own
+    /// severity range as positive (ticks up, e.g. chara_status_pms_luteal 0..100) or negative (ticks
+    /// down, e.g. chara_status_pms_menstrual -100..0) depending on when in the phase symptoms peak —
+    /// either way, 0 always means "no symptom" and the far end from 0 is worst, so abs() normalizes
+    /// both conventions onto one "how bad right now" magnitude without needing to know which one the
+    /// tied status used. No-ops silently when no chara_status_pain_&lt;id&gt; Status_Base is defined,
+    /// so only statuses actually authored to hurt do anything here.
+    /// </summary>
+    public void SyncPainCompanion(string tiedStatusID)
+    {
+        if (string.IsNullOrEmpty(tiedStatusID)) return;
+        string companionID = "chara_status_pain_" + tiedStatusID;
+        if (scr_System_Serializer.current.GetByNameOrID_Status_Base(companionID) == null) return;
+
+        var tied = FindStatusByExactID(tiedStatusID);
+        if (tied == null)
+        {
+            if (FindStatusByExactID(companionID) != null) RemoveStatusByExactID(companionID);
+            return;
+        }
+        SetStatusSeverity(companionID, Math.Abs(tied.Severity));
+    }
+
     public void AddOrModStatus(string s, float modSeverity = 0f, int modDuration = -1, float severityCap = -1f)
     {
         if (s == null || s == "" || s.Length < 1) return;
@@ -1134,6 +1239,7 @@ public class StatsManager : I_StatsManager
     {
         previouslyUnconscious = isConsciousnessUnconscious;
         this.modifiers_temporary.Clear();
+        NotifyStatModsChanged();
         foreach (var i in _statusInstancesEx) i.Value.ClearCache(true);
 
         RefreshAllStats();
@@ -1147,6 +1253,7 @@ public class StatsManager : I_StatsManager
             Status_Instance si = target.Instantiate(this, initialSeverity, durationMinute);
             this._statusInstances.Add(si.ID, si);
 
+            NotifyStatModsChanged();
             ClearStatusInstanceCache();
 
             if (si.BaseRef.variationMode.randomVariation is Status_Base.RandomVariation_Sex)

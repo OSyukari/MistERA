@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for COM_special.json. Holds en-us entries for the retail-browsing command."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_special_retailTrade_displayName_1": "Browse Goods",
+                "com_special_retailTrade_begin_1": "$doer.firstname$ starts browsing goods",
+                "com_special_retailTrade_ongoing_1": "$doer.firstname$ is browsing goods"
+            }
+        }
+    }
+}

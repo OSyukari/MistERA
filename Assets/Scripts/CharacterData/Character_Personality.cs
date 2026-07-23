@@ -235,7 +235,7 @@ public class Character_Personality
     { if (kol.Owner.RefID == 0) return null;
         var key = $"{kol.eventID}{kol.suffix}";
 
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Character_Personality GetKOJOMessage evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.TargetTags)}");
 
         if (!entries.ContainsKey(key))
         {

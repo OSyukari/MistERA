@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Traits_nsfw.json. Holds en-us entries for the Sadist/Masochist singular traits."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "traits_BODY": "Body Traits",
+                "trait_Singular_Sadist": "Sadist",
+                "trait_Singular_Sadist_tooltip": "%%notimplemented%%",
+                "trait_Singular_Masochist": "Masochist",
+                "trait_Singular_Masochist_tooltip": "%%notimplemented%%"
+            }
+        }
+    }
+}

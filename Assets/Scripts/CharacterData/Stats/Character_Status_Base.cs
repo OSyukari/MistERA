@@ -71,6 +71,13 @@ public class Status_Base
     public bool allowNaturalRemoval = true;
     public string stringFormat = "N1";
 
+    /// <summary>
+    /// Fixed lifetime in minutes for any instance of this status, default -1 = no forced duration
+    /// (existing decay/severity-driven behavior, unchanged). Only fills in when the caller didn't
+    /// already request a specific duration - see Instantiate().
+    /// </summary>
+    public int maxDuration = -1;
+
 
 
     [JsonIgnore]
@@ -121,8 +128,12 @@ public class Status_Base
     [System.Serializable]
     public class RandomVariation
     {
-
-        public virtual float Variation(int elapsed = 0)
+        /// <summary>
+        /// seed is a value stable for the lifetime of a single Status_Instance (randomized on creation),
+        /// so variation types can differ per-character/per-instance instead of every instance of a status
+        /// oscillating in exact lockstep. elapsed is the instance's own elapsedTime (minutes since added).
+        /// </summary>
+        public virtual float Variation(int seed, int elapsed = 0)
         {
             return 0;
         }
@@ -135,9 +146,30 @@ public class Status_Base
         public float cycleLen = 0;
         public float intensityMod = 1;
 
-        public override float Variation(int elapsed = 0)
+        public override float Variation(int seed, int elapsed = 0)
         {
             return (float)UtilityEX.SineSample(cycleLen, baseSample, elapsed) * intensityMod;
+        }
+    }
+
+    /// <summary>
+    /// Deterministic pseudo-random "noise" variation: re-rolls every cycleLen minutes, and is seeded
+    /// per-instance so different characters (or different occurrences of the same status) get different
+    /// values instead of a single shared global wave. Stable across repeated reads within the same
+    /// cycleLen window. Configure entirely via JSON — cycleLen (minutes between rolls) and intensityMod
+    /// (amplitude, output range is +/-intensityMod).
+    /// </summary>
+    [System.Serializable]
+    public class RandomVariation_Noise : RandomVariation
+    {
+        public float cycleLen = 60;
+        public float intensityMod = 1;
+
+        public override float Variation(int seed, int elapsed = 0)
+        {
+            if (cycleLen <= 0) return 0;
+            int bucket = (int)(elapsed / cycleLen);
+            return UtilityEX.DeterministicNoise(seed, bucket) * intensityMod;
         }
     }
 
@@ -251,6 +283,7 @@ public class Status_Base
 
     public Status_Instance Instantiate(StatsManager owner, float severity = 0f, int duration = -1)
     {
+        if (duration == -1 && maxDuration != -1) duration = maxDuration;
         return new Status_Instance(this, owner, severity, duration);
     }
 }

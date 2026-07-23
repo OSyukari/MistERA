@@ -23,7 +23,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -37,7 +37,7 @@
                                     ]
                                 }
                             ],
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -65,7 +65,7 @@
                             "requirement": {
                                 "requirePermission": true
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -85,7 +85,7 @@
                             "requirement": {
                                 "requireSelfAttitudeGTE": "Like"
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -99,7 +99,7 @@
                             ]
                         },
                         {
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -133,7 +133,7 @@
                                     "sleeping"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -154,7 +154,7 @@
                                     "timestop"
                                 ]
                             },
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -181,7 +181,7 @@
                                             "justWokenUp"
                                         ]
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sorry",
                                         "disgusted",
                                         "disappointed",
@@ -196,7 +196,7 @@
                                             "requirement": {
                                                 "requirePermission": true
                                             },
-                                            "extraPortraitTags": [
+                                            "extraSelfPortraitTags": [
                                                 "sorry",
                                                 "disgusted",
                                                 "disappointed",
@@ -223,7 +223,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -244,7 +244,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "troubled",
                                         "sigh",
                                         "smile",
@@ -261,7 +261,7 @@
                                 }
                             ],
                             "_comment": "2.2.4 指令失败拒绝 骑乘位V 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "angry",
                                 "disgust",
                                 "surprised",
@@ -286,7 +286,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -306,7 +306,7 @@
                                     "requirement": {
                                         "requireSelfAttitudeGTE": "Like"
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -324,7 +324,7 @@
                                 }
                             ],
                             "_comment": "2.2.8 玩家专用 刚睡醒时的 骑乘位V 无允许 敌意 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -355,7 +355,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -373,7 +373,7 @@
                                 }
                             ],
                             "_comment": "2.2.5 ($self$) 骑乘位V 结果正面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -394,7 +394,7 @@
                                     "requirement": {
                                         "requirePermission": true
                                     },
-                                    "extraPortraitTags": [
+                                    "extraSelfPortraitTags": [
                                         "sex",
                                         "doer",
                                         "cowgirl",
@@ -413,7 +413,7 @@
                                 }
                             ],
                             "_comment": "2.2.6 ($self$) 骑乘位V 结果负面 未允许 口上文",
-                            "extraPortraitTags": [
+                            "extraSelfPortraitTags": [
                                 "sex",
                                 "doer",
                                 "cowgirl",
@@ -440,94 +440,94 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_P_cowgirl_Climax_1": "($self$) 被骑乘位V 高潮 口上文",
-                "com_sex_P_cowgirl_Climax_2": "$self$猛地仰起头，身体像拉满的弓一样紧绷，十指死死扣进$target$的后背。\"啊——！去了！要去了！好爱……哈啊……好爱你……！\"",
-                "com_sex_P_cowgirl_Climax_3": "$self$眼前一片白光，失神地张大嘴巴，除了破碎的尖叫再也发不出完整的音节，内壁剧烈痉挛着绞紧。\"不行了……脑子要坏掉了……亲爱的……啊啊啊啊！\"",
-                "com_sex_P_cowgirl_Climax_4": "$self$绝望地咬住手背试图压抑声音，但强烈的快感还是冲破了理智的防线，整个人在痉挛中崩溃大哭。\"不要……别让我……啊啊啊！这种事……我不承认……！\"",
-                "com_sex_P_cowgirl_Climax_5": "$self$虽然心里满是屈辱，身体却并不受控制地迎来了高潮，眼神空洞地流着口水，大腿不住地抽搐。\"身体……身体擅自……哈啊……哪怕是你这样的家伙……啊啊！\"",
-                "com_sex_P_cowgirl_Begin_1": "$self$跨坐在$target$身上，双手撑着对方的胸膛，随着重力的下沉发出了一声满足的喟叹：\"哈啊……终于进来了……\"",
-                "com_sex_P_cowgirl_Begin_2": "$self$撩起耳边的发丝，低头看着结合处，腰身缓缓下压，直到彻底吞没。\"准备好了吗？我要动了哦。\"",
-                "com_sex_P_cowgirl_Begin_3": "$self$眼角带着笑意，主动握住$target$的手放在自己的腰际，随即开始了第一次起伏。\"这种深度……刚刚好。\"",
-                "com_sex_P_cowgirl_Begin_4": "$self$身体僵硬地跨坐着，脸上写满了不知所措，但没有起身离开。\"这……这样真的可以吗？我们可是……\"",
-                "com_sex_P_cowgirl_Begin_5": "$self$羞耻地捂住脸，不敢看$target$的眼睛，身体却在对方的引导下缓缓下沉。\"只、只有这一次哦……别告诉别人……\"",
-                "com_sex_P_cowgirl_Begin_6": "$self$咬着下唇，眼眶泛红，颤抖着按照命令分开双腿。\"我知道了……只要照做就可以了吧……\"",
-                "com_sex_P_cowgirl_Begin_7": "$self$死死抓着床单，像是在忍受酷刑一般接纳了侵入，声音冷得像冰。\"快点结束……别指望我会发出声音。\"",
-                "com_sex_P_cowgirl_1": "$self$发出轻微的鼾声，对此刻发生的事一无所知，只是偶尔因为过于猛烈的撞击而皱眉哼哼两声。",
-                "com_sex_P_cowgirl_2": "$self$如同失去意识的人偶般任由摆布，温热的内壁在本能地收缩，却无法传达给沉睡的大脑。",
-                "com_sex_P_cowgirl_3": "$self$保持着被定格的姿势，脸上还残留着上一秒的表情，而下体却在无法感知的状态下被反复贯穿，随着撞击被动地摇晃着。",
-                "com_sex_P_cowgirl_4": "$self$毫无知觉地在这个凝固的世界里承受着侵犯，唯有结合处不断溢出的体液证明了时间在她体内疯狂流逝的痕迹。",
-                "com_sex_P_cowgirl_5": "$self$被惊醒后猛地坐起身，有些生气地推开$target$。\"你在干什么！让我好好睡觉行不行！\"",
-                "com_sex_P_cowgirl_6": "$self$烦躁地踹了$target$一脚，裹紧了被子背过身去。\"别烦我……困死了……\"",
-                "com_sex_P_cowgirl_7": "$self$发出一声尖叫，手脚并用地试图把$target$踢下床。\"救命！你在干什么！滚开！\"",
-                "com_sex_P_cowgirl_8": "$self$惊恐万状地缩到墙角，随手抓起枕头砸过去。\"变态！强奸犯！别过来！\"",
-                "com_sex_P_cowgirl_9": "$self$轻轻推开了$target$伸过来的手，翻身滚到床的另一边。\"不行，今天太累了，腰酸得厉害。\"",
-                "com_sex_P_cowgirl_10": "$self$歉意地吻了吻$target$的额头，然后拉过了被子。\"饶了我吧，明天还要早起呢，乖。\"",
-                "com_sex_P_cowgirl_11": "$self$捉住了$target$不安分的手指，摇了摇头。\"现在没那个心情……我们就这样抱一会儿好不好？\"",
-                "com_sex_P_cowgirl_12": "$self$尴尬地笑了笑，像泥鳅一样从$target$怀里溜了出去。\"别开这种玩笑啦，不管怎么说这也太越界了。\"",
-                "com_sex_P_cowgirl_13": "$self$按住$target$的肩膀，认真地注视着对方。\"我不讨厌你，但这还没到那一步，对吧？\"",
-                "com_sex_P_cowgirl_14": "$self$像触电一样跳了起来，反手给了$target$一耳光。\"你疯了吗？！离我远点！\"",
-                "com_sex_P_cowgirl_15": "$self$眼神中充满了鄙夷，冷冷地整理好衣服。\"真令人作呕，别用你的脏手碰我。\"",
-                "com_sex_P_cowgirl_16": "$self$迷迷糊糊地睁开眼，感受到体内的异物感后并没有反抗，而是慵懒地抱住了$target$的脖子。\"嗯……半夜偷袭吗……随你便吧……\"",
-                "com_sex_P_cowgirl_17": "$self$发出一声软绵绵的鼻音，顺势配合着对方的动作扭动了一下腰肢。\"坏蛋……连睡觉都不放过我……哈啊……\"",
-                "com_sex_P_cowgirl_18": "$self$惊醒过来，在看清是$target$后，眼中的惊恐变成了某种复杂的默许。\"是你……？这算是什么……补偿吗？\"",
-                "com_sex_P_cowgirl_19": "$self$在黑暗中喘息着，没有推开身上的人，反而试探性地挺起了腰。\"既然已经这样了……那就做到底吧。\"",
-                "com_sex_P_cowgirl_20": "$self$恐惧地蜷缩着身子，却不敢反抗压在身上的重量。\"别打我……我做……我做就是了……\"",
-                "com_sex_P_cowgirl_21": "$self$绝望地闭上眼，任由泪水滑落，机械地配合着动作。\"反正我反抗也没用……对吧？\"",
-                "com_sex_P_cowgirl_22": "$self$原本支撑的双手无力地滑落，整个人瘫软在$target$怀里，呼吸变得急促而滚烫。\"这……太深了……哈啊……停不下来……\"",
-                "com_sex_P_cowgirl_23": "$self$迷离地半眯着眼，指甲在$target$的肩膀上留下了抓痕，腰部的摆动变得更加迎合。\"就是那里……嗯……好舒服……再用力一点……\"",
-                "com_sex_P_cowgirl_24": "$self$仰起脖颈，汗水顺着锁骨滑落，声音里带上了明显的哭腔。\"坏心眼……别顶那里……哈……我要受不了了……\"",
-                "com_sex_P_cowgirl_25": "$self$原本抗拒的手臂不知何时环上了$target$的脖颈，眼中的理智逐渐涣散。\"不……不行……这种感觉……哈啊……怎么会……\"",
-                "com_sex_P_cowgirl_26": "$self$带着哭腔摇着头，身体却诚实地索求着更多。\"明明不应该的……可是……好奇怪……那里……要融化了……\"",
-                "com_sex_P_cowgirl_27": "$self$皱着眉头停下了动作，有些难受地调整了一下姿势。\"等等……有点痛，位置好像不对。\"",
-                "com_sex_P_cowgirl_28": "$self$的动作变得机械而敷衍，视线游离到了天花板上。\"还要多久？我腿有点麻了。\"",
-                "com_sex_P_cowgirl_29": "$self$叹了口气，直接从$target$身上翻身下来，显得兴致缺缺。\"感觉不太对，今天就算了吧。\"",
-                "com_sex_P_cowgirl_30": "$self$依然保持着僵硬的姿势，眼神空洞地看着前方，仿佛灵魂已经出窍。\"……结束了吗？\"",
-                "com_sex_P_cowgirl_31": "$self$强忍着不适感，指甲深深掐进掌心。\"好恶心……这种感觉只有恶心……\""
+                "com_sex_P_cowgirl_Climax_1": "$self$腰猛地停住，整个人僵住，随即剧烈地颤抖起来。\n\n\"啊——！去了……！哈啊……！\"\n\n她坐在他身上不停地抽，小穴把肉棒绞得死紧，爱液顺着结合处往下淌，连腿都夹不稳了。",
+                "com_sex_P_cowgirl_Climax_2": "$self$猛地仰起头，身体绷得死紧，十指死死扣进$target$的后背。\n\n\"啊——！去了！要去了！好爱……哈啊……好爱你……！\"\n\n她坐在他身上不停地颤，小穴把肉棒绞得死紧，爱液顺着结合处往下淌。",
+                "com_sex_P_cowgirl_Climax_3": "$self$眼前阵阵发白，失神地张着嘴，除了破碎的尖叫再发不出完整的音节。\n\n\"不行了……脑子要坏掉了……亲爱的……啊啊啊啊！\"\n\n小穴剧烈痉挛着绞紧肉棒，她整个人瘫在他身上抽个不停。",
+                "com_sex_P_cowgirl_Climax_4": "$self$绝望地咬住手背想压住声音，强烈的快感还是冲破了理智，整个人在痉挛中崩溃大哭。\n\n\"不要……别让我……啊啊啊！这种事……我不承认……！\"\n\n小穴却把肉棒绞得更紧，把快感全吞了下去。",
+                "com_sex_P_cowgirl_Climax_5": "$self$心里满是屈辱，身体却不听使唤地迎来了高潮，眼神空洞地淌着口水，大腿不住地抽搐。\n\n\"身体……身体擅自……哈啊……啊啊！\"\n\n她坐在他身上动不了，小穴自己不住地缩着咬肉棒。",
+                "com_sex_P_cowgirl_Begin_1": "$self$跨坐在$target$身上，双手撑着对方的胸膛，随着重力下沉发出满足的喟叹。\n\n\"哈啊……终于进来了……\"\n\n她慢慢坐到底，把肉棒整根吞进小穴，舒服得眯起眼。",
+                "com_sex_P_cowgirl_Begin_2": "$self$撩起耳边的发丝，低头看着结合处，腰身缓缓下压，直到彻底吞没。\n\n\"准备好了吗？我要动了哦。\"\n\n她试探着抬腰又坐下，小穴把肉棒含得紧紧的。",
+                "com_sex_P_cowgirl_Begin_3": "$self$眼角带着笑意，主动握住$target$的手放在自己腰际，随即开始了起伏。\n\n\"这种深度……刚刚好。\"\n\n她上下颠着腰，奶子也跟着轻轻晃，越骑越顺。",
+                "com_sex_P_cowgirl_Begin_4": "$self$身体僵硬地跨坐着，脸上写满不知所措，却没有起身离开。\n\n\"这……这样真的可以吗？我们可是……\"\n\n她咬着唇，在$target$的引导下缓缓下沉，小穴慢慢把肉棒吞进去。",
+                "com_sex_P_cowgirl_Begin_5": "$self$羞耻地捂住脸，不敢看$target$的眼睛，身体却在对方的引导下缓缓下沉。\n\n\"只、只有这次哦……别告诉别人……\"\n\n她坐到底的时候忍不住哼出声，腿根泛红。",
+                "com_sex_P_cowgirl_Begin_6": "$self$咬着下唇，眼眶泛红，颤抖着按命令分开双腿跨坐上去。\n\n\"我知道了……只要照做就可以了吧……\"\n\n她僵硬地吞进肉棒，小穴绷得死紧，疼得直抽气。",
+                "com_sex_P_cowgirl_Begin_7": "$self$死死抓着床单，咬牙接纳了侵入，眼神冷得发寒。\n\n\"快点结束……别指望我会出声。\"\n\n她机械地起伏着，整个人绷着，不肯多动半分。",
+                "com_sex_P_cowgirl_1": "$self$趴在$target$身上发出轻微的鼾声，对此刻发生的事毫无知觉。\n\n偶尔因为过猛的顶弄而皱眉哼几声，小穴却本能地把肉棒含得紧紧的。",
+                "com_sex_P_cowgirl_2": "$self$毫无意识地趴着任由摆布，温热的小穴在本能地收缩，却传不进沉睡的脑子。\n\n随着底下人的动作，她的身子被动地前后晃，呼吸始终平稳。",
+                "com_sex_P_cowgirl_3": "$self$保持着被定格的姿势跨坐在$target$身上，脸上还残留着刚才的表情。\n\n凝固的世界里，下体却在无法感知的状态下被反复顶弄，她整个人被动地随撞击摇晃。",
+                "com_sex_P_cowgirl_4": "$self$毫无知觉地在这凝固的世界里承受着侵犯。\n\n唯有结合处不断溢出的爱液，证明时间在她体内疯狂地流逝着。",
+                "com_sex_P_cowgirl_5": "$self$被惊醒后猛地坐起身，有些生气地推开$target$。\n\n\"你在干什么！让我好好睡觉行不行！\"\n\n她从他身上下来，裹紧被子缩到床角。",
+                "com_sex_P_cowgirl_6": "$self$烦躁地踹了$target$几脚，裹紧被子背过身去。\n\n\"别烦我……困死了……\"\n\n她把他踹开，重新倒头就睡。",
+                "com_sex_P_cowgirl_7": "$self$发出尖叫，手脚并用地想把$target$踹下床。\n\n\"救命！你在干什么！滚开！\"\n\n她慌乱地从床上爬起来，抓起手边的防身物。",
+                "com_sex_P_cowgirl_8": "$self$惊恐万状地缩到墙角，随手抓起枕头砸过去。\n\n\"变态！强奸犯！别过来！\"\n\n她抓起手机想报警，浑身止不住地发抖。",
+                "com_sex_P_cowgirl_9": "$self$轻轻推开$target$伸过来的手，翻身滚到床那头去。\n\n\"不行，今天太累了，腰酸得厉害。\"\n\n她歉意地揉了揉腰，明显没了兴致。",
+                "com_sex_P_cowgirl_10": "$self$歉意地吻了吻$target$的额头，然后拉过被子。\n\n\"饶了我吧，明天还要早起呢，乖。\"\n\n她拍了拍他的脸，转身背对着他躺好。",
+                "com_sex_P_cowgirl_11": "$self$捉住$target$不安分的手指，摇摇头。\n\n\"现在没那个心情……我们就这样抱会儿好不好？\"\n\n她把他的手按回腰间，只肯安静地抱着。",
+                "com_sex_P_cowgirl_12": "$self$尴尬地笑了笑，从$target$怀里溜了出去。\n\n\"别开这种玩笑啦，不管怎么说这也太越界了。\"\n\n她不动声色地拉开距离，把被子扯过来挡着。",
+                "com_sex_P_cowgirl_13": "$self$按住$target$的肩膀，认真地注视着对方。\n\n\"我不讨厌你，但这还没到那地步，对吧？\"\n\n她温和但坚定地拒绝，拍了拍他的手背。",
+                "com_sex_P_cowgirl_14": "$self$猛地跳起来，反手给了$target$个耳光。\n\n\"你疯了吗？！离我远点！\"\n\n她捂着身子退到床角，眼里满是厌恶。",
+                "com_sex_P_cowgirl_15": "$self$眼神里满是鄙夷，冷冷地推开他。\n\n\"真令人作呕，别用你的脏手碰我。\"\n\n她迅速抓过衣服遮住自己，连多看几眼都嫌脏。",
+                "com_sex_P_cowgirl_16": "$self$迷迷糊糊睁开眼，感受到体内的异物感后并没有反抗，而是慵懒地抱住$target$的脖子。\n\n\"嗯……半夜偷袭吗……随你便吧……\"\n\n她坐在他身上没动，由着底下的人自己顶，小穴含着肉棒满足地缩了缩。",
+                "com_sex_P_cowgirl_17": "$self$发出软绵绵的鼻音，顺势配合着对方的动作扭了扭腰。\n\n\"坏蛋……连睡觉都不放过我……哈啊……\"\n\n她懒洋洋地开始起伏，把肉棒吞得更深了些。",
+                "com_sex_P_cowgirl_18": "$self$惊醒过来，看清是$target$后，眼里的惊恐变成了某种复杂的默许。\n\n\"是你……？这算是什么……补偿吗？\"\n\n她咬着唇没起身，试探性地抬了抬腰。",
+                "com_sex_P_cowgirl_19": "$self$在黑暗中喘息着，没有推开身上的人，反而试探性地挺起了腰。\n\n\"既然已经这样了……那就做到底吧。\"\n\n她慢慢坐到底，主动骑了起来。",
+                "com_sex_P_cowgirl_20": "$self$恐惧地蜷着身子，却不敢反抗被按着跨坐上去的姿势。\n\n\"别打我……我做……我做就是了……\"\n\n她颤抖着跨坐上去，由着肉棒撑开小穴，眼泪无声地往下掉。",
+                "com_sex_P_cowgirl_21": "$self$绝望地闭上眼，任由泪水滑落，机械地配合着起伏。\n\n\"反正我反抗也没用……对吧？\"\n\n她僵硬地骑着他，小穴绷得紧紧的，连哼都不敢大声。",
+                "com_sex_P_cowgirl_22": "$self$双手撑在$target$胸上，腰有节奏地起伏着，呼吸越来越急。\n\n\"哈啊……好深……正好顶到那儿了……\"\n\n她越骑越顺，小穴把肉棒含得紧紧的，爱液顺着结合处往下淌，整个人都泛起红晕。",
+                "com_sex_P_cowgirl_23": "$self$俯下身贴上$target$的胸膛，腰身的起伏变得更急切。\n\n\"嗯……这样磨……好舒服……再深些……\"\n\n她主动调整角度去磨那个最舒服的点，小穴不住地缩着吮肉棒，停不下来。",
+                "com_sex_P_cowgirl_24": "$self$仰起脖颈，汗水顺着锁骨滑落，骑得越来越忘我。\n\n\"哈啊……别顶那儿……嗯……我要受不了了……\"\n\n她腰上下颠着，奶子跟着晃，完全沉浸在被填满的快感里。",
+                "com_sex_P_cowgirl_25": "$self$原本只是想敷衍了事，骑上去才发现自己竟越来越有感觉。\n\n\"……怎么会……明明没打算享受的……\"\n\n她的腰不受控地快了起来，小穴把肉棒绞得紧紧的，连她自己都分不清是难受还是舒服了。",
+                "com_sex_P_cowgirl_26": "$self$咬着唇，脸上泛红，骑着的腰却诚实得很。\n\n\"……啧……居然这么舒服……\"\n\n她嘴上不饶人，腰却主动往深里坐，小穴把肉棒吮得滋滋作响。",
+                "com_sex_P_cowgirl_27": "$self$放慢了起伏，有些无趣地看了看身下的$target$。\n\n\"……嗯……还行吧。\"\n\n这段她始终找不到舒服的节奏，骑得懒懒散散的，神色淡淡的。",
+                "com_sex_P_cowgirl_28": "$self$敷衍地上下起伏着，却总觉得差了点什么。\n\n\"……怎么说呢，有点……填不满。\"\n\n这段对她来说没什么滋味，她甚至悄悄分了神，盘算着换个姿势会不会好些。",
+                "com_sex_P_cowgirl_29": "$self$有气无力地坐在他身上，腰懒得动。\n\n\"……要不你来动吧？我没什么劲了。\"\n\n这段她兴致缺缺，干脆趴在他身上由着他从底下顶，自己只当省力气。",
+                "com_sex_P_cowgirl_30": "$self$皱着眉停下动作，下身被撑得生疼。\n\n\"……太大了……你别顶那么深。\"\n\n这段她完全是强忍着不适在骑，小穴被磨得火辣辣的，每坐下去都疼得蹙眉。",
+                "com_sex_P_cowgirl_31": "$self$强忍着难受，机械地起伏着，脸上没什么享受的表情。\n\n\"……够了吧。\"\n\n这段她完全是被动地挨着，小穴被磨得发酸，巴不得这阵赶紧翻篇。"
             },
             "en-us": {
-                "com_sex_P_cowgirl_Climax_1": "($self$) Cowgirl V Climax Dialogue",
-                "com_sex_P_cowgirl_Climax_2": "$self$ throws her head back violently, body taut as a drawn bow, fingers digging hard into $target$'s back. \"Ah—! I'm coming! I'm coming! I love... haah... love you so much...!\"",
-                "com_sex_P_cowgirl_Climax_3": "White light floods $self$'s vision as her jaw drops in a daze, unable to form words beyond broken screams, her inner walls clamping down in violent spasms. \"I can't... my brain is breaking... Darling... Aaaah!\"",
-                "com_sex_P_cowgirl_Climax_4": "$self$ desperately bites her hand to stifle the sound, but the intense pleasure breaches her mental defenses, leaving her sobbing in convulsions. \"No... don't make me... Aaah! I don't... I don't accept this...!\"",
-                "com_sex_P_cowgirl_Climax_5": "Though humiliated, $self$'s body betrays her with an uncontrollable climax, eyes blank and drooling as her thighs twitch helplessly. \"My body... it's doing this on its own... haah... even for someone like you... Aah!\"",
-                "com_sex_P_cowgirl_Begin_1": "$self$ straddles $target$, hands resting on their chest, letting out a satisfied sigh as gravity sinks her down. \"Haah... finally inside...\"",
-                "com_sex_P_cowgirl_Begin_2": "$self$ tucks a strand of hair behind her ear, looking down at where they join, slowly sinking her hips until fully engulfed. \"Ready? I'm going to move now.\"",
-                "com_sex_P_cowgirl_Begin_3": "With a smile in her eyes, $self$ guides $target$'s hands to her waist and begins the first undulation. \"This depth... is just right.\"",
-                "com_sex_P_cowgirl_Begin_4": "$self$ sits stiffly atop $target$, face full of confusion, but makes no move to leave. \"Is... is this really okay? We are...\"",
-                "com_sex_P_cowgirl_Begin_5": "$self$ covers her face in shame, avoiding $target$'s eyes, but slowly sinks down under their guidance. \"Just... just this once... don't tell anyone...\"",
-                "com_sex_P_cowgirl_Begin_6": "$self$ bites her lip, eyes red, trembling as she spreads her legs as ordered. \"I get it... I just have to do as I'm told, right...\"",
-                "com_sex_P_cowgirl_Begin_7": "$self$ clutches the bedsheets tightly, accepting the intrusion as if enduring torture, voice cold as ice. \"Just finish it quickly... and don't expect me to make a sound.\"",
-                "com_sex_P_cowgirl_1": "$self$ breathes softly, completely unaware of what is happening, only frowning and moaning slightly at the more vigorous thrusts.",
-                "com_sex_P_cowgirl_2": "$self$ lets herself be handled like an unconscious doll, her warm inner walls contracting instinctively, unable to relay the sensation to her sleeping mind.",
-                "com_sex_P_cowgirl_3": "$self$ remains frozen in position, the previous second's expression still on her face, while her lower body is repeatedly penetrated without her perception, rocking passively with the impacts.",
-                "com_sex_P_cowgirl_4": "$self$ endures the violation unknowingly in this frozen world, only the fluids overflowing from their union proving the passage of time within her.",
-                "com_sex_P_cowgirl_5": "$self$ bolts upright after being startled awake, pushing $target$ away angrily. \"What are you doing! Let me sleep!\"",
-                "com_sex_P_cowgirl_6": "$self$ kicks $target$ in annoyance, wrapping the blanket tight and turning her back. \"Don't bother me... I'm dead tired...\"",
-                "com_sex_P_cowgirl_7": "$self$ screams, flailing to kick $target$ off the bed. \"Help! What are you doing! Get off!\"",
-                "com_sex_P_cowgirl_8": "$self$ shrinks into the corner in terror, grabbing a pillow to throw. \"Pervert! Rapist! Stay back!\"",
-                "com_sex_P_cowgirl_9": "$self$ gently pushes $target$'s reaching hand away, rolling to the other side of the bed. \"No, I'm too tired today, my back hurts.\"",
-                "com_sex_P_cowgirl_10": "$self$ kisses $target$'s forehead apologetically, then pulls up the blanket. \"Spare me today, I have to get up early tomorrow, be good.\"",
-                "com_sex_P_cowgirl_11": "$self$ catches $target$'s wandering fingers and shakes her head. \"Not in the mood right now... can we just cuddle for a while?\"",
-                "com_sex_P_cowgirl_12": "$self$ laughs awkwardly, slipping out of $target$'s embrace like an eel. \"Don't joke like that, this is crossing the line.\"",
-                "com_sex_P_cowgirl_13": "$self$ holds $target$'s shoulders, looking at them seriously. \"I don't dislike you, but we aren't there yet, right?\"",
-                "com_sex_P_cowgirl_14": "$self$ jumps up as if electrified, slapping $target$ across the face. \"Are you crazy?! Stay away from me!\"",
-                "com_sex_P_cowgirl_15": "$self$ looks with disdain, coldly arranging her clothes. \"Disgusting. Don't touch me with your filthy hands.\"",
-                "com_sex_P_cowgirl_16": "$self$ opens her eyes groggily, feeling the intrusion but not resisting, instead lazily wrapping her arms around $target$'s neck. \"Mmm... a midnight surprise?... Do as you please...\"",
-                "com_sex_P_cowgirl_17": "$self$ lets out a soft nasal sound, swaying her hips to match the rhythm. \"Meanie... won't even let me sleep... haah...\"",
-                "com_sex_P_cowgirl_18": "$self$ wakes with a start, the fear in her eyes turning into a complex acquiescence upon seeing $target$. \"You...? Is this some kind of... compensation?\"",
-                "com_sex_P_cowgirl_19": "$self$ pants in the darkness, not pushing the weight away, but tentatively arching her hips. \"Since it's come to this... might as well go all the way.\"",
-                "com_sex_P_cowgirl_20": "$self$ curls up in fear, daring not to resist the weight pressing on her. \"Don't hit me... I'll do it... I'll do it...\"",
-                "com_sex_P_cowgirl_21": "$self$ closes her eyes in despair, tears falling as she mechanically cooperates with the movements. \"It's not like resisting would help... right?\"",
-                "com_sex_P_cowgirl_22": "$self$'s supporting arms give way, collapsing weakly into $target$'s embrace, breath hot and rapid. \"It's... too deep... haah... I can't stop...\"",
-                "com_sex_P_cowgirl_23": "$self$ eyes half-closed in a daze, nails leaving scratches on $target$'s shoulders, waist moving more eagerly. \"Right there... mm... feels so good... harder...\"",
-                "com_sex_P_cowgirl_24": "$self$ cranes her neck, sweat sliding down her collarbone, voice thick with tears. \"So mean... don't hit that spot... ha... I can't take it...\"",
-                "com_sex_P_cowgirl_25": "$self$'s resisting arms unknowingly wrap around $target$'s neck, reason fading from her eyes. \"No... I can't... this feeling... haah... how could...\"",
-                "com_sex_P_cowgirl_26": "$self$ shakes her head tearfully, but her body honestly begs for more. \"It shouldn't be like this... but... it's strange... down there... is melting...\"",
-                "com_sex_P_cowgirl_27": "$self$ frowns and stops moving, adjusting her posture uncomfortably. \"Wait... it hurts a bit, the angle seems off.\"",
-                "com_sex_P_cowgirl_28": "$self$'s movements become mechanical and perfunctory, gaze drifting to the ceiling. \"How much longer? My legs are numb.\"",
-                "com_sex_P_cowgirl_29": "$self$ sighs, rolling off $target$ directly, looking uninterested. \"Doesn't feel right, let's forget it for today.\"",
-                "com_sex_P_cowgirl_30": "$self$ maintains a stiff posture, staring blankly ahead as if her soul has left her body. \"...Is it over?\"",
-                "com_sex_P_cowgirl_31": "$self$ endures the discomfort, nails digging deep into her palms. \"Disgusting... I feel nothing but disgust...\""
+                "com_sex_P_cowgirl_Climax_1": "$self$'s hips jerk to a halt, her whole body going rigid, then trembling violently.\n\n\"Ah—! Cumming...! Haa...!\"\n\nShe sits on him twitching nonstop, her pussy clamping the cock death-tight, slick running down where they join, her legs too weak to stay clamped.",
+                "com_sex_P_cowgirl_Climax_2": "$self$ throws her head back, body pulled taut, fingers digging into $target$'s back.\n\n\"Ah—! Cumming! I'm cumming! Love... haa... love you...!\"\n\nShe sits on him trembling, her pussy clamping the cock death-tight, slick running down where they join.",
+                "com_sex_P_cowgirl_Climax_3": "$self$'s vision whites at the edges, mouth hanging open in a daze, only broken screams coming out.\n\n\"Can't take it... my mind's gonna break... darling... aaaaaah!\"\n\nHer pussy spasms and clenches the cock; she slumps against him, twitching nonstop.",
+                "com_sex_P_cowgirl_Climax_4": "$self$ bites the back of her hand in despair trying to muffle herself, but the intense pleasure breaks through her reason and she breaks down sobbing in spasms.\n\n\"No... don't make me... aaah! This... I won't admit it...!\"\n\nYet her pussy clamps the cock tighter, swallowing all the pleasure.",
+                "com_sex_P_cowgirl_Climax_5": "$self$'s heart is full of humiliation, but her body climaxes beyond her control, eyes vacant and drooling, thighs twitching nonstop.\n\n\"My body... it's moving on its own... haa... aaah!\"\n\nShe can't move on top of him, her pussy clenching the cock on its own.",
+                "com_sex_P_cowgirl_Begin_1": "$self$ straddles $target$, hands braced on his chest, letting out a satisfied sigh as she sinks under her own weight.\n\n\"Haa... it's finally in...\"\n\nShe slowly bottoms out, swallowing the whole cock into her pussy, narrowing her eyes in pleasure.",
+                "com_sex_P_cowgirl_Begin_2": "$self$ tucks the hair by her ear back, looking down at where they join, pressing her hips down slowly until she's taken him entirely.\n\n\"Ready? I'm going to move.\"\n\nShe lifts her hips experimentally then sits back down, her pussy gripping the cock tight.",
+                "com_sex_P_cowgirl_Begin_3": "$self$'s eyes crinkle with a smile; she takes $target$'s hand of her own accord and puts it on her waist, then starts to ride.\n\n\"This depth... is just right.\"\n\nShe bounces her hips up and down, her tits swaying lightly, getting into the rhythm.",
+                "com_sex_P_cowgirl_Begin_4": "$self$ straddles him stiffly, face full of bewilderment, yet she doesn't get up and leave.\n\n\"Is... is this really okay? But we're...\"\n\nShe bites her lip and sinks slowly under his guidance, her pussy swallowing the cock little by little.",
+                "com_sex_P_cowgirl_Begin_5": "$self$ covers her face in shame, not daring to meet $target$'s eyes, but her body sinks under his guidance.\n\n\"J-just this once... don't tell anyone...\"\n\nWhen she bottoms out she can't help moaning, the roots of her thighs flushing red.",
+                "com_sex_P_cowgirl_Begin_6": "$self$ bites her lower lip, eyes reddening, and trembling, parts her legs to straddle him as ordered.\n\n\"I get it... as long as I do as I'm told, right...\"\n\nShe stiffly swallows the cock, her pussy clenched tight, gasping in pain.",
+                "com_sex_P_cowgirl_Begin_7": "$self$ grips the sheets tight, gritting her teeth as she takes the intrusion, eyes ice-cold.\n\n\"Just finish quick... don't expect me to make a sound.\"\n\nShe rides mechanically, all tense, refusing to move an inch more.",
+                "com_sex_P_cowgirl_1": "$self$ dozes on $target$'s chest with soft snores, oblivious to what's happening.\n\nShe frowns and hums now and then at overly hard thrusts, but her pussy instinctively grips the cock tight.",
+                "com_sex_P_cowgirl_2": "$self$ lies uncomprehending on him, letting herself be moved, her warm pussy contracting on instinct, none of it reaching her sleeping mind.\n\nWith the motion beneath her, her body sways passively back and forth, her breathing staying even.",
+                "com_sex_P_cowgirl_3": "$self$ is frozen mid-straddle on $target$'s lap, face still holding the expression from a moment ago.\n\nIn the frozen world, her lower body is pumped over and over beyond her awareness, her whole body swaying passively with the impacts.",
+                "com_sex_P_cowgirl_4": "$self$ endures the violation uncomprehending in this congealed world.\n\nOnly the slick endlessly overflowing from where they join proves how wildly time is passing inside her.",
+                "com_sex_P_cowgirl_5": "$self$ wakes with a start and sits up, shoving $target$ away in annoyance.\n\n\"What are you doing! Let me sleep, will you!\"\n\nShe climbs off him, wraps the blanket around herself, and shrinks to the corner of the bed.",
+                "com_sex_P_cowgirl_6": "$self$ kicks $target$ a few times in irritation, bundling the blanket around herself and turning away.\n\n\"Quit bothering me... so sleepy...\"\n\nShe kicks him off and drops right back to sleep.",
+                "com_sex_P_cowgirl_7": "$self$ screams, thrashing to kick $target$ off the bed.\n\n\"Help! What are you doing! Get off!\"\n\nShe scrambles up, grabbing the nearest thing to defend herself.",
+                "com_sex_P_cowgirl_8": "$self$ shrinks to the corner in terror, hurling a pillow at him.\n\n\"Pervert! Rapist! Stay away!\"\n\nShe snatches up her phone to call the cops, trembling all over.",
+                "com_sex_P_cowgirl_9": "$self$ gently pushes $target$'s reaching hand away and rolls to the far side of the bed.\n\n\"No, I'm too tired today, my waist aches.\"\n\nShe apologetically rubs her waist, clearly not in the mood.",
+                "com_sex_P_cowgirl_10": "$self$ apologetically kisses $target$'s forehead, then pulls the blanket up.\n\n\"Spare me, I have to be up early tomorrow, be good.\"\n\nShe pats his cheek and turns her back to him to settle in.",
+                "com_sex_P_cowgirl_11": "$self$ catches $target$'s restless fingers and shakes her head.\n\n\"I'm not in the mood right now... can we just hold each other for a bit?\"\n\nShe presses his hand back to her waist, willing only to cuddle quietly.",
+                "com_sex_P_cowgirl_12": "$self$ laughs awkwardly and slips out of $target$'s arms.\n\n\"Don't joke like that—this is way out of line no matter how you put it.\"\n\nShe subtly puts distance between them and pulls the blanket up to cover herself.",
+                "com_sex_P_cowgirl_13": "$self$ presses on $target$'s shoulders, looking at him seriously.\n\n\"I don't hate you, but we're not at that stage yet, are we?\"\n\nShe refuses gently but firmly, patting the back of his hand.",
+                "com_sex_P_cowgirl_14": "$self$ jumps up and slaps $target$ across the face.\n\n\"Are you crazy?! Stay away from me!\"\n\nShe clutches herself and retreats to the corner, eyes full of disgust.",
+                "com_sex_P_cowgirl_15": "$self$'s eyes fill with disdain as she coldly shoves him away.\n\n\"Disgusting, don't touch me with your dirty hands.\"\n\nShe snatches up clothes to cover herself, finding even looking at him dirty.",
+                "com_sex_P_cowgirl_16": "$self$ opens her eyes groggily; feeling the intrusion inside, she doesn't resist—instead she lazily loops her arms around $target$'s neck.\n\n\"Mm... a midnight ambush... do what you want...\"\n\nShe sits on him without moving, letting him thrust from below, her pussy clenching contentedly around the cock.",
+                "com_sex_P_cowgirl_17": "$self$ lets out a soft nasal hum, rolling her hips in time with his motion.\n\n\"Meanie... won't even let me sleep... haa...\"\n\nShe lazily starts to ride, taking the cock deeper.",
+                "com_sex_P_cowgirl_18": "$self$ wakes with a start; once she sees it's $target$, the terror in her eyes turns to a complicated sort of acquiescence.\n\n\"It's you...? Is this some kind of... compensation?\"\n\nShe bites her lip without getting up, experimentally lifting her hips.",
+                "com_sex_P_cowgirl_19": "$self$ pants in the dark, not pushing off the one atop her, instead tentatively lifting her hips.\n\n\"Since it's come to this... then let's go all the way.\"\n\nShe slowly bottoms out and starts to ride on her own.",
+                "com_sex_P_cowgirl_20": "$self$ curls up in terror, not daring to resist being pressed into the straddling pose.\n\n\"Don't hit me... I'll do it... I'll do it...\"\n\nShe tremblingly straddles him, letting the cock stretch her pussy open, tears falling silently.",
+                "com_sex_P_cowgirl_21": "$self$ shuts her eyes in despair, letting tears slip, mechanically moving along.\n\n\"It's no use resisting anyway... right?\"\n\nShe rides him stiffly, her pussy clenched tight, not daring even to moan loud.",
+                "com_sex_P_cowgirl_22": "$self$ braces her hands on $target$'s chest, hips rolling in rhythm, breathing growing ragged.\n\n\"Haa... so deep... right there...\"\n\nShe rides smoother and smoother, her pussy gripping the cock tight, slick running down where they join, a flush spreading over her.",
+                "com_sex_P_cowgirl_23": "$self$ leans down against $target$'s chest, her hips rolling more urgently.\n\n\"Mm... grinding like this... so good... deeper...\"\n\nShe adjusts the angle to grind that sweet spot, her pussy clenching and sucking the cock nonstop.",
+                "com_sex_P_cowgirl_24": "$self$ tips her head back, sweat sliding down her collarbone, riding more and more lost in it.\n\n\"Haa... don't hit there... mm... I can't take it...\"\n\nShe bounces her hips, tits swaying, utterly sunk into the fullness.",
+                "com_sex_P_cowgirl_25": "$self$ only meant to go through the motions, but once she's on top she finds herself feeling more and more.\n\n\"...How... I wasn't planning to enjoy this...\"\n\nHer hips speed up beyond her control, her pussy clamping the cock tight, unable to tell anymore if it's bad or good.",
+                "com_sex_P_cowgirl_26": "$self$ bites her lip, face flushed, but her riding hips are completely honest.\n\n\"...Tch... to think it's this good...\"\n\nHer mouth stays sharp, but her hips sink deeper on their own, her pussy slurping audibly around the cock.",
+                "com_sex_P_cowgirl_27": "$self$ slows her bouncing, glancing down at $target$ with mild boredom.\n\n\"...Mm... it's fine.\"\n\nShe never finds a good rhythm this round, riding lazily, expression flat.",
+                "com_sex_P_cowgirl_28": "$self$ goes through the motions of bouncing, but something feels missing.\n\n\"...How do I put it, it's a bit... not filling enough.\"\n\nThis round doesn't do much for her; she even drifts, wondering if a different angle might be better.",
+                "com_sex_P_cowgirl_29": "$self$ sits on him listlessly, too tired to move her hips.\n\n\"...How about you move instead? I'm out of energy.\"\n\nShe's not into it this round; she just lies against him and lets him thrust from below, letting him do the work so she can save her energy.",
+                "com_sex_P_cowgirl_30": "$self$ frowns and halts, her lower body aching from the stretch.\n\n\"...It's too big... don't go so deep.\"\n\nShe's purely enduring the discomfort this round, her pussy chafed raw, wincing every time she sinks down.",
+                "com_sex_P_cowgirl_31": "$self$ endures the ache, mechanically bouncing, no enjoyment on her face.\n\n\"...That's enough.\"\n\nShe's purely taking it passively this round, her pussy sore from the friction, wishing this stretch would just pass."
             }
         }
     }

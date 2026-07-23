@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for interactions.json. Holds the en-us entry for com_interaction_initiateSex_description_onComplete_1, matching the tense/phrasing already used by its sibling begin_1/ongoing_1 keys in the same file."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_interaction_initiateSex_description_onComplete_1": "$doer.firstname$ pushed $receiver.firstname$ down"
+            }
+        }
+    }
+}

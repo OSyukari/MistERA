@@ -128,12 +128,21 @@ public class Job : IDisposable, I_Disposable
     //[NonSerialized] public Manageable FactionOwner = null;
     [JsonProperty] protected SortedDictionary<int, COM_Match> actorRefIDStorage = new SortedDictionary<int, COM_Match>();
     [JsonProperty] protected Dictionary<int, DateTime> actorJoinTime = new Dictionary<int, DateTime>();
-    [JsonIgnore] public virtual List<int> actorRefID 
-    { 
-        get 
+    [JsonIgnore] public virtual List<int> actorRefID
+    {
+        get
         {
-            return actorRefIDStorage.Keys.ToList(); 
-        } 
+            return actorRefIDStorage.Keys.ToList();
+        }
+    }
+
+    /// <summary>
+    /// Who a log message about the given AP should be scoped to (relevantActors). Defaults to the whole job's actor roster;
+    /// override for Job types where a single job can host multiple actors doing unrelated things (e.g. Job_Furniture).
+    /// </summary>
+    public virtual List<int> GetLogRelevantActors(ActionPackage ap)
+    {
+        return this.actorRefID;
     }
 
 
@@ -554,6 +563,37 @@ public class Job : IDisposable, I_Disposable
         }
         list = list.Distinct().ToList();
         ownerTags.AddRange(list);
+
+        return;
+    }
+
+    /// <summary>
+    /// Same traversal as GetActorAPTags, but collects the tags of refID's interaction partner(s) instead of refID's own tags.
+    /// Used to feed the "targetTags" side of portrait matching for whoever refID is currently acting with.
+    /// </summary>
+    public void GetActorAPTargetTags(int refID, List<string> targetTags, List<ActionPackage> packages = null)
+    {
+        List<string> list = new List<string>();
+        foreach (var ap in this.packages_current)
+        {
+            if (!ap.actorRefs.Contains(refID)) continue;
+            if (packages != null) packages.Add(ap);
+            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
+        }
+        foreach (var ap in this.packages_previous)
+        {
+            if (!ap.actorRefs.Contains(refID)) continue;
+            if (packages != null) packages.Add(ap);
+            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
+        }
+        foreach (var ap in this.packages_completed)
+        {
+            if (!ap.actorRefs.Contains(refID)) continue;
+            if (packages != null) packages.Add(ap);
+            foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
+        }
+        list = list.Distinct().ToList();
+        targetTags.AddRange(list);
 
         return;
     }

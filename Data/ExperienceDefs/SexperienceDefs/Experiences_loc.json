@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Experiences.json. Holds en-us entries for the experience_* labels."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "experience_birth": "Childbirth Experience",
+                "experience_sex_cumtainer_ownerless": "($partname$ was filled with $amount$ml of $sourcename$)"
+            }
+        }
+    }
+}

@@ -8,7 +8,7 @@
     "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
     "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
 
-    "RequireContextKeys":["sex","doer"],
+    "RequireSelfContextKeys":["sex","doer"],
     "Variants":
     [    
         {  "tagsMatch":["rimjob"], "PortraitVariantData":[ "dorothy/492.webp","dorothy/493.webp", "dorothy/494.webp" ] },
@@ -31,7 +31,7 @@
     "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
     "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
 
-    "RequireContextKeys":["sex","receiver"],
+    "RequireSelfContextKeys":["sex","receiver"],
     "Variants":
     [    
         {  "tagsMatch":["doggy"], "PortraitVariantData":[ "dorothy/433.webp","dorothy/434.webp","dorothy/435.webp" ] },   
@@ -47,7 +47,7 @@
     "portrait_offset_x": 0,   "portrait_offset_y": 0,    "portrait_offset_size": 0.75,
     "icon_offset_x":0.0,    "icon_offset_y":0.0,    "icon_offset_size":1.13,
 
-    "RequireContextKeys":["sex"],
+    "RequireSelfContextKeys":["sex"],
     "Variants":
     [    
         {  "tagsMatch":["cum"], "PortraitVariantData":[ "dorothy/428.webp","dorothy/429.webp" ] },
@@ -70,7 +70,7 @@
     "icon_offset_y":0.0,
     "icon_offset_size":1.13,
 
-    "RequireContextKeys":["combat"],
+    "RequireSelfContextKeys":["combat"],
     "icon_path":"Dorothy/si_c233_00_s.png",
     "Variants":
     [  

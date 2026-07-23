@@ -1,0 +1,79 @@
+{
+    "_doc": {
+        "purpose": "Daily contraceptive pill (real-world analogue: combined oral contraceptive). Suppresses the FSH/LH surge that drives ovulation. Modeled as a presence-only status (no stat_modifiers) - ReproductionCycle checks whether this status is currently active each day.",
+        "mechanic": "Cycles_Menstruation/Cycles_Estrus only act on this once the cycle naturally reaches its post-ovulation resting stage (Rest / Interestrus) - nothing left to interrupt that cycle at that point. While the status stays active there, cycleValue is held/reset to the start of that stage every day (SetCycle in Cycles_Menstruation.cs / Cycles_Estrus.cs). Any cycle already past Rest/Interestrus when dosing starts (Menstrual, PreOvulation/Proestrus, Ovulation/Estrus) completes normally first, including possibly ovulating that cycle - matches real-world quick-start guidance where only a luteal-phase start is unambiguously safe.",
+        "decay_reasoning": "decaySpeed tuned so ~50 severity (one dose, clamped to the top variant) decays to 0 in ~41.7h: long enough that once-daily dosing keeps the status continuously active, short enough that a fully missed day (~48h gap) reliably lets it decay out before the next day's check, so a lapse actually breaks the contraceptive hold as intended.",
+        "neutral_default": "Default value is severity 0 (status absent) so any character never given the item behaves exactly as before this feature was added."
+    },
+    "Status": {
+        "list": [
+            {
+                "statusID": "chara_status_contraceptive_daily",
+                "_comment": "Applied by consumable_medicine_contraceptive_daily. Severity spikes near 50 on dose, then decays naturally back to 0 over about 1.75 in-game days if not redosed.",
+                "variationMode": {
+                    "baselineVariation": {
+                        "$type": "Status_Base+BaselineVariation_Linear, Assembly-CSharp",
+                        "baseValue": 0,
+                        "decaySpeed": 0.02,
+                        "_decaySpeed_note": "severity/minute. ~50 severity / 0.02 per min =~ 2500 min =~ 41.7 hours to fully decay."
+                    }
+                },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    {
+                        "displayName": "chara_status_contraceptive_daily_1",
+                        "threshold": 50,
+                        "_note": "No stat_modifiers - this status is only ever queried for presence (severity > 0) by ReproductionCycle."
+                    }
+                ]
+            }
+        ]
+    },
+    "Items": {
+        "list": [
+            {
+                "id": "consumable_medicine_contraceptive_daily",
+                "displayName": "Daily Contraceptive Pill",
+                "tooltip": "An oral contraceptive tablet. Taken daily, it suppresses ovulation once the cycle reaches its resting phase.",
+                "Tags": ["consumable","industrial","rarity_common", "medicine","additive"],
+                "value": 60,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "_note": "Plausible oral-tablet pacing (unlike consumable_medicine_analgesic's intentionally fast debug numbers): ~1.5hr onset, digests over ~6-7min once absorption starts, dose sized to push chara_status_contraceptive_daily to its 50-severity ceiling (20*3=60 delivered, comfortably clamps to 50 even accounting for concurrent decay).",
+                            "ingestMethod": [
+                                {
+                                    "bodyTags": "stomach",
+                                    "digestSpeed": -3,
+                                    "digestDelay": 90,
+                                    "digestDelayVariation": 20,
+                                    "amountMod": 3,
+                                    "giveStatus": "chara_status_contraceptive_daily"
+                                }
+                            ],
+                            "amount": 20
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_contraceptive_daily_1": "Daily Contraceptive",
+
+                "consumable_medicine_contraceptive_daily": "Daily Contraceptive Pill"
+                
+            },
+            "zh-cn": {
+                "chara_status_contraceptive_daily_1": "每日避孕",
+                "chara_status_contraceptive_daily_tooltip":"该角色的经期进度会在到达平稳期后暂停。",
+
+                "consumable_medicine_contraceptive_daily": "每日避孕药",
+                "consumable_medicine_contraceptive_daily_tooltip": "口服避孕药片，需每日服用。只要药效持续，便会将服用者的周期进度暂停。"
+            }
+        }
+    }
+}

@@ -3,243 +3,243 @@
         "looselist": [
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_head_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_head", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_hair_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_hair", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_cheek_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_cheek", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_ears_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_ears", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_fingers_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_fingers", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_foot_toes_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_foot_toes", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_abdomen_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_abdomen", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_butt_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_butt", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_thigh_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_thigh", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_shoulders_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_shoulders", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_hug_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_hug", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } },
 
             { "ID": "personality_base", "Entry": { "ID": "com_touch_back_Begin", "variants": [
-                { "requirement": { "requirePermission": true }, "extraPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
-                { "extraPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
+                { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["closed_eyes","blush","affectionate"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["blush"], "useActiveTags": false, "responses": [] },
+                { "extraSelfPortraitTags": ["fear","trembling"], "useActiveTags": false, "responses": [] }
             ] } },
             { "ID": "personality_base", "Entry": { "ID": "com_touch_back", "variants": [
-                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
-                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] }, "extraSelfPortraitTags": ["sleeping","relaxed"], "useActiveTags": false, "responses": [] },
+                { "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] }, "extraSelfPortraitTags": ["doll","empty","silence","idle"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPFailure": true }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
-                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy","tired"], "useActiveTags": false, "responses": [] },
+                    { "requirement": { "requireSelfAttitudeGTE": "Like" }, "extraSelfPortraitTags": ["troubled","sigh","smile","surprised","shy"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","disgust","surprised","serious"], "useActiveTags": false, "responses": [] },
                 { "requirement": { "requireEPSuccessGTE": "Success" }, "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["love","happy","relaxed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["blush","shy","surprised","happy","aroused"], "responses": [] },
                 { "variants": [
-                    { "requirement": { "requirePermission": true }, "extraPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
-                ], "extraPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
+                    { "requirement": { "requirePermission": true }, "extraSelfPortraitTags": ["pain","bored","doubt","disappointed"], "useActiveTags": false, "responses": [] }
+                ], "extraSelfPortraitTags": ["angry","cry","glare","disgust","pouting","sad","troubled","silence"], "useActiveTags": false, "responses": [] }
             ] } }
 
         ]

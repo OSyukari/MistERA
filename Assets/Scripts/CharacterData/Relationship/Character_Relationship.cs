@@ -117,6 +117,7 @@ public class Character_Relationship
 
     [JsonProperty] int targetRefID = -1;
     [JsonProperty] string targetBaseID = "";
+    [JsonProperty] string targetRaceID = "";
     public string displayName = "";
     [JsonIgnore] public bool displayable { get { return targetRefID != -1 && this.Owner.RefID != targetRefID; } }
 
@@ -814,6 +815,7 @@ public class Character_Relationship
     }
 
     [JsonIgnore] public string TargetBaseID { get { return targetBaseID; } }
+    [JsonIgnore] public string TargetRaceID { get { return targetRaceID; } }
     [JsonProperty] float[] relationshipScores = new float[5] { 0f, 0f, 0f, 0f, 0f };
     [JsonIgnore]
     protected int relationshipScoresSum { get
@@ -1152,6 +1154,7 @@ public class Character_Relationship
 
         this.targetRefID = target.RefID;
         this.targetBaseID = forceBaseID != "" ? forceBaseID : Target.BaseID;
+        this.targetRaceID = target.Race != null ? target.Race.ID : "";
         this.displayName = overrideCallName != "" ? overrideCallName : "";
 
         if (template != null)

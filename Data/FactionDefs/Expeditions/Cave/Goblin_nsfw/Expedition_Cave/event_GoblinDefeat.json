@@ -91,7 +91,7 @@
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "br_choice",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "question": "event_goblin_combatDefeat_event_ev01",
@@ -164,7 +164,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_escape",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "line": "event_goblin_combatDefeat_event_ev02",
@@ -174,7 +174,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_defeat",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "line": "event_goblin_combatDefeat_event_ev03",
@@ -184,7 +184,7 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_mia",
                         "portraitRefKey": "party",
-                        "portraitTagsOverride": [
+                        "portraitSelfTagsOverride": [
                             "serious"
                         ],
                         "line": "event_goblin_combatDefeat_event_ev04",

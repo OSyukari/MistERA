@@ -1,0 +1,36 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ExpInitSingle.json. Holds en-us entries for the expinit_target_* labels used by the experience-log/memory system (who a character's sexual experience was with, and which penis-descriptor variant gets inserted into the resulting memory sentence)."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "expinit_target_sbrother_male": "Younger Brother",
+                "expinit_target_brother_male": "Older Brother",
+                "expinit_target_father_male": "Biological Father",
+                "expinit_target_stepfather_male": "Stepfather",
+
+                "expinit_target_landlord_male": "Landlord",
+                "expinit_target_boss_male": "Boss",
+
+                "expinit_target_delinquent_male": "Delinquent",
+                "expinit_target_pickup_male": "Pickup Artist",
+                "expinit_target_classmate_male": "Male Classmate",
+                "expinit_target_client_male": "Male Client",
+                "expinit_target_hobo_male": "Homeless Man",
+
+                "expinit_target_husband_male": "Husband",
+                "expinit_target_boyfriend_male": "Boyfriend",
+
+                "expinit_target_male_penis_undev": "Phimotic Cock",
+                "expinit_target_male_penis_small": "Small Cock",
+                "expinit_target_male_penis_medium": "Cock",
+                "expinit_target_male_penis_large": "Thick Cock",
+                "expinit_target_male_penis_stinky": "Reeking Cock",
+
+                "expinit_target_client_female": "Female Client",
+                "expinit_target_female_dildo": "Dildo"
+            }
+        }
+    }
+}

@@ -365,7 +365,7 @@ public abstract class ActionPackage
                     {
                         Debug.LogError("error logmessagejoin failure");
                         var desc = new DescriptionCollector(s);
-                        desc.LoadActors(this.job.actorRefID);
+                        desc.LoadActors(this.job.GetLogRelevantActors(this));
                         desc.LoadActors(c2.RefID, true, true);
                         desc.message_excludeRelated = s;
                         this.job.m.AddMessage_Before(desc, this.RoomKey);
@@ -444,7 +444,7 @@ public abstract class ActionPackage
             else if (!logged)
             {
                 var desc = new DescriptionCollector(s);
-                desc.LoadActors(this.job.actorRefID);
+                desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.LoadActors(newchara, true, true);
                 desc.message_excludeRelated = s;
                 this.job.m.AddMessage_Before(desc, this.RoomKey);
@@ -1579,7 +1579,7 @@ public abstract class ActionPackage
         bool single = ShortenAPDisplay;
         var desc = new DescriptionCollector();
 
-        desc.message = $"{this.checkResults_result}";
+        desc.message = isPlayerRelatedPackage ? $"{this.checkResults_result}" : "";
         if (targetCOM != null && COMVariantID >= 0)
         {
             //desc.message = targetCOM.variants[COMVariantID].GetDescription_OnComplete(targetCOM, this);
@@ -1618,11 +1618,11 @@ public abstract class ActionPackage
             }
             if (exist && single) break;
         }
-        desc.LoadActors(this.job.actorRefID);
+        desc.LoadActors(this.job.GetLogRelevantActors(this));
 
         //desc.message_excludeRelated = desc.message;
         //desc.LoadPortraits(this.actorRefs, true);
-        m.AddMessage_Checks(desc, logging ? Room : null);    
+        m.AddMessage_Checks(desc, logging ? Room : null);
         if (!logging) packageStateChanged = true;
     }
 
@@ -1638,13 +1638,18 @@ public abstract class ActionPackage
 
         List<string> checkResults = new List<string>();
 
-        foreach (var ep in packages)
+        if (isPlayerRelatedPackage)
         {
-            if (ep.skipCheckResult) continue; // skip player alone package
-            var res = ep.GetCheckResult(false);
-            if (res.Length < 1) continue;
-            checkResults.Add(res);
+            foreach (var ep in packages)
+            {
+                if (ep.skipCheckResult) continue; // skip player alone package
+                var res = ep.GetCheckResult(false);
+                if (res.Length < 1) continue;
+                checkResults.Add(res);
+            }
+
         }
+        else return;
 
         if (checkResults.Count < 1) return;
         desc.message = String.Join("\n", checkResults);
@@ -2364,7 +2369,7 @@ public abstract class ActionPackage
                 // if (visible)
                 // {
                 kol.tooltip = tooltip;
-                kol.LoadRelevantActors(this.job.actorRefID);
+                kol.LoadRelevantActors(this.job.GetLogRelevantActors(this));
                 m.AddMessage_Before(kol, true, logging ? Room : null, false);
                 if (!logging) packageStateChanged = true;
                 else if (Room != null && Room.HasRecording) Room.NotifyDescCollect(kol);
@@ -2404,6 +2409,7 @@ public abstract class ActionPackage
             m = this.mcol;
         }
         LoggedBegin = true;
+        LoggedOngoing = true;  // AP started this turn - skip the next Ongoing print so begin/ongoing don't both show for the same turn
         var playerRef = scr_System_CampaignManager.current.Player;
         if (this.Actors.Contains(playerRef) && injectChara == null) injectChara = playerRef;
 
@@ -2440,7 +2446,7 @@ public abstract class ActionPackage
 
         if (exist)
         {
-            desc.LoadActors(this.job.actorRefID);
+            desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message_excludeRelated = desc.message;
             //desc.LoadPortraits(this.actorRefs, true);
             m.AddMessage_Before(desc, true, logging ? Room : null);
@@ -2469,7 +2475,7 @@ public abstract class ActionPackage
 
 
             var desc = new DescriptionCollector(response);
-            desc.LoadActors(this.job.actorRefID);
+            desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message_excludeRelated = response;
             mcol.AddMessage_Before(desc, true, logging ? Room : null);
             if (!logging) packageStateChanged = true;
@@ -2487,6 +2493,7 @@ public abstract class ActionPackage
     public void LogMessage_Ongoing(MessageCollect m, Character_Trainable target = null)
     {
         if (this.isTemporaryAP) return;
+        if (LoggedOngoing) { LoggedOngoing = false; return; }  // AP began this same turn - Begin already printed, skip Ongoing once
         bool logging = true;
         if (m == null)
         {
@@ -2526,7 +2533,7 @@ public abstract class ActionPackage
 
         if (exist)
         {
-            desc.LoadActors(this.job.actorRefID);
+            desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message_excludeRelated = desc.message;
             desc.autoAnimate = true;
             if (!logging) packageStateChanged = true;
@@ -2573,7 +2580,7 @@ public abstract class ActionPackage
             if (responses.Length > 0)
             {
                 var desc = new DescriptionCollector(responses);
-                desc.LoadActors(this.job.actorRefID);
+                desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.message_excludeRelated = responses;
                 mcol.AddMessage_Before(desc, true, logging ? Room : null);
                 if (!logging) packageStateChanged = true;
@@ -2598,7 +2605,7 @@ public abstract class ActionPackage
             if (responses.Length > 0)
             {
                 var desc = new DescriptionCollector(responses);
-                desc.LoadActors(this.job.actorRefID);
+                desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.message_excludeRelated = responses;
                 m.AddMessage_Before(desc, true, logging ? Room : null);
                 if (!logging) packageStateChanged = true;
@@ -2693,7 +2700,7 @@ public abstract class ActionPackage
 
         if (exist)
         {
-            desc.LoadActors(this.job.actorRefID);
+            desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message = $"{s}{(s.Length > 0 ? "\n" : "")}{desc.message}";
             desc.message_excludeRelated = desc.message;
 

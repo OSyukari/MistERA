@@ -14,36 +14,18 @@
                     }
                 ],
                 "events":[
-                    
 {
-    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-    "options":[
-        {   
-            "option": "silent branch after successful interrupts",
-            "Results": [ 
-                { "Type":"FlushMessageExpAll" }
-            ] 
-        }
-    ],
-    "isLast": true
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+    "line": "PregnancyEnd_Birth_EV01",
+    "Results":[
+        { "Type":"InterruptAP", "arguments":["self", "false", ""]  }
+    ]
 },
 {
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "line": "PregnancyEnd_Birth_EV01"
-},
-{
-    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "line": "$outcome$"
-},
-{
-    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-    "options":[
-        {   
-            "option": "silent branch after successful interrupts",
-            "Results": [ 
-                { "Type":"FlushMessageExpAll" }
-            ] 
-        }
+    "line": "$outcome$",
+    "Results":[
+        { "Type":"FlushMessageExpAll" }
     ],
     "isLast": true
 }

@@ -1,0 +1,18 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_FertilityMedication.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_fertility_boost_1": "Fertility Boost (Low)",
+                "chara_status_fertility_boost_2": "Fertility Boost (Medium)",
+                "chara_status_fertility_boost_3": "Fertility Boost (High)",
+
+                "chara_status_fertility_boost_tooltip": "%%stats_derived_fertilityMultiplier%%: %%stats_derived_fertilityMultiplier_tooltip%%",
+
+                "consumable_medicine_fertility_tooltip": "An oral fertility medication. Encourages the body to mature and release eggs more readily for several days after taking it.\n%%stats_derived_fertilityMultiplier%%: %%stats_derived_fertilityMultiplier_tooltip%%"
+            }
+        }
+    }
+}

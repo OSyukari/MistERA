@@ -9,7 +9,7 @@ using UnityEngine;
 public class StatModStorage
 {
 
-    public StatModStorage(I_StatsManager parent, float baseValue, float baseMult, float finalValue, float finalMult, float statFloor = 0f, float statCeiling = 999f, bool capModded = false, bool allowOvercap = false)
+    public StatModStorage(I_StatsManager parent, float baseValue, float baseMult, float finalValue, float finalMult, float statFloor = 0f, float statCeiling = 999f, bool capModded = false)
     {
         //Debug.Log($"instantiate statmodmanager, {setValue_original}*{setMult_original} {finalValue_original}*{finalMult_original}");
 
@@ -21,12 +21,10 @@ public class StatModStorage
         this.statFloor = statFloor;
         this.statCeiling = statCeiling;
         this.isCapModded = capModded;
-        this.allowOvercap = allowOvercap;
     }
 
     I_StatsManager parent = null;
     public bool isCapModded = false;
-    public bool allowOvercap = false;
     float statFloor = 0f;
     float statCeiling = 999f;
 
@@ -86,10 +84,9 @@ public class StatModStorage
 
         if (isCapModded && (_value > valueCeiling || _value < valueFloor))
             _value = Mathf.Clamp(_value, valueFloor, valueCeiling);
-        if (!allowOvercap)
-            _value = Mathf.Clamp(_value, statFloor, statCeiling);
 
-        _value = CalcMods_Final(ref _value, finalValue_override, addValue_final, finalMult_override, null, tooltips);
+        _value = CalcMods_Final(ref _value, finalValue_override, addValue_final, finalMult_override, addMult_final, tooltips);
+        _value = Mathf.Clamp(_value, statFloor, statCeiling);
         _value_cached = true;
     }
 
@@ -100,12 +97,23 @@ public class StatModStorage
        // Debug.Log($"Setbasevalue {val}*{mult}");
     }
     bool finalOverride = false;
+    Stat_Modifier _finalValueOverride_reuse = null, _finalMultOverride_reuse = null;
     public void SetFinalOverride(float val, float mult)
     {
-        if (finalValue_original != val) finalValue_override = new Stat_Modifier("finalMod", val);
+        if (finalValue_original != val)
+        {
+            _finalValueOverride_reuse ??= new Stat_Modifier("finalMod", val);
+            _finalValueOverride_reuse.SetNumber(val);
+            finalValue_override = _finalValueOverride_reuse;
+        }
         else finalValue_override = null;
 
-        if (finalMult_original != mult) finalMult_override = new Stat_Modifier("finalMod", mult);
+        if (finalMult_original != mult)
+        {
+            _finalMultOverride_reuse ??= new Stat_Modifier("finalMod", mult);
+            _finalMultOverride_reuse.SetNumber(mult);
+            finalMult_override = _finalMultOverride_reuse;
+        }
         else finalMult_override = null;
     }
 
@@ -125,7 +133,7 @@ public class StatModStorage
         float addmul_f = addmul == null || addmul.Count < 1 ? 0 : SumStatMods(addmul);
 
         var final = (setval_f + addval_f) * (setmul_f + addmul_f);
-        if (final != 0 && tooltips != null) tooltips.Add($"{key}: {setval_f}{addval_f.ToString("+0;-#")} * {setmul_f}{addmul_f.ToString("+0;-#")}");
+        if (final != 0 && tooltips != null) tooltips.Add($"{key}: {setval_f}{addval_f.ToString("+0.##;-0.##")} * {setmul_f}{addmul_f.ToString("+0.##;-0.##")}");
         return final;
     }
     float CalcMods_Final(ref float value, Stat_Modifier setval, List<Stat_Modifier> addval, Stat_Modifier setmul, List<Stat_Modifier> addmul, List<string> tooltips)
@@ -137,7 +145,7 @@ public class StatModStorage
 
         var prev = value;
         value = value * (setmul_f + addmul_f) + (setval_f + addval_f);
-        if ( tooltips != null) tooltips.Add($"{prev.ToString("F2")} finalMod * {setmul_f}{addmul_f.ToString("+0;-#")} + {setval_f}{addval_f.ToString("+0;-#")} -> {value.ToString("F2")}");
+        if ( tooltips != null) tooltips.Add($"{prev.ToString("F2")} finalMod * {setmul_f}{addmul_f.ToString("+0.##;-0.##")} + {setval_f}{addval_f.ToString("+0.##;-0.##")} -> {value.ToString("F2")}");
         return value;
     }
     float CalcMods_Base(Stat_Modifier setval, List<Stat_Modifier> addval, Stat_Modifier setmul, List<Stat_Modifier> addmul, List<string> tooltips)
@@ -149,7 +157,7 @@ public class StatModStorage
 
        // Debug.Log($"Getting basevalue {setval_f} {addval_f} {setmul_f} {addmul_f}\n baseval null? {setval == null} {setValue_original} {(setval == null ? "null" : UtilityEX.StatValue(setval, parent))}");
 
-        if (tooltips != null) tooltips.Add($"baseValue: {setval_f}{addval_f.ToString("+0;-#")} * {setmul_f}{addmul_f.ToString("+0;-#")}");
+        if (tooltips != null) tooltips.Add($"baseValue: {setval_f}{addval_f.ToString("+0.##;-0.##")} * {setmul_f}{addmul_f.ToString("+0.##;-0.##")}");
         return (setval_f + addval_f) * (setmul_f + addmul_f);
     }
 

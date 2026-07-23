@@ -1015,7 +1015,8 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);
             string s2 = String.Join("\n", s);
-            //s2 = Utility.StringReplace(ref evp, s2);
+            //s2 = Utility.StringReplace(ref evp, s2); 
+            //Debug.LogError($"GetDescription_Begin: {s2} 2");
             return s2;
         }
         public string GetDescription_Begin(COM ownerCOM, ActionPackage ap)
@@ -1032,6 +1033,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             s.RemoveAll(x => x.Length < 1);
             string s2 = String.Join("\n", s);
             //s2 = Utility.StringReplace(ref evp, s2);
+            //Debug.LogError($"GetDescription_Begin: {s2} 1");
             return s2;
         }
 

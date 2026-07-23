@@ -9,7 +9,8 @@
 "console_loadevent_tooltip":"loadevent [int targetRefID, -1 for null] [string eventId] [string eventLabel]",
 "console_modexperience_tooltip":"modexperience [string expBaseID] [int value]",
 "console_modrelationshipwith_tooltip":"modrelationshipwith [targetRefID] trust|fear|goodwill|badwill|desire [value]",
-"console_modpersonalityscore_tooltip":"modpersonalityscore pride|corruption|mood|stress|lust [value]"
+"console_modpersonalityscore_tooltip":"modpersonalityscore pride|corruption|mood|stress|lust [value]",
+"console_ingestItem_tooltip":"ingestItem [itemBaseID] [ingestTag]\nRequire current Target"
 
 
             }

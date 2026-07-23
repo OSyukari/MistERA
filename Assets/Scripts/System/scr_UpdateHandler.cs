@@ -767,7 +767,7 @@ public class scr_UpdateHandler : MonoBehaviour
         //NotifyLogsSingleUpdate(CallbackResumeUpdate);
         scr_System_CampaignManager.current.NotifyEventEnd();
         var player = scr_System_CampaignManager.current.Player;
-        var desc = new DescriptionCollector($"<align=\"right\"><color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color></align>", VisibilityLevel.Roomwide);
+        var desc = new DescriptionCollector($"<color={Utility.HexCOLOR(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color)}>{ElapsedTime.Replace("$count$", loopCount.ToString())}</color>", VisibilityLevel.Roomwide);
         desc.tooltip = scr_System_Time.current.getCurrentTime().ToString();
         desc.rightAlign = true;
         desc.autoAnimate = true;

@@ -1,0 +1,48 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for item_gamecd_RW.json. Holds en-us entries for the knowledge_game_rw_* flavor-text cluster.",
+        "rw_reference_note": "Critical: 'rw_reference' itself needed an en-us entry too, distinct from item_gamecd_RW (which hardcodes 'Rib World' directly rather than using the token). Every knowledge_game_rw_* entry below embeds %%rw_reference%%, so without this entry the token would render literally as 'rw_reference' in English builds instead of resolving.",
+        "naming_convention": "Per user decision 2026-07-22: distinctive game-coined proper nouns (Glitterworld, Archotech, Mechanoids) got a light parody alteration, matching the title's own treatment (RimWorld -> Rib World). Plain generic sim-genre vocabulary (Pawns, Raids, Mood, Mental Break, Research, Trading, Pirates, Tribespeople, Insectoids) was translated directly since it isn't a proprietary coined term. The three AI storyteller names (Cassandra Classic, Randy Random, Phoebe Chillax) are a deliberate exception: the zh-cn source itself already spells them as puns matching their real official localized names (e.g. 卡珊德拉·经典 = Cassandra·Classic), so those are reproduced as the real names rather than re-parodied - see name_consistency.md."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "rw_reference": "Rib World",
+
+                "knowledge_game_rw_world": "The world of %%rw_reference%%",
+                "knowledge_game_rw_world_rimworld": "Fringe worlds in %%rw_reference%%",
+                "knowledge_game_rw_world_glitterworld": "Glimmerworlds in %%rw_reference%%",
+                "knowledge_game_rw_world_empire": "The interstellar Empire in %%rw_reference%%",
+                "knowledge_game_rw_world_techlevels": "The tech level system in %%rw_reference%%",
+                "knowledge_game_rw_world_archotech": "Archotek in %%rw_reference%%",
+
+                "knowledge_game_rw_factions": "The factions of %%rw_reference%%",
+                "knowledge_game_rw_factions_tribes": "Tribespeople in %%rw_reference%%",
+                "knowledge_game_rw_factions_outlanders": "The Outlander Alliance in %%rw_reference%%",
+                "knowledge_game_rw_factions_pirates": "Pirate bands in %%rw_reference%%",
+                "knowledge_game_rw_factions_empire": "The Empire faction in %%rw_reference%%",
+                "knowledge_game_rw_factions_mechanoids": "Automatons in %%rw_reference%%",
+                "knowledge_game_rw_factions_insectoids": "Insectoids in %%rw_reference%%",
+
+                "knowledge_game_rw_mechanics": "The game mechanics of %%rw_reference%%",
+                "knowledge_game_rw_mechanics_pawns": "The Pawn system in %%rw_reference%%",
+                "knowledge_game_rw_mechanics_research": "The tech research tree in %%rw_reference%%",
+                "knowledge_game_rw_mechanics_raids": "Raid events in %%rw_reference%%",
+                "knowledge_game_rw_mechanics_mood": "The mood system in %%rw_reference%%",
+                "knowledge_game_rw_mechanics_mentalbreak": "Mental breaks in %%rw_reference%%",
+                "knowledge_game_rw_mechanics_trading": "Trading and caravans in %%rw_reference%%",
+
+                "knowledge_game_rw_storytellers": "The AI storytellers of %%rw_reference%%",
+                "knowledge_game_rw_storytellers_cassandra": "Cassandra Classic in %%rw_reference%%",
+                "knowledge_game_rw_storytellers_cassandra_0": "The good times won't last forever.",
+                "knowledge_game_rw_storytellers_cassandra_1": "Hang in there a little longer. Let's see what you're made of.",
+                "knowledge_game_rw_storytellers_randy": "Randy Random in %%rw_reference%%",
+                "knowledge_game_rw_storytellers_randy_0": "Ha. Hahaha.",
+                "knowledge_game_rw_storytellers_randy_1": "I just wanted to see what would happen...",
+                "knowledge_game_rw_storytellers_phoebe": "Phoebe Chillax in %%rw_reference%%",
+                "knowledge_game_rw_storytellers_phoebe_0": "Relax, take a good rest. You've earned this peace.",
+                "knowledge_game_rw_storytellers_phoebe_1": "...until you can't relax anymore."
+            }
+        }
+    }
+}

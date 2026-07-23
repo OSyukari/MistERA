@@ -214,7 +214,8 @@ public class KojoCollector : I_ResultStorage, I_Records
 
     [JsonIgnore] public List<string> SelfTags { get { return selfTags; } }
     [JsonProperty] protected List<string> selfTags = new List<string>();
-    public List<string> targetTags = new List<string>();
+    [JsonIgnore] public List<string> TargetTags { get { return targetTags; } }
+    [JsonProperty] protected List<string> targetTags = new List<string>();
 
     public bool requireAnimate = true;
 

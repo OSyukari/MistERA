@@ -99,7 +99,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return false;
         }
     }
-    [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned; } }
+    [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned && !Stats.hasStatusEXTag(StatsUtility.Stat_Tag_Immobilized); } }
     [JsonIgnore] public bool canLeave { get { return canMove && (CurrentJob == null || CurrentJob.CanBeInterrupted); } }
     [JsonIgnore] public Manageable.HourlySchedule currentHourSchedule { get {
             return GetJobPost(scr_System_Time.current.getCurrentTime().Hour);
@@ -188,12 +188,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         this.Body.Height = Template.Height;
         this.Body.Weight = Template.Weight;
 
-        Body.AddMissing();
-
-
         this.Memory = new MemoryManager(this);
         this.Stats.InitializeWithID(this, Template.stat_STR, Template.stat_CON, Template.stat_PSY, Template.stat_WIL);
 
+        Body.AddMissing();
         //this.sexLogManager = new SexLogManager(refID);
         ReEstablishObservers();
         RestoreAll(true);
@@ -244,6 +242,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         Debug.Log($"Character {FirstName} spawned, expinits {expInits.Count}:\n{String.Join("\n", expInits)}");
 
         Skills.UpdateAllSkills(null);
+
+        // fill statbars against the final maxes: exp inits and skill updates above can add
+        // modifiers that change max values after the earlier RestoreAll
+        RestoreAll();
     }
 
     [JsonProperty] protected SkillManager _Skills = null;
@@ -455,14 +457,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public ReproductionCycle ReproCycle = null;
 
-    public void TickWomb(bool forcebirth = false)
+    public void TickWomb(bool forcebirth = false, bool forbidBirth = false)
     {
         if (this.wombs == null || this.wombs.Count < 1) return;
         bool birth = false;
         foreach (var wb in wombs)
         {
             /// notify result
-            wb.HourTick(forcebirth);
+            wb.HourTick(forcebirth, forbidBirth);
             if (wb.birthEV.Count > 0) birth = true;
         }
         if (birth) NotifyBirth();
@@ -478,9 +480,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         bool birth = false;
         for (int i = 0; i < totalCycle; i++)
         {
-            // this variable will be replaced by a boolean getter
-            // that go though character's status to see if daily contraceptive is taken
-            bool stagesupressed = false;
+            bool stagesupressed = GetStatusSeverity(ReproductionUtility.status_pills_daily) > 0;
+            bool emergencyActive = GetStatusSeverity(ReproductionUtility.status_pills_emergency) > 0;
+            bool forceOvulateActive = GetStatusSeverity(ReproductionUtility.status_pills_induceovulation) > 0;
 
 
             // this variable will be replaced by a boolean getter
@@ -497,17 +499,29 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             {
                 // leave this blank for now, I'll add this in the future
             }*/
-            for (int j = 0; j < 24; j++) TickWomb();
+            for (int j = 0; j < 24; j++) TickWomb(false, log);
             
 
             var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
-            ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, isOvumexhausted);
+            ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, emergencyActive, forceOvulateActive,  isOvumexhausted);
 
             foreach (var wb in wombs)
             {
                 /// notify result
                 wb.dayTick_Cycle(ReproCycle);
             }
+
+            // Ovulation-trigger item: forces the cycle to (re)enter the ovulate-eligible stage and
+            // fires ovulation directly every day it's active, bypassing dayTick_Cycle's transition
+            // guard above (which would otherwise skip re-firing on consecutive days already sitting
+            // in that stage).
+            if (forceOvulateActive && ReproCycle.CanOvulate)
+            {
+                foreach (var wb in wombs) wb.ovulation();
+            }
+
+            TickCyclePhaseStatus();
+            TickPregnancyMoodStatus();
         }
 
         if (log)
@@ -519,6 +533,75 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             }
 
             Debug.Log(debugmsg);
+        }
+    }
+
+    /// <summary>
+    /// Per-day, cycle-type-agnostic status handling: each cycle phase may have a status configured
+    /// in ReproTemplate.cycleStatusIDs (indexed by ReproCycle.CurrentStatus). On a phase transition,
+    /// the previous phase's status (if any, and if different from the new phase's) is removed.
+    /// The current phase's status (if any) has its severity set directly every day from
+    /// ReproCycle.CurrentPhaseProgress via SetStatusSeverityRatio (0=variants[0].threshold,
+    /// 1=variants[last].threshold) — whether that reads as "ticking up" or "ticking down" is entirely
+    /// down to whether the status' own threshold range is e.g. 0..100 or -100..0, not anything decided
+    /// here. No decay is involved, since phase lengths vary wildly across races.
+    /// </summary>
+    private void TickCyclePhaseStatus()
+    {
+        if (ReproCycle == null || ReproTemplate == null) return;
+
+        int current = ReproCycle.CurrentStatus;
+        string currID = ReproTemplate.GetCycleStatusID(current);
+
+        if (current != ReproCycle.PreviousStatus)
+        {
+            string prevID = ReproTemplate.GetCycleStatusID(ReproCycle.PreviousStatus);
+            if (prevID != "" && prevID != currID)
+            {
+                Stats.RemoveStatusByStringMatch(prevID);
+                Stats.SyncPainCompanion(prevID);
+            }
+            ReproCycle.AdvanceStatusHistory();
+        }
+
+        if (currID == "") return;
+
+        float progress = Mathf.Clamp01(ReproCycle.CurrentPhaseProgress(ReproTemplate));
+        Stats.SetStatusSeverityRatio(currID, progress);
+        Stats.SyncPainCompanion(currID);
+    }
+
+    /// <summary>
+    /// Pregnancy-stage-agnostic status handling, mirroring TickCyclePhaseStatus but keyed by the
+    /// oldest ovum's OvumState via ReproTemplate.pregnancyStatusIDs instead of the cycle phase.
+    /// No case-specific branching: every configured slot is checked the same way, whichever one
+    /// matches the current OvumState gets its severity set from Ovum.CurrentPhaseProgress via
+    /// SetStatusSeverityRatio, every other configured slot gets removed if present (covers stage
+    /// transitions and losing pregnancy).
+    /// </summary>
+    private void TickPregnancyMoodStatus()
+    {
+        if (ReproTemplate == null) return;
+
+        int activeIndex = -1;
+        float progress = 0f;
+        if (ReproCycle != null && ReproCycle.isPregnant)
+        {
+            var ovum = ReproductionUtility.GetOldestOvum(this);
+            if (ovum != null)
+            {
+                activeIndex = (int)ovum.State;
+                progress = Mathf.Clamp01(ovum.CurrentPhaseProgress());
+            }
+        }
+
+        for (int i = 0; i < ReproTemplate.pregnancyStatusIDs.Count; i++)
+        {
+            string id = ReproTemplate.pregnancyStatusIDs[i];
+            if (id == "") continue;
+
+            if (i == activeIndex) Stats.SetStatusSeverityRatio(id, progress);
+            else if (Stats.HasStatusByStringMatch(id)) Stats.RemoveStatusByStringMatch(id);
         }
     }
 
@@ -597,7 +680,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
 
         var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
-        ReproCycle.Birth(ispregnant);
+        ReproCycle.Birth(ispregnant, ReproTemplate);
     }
 
 
@@ -643,7 +726,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (ReproCycle == null)
         {
             ReproCycle = ReproductionCycleUtility.MakeCycle(ReproTemplate);
-            if (ReproCycle != null) ReproCycle.Quickstart(ReproTemplate, Age, isDefaultAge);
+            if (ReproCycle != null)
+            {
+                ReproCycle.Quickstart(ReproTemplate, Age, isDefaultAge);
+                TickMenstruation();
+            }
         }
     }
 
@@ -693,6 +780,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return Body.EquippedItemRefs;
         }
     }
+
+    List<string> _actorKeywords = null;
+    [JsonIgnore]
+    public List<string> ActorKeywords
+    {
+        get
+        {
+            if (_actorKeywords == null)
+            {
+                _actorKeywords = new List<string>();
+                if (this.Template != null) _actorKeywords.AddRange(this.Template.actorKeyword);
+                if (this.Race != null) _actorKeywords.AddRange(this.Race.RaceType);
+                //if (this.RaceTemplate != null) _actorKeywords.AddRange(RaceTemplate.)
+                Utility.DistinctInPlace(_actorKeywords);
+            }
+            return _actorKeywords;
+        }
+    }
+
 
     protected CharaSafeTemplate _templateS = null;
     protected CharaTrainableTemplate _template = null;
@@ -880,8 +986,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         } }
 
     [JsonProperty] protected string race = "humanRace_human";
-    [JsonIgnore] public Humanoid_Race Race { 
-        get { return scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(race); } 
+    [JsonIgnore] public Humanoid_Race Race {
+        get { return scr_System_Serializer.current.MasterList.humanoid_Races.GetByID(race); }
         set { race = value.ID;
             this.Stats.RefreshAllStats(true);
         } }
@@ -1481,68 +1587,69 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return true;
         }
     }
-    bool needSleep
-    {
-        get
-        {
-            if (this.Stats.Fatigued) return true;
-            var induced = this.Stats.FindStatusByExactID("chara_status_inducedSleep");
-            if (induced != null && induced.Severity > 5) return true;
-            return false;
-        }
-    }
+
+    /// <summary>
+    /// Allow sleep but respect work schedule
+    /// </summary>
     bool canSleep
     {
         get
         {
             if (this.Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived") > 0) return true;
-            var sleephours = Stats.SleepHours;
-            var returnval = hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
-            //if (!returnval && RefID > 0) Debug.LogError($"{FirstName} cannot sleep! hasSleepNeed {hasSleepNeed}, sleephours > 0 {sleephours > 0}, timeSinceLastSleep {timeSinceLastSleep} > sleephours {sleephours} = {timeSinceLastSleep > sleephours}");
-            return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours ;
+            if (this.Stats.Fatigued) return true;
+            return (hasSleepNeed && Stats.SleepHours > 0 && timeSinceLastSleep > Stats.SleepHours / 2);
         }
     }
+
+    /// <summary>
+    /// Allow sleep regardless of current work schedules
+    /// </summary>
+    bool forceSleep
+    {
+        get
+        {
+            var induced = this.Stats.FindStatusByExactID("chara_status_inducedSleep");
+            if (induced != null && induced.Severity > 5) return true;
+            return false;
+        }
+    }
+
     [JsonIgnore] public bool shouldSleep { get
         {
-            if (needSleep)
-            {
-                //if (RefID > 0) Debug.Log($"{FirstName} need sleep!");
-                return true;
-            }
-            if (!canSleep)
-            {
-                //if (RefID > 0) Debug.Log($"{FirstName} cannot sleep!");
-                return false;
-            }
+            if (forceSleep) return true;
+            if (!canSleep) return false;
+            
+            // check schedule
+            //var returnval = hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
+            //if (!returnval && RefID > 0) Debug.LogError($"{FirstName} cannot sleep! hasSleepNeed {hasSleepNeed}, sleephours > 0 {sleephours > 0}, timeSinceLastSleep {timeSinceLastSleep} > sleephours {sleephours} = {timeSinceLastSleep > sleephours}");
+            //return hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
 
             // Party override: while in an ongoing expedition, the party sleep window is authoritative.
             // Personal schedule is bypassed; NPC sleeps iff the party window says so (and canSleep).
             var party = this.FactionManager.CurrentParty;
 
-            if (party != null &&  (party.isActive || party.Room.RoomChara.Contains(this)))
+            if (party != null && (party.isActive || party.Room.RoomChara.Contains(this)))
             {
                 int currentHour = scr_System_Time.current.getCurrentTime().Hour;
-               // if (RefID > 0) Debug.Log($"{FirstName} should sleep in party? {party.SleepHours.Contains(currentHour)} = current {currentHour} in [{String.Join(" ", party.SleepHours)}]");
+                // if (RefID > 0) Debug.Log($"{FirstName} should sleep in party? {party.SleepHours.Contains(currentHour)} = current {currentHour} in [{String.Join(" ", party.SleepHours)}]");
                 return party.SleepHours.Contains(currentHour);
             }
-
-            if (this.FactionManager.HasSleepSchedule)
+            else if (this.FactionManager.HasSleepSchedule)
             {
                 var v = GetJobPost();
-               // if (RefID > 0) Debug.Log($"{FirstName} should sleep in schedule? {v != null && v.comIDs.Contains("com_furniture_sleep")}");
+                // if (RefID > 0) Debug.Log($"{FirstName} should sleep in schedule? {v != null && v.comIDs.Contains("com_furniture_sleep")}");
                 return v != null && v.comIDs.Contains("com_furniture_sleep");
             }
-            else
-            {
-                return true;
-            }
+            
 
+            else return false;
         } }
 
     [JsonIgnore] public bool shouldRest { get
         {
             if (Stats.Stamina != null && Stats.Stamina.ValuePercentile < 0.5) return true;
             if (Stats.Energy != null && Stats.Energy.ValuePercentile < 0.5) return true;
+            if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_NeedResting)) return true;
             return false;
         } }
 
@@ -1745,7 +1852,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (currentRoomRef != mem.lastLocationRef) tags.Add("location_change");
 
             var pleasure = Stats.SexStimulation;
-            var pain = Stats.FindStatusByExactID("chara_status_pain");
+            var pain = Stats.Pain;
             var pleasureSeverity = pleasure == null ? 0 : (int)pleasure.Severity;
             var painSeverity = pain == null ? 0 : (int)pain.Severity;
 

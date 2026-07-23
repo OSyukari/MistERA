@@ -61,38 +61,62 @@ public class Stats_Base : I_CacheValues, I_StatsDisplayable
 
     }
 
-    public string ModStrings(List<string> contextKeys = null) 
+    int _cacheVersion = -1;
+    /// <summary>
+    /// Lazily drop caches when the owner's modifier universe changed since they were computed.
+    /// </summary>
+    void SyncCacheVersion()
     {
+        if (parentCache == null) return;
+        if (_cacheVersion != parentCache.StatModsVersion)
+        {
+            _cacheVersion = parentCache.StatModsVersion;
+            ClearCache();
+        }
+    }
+
+    public string ModStrings(List<string> contextKeys = null)
+    {
+        SyncCacheVersion();
         var key = GetContextID(contextKeys);
-        if (!_cache_string.ContainsKey(key)) GetValue(contextKeys);
+        if (!_cache_string.ContainsKey(key))
+        {
+            GetValue(contextKeys);
+            _cache_string[key] = storage.Print();
+        }
         return String.Join("\n", _cache_string[key]);
     }
     [JsonIgnore] public int BaseValue { get { return value_base; } }
     public float FinalValue(List<string> contextKeys = null)
     {
+        SyncCacheVersion();
         var key = GetContextID(contextKeys);
         if (!_cache_values.ContainsKey(key)) GetValue(contextKeys);
         return _cache_values[key];
     }
 
+    readonly List<Stat_Modifier> _modScratch = new List<Stat_Modifier>();
+
     protected void GetValue(List<string> contextKeys)
     {
         var key = GetContextID(contextKeys);
 
-        var list = Parent.GetModifiers(this, stat_base_string, contextKeys);
-        var value = UtilityEX.ParseStatMods(this, storage, list);
-        _cache_values[key] = value;
-        _cache_string[key] = storage.Print();
+        _modScratch.Clear();
+        Parent.GetModifiers(_modScratch, this, stat_base_string, contextKeys);
+        _cache_values[key] = UtilityEX.ParseStatMods(this, storage, _modScratch);
     }
 
 
+    readonly List<string> _ctxScratch = new List<string>();
     protected string GetContextID(List<string> context)
     {
         if (context == null || context.Count < 1) return "";
-        context = Utility.Distinct(context);
-        context.RemoveAll(x => x.Length < 1);
-        context.Sort();
-        return String.Join("|", context);
+        _ctxScratch.Clear();
+        _ctxScratch.AddRange(context);
+        Utility.DistinctInPlace(_ctxScratch);
+        _ctxScratch.RemoveAll(x => x.Length < 1);
+        _ctxScratch.Sort();
+        return String.Join("|", _ctxScratch);
     }
     public void SetValue(int i)
     {

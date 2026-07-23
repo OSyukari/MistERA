@@ -224,7 +224,7 @@ public class Event : I_SerializationCallbackReceiver
     public List<EventScope_Target> TargetValidators = new List<EventScope_Target>();
 
 
-    public abstract class EventEntry
+    public abstract class EventEntry : I_hasPortrait
     {
         [JsonIgnore] public virtual string Name { get { return label; } }
 
@@ -234,8 +234,12 @@ public class Event : I_SerializationCallbackReceiver
         public string nextEntryLabel = "";
 
         public string portraitRefKey = "";
-        public List<string> portraitTagsOverride = new List<string>();
-  
+        public List<string> portraitSelfTagsOverride = new List<string>();
+        public List<string> portraitTargetTagsOverride = new List<string>();
+
+        [JsonIgnore] public List<string> SelfPortraitTag { get { return portraitSelfTagsOverride; } }
+        [JsonIgnore] public List<string> TargetPortraitTag { get { return portraitTargetTagsOverride; } }
+
 
         //public List<Query> queries = new List<Query>();
         //public List<Condition> conditions = new List<Condition>();

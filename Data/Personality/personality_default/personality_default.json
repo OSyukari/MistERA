@@ -358,7 +358,7 @@
                                     "kojo_default_event_interrupt_02_reverse"
                                 ],
                                 "useActiveTags":true,
-                                "extraPortraitTags":["blush","angry","disgusted","sorry"],
+                                "extraSelfPortraitTags":["blush","angry","disgusted","sorry"],
                                 "results": [
                                     {
                                         "launchEvent": {

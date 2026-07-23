@@ -372,7 +372,7 @@ public class RelationshipManager
         //var msg = this.Personality.GetKOJOMessage(triggerEventID, selfEPs, targetEPs, rel);
         if (kol != null && kol.collect != null)
         {
-            if (debug) Debug.Log($"[{Owner.FirstName} -> {c.FirstName}] NotifyMeeting [{kol.eventID}{kol.suffix}] result [{kol.collect.message}]\n{Owner.FirstName} = {kol.Owner.FirstName} tags: {String.Join(" ", kol.SelfTags)}\n{c.FirstName} = {kol.Target.FirstName} tags: {String.Join(" ", kol.targetTags)}");
+            if (debug) Debug.Log($"[{Owner.FirstName} -> {c.FirstName}] NotifyMeeting [{kol.eventID}{kol.suffix}] result [{kol.collect.message}]\n{Owner.FirstName} = {kol.Owner.FirstName} tags: {String.Join(" ", kol.SelfTags)}\n{c.FirstName} = {kol.Target.FirstName} tags: {String.Join(" ", kol.TargetTags)}");
             kol.ReplaceString("$self$", Owner.FirstName);
             kol.ReplaceString("$target$", c.FirstName);//.message = msg.message.Replace().Replace();
             scr_UpdateHandler.current.AppendKojoMessage(kol, Owner.CurrentRoom);
@@ -658,7 +658,7 @@ public class RelationshipManager
             kol.collect = message;
             return kol;
             //m.AddKojo(kol);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.selfPortraitTag)} | {String.Join(" ", message.targetPortraitTag)}");
         }
         else return null;
     }
@@ -689,7 +689,7 @@ public class RelationshipManager
         MessageCollect_KojoEntry message = injectRel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
             : this.Personality.GetKOJOMessage_Suffix(suffix, ep.isDoer(Owner), ep.isReceiver(Owner), ep, injectRel);
         */
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.TargetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
 
         if (message != null && message.message != null && message.message.Length > 0)
         {
@@ -698,7 +698,7 @@ public class RelationshipManager
             kol.collect = message;
             return kol;
             //m.messages_before.Add(rightAlign ? $"<align=\"right\">{message.message}</align>" : message.message);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.portraitTags)}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.selfPortraitTag)} | {String.Join(" ", message.targetPortraitTag)}");
             //return true;
         }
         else return null;
@@ -718,7 +718,7 @@ public class RelationshipManager
         MessageCollect_KojoEntry message = injectRel == null ? this.Personality.GetKOJOMessage($"{cleanedID}{suffix}", Owner, ep.DoerTargetTag, new List<EvaluationPackage>() { ep })
             : this.Personality.GetKOJOMessage_Suffix(suffix, ep.isDoer(Owner), ep.isReceiver(Owner), ep, injectRel);
         */
-        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.targetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"RelationshipManager GetKOJOMessage_Suffix evID[{kol.eventID}{kol.suffix}] [{(kol.Owner.FirstName)}{(kol.Target == null ? "" : $" -> {kol.Target.FirstName}")}]\nSelftags: {String.Join(" ", kol.SelfTags)}\nTargetTags: {String.Join(" ", kol.TargetTags)}\nFinalMSG: {(message == null ? "null" : message.message)}");
 
         if (message != null && message.message.Length > 0)
         {
@@ -796,6 +796,17 @@ public class RelationshipManager
         if (relationships_generic.TryGetValue(returnValue.TargetBaseID, out var generic))
         {
             returnValue.MergeWith(generic);
+        }
+        else if (returnValue.TargetRaceID != "")
+        {
+            foreach (var g in relationships_generic.Values)
+            {
+                if (g.TargetRaceID == returnValue.TargetRaceID)
+                {
+                    returnValue.MergeWith(g);
+                    break;
+                }
+            }
         }
 
         return returnValue;

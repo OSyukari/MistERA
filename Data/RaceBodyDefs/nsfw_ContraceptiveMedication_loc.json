@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_ContraceptiveMedication.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_contraceptive_daily_tooltip": "Pauses this character's cycle progress once it reaches the resting stage.",
+
+                "consumable_medicine_contraceptive_daily_tooltip": "An oral contraceptive tablet taken daily. For as long as it remains active, it pauses the user's cycle progress."
+            }
+        }
+    }
+}

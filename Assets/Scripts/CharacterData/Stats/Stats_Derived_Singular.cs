@@ -44,8 +44,6 @@ public class Stats_Derived_Base
     [JsonProperty] protected string displayName = "";
     [JsonProperty] protected string tooltip = "";
 
-    public bool allowOvercap = true;
-
     bool _isnsfw = false;
     bool _isnsfw_cached = false;
     [JsonIgnore]public bool isNSFW
@@ -75,7 +73,7 @@ public class Stats_Derived_Base
         public float finalMod_value = 0.0f;
         public float finalMod_mult = 1.0f;
         public float valueFloor = 0.0f;
-        public float valueCeiling = 0.0f;
+        public float valueCeiling = 1.0f;
     }
 
     public Stats_Derived_Instance Instantiate(I_StatsManager parent)
@@ -116,24 +114,44 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
         this.Parent = baseStat;
         this.parentString = baseStat.ID; 
         
-        storage = new StatModStorage(owner, Parent.valueBase.baseValue_value, Parent.valueBase.baseValue_mult, 
-                                    Parent.valueBase.finalMod_value, Parent.valueBase.finalMod_mult, 
-                                    this.Parent.valueBase.valueFloor, this.Parent.valueBase.valueCeiling, false, this.Parent.allowOvercap);
+        storage = new StatModStorage(owner, Parent.valueBase.baseValue_value, Parent.valueBase.baseValue_mult,
+                                    Parent.valueBase.finalMod_value, Parent.valueBase.finalMod_mult,
+                                    this.Parent.valueBase.valueFloor, this.Parent.valueBase.valueCeiling, false);
     }
     public void ClearCache(bool reset = false)
     {
         _cache_string.Clear();
         _cache_values.Clear();
     }
+    int _cacheVersion = -1;
+    /// <summary>
+    /// Lazily drop caches when the owner's modifier universe changed since they were computed.
+    /// </summary>
+    void SyncCacheVersion()
+    {
+        if (owner == null) return;
+        if (_cacheVersion != owner.StatModsVersion)
+        {
+            _cacheVersion = owner.StatModsVersion;
+            ClearCache();
+        }
+    }
+
     public string ModStrings(List<string> contextKeys = null)
     {
+        SyncCacheVersion();
         var key = GetContextID(contextKeys);
-        if (!_cache_string.ContainsKey(key)) GetFinalValue(contextKeys);
+        if (!_cache_string.ContainsKey(key))
+        {
+            ComputeValue(contextKeys, false);
+            _cache_string[key] = storage.Print();
+        }
         return String.Join("\n", _cache_string[key]);
     }
 
     public float FinalValue(List<string> contextKeys = null)
     {
+        SyncCacheVersion();
         var key = GetContextID(contextKeys);
         if (!_cache_values.ContainsKey(key)) GetFinalValue(contextKeys);
         if (_cache_values[key] == -1)
@@ -144,6 +162,7 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
     }
     public float FinalValue(List<string> contextKeys, bool forbidStatus)
     {
+        SyncCacheVersion();
         var key = GetContextID(contextKeys);
         if (!_cache_values.ContainsKey(key)) GetFinalValue(contextKeys, forbidStatus);
         if (_cache_values[key] == -1)
@@ -163,30 +182,35 @@ public class Stats_Derived_Instance : I_StatsDisplayable, I_CacheValues
     Dictionary<string, float> _cache_values = new Dictionary<string, float>();
     Dictionary<string, string> _cache_string = new Dictionary<string, string>();
 
+    readonly List<string> _ctxScratch = new List<string>();
     protected string GetContextID(List<string> context)
     {
         if (context == null || context.Count < 1) return "";
-        context = context.Distinct().ToList();
-        context.RemoveAll(x => x.Length < 1);
-        context.Sort();
-        return String.Join("|", context);
+        _ctxScratch.Clear();
+        _ctxScratch.AddRange(context);
+        Utility.DistinctInPlace(_ctxScratch);
+        _ctxScratch.RemoveAll(x => x.Length < 1);
+        _ctxScratch.Sort();
+        return String.Join("|", _ctxScratch);
     }
 
     protected void GetFinalValue(List<string> contextKeys, bool forbidStatus = false)
     {
-        //var keys = new Tuple<string, List<string>>(ID, contextKeys);
-        // collect valuebase from struct
-        //if (c.sta.cached_values.ContainsKey(keys)) return (int)parent.cached_values[keys];
-        // collect calculation mod from struct
-
         var key = GetContextID(contextKeys);
+        _cache_values[key] = ComputeValue(contextKeys, forbidStatus);
+    }
 
-        // collect calculation mod from c
-        var list = new List<Stat_Modifier>();
-        list.AddRange(this.Parent.valueCalculations);
-        list.AddRange(owner.GetModifiers(this.Parent, ID, null, forbidStatus));      
+    readonly List<Stat_Modifier> _modScratch = new List<Stat_Modifier>();
 
-        _cache_values[key] = UtilityEX.ParseStatMods(this.Parent, storage, list);
-        _cache_string[key] = storage.Print();
+    /// <summary>
+    /// Merges modifiers into storage and returns the computed value. Does not touch caches.
+    /// </summary>
+    float ComputeValue(List<string> contextKeys, bool forbidStatus)
+    {
+        _modScratch.Clear();
+        _modScratch.AddRange(this.Parent.valueCalculations);
+        owner.GetModifiers(_modScratch, this.Parent, ID, null, forbidStatus);
+
+        return UtilityEX.ParseStatMods(this.Parent, storage, _modScratch);
     }
 }

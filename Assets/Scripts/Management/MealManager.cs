@@ -14,6 +14,12 @@ public class MealManager
         this.Owner = owner;
     }
 
+    public MealManager() { }
+    public MealManager(Manageable owner)
+    {
+        ReEstablishParent(owner);
+    }
+
     // ── Poison management ───────────────────────────────────────────────────
 
     public void OnTimeUpdate(TimeSpan interval)
@@ -57,16 +63,17 @@ public class MealManager
     public bool CheckAdditives(Character_Trainable source, Item_Instance item, ItemComponent_Ingestible food)
     {
         if (item == null || food == null) return false;
+        bool applied = false;
         foreach (var additives in additives)
         {
             if (additives.AppliesToCharacter(source.RefID) && additives.TryApplyToFood(Owner.Inventory, item, food))
             {
                 // applied
-                return true;
+                applied = true;
             }
         }
 
-        return false;
+        return applied;
     }
 }
 

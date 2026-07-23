@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary_Characters.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "bodyPart_Fulldisplayname": "$name$'s $part$"
+            }
+        }
+    }
+}

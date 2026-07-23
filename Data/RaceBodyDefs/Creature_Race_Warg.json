@@ -1,0 +1,74 @@
+{
+    "humanoid_Races":
+    {
+        "list": [
+            {
+                "ID": "creature_beastRace_warg",
+                "bodyPartRoot":"head_beast_warg_base",
+                "addStatsKeyword":["hp","mp","energy","stamina","hunger","sleep","lust","physical"],
+                "needs":[
+                    {
+                        "ID":"food",
+                        "displayName":"food need",
+                        "tooltip":"tooltip",
+                        "statusDebuffID": "chara_status_malnourished",
+                        "consumeItemByTag": "food_meal",
+                        "requiresStatKeyword": "hunger",
+                        "overwritesNeedsIDs": []
+                    }
+                ],
+                "RaceType":["animal","dog"]
+            }
+        ]
+    },
+    "BodyPartBases":
+    {
+        "BodyPart_Base":
+        [
+            {
+                "id": "head_beast_warg_base",
+                "displayName":"%%bodyPart_base_head%%",
+                "tooltip":"An {0}'s head.",
+                "AvailableSlots":["Hair", "Face", "Eyes"],
+                "childID":["body_beast_warg_base"],
+                "internalID":["mouth_beast_base"],
+                "tags":["head"],
+                "sortOrder":0,
+                "NaturalDefense":
+                {
+                    "integrity":4,
+                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
+                }
+            },
+            {
+                "id": "body_beast_warg_base",
+                "displayName":"",
+                "tooltip":"An {0}'s body.",
+                "AvailableSlots":["Neck","Torso"],
+                "childID":["frontleg_beast_base","frontleg_beast_base","hindleg_beast_base","hindleg_beast_base"],
+                "internalID":["stomach_beast_base","anus_beast_base","penis_beast_base","guts_beast_base"],
+                "tags":["torso","lower"],
+                "sortOrder":1,
+                "NaturalDefense":
+                {
+                    "integrity":4,
+                    "armorLayers": [ { "applyToDamageTypes":["Blunt","Slash"], "damageReductionValue":1 } ]
+                }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"creature_beastRace_warg":"座狼"
+            },
+            "en-us":
+            {
+"creature_beastRace_warg":"Warg"
+            }
+        }
+    }
+}

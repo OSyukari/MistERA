@@ -465,7 +465,8 @@ public class MessageCollect_KojoEntry
             else return portraitRefsOverride;
         }
     }
-    public List<string> portraitTags = new List<string>();
+    public List<string> selfPortraitTag = new List<string>();
+    public List<string> targetPortraitTag = new List<string>();
     public List<int> relevantActors = new List<int>();
     public string message = "";
     int portraitRefsOverride = -1;
@@ -489,10 +490,11 @@ public class MessageCollect_KojoEntry
     public void Merge(MessageCollect_KojoEntry m)
     {
         if (m == null) return;
-        if (this.message == "" && portraitTags.Count < 1 && portraitRefID == -1 && this.nexts.Count < 1)
+        if (this.message == "" && selfPortraitTag.Count < 1 && portraitRefID == -1 && this.nexts.Count < 1)
         {
             this.message = m.message;
-            this.portraitTags = m.portraitTags;
+            this.selfPortraitTag = m.selfPortraitTag;
+            this.targetPortraitTag = m.targetPortraitTag;
             this.portraitRefID = m.portraitRefID;
             this.nexts = m.nexts;
         }

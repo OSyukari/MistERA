@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_ContraceptiveMedication_Emergency.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_contraceptive_emergency_tooltip": "This character's ovulation cycle is temporarily delayed.",
+
+                "consumable_medicine_contraceptive_emergency_tooltip": "A single high-dose oral contraceptive. Taken shortly before ovulation, it delays ovulation for as long as the effect lasts; has no effect if ovulation has already occurred."
+            }
+        }
+    }
+}

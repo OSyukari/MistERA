@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary.json (Wuwa faction).",
+        "Wuwa_Aemeath_firstname2_note": "zh-cn source value is already the English placeholder string 'Aemeath 22' - copied verbatim, not translated."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Wuwa_Aemeath_firstname2": "Aemeath 22"
+            }
+        }
+    }
+}

@@ -1,0 +1,71 @@
+{
+    "_doc": {
+        "purpose": "Ovulation-trigger medication (real-world analogue: hCG trigger shot). hCG structurally mimics LH, substituting for the natural LH surge - ovulation follows ~36-40h later, reliably, regardless of where the natural cycle was. Modeled here as a presence-only status checked once per day by Character_Trainable.TickMenstruation: while active, the cycle is forced straight into the ovulate-eligible stage and the womb ovulates directly, every day the status is active (not just once on a transition) - covers 'already ovulating, ovulate again' from repeated/extended dosing.",
+        "duration_reasoning": "Uses maxDuration (a hard 1-day countdown on Status_Base, independent of severity) instead of decaySpeed approximation - a trigger shot's window of effect is a fixed one-shot event, not a fading dose. No baselineVariation configured, so severity never decays; the status disappears outright when its 1440-minute duration reaches 0.",
+        "real_world_deviation": "Real hCG is injected, not ingested, and only works on an already near-mature follicle (late follicular phase) - modeled here as an oral ingestible for consistency with the other reproduction medications in this codebase (no injectable item mechanic exists), and effective in any actively-cycling non-pregnant stage rather than gated to just the late-follicular stage, per design decision.",
+        "neutral_default": "Default value is severity 0 (status absent) so any character never given the item behaves exactly as before this feature was added."
+    },
+    "Status": {
+        "list": [
+            {
+                "statusID": "chara_status_ovulation_trigger",
+                "_comment": "Applied by consumable_medicine_ovulation_trigger. Severity spikes near 50 on dose and stays flat (no decay) until its maxDuration (1440 min = 1 day) runs out, at which point it's removed outright.",
+                "maxDuration": 1440,
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    {
+                        "displayName": "chara_status_ovulation_trigger_1",
+                        "threshold": 50,
+                        "_note": "No stat_modifiers - this status is only ever queried for presence (severity > 0) by Character_Trainable/ReproductionCycle."
+                    }
+                ]
+            }
+        ]
+    },
+    "Items": {
+        "list": [
+            {
+                "id": "consumable_medicine_ovulation_trigger",
+                "displayName": "Ovulation Trigger Tablet",
+                "tooltip": "A fast-acting ovulation-inducing tablet. Forces the body to release an egg shortly after taking it, regardless of where the cycle currently stands - has no effect during prepuberty or pregnancy.",
+                "Tags": ["consumable","industrial","rarity_common", "medicine","additive"],
+                "value": 150,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "_note": "Single urgent-use dose, same pacing as consumable_medicine_contraceptive_emergency (~1hr onset), dose sized to push chara_status_ovulation_trigger to its 50-severity ceiling (20*3=60 delivered, comfortably clamps to 50).",
+                            "ingestMethod": [
+                                {
+                                    "bodyTags": "stomach",
+                                    "digestSpeed": -3,
+                                    "digestDelay": 60,
+                                    "digestDelayVariation": 15,
+                                    "amountMod": 3,
+                                    "giveStatus": "chara_status_ovulation_trigger"
+                                }
+                            ],
+                            "amount": 20
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_ovulation_trigger_1": "Ovulation Triggered",
+
+                "consumable_medicine_ovulation_trigger_tooltip": "A fast-acting ovulation-inducing tablet. Forces the body to release an egg shortly after taking it, regardless of where the cycle currently stands - has no effect during prepuberty or pregnancy."
+            },
+            "zh-cn": {
+                "chara_status_ovulation_trigger_1": "排卵诱发中",
+                "chara_status_ovulation_trigger_tooltip":"会在下次经期判定时进入排卵期。判定优先度低于避孕药物",
+
+                "consumable_medicine_ovulation_trigger": "排卵诱发药",
+                "consumable_medicine_ovulation_trigger_tooltip": "一种速效促排卵药片。服用后不久会强制身体排出卵子，无论当前周期处于哪个阶段————但在青春期前或孕期服用无效。"
+            }
+        }
+    }
+}

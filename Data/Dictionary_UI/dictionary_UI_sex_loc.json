@@ -1,0 +1,56 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary_UI_sex.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes.",
+        "ui_debug_tooltip2_note": "zh-cn source added a 7th line (pregnancy rate x100%). The stale (6-line) en-us entry was removed from dictionary_UI_sex.json and replaced here. Note: this key also has an intentional, unrelated '' (empty) definition in dictionary_UI_safeOnly.json, used for the safe-mode/SFW build variant - that is not a collision, since scr_System_Serializer.LoadDefs skips nsfw-named files in safe mode and skips '*safeOnly*' files otherwise, so only one of the two is ever loaded."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "ui_debug_tooltip2": "6. Global Ejaculation Volume X5\n7. Pregnancy Chance x100%",
+
+                "charaDetail_panel_bodyexp_content": "Internal Data",
+                "charaDetail_panel_bodyexp_cycle": "Cycle: $cycle$",
+                "charaDetail_panel_bodyexp_cycle_none": "<link=\"charaDetail_panel_bodyexp_cycle_none_tooltip\">Cycle: None</link>",
+                "charaDetail_panel_bodyexp_cycle_none_tooltip": "This character is incapable of pregnancy.",
+                "charaDetail_panel_cycle_current": "Current cycle expected to last $count$ days",
+                "charaDetail_panel_cycle_current_none": "Permanent",
+                "charaDetail_panel_cycle_ovumCount": "<link=\"charaDetail_panel_cycle_ovumCount_tooltip\">Eggs released per cycle: $count$</link>",
+                "charaDetail_panel_cycle_ovumCount_tooltip": "If ovulation doesn't succeed, the ovulation rate carries over to the next cycle.",
+                "charaDetail_panel_cycle_ovumFertility": "<link=\"charaDetail_panel_cycle_ovumFertility_tooltip\">Average egg conception rate $fertility$%</link>",
+                "charaDetail_panel_cycle_ovumFertility_tooltip": "/ml of semen /hour",
+                "charaDetail_panel_cycle_ovumLists": "Eggs $total$: $content$",
+                "charaDetail_panel_cycle_OvumState_Default": "Unfertilized $count$",
+                "charaDetail_panel_cycle_OvumState_Fertilized": "Fertilized $count$",
+                "charaDetail_panel_cycle_OvumState_Foetus": "Foetus $count$",
+                "charaDetail_panel_cycle_OvumState_Implanted": "Implanted $count$",
+                "charaDetail_panel_cycle_single": "$name$ $count$ days",
+                "charaDetail_panel_cycle_total": "Total cycle length $total$ days",
+                "charaDetail_panel_womb_content": "Contents (total $volume$ml)",
+
+                "item_cum_print_amount": "$item$ $count$ml",
+                "Item_Instance_Cum_nameOverwrite": "$name$'s Semen",
+                "Item_Instance_Cum_fertChance_perHour": "Conception chance per hour $chance$%",
+
+                "OvumState_First_trimester": "First Trimester",
+                "OvumState_Second_trimester": "Second Trimester",
+                "OvumState_Third_trimester": "Third Trimester",
+                "OvumState_Implanted": "Implanted",
+                "OvumState_Final": "Labor",
+
+                "ovum_itemName": "$race$ Foetus",
+                "ovum_finalName": "$mother$ and $father$'s Baby",
+
+                "chara_currentjob_labor": "In Labor",
+                "chara_currentjob_labor_assist": "Assisting Labor",
+
+                "ui_entry_reproductionCycles": "Cycle",
+
+                "CalcFertility_notSameRace": "Different Race",
+                "CalcFertility_notSharingTag": "Vastly Different Race",
+
+                "management_faction_managedBaby": "<link=management_faction_managedBaby_tooltip>Babies Being Raised:</link>",
+                "management_faction_managedBaby_tooltip": "Babies don't consume food, but someone must be assigned time each day to care for them (not yet implemented)."
+            }
+        }
+    }
+}

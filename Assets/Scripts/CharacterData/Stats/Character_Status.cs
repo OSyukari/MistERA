@@ -21,7 +21,6 @@ public enum RandomSample
 }
 
 
-[System.Serializable]
 public class Status_Instance
 {
     [JsonProperty] protected string baseID;
@@ -70,6 +69,9 @@ public class Status_Instance
         }
     }
 
+    [JsonIgnore]
+    public bool hasThresholdMod { get { return BaseRef != null && BaseRef.variantThresholdModStat != ""; } }
+
     protected Status_Base baseRef = null;
     [JsonIgnore] public string SeverityDisplayName 
     { 
@@ -104,7 +106,7 @@ public class Status_Instance
 
     [JsonIgnore] public List<string> Tags { get { return this.BaseRef.variants[SeverityIndex].tags; } }
 
-    [JsonProperty] protected int _severityIndex = -1;
+    protected int _severityIndex = -1;
     [JsonIgnore] public int SeverityIndex { get
         {
             if (_severityIndex == -1) _severityIndex = UpdateSeverity();
@@ -132,9 +134,16 @@ public class Status_Instance
     {
         get
         {
-            return (float) Math.Round( this.BaseRef.variationMode.randomVariation.Variation(elapsedTime), 2);
+            return (float) Math.Round( this.BaseRef.variationMode.randomVariation.Variation(randomSeed, elapsedTime), 2);
         }
     }
+
+    /// <summary>
+    /// Stable for the lifetime of this instance, randomized once on creation. Lets a RandomVariation
+    /// (e.g. RandomVariation_Noise) differ per-instance instead of every instance of a status
+    /// oscillating in exact lockstep.
+    /// </summary>
+    [JsonProperty] protected int randomSeed = 0;
 
     [JsonIgnore] public bool hasRandomVariation 
     { get 
@@ -217,7 +226,13 @@ public class Status_Instance
 
         _severityIndex = UpdateSeverity();
 
-        return this.SeverityIndex != initialS;
+        if (this.SeverityIndex != initialS)
+        {
+            // variant crossing swaps this status' stat_modifiers -> stale stat caches
+            owner?.NotifyStatModsChanged();
+            return true;
+        }
+        return false;
     }
 
     public bool SeveritySet(float target)
@@ -239,7 +254,29 @@ public class Status_Instance
         else maxed = false;
 
         _severityIndex = UpdateSeverity();
-        return this.SeverityIndex != initialS;
+        if (this.SeverityIndex != initialS)
+        {
+            owner?.NotifyStatModsChanged();
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Set severity to a 0-1 position along this status' base [variants[0], variants[last]] threshold
+    /// range, so callers don't need to know the status' actual scale (0-100, -100-0, etc).
+    /// </summary>
+    public bool SeverityRatioSet(float ratio)
+    {
+        ratio = Mathf.Clamp01(ratio);
+
+        var min = BaseRef.variants[0].threshold;
+        var max = BaseRef.variants[BaseRef.variants.Count - 1].threshold;
+
+        var mmm = VariantThresholdMod;
+        if (mmm != 0) { min *= mmm; max *= mmm; }
+
+        return SeveritySet(Mathf.Lerp(min, max, ratio));
     }
 
     protected int UpdateSeverity()
@@ -272,6 +309,7 @@ public class Status_Instance
         copy.elapsedTime = this.elapsedTime;
         copy.maxed = this.maxed;
         copy.pauseXMinAfterMod = this.pauseXMinAfterMod;
+        copy.randomSeed = this.randomSeed;
 
         return copy;
     }
@@ -288,6 +326,7 @@ public class Status_Instance
         this.duration = duration;
         if (initialSeverity < 0.001f && initialSeverity > -0.001f) this.severity = Math.Clamp(0f, 0, 0);
         else this.severity = initialSeverity;
+        this.randomSeed = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
 
     }
 
@@ -318,6 +357,26 @@ public class Status_Instance
                 }
             }
             return s;
+        }
+    }
+
+    /// <summary>
+    /// Every variant's threshold, in order, joined by "|" (e.g. "0|1|2|3|4") — the same effective
+    /// values UpdateSeverity() checks against (VariantThresholdMod-scaled), so it's easy to see at a
+    /// glance where the current Severity sits relative to every tier boundary while debugging.
+    /// </summary>
+    [JsonIgnore] public string ThresholdString
+    {
+        get
+        {
+            var mod = VariantThresholdMod;
+            List<string> parts = new List<string>();
+            foreach (var v in BaseRef.variants)
+            {
+                float t = mod == 0 ? v.threshold : v.threshold * mod;
+                parts.Add(t.ToString(BaseRef.stringFormat));
+            }
+            return String.Join("|", parts);
         }
     }
 }

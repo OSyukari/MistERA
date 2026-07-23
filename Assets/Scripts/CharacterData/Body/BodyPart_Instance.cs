@@ -76,7 +76,7 @@ public class BodyPart_Instance : I_CombatItem
         {
             if (s.Length < 1) continue;
             BodyInternal_Instance inter = new BodyInternal_Instance();
-            if (!inter.Initialize(c.BaseID, s, this)) continue;
+            if (!inter.Initialize(c, s, this)) continue;
             else if ((inter.hasTag("vagina") || inter.hasTag("womb") || inter.hasTag("urethra")) && !Owner.Template.isFemale) { }
             //else if (inter.hasTag("anus") && Owner.Template.Size_A.ID == "trait_Size_A_none") { }
             else if (inter.hasTag("penis") && !Owner.Template.isMale) { }

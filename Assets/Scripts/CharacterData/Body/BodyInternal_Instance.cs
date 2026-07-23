@@ -352,11 +352,11 @@ public class BodyInternal_Instance
             Owner.RegisterWomb(this.womb);
         }
     }
-    public bool Initialize(string npcBaseID, string baseID, BodyPart_Instance c)
+    public bool Initialize(Character_Trainable cc, string baseID, BodyPart_Instance c)
     {
         ReEstablishParent(c);
 
-        this.baseID = $"{npcBaseID}_{baseID}";
+        this.baseID = $"{cc.BaseID}_{baseID}";
         basePointer = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(this.baseID);
         if (basePointer == null)
         {
