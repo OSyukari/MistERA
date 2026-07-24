@@ -108,30 +108,15 @@ public class MasterList
             this.ExplorationFeatures = Expeditions.ExplorationFeatures;
             this.ExpeditionEntry = Expeditions.ExpeditionEntry;
         }
-        else
-        {
-            this.Events = new Index_Events();
-            this.Items = new Index_Item_Base();
-            this.Dictionary = new Dictionary_Index();
-            this.humanoid_Races = new Humanoid_Race_Index();
-            this.Character_Origins = new Character_Origin_Index();
-            this.Character_Origin_StartingOptions = new Character_Origin_startingOption_Index();
-            this.humanoid_RaceTemplates = new Humanoid_RaceTemplate_Index();
-            this.BodyPartBases = new Index_BodyPartBase();
-            this.Traits_Groups = new Traits_Group_Index();
-            this.ExpeditionEntry = new Index_Expeditions();
-            this.ExplorationEvents = new Index_ExpEvents();
-            this.ExplorationFeatures = new Index_FeatureSet();
-        }
     }
 
-    public Index_Events Events;
-    public Traits_Group_Index Traits_Groups;
-    public Index_Item_Base Items;
-    public Dictionary_Index Dictionary;
-    public Index_Expeditions ExpeditionEntry;
-    public Index_ExpEvents ExplorationEvents;
-    public Index_FeatureSet ExplorationFeatures;
+    public Index_Events Events = new Index_Events();
+    public Traits_Group_Index Traits_Groups = new Traits_Group_Index();
+    public Index_Item_Base Items = new Index_Item_Base();
+    public Dictionary_Index Dictionary = new Dictionary_Index();
+    public Index_Expeditions ExpeditionEntry = new Index_Expeditions();
+    public Index_ExpEvents ExplorationEvents = new Index_ExpEvents();
+    public Index_FeatureSet ExplorationFeatures = new Index_FeatureSet();
     public void MergeWith(MasterList list)
     {
         for (int i = 0; i < this.List.Count; i++)
@@ -183,8 +168,6 @@ public class MasterList
         {
             RemoveElementWithTag (keyword);
         }
-
-        Traits_Groups = null;
     }
 
     public void RemoveNonExisting()

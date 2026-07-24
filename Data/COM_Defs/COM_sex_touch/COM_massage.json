@@ -46,27 +46,6 @@
     {
         "zh-cn":
         {
-            "com_touch_butt_displayName_1": "揉捏屁股",
-            "com_touch_butt_displayName_2": "抚摸屁股",
-            "com_touch_abdomen_displayName_1": "揉捏腹部",
-            "com_touch_abdomen_displayName_2": "抚摸腹部",
-            "com_touch_thigh_displayName_1": "揉捏大腿",
-            "com_touch_thigh_displayName_2": "抚摸大腿",
-            "com_touch_back_displayName_1": "揉捏腰部",
-            "com_touch_back_displayName_2": "抚摸背部",
-            "com_touch_shoulders_displayName_1": "揉捏肩部",
-            "com_touch_shoulders_displayName_2": "抚摸肩部",
-            "com_touch_fingers_displayName_1": "撫摸手指",
-            "com_touch_foot_toes_displayName_1": "撫摸脚趾",
-            "com_touch_ears_displayName_1": "撫摸耳朵",
-                            
-            "com_touch_cheek_displayName": "捏脸蛋",
-            "com_touch_cheek_displayName_1": "捏脸蛋",
-
-            "com_touch_hair_displayName": "抚摸头发",
-            "com_touch_hair_displayName_1": "抚摸头发",
-            "com_touch_hug_displayName": "拥抱",
-            "com_touch_hug_displayName_1": "拥抱",
             "com_touch_sleeponthigh_give_displayName": "给予膝枕",
             "com_touch_sleeponthigh_give_displayName_1": "给予膝枕",
             "com_touch_sleeponthigh_ask_displayName": "索求膝枕",
@@ -74,32 +53,10 @@
         },
         "en-us":
         {
-
-            "com_touch_cheek_displayName": "Pinch cheek",
-            "com_touch_cheek_displayName_1": "Pinch cheek",
-
-            "com_touch_hair_displayName": "Stroke hair",
-            "com_touch_hair_displayName_1": "Stroke hair",
-            "com_touch_hug_displayName": "Hug",
-            "com_touch_hug_displayName_1": "Hug",
             "com_touch_sleeponthigh_give_displayName": "Offer lap pillow",
             "com_touch_sleeponthigh_give_displayName_1": "Offer lap pillow",
             "com_touch_sleeponthigh_ask_displayName": "Request lap pillow",
-            "com_touch_sleeponthigh_ask_displayName_1": "Request lap pillow",
-
-            "com_touch_butt_displayName_1": "Knead Butt",
-            "com_touch_butt_displayName_2": "Stroke Butt",
-            "com_touch_abdomen_displayName_1": "Knead Abdomen",
-            "com_touch_abdomen_displayName_2": "Stroke Abdomen",
-            "com_touch_thigh_displayName_1": "Knead Thighs",
-            "com_touch_thigh_displayName_2": "Stroke Thighs",
-            "com_touch_back_displayName_1": "Knead Waist",
-            "com_touch_back_displayName_2": "Stroke Back",
-            "com_touch_shoulders_displayName_1": "Knead Shoulders",
-            "com_touch_shoulders_displayName_2": "Stroke Shoulders",
-            "com_touch_fingers_displayName_1": "Stroke Fingers",
-            "com_touch_foot_toes_displayName_1": "Stroke Toes",
-            "com_touch_ears_displayName_1": "Stroke Ears"
+            "com_touch_sleeponthigh_ask_displayName_1": "Request lap pillow"
                             
         }
     }

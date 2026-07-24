@@ -121,6 +121,7 @@ public class scr_System_CentralControl : MonoBehaviour
     public bool isSafeMode { get
         {
 #if UNITY_EDITOR
+
             return _SafeMode;
 #else
             if (!cachedSafeMode)

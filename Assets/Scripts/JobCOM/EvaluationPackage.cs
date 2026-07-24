@@ -255,35 +255,52 @@ public partial class EvaluationPackage : I_ResultStorage
     [JsonProperty] List<string> injectedCOMTags = new List<string>();
     [JsonProperty] List<string> injectedReceiverTags = new List<string>();
 
-    List<string> _doerSelfTag = new List<string>();
+    /// <summary>
+    /// Must be called whenever extraDoerTags/extraCOMTags/extraReceiverTags/injectedDoerTags/injectedCOMTags/injectedReceiverTags change,
+    /// so DoerSelfTag/ReceiverTargetTag/DoerTargetTag/ReceiverSelfTag recompute instead of returning stale cached data.
+    /// </summary>
+    private void InvalidateTagCache()
+    {
+        _doerSelfTag = null;
+        _receiverTargetTag = null;
+        _doerTargetTag = null;
+        _receiverSelfTag = null;
+    }
+
+    List<string> _doerSelfTag = null;
 
     [JsonIgnore] public List<string> DoerSelfTag { get
         {
-            List<string> tags = new List<string>();
-            if (this.receiverRef == -1 || receiverRef == doerRef) return DoerTargetTag;
-            else return extraDoerTags.Concat(injectedDoerTags).Distinct().ToList(); ;
+            if (_doerSelfTag == null)
+            {
+                if (this.receiverRef == -1 || receiverRef == doerRef) _doerSelfTag = DoerTargetTag;
+                else _doerSelfTag = extraDoerTags.Concat(injectedDoerTags).Distinct().ToList();
+            }
+            return _doerSelfTag;
         } }
 
+    List<string> _receiverTargetTag = null;
     [JsonIgnore] public List<string> ReceiverTargetTag
     {
         get
         {
-            return Enumerable.Concat(targetCOM == null? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraReceiverTags).Concat(injectedReceiverTags).Concat(injectedCOMTags).Distinct().ToList();
+            if (_receiverTargetTag == null)
+            {
+                _receiverTargetTag = Enumerable.Concat(targetCOM == null? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraReceiverTags).Concat(injectedReceiverTags).Concat(injectedCOMTags).Distinct().ToList();
+            }
+            return _receiverTargetTag;
         }
     }
 
-    List<string> _doerTargetTag = new List<string>();
-    //COM _doerCOM = null;
+    List<string> _doerTargetTag = null;
     [JsonIgnore] public List<string> DoerTargetTag
     {
         get
         {
-            //if (_doerCOM != targetCOM) 
-           // {
-            //    _doerCOM = targetCOM;
+            if (_doerTargetTag == null)
+            {
                 HashSet<string> tagSet = new();
 
-                //_doerTargetTag = Enumerable.Concat(targetCOM == null ? new List<string>() : targetCOM.comTags, extraCOMTags).Concat(extraDoerTags).Concat(injectedDoerTags).Concat(injectedCOMTags).Distinct().ToList();
                 if (targetCOM != null)
                 {
                     foreach (var tag in targetCOM.comTags) tagSet.Add(tag);
@@ -295,7 +312,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 foreach (var tag in injectedCOMTags) tagSet.Add(tag);
 
                 _doerTargetTag = new List<string>(tagSet);
-            
+            }
             return _doerTargetTag;
         }
     }
@@ -312,9 +329,14 @@ public partial class EvaluationPackage : I_ResultStorage
         }
     }
 
+    List<string> _receiverSelfTag = null;
     [JsonIgnore] public List<string> ReceiverSelfTag { get
         {
-            return extraReceiverTags.Concat(injectedReceiverTags).Distinct().ToList(); ;
+            if (_receiverSelfTag == null)
+            {
+                _receiverSelfTag = extraReceiverTags.Concat(injectedReceiverTags).Distinct().ToList();
+            }
+            return _receiverSelfTag;
         } }
 
     //MessageLog log;
@@ -391,11 +413,13 @@ public partial class EvaluationPackage : I_ResultStorage
     {
         this.injectedCOMTags.Add(s);
         this.injectedCOMTags = Utility.Distinct(this.injectedCOMTags);
+        InvalidateTagCache();
     }
     public void AddExtraActorTags(string doer, string receiver)
     {
         if (doer != "") this.injectedDoerTags.Add(doer);
         if (receiver != "") this.injectedReceiverTags.Add(receiver);
+        InvalidateTagCache();
     }
 
     public bool Evaluate(bool reset = false)
@@ -414,6 +438,7 @@ public partial class EvaluationPackage : I_ResultStorage
 
         UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
         UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, targetCOM, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+        InvalidateTagCache();
         CalculateRequestRate();
         CalculateResponseRate();
 
@@ -627,6 +652,7 @@ public partial class EvaluationPackage : I_ResultStorage
         extraReceiverTags = new List<string>();
         UtilityEX.GetInteractionTagsFrom(Doer, Receiver, targetCOM, VariantID, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
         UtilityEX.GetJobInteractionTagsFrom(Doer, Receiver, targetCOM, this.job, ref extraDoerTags, ref extraCOMTags, ref extraReceiverTags);
+        InvalidateTagCache();
 
 
         if (response == Memory_Response.None || response == Memory_Response.Refuse)
@@ -1381,6 +1407,8 @@ public partial class EvaluationPackage : I_ResultStorage
             injectedDoerTags.AddRange(com.requirements.requirement.req_Receivers.BodyTags);
             injectedDoerTags.AddRange(com.variants[variantID].requirements.requirement.req_Receivers.BodyTags);
             injectedDoerTags = Utility.Distinct(injectedDoerTags);
+
+            InvalidateTagCache();
 
             if (Fuck_3(m, true, true, doer, doerInternal, receiverInternal, com, variantID, isForce, true)) { }
             else if (Fuck_3(m, true, false, receiver, receiverInternal, doerInternal, com, variantID, isForce, false)) { }

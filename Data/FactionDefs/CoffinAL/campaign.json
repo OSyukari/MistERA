@@ -62,6 +62,7 @@
                         ]
                     }
                 ],
+                "managerBaseIDs":["TCoAaL_Char_Andrew","TCoAaL_Char_Ashley"],
                 "mealHours":[7, 12, 18],
                 "activeHoursStart":7,
                 "activeHoursEnd":22

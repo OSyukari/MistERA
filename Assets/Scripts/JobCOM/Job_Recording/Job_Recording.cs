@@ -58,7 +58,7 @@ public class Job_Recording : Job, I_CanEndJob, I_RequireSpecialTracker
 
     protected override List<COM> UpdateAllUsableCOMs()
     {
-        return scr_System_Serializer.current.index_COM.list.FindAll(x => x.comTags.Contains("endRecording"));
+        return scr_System_Serializer.current.index_COM.LIST.FindAll(x => x.comTags.Contains("endRecording"));
     }
 
     // track current room. job can change currentroom at any time

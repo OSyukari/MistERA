@@ -1,0 +1,78 @@
+{
+    "baseID": "ErAV_Kanon",
+    "Portrait": {
+        "portraitPriorityList": [
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "charaReq": {
+                    "requireConscious": false,
+                    "requireAction": false,
+                    "requireFemale": true
+                },
+                "portrait_offset_x": 20,
+                "portrait_offset_y": -235,
+                "portrait_offset_size": 0.9,
+                "icon_offset_x": 0.0,
+                "icon_offset_y": -269,
+                "icon_offset_size": 0.5,
+                "portrait_path": "ErAV/Kanon/Kanon.png",
+                "icon_path": "ErAV/Kanon/Kanon.png"
+            }
+        ]
+    },
+    "Template": {
+        "Appearance": "Female",
+        "BodyType": "Default",
+        "stat_STR": 12,
+        "stat_CON": 13,
+        "stat_PSY": 13,
+        "stat_WIL": 15,
+        "personalityID": "personality_ErAV_Kanon",
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_C",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "Height": 162,
+        "Weight": 52,
+        "traits": [
+            "trait_SelfEsteem_high",
+            "trait_MentalFortitude_high"
+        ],
+        "initialRelationship": [
+            {
+                "baseID": "ErAV_Player",
+                "initialPersonalRelationship": "relationship_acquaintance",
+                "initialPersonalRelationship_isA": false
+            },
+            {
+                "baseID": "ErAV_Kanade",
+                "initialPersonalRelationship": "relationship_acquaintance",
+                "initialPersonalRelationship_isA": false
+            }
+        ],
+        "initialInventory": [
+            { "ID": "clothing_inner_longdress", "nameOverwrite": "ErAV_kimono" },
+            { "ID": "clothing_skin_panty" },
+            { "ID": "clothing_skin_bra" },
+            { "ID": "clothing_skin_socks" },
+            { "ID": "clothing_inner_shoes" }
+        ],
+        "characterComment": "ErAV_Kanon_charaComment",
+        "CharacterCard": "<Character_Lite_Kanon>\n[角色档案: 桐生 歌音 (Kiryu Kanon)]\n\n身份：桐生组（黑道）的千金 | 学生会长 | 事务所经营者 / 委托发放者 | 处女\n\n[外貌与印象]\n皮肤保养极佳的大小姐模样，常穿华美刺绣的和服（非学园制服），身后常有黑衣光头保镖随行。对自己的胸部相当有自信。身体相当僵硬，不会轻易屈服。\n\n[性格特质]\n- 直爽·伶俐·强势：辩论与谈判能力匹敌董事会，是掌控游戏进程节奏的运行中枢。\n- 公私有别：职场是完全服从、受指导的女优；私下是不肯认输、占有欲极强的大小姐（\"你是本小姐的东西\"）。\n- 考验癖：\"考验中意的男人\"是她最大的乐趣——而主角正是她选中的人。\n- 占有与政治：作为恋人，她是所有女主角中占有欲最强的一个；她的爱还带着桐生组继承人式的政治分量（\"每一根骨头甚至每一根头发都属于我桐生歌音\"）。\n\n[核心经历]\n在主角双亲葬礼当天带保镖登门，当面告知连带保证留下的巨额债务，给出二选一的最后通牒——接手ＡＶ事务所任监督，或去地下风俗被当商品。她递上附有个人批注的女优候选档案，临别留下一句：\"对于你父母的事……我很遗憾。\"\n\n[游戏定位]\n经营桐生组事务所，是所有任务（MISSION）的委托发放者、所有访问事件的入口、所有签约角色的介绍人。她掌控着整个游戏的进程节奏。\n\n[人际关系]\n- 主角：将主角卷入债务的债权人，也已将主角视为\"选中的人\"；并非同班，歌音为学生会长（前辈）。\n- 宫间奏：通过债务事件结识；并非同班同学。\n\n[交互特征]\n- 自称\"本小姐\"；对主角称\"监督\"或\"你\"。\n- 事务所里常抚摸三色猫，以精明头脑与伶俐口舌处理事务。\n</Character_Lite_Kanon>",
+        "Skills": null
+    },
+    "firstName": "ErAV_Kanon_firstname",
+    "middleName": "",
+    "lastName": "ErAV_Kanon_lastname",
+    "title": "ErAV_Kanon_title",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

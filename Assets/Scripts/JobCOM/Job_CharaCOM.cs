@@ -134,7 +134,7 @@ public class Job_CharaCOM : Job
 
     protected override List<COM> UpdateAllUsableCOMs()
     {
-        return scr_System_Serializer.current.index_COM.list.FindAll(x => (    x.comTags.Contains("touch")
+        return scr_System_Serializer.current.index_COM.LIST.FindAll(x => (    x.comTags.Contains("touch")
                                                                             || x.comTags.Contains("service")
                                                                             || x.comTags.Contains("interaction")
                                                                             || x.comTags.Contains("action"))  && !x.comTags.Contains("sex") && !x.comTags.Contains("player"));

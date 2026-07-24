@@ -159,7 +159,7 @@ public class scr_Traits_Group
 
 
 [System.Serializable]
-public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable
+public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMergeable, I_RemoveNSFW
 {
 
     public void MergeWith(I_IndexMergeable list)
@@ -211,11 +211,11 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
                 traitsall.Add(traits_CON);
                 traitsall.Add(traits_PSY);
                 traitsall.Add(traits_WIL);
-                traitsall.Add(traits_STR_SEX);
-                traitsall.Add(traits_CON_SEX);
-                traitsall.Add(traits_PSY_SEX);
-                traitsall.Add(traits_WIL_SEX);
-                traitsall.Add(traits_BODY);
+                if (traits_STR_SEX != null) traitsall.Add(traits_STR_SEX);
+                if (traits_CON_SEX != null) traitsall.Add(traits_CON_SEX);
+                if (traits_PSY_SEX != null) traitsall.Add(traits_PSY_SEX);
+                if (traits_WIL_SEX != null) traitsall.Add(traits_WIL_SEX);
+                if (traits_BODY != null) traitsall.Add(traits_BODY);
                 return traitsall;
             }
             else
@@ -242,12 +242,11 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
         foreach (var group in traits_CON) group.GroupLabel = "traits_CON";
         foreach (var group in traits_PSY) group.GroupLabel = "traits_PSY";
         foreach (var group in traits_WIL) group.GroupLabel = "traits_WIL";
-        foreach (var group in traits_STR_SEX) group.GroupLabel = "traits_STR_SEX";
-        foreach (var group in traits_CON_SEX) group.GroupLabel = "traits_CON_SEX";
-        foreach (var group in traits_PSY_SEX) group.GroupLabel = "traits_PSY_SEX";
-        foreach (var group in traits_WIL_SEX) group.GroupLabel = "traits_WIL_SEX";
-        foreach (var group in traits_BODY) group.GroupLabel = "traits_BODY";
-        foreach (var group in traits_STR) group.GroupLabel = "traits_STR";
+        if (traits_STR_SEX != null) foreach (var group in traits_STR_SEX) group.GroupLabel = "traits_STR_SEX";
+        if (traits_CON_SEX != null) foreach (var group in traits_CON_SEX) group.GroupLabel = "traits_CON_SEX";
+        if (traits_PSY_SEX != null) foreach (var group in traits_PSY_SEX) group.GroupLabel = "traits_PSY_SEX";
+        if (traits_WIL_SEX != null) foreach (var group in traits_WIL_SEX) group.GroupLabel = "traits_WIL_SEX";
+        if (traits_BODY != null) foreach (var group in traits_BODY) group.GroupLabel = "traits_BODY";
 
     }
 
@@ -301,5 +300,16 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
             }
             foreach (var oo in removelist) o.Remove(oo);
         }
+    }
+
+    public void RemoveNSFW()
+    {
+        traits_STR_SEX = null;
+        traits_CON_SEX = null;
+        traits_PSY_SEX = null;
+        traits_WIL_SEX = null;
+        traits_BODY = null;
+
+
     }
 }

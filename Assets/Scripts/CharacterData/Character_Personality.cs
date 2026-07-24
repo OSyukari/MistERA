@@ -95,6 +95,7 @@ public class PrideMod
     {
         public List<string> selfTags = new List<string>();
         public List<string> comTags = new List<string>();
+        public List<string> tags = new List<string>();
 
         public double mult = 1;
         public double threshold = 0;
@@ -198,6 +199,14 @@ public class Character_Personality
             }
         }
         this.pride_decrease.Clear();
+
+        foreach(var i in this.pride_increase)
+        {
+            for(int j = i.Value.mods.Count - 1; j >= 0; j--)
+            {
+                if (i.Value.mods[j].tags.Count > 0 && Utility.ListContainsLoose(scr_System_Serializer.current.nsfwKeywords, i.Value.mods[j].tags)) i.Value.mods.RemoveAt(j);
+            }
+        }
     }
 
 

@@ -1,0 +1,71 @@
+{
+    "_doc": "ErAV campaign. Reuses the shared 2LDK floor 'floor_2ldk_2floor_1' (defined in CoffinAL/House/2ldk.json) — no copy. Protagonist baseID is forced to 'ErAV_Player' (referenced by NPC initialRelationship). NOTE: campaign_init_playerFamilyName requires a code branch in scr_System_CampaignManager.StartCampaign; the engine also currently keys the player relationship by the literal 'PLAYER' token (RelationshipManager.cs:776), so ErAV_Player-based relationships resolve once that lookup also matches the player's baseID.",
+
+    "CampaignSettings": {
+        "list": [
+            {
+                "ID": "campaign_erav",
+                "extraOptions": [
+                    {
+                        "ID": "campaign_erav_start",
+                        "_doc_option": "No forbidPCSelect: the protagonist is created in the custom character editor, then its baseID/family name are forced by the initializers below.",
+                        "initializers": [
+                            { "initClass": "campaign_init_playerNameIDs", "initArguments": ["ErAV_Player"] },
+                            { "initClass": "campaign_init_playerFamilyName", "initArguments": ["ErAV_Miyama_lastname"] },
+                            { "initClass": "campaign_init_homefaction", "initArguments": ["ErAV_Homehold", "true", "true"] },
+                            { "initClass": "campaign_init_map_root", "initArguments": ["map_erav", "ErAV_Homehold"] }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
+    "MapPlans": {
+        "list": [
+            {
+                "ID": "map_erav",
+                "z_rotation": 0.0,
+                "initializeFaction": "ErAV_Homehold",
+                "setPrivateRoomOwner": true,
+                "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 5 },
+                "floors": [
+                    {
+                        "ID": "floor_2ldk_2floor_1",
+                        "nameOverwrite": "ErAV_Homehold_Home",
+                        "Additional": [
+                            { "addClass": "map_init_playerLocation", "map_init_playerLocation": { "roomID": "floor_2ldk_2floor_1_1L_room" } },
+                            { "addClass": "map_init_placeChara", "map_init_placeChara": { "roomID": "floor_2ldk_2floor_1_2L_room", "charaBaseID": ["ErAV_Kanade"] } },
+                            { "addClass": "map_init_placeChara", "map_init_placeChara": { "roomID": "floor_2ldk_2floor_1_2L_living", "charaBaseID": ["ErAV_Kanon"] } },
+                            { "addClass": "map_init_organization", "map_init_organization": { "orgID": "ErAV_Homehold", "addCharaToFaction": true, "setPrivateRoom": true } }
+                        ]
+                    }
+                ],
+                "salesCurrency": "currency_JPY",
+                "mealHours": [7, 12, 18],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22,
+                "managerBaseIDs": ["ErAV_Player"]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "campaign_erav": "ErAV：偿还",
+                "campaign_erav_tooltip": "双亲因事故离世，留下巨额连带保证债务。在黑道千金桐生歌音的最后通牒下，你必须在毕业前还清——接手ＡＶ事务所，还是自己另寻出路？",
+                "campaign_erav_start": "开始游戏",
+                "campaign_erav_start_tooltip": "以可自定义的主角（强制姓氏「宫间」）开始游戏",
+                "ErAV_Homehold_Home": "宫间家"
+            },
+            "en-us": {
+                "campaign_erav": "ErAV: Repayment",
+                "campaign_erav_tooltip": "Your parents died in an accident, leaving a crushing joint-guarantor debt. Under yakuza princess Kiryu Kanon's ultimatum, you must repay it before graduation — take over the AV agency, or find your own way out.",
+                "campaign_erav_start": "Begin",
+                "campaign_erav_start_tooltip": "Start as the customizable protagonist (family name forced to 'Miyama')",
+                "ErAV_Homehold_Home": "Miyama Residence"
+            }
+        }
+    }
+}

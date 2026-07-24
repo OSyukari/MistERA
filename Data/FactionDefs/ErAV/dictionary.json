@@ -1,0 +1,38 @@
+{
+    "_doc": "ErAV faction localization. Names/titles/comments/clothing-overrides resolve via LocalizeDictionary; firstName/lastName in character JSONs are dictionary keys defined here.",
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "ErAV_Kanade_firstname": "奏",
+                "ErAV_Kanade_lastname": "宫间",
+                "ErAV_Kanade_title": "妹妹",
+                "ErAV_Kanade_charaComment": "主角的亲妹妹。学业常年保持年级第一的优等生，运动却不太擅长。得知哥哥背负巨债后，主动决定成为ＡＶ女优帮忙还债。温柔清秀、献身的三项齐备，却隐藏着被封印的强势本性。",
+
+                "ErAV_Kanon_firstname": "歌音",
+                "ErAV_Kanon_lastname": "桐生",
+                "ErAV_Kanon_title": "学生会长",
+                "ErAV_Kanon_charaComment": "黑社会桐生组的掌上明珠，直爽的学生会长，辩论与谈判能力极高。是将主角卷入债务事件的罪魁祸首，也是事务所一切委托的发放者。公私有别：职场完全服从的女优，私下是不肯认输的大小姐。",
+
+                "ErAV_kimono": "和服",
+                "ErAV_personality_Kanade_displayName": "奏",
+                "ErAV_personality_Kanon_displayName": "歌音"
+            },
+            "en-us": {
+                "ErAV_Kanade_firstname": "Kanade",
+                "ErAV_Kanade_lastname": "Miyama",
+                "ErAV_Kanade_title": "Little Sister",
+                "ErAV_Kanade_charaComment": "The protagonist's younger sister. A top-of-her-class honor student, though poor at sports. On learning of her brother's crushing debt, she resolves to become an AV actress to help repay it. Gentle, demure and devoted, yet hides a sealed-away dominant nature.",
+
+                "ErAV_Kanon_firstname": "Kanon",
+                "ErAV_Kanon_lastname": "Kiryu",
+                "ErAV_Kanon_title": "Student Council President",
+                "ErAV_Kanon_charaComment": "The pampered daughter of the Kiryu-gumi syndicate; a blunt student council president with formidable negotiation skills. She is the architect of the protagonist's debt entanglement and the issuer of every agency commission. Strictly separates public and private: an utterly compliant actress on set, a proud, unyielding ojou-sama off it.",
+
+                "ErAV_kimono": "Kimono",
+                "ErAV_personality_Kanade_displayName": "Kanade",
+                "ErAV_personality_Kanon_displayName": "Kanon"
+            }
+        }
+    }
+}

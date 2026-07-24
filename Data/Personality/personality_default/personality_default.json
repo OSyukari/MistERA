@@ -32,20 +32,20 @@
                     "Medium":{ 
                         "mods":
                         [
-                            { "selfTags":["raped"], "comTags":["unsafe"] }
+                            { "selfTags":["raped"], "comTags":["unsafe"], "tags":["nsfw"] }
                         ]
                     },
                     "Low":{ 
                         "mods":
                         [
                             { "selfTags":["restrained"], "comTags":[] },
-                            { "selfTags":["raped","penetration"], "comTags":["unsafe"] }
+                            { "selfTags":["raped","penetration"], "comTags":["unsafe"], "tags":["nsfw"]  }
                         ]
                     },
                     "None":{ 
                         "mods":
                         [
-                            { "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1 }
+                            { "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1 , "tags":["nsfw"] }
                         ]
                     }
                 },

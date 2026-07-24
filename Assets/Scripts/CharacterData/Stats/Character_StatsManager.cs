@@ -121,6 +121,12 @@ public class StatsManager : I_StatsManager
 
     protected void PopulateTraits()
     {
+        if (false && scr_System_CentralControl.current.isSafeMode)
+        {
+            Debug.Log($"PopulateTraits check exist: masterlist? {scr_System_Serializer.current.MasterList != null} " +
+                $"Traits_Groups? {scr_System_Serializer.current.MasterList != null && scr_System_Serializer.current.MasterList.Traits_Groups != null} " +
+                $"traits_All? {scr_System_Serializer.current.MasterList != null && scr_System_Serializer.current.MasterList.Traits_Groups != null && scr_System_Serializer.current.MasterList.Traits_Groups.traits_All != null}");
+        }
         foreach(var tgroup in scr_System_Serializer.current.MasterList.Traits_Groups.traits_All)
         {
             foreach(var tr in tgroup)

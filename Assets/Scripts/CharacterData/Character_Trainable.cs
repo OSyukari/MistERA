@@ -2512,7 +2512,7 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         }
         else
         {
-            Debug.LogError($"Error GetTemplateSafeByID {id}");
+            Debug.LogError($"Error GetTemplateSafeByID {id}, entries in dict {templatesS.Count}");
 #if UNITY_EDITOR
             var str = new List<string>();
             foreach(var kvp in templatesS)
@@ -2620,6 +2620,11 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
             if (o.baseID == "") continue;
             if (!ID_Dictionary.ContainsKey(o.baseID)) ID_Dictionary[o.baseID] = o;
             else Debug.LogError($"Error registering allID in Character_Base_Index, {o.baseID} already registered");
+
+            // templates/templatesS are lookup caches and are not serialized; rebuild them here
+            // from each character's own embedded Template field, which IS serialized as part of baseCharacters.
+            if (o is Character_SerializableSafe safe && safe.Template != null) SetTemplateSafe(o.baseID, safe.Template);
+            else if (o is Character_SerializableTrainable trainable && trainable.Template != null) SetTemplate(o.baseID, trainable.Template);
         }
 
         foreach( var gen in this.generators)

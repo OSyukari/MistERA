@@ -158,7 +158,7 @@ public class Job_Sex_Group : Job
     }
     protected override List<COM> UpdateAllUsableCOMs()
     {
-        return scr_System_Serializer.current.index_COM.list.FindAll(x => x.comTags.Contains("sex") && !x.isHiddenParent);
+        return scr_System_Serializer.current.index_COM.LIST.FindAll(x => x.comTags.Contains("sex") && !x.isHiddenParent);
     }
 
     [JsonProperty] protected int parentRoomID = -1;

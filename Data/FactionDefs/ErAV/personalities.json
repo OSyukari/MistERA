@@ -1,0 +1,24 @@
+{
+    "_doc": "Dedicated personality placeholders for ErAV characters. They currently fall back to personality_default (fallbackID); dedicated kojo/response content will be added later. Empty entries_list + empty pride dicts are safe (only foreach-iterated; KOJO/behavior route through the fallback).",
+
+    "Character_Personalities": {
+        "list": [
+            {
+                "id": "personality_ErAV_Kanade",
+                "displayName": "ErAV_personality_Kanade_displayName",
+                "fallbackID": "personality_default",
+                "behaviorID": "",
+                "maxPrideValue": 100,
+                "entries_list": []
+            },
+            {
+                "id": "personality_ErAV_Kanon",
+                "displayName": "ErAV_personality_Kanon_displayName",
+                "fallbackID": "personality_default",
+                "behaviorID": "",
+                "maxPrideValue": 100,
+                "entries_list": []
+            }
+        ]
+    }
+}

@@ -1,0 +1,55 @@
+{
+    "_doc": "PLACEHOLDER floor for the Kiryu-gumi office (where Kanon resides / commission hub). Reuses generic building-corridor backgrounds for now; layout and dedicated art are to be redesigned later. See Plan_ErAV_OpeningScene.md (incomplete status).",
+
+    "Floors": {
+        "list": [
+            {
+                "ID": "erav_kiryu_office",
+                "imagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                "floorWidth": 800,
+                "floorHeight": 500,
+                "AnchorType": "TopLeft",
+                "mapExit": "erav_kiryu_office_frontDoor",
+                "rooms": [
+                    {
+                        "ID": "erav_kiryu_office_frontDoor",
+                        "displayName": "map_frontdoor",
+                        "offsetX": 360,
+                        "offsetY": 60,
+                        "connects": [
+                            { "ID": "erav_kiryu_office_reception", "cost": 1.0 }
+                        ]
+                    },
+                    {
+                        "ID": "erav_kiryu_office_reception",
+                        "displayName": "map_entrance",
+                        "offsetX": 360,
+                        "offsetY": 230,
+                        "connects": [
+                            { "ID": "erav_kiryu_office_frontDoor", "cost": 1.0 },
+                            { "ID": "erav_kiryu_office_main", "cost": 1.0 }
+                        ],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "erav_kiryu_office_main",
+                        "displayName": "map_office",
+                        "offsetX": 360,
+                        "offsetY": 400,
+                        "connects": [
+                            { "ID": "erav_kiryu_office_reception", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_round_table_4",
+                            "furniture_computer_terminal",
+                            "furniture_bookshelves"
+                        ],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -393,10 +393,39 @@
     {
         "zh-cn":
         {
+            "com_touch_butt_displayName_1": "揉捏屁股",
+            "com_touch_butt_displayName_2": "抚摸屁股",
+            "com_touch_abdomen_displayName_1": "揉捏腹部",
+            "com_touch_abdomen_displayName_2": "抚摸腹部",
+            "com_touch_thigh_displayName_1": "揉捏大腿",
+            "com_touch_thigh_displayName_2": "抚摸大腿",
+            "com_touch_back_displayName_1": "揉捏腰部",
+            "com_touch_back_displayName_2": "抚摸背部",
+            "com_touch_shoulders_displayName_1": "揉捏肩部",
+            "com_touch_shoulders_displayName_2": "抚摸肩部",
+            "com_touch_fingers_displayName_1": "撫摸手指",
+            "com_touch_ears_displayName_1": "撫摸耳朵",
+                            
+            "com_touch_foot_toes_displayName_1": "撫摸脚趾",
             "com_touch_unsafe_base":"触摸类指令"
         },
         "en-us":
         {
+            "com_touch_shoulders_displayName_1": "Knead Shoulders",
+            "com_touch_shoulders_displayName_2": "Stroke Shoulders",
+            "com_touch_fingers_displayName_1": "Stroke Fingers",
+            "com_touch_ears_displayName_1": "Stroke Ears",
+
+
+            "com_touch_butt_displayName_1": "Knead Butt",
+            "com_touch_butt_displayName_2": "Stroke Butt",
+            "com_touch_abdomen_displayName_1": "Knead Abdomen",
+            "com_touch_abdomen_displayName_2": "Stroke Abdomen",
+            "com_touch_thigh_displayName_1": "Knead Thighs",
+            "com_touch_thigh_displayName_2": "Stroke Thighs",
+            "com_touch_back_displayName_1": "Knead Waist",
+            "com_touch_back_displayName_2": "Stroke Back",
+            "com_touch_foot_toes_displayName_1": "Stroke Toes",
             "com_touch_unsafe_base": "Touch Commands"
         }
     }

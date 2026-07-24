@@ -120,10 +120,26 @@
     {
         "zh-cn":
         {
+            "com_touch_cheek_displayName": "捏脸蛋",
+            "com_touch_cheek_displayName_1": "捏脸蛋",
+
+            "com_touch_hug_displayName": "拥抱",
+            "com_touch_hug_displayName_1": "拥抱",
+
+            "com_touch_hair_displayName": "抚摸头发",
+            "com_touch_hair_displayName_1": "抚摸头发",
             "com_touch_safe_base":"健全系触摸指令"
         },
         "en-us":
         {
+            "com_touch_cheek_displayName": "Pinch cheek",
+            "com_touch_cheek_displayName_1": "Pinch cheek",
+
+            "com_touch_hug_displayName": "Hug",
+            "com_touch_hug_displayName_1": "Hug",
+            
+            "com_touch_hair_displayName": "Stroke hair",
+            "com_touch_hair_displayName_1": "Stroke hair",
             "com_touch_safe_base": "Safe Touch Commands"
         }
     }

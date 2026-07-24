@@ -21,10 +21,10 @@
                             "furniture_round_table_4",
                             "furniture_marker_getmeal"
                         ],
-                        "roomImagePath": "Jitaku/House/bgi-jk105饭厅d.png",
-                        "roomImagePath_Night": "Jitaku/House/bgi-jk105饭厅b.png",
-                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk105饭厅d.png",
-                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk105饭厅c.png"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk105饭厅d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk105饭厅b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk105饭厅d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk105饭厅c.png"
                     },
                     {
                         "ID": "floor_2ldk_2floor_1_2L_living",
@@ -42,10 +42,10 @@
                             "furniture_TV_flatscreen",
                             "furniture_cafe_table_2"
                         ],
-                        "roomImagePath": "Jitaku/House/bgi-jk104客厅d.png",
-                        "roomImagePath_Night": "Jitaku/House/bgi-jk104客厅b.png",
-                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk104客厅d.png",
-                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk104客厅c.png",
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk104客厅d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk104客厅b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk104客厅d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk104客厅c.png",
                         "activityState": "DayOnly"
                     },
                     {
@@ -59,8 +59,8 @@
                                 "cost": 1.0
                             }
                         ],
-                        "roomImagePath": "Jitaku/House/bgi-jk108脱衣所d.png",
-                        "roomImagePath_Night": "Jitaku/House/bgi-jk108脱衣所b.png"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk108脱衣所d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk108脱衣所b.png"
                     },
                     {
                         "ID": "floor_2ldk_2floor_1_1L_bath",
@@ -77,8 +77,8 @@
                             "furniture_bathtub",
                             "furniture_shower"
                         ],
-                        "roomImagePath": "Jitaku/House/bgi-jk120浴室d.png",
-                        "roomImagePath_Night": "Jitaku/House/bgi-jk120浴室b.png"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk120浴室d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk120浴室b.png"
                     },
                     {
                         "ID": "floor_2ldk_2floor_1_1L_toilet",
@@ -94,8 +94,8 @@
                         "furnitureIDs": [
                             "furniture_bathroom_set"
                         ],
-                        "roomImagePath": "Jitaku/House/bgi-jk107トイレd.png",
-                        "roomImagePath_Night": "Jitaku/House/bgi-jk107トイレb.png"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk107トイレd.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk107トイレb.png"
                     },
                     {
                         "ID": "floor_2ldk_2floor_1_1L_room",
@@ -114,10 +114,10 @@
                             "furniture_bookshelves",
                             "furniture_computer_terminal"
                         ],
-                        "roomImagePath": "Jitaku/House/bgi-jk112自室d.png",
-                        "roomImagePath_Night": "Jitaku/House/bgi-jk112自室b.png",
-                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk112自室d.png",
-                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk112自室c.png"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk112自室d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk112自室b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk112自室d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk112自室c.png"
                     },
                     {
                         "ID": "floor_2ldk_2floor_1_1L_frontDoor",
@@ -161,10 +161,10 @@
                             "furniture_table_1_chair_1",
                             "furniture_bookshelves"
                         ],
-                        "roomImagePath": "Jitaku/House/bgi-jk114妹の部屋d.png",
-                        "roomImagePath_Night": "Jitaku/House/bgi-jk114妹の部屋b.png",
-                        "roomImagePath_Inactive": "Jitaku/House/bgi-jk114妹の部屋d.png",
-                        "roomImagePath_Inactive_Night": "Jitaku/House/bgi-jk114妹の部屋c.png"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk114妹の部屋d.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk114妹の部屋b.png",
+                        "roomImagePath_Inactive": "BGAssets/House_Jitaku/bgi-jk114妹の部屋d.png",
+                        "roomImagePath_Inactive_Night": "BGAssets/House_Jitaku/bgi-jk114妹の部屋c.png"
                     },
                     {
                         "ID":"floor_2ldk_2floor_1_2L_balcony",
@@ -177,7 +177,7 @@
                         ],
                         "offsetX":821,
                         "offsetY":927,
-                        "roomImagePath": "Jitaku/House/bgi-jk118トイレd.png"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk118トイレd.png"
                     }
                 ]
             }

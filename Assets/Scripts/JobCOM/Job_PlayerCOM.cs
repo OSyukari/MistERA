@@ -75,7 +75,7 @@ public class Job_PlayerCOM : Job
     protected override List<COM> UpdateAllUsableCOMs()
     {
        // Debug.Log("Updating player Job all valid COM");
-        return scr_System_Serializer.current.index_COM.list.FindAll(x => x.comTags.Contains("player"));
+        return scr_System_Serializer.current.index_COM.LIST.FindAll(x => x.comTags.Contains("player"));
     }
 }
 

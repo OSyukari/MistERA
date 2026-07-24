@@ -12,7 +12,7 @@
     },
     
     {
-        "id":"itemm_gamecd_minesweeper",
+        "id":"item_gamecd_minesweeper",
         "Tags":["furniture_playVideoGames","noFactionReq"]
     },
     
@@ -29,15 +29,15 @@
         {
             "zh-cn":
             {
-"itemm_gamecd_minesweeper":"扫雷",
-"itemm_gamecd_minesweeper_tooltip":"扫雷",
+"item_gamecd_minesweeper":"扫雷",
+"item_gamecd_minesweeper_tooltip":"扫雷",
 "item_videocd_news":"新闻",
 "item_videocd_news_tooltip":"新闻"
             },
             "en-us":
             {
-                "itemm_gamecd_minesweeper": "Minesweeper",
-                "itemm_gamecd_minesweeper_tooltip": "Minesweeper",
+                "item_gamecd_minesweeper": "Minesweeper",
+                "item_gamecd_minesweeper_tooltip": "Minesweeper",
                 "item_videocd_news": "News",
                 "item_videocd_news_tooltip": "News"
             }

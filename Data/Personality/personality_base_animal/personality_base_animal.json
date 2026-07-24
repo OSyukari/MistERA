@@ -9,7 +9,7 @@
                 "pride_increase": {},
                 "pride_decrease": {
                     "High": { "mods": [{ "selfTags":["imprisoned"], "comTags":[] }] },
-                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1 }] }
+                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1, "tags":["nsfw"] }] }
                 },
                 "entries_list": [
                     {
@@ -99,6 +99,7 @@
                         "ID": "DisruptSleep",
                         "variants": [
                             {
+                                "tags": [ "nsfw" ],
                                 "requirement": {
                                     "requireSelfAction": false,
                                     "selfTags": ["sleeping", "timestop"]
@@ -106,6 +107,7 @@
                                 "responses": []
                             },
                             {
+                                "tags": [ "nsfw" ],
                                 "requirement": {
                                     "requireSelfAction": false,
                                     "selfTags": ["sleeping", "pain"],
@@ -115,6 +117,7 @@
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
                             },
                             {
+                                "tags": [ "nsfw" ],
                                 "requirement": {
                                     "requireSelfAction": false,
                                     "selfTags": ["sleeping"],
@@ -123,6 +126,7 @@
                                 "responses": []
                             },
                             {
+                                "tags": [ "nsfw" ],
                                 "requirement": {
                                     "requireSelfAction": false,
                                     "selfTags": ["sleeping", "pain"],
@@ -132,6 +136,7 @@
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.2 } }]
                             },
                             {
+                                "tags": [ "nsfw" ],
                                 "requirement": {
                                     "requireSelfAction": false,
                                     "selfTags": ["sleeping"],
@@ -140,6 +145,7 @@
                                 "responses": []
                             },
                             {
+                                "tags": [ "nsfw" ],
                                 "requirement": {
                                     "requireSelfAction": false,
                                     "selfTags": ["sleeping", "pain"]

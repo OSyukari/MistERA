@@ -1,0 +1,81 @@
+{
+    "baseID": "ErAV_Kanade",
+    "Portrait": {
+        "portraitPriorityList": [
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "charaReq": {
+                    "requireConscious": false,
+                    "requireAction": false,
+                    "requireFemale": true
+                },
+                "portrait_offset_x": 20,
+                "portrait_offset_y": -235,
+                "portrait_offset_size": 0.9,
+                "icon_offset_x": 0.0,
+                "icon_offset_y": -269,
+                "icon_offset_size": 0.5,
+                "portrait_path": "ErAV/Kanade/Kanade.png",
+                "icon_path": "ErAV/Kanade/Kanade.png"
+            }
+        ]
+    },
+    "Template": {
+        "Appearance": "Female",
+        "BodyType": "Default",
+        "stat_STR": 9,
+        "stat_CON": 10,
+        "stat_PSY": 14,
+        "stat_WIL": 12,
+        "personalityID": "personality_ErAV_Kanade",
+        "sensitivity_B": "trait_Sensitivity_B_sensitive",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_sensitive",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_B",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "Height": 158,
+        "Weight": 48,
+        "traits": [
+            "trait_SelfEsteem_high",
+            "trait_MemoryCapacity_high"
+        ],
+        "initialRelationship": [
+            {
+                "baseID": "ErAV_Player",
+                "initialBiologicalRelationship": "relationship_sibling",
+                "initialBiologicalRelationship_isA": false
+            },
+            {
+                "baseID": "ErAV_Kanon",
+                "initialPersonalRelationship": "relationship_acquaintance",
+                "initialPersonalRelationship_isA": false
+            }
+        ],
+        "initialInventory": [
+            { "ID": "clothing_inner_shirt" },
+            { "ID": "clothing_inner_skirt" },
+            { "ID": "clothing_inner_necktie" },
+            { "ID": "clothing_inner_hair_ribbon" },
+            { "ID": "clothing_inner_shoes" },
+            { "ID": "clothing_skin_socks" },
+            { "ID": "clothing_skin_panty" },
+            { "ID": "clothing_skin_bra" }
+        ],
+        "characterComment": "ErAV_Kanade_charaComment",
+        "CharacterCard": "<Character_Lite_Kanade>\n[角色档案: 宫间 奏 (Miyama Kanade)]\n\n身份：主角的亲妹妹 | 学生（年级第一的优等生） | 处女\n\n[外貌与印象]\n清秀温柔的黑发少女，气质文静顺从。身材纤瘦，胸量适中。常穿校服，会松开衬衫上的丝带表示愿意学习\"色色的事情\"。意外地对流行敏感，容易随波逐流。\n\n[性格特质]\n- 温柔·清秀·献身：为帮助哥哥承担双亲遗留的债务，主动决定成为ＡＶ女优。\n- 优等生面具：学业常年年级第一，运动却不擅长。被封印的本性里藏着强势与支配欲。\n- 隐藏的双重人格：幼年曾是欺负同伴的\"调皮猴\"，因被哥哥一句\"我讨厌欺负人的奏\"而封印本性，变为如今文静顺从的模样。在调教深入后，那个被封存的强势本性会逐渐苏醒——尤其在对男性掌握主导权时。\n- 情感：对亲哥哥抱有自己也说不清的恋慕心，平时完全没注意到同班男生的接近。\n\n[核心经历]\n双亲因事故离世、留下巨额债务。得知哥哥将被迫接手事务所还债后，奏红着脸坦白：与陌生人发生关系她无法忍受，但若能让哥哥少受些苦，她愿意克服——主动请求签约成为女优。\n\n[人际关系]\n- 主角（哥哥）：唯一的家人与情感寄托，愿为其献身。\n- 桐生歌音：把兄妹卷入事件的债权人，也是事务所的经营者；并非同班同学，歌音为学生会长（前辈）。\n- 宫间响也：主角在游戏中的默认姓名（響也=Kyōya，与\"奏=Kanade\"同为音乐相关读音）。\n\n[交互特征]\n- 工作场合称主角为\"监督\"，私下称\"哥哥\"。\n- 自称\"私\"，语气温柔，但本性苏醒后会流露出命令式的支配口吻（\"现在开始为我服务的时候就叫做'奏大人'吧\"）。\n</Character_Lite_Kanade>",
+        "Skills": null
+    },
+    "firstName": "ErAV_Kanade_firstname",
+    "middleName": "",
+    "lastName": "ErAV_Kanade_lastname",
+    "title": "ErAV_Kanade_title",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

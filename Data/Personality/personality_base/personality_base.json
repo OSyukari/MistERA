@@ -12,24 +12,27 @@
                 },
                 "pride_decrease": {
                     "High":   { "mods": [{ "selfTags":["imprisoned"], "comTags":[] }] },
-                    "Medium": { "mods": [{ "selfTags":["raped"], "comTags":["unsafe"] }] },
+                    "Medium": { "mods": [{ "selfTags":["raped"], "comTags":["unsafe"], "tags":["nsfw"] }] },
                     "Low": {
                         "mods": [
                             { "selfTags":["restrained"], "comTags":[] },
-                            { "selfTags":["raped","penetration"], "comTags":["unsafe"] }
+                            { "selfTags":["raped","penetration"], "comTags":["unsafe"], "tags":["nsfw"] }
                         ]
                     },
-                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1 }] }
+                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1, "tags":["nsfw"] }] }
                 },
                 "entries_list": [
                     {
                         "ID": "Descriptor",
+                        "tags": ["nsfw"],
                         "variants": [
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"] },
                                 "responses": []
                             },
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["timestop"] },
                                 "responses": []
                             },
@@ -150,33 +153,40 @@
                         "ID": "DisruptSleep",
                         "variants": [
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","timestop"] },
                                 "responses": []
                             },
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } },
                                 "responses": [],
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
                             },
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } },
                                 "responses": []
                             },
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
                                 "responses": [],
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.2 } }]
                             },
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "targetTags": ["sex","penetration"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
                                 "responses": [],
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
                             },
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
                                 "responses": []
                             },
                             {
+                                "tags": ["nsfw"],
                                 "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"] },
                                 "responses": [],
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.3 } }]
@@ -190,6 +200,7 @@
                     },
                     {
                         "ID": "OnNightAssaultSuccess",
+                        "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [
                             { "responses": [], "keepLooking": true }
@@ -197,6 +208,7 @@
                     },
                     {
                         "ID": "OnNightAssaultFailure",
+                        "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [
                             { "responses": [], "keepLooking": true }
