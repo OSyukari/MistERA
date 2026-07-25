@@ -4,19 +4,45 @@
         "portraitPriorityList": [
             {
                 "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
-                "charaReq": {
-                    "requireConscious": false,
-                    "requireAction": false,
-                    "requireFemale": true
-                },
-                "portrait_offset_x": 20,
-                "portrait_offset_y": -235,
-                "portrait_offset_size": 0.9,
+                "portrait_offset_x": 8.6,
+                "portrait_offset_y": -231,
+                "portrait_offset_size": 0.8,
                 "icon_offset_x": 0.0,
-                "icon_offset_y": -269,
+                "icon_offset_y": -300,
                 "icon_offset_size": 0.5,
-                "portrait_path": "ErAV/Kanade/Kanade.png",
-                "icon_path": "ErAV/Kanade/Kanade.png"
+                "charaReq": {
+                    "requireConscious": false, "requireAction": false,
+                    "clothingRequirement": "None", "requireUndressedTags": ["lower", "torso"], "minRevealingScore":1
+                },
+                "Variants": [
+                    { "tagsMatch": ["angry"],     "PortraitVariantData": ["Kanade/nude/core_angry_01.webp"] },
+                    { "tagsMatch": ["sad"],       "PortraitVariantData": ["Kanade/nude/core_sad_01.webp"] },
+                    { "tagsMatch": ["serious"],   "PortraitVariantData": ["Kanade/nude/core_serious_01.webp"] },
+                    { "tagsMatch": ["surprised"], "PortraitVariantData": ["Kanade/nude/core_surprised_01.webp"] },
+                    { "tagsMatch": ["happy"],     "PortraitVariantData": ["Kanade/nude/core_happy_01.webp"] },
+                    { "tagsMatch": ["relaxed"],   "PortraitVariantData": ["Kanade/nude/core_relaxed_01.webp"] }
+                ],
+                "portrait_path": "Kanade/nude/core_neutral_01.webp",
+                "icon_path": "Kanade/nude/core_neutral_01.webp"
+            },
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "portrait_offset_x": 8.6,
+                "portrait_offset_y": -231,
+                "portrait_offset_size": 0.8,
+                "icon_offset_x": 0.0,
+                "icon_offset_y": -300,
+                "icon_offset_size": 0.5,
+                "Variants": [
+                    { "tagsMatch": ["angry"],     "PortraitVariantData": ["Kanade/school/core_angry_03.webp"] },
+                    { "tagsMatch": ["sad"],       "PortraitVariantData": ["Kanade/school/core_sad_03.webp"] },
+                    { "tagsMatch": ["serious"],   "PortraitVariantData": ["Kanade/school/core_serious_03.webp"] },
+                    { "tagsMatch": ["surprised"], "PortraitVariantData": ["Kanade/school/core_surprised_03.webp"] },
+                    { "tagsMatch": ["happy"],     "PortraitVariantData": ["Kanade/school/core_happy_03.webp"] },
+                    { "tagsMatch": ["relaxed"],   "PortraitVariantData": ["Kanade/school/core_relaxed_03.webp"] }
+                ],
+                "portrait_path": "Kanade/school/core_neutral_03.webp",
+                "icon_path": "Kanade/school/core_neutral_03.webp"
             }
         ]
     },
@@ -71,7 +97,7 @@
     },
     "firstName": "ErAV_Kanade_firstname",
     "middleName": "",
-    "lastName": "ErAV_Kanade_lastname",
+    "lastName": "ErAV_Miyama_lastname",
     "title": "ErAV_Kanade_title",
     "nameDisplayFormat": "chara_fullname_lastToFirst",
     "origin": "charOrigin_none",

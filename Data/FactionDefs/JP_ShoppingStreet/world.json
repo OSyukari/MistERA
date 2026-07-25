@@ -1,0 +1,89 @@
+{
+    "_doc": "Child WorldPlan for the shopping mall (购物中心). Entered via the 'jp_shopping_street' childWorldID door on world_erav_modern_jp. Each shop below is its own independent placeholder faction with a one-room floor (no factionInit yet) - see Plan_ErAV_OpeningScene.md §10.7.",
+
+    "MapPlans":{
+
+"worldInit":[
+    {
+        "worldID":"world_jp_shopping_street",
+        "mapImagePath":"JP_ShoppingStreet/mall_directory.jpg",
+
+        "AnchorType":"TopLeft",
+        "worldWidth":600,
+        "worldHeight":400,
+        "worldSizeMult":2,
+
+        "travelDistancePerMinute":6.67,
+
+        "playerInitLocationFaction":"",
+        "initializeFactions":{ },
+        "doors":
+        [
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":150, "offset_y":150, "isPublic":true,
+                "factionID":"jp_mall_clothing",
+                "floorExitID":"clothing_room"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":300, "offset_y":150, "isPublic":true,
+                "factionID":"jp_mall_furniture",
+                "floorExitID":"furniture_room"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":450, "offset_y":150, "isPublic":true,
+                "factionID":"jp_mall_fastfood",
+                "floorExitID":"fastfood_counter"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":150, "offset_y":300, "isPublic":true,
+                "factionID":"jp_mall_electronics",
+                "floorExitID":"electronics_room"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":300, "offset_y":300, "isPublic":true,
+                "factionID":"jp_mall_bookstore",
+                "floorExitID":"bookstore_room"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":450, "offset_y":300, "isPublic":true,
+                "factionID":"jp_mall_general_goods",
+                "floorExitID":"generalgoods_room"
+            }
+        ]
+    }
+],
+"factionInit":[ ]
+
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "world_jp_shopping_street": "商店街",
+
+                "jp_mall_clothing": "服装店",
+                "jp_mall_furniture": "家具店",
+                "jp_mall_fastfood": "快餐店",
+                "jp_mall_electronics": "电器店",
+                "jp_mall_bookstore": "书店",
+                "jp_mall_general_goods": "百货杂货"
+            },
+            "en-us": {
+                "world_jp_shopping_street": "Shopping Street",
+
+                "jp_mall_clothing": "Clothing Store",
+                "jp_mall_furniture": "Furniture Store",
+                "jp_mall_fastfood": "Fast Food Counter",
+                "jp_mall_electronics": "Electronics Store",
+                "jp_mall_bookstore": "Bookstore",
+                "jp_mall_general_goods": "General Goods"
+            }
+        }
+    }
+}

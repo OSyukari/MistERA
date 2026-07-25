@@ -77,44 +77,6 @@ public class Floor_Base
     }
 }
 
-
-
-[System.Serializable]
-public class Index_Floor_Base : I_IndexHasID, I_IndexMergeable, I_SerializationCallbackReceiver
-{
-    public List<Floor_Base> list = new List<Floor_Base>();
-    public Floor_Base GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
-    Dictionary<string, Floor_Base> ID_Dictionary = new Dictionary<string, Floor_Base>();
-    public void RegisterAllID(List<string> messages)
-    {
-        messages.Add("Index_Floor_Base : registering ID with list length [" + list.Count + "]");
-
-        foreach (Floor_Base o in this.list)
-        {
-            if (!o.isValid || string.IsNullOrEmpty(o.ID)) continue;
-            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_Floor_Base id [{o.ID}] due to duplicate");
-        }
-    }
-
-    public void MergeWith(I_IndexMergeable list)
-    {
-        var l = list as Index_Floor_Base;
-        if (l == null) return;
-        else if (l.list == null) return;
-        else
-        {
-            if (this.list == null) this.list = new List<Floor_Base>();
-            this.list.AddRange(l.list);
-        }
-    }
-
-    public void OnAfterDeserialize()
-    {
-        foreach (var i in list) i.OnAfterDeserialize();
-    }
-}
-
-
 public class Door_Base
 {
     public string ID = "";

@@ -22,6 +22,7 @@ public class scr_System_CampaignManager_Serializable
     public Dictionary<int, Character_Trainable> Characters;
     public Dictionary<int, Item_Instance> Items;
     public string campaignSettingID;
+    public List<string> WorldPlanIDs;
     public Dictionary<int, ExpeditionInstance> ExpeditionInstances;
     public int debugRoomRef, statisRoomRef, tempRoomRef;
     public Dictionary<string, string> LLMResponseStorage;
@@ -250,6 +251,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.Combat = this.Combat;
         obj.Characters = this.Index_referenceID;
         obj.campaignSettingID = CurrentCampaignID;
+        obj.WorldPlanIDs = currentWorldPlanIDs;
         obj.ExpeditionInstances = this.Index_ExpeditionInstances;
         obj.specialUpdateJobs = this.specialUpdateJobs;
 
@@ -314,6 +316,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         deletedRefIDs = obj.DeletedRefIDs;
 
         this.CurrentCampaignID = obj.campaignSettingID;
+        this.currentWorldPlanIDs = obj.WorldPlanIDs ?? new List<string>();
 
         //this.jobs = obj.Jobs;
         //index_JobReferenceIDCache = null;
@@ -339,7 +342,12 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         // now rebuild full map data
         map.SerializationRebuilt();
-        
+
+        // reconcile: any faction listed in an already-loaded WorldPlan but missing from the restored faction
+        // registry was added to the data after this save was made - lazily instantiate just that faction.
+        // isPlayerInitWorld is false here: the player's placement already came from the restored save.
+        foreach (var worldID in currentWorldPlanIDs) map.AddWorldTemplate(worldID, false);
+
         if (obj.Combat != null) this.Combat = obj.Combat;
 
         foreach (var i in Index_referenceID) i.Value.OnAfterDeserialize();
@@ -1730,6 +1738,12 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     int debugRoomRef = 0;
     string CurrentCampaignID = "";
+
+    /// <summary>
+    /// IDs of every WorldPlan instantiated in the current campaign (via campaign_init_world). Only the IDs are
+    /// saved; WorldPlan content is always re-resolved from MasterList on load.
+    /// </summary>
+    public List<string> currentWorldPlanIDs = new List<string>();
     public Room_Instance debugRoom;
 
     protected int statisRoomID = -1;
@@ -1851,7 +1865,10 @@ public class scr_System_CampaignManager : MonoBehaviour
                 {
                     var target = FindInstanceByID(0);
                     target.BaseID = ini.initArguments[0];
-                    //target.SetName(ini.initArguments[1],ini.initArguments[2],ini.initArguments[3],ini.initArguments[4]);
+                    if (ini.initArguments.Count >= 5)
+                    {
+                        target.SetName(ini.initArguments[1], ini.initArguments[2], ini.initArguments[3], ini.initArguments[4]);
+                    }
                 }
                 else if (ini.initClass == "campaign_init_playerPortrait")
                 {
@@ -1867,11 +1884,12 @@ public class scr_System_CampaignManager : MonoBehaviour
                         Player.PortraitManager.SetTemplate(chara);
                     }
                 }
-                else if (ini.initClass == "campaign_init_map_root")
+                else if (ini.initClass == "campaign_init_world")
                 {
-                    map.AddMapTemplate(ini.initArguments[0], ini.initArguments[1]);
-                    // FindInstanceByID(0).baseID = ini.initArguments[0];
+                    map.AddWorldTemplate(ini.initArguments[0], ini.initArguments[1] == "true");
+                    if (!currentWorldPlanIDs.Contains(ini.initArguments[0])) currentWorldPlanIDs.Add(ini.initArguments[0]);
                 }
+                /*
                 else if (ini.initClass == "campaign_init_homefaction")
                 {
                     Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
@@ -1882,7 +1900,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                     {
                         f.backgroundIMG = ini.initArguments[3];
                     }
-                }
+                }*/
                 else if (ini.initClass == "campaign_init_productionOrder")
                 {
                     Manageable f = FindorAddHomeFactionByID(ini.initArguments[0]);
@@ -2379,6 +2397,34 @@ public class scr_System_CampaignManager : MonoBehaviour
         else return null;
     }
 
+    /// <summary>
+    /// Resolves every WorldPlan ID tracked by the current campaign back into its (always re-read, never saved) def.
+    /// </summary>
+    public List<WorldPlan> GetLoadedWorldPlans()
+    {
+        var list = new List<WorldPlan>();
+        foreach (var id in currentWorldPlanIDs)
+        {
+            var w = scr_System_Serializer.current.GetByNameOrID_WorldPlan(id);
+            if (w != null) list.Add(w);
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// Every currently-loaded WorldPlan whose initializeFactions contains the given faction. A faction can belong
+    /// to more than one world (e.g. a shared border faction), so this returns all matches, not just the first.
+    /// </summary>
+    public List<WorldPlan> FindWorldsContainingFaction(string factionID)
+    {
+        var list = new List<WorldPlan>();
+        foreach (var w in GetLoadedWorldPlans())
+        {
+            if (w.initializeFactions.ContainsKey(factionID)) list.Add(w);
+        }
+        return list;
+    }
+
     protected Character_Trainable InstantiateCharacter(Character_Trainable c, Room_Instance room, int forceRefID = -1){
 
         if (c == null) return c;
@@ -2595,6 +2641,49 @@ public static class WorldManager
         return i;
     }
 
+    /// <summary>
+    /// Instantiates every faction listed in a WorldPlan that isn't already present in the current campaign's faction registry
+    /// (fresh campaign start: nothing exists yet, so everything gets instantiated; save-load reconciliation: only newly-added
+    /// factions get instantiated), then auto-connects all factions in the world to each other.
+    /// </summary>
+    public static Dictionary<int, Floor_Instance> InstantiateWorld(WorldPlan world, bool isPlayerInitWorld = false)
+    {
+        var allFloors = new Dictionary<int, Floor_Instance>();
+        var factionsInWorld = new List<Manageable>();
+
+        foreach (var kvp in world.initializeFactions)
+        {
+            var existing = scr_System_CampaignManager.current.FindFactionByID(kvp.Key);
+            if (existing == null)
+            {
+                var mapPlan = scr_System_Serializer.current.GetByNameOrID_MapPlan(kvp.Value);
+                if (mapPlan == null)
+                {
+                    Debug.LogError($"InstantiateWorld: cannot find MapPlan [{kvp.Value}] for faction [{kvp.Key}] in world [{world.worldID}]");
+                    continue;
+                }
+                bool disablePlayerInit = !(isPlayerInitWorld && kvp.Key == world.playerInitLocationFaction);
+                foreach (var kvpF in Instantiate(mapPlan, kvp.Key, disablePlayerInit))
+                {
+                    allFloors[kvpF.Key] = kvpF.Value;
+                }
+                existing = scr_System_CampaignManager.current.FindFactionByID(kvp.Key);
+            }
+            if (existing != null) factionsInWorld.Add(existing);
+        }
+
+        // same-world factions are connected to each other automatically (full mesh)
+        for (int i = 0; i < factionsInWorld.Count; i++)
+        {
+            for (int j = i + 1; j < factionsInWorld.Count; j++)
+            {
+                scr_System_CampaignManager.current.Map.ConnectFactions(factionsInWorld[i], factionsInWorld[j]);
+            }
+        }
+
+        return allFloors;
+    }
+
     public static Dictionary<int, Floor_Instance> Instantiate(MapPlan map, string factionOverride = "", bool disablePlayerInit = false, bool disableCharaInstantiation = false)
     {
         Dictionary<int, Floor_Instance> list = new Dictionary<int, Floor_Instance>();
@@ -2752,6 +2841,16 @@ public static class WorldManager
                     Debug.LogError("map_init_playerLocation, error reading room init config.");
                 }
 
+                break;
+            case "map_init_roomNameOverwrite":
+                if (init.arguments.Count >= 2)
+                {
+                    Room_Instance r = f.FindRoom(init.arguments[0]);
+                    if (r != null)
+                    {
+                        r.displayNameOverwrite = init.arguments[1];
+                    }
+                }
                 break;
             case "map_init_placeChara":
                 if (!disableCharaInstantiation && init.map_init_placeChara != null && init.map_init_placeChara.roomID != "")

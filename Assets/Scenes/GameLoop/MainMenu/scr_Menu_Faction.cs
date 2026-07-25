@@ -47,11 +47,9 @@ public class scr_Menu_Faction : MonoBehaviour
     int previousHour = -1, currentHour = -1;
     Character_Trainable player;
 
-    Dictionary<string, string> _cachedTagRefTable = new Dictionary<string, string>();
     private string GetTagString(string tag)
     {
-        if (!_cachedTagRefTable.ContainsKey(tag)) _cachedTagRefTable.Add(tag, LocalizeDictionary.QueryThenParse("tag_" + tag));
-        return _cachedTagRefTable[tag];
+        return LocalizeDictionary.QueryThenParse("tag_" + tag);
     }
 
     private void refreshFaction()
@@ -97,46 +95,8 @@ public class scr_Menu_Faction : MonoBehaviour
 
         Dictionary<Item_Base, int> costOrder = targetFaction.GetMaintenanceCost_Orders_Current;
 
+        FactionUtility.ParseMaintenanceCost(values, targetFaction.GetMaintenanceCost_Total);
 
-        foreach (KeyValuePair<string, List<int>> kvp in targetFaction.GetMaintenanceCost_Total)
-        {
-            string s = kvp.Key;
-            string ss = GetTagString(s);// LocalizeDictionary.QueryThenParse("tag_" + s);
-            int initial = 0;
-            int plus = 0;
-            int total = 0;
-
-            bool first = true;
-            bool second = true;
-            foreach(var i in kvp.Value)
-            {
-                if (first)
-                {   // current count
-                    first = false;
-                    initial = i;
-                }
-                else if (second)
-                {   // population maintenance cost
-                    second = false;
-                }
-                else
-                {   // others
-                    plus += i;
-                }
-                total += i;
-                //if (i != 0) val += i.ToString("+0;-#");
-            }
-
-            if (total < 0)
-            {
-                values.Add(ss + ":" + "<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + initial.ToString() + plus.ToString("+0;-#") + "</color>");
-            }
-            else 
-            {
-                values.Add(ss + ":" + initial.ToString() + plus.ToString("+0;-#"));
-            }
-            
-        }
         currentHour = scr_System_Time.current.getCurrentTime().Hour;
         player = scr_System_CampaignManager.current.Player;
 

@@ -13,33 +13,6 @@ using UnityEngine;
 
 public class Map_Instance
 {
-
-    //public List<Floor_Instance> floors;
-    // [JsonIgnore] public float z_rotation{ get { return Template.z_rotation; } }
-    /*
-     [JsonProperty] private string baseTemplate = "";
-     private MapPlan template = null;
-     private MapPlan Template
-     {
-         get
-         {
-             if (template == null) template = scr_System_Serializer.current.GetByNameOrID_MapPlan(baseTemplate);
-             return template;
-         }
-     }*/
-
-    /**/
-    public void SetTemplate(string mapTemplateID)
-    {
-        if (mapTemplateID != "")
-        {
-            var template = scr_System_Serializer.current.GetByNameOrID_MapPlan(mapTemplateID);
-            floors = WorldManager.Instantiate( template);
-
-            BuildPath();
-        }
-    }
-
     public void NotifyEventEnd()
     {
         if (scr_System_CentralControl.current.LogPrefs.DLog_Interrupt) Debug.Log($"Map NotifyEventEnd, clearing... dirtyAP {String.Join(",",dirtyCharaAPRef)} dirtyChara {String.Join(",", dirtyCharaRef)}");
@@ -63,6 +36,27 @@ public class Map_Instance
             }
             BuildPath();
         }
+    }
+
+    /// <summary>
+    /// Instantiates every faction in the given WorldPlan that isn't already present (safe to call both on fresh
+    /// campaign start and on save-load reconciliation for newly-added factions), then rebuilds pathing.
+    /// </summary>
+    public void AddWorldTemplate(string worldID, bool isPlayerInitWorld = false)
+    {
+        if (worldID == "") return;
+
+        var world = scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
+        if (world == null)
+        {
+            Debug.LogError($"AddWorldTemplate: cannot find WorldPlan [{worldID}]");
+            return;
+        }
+        foreach (var fl in WorldManager.InstantiateWorld(world, isPlayerInitWorld))
+        {
+            if (!floors.ContainsKey(fl.Key)) floors.Add(fl.Key, fl.Value);
+        }
+        BuildPath();
     }
 
     [JsonIgnore] public Dictionary<int, int> floorDoorQuickSearch = new Dictionary<int, int>();
@@ -758,7 +752,9 @@ public class Map_Instance
         if (a == null || b == null) return false;
         if (a == b) return true;
         if (factionGraphs.TryGetValue(a.ID, out var lists) && lists.Contains(b.ID)) return true;
-        else return false;
+        // a commercial pact also grants connectivity, as if manually connected, even with no other path
+        if (commercialPactGraphs.TryGetValue(a.ID, out var pactLists) && pactLists.Contains(b.ID)) return true;
+        return false;
     }
 
     protected bool Findpath_InsideFloor(Room_Instance roomRef, Room_Instance targetRoom, out IEnumerable<TaggedEdge<int, Door_Instance>> path)
@@ -1031,7 +1027,11 @@ public class Map_Instance
     public List<Manageable> GetConnectedFactions(string factionID)
     {
         var list = new List<Manageable>();
-        if (!factionGraphs.ContainsKey(factionID)) return list;
+
+        bool hasFactionLink = factionGraphs.ContainsKey(factionID);
+        // a commercial pact also grants connectivity, as if manually connected, even with no other path
+        bool hasPactLink = commercialPactGraphs.ContainsKey(factionID);
+        if (!hasFactionLink && !hasPactLink) return list;
 
         var selfFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
         if (selfFaction == null || selfFaction.MainExit == null)
@@ -1039,13 +1039,18 @@ public class Map_Instance
             Debug.LogError($"Faction [{selfFaction.ID}] has no main exit");
             return list;
         }
-        foreach (var i in factionGraphs[factionID])
+
+        var ids = new List<string>();
+        if (hasFactionLink) ids.AddRange(factionGraphs[factionID]);
+        if (hasPactLink) foreach (var i in commercialPactGraphs[factionID]) if (!ids.Contains(i)) ids.Add(i);
+
+        foreach (var i in ids)
         {
             var j = scr_System_CampaignManager.current.FindFactionByID(i);
             if (j == null) continue;
             list.Add(j);
         }
-        return list;    
+        return list;
     }
 
     public void ConnectFactions(Manageable a, Manageable b)
@@ -1066,6 +1071,54 @@ public class Map_Instance
 
         if (factionGraphs.ContainsKey(a.ID)) factionGraphs[a.ID].Remove(b.ID);
         if (factionGraphs.ContainsKey(b.ID)) factionGraphs[b.ID].Remove(a.ID);
+    }
+
+    /// <summary>
+    /// Commercial pact links between factions (management UI: trade orders, external job assignment). Kept as a
+    /// separate list from `factionGraphs` (populated independently, e.g. from the addlinkfaction UI), but a pact
+    /// also grants connectivity on its own: isConnectedFaction/GetConnectedFactions treat it the same as a manual
+    /// factionGraphs link, even with no other path between the two factions.
+    /// </summary>
+    [JsonProperty] Dictionary<string, List<string>> commercialPactGraphs = new Dictionary<string, List<string>>();
+
+    public List<Manageable> GetCommercialPactFactions(string factionID)
+    {
+        var list = new List<Manageable>();
+        if (!commercialPactGraphs.ContainsKey(factionID)) return list;
+
+        foreach (var i in commercialPactGraphs[factionID])
+        {
+            var j = scr_System_CampaignManager.current.FindFactionByID(i);
+            if (j == null) continue;
+            list.Add(j);
+        }
+        return list;
+    }
+
+    public bool IsCommercialPactLinked(Manageable a, Manageable b)
+    {
+        if (a == null || b == null) return false;
+        if (a == b) return true;
+        return commercialPactGraphs.TryGetValue(a.ID, out var lists) && lists.Contains(b.ID);
+    }
+
+    public void ConnectCommercialPact(Manageable a, Manageable b)
+    {
+        if (a == null || b == null) return;
+
+        if (!commercialPactGraphs.ContainsKey(a.ID)) commercialPactGraphs.Add(a.ID, new List<string>() { b.ID });
+        else if (!commercialPactGraphs[a.ID].Contains(b.ID)) commercialPactGraphs[a.ID].Add(b.ID);
+
+        if (!commercialPactGraphs.ContainsKey(b.ID)) commercialPactGraphs.Add(b.ID, new List<string>() { a.ID });
+        else if (!commercialPactGraphs[b.ID].Contains(a.ID)) commercialPactGraphs[b.ID].Add(a.ID);
+    }
+
+    public void DisconnectCommercialPact(Manageable a, Manageable b)
+    {
+        if (a == null || b == null) return;
+
+        if (commercialPactGraphs.ContainsKey(a.ID)) commercialPactGraphs[a.ID].Remove(b.ID);
+        if (commercialPactGraphs.ContainsKey(b.ID)) commercialPactGraphs[b.ID].Remove(a.ID);
     }
 
     bool initialized = false;

@@ -1,7 +1,7 @@
 {
     
-"Floors": {
-        "list": [
+"MapPlans": {
+        "floorPlans": [
             {
                 "ID": "floor_2ldk_2floor_1",
                 "imagePath": "CoffinAL/House/2ldk.jpg",

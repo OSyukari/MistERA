@@ -84,9 +84,12 @@ public class Room_Instance: IDisposable, I_Disposable
     [JsonIgnore] public int RefID { get { return refID; } }
     [JsonIgnore] protected string displayName { get
         {
+            if (displayNameOverwrite != "") return LocalizeDictionary.QueryThenParse(displayNameOverwrite);
             if (Base != null) return LocalizeDictionary.QueryThenParse(Base.displayName, LocalizeDictionary.QueryThenParse(Base.ID, Base.ID));
             else return "room";
         } }
+
+    public string displayNameOverwrite = "";
 
     [JsonIgnore] public Floor_Instance parentFloor = null;
 

@@ -1,34 +1,62 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 
 [System.Serializable]
-public class Index_MapPlan : I_IndexHasID, I_IndexMergeable
+public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCallbackReceiver
 {
-    public List<MapPlan> list = new List<MapPlan>();
+    public List<MapPlan> factionInit = new List<MapPlan>();
+    public List<Floor_Base> floorPlans = new List<Floor_Base>();
+    public List<WorldPlan> worldInit = new List<WorldPlan>();
 
-    Dictionary<string, MapPlan> ID_Dictionary = new Dictionary<string, MapPlan>();
     public void RegisterAllID(List<string> message)
     {
-        message.Add("Index_MapPlan : registering ID with list length [" + list.Count + "]");
+        message.Add("Index_MapPlan : registering ID with list length [" + factionInit.Count + "]");
 
-        foreach (MapPlan o in this.list)
+        foreach (MapPlan o in this.factionInit)
         {
             if (string.IsNullOrEmpty(o.ID)) continue;
-            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MapPlan id [{o.ID}] due to duplicate");
+            if (!ID_Dictionary_Map.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MapPlan id [{o.ID}] due to duplicate");
+        }
+
+        message.Add("Index_Floor_Base : registering ID with list length [" + floorPlans.Count + "]");
+
+        foreach (Floor_Base o in this.floorPlans)
+        {
+            if (!o.isValid || string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary_Floor.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_Floor_Base id [{o.ID}] due to duplicate");
+        }
+
+        message.Add("Index_WorldPlan : registering ID with list length [" + worldInit.Count + "]");
+
+        foreach (WorldPlan o in this.worldInit)
+        {
+            if (string.IsNullOrEmpty(o.worldID)) continue;
+            if (!ID_Dictionary_World.TryAdd(o.worldID, o)) Debug.Log($"failed to add Index_WorldPlan id [{o.worldID}] due to duplicate");
         }
     }
-    public MapPlan GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
+    Dictionary<string, MapPlan> ID_Dictionary_Map = new Dictionary<string, MapPlan>();
+    public MapPlan GetByID_MapPlan(string id) { return ID_Dictionary_Map.ContainsKey(id) ? ID_Dictionary_Map[id] : null; }
+
+    Dictionary<string, Floor_Base> ID_Dictionary_Floor = new Dictionary<string, Floor_Base>();
+    public Floor_Base GetByID_FloorBase(string id) { return ID_Dictionary_Floor.ContainsKey(id) ? ID_Dictionary_Floor[id] : null; }
+
+    Dictionary<string, WorldPlan> ID_Dictionary_World = new Dictionary<string, WorldPlan>();
+    public WorldPlan GetByID_WorldPlan(string id) { return ID_Dictionary_World.ContainsKey(id) ? ID_Dictionary_World[id] : null; }
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Index_MapPlan;
         if (l == null) return;
-        else if (l.list == null) return;
-        else
-        {
-            this.list.AddRange(l.list);
-        }
+        if (l.factionInit != null) this.factionInit.AddRange(l.factionInit);
+        if (l.floorPlans != null) this.floorPlans.AddRange(l.floorPlans);
+        if (l.worldInit != null) this.worldInit.AddRange(l.worldInit);
+    }
+    public void OnAfterDeserialize()
+    {
+        foreach (var i in floorPlans) i.OnAfterDeserialize();
     }
 
 }
@@ -58,6 +86,9 @@ public class MapPlan
     public List<MapPlan_Floor> floors = new List<MapPlan_Floor>();
     public Map_MainExit mainExit = null;
 
+    /// <summary>
+    /// Default faction
+    /// </summary>
     public string initializeFaction = "";
     public bool setPrivateRoomOwner = false;
 
@@ -131,7 +162,12 @@ public class MapPlan
         public string addClass = "";
         public Map_init_playerLocation map_init_playerLocation = null;
         public Map_init_placeChara map_init_placeChara = null;
-
+        public List<string> arguments = new List<string>();
+        /*
+         map_init_roomNameOverwrite: [roomID, overwritestring]
+         
+         
+         */
         public class Map_init_playerLocation
         {
             public string roomID = "";

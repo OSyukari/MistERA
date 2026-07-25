@@ -4,19 +4,65 @@
         "portraitPriorityList": [
             {
                 "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
-                "charaReq": {
-                    "requireConscious": false,
-                    "requireAction": false,
-                    "requireFemale": true
-                },
-                "portrait_offset_x": 20,
-                "portrait_offset_y": -235,
-                "portrait_offset_size": 0.9,
+                "portrait_offset_x": 8.6,
+                "portrait_offset_y": -231,
+                "portrait_offset_size": 0.8,
                 "icon_offset_x": 0.0,
-                "icon_offset_y": -269,
+                "icon_offset_y": -300,
                 "icon_offset_size": 0.5,
-                "portrait_path": "ErAV/Kanon/Kanon.png",
-                "icon_path": "ErAV/Kanon/Kanon.png"
+                "charaReq": {
+                    "requireConscious": false, "requireAction": false,
+                    "clothingRequirement": "None", "requireUndressedTags": ["lower", "torso"], "minRevealingScore":1
+                },
+                "Variants": [
+                    { "tagsMatch": ["angry"],     "PortraitVariantData": ["Kanon/nude/core_angry_01.webp"] },
+                    { "tagsMatch": ["sad"],       "PortraitVariantData": ["Kanon/nude/core_sad_01.webp"] },
+                    { "tagsMatch": ["serious"],   "PortraitVariantData": ["Kanon/nude/core_serious_01.webp"] },
+                    { "tagsMatch": ["surprised"], "PortraitVariantData": ["Kanon/nude/core_surprised_01.webp"] },
+                    { "tagsMatch": ["happy"],     "PortraitVariantData": ["Kanon/nude/core_happy_01.webp"] },
+                    { "tagsMatch": ["relaxed"],   "PortraitVariantData": ["Kanon/nude/core_relaxed_01.webp"] }
+                ],
+                "portrait_path": "Kanon/nude/core_neutral_01.webp",
+                "icon_path": "Kanon/nude/core_neutral_01.webp"
+            },
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "portrait_offset_x": 8.6,
+                "portrait_offset_y": -231,
+                "portrait_offset_size": 0.8,
+                "icon_offset_x": 0.0,
+                "icon_offset_y": -300,
+                "icon_offset_size": 0.5,
+                "RequireSelfContextKeys": ["yakuza"],
+                "Variants": [
+                    { "tagsMatch": ["angry"],     "PortraitVariantData": ["Kanon/Kimono/core_angry_01.webp"] },
+                    { "tagsMatch": ["sad"],       "PortraitVariantData": ["Kanon/Kimono/core_sad_01.webp"] },
+                    { "tagsMatch": ["serious"],   "PortraitVariantData": ["Kanon/Kimono/core_serious_01.webp"] },
+                    { "tagsMatch": ["surprised"], "PortraitVariantData": ["Kanon/Kimono/core_surprised_01.webp"] },
+                    { "tagsMatch": ["happy"],     "PortraitVariantData": ["Kanon/Kimono/core_happy_01.webp"] },
+                    { "tagsMatch": ["relaxed"],   "PortraitVariantData": ["Kanon/Kimono/core_relaxed_01.webp"] }
+                ],
+                "portrait_path": "Kanon/Kimono/core_neutral_01.webp",
+                "icon_path": "Kanon/Kimono/core_neutral_01.webp"
+            },
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "portrait_offset_x": 8.6,
+                "portrait_offset_y": -231,
+                "portrait_offset_size": 0.8,
+                "icon_offset_x": 0.0,
+                "icon_offset_y": -300,
+                "icon_offset_size": 0.5,
+                "Variants": [
+                    { "tagsMatch": ["angry"],     "PortraitVariantData": ["Kanon/School/core_angry_02.webp"] },
+                    { "tagsMatch": ["sad"],       "PortraitVariantData": ["Kanon/School/core_sad_02.webp"] },
+                    { "tagsMatch": ["serious"],   "PortraitVariantData": ["Kanon/School/core_serious_02.webp"] },
+                    { "tagsMatch": ["surprised"], "PortraitVariantData": ["Kanon/School/core_surprised_02.webp"] },
+                    { "tagsMatch": ["happy"],     "PortraitVariantData": ["Kanon/School/core_happy_02.webp"] },
+                    { "tagsMatch": ["relaxed"],   "PortraitVariantData": ["Kanon/School/core_relaxed_02.webp"] }
+                ],
+                "portrait_path": "Kanon/School/core_neutral_02.webp",
+                "icon_path": "Kanon/School/core_neutral_02.webp"
             }
         ]
     },

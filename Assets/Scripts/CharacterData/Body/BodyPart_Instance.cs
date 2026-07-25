@@ -474,7 +474,7 @@ public class BodyPart_Instance : I_CombatItem
     {
         foreach(var layer in this.equipLayers)
         {
-            if (layer >= layerFilter && layerFilter != BodyEquipLayer.None) continue;
+            if (layer <= layerFilter && layerFilter != BodyEquipLayer.None) continue;
             foreach (BodyPartEquipSlot slot in this.availableSlots)
             {
                 var equip = this.GetEquip(layer, slot);

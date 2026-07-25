@@ -90,48 +90,11 @@ public class initScript_ManagementOverview : MonoBehaviour
 
 
         List<string> values = new List<string>();
-        foreach (KeyValuePair<string, List<int>> kvp in m.GetMaintenanceCost_Total)
-        {
-            string s = kvp.Key;
-            string ss = LocalizeDictionary.QueryThenParse("tag_" + s);
-            int initial = 0;
-            int plus = 0;
-            int total = 0;
-
-            bool first = true;
-            bool second = true;
-            foreach (var i in kvp.Value)
-            {
-                if (first)
-                {   // current count
-                    first = false;
-                    initial = i;
-                }
-                else if (second)
-                {   // population maintenance cost
-                    second = false;
-                }
-                else
-                {   // others
-                    plus += i;
-                }
-                total += i;
-                //if (i != 0) val += i.ToString("+0;-#");
-            }
-
-            if (total < 0)
-            {
-                values.Add(ss + ":" + "<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + initial.ToString() + plus.ToString("+0;-#") + "</color>");
-            }
-            else
-            {
-                values.Add(ss + ":" + initial.ToString() + plus.ToString("+0;-#"));
-            }
-
-        }
+        FactionUtility.ParseMaintenanceCost(values, m.GetMaintenanceCost_Total);
 
         Utility.DestroyAllChildrenFrom( linkedFactionGrid);
-        if (m.ConnectedFactions.Count < 1)
+        // commercial pact links only - decoupled from world/manual pathfinding connectivity
+        if (m.CommercialPactFactions.Count < 1)
         {
             var c_name = Instantiate(prefab_factionEntry);
             c_name.SetText("none");//
@@ -139,7 +102,7 @@ public class initScript_ManagementOverview : MonoBehaviour
         }
         else
         {
-            foreach (var connect in m.ConnectedFactions)
+            foreach (var connect in m.CommercialPactFactions)
             {
                 var c_name = Instantiate(prefab_factionEntry);
                 c_name.SetText(connect.FactionDisplayName);

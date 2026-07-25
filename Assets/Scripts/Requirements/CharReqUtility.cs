@@ -155,6 +155,13 @@ public static class CharaReqUtility
                                 .Replace("$name$", c.FirstName));
             return false;
         }
+        if (q.requireUndressedTags.Count > 0 && c.Body.HasEquipByFilter(q.requireUndressedTags, q.clothingRequirement, q.minRevealingScore))
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireUndressedTags")
+                                .Replace("$name$", c.FirstName)
+                                .Replace("$bodytags$", String.Join(" ", q.requireUndressedTags)));
+            return false;
+        }
         if (q.requireMale && !c.isMale)
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMale")

@@ -1,6 +1,6 @@
 {
-    "Floors":{
-        "list":
+    "MapPlans":{
+        "floorPlans":
         [
             {
                 "ID":"floor_stockasset_medbay",

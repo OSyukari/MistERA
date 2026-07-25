@@ -1,9 +1,10 @@
-using System.Collections.Generic;
-using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using QuikGraph;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
+using UnityEngine;
 
 public class PathingRoomFilter
 {
@@ -37,6 +38,49 @@ public enum PathfindHeuristic
 
 public static class FactionUtility
 {
+    public static void ParseMaintenanceCost(List<string> populate, Dictionary<string, List<int>> list)
+    {
+        foreach (KeyValuePair<string, List<int>> kvp in list)
+        {
+            string s = kvp.Key;
+            string ss = LocalizeDictionary.QueryThenParse("tag_" + s);
+            int initial = 0;
+            int plus = 0;
+            int total = 0;
+
+            bool first = true;
+            bool second = true;
+            foreach (var i in kvp.Value)
+            {
+                if (first)
+                {   // current count
+                    first = false;
+                    initial = i;
+                }
+                else if (second)
+                {   // population maintenance cost
+                    second = false;
+                }
+                else
+                {   // others
+                    plus += i;
+                }
+                total += i;
+                //if (i != 0) val += i.ToString("+0;-#");
+            }
+
+            if (total < 0)
+            {
+                populate.Add(ss + " " + "<color=" + scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Hex + ">" + initial.ToString() + plus.ToString("+0;-#") + "</color>");
+            }
+            else
+            {
+                populate.Add(ss + " " + initial.ToString() + plus.ToString("+0;-#"));
+            }
+
+        }
+    }
+
 
     public static Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> GetHeuristic(PathfindHeuristic heuristic)
     {

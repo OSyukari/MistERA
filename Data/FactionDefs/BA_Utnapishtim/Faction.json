@@ -14,19 +14,15 @@
                     "initializers":[
                         {
                             "initClass":"campaign_init_playerNameIDs",
-                            "initArguments":["Campaign1_Sensei_Template"]
+                            "initArguments":["Campaign1_Sensei_Template","","","",""]
                         },
                         {
                             "initClass":"campaign_init_playerPortrait_fromBaseID",
                             "initArguments":["Campaign1_Sensei_Template"]
                         },
                         {
-                            "initClass":"campaign_init_homefaction",
-                            "initArguments":["Utnapishtim","true", "true"]
-                        },
-                        {
-                            "initClass":"campaign_init_map_root",
-                            "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
+                            "initClass":"campaign_init_world",
+                            "initArguments":["world_kivotos","true"]
                         },
                         {
                             "initClass":"campaign_init_map_extra",
@@ -42,34 +38,24 @@
                         "initializers":[
                         {
                             "initClass":"campaign_init_playerNameIDs",
-                            "initArguments":["Campaign1_Sensei_Template"]
+                            "initArguments":["Campaign1_Sensei_Template","","","",""]
                         },
                         {
                             "initClass":"campaign_init_playerPortrait_fromBaseID",
                             "initArguments":["Campaign1_Sensei_Template"]
                         },
                         {
-                            "initClass":"campaign_init_homefaction",
-                            "initArguments":["Utnapishtim","true", "true"]
-                        },
-                        {
-                            "initClass":"campaign_init_map_root",
-                            "initArguments":["map_bluearchive_utnapishtim","Utnapishtim"]
+                            "initClass":"campaign_init_world",
+                            "initArguments":["world_kivotos","true"]
                         },
                         {
                             "initClass":"campaign_init_map_extra",
                             "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
                         },
                         {
-                            "initClass":"campaign_init_homefaction",
-                            "initArguments":["External","false", "false"]
-                        },
-
-                        {
                             "initClass":"campaign_init_map_extra",
                             "initArguments":["map_debug_store", "jp_debug_store"]
                         },
-
                         {
                             "initClass":"campaign_init_factionVisitor",
                             "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Cinderella","External","Prisoner"]
@@ -182,7 +168,29 @@
     ]
     },
     "MapPlans":{
-        "list":
+        "worldInit":
+        [
+{
+    "worldID":"world_kivotos",
+    "mapImagePath":"",
+
+    "AnchorType":"TopLeft",
+    "worldWidth":833,
+    "worldHeight":400,
+    "worldSizeMult":2,
+
+    "travelDistancePerMinute":6.67,
+
+    "playerInitLocationFaction":"Utnapishtim",
+    "initializeFactions":
+    {
+        "Utnapishtim":"map_bluearchive_utnapishtim"
+    },
+    "doors":
+    [ ]
+}
+        ],
+        "factionInit":
         [
             {
                 "ID":"map_bluearchive_utnapishtim",
@@ -194,12 +202,7 @@
                     {
                         "ID":"floor_stockasset_bridge",
                         "nameOverwrite":"campaign1_map_utnapishtim_bridge",
-                        "Additional":[
-                            {
-                                "addClass":"map_init_organization",
-                                "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
-                            }
-                        ]
+                        "Additional":[]
                     },
                     {
                         "ID":"floor_stockasset_lounge2",
@@ -244,10 +247,6 @@
                             {
                                 "addClass":"map_init_placeChara",
                                 "map_init_placeChara":{ "roomID":"lounge2_exec_suite_2", "charaBaseID": [ "Campaign1_Char_Rin" ] }
-                            },
-                            {
-                                "addClass":"map_init_organization",
-                                "map_init_organization":{ "orgID":"Utnapishtim", "addCharaToFaction":true, "setPrivateRoom":true }
                             }
                         ],
                         "connectTo":
@@ -261,12 +260,7 @@
                     {
                         "ID":"floor_stockasset_hydroponics",
                         "nameOverwrite":"campaign1_map_utnapishtim_faming",
-                        "Additional":[
-                            {
-                                "addClass":"map_init_organization",
-                                "map_init_organization":{ "orgID":"Utnapishtim" }
-                            }
-                        ],
+                        "Additional":[],
                         "connectTo":
                             {
                                 "fromExitID":"East",
@@ -278,12 +272,7 @@
                     {
                         "ID":"floor_stockasset_medbay",
                         "nameOverwrite":"campaign1_map_utnapishtim_medical",
-                        "Additional":[
-                            {
-                                "addClass":"map_init_organization",
-                                "map_init_organization":{ "orgID":"Utnapishtim" }
-                            }
-                        ],
+                        "Additional":[],
                         "connectTo":
                             {
                                 "fromExitID":"West",

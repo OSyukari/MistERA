@@ -97,10 +97,20 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
     }
     public void OnPointerExit(PointerEventData eventData)
     {
+        DismissTooltip();
+    }
+
+    /// <summary>
+    /// Clears any tooltip currently shown for this element and resets hover tracking. Shared by the normal
+    /// pointer-exit case and by a click's dismiss call - a click never raises OnPointerExit on its own,
+    /// especially when it destroys/replaces the button under the mouse (e.g. navigating within the same
+    /// canvas), which otherwise leaves the last hovered tooltip orphaned on screen.
+    /// </summary>
+    public void DismissTooltip()
+    {
         updating = false;
         lastTrackedIndex = -1;
-        //Debug.Log("OnPointerExit");
-        Handler.NotifyExit();
+        if (Handler != null) Handler.NotifyExit();
     }
 
     void Awake()

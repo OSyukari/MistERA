@@ -892,10 +892,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
     public void SetName(string firstName, string middleName, string lastName, string displayFormat){
-        this.FirstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.nameDisplayFormat = displayFormat;
+        if (firstName != "") this.FirstName = firstName;
+        if (middleName != "") this.middleName = middleName;
+        if (lastName != "") this.lastName = lastName;
+        if (displayFormat != "") this.nameDisplayFormat = displayFormat;
+
+        _cachedFullName = "";
+        _callName = string.Empty;
     }
 
     bool _isFirstNameCached = false;
@@ -2305,10 +2308,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         
         if (charareq.requireUndressedTags.Count > 0)
         {
-            foreach(var tag in charareq.requireUndressedTags)
-            {
-                foreach (var part in Body.Body) if (part.hasTag(tag) && part.HasEquipByFilter(charareq.clothingRequirement, charareq.minRevealingScore)) return true;
-            }
+            if (Body.HasEquipByFilter(charareq.requireUndressedTags, charareq.clothingRequirement, charareq.minRevealingScore)) return true;
         }
         else if (charareq.clothingRequirement < BodyEquipLayer.Outer && NeedUndress(charareq.clothingRequirement, Revealing.Erotic)) return true;
 

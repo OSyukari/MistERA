@@ -1,0 +1,225 @@
+{
+    "MapPlans":{
+
+"worldInit":[
+    {
+        "worldID":"world_erav_modern_jp",
+        "mapImagePath":"ErAV/156274_BlogPostFeatureImage21_120617.jpg",
+
+        "AnchorType":"TopLeft",
+        "worldWidth":833,
+        "worldHeight":400,
+        "worldSizeMult":2,
+
+        "travelDistancePerMinute":6.67,
+
+        "playerInitLocationFaction":"ErAV_miyama_Household",
+        "initializeFactions":
+        {
+            "jp_convenience_store_SunMart":"map_jp_convenience_store",
+            "Katsuragi_Household":"map_jitaku_keibiin",
+            "ErAV_miyama_Household":"map_erav_miyama_household",
+            "CoffinAnL_Household":"map_coffinanl"
+        },
+        "doors":
+        [
+            {
+                "offset_x":460, "offset_y":250, "isPublic":true,
+                "factionID":"jp_convenience_store_SunMart",
+                "floorExitID":"store_1F_entrance"
+            },
+            {
+                "offset_x":430, "offset_y":220, "isPublic":true,
+                "factionID":"Katsuragi_Household",
+                "floorExitID":"4ldk_floor_1L_frontDoor"
+            },
+            {
+                "offset_x":520, "offset_y":230, "isPublic":true,
+                "factionID":"CoffinAnL_Household",
+                "floorExitID":"floor_2ldk_2floor_1_1L_frontDoor"
+            },
+            {
+                "offset_x":480, "offset_y":190, "isPublic":true,
+                "factionID":"ErAV_miyama_Household",
+                "floorExitID":"4ldk_floor_1L_frontDoor"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet, button will be non-clickable until Kiryu-gumi office is wired up",
+                "offset_x":650, "offset_y":260, "isPublic":true,
+                "factionID":"ErAV_KiryuGumi_Office",
+                "floorExitID":"erav_kiryu_office_frontDoor"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":440, "offset_y":150, "isPublic":true,
+                "factionID":"jp_park",
+                "floorExitID":"park_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":470, "offset_y":130, "isPublic":true,
+                "factionID":"jp_high_school",
+                "floorExitID":"school_frontGate"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":620, "offset_y":110, "isPublic":true,
+                "factionID":"jp_university",
+                "floorExitID":"university_frontGate"
+            },
+            {
+                "_comment":"opens the shopping mall as a child WorldPlan - see JP_ShoppingStreet/world.json",
+                "offset_x":560, "offset_y":210, "isPublic":true,
+                "childWorldID":"world_jp_shopping_street"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":600, "offset_y":200, "isPublic":true,
+                "factionID":"jp_family_restaurant",
+                "floorExitID":"restaurant_1F_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":560, "offset_y":310, "isPublic":true,
+                "factionID":"jp_karaoke",
+                "floorExitID":"karaoke_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":640, "offset_y":200, "isPublic":true,
+                "factionID":"jp_maid_cafe",
+                "floorExitID":"maidcafe_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":600, "offset_y":310, "isPublic":true,
+                "factionID":"jp_arcade",
+                "floorExitID":"arcade_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":620, "offset_y":275, "isPublic":true,
+                "factionID":"jp_gym",
+                "floorExitID":"gym_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":540, "offset_y":275, "isPublic":true,
+                "factionID":"jp_beauty_salon",
+                "floorExitID":"beautysalon_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":580, "offset_y":275, "isPublic":true,
+                "factionID":"jp_pet_shop",
+                "floorExitID":"petshop_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":680, "offset_y":310, "isPublic":true,
+                "factionID":"jp_casino",
+                "floorExitID":"casino_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":700, "offset_y":275, "isPublic":true,
+                "factionID":"jp_bar",
+                "floorExitID":"bar_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":500, "offset_y":300, "isPublic":true,
+                "factionID":"jp_hospital",
+                "floorExitID":"hospital_1F_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":690, "offset_y":200, "isPublic":true,
+                "factionID":"jp_train_station",
+                "floorExitID":"station_gate"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":350, "offset_y":240, "isPublic":true,
+                "factionID":"jp_tourist_riverside",
+                "floorExitID":"riverside_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":200, "offset_y":310, "isPublic":true,
+                "factionID":"jp_tourist_shrine",
+                "floorExitID":"shrine_torii"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":90, "offset_y":100, "isPublic":true,
+                "factionID":"jp_farm",
+                "floorExitID":"farm_entrance"
+            },
+            {
+                "_comment":"placeholder - no factionInit yet",
+                "offset_x":60, "offset_y":300, "isPublic":true,
+                "factionID":"jp_ranch",
+                "floorExitID":"ranch_entrance"
+            }
+        ]
+    }
+],
+"factionInit":[ ]
+
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "world_erav_modern_jp": "日本",
+                "world_jp_shopping_street": "商店街",
+
+                "ErAV_KiryuGumi_Office": "桐生组事务所",
+                "jp_park": "公园",
+                "jp_high_school": "高中",
+                "jp_university": "大学",
+                "jp_shopping_street": "商店街",
+                "jp_family_restaurant": "家庭餐厅",
+                "jp_karaoke": "卡拉OK",
+                "jp_maid_cafe": "女仆咖啡厅",
+                "jp_arcade": "游戏中心",
+                "jp_gym": "健身房",
+                "jp_beauty_salon": "美容院",
+                "jp_pet_shop": "宠物店",
+                "jp_casino": "赌场",
+                "jp_bar": "酒吧",
+                "jp_hospital": "医院",
+                "jp_train_station": "车站",
+                "jp_tourist_riverside": "河畔",
+                "jp_tourist_shrine": "神社",
+                "jp_farm": "农场",
+                "jp_ranch": "牧场"
+            },
+            "en-us": {
+                "world_jp_shopping_street": "Shopping Street",
+
+                "ErAV_KiryuGumi_Office": "Kiryu-gumi Office",
+                "jp_park": "Park",
+                "jp_high_school": "High School",
+                "jp_university": "University",
+                "jp_shopping_street": "Shopping Street",
+                "jp_family_restaurant": "Family Restaurant",
+                "jp_karaoke": "Karaoke",
+                "jp_maid_cafe": "Maid Cafe",
+                "jp_arcade": "Game Center",
+                "jp_gym": "Gym",
+                "jp_beauty_salon": "Beauty Salon",
+                "jp_pet_shop": "Pet Shop",
+                "jp_casino": "Casino",
+                "jp_bar": "Bar",
+                "jp_hospital": "Hospital",
+                "jp_train_station": "Train Station",
+                "jp_tourist_riverside": "Riverside",
+                "jp_tourist_shrine": "Shrine",
+                "jp_farm": "Farm",
+                "jp_ranch": "Ranch"
+            }
+        }
+    }
+}

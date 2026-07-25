@@ -8,14 +8,14 @@
         "campaign_starfarers":"星之旅人",
         "campaign_starfarers_tooltip":"为了方便熟悉游戏机制而设计的小型剧本。\n\n此剧本为碧蓝档案同人",
         "campaign1_start_default":"老师",
-        "campaign1_start_default_tooltip":"以碧蓝档案的老师身份，与%%factionName_Utnapishtim%%的领航员们一同开始游戏。\n身为老师，玩家有义务管理%%factionName_Utnapishtim%%阵营，有义务维护学生们的身心健康。\n限制：玩家不可参与战斗（未实装）\n玩家的立绘和名字会被更改",
+        "campaign1_start_default_tooltip":"以碧蓝档案的老师身份，与%%Utnapishtim%%的领航员们一同开始游戏。\n身为老师，玩家有义务管理%%Utnapishtim%%阵营，有义务维护学生们的身心健康。\n限制：玩家不可参与战斗（未实装）\n玩家的立绘和名字会被更改",
         
         "campaign1_start_student":"（未实装）学生",
         "campaign1_start_student_tooltip":"（未实装）以奇沃托斯的学生身份，与生命守护者的领航员们一同开始游戏。\n身为学生，玩家可以参与战斗。\n限制：玩家的种族模板会被改为--学生模板--\n--学生模板--：--模板描述--",
         "campaign1_start_debug":"DEBUG",
         "campaign1_start_debug_tooltip":"%%campaign1_start_default_tooltip%%\n\nDEBUG剧本将会往游戏内额外添加本不该出现的东西",
 
-        "factionName_Utnapishtim":"生命守护者",
+        "Utnapishtim":"生命守护者",
 
         "Campaign1_students_charCard_comment":"角色卡条目取自酒馆的BA角色卡：[ブルアカ/同人] 蔚藍檔案 基沃托斯(Kivotos) Ver2.00\n暂未获得作者授权",
 
@@ -84,10 +84,10 @@
         "map_prisoncell_single":"单人牢房",
         "map_prisoncell_double":"双人牢房",
 
-        "campaign1_map_utnapishtim_bridge":"%%factionName_Utnapishtim%%舰桥",
-        "campaign1_map_utnapishtim_living":"%%factionName_Utnapishtim%%居住区",
-        "campaign1_map_utnapishtim_faming":"%%factionName_Utnapishtim%%农业区",
-        "campaign1_map_utnapishtim_medical":"%%factionName_Utnapishtim%%医疗区",
+        "campaign1_map_utnapishtim_bridge":"%%Utnapishtim%%舰桥",
+        "campaign1_map_utnapishtim_living":"%%Utnapishtim%%居住区",
+        "campaign1_map_utnapishtim_faming":"%%Utnapishtim%%农业区",
+        "campaign1_map_utnapishtim_medical":"%%Utnapishtim%%医疗区",
 
         "Campaign1_86_Lerche_firstname":"蕾尔赫",
         "humanRaceAddon_Android_Sirin":"西琳",
@@ -110,9 +110,9 @@
         "campaign_starfarers":"Starfarers",
         "campaign_starfarers_tooltip":"A small scenario designed to help familiarize you with the game mechanics.\n\nThis scenario is a parody of Blue Archive.",
         "campaign1_start_default":"Sensei",
-        "campaign1_start_default_tooltip":"Start the game as the Sensei from Blue Archive, along with the navigators of %%factionName_Utnapishtim%%.\nAs Sensei, the player need to to manage %%factionName_Utnapishtim%% faction and maintain the physical and mental wellbeing of all students.\nRestrictions: The player cannot participate in combat (not yet implemented).\nThe player's portrait and name will be altered.",
+        "campaign1_start_default_tooltip":"Start the game as the Sensei from Blue Archive, along with the navigators of %%Utnapishtim%%.\nAs Sensei, the player need to to manage %%Utnapishtim%% faction and maintain the physical and mental wellbeing of all students.\nRestrictions: The player cannot participate in combat (not yet implemented).\nThe player's portrait and name will be altered.",
         
-        "factionName_Utnapishtim":"Utnapishtim",
+        "Utnapishtim":"Utnapishtim",
 
         "Campaign1_player_firstname":"Sensei",
         "Campaign1_player_middlename":"",
@@ -169,10 +169,10 @@
   "map_prisoncell_single": "Single Prison Cell",
   "map_prisoncell_double": "Double Prison Cell",
 
-  "campaign1_map_utnapishtim_bridge": "%%factionName_Utnapishtim%% Bridge",
-  "campaign1_map_utnapishtim_living": "%%factionName_Utnapishtim%% Living Quarters",
-  "campaign1_map_utnapishtim_faming": "%%factionName_Utnapishtim%% Agricultural Zone",
-  "campaign1_map_utnapishtim_medical": "%%factionName_Utnapishtim%% Medical Bay",
+  "campaign1_map_utnapishtim_bridge": "%%Utnapishtim%% Bridge",
+  "campaign1_map_utnapishtim_living": "%%Utnapishtim%% Living Quarters",
+  "campaign1_map_utnapishtim_faming": "%%Utnapishtim%% Agricultural Zone",
+  "campaign1_map_utnapishtim_medical": "%%Utnapishtim%% Medical Bay",
 
   "Campaign1_86_Lerche_firstname": "Lerche",
   "humanRaceAddon_Android_Sirin": "Sirin",

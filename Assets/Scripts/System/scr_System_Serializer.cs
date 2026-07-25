@@ -591,11 +591,15 @@ public class scr_System_Serializer : MonoBehaviour
     }
     public Floor_Base GetByNameOrID_Floor_Base(string name_or_id)
     {
-        return MasterList.Floors.GetByID(name_or_id);
+        return MasterList.MapPlans.GetByID_FloorBase(name_or_id);
     }
     public MapPlan GetByNameOrID_MapPlan(string name_or_id)
     {
-        return MasterList.MapPlans.GetByID(name_or_id);
+        return MasterList.MapPlans.GetByID_MapPlan(name_or_id);
+    }
+    public WorldPlan GetByNameOrID_WorldPlan(string name_or_id)
+    {
+        return MasterList.MapPlans.GetByID_WorldPlan(name_or_id);
     }
 
     public FurnitureBase GetByNameOrID_FurnitureBase(string name_or_id)

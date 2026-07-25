@@ -17,11 +17,20 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
         this.sourceFaction = sourceFaction;
         Utility.DestroyAllChildrenFrom( factionList);
 
+        var pactFactions = sourceFaction.CommercialPactFactions;
         foreach (var faction in scr_System_CampaignManager.current.Factions)
         {
-            // TODO INSTANTIATE BUTTON
             if (faction == sourceFaction) continue;
-            else if (faction.MainExit == null && (faction.salesInventory == null || faction.salesInventory.entries.Count < 1)) continue;
+
+            // always show factions already under commercial pact, plus any faction eligible to form one:
+            // has a sales currency set, has a sales inventory, and is connected (manually or via a shared world)
+            bool alreadyLinked = pactFactions.Contains(faction);
+            bool eligible = faction.Currency != null
+                && faction.salesInventory != null && faction.salesInventory.entries.Count > 0
+                && scr_System_CampaignManager.current.Map.isConnectedFaction(sourceFaction, faction);
+
+            if (!alreadyLinked && !eligible) continue;
+
             MakeFactionButton(faction);
         }
         ValidateAll();
@@ -141,7 +150,6 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
     public class Button_ToggleLink : ButtonValidator, I_ButtonClickable
     {
         new scr_Menu_addlinkfaction parent;
-        ItemEntry entry;
         Manageable targetFaction;
         scr_SelectableText button;
 
@@ -167,47 +175,43 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
                 button.SetText(" - ");
                 return false;
             }
-            else
+            else if (parent.sourceFaction.CommercialPactFactions.Contains(targetFaction))
             {
-                if (parent.sourceFaction.ConnectedFactions.Contains(targetFaction))
-                {
-                    button.SetText(remove);
-                    if (targetFaction.ManagedRefs.Count > 0 && Utility.ListContainsLoose(parent.sourceFaction.ManagedRefs, targetFaction.ManagedRefs))
-                    {   // if job assigned, return false
+                button.SetText(remove);
+                if (targetFaction.ManagedRefs.Count > 0 && Utility.ListContainsLoose(parent.sourceFaction.ManagedRefs, targetFaction.ManagedRefs))
+                {   // if job assigned, return false
+                    this.tooltip = remove_error1;
+                    return false;
+                }
+
+                var targetRooms = targetFaction.ManagedRooms.Keys;
+                foreach(var chara in parent.sourceFaction.ManagedRefs)
+                {   // if any chara is present, return false
+                    var room = scr_System_CampaignManager.current.Map.FindRoomByChara(chara);
+                    if (room != null && targetRooms.Contains( room.RefID))
+                    {
                         this.tooltip = remove_error1;
                         return false;
                     }
-
-                    var targetRooms = targetFaction.ManagedRooms.Keys;
-                    foreach(var chara in parent.sourceFaction.ManagedRefs)
-                    {   // if any chara is present, return false
-                        var room = scr_System_CampaignManager.current.Map.FindRoomByChara(chara);
-                        if (room != null && targetRooms.Contains( room.RefID))
-                        {
-                            this.tooltip = remove_error1;
-                            return false;
-                        }
-                    }
-
-                    this.tooltip = remove;
-                    connect = false;
-                    return true;
-                    
                 }
-                else
-                {
-                    button.SetText(add);
-                    this.tooltip = add_tooltip;
-                    connect = true;
-                    return true;
-                }
+
+                this.tooltip = remove;
+                connect = false;
+                return true;
+            }
+            else
+            {
+                button.SetText(add);
+                this.tooltip = add_tooltip;
+                connect = true;
+                return true;
             }
         }
 
         public void OnClickButton()
         {
-            if (connect) scr_System_CampaignManager.current.Map.ConnectFactions(parent.sourceFaction, targetFaction);
-            else scr_System_CampaignManager.current.Map.DisconnectFactions(parent.sourceFaction, targetFaction);
+            if (connect) scr_System_CampaignManager.current.Map.ConnectCommercialPact(parent.sourceFaction, targetFaction);
+            else scr_System_CampaignManager.current.Map.DisconnectCommercialPact(parent.sourceFaction, targetFaction);
             parent.NotifyChange();
         }
     }

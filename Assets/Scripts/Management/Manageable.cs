@@ -328,7 +328,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     string _cachedDisplayName = string.Empty;
     [JsonIgnore] public string FactionDisplayName { get
         {
-            if (_cachedDisplayName == string.Empty) _cachedDisplayName = LocalizeDictionary.QueryThenParse("factionName_" + ID);
+            if (_cachedDisplayName == string.Empty) _cachedDisplayName = LocalizeDictionary.QueryThenParse(ID);
             return _cachedDisplayName;
         } }
 
@@ -1582,6 +1582,18 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
+    /// <summary>
+    /// Commercial pact links (management UI: trade orders, external job assignment). Populated independently of
+    /// ConnectedFactions, but a pact also grants connectivity on its own - see Map_Instance.isConnectedFaction.
+    /// </summary>
+    [JsonIgnore] public List<Manageable> CommercialPactFactions
+    {
+        get
+        {
+            return scr_System_CampaignManager.current.Map.GetCommercialPactFactions(this.ID);
+        }
+    }
+
 
     public class Job_Schedule
     {
@@ -2281,7 +2293,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public void RefreshSalesInventory(MapPlan plan = null)
     {
-        if (plan == null) plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID(mapPlanID);
+        if (plan == null) plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
         
         if (plan != null)
         {

@@ -46,9 +46,11 @@ public class CharaReq
     public void Read(CharaReq req)
     {
         this.BodyTags.AddRange(req.BodyTags);
+        this.requireUndressedTags.AddRange(req.requireUndressedTags);
         this.requireAbsentJobwithCOMTag.AddRange(req.requireAbsentJobwithCOMTag);
         this.requireExistingJobwithCOMTag.AddRange(req.requireExistingJobwithCOMTag);
         this.BodyTags = this.BodyTags.Distinct().ToList();
+        this.requireUndressedTags = this.requireUndressedTags.Distinct().ToList();
         requireConscious = requireConscious && req.requireConscious;
         requireUnrestrained = requireUnrestrained || req.requireUnrestrained;
         requireMovement = requireMovement || req.requireMovement;

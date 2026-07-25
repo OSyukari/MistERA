@@ -1362,7 +1362,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 break;
             case JobAssignmentTab.externalJob: 
 
-                foreach(var faction in currentFaction.ConnectedFactions)
+                foreach(var faction in currentFaction.CommercialPactFactions)
                 {
                     foreach(var c in faction.JobPostsPresets)
                     {

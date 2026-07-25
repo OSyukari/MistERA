@@ -9,6 +9,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 {
 
     protected TextMeshProUGUI text = null;
+    protected scr_HoverableText hoverable = null;
 
     protected scr_Menu parent;
 
@@ -63,6 +64,7 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
         {
             initialized = true;
             text = GetComponent<TextMeshProUGUI>();
+            hoverable = GetComponent<scr_HoverableText>();
             // parent does not exist at this moment ?
             baseColor = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
             hoverColor = scr_System_CentralControl.current.DisplaySetting.TextColor_hover.Color;
@@ -109,6 +111,8 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        hoverable.DismissTooltip();
+
         if(forbidNotify) return;
         if (eventData.pointerId == -1 && isValid && optionID != -1)
         {

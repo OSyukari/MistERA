@@ -1,7 +1,7 @@
 {
-    "Floors":
+    "MapPlans":
     {
-        "list":[
+        "floorPlans":[
             {
                 "ID":"floor_jp_convenience_store",
                 "imagePath":"SunMart/floorplan.png",

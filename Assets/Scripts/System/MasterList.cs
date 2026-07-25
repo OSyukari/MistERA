@@ -21,7 +21,6 @@ public class MasterList
 
                 list.Add(Stats_Derived_Bases);
                 list.Add(BodyPartBases);
-                list.Add(Floors);
                 list.Add(MapPlans);
                 list.Add(StatusEXs);
            //     list.Add(Sexperiences);
@@ -63,7 +62,6 @@ public class MasterList
     public Index_BodyPartBase BodyPartBases = new Index_BodyPartBase();
     public Stats_Derived_Base_Index Stats_Derived_Bases = new Stats_Derived_Base_Index();
     //public Character_BaseID_Index Character_BaseIDs = null;
-    public Index_Floor_Base Floors = new Index_Floor_Base();
     public Index_MapPlan MapPlans = new Index_MapPlan();
     public Character_Base_Index Character_Bases = new Character_Base_Index();
     public Index_StatusEx StatusEXs = new Index_StatusEx();

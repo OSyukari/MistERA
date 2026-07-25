@@ -1,8 +1,8 @@
 {
     "_doc": "PLACEHOLDER floor for the Kiryu-gumi office (where Kanon resides / commission hub). Reuses generic building-corridor backgrounds for now; layout and dedicated art are to be redesigned later. See Plan_ErAV_OpeningScene.md (incomplete status).",
 
-    "Floors": {
-        "list": [
+    "MapPlans": {
+        "floorPlans": [
             {
                 "ID": "erav_kiryu_office",
                 "imagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",

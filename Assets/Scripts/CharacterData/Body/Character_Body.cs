@@ -456,6 +456,18 @@ public class Character_Body
         return false;
     }
 
+    public bool HasEquipByFilter(List<string> tags, BodyEquipLayer layer, int revealingScoreFilter = -1)
+    {
+        foreach (BodyPart_Instance b in Body)
+        {
+            foreach (var tag in tags)
+            {
+                if (b.hasTag(tag) && b.HasEquipByFilter(layer, revealingScoreFilter)) return true;
+            }
+        }
+        return false;
+    }
+
     public bool UnequipItem(int itemRefID)
     {
         bool returnVal = false;

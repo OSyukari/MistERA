@@ -1,7 +1,7 @@
 {
     "MapPlans":
     {
-        "list":
+        "factionInit":
         [
             {
                 "ID":"map_jp_convenience_store",
@@ -13,7 +13,7 @@
                 [
                     {
                         "ID":"floor_jp_convenience_store",
-                        "nameOverwrite":"factionName_jp_convenience_store_SunMart"
+                        "nameOverwrite":"jp_convenience_store_SunMart"
                     }
                 ],
                 "initializers":[
