@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System.IO;
-using TMPro;
-using UnityEngine.EventSystems;
 using QuikGraph;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 {
@@ -557,19 +557,45 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     /// </summary>
     public WorldPlan.DoorConnection FindPlayerOriginDoor(WorldPlan world)
     {
-        var ownerID = scr_System_CampaignManager.current.CurrentRoom.FactionOwner?.FactionOwnerRoot?.ID;
-        if (string.IsNullOrEmpty(ownerID)) return null;
+        var faction = scr_System_CampaignManager.current.CurrentRoom.FactionOwner?.FactionOwnerRoot;
+        if (faction == null) return null;
+
+        // a subfaction (e.g. a mall shop) has no door of its own on the world map - its MainExit resolves to
+        // its parent's room, so use whichever faction actually owns that room instead of the subfaction's own ID.
+        var ownerID = faction.MainExit != null && faction.MainExit.FactionOwner != null
+            ? faction.MainExit.FactionOwner.FactionOwnerRoot.ID : faction.ID;
+
         return world.doors.Find(d => d.factionID == ownerID);
     }
 
     /// <summary>
-    /// takes 2 door points, calc pixel distance, and divide by travelDistancePerMinute to get travel time
+    /// Cost for the player to walk from their current room to their current faction's MainExit - the "leaving
+    /// the building" segment of a cross-faction trip, so the world-map tooltip can show the same total a real
+    /// move would actually cost instead of just the map-distance segment.
+    /// </summary>
+    public static float PlayerExitCost()
+    {
+        var faction = scr_System_CampaignManager.current.CurrentRoom.FactionOwner?.FactionOwnerRoot;
+        if (faction == null || faction.MainExit == null || scr_System_CampaignManager.current.CurrentRoom == faction.MainExit) return 0f;
+
+        var path = scr_System_CampaignManager.current.Map.Findpath(0, faction.MainExit.RefID);
+        if (path == null) return 0f;
+
+        float cost = 0f;
+        foreach (var e in path) cost += e.Tag.Cost;
+        return cost;
+    }
+
+    /// <summary>
+    /// takes 2 door points, calc pixel distance, divide by travelDistancePerMinute to get map travel time, and
+    /// add the cost of walking from the player's current room to their faction's exit door.
     /// </summary>
     public static string TravelTimeMinutesString(WorldPlan world, WorldPlan.DoorConnection origin, WorldPlan.DoorConnection target)
     {
         if (origin == null || target == null || world.travelDistancePerMinute <= 0f) return "-";
         float dist = Vector2.Distance(new Vector2(origin.offset_x, origin.offset_y), new Vector2(target.offset_x, target.offset_y));
-        return Mathf.CeilToInt(dist / world.travelDistancePerMinute).ToString();
+        float mapCost = dist / world.travelDistancePerMinute;
+        return Mathf.CeilToInt(mapCost + PlayerExitCost()).ToString();
     }
 
     /// <summary>
@@ -946,6 +972,15 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
             var faction = scr_System_CampaignManager.current.FindFactionByID(door.factionID);
             var timeString = canvas_RoomDisplay.TravelTimeMinutesString(world, parent.FindPlayerOriginDoor(world), door);
+
+            var current = scr_System_CampaignManager.current.CurrentRoom;
+   
+            if (current != null && faction != null && current.FactionOwner.getLocaleFaction == faction.getLocaleFaction)
+            {
+                text.Toggle(true, true);
+            }
+            else text.Toggle(true, false);
+            
 
             Floor_Instance targetFloor = faction != null && faction.ManagedFloors.Count > 0 ? faction.ManagedFloors[0] : null;
             this.tooltip = targetFloor != null && targetFloor.rooms.Count == 1

@@ -269,6 +269,9 @@ public static class EventUtility
             case "isPlayer":
                 //if (debug) Debug.Log($"excludePlayer {c.FirstName} {scr_System_CampaignManager.current.Player == c}");
                 return scr_System_CampaignManager.current.Player == c;
+            case "isActorBaseID":
+                if (r.parameters.Count < 2) return false;
+                else return c.BaseID == r.parameters[1];
             case "hasActionPackageType":
                 if (r.parameters.Count < 2) return false;
                 else
@@ -287,6 +290,8 @@ public static class EventUtility
                 return c.Stats.isConsciousnessUnconscious;
             case "isFemale":
                 return c.isFemale;
+            case "isMale":
+                return c.isMale;
             case "isSleeping":
                 return c.Stats.isSleeping;
             case "isRoomOwner":
@@ -389,6 +394,13 @@ public static class EventUtility
 
             switch (scope.baseScope)
             {
+                case TargetScope.BaseID_Unrestricted:
+                    if (scope.extraScopeArguments.Count >= 1)
+                    {
+                        var candidates = scr_System_CampaignManager.current.HasInstanceCharaWithBaseID(scope.extraScopeArguments[0]);
+                        if (candidates != null && !list.Contains(candidates)) list.Add(candidates);
+                    }
+                    break;
                 case TargetScope.AllCharaInSelfRoom:
                     if (self == null) return false;
                     room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);

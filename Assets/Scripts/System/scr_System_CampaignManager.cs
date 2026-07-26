@@ -1036,7 +1036,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         updateTime = 0;
 
         //string s = "ExistPlayerPackage : ";
-        var status = scr_System_CampaignManager.current.Player.Stats.GetStatusByStringMatch("chara_status_sleeping");
+        var status = Player.Stats.GetStatusByStringMatch("chara_status_sleeping");
 
         if (Player.isSleeping && status != null && status.duration > 0 && status.Severity > 0)
         {
@@ -1718,6 +1718,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     [JsonProperty] protected Dictionary<string, string> relationshipRecords = new Dictionary<string, string>();
 
     public List<Character_Trainable> CharaInCurrentRoom { get {
+            if (CurrentRoom == null) return new List<Character_Trainable>();
             return Map.GetRoomByRef(currentRoomRef).RoomChara;
         } }
 
@@ -1726,6 +1727,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         get
         {
+            if (CurrentRoom == null) return new List<int>();
             return Map.GetRoomByRef(currentRoomRef).RoomCharaRefs;
         }
     }
@@ -1998,6 +2000,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         UpdateScene();
         scr_System_Time.current.UpdateTime(0, 0, 0, 0, true);
+
+
     }
 
     protected IEnumerator CachePortraitCoroutine()
@@ -2036,6 +2040,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         scr_System_SceneManager.current.LoadScene(GlobalValues.GameScene);
         StartCoroutine(InitializeNewGame(camp, camp_ex, main, sub));
         scr_System_SceneManager.current.UnloadScene(GlobalValues.IntroScene);
+
     }
 
     /// <summary>
@@ -2059,6 +2064,14 @@ public class scr_System_CampaignManager : MonoBehaviour
         yield return null;
         yield return CachePortraitCoroutine();
         Observer_LoadComplete?.Invoke();
+        // launch all on-gamestart event
+        scr_UpdateHandler.current.EventHandler.Trigger(Player, EventTrigger.OnCampaignStart);
+        if (scr_UpdateHandler.current.EventHandler.Active)
+        {
+            ChangeCurrentViewMode(ViewMode.View_Logs);
+            scr_UpdateHandler.current.EventHandler.Run();
+            Observer_UpdateNotice?.Invoke(false);
+        }
     }
 
     private IEnumerator InitializeLoadSave(SaveFileHolder saveHolder)
@@ -2385,6 +2398,37 @@ public class scr_System_CampaignManager : MonoBehaviour
             var newstuff = new Manageable_HomeFaction(id);
             organizations.Add(id, newstuff);
             return newstuff;
+        }
+    }
+    public Manageable FindorAddSubfactionByID(string id, Manageable prevOwner)
+    {
+        if (organizations.TryGetValue(id, out var target))
+        {
+            return target;
+        }
+        else
+        {
+            var template = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(id);
+
+            var newstuff = new Manageable_Subfaction(id, prevOwner);
+            // register before WorldManager.Instantiate below - it resolves its target faction via
+            // FindorAddHomeFactionByID(id), which must find this subfaction already in place instead of
+            // creating an unrelated plain home faction under the same key.
+            organizations.Add(id, newstuff);
+
+            if (template != null)
+            {
+                // floors is expected empty for a subfaction's MapPlan (its room arrives later via the host
+                // floor's subfactionOwnerOverwrite) - this call only applies mainExit/sales/workHours/etc setup.
+                WorldManager.Instantiate(template, id, true);
+                return newstuff;
+            }
+            else
+            {
+                Debug.LogError($"FindorAddSubfactionByID: cannot find factionInit MapPlan [{id}]");
+                return null;
+            }
+
         }
     }
 

@@ -16,7 +16,16 @@ public class Room_Base
     public string roomImagePath_Inactive_Night = "";
     public string roomImagePath_Inactive = "";
 
-
+    /// <summary>
+    /// If set, this room is owned by the named faction instead of whatever faction the containing floor
+    /// is attached to (e.g. a mall's shared directory floor where each room belongs to a different shop).
+    /// The target faction is found-or-created on demand (scr_System_CampaignManager.FindorAddHomeFactionByID)
+    /// at room-attachment time - see Manageable.AddToFaction(Floor_Instance,...). Purely a room→faction
+    /// ownership assignment; unrelated to (and safe regardless of ordering against) the physical floor/room
+    /// connectivity graphs (Map_Instance.BuildPath / Floor_Instance.BuildPath), which are built solely from
+    /// Room_Base.connects / MapPlan_Floor.connectTo and never reference FactionOwner.
+    /// </summary>
+    public string subfactionOwnerOverwrite = "";
 
     public RoomActivityState activityState = RoomActivityState.AlwaysActive;
 }

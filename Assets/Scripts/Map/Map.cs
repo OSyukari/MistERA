@@ -747,6 +747,36 @@ public class Map_Instance
         return path;
     }
 
+    /// <summary>
+    /// Real travel time (in minutes) between two factions' doors on a WorldPlan they share, mirroring the
+    /// distance/travelDistancePerMinute calc shown on the world-map tooltip (canvas_RoomDisplay.TravelTimeMinutesString).
+    /// Falls back to the flat legacy cost of 5 when no shared WorldPlan has a door for both factions (e.g. factions
+    /// linked only via a commercial pact, or a faction with no door of its own on the world map).
+    /// </summary>
+    protected float CrossFactionBridgeCost(Manageable fromFaction, Manageable toFaction)
+    {
+        // a subfaction (e.g. a mall shop) has no door of its own on the world map - its MainExit resolves to
+        // its parent's room, so the door lookup below should key off whichever faction actually owns that
+        // room instead of the (possibly virtual-tenant) faction passed in.
+        string fromDoorFactionID = fromFaction.MainExit != null && fromFaction.MainExit.FactionOwner != null
+            ? fromFaction.MainExit.FactionOwner.FactionOwnerRoot.ID : fromFaction.ID;
+        string toDoorFactionID = toFaction.MainExit != null && toFaction.MainExit.FactionOwner != null
+            ? toFaction.MainExit.FactionOwner.FactionOwnerRoot.ID : toFaction.ID;
+
+        foreach (var world in scr_System_CampaignManager.current.FindWorldsContainingFaction(fromDoorFactionID))
+        {
+            if (!world.initializeFactions.ContainsKey(toDoorFactionID)) continue;
+
+            var doorA = world.doors.Find(d => d.factionID == fromDoorFactionID);
+            var doorB = world.doors.Find(d => d.factionID == toDoorFactionID);
+            if (doorA == null || doorB == null || world.travelDistancePerMinute <= 0f) continue;
+
+            float dist = Vector2.Distance(new Vector2(doorA.offset_x, doorA.offset_y), new Vector2(doorB.offset_x, doorB.offset_y));
+            return Mathf.CeilToInt(dist / world.travelDistancePerMinute);
+        }
+        return 5f;
+    }
+
     public bool isConnectedFaction(Manageable a, Manageable b)
     {
         if (a == null || b == null) return false;
@@ -754,6 +784,13 @@ public class Map_Instance
         if (factionGraphs.TryGetValue(a.ID, out var lists) && lists.Contains(b.ID)) return true;
         // a commercial pact also grants connectivity, as if manually connected, even with no other path
         if (commercialPactGraphs.TryGetValue(a.ID, out var pactLists) && pactLists.Contains(b.ID)) return true;
+
+        // a subfaction (e.g. a mall shop) is a virtual tenant with no physical presence of its own on the
+        // world map - it's reachable wherever its parent (e.g. the mall) is, regardless of whether it ended up
+        // directly meshed into factionGraphs itself (its parent's connectivity is the source of truth).
+        if (a is Manageable_Subfaction subA && subA.Parent != null && isConnectedFaction(subA.Parent, b)) return true;
+        if (b is Manageable_Subfaction subB && subB.Parent != null && isConnectedFaction(a, subB.Parent)) return true;
+
         return false;
     }
 
@@ -908,7 +945,7 @@ public class Map_Instance
                 if (Findpath(roomRef, fromFaction.MainExit,imprisoned, out var path1) && Findpath(toFaction.MainExit, targetRoom, imprisoned, out var path2))
                 {
                     if (path1 != null) temppath.AddRange(path1);
-                    temppath.Add(new TaggedEdge<int, Door_Instance>(fromFaction.MainExit.RefID, toFaction.MainExit.RefID, new Door_Instance(5)));
+                    temppath.Add(new TaggedEdge<int, Door_Instance>(fromFaction.MainExit.RefID, toFaction.MainExit.RefID, new Door_Instance(CrossFactionBridgeCost(fromFaction, toFaction))));
                     if (path2 != null) temppath.AddRange(path2);
 
                     path = temppath;

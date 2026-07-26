@@ -31,6 +31,7 @@ public enum PartyAvailability
 
 public class Manageable_Party : I_IsJobGiver
 {
+    [JsonIgnore] public virtual I_IsJobGiver getLocaleFaction { get { return this; } }
 
     public List<Job_Furniture> GetValidJobs_Heuristics(
         Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic,

@@ -143,7 +143,7 @@ public class EventInstance
     /// </summary>
     /// <param name="targetRef"></param>
     /// <param name="maxCallStack"></param>
-    public EventInstance(Character_Trainable eventSelf, string eventID, string label, int maxCallStack = 50, bool immediateInit = true)
+    public EventInstance(Character_Trainable eventSelf, string eventID, string label, int maxCallStack = 100, bool immediateInit = true)
     {
         this.Self = eventSelf;
         this.maxCallStack = maxCallStack;

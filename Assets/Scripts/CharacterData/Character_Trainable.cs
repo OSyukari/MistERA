@@ -158,7 +158,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// This field is empty in chara data, if chara data is re-deserealized then this field need to be manually copied
     /// </summary>
     [JsonProperty] protected string baseID = "";
-    [JsonIgnore] public string BaseID { get { return baseID; } set { this.baseID = value; } }
+    [JsonIgnore] public string BaseID { get { return baseID; } set {
+
+            if (this.baseTemplateID == "") this.baseTemplateID = this.baseID;
+            this.baseID = value; } }
     [JsonProperty] protected int referenceID = -1;
     [JsonIgnore] public int RefID { get { return referenceID; } }
 
@@ -810,6 +813,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 if (_templateS == null)
                 {
                     _templateS = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateSafeByID(BaseID);
+                    if (_templateS == null && baseTemplateID != "")
+                    {
+                        _templateS = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateSafeByID(baseTemplateID);
+                    }
                     if (_templateS == null)
                     {
                         _templateS = new CharaSafeTemplate();
@@ -823,6 +830,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 if (_template == null)
                 {
                     _template = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(BaseID) as CharaTrainableTemplate;
+                    if (_template == null && baseTemplateID != "")
+                    {
+                        _template = scr_System_Serializer.current.MasterList.Character_Bases.GetTemplateByID(baseTemplateID);
+                    }
                     if (_template == null)
                     {
                         _template = new CharaTrainableTemplate();
@@ -2500,7 +2511,7 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         }
         else
         {
-            if (id != "") Debug.LogError($"Error GetTemplateByID {id}");
+            //if (id != "") Debug.LogError($"Error GetTemplateByID {id}");
             return null;
         }
     }
@@ -2512,18 +2523,7 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         }
         else
         {
-            Debug.LogError($"Error GetTemplateSafeByID {id}, entries in dict {templatesS.Count}");
-#if UNITY_EDITOR
-            var str = new List<string>();
-            foreach(var kvp in templatesS)
-            {
-                str.Add($"{kvp.Key}, {(kvp.Value == null ? "null" : "")}");
-            }
-
-            Debug.Log($"templatesS content {templatesS.Count}\n{String.Join("\n", str)}");
-
-
-#endif
+            //Debug.LogError($"Error GetTemplateSafeByID {id}, entries in dict {templatesS.Count}");
             return null;
         }
     }

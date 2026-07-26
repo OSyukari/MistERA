@@ -5,6 +5,8 @@ using Newtonsoft.Json;
 
 public interface I_IsJobGiver
 {
+    [JsonIgnore] public I_IsJobGiver getLocaleFaction { get; }
+
     public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s);
     [JsonIgnore]
     public string FactionDisplayName { get; }

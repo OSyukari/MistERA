@@ -59,6 +59,7 @@ public enum EventTrigger
     /// This event will not be run by trigger
     /// </summary>
     None,
+    OnCampaignStart,
     OnEnterRoom
 }
 /// <summary>
@@ -77,6 +78,7 @@ public enum Manageable_GuestStatus
 public enum TargetScope
 {
     None,
+    BaseID_Unrestricted,
     AllCharaInSelfRoom,
     AllCharaInSelfRoom_ExcludeSelf,
     ScopeWithinRef,

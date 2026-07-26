@@ -1,0 +1,38 @@
+{
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "map_jp_mall_clothing",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_clothing",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "clothing_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_mall_clothing_room_displayName": "服装店"
+            },
+            "en-us": {
+                "jp_mall_clothing_room_displayName": "Clothing Store"
+            }
+        }
+    }
+}

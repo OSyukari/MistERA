@@ -39,6 +39,11 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         }
     }
     Dictionary<string, MapPlan> ID_Dictionary_Map = new Dictionary<string, MapPlan>();
+    /// <summary>
+    /// FactionInit
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public MapPlan GetByID_MapPlan(string id) { return ID_Dictionary_Map.ContainsKey(id) ? ID_Dictionary_Map[id] : null; }
 
     Dictionary<string, Floor_Base> ID_Dictionary_Floor = new Dictionary<string, Floor_Base>();

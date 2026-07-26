@@ -94,6 +94,28 @@
                 "activeHoursStart": 7,
                 "activeHoursEnd": 22,
                 "managerBaseIDs": ["ErAV_Player"]
+            },
+            {
+                "ID": "map_erav_kiryugumi_office",
+                "z_rotation": 0.0,
+                "initializeFaction": "ErAV_KiryuGumi_Office",
+                "setPrivateRoomOwner": false,
+                "mainExit": { "roomID": "erav_kiryu_office_frontDoor", "exitCost": 5 },
+                "floors": [
+        {
+            "ID": "erav_kiryu_office",
+            "nameOverwrite": "ErAV_KiryuGumi_Office",
+            "Additional": [
+                {
+                    "addClass":"map_init_placeChara",
+                    "map_init_placeChara":{ "roomID":"erav_kiryu_office_kanonoffice", "charaBaseID": [ "ErAV_Kanon" ] }
+                }
+            ]
+        }
+                ],
+                "mealHours": [7, 12, 18],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22
             }
         ]
     },
@@ -109,12 +131,37 @@
                 "campaign_erav_custom_noreplace_tooltip": "以可自定义的主角开始游戏",
                 "ErAV_miyama_Household": "宫间家",
                 "ErAV_miyama_Household_Home": "宫间家宅",
-                "ErAV_roomNameOverride_parents": "父母的房间"
+                "ErAV_roomNameOverride_parents": "父母的房间",
+                "ErAV_KiryuGumi_Office":"桐生组事务所",
+                
+                "ErAV_Kanade_firstname": "奏",
+                "ErAV_Miyama_lastname": "宫间",
+                "ErAV_Kanade_charaComment": "主角的亲妹妹。学业常年保持年级第一的优等生，运动却不太擅长。得知哥哥背负巨债后，主动决定成为ＡＶ女优帮忙还债。温柔清秀、献身的三项齐备，却隐藏着被封印的强势本性。",
+
+                "ErAV_Kanon_firstname": "歌音",
+                "ErAV_Kanon_lastname": "桐生",
+                "ErAV_Kanon_charaComment": "黑社会桐生组的掌上明珠，直爽的学生会长，辩论与谈判能力极高。是将主角卷入债务事件的罪魁祸首，也是事务所一切委托的发放者。公私有别：职场完全服从的女优，私下是不肯认输的大小姐。",
+
+                "ErAV_kimono": "和服",
+                "ErAV_personality_Kanade_displayName": "奏",
+                "ErAV_personality_Kanon_displayName": "歌音"
             },
             "en-us": {
                 "campaign_erav": "ErAV: Repayment",
                 "campaign_erav_tooltip": "Your parents died in an accident, leaving a crushing joint-guarantor debt. Under yakuza princess Kiryu Kanon's ultimatum, you must repay it before graduation — take over the AV agency, or find your own way out.",
-                "ErAV_miyama_Household_Home": "Miyama Residence"
+                "ErAV_miyama_Household_Home": "Miyama Residence",
+                
+                "ErAV_Kanade_firstname": "Kanade",
+                "ErAV_Miyama_lastname": "Miyama",
+                "ErAV_Kanade_charaComment": "The protagonist's younger sister. A top-of-her-class honor student, though poor at sports. On learning of her brother's crushing debt, she resolves to become an AV actress to help repay it. Gentle, demure and devoted, yet hides a sealed-away dominant nature.",
+
+                "ErAV_Kanon_firstname": "Kanon",
+                "ErAV_Kanon_lastname": "Kiryu",
+                "ErAV_Kanon_charaComment": "The pampered daughter of the Kiryu-gumi syndicate; a blunt student council president with formidable negotiation skills. She is the architect of the protagonist's debt entanglement and the issuer of every agency commission. Strictly separates public and private: an utterly compliant actress on set, a proud, unyielding ojou-sama off it.",
+
+                "ErAV_kimono": "Kimono",
+                "ErAV_personality_Kanade_displayName": "Kanade",
+                "ErAV_personality_Kanon_displayName": "Kanon"
             }
         }
     }

@@ -110,12 +110,15 @@ public class scr_System_Serializer : MonoBehaviour
 
         List<string> skippedFiles = new List<string>();
         List<string> loadedFiles = new List<string>();
+        List<string> errors = new List<string>();
         string path = DataPath;
         if (!Directory.Exists(path)) { Debug.LogError($"Error in LoadDefs, path [{path}] do not exist"); return; }
 
         DirectoryInfo d = new DirectoryInfo(path);
         int appDataLen = d.Parent.Parent.FullName.Length + 1;
         var safe = "safeOnly";
+
+        
 
         foreach (var file in d.GetFiles("*.*", SearchOption.AllDirectories))
         {   // all files must be index_com files
@@ -161,8 +164,14 @@ public class scr_System_Serializer : MonoBehaviour
                 continue;
             }*/
 
-            ShortFileAddress.Add($"{file.Directory.Name}/{file.Name}", file.FullName);
-            ShortFileAddress.Add($"{file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}", file.FullName);
+            if (!ShortFileAddress.TryAdd($"{file.Directory.Name}/{file.Name}", file.FullName))
+            {
+                errors.Add($"conflict key {file.Directory.Name}/{file.Name}");
+            }
+            if (!ShortFileAddress.TryAdd($"{file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}", file.FullName))
+            {
+                errors.Add($"conflict key {file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}");
+            }
 
             //var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
             //entry.address = filepath;
@@ -170,7 +179,7 @@ public class scr_System_Serializer : MonoBehaviour
             //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
         }
        // AssetDatabase.SaveAssets();
-        Debug.Log($"BuildAddressables Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
+        Debug.Log($"BuildAddressables Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}\n-- ERRORS COUNT {errors.Count} --\n{String.Join("\n", errors)}");
 
     }
 

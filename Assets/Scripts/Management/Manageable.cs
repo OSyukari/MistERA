@@ -11,6 +11,9 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Manageable : I_Disposable, I_IsJobGiver
 {
+
+    [JsonIgnore] public virtual I_IsJobGiver getLocaleFaction { get { return this; } }
+
     [JsonIgnore] public Manageable Faction { get { return this; } }
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
 
@@ -210,18 +213,20 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
     [JsonIgnore] protected Room_Instance mainExit_cache = null;
-    [JsonIgnore] public Room_Instance MainExit { get
+    [JsonIgnore] public virtual Room_Instance MainExit { get
     {
-        if (mainExit_cache == null)
+        // Only memoize a successful resolution - a faction with no floors of its own (a "virtual tenant"
+        // whose rooms arrive later via Room_Base.factionOwnerOverwrite, e.g. a mall shop on a shared floor)
+        // may have SetMainExit called before its room is actually attached. Caching a negative result here
+        // would lock MainExit to null forever once the room does show up.
+        if (mainExit_cache == null && mainExit != null && mainExit.roomID != "")
         {
-            mainExit_cache = mainExit == null ? null :
-                             mainExit.roomID == "" ? null :
-                             ManagedRooms.Values.ToList().Find(x => x.Base.ID == mainExit.roomID);
+            mainExit_cache = ManagedRooms.Values.ToList().Find(x => x.Base.ID == mainExit.roomID);
         }
         return mainExit_cache;
     } }
 
-    [JsonIgnore] public int MainExitCost { get { return mainExit == null ? 1 : mainExit.exitCost; } }
+    [JsonIgnore] public virtual int MainExitCost { get { return mainExit == null ? 1 : mainExit.exitCost; } }
     [JsonProperty] protected Map_MainExit mainExit = null;
     public void SetMainExit(Map_MainExit exit)
     {
@@ -1000,13 +1005,36 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public void AddToFaction(Floor_Instance floor, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
     {
-        foreach (Room_Instance ri in floor.rooms) AddToFaction(ri, addAllCharaToFaction, setRoomOwnership);
+        foreach (Room_Instance ri in floor.rooms)
+        {
+            // per-room ownership override (e.g. mall shops sharing one physical floor) - the override
+            // faction is found-or-created on demand and takes the room instead of this (the floor's
+            // default owner). Safe regardless of ordering against Map_Instance/Floor_Instance.BuildPath():
+            // those graphs are built purely from Room_Base.connects / MapPlan_Floor.connectTo and never
+            // read FactionOwner, so they don't care which faction ends up owning a room or when.
+            
+                AddToFaction(ri, addAllCharaToFaction, setRoomOwnership);
+            
+        }
     }
 
     protected void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
     {
         this.managedRoomRefs.Add(room.RefID, new List<int>());
         this.roomRefsCache = null;
+
+        string overwriteID = room.Base != null ? room.Base.subfactionOwnerOverwrite : "";
+        if (!string.IsNullOrEmpty(overwriteID) && overwriteID != this.ID)
+        {
+            var overwriteOrg = scr_System_CampaignManager.current.FindorAddSubfactionByID(overwriteID, this);
+            if (overwriteOrg != null)
+            {
+                overwriteOrg.AddToFaction(room, addAllCharaToFaction, setRoomOwnership);
+                Debug.Log($"add room {room.DisplayNameShort} to override faction {overwriteID}");
+                return;
+            }
+        }
+
 
         room.SetFaction(this);
         //if (room.isRoomPrivate) roomOwnerships.Add(room.RefID, new List<int>());
@@ -1574,7 +1602,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             return this;
         }
     }
-    [JsonIgnore] public List<Manageable> ConnectedFactions
+    [JsonIgnore] public virtual List<Manageable> ConnectedFactions
     {
         get
         {

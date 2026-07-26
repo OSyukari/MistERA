@@ -19,7 +19,9 @@
             "jp_convenience_store_SunMart":"map_jp_convenience_store",
             "Katsuragi_Household":"map_jitaku_keibiin",
             "ErAV_miyama_Household":"map_erav_miyama_household",
-            "CoffinAnL_Household":"map_coffinanl"
+            "CoffinAnL_Household":"map_coffinanl",
+            "ErAV_KiryuGumi_Office":"map_erav_kiryugumi_office",
+            "jp_shopping_street":"map_jp_shopping_street"
         },
         "doors":
         [
@@ -44,7 +46,6 @@
                 "floorExitID":"4ldk_floor_1L_frontDoor"
             },
             {
-                "_comment":"placeholder - no factionInit yet, button will be non-clickable until Kiryu-gumi office is wired up",
                 "offset_x":650, "offset_y":260, "isPublic":true,
                 "factionID":"ErAV_KiryuGumi_Office",
                 "floorExitID":"erav_kiryu_office_frontDoor"
@@ -68,9 +69,9 @@
                 "floorExitID":"university_frontGate"
             },
             {
-                "_comment":"opens the shopping mall as a child WorldPlan - see JP_ShoppingStreet/world.json",
                 "offset_x":560, "offset_y":210, "isPublic":true,
-                "childWorldID":"world_jp_shopping_street"
+                "factionID":"jp_shopping_street",
+                "floorExitID":"jp_shopping_street_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
@@ -173,9 +174,7 @@
         "Entries": {
             "zh-cn": {
                 "world_erav_modern_jp": "日本",
-                "world_jp_shopping_street": "商店街",
 
-                "ErAV_KiryuGumi_Office": "桐生组事务所",
                 "jp_park": "公园",
                 "jp_high_school": "高中",
                 "jp_university": "大学",
@@ -197,7 +196,6 @@
                 "jp_ranch": "牧场"
             },
             "en-us": {
-                "world_jp_shopping_street": "Shopping Street",
 
                 "ErAV_KiryuGumi_Office": "Kiryu-gumi Office",
                 "jp_park": "Park",

@@ -1,0 +1,194 @@
+{
+    "_doc": "Host faction for the shopping mall's shared physical floor (floor_jp_shopping_street, see floor.json in this folder). Owns the floor and its entrance room; the 7 shop rooms on that same floor are reassigned to their own factions via each room's subfactionOwnerOverwrite.",
+
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "map_jp_shopping_street",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_shopping_street",
+                "setPrivateRoomOwner": true,
+                "mainExit": { "roomID": "jp_shopping_street_entrance", "exitCost": 5 },
+                "floors": [
+                    { "ID": "floor_jp_shopping_street", "nameOverwrite": "jp_shopping_street" }
+                ],
+                "mealHours": [],
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [""],
+                "workHours": [],
+                "workAssignment": []
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_shopping_street",
+                "imagePath": "JP_ShoppingStreet/mall_directory.jpg",
+                "floorWidth": 1390,
+                "floorHeight": 729,
+                "AnchorType": "TopLeft",
+                "mapExit": "jp_shopping_street_entrance",
+                "rooms": [
+                    {
+                        "ID": "jp_shopping_street_entrance",
+                        "displayName": "jp_shopping_street_entrance_displayName",
+                        "offsetX": 427,
+                        "offsetY": 191,
+                        "connects": [ ],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "hallway_1",
+                        "displayName": "hallway",
+                        "offsetX": 571, "offsetY": 287,
+                        "connects": [ 
+                            { "ID": "jp_shopping_street_entrance", "cost": 1.0 }
+                        ],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "hallway_2",
+                        "displayName": "hallway",
+                        "offsetX": 995, "offsetY": 473,
+                        "connects": [ 
+                            { "ID": "hallway_1", "cost": 1.0 }
+                        ],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "hallway_3",
+                        "displayName": "hallway",
+                        "offsetX": 702, "offsetY": 612,
+                        "connects": [
+                            { "ID": "hallway_2", "cost": 1.0 }
+                         ],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "hallway_4",
+                        "displayName": "hallway",
+                        "offsetX": 279, "offsetY": 399,
+                        "connects": [ 
+                            { "ID": "hallway_3", "cost": 1.0 },
+                            { "ID": "hallway_1", "cost": 1.0 }],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "clothing_room",
+                        "displayName": "jp_mall_clothing_room_displayName",
+                        "offsetX": 689,
+                        "offsetY": 495,
+                        "subfactionOwnerOverwrite": "jp_mall_clothing",
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "connects": [ 
+                            { "ID": "hallway_3", "cost": 1.0 }],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "cinema_room",
+                        "displayName": "jp_mall_cinema_room_displayName",
+                        "offsetX": 940,
+                        "offsetY": 286,
+                        "subfactionOwnerOverwrite": "jp_mall_cinema",
+                        "connects": [     
+                            { "ID": "hallway_1", "cost": 1.0 },
+                            { "ID": "hallway_2", "cost": 1.0 }                   ],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "fastfood_counter",
+                        "displayName": "jp_mall_fastfood_room_displayName",
+                        "offsetX": 594,
+                        "offsetY": 354,
+                        "subfactionOwnerOverwrite": "jp_mall_fastfood",
+                        "connects": [   
+                            { "ID": "hallway_1", "cost": 1.0 }                    
+                        ],
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "electronics_room",
+                        "displayName": "jp_mall_electronics_room_displayName",
+                        "offsetX": 1037,
+                        "offsetY": 564,
+                        "subfactionOwnerOverwrite": "jp_mall_electronics",
+                        "connects": [    
+                            { "ID": "hallway_2", "cost": 1.0 }                     ],
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "bookstore_room",
+                        "displayName": "jp_mall_bookstore_room_displayName",
+                        "offsetX": 647,
+                        "offsetY": 656,
+                        "subfactionOwnerOverwrite": "jp_mall_bookstore",
+                        "connects": [    
+                            { "ID": "hallway_3", "cost": 1.0 }                     ],
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "generalgoods_room",
+                        "displayName": "jp_mall_general_goods_room_displayName",
+                        "offsetX": 245,
+                        "offsetY": 294,
+                        "subfactionOwnerOverwrite": "jp_mall_general_goods",
+                        "connects": [     
+                            { "ID": "hallway_4", "cost": 1.0 }                     ],
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "sportswear_room",
+                        "displayName": "jp_mall_sportswear_room_displayName",
+                        "offsetX": 662,
+                        "offsetY": 145,
+                        "subfactionOwnerOverwrite": "jp_mall_sportswear",
+                        "connects": [    
+                            { "ID": "hallway_1", "cost": 1.0 }                    ],
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    }
+                ]
+            }
+        ]
+    },
+    "Furnitures":
+    {
+        "list":
+        [
+            {
+                "ID":"furniture_marker_store_trade",
+                "displayName":"frontdesk",
+                "recipe":[],
+                "furnitureSize":2,
+                "givesJob": [ { "comTags":["furniture","retailTrade"] } ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_shopping_street_entrance_displayName": "商店街入口"
+            },
+            "en-us": {
+                "jp_shopping_street_entrance_displayName": "Shopping Street Entrance"
+            }
+        }
+    }
+}
