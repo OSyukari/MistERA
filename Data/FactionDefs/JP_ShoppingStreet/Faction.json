@@ -4,10 +4,9 @@
     "MapPlans": {
         "factionInit": [
             {
-                "ID": "map_jp_shopping_street",
+                "ID": "jp_shopping_street",
                 "z_rotation": 0.0,
-                "initializeFaction": "jp_shopping_street",
-                "setPrivateRoomOwner": true,
+                "setPrivateRoomOwner": false,
                 "mainExit": { "roomID": "jp_shopping_street_entrance", "exitCost": 5 },
                 "floors": [
                     { "ID": "floor_jp_shopping_street", "nameOverwrite": "jp_shopping_street" }
@@ -18,6 +17,241 @@
                 "managerBaseIDs": [""],
                 "workHours": [],
                 "workAssignment": []
+            },
+            {
+                "ID": "jp_mall_sportswear",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_sportswear",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "sportswear_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            },
+            {
+                "ID": "jp_mall_fastfood",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_fastfood",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "fastfood_counter",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            },
+            {
+                "ID": "jp_mall_electronics",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_electronics",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "electronics_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            },
+            {
+                "ID": "jp_mall_bookstore",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_bookstore",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "bookstore_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            },
+            {
+                "ID": "jp_mall_cinema",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_cinema",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "cinema_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            },
+            {
+                "ID": "jp_mall_clothing",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_clothing",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "clothing_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            },
+            {
+                "ID": "jp_mall_furniture",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_furniture",
+                "setPrivateRoomOwner": true,
+                "mainExit": {
+                    "roomID": "furniture_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+                "salesInventory": [],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+            },
+            {
+                "ID": "jp_mall_general_goods",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_mall_general_goods",
+                "setPrivateRoomOwner": false,
+                "mainExit": {
+                    "roomID": "generalgoods_room",
+                    "exitCost": 5
+                },
+                "floors": [],
+                "mealHours": [],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "copied from JP_CovenienceStore/Faction.json (SunMart)",
+                "salesInventory": [
+                    {
+                        "matchByTags": [
+                            "industrial",
+                            "rarity_common"
+                        ]
+                    },
+                    {
+                        "matchByTags": [
+                            "consumable",
+                            "industrial",
+                            "rarity_common"
+                        ]
+                    },
+                    {
+                        "matchByTags": [
+                            "videogame",
+                            "industrial",
+                            "rarity_common"
+                        ]
+                    },
+                    {
+                        "matchByTags": [
+                            "moviecd",
+                            "industrial",
+                            "rarity_common"
+                        ]
+                    },
+                    {
+                        "matchByTags": [
+                            "paperbook",
+                            "industrial",
+                            "rarity_common"
+                        ]
+                    },
+                    {
+                        "matchByID": "raw_rice",
+                        "nameOverwrite": "jp_convenience_store_rice_bag_5kg",
+                        "itemCount": 5000,
+                        "countOverride": true
+                    },
+                    {
+                        "matchByID": "currency_pyroxene",
+                        "nameOverwrite": "jp_convenience_store_pyroxene_4800",
+                        "itemCount": 4800,
+                        "countOverride": true
+                    },
+                    {
+                        "matchByID": "consumable_drug_sleepingpill",
+                        "nameOverwrite": "jp_convenience_store_otcsleepingpills_6pack",
+                        "itemCount": 6,
+                        "countOverride": true
+                    },
+                    {
+                        "matchByID": "consumable_alcohol_beer",
+                        "nameOverwrite": "jp_convenience_store_beer_6pack",
+                        "itemCount": 6,
+                        "countOverride": true
+                    }
+                ],
+                "workModules": [],
+                "managerBaseIDs": [
+                    ""
+                ],
+                "workHours": [],
+                "workAssignment": [],
+                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
             }
         ],
         "floorPlans": [
@@ -31,7 +265,7 @@
                 "rooms": [
                     {
                         "ID": "jp_shopping_street_entrance",
-                        "displayName": "jp_shopping_street_entrance_displayName",
+                        "displayName": "jp_shopping_street_entrance",
                         "offsetX": 427,
                         "offsetY": 191,
                         "connects": [ ],
@@ -40,7 +274,7 @@
                     },
                     {
                         "ID": "hallway_1",
-                        "displayName": "hallway",
+                        "displayName": "map_hallway",
                         "offsetX": 571, "offsetY": 287,
                         "connects": [ 
                             { "ID": "jp_shopping_street_entrance", "cost": 1.0 }
@@ -50,7 +284,7 @@
                     },
                     {
                         "ID": "hallway_2",
-                        "displayName": "hallway",
+                        "displayName": "map_hallway",
                         "offsetX": 995, "offsetY": 473,
                         "connects": [ 
                             { "ID": "hallway_1", "cost": 1.0 }
@@ -60,7 +294,7 @@
                     },
                     {
                         "ID": "hallway_3",
-                        "displayName": "hallway",
+                        "displayName": "map_hallway",
                         "offsetX": 702, "offsetY": 612,
                         "connects": [
                             { "ID": "hallway_2", "cost": 1.0 }
@@ -70,7 +304,7 @@
                     },
                     {
                         "ID": "hallway_4",
-                        "displayName": "hallway",
+                        "displayName": "map_hallway",
                         "offsetX": 279, "offsetY": 399,
                         "connects": [ 
                             { "ID": "hallway_3", "cost": 1.0 },
@@ -80,7 +314,7 @@
                     },
                     {
                         "ID": "clothing_room",
-                        "displayName": "jp_mall_clothing_room_displayName",
+                        "displayName": "jp_mall_clothing_room",
                         "offsetX": 689,
                         "offsetY": 495,
                         "subfactionOwnerOverwrite": "jp_mall_clothing",
@@ -92,7 +326,7 @@
                     },
                     {
                         "ID": "cinema_room",
-                        "displayName": "jp_mall_cinema_room_displayName",
+                        "displayName": "jp_mall_cinema_room",
                         "offsetX": 940,
                         "offsetY": 286,
                         "subfactionOwnerOverwrite": "jp_mall_cinema",
@@ -104,7 +338,7 @@
                     },
                     {
                         "ID": "fastfood_counter",
-                        "displayName": "jp_mall_fastfood_room_displayName",
+                        "displayName": "jp_mall_fastfood_room",
                         "offsetX": 594,
                         "offsetY": 354,
                         "subfactionOwnerOverwrite": "jp_mall_fastfood",
@@ -117,10 +351,22 @@
                     },
                     {
                         "ID": "electronics_room",
-                        "displayName": "jp_mall_electronics_room_displayName",
+                        "displayName": "jp_mall_electronics_room",
+                        "offsetX": 507,
+                        "offsetY": 602,
+                        "subfactionOwnerOverwrite": "jp_mall_electronics",
+                        "connects": [    
+                            { "ID": "hallway_3", "cost": 1.0 }                     ],
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID": "furniture_room",
+                        "displayName": "jp_mall_furniture",
                         "offsetX": 1037,
                         "offsetY": 564,
-                        "subfactionOwnerOverwrite": "jp_mall_electronics",
+                        "subfactionOwnerOverwrite": "jp_mall_furniture",
                         "connects": [    
                             { "ID": "hallway_2", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
@@ -129,7 +375,7 @@
                     },
                     {
                         "ID": "bookstore_room",
-                        "displayName": "jp_mall_bookstore_room_displayName",
+                        "displayName": "jp_mall_bookstore_room",
                         "offsetX": 647,
                         "offsetY": 656,
                         "subfactionOwnerOverwrite": "jp_mall_bookstore",
@@ -141,7 +387,7 @@
                     },
                     {
                         "ID": "generalgoods_room",
-                        "displayName": "jp_mall_general_goods_room_displayName",
+                        "displayName": "jp_mall_general_goods_room",
                         "offsetX": 245,
                         "offsetY": 294,
                         "subfactionOwnerOverwrite": "jp_mall_general_goods",
@@ -153,7 +399,7 @@
                     },
                     {
                         "ID": "sportswear_room",
-                        "displayName": "jp_mall_sportswear_room_displayName",
+                        "displayName": "jp_mall_sportswear_room",
                         "offsetX": 662,
                         "offsetY": 145,
                         "subfactionOwnerOverwrite": "jp_mall_sportswear",
@@ -184,10 +430,25 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "jp_shopping_street_entrance_displayName": "商店街入口"
+                "jp_shopping_street_entrance": "商店街入口",
+                "jp_mall_sportswear_room": "运动用品店",
+                "jp_mall_general_goods_room": "百货杂货",
+                "jp_mall_fastfood_room": "快餐店",
+                "jp_mall_electronics_room": "电器店",
+                "jp_mall_clothing_room": "服装店",
+                "jp_mall_cinema_room": "电影院",
+                "jp_mall_bookstore_room": "书店",
+                "jp_mall_furniture":"家具店"
             },
             "en-us": {
-                "jp_shopping_street_entrance_displayName": "Shopping Street Entrance"
+                "jp_shopping_street_entrance": "Shopping Street Entrance",
+                "jp_mall_sportswear_room": "Sportswear Store",
+                "jp_mall_general_goods_room": "General Goods",
+                "jp_mall_fastfood_room": "Fast Food Counter",
+                "jp_mall_electronics_room": "Electronics Store",
+                "jp_mall_clothing_room": "Clothing Store",
+                "jp_mall_cinema_room": "Cinema",
+                "jp_mall_bookstore_room": "Bookstore"
             }
         }
     }

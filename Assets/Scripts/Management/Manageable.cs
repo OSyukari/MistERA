@@ -42,10 +42,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         var temp = scr_System_Serializer.current.GetByNameOrID_Item_Base(itemID);
         if (temp != null) Currency = temp;
     }
-    protected virtual bool isManageableHours(int hour)
-    {
-        return false;
-    }
+
 
     [JsonProperty] protected int activeHoursStart = 0;
     [JsonProperty] protected int activeHoursEnd   = 0;
@@ -59,6 +56,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
             return _activeHoursCache;
         }
     }
+
+    [JsonProperty]
+    protected List<string> factionInventoryTracksTag = new List<string>();
+
 
     [JsonIgnore] 
     public List<int> ActiveHours { get { return ActiveHoursCache; } }
@@ -110,7 +111,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 c.FactionManager.UpdateSchedule(ref debugmsg);
             }
         }
-        Debug.Log($"Faction {this.FactionDisplayName} active hours changed!\n{String.Join("\n", debugmsg)}");
+        //Debug.Log($"Faction {this.FactionDisplayName} active hours changed!\n{String.Join("\n", debugmsg)}");
     }
 
     [JsonIgnore] public bool IsAlwaysActive
@@ -219,9 +220,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
         // whose rooms arrive later via Room_Base.factionOwnerOverwrite, e.g. a mall shop on a shared floor)
         // may have SetMainExit called before its room is actually attached. Caching a negative result here
         // would lock MainExit to null forever once the room does show up.
-        if (mainExit_cache == null && mainExit != null && mainExit.roomID != "")
+        if (mainExit_cache == null && mainExit != null && mainExit.roomID != "" && ManagedRooms != null)
         {
-            mainExit_cache = ManagedRooms.Values.ToList().Find(x => x.Base.ID == mainExit.roomID);
+            foreach(var kvp in ManagedRooms)
+            {
+                if (kvp.Value == null) continue;
+                if (kvp.Value.Base == null) continue;
+                if (kvp.Value.Base.ID != mainExit.roomID) continue;
+                mainExit_cache = kvp.Value;
+                break;
+            }
         }
         return mainExit_cache;
     } }
@@ -257,6 +265,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public bool isManagedChara(int chararef)
     {
         return charaGuestStatus.ContainsKey(chararef);
+    }
+
+
+    public void RemoveManagedRoom(int roomRefID)
+    {
+        managedRoomRefs.Remove(roomRefID);
+        roomRefsCache = null;
+        managedRoomOwnersRefs = null;
     }
 
     public bool isVisitor(int charaRef)
@@ -448,6 +464,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public void NotifyFactionMemberChange()
     {
         this.charaMaintenanceCostCache = null;
+        this.Inventory?.InvalidateTracker();
     }
 
 
@@ -1007,18 +1024,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         foreach (Room_Instance ri in floor.rooms)
         {
-            // per-room ownership override (e.g. mall shops sharing one physical floor) - the override
-            // faction is found-or-created on demand and takes the room instead of this (the floor's
-            // default owner). Safe regardless of ordering against Map_Instance/Floor_Instance.BuildPath():
-            // those graphs are built purely from Room_Base.connects / MapPlan_Floor.connectTo and never
-            // read FactionOwner, so they don't care which faction ends up owning a room or when.
-            
-                AddToFaction(ri, addAllCharaToFaction, setRoomOwnership);
+            if (managedRoomRefs.ContainsKey(ri.RefID)) continue;
+            AddToFaction(ri, addAllCharaToFaction, setRoomOwnership);
             
         }
     }
 
-    protected void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
+    public void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
     {
         this.managedRoomRefs.Add(room.RefID, new List<int>());
         this.roomRefsCache = null;
@@ -1158,8 +1170,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public void RemoveFromFaction(Character_Trainable c)
     {
-        charaSchedules.Remove(c.RefID);
-        charaGuestStatus.Remove(c.RefID);
+        if (c == null)
+        {
+            Debug.LogError("Error RemoveFromFaction null");
+            return;
+        }
+        if (charaSchedules != null) charaSchedules.Remove(c.RefID);
+        else Debug.LogError($"charaSchedules null when RemoveFromFaction {c.FirstName}");
+        if (charaGuestStatus != null) charaGuestStatus.Remove(c.RefID);
+        else Debug.LogError($"charaGuestStatus null when RemoveFromFaction {c.FirstName}");
         managedChara = null;
         _managerRefs = null;
 

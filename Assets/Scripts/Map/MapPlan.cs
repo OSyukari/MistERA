@@ -91,10 +91,6 @@ public class MapPlan
     public List<MapPlan_Floor> floors = new List<MapPlan_Floor>();
     public Map_MainExit mainExit = null;
 
-    /// <summary>
-    /// Default faction
-    /// </summary>
-    public string initializeFaction = "";
     public bool setPrivateRoomOwner = false;
 
     public int activeHoursStart = 0;

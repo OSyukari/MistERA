@@ -1046,6 +1046,148 @@ public static class EventUtility
 
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.TransferItemByKey:
+                if (exec.arguments.Count >= 4 && exec.arguments[2] != "" && int.TryParse(exec.arguments[3], out var transferCount) && transferCount > 0)
+                {
+                    I_IsJobGiver fromFaction = null, toFaction = null;
+
+                    switch (exec.arguments[0])
+                    {
+                        case "self":
+                            if (owner.Self != null)
+                            {
+                                fromFaction = owner.Self.FactionManager.CurrentActiveParty != null ? owner.Self.FactionManager.CurrentActiveParty : owner.Self.FactionManager.CurrentlyActiveFaction;
+                                if (fromFaction == null) fromFaction = owner.Self.FactionManager.Faction_Home;
+                            }
+                            break;
+                        default:
+                            if (owner.Targets.ContainsKey(exec.arguments[0])) fromFaction = UtilityEX.GetActiveFactionFrom(owner.Targets[exec.arguments[0]]);
+                            break;
+                    }
+
+                    switch (exec.arguments[1])
+                    {
+                        case "self":
+                            if (owner.Self != null)
+                            {
+                                toFaction = owner.Self.FactionManager.CurrentActiveParty != null ? owner.Self.FactionManager.CurrentActiveParty : owner.Self.FactionManager.CurrentlyActiveFaction;
+                                if (toFaction == null) toFaction = owner.Self.FactionManager.Faction_Home;
+                            }
+                            break;
+                        default:
+                            if (owner.Targets.ContainsKey(exec.arguments[1])) toFaction = UtilityEX.GetActiveFactionFrom(owner.Targets[exec.arguments[1]]);
+                            break;
+                    }
+
+                    if (fromFaction == null || toFaction == null) return false;
+
+                    // mirrors Manageable.TradeOrder.ProcessOrder: a nonplayer faction acts as an infinite
+                    // source (fresh item instantiated) and sink (item just dumped, never really tracked) via the Recycler
+                    FactionInventory recycler = scr_System_CampaignManager.current.Recycler;
+                    FactionInventory source = fromFaction.isPlayerFaction ? fromFaction.Inventory : recycler;
+                    FactionInventory target = toFaction.isPlayerFaction && toFaction != fromFaction ? toFaction.Inventory : recycler;
+
+                    if (source != recycler && !source.HasRequiredItems(new ItemEntry(exec.arguments[2], "", transferCount, false), 1)) return false;
+
+                    if (source == recycler) target.AddItem(WorldManager.Instantiate(exec.arguments[2], "", transferCount));
+                    else target.AddItem(source.RemoveItem(exec.arguments[2], transferCount));
+
+                    if (target != recycler && toFaction.Faction != null) toFaction.Faction.DailyReport.AddTradeRecord(exec.arguments[2], transferCount);
+                    if (source != recycler && source != target && fromFaction.Faction != null) fromFaction.Faction.DailyReport.AddTradeRecord(exec.arguments[2], -transferCount);
+
+                    var entryPrint = new ItemEntry(exec.arguments[2], "", transferCount, false).Print;
+
+                    if (target != recycler)
+                    {
+                        var receiverText = source != recycler
+                            ? LocalizeDictionary.QueryThenParse("event_transferItem_gainFrom").Replace("$entry$", entryPrint).Replace("$faction$", fromFaction.FactionDisplayName)
+                            : LocalizeDictionary.QueryThenParse("event_transferItem_gain").Replace("$entry$", entryPrint);
+                        if (toFaction.Faction != null) toFaction.Faction.DailyReport.AddMiscRecord(receiverText, new List<string>());
+                    }
+
+                    if (source != recycler && source != target)
+                    {
+                        var giverText = target != recycler
+                            ? LocalizeDictionary.QueryThenParse("event_transferItem_giveTo").Replace("$entry$", entryPrint).Replace("$faction$", toFaction.FactionDisplayName)
+                            : LocalizeDictionary.QueryThenParse("event_transferItem_loss").Replace("$entry$", entryPrint);
+                        if (fromFaction.Faction != null) fromFaction.Faction.DailyReport.AddMiscRecord(giverText, new List<string>());
+                    }
+
+                    if (exec.arguments.Count >= 5 && bool.TryParse(exec.arguments[4], out var lg2) && lg2 && transferCount != 0)
+                    {
+                        // one screen message only, from a narrator perspective (unlike the per-faction report entries above)
+                        string message = source != recycler && target != recycler
+                            ? LocalizeDictionary.QueryThenParse("event_transferItem_screen_giveTo").Replace("$entry$", entryPrint).Replace("$fromFaction$", fromFaction.FactionDisplayName).Replace("$toFaction$", toFaction.FactionDisplayName)
+                            : source == recycler
+                                ? LocalizeDictionary.QueryThenParse("event_transferItem_screen_gain").Replace("$entry$", entryPrint).Replace("$toFaction$", toFaction.FactionDisplayName)
+                                : LocalizeDictionary.QueryThenParse("event_transferItem_screen_loss").Replace("$entry$", entryPrint).Replace("$fromFaction$", fromFaction.FactionDisplayName);
+
+                        var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
+                        owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                    }
+
+                    return true;
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.TransferItemByFactionID:
+                if (exec.arguments.Count >= 4 && exec.arguments[2] != "" && int.TryParse(exec.arguments[3], out var transferCount_byID) && transferCount_byID > 0)
+                {
+                    Manageable fromFactionID = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[0]);
+                    Manageable toFactionID = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
+
+                    if (fromFactionID == null || toFactionID == null) return false;
+
+                    // mirrors Manageable.TradeOrder.ProcessOrder: a nonplayer faction acts as an infinite
+                    // source (fresh item instantiated) and sink (item just dumped, never really tracked) via the Recycler
+                    FactionInventory recycler = scr_System_CampaignManager.current.Recycler;
+                    FactionInventory source = fromFactionID.isPlayerFaction ? fromFactionID.Inventory : recycler;
+                    FactionInventory target = toFactionID.isPlayerFaction && toFactionID != fromFactionID ? toFactionID.Inventory : recycler;
+
+                    if (source != recycler && !source.HasRequiredItems(new ItemEntry(exec.arguments[2], "", transferCount_byID, false), 1)) return false;
+
+                    if (source == recycler) target.AddItem(WorldManager.Instantiate(exec.arguments[2], "", transferCount_byID));
+                    else target.AddItem(source.RemoveItem(exec.arguments[2], transferCount_byID));
+
+                    if (target != recycler) toFactionID.DailyReport.AddTradeRecord(exec.arguments[2], transferCount_byID);
+                    if (source != recycler && source != target) fromFactionID.DailyReport.AddTradeRecord(exec.arguments[2], -transferCount_byID);
+
+                    var entryPrint = new ItemEntry(exec.arguments[2], "", transferCount_byID, false).Print;
+
+                    if (target != recycler)
+                    {
+                        var receiverText = source != recycler
+                            ? LocalizeDictionary.QueryThenParse("event_transferItem_gainFrom").Replace("$entry$", entryPrint).Replace("$faction$", fromFactionID.FactionDisplayName)
+                            : LocalizeDictionary.QueryThenParse("event_transferItem_gain").Replace("$entry$", entryPrint);
+                        toFactionID.DailyReport.AddMiscRecord(receiverText, new List<string>());
+                    }
+
+                    if (source != recycler && source != target)
+                    {
+                        var giverText = target != recycler
+                            ? LocalizeDictionary.QueryThenParse("event_transferItem_giveTo").Replace("$entry$", entryPrint).Replace("$faction$", toFactionID.FactionDisplayName)
+                            : LocalizeDictionary.QueryThenParse("event_transferItem_loss").Replace("$entry$", entryPrint);
+                        fromFactionID.DailyReport.AddMiscRecord(giverText, new List<string>());
+                    }
+
+                    if (exec.arguments.Count >= 5 && bool.TryParse(exec.arguments[4], out var lg2) && lg2)
+                    {
+                        // one screen message only, from a narrator perspective (unlike the per-faction report entries above)
+                        // no owner.Self here, so there is no natural room to record into - log directly, visible to all
+                        string message = source != recycler && target != recycler
+                            ? LocalizeDictionary.QueryThenParse("event_transferItem_screen_giveTo").Replace("$entry$", entryPrint).Replace("$fromFaction$", fromFactionID.FactionDisplayName).Replace("$toFaction$", toFactionID.FactionDisplayName)
+                            : source == recycler
+                                ? LocalizeDictionary.QueryThenParse("event_transferItem_screen_gain").Replace("$entry$", entryPrint).Replace("$toFaction$", toFactionID.FactionDisplayName)
+                                : LocalizeDictionary.QueryThenParse("event_transferItem_screen_loss").Replace("$entry$", entryPrint).Replace("$fromFaction$", fromFactionID.FactionDisplayName);
+
+                        var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
+                        owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                    }
+
+                    return true;
+                }
+                return false;
             case Event.EventEntry.ExecutionType.InterruptAP:
                 if (exec.arguments.Count < 3)
                 {

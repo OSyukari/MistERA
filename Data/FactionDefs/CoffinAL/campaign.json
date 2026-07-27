@@ -3,9 +3,8 @@
         "factionInit":
         [
             {
-                "ID":"map_coffinanl",
+                "ID":"CoffinAnL_Household",
                 "z_rotation":0.0,
-                "initializeFaction":"CoffinAnL_Household",
                 "setPrivateRoomOwner":true,
                 "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 5 },
                 "floors":[

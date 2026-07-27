@@ -4,9 +4,8 @@
         "factionInit":
         [
             {
-                "ID":"map_jp_convenience_store",
+                "ID":"jp_convenience_store_SunMart",
                 "z_rotation":0.0,
-                "initializeFaction":"jp_convenience_store",
                 "setPrivateRoomOwner":true,
                 "mainExit": { "roomID": "store_1F_entrance", "exitCost": 5 },
                 "floors":

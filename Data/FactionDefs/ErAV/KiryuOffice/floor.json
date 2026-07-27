@@ -10,6 +10,14 @@
                 "floorHeight": 742,
                 "AnchorType": "TopLeft",
                 "mapExit": "erav_kiryu_office_frontDoor",
+                "exits":[
+                    {
+                        "ID":"South",
+                        "connectedRoom": "erav_kiryu_office_frontDoor",
+                        "offsetX":415.5,
+                        "offsetY":782
+                    }
+                ],
                 "rooms": [
                     {
                         "ID": "erav_kiryu_office_frontDoor",

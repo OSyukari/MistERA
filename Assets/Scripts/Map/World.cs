@@ -84,6 +84,7 @@ public class WorldPlan
     /// </summary>
     public Dictionary<string, string> initializeFactions = new Dictionary<string, string>();
 
+    public List<NPCInit> npcInit = new List<NPCInit>();
     // how to check node connectivity?
     // build graph is not necessary
 

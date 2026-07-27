@@ -61,7 +61,15 @@
 
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "br_agree", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "serious" ], "line": "event_OpeningErAV_A01" },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_OpeningErAV_A03b" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_A03c" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "portraitRefKey": "",
+                        "line": "event_OpeningErAV_A03c",
+                        "Results":[
+                            { "Type":"TransferItemByFactionID", "arguments":["ErAV_KiryuGumi","ErAV_miyama_Household","item_recording_camera","1", "true"] },
+                            { "Type":"TransferItemByFactionID", "arguments":["ErAV_KiryuGumi","ErAV_miyama_Household","item_recording_camera_Tape","3","true"] }
+                        ]
+                    },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "event_OpeningErAV_A03d" },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_A04" },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "sorry", "sad" ], "line": "event_OpeningErAV_A06" },

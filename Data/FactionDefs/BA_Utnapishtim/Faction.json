@@ -26,7 +26,7 @@
                         },
                         {
                             "initClass":"campaign_init_map_extra",
-                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
+                            "initArguments":["jp_convenience_store_SunMart", ""]
                         }
                     ]
                 },
@@ -49,24 +49,16 @@
                             "initArguments":["world_kivotos","true"]
                         },
                         {
+                            "initClass":"campaign_init_world",
+                            "initArguments":["world_kivotos_debug","false"]
+                        },
+                        {
                             "initClass":"campaign_init_map_extra",
-                            "initArguments":["map_jp_convenience_store", "jp_convenience_store_SunMart"]
+                            "initArguments":["jp_convenience_store_SunMart", ""]
                         },
                         {
                             "initClass":"campaign_init_map_extra",
                             "initArguments":["map_debug_store", "jp_debug_store"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Cinderella","External","Prisoner"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Campaign1_Nikke_Dorothy","External","Prisoner"]
-                        },
-                        {
-                            "initClass":"campaign_init_factionVisitor",
-                            "initArguments":["Utnapishtim","medbay_isolation_room_1","Wuwa_Aemeath","External","Prisoner"]
                         }
                     ]
                 }
@@ -184,18 +176,111 @@
     "playerInitLocationFaction":"Utnapishtim",
     "initializeFactions":
     {
-        "Utnapishtim":"map_bluearchive_utnapishtim"
+        "Utnapishtim":"Utnapishtim"
     },
     "doors":
-    [ ]
+    [ ],
+    "npcInit":
+    [
+        {
+            "initID":"init_utnapishtim_ako",
+            "actorBaseID":"Campaign1_Char_Ako",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite1", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_ayane",
+            "actorBaseID":"Campaign1_Char_Ayane",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite2", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_hanako",
+            "actorBaseID":"Campaign1_Char_Hanako",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite3", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_kayoko",
+            "actorBaseID":"Campaign1_Char_Kayoko",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite4", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_ayumu",
+            "actorBaseID":"Campaign1_Char_Ayumu",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite5", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_momoka",
+            "actorBaseID":"Campaign1_Char_Momoka",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite6", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_himari",
+            "actorBaseID":"Campaign1_Char_Himari",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite7", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_yuuka",
+            "actorBaseID":"Campaign1_Char_Yuuka",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite8", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_rin",
+            "actorBaseID":"Campaign1_Char_Rin",
+            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_exec_suite_2", "setRoomOwnership":true },
+            "TempHomefaction":null,
+            "Workfactions":[]
+        }
+    ]
+},
+{
+    "_doc": "debug-only companion world for campaign1_start_debug: no factions/floors of its own, just npcInit for the 3 debug prisoners. Loaded via a 2nd campaign_init_world call after world_kivotos, so Utnapishtim (and its medbay) already exist by the time these spawn.",
+    "worldID":"world_kivotos_debug",
+    "npcInit":
+    [
+        {
+            "initID":"init_utnapishtim_debug_cinderella",
+            "actorBaseID":"Campaign1_Nikke_Cinderella",
+            "Homefaction": { "factionID":"External" },
+            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"Prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_debug_dorothy",
+            "actorBaseID":"Campaign1_Nikke_Dorothy",
+            "Homefaction": { "factionID":"External" },
+            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"Prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
+            "Workfactions":[]
+        },
+        {
+            "initID":"init_utnapishtim_debug_aemeath",
+            "actorBaseID":"Wuwa_Aemeath",
+            "Homefaction": { "factionID":"External" },
+            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"Prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
+            "Workfactions":[]
+        }
+    ]
 }
         ],
         "factionInit":
         [
             {
-                "ID":"map_bluearchive_utnapishtim",
+                "ID":"Utnapishtim",
                 "z_rotation":0.0,
-                "initializeFaction":"Utnapishtim",
                 "setPrivateRoomOwner":true,
                 "mainExit": { "roomID": "bridge_captainsroom", "exitCost": 5 },
                 "floors":[
@@ -209,44 +294,8 @@
                         "nameOverwrite":"campaign1_map_utnapishtim_living",
                         "Additional":[
                             {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite1", "charaBaseID": [ "Campaign1_Char_Ako" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite2", "charaBaseID": [ "Campaign1_Char_Ayane" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite3", "charaBaseID": [ "Campaign1_Char_Hanako" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite4", "charaBaseID": [ "Campaign1_Char_Kayoko" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite5", "charaBaseID": [ "Campaign1_Char_Ayumu" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite6", "charaBaseID": [ "Campaign1_Char_Momoka" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite7", "charaBaseID": [ "Campaign1_Char_Himari" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_singlesuite8", "charaBaseID": [ "Campaign1_Char_Yuuka" ] }
-                            },
-                            {
                                 "addClass":"map_init_playerLocation",
                                 "map_init_playerLocation":{ "roomID":"lounge2_exec_suite_1" }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"lounge2_exec_suite_2", "charaBaseID": [ "Campaign1_Char_Rin" ] }
                             }
                         ],
                         "connectTo":

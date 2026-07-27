@@ -161,8 +161,8 @@ public class initScript_ManagementOverview : MonoBehaviour
         //foreach (KeyValuePair<string, int> kvp in targetFaction.GetMaintenanceCost_Total) values.Add(kvp.Key + kvp.Value.ToString("+0;-#"));
         factionResource.text = factionRes.Replace("$resources$", String.Join(" | ", values));  // targetFaction.GetMaintenanceCost_Total
 
-        activeHoursBegin.self_inputfield.text = m is Manageable_HomeFaction ? $"{(m as Manageable_HomeFaction).DayStartHour}" : "none";
-        activeHoursEnd.self_inputfield.text = m is Manageable_HomeFaction ? $"{(m as Manageable_HomeFaction).DayEndHour}" : "none";
+        activeHoursBegin.self_inputfield.text = $"{m.DayStartHour}";
+        activeHoursEnd.self_inputfield.text = $"{m.DayEndHour}";
 
         _activeHours_init = true;
 

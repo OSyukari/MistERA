@@ -437,6 +437,20 @@ public class Room_Instance: IDisposable, I_Disposable
 
     [JsonProperty] protected string factionOwnerRef = "";
     [JsonProperty] protected string factionOwnerPartyRef = "";
+
+    /// <summary>
+    /// Should only be called by map serialization rebuilt
+    /// </summary>
+    [JsonIgnore]
+    public string FactionOwnerRef
+    {
+        get
+        {
+            if (factionOwnerPartyRef != "") return factionOwnerPartyRef;
+            else return factionOwnerRef;
+        }
+    }
+
     protected I_IsJobGiver factionOwner = null;
     [JsonIgnore] public I_IsJobGiver FactionOwner 
     { 

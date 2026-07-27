@@ -74,8 +74,11 @@ public class Character_Factions
 
     public void ReEstablishParentData(Character_Trainable owner)
     {
-        this.ownerPointer = owner;
-        this.ownerRefID = owner.RefID;
+        if (this.ownerPointer == null && owner != null)
+        {
+            this.ownerPointer = owner;
+            this.ownerRefID = owner.RefID;
+        }
     }
 
     /// <summary>
@@ -86,7 +89,11 @@ public class Character_Factions
     {
         if (homeFactionID != FactionID_Home)
         {
-            if (Faction_Home != null) Faction_Home.RemoveFromFaction(Owner);
+            if (Faction_Home != null)
+            {
+                Faction_Home.RemoveFromFaction(Owner);
+                if (Owner == null) Debug.LogError($"Error SetHomeFaction Owner Null on [{ownerRefID}]");
+            }
             this.FactionID_Home = homeFactionID;
         }
         //Debug.Log("SetHomeFaction called on " + Owner.FirstName + " with arguments homeFactionID["+ homeFactionID+ "] isManager["+isManager+"]");
@@ -286,7 +293,7 @@ public class Character_Factions
         }
     }
 
-    public void AddWorkFaction(string factionID, bool isManager = false)
+    public void AddWorkFaction(string factionID, Manageable_GuestStatus status, bool sendEvent = true)
     {
         Manageable targetFaction = Factions_Work.Find(x => x.ID == factionID);
         if (targetFaction == null) targetFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
@@ -294,7 +301,7 @@ public class Character_Factions
         if (targetFaction == null) return;
         else
         {
-            targetFaction.AddToFaction(Owner, isManager ? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
+            targetFaction.AddToFaction(Owner, status, sendEvent);
             if (!Factions_Work.Contains(targetFaction))  this.Factions_Work.Add(targetFaction);
             if (!FactionIDs_Work.Contains(targetFaction.ID)) this.FactionIDs_Work.Add(targetFaction.ID);
         }
@@ -302,6 +309,9 @@ public class Character_Factions
         UpdateFactionPriorityList();
 
     }
+
+    public void AddWorkFaction(string factionID, bool isManager = false)
+        => AddWorkFaction(factionID, isManager ? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
     [JsonProperty] List<int> trackedPartyRef = new List<int>();
 
     public bool AddToPartyAsTemp(I_IsJobGiver party, Manageable_GuestStatus status, Manageable_GuestStatus homeStatus, bool isLock = false)

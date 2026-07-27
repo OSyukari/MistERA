@@ -197,6 +197,26 @@ public class FactionInventory : Inventory
 
     public List<string> tracksTag = new List<string>();
     private Dictionary<string, int> tracker_cache = null;
+
+    /// <summary>
+    /// tracksTag plus whatever tags the owning Manageable's members currently need (GetMaintenanceCost_Chara),
+    /// so the inventory tracks the right tags automatically as faction membership changes. Falls back to
+    /// tracksTag alone when the owner isn't a Manageable (e.g. FactionOwner.Faction is null).
+    /// </summary>
+    [JsonIgnore]
+    private List<string> TrackedTags
+    {
+        get
+        {
+            var owner = FactionOwner?.FactionOwnerRoot;
+            if (owner == null) return tracksTag;
+            var combined = new List<string>(tracksTag);
+            foreach (var tag in owner.GetMaintenanceCost_Chara().Keys) if (!combined.Contains(tag)) combined.Add(tag);
+            Utility.DistinctInPlace(combined);
+            return combined;
+        }
+    }
+
     [JsonIgnore]
     public Dictionary<string, int> tracker
     {
@@ -205,11 +225,19 @@ public class FactionInventory : Inventory
             if (tracker_cache == null)
             {
                 tracker_cache = new Dictionary<string, int>();
-                foreach (var i in tracksTag) if (!tracker_cache.ContainsKey(i)) tracker_cache.Add(i, this.GetItemCountByTag(i));
+                foreach (var i in TrackedTags) if (!tracker_cache.ContainsKey(i)) tracker_cache.Add(i, this.GetItemCountByTag(i));
             }
 
             return tracker_cache;
         }
+    }
+
+    /// <summary>
+    /// Call when the set of tags this inventory should track may have changed, e.g. faction membership changed.
+    /// </summary>
+    public void InvalidateTracker()
+    {
+        tracker_cache = null;
     }
 
     public override Item_Instance Split(Item_Instance item, int count)

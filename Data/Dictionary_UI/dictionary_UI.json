@@ -601,6 +601,15 @@
 "management_jobpost_payout_item":"$item$ x$count$",
 "management_schedule_box_none":"无预定",
 
+"event_transferItem_gain":"获得了$entry$",
+"event_transferItem_loss":"失去了$entry$",
+"event_transferItem_gainFrom":"从$faction$那得到了$entry$",
+"event_transferItem_giveTo":"将$entry$交给了$faction$",
+
+"event_transferItem_screen_giveTo":"$fromFaction$将$entry$交给了$toFaction$",
+"event_transferItem_screen_gain":"$toFaction$获得了$entry$",
+"event_transferItem_screen_loss":"$fromFaction$失去了$entry$",
+
 "management_setschedule_single":"",
 "management_setschedule_jobpost":"",
 "management_setschedule_jobpost_ext":"",

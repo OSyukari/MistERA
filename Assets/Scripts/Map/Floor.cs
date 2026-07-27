@@ -185,9 +185,29 @@ public class Floor_Instance : IDisposable, I_Disposable
 
 
 
-    public void SerializationRebuilt()
+    [JsonIgnore] private List<Room_Base> pendingRoomAdditions = new List<Room_Base>();
+    [JsonIgnore] private List<Room_Instance> pendingRoomRemovals = new List<Room_Instance>();
+
+    public void SerializationRebuilt(bool buildpath)
     {
-        //Debug.LogError("Floor SerializationRebuilt");
+        // PASS 1 (buildpath == false, scr_System_CampaignManager.LoadSerializable) runs before
+        // Factions/Jobs/Items/Characters are restored from the save. It may only DETECT drift between
+        // the live rooms and the current template here - not act on it:
+        //  - registering a new room's furniture/jobs here writes into Index_JobReferenceID, which gets
+        //    replaced by reference wholesale right after (Index_JobReferenceID = obj.Jobs), losing them;
+        //  - evacuating/unregistering a removed room here NREs, since RoomChara/Jobs resolve via
+        //    FindInstanceByID/FindJobInstanceByID against the still-cleared registries;
+        //  - removing the room from `rooms` here means Map_Instance.SerializationRebuilt's AddRoom loop
+        //    never registers it into Map.Rooms, so Job_Furniture.OnAfterDeserialize (which runs between
+        //    the two passes and resolves ParentRoom via Map.GetRoomByRef) NREs for any of its jobs.
+        // scr_System_CampaignManager.LoadSerializable calls ApplyPendingRoomChanges() once that data is
+        // wired up, strictly before calling SerializationRebuilt(true) - so by PASS 2 the room list must
+        // already be sound (checked below, not just assumed).
+        if (!buildpath && FloorBase != null)
+        {
+            pendingRoomRemovals = rooms.FindAll(x => x.Base == null);
+            pendingRoomAdditions = FloorBase.rooms.FindAll(rb => rooms.Find(x => x.Base != null && x.Base.ID == rb.ID) == null);
+        }
 
         foreach (var room in rooms)
         {
@@ -195,8 +215,92 @@ public class Floor_Instance : IDisposable, I_Disposable
             room.parentFloor = this;
         }
 
-        BuildPath();
+        if (buildpath)
+        {
+            if (pendingRoomAdditions.Count > 0 || pendingRoomRemovals.Count > 0)
+                Debug.LogError("Floor [" + displayName + "] entering final rebuild with unapplied room changes - ApplyPendingRoomChanges() was not called first.");
 
+            BuildPath();
+        }
+    }
+
+    /// <summary>
+    /// Performs the room additions/removals detected by SerializationRebuilt(false). Must run after
+    /// Factions/Jobs/Items/Characters are restored (and their OnAfterDeserialize() hooks have run) but
+    /// before SerializationRebuilt(true) - see scr_System_CampaignManager.LoadSerializable.
+    /// </summary>
+    public void ApplyPendingRoomChanges()
+    {
+        // Rooms deleted from the template: evacuate anyone inside, then tear the room down.
+        foreach (var ri in pendingRoomRemovals)
+        {
+            Manageable owner = ri.FactionOwner as Manageable;
+            Room_Instance destination;
+
+            if (owner == null)
+            {
+                // no faction to fall back on at all
+                destination = scr_System_CampaignManager.current.debugRoom;
+            }
+            else if (owner.MainExit == ri)
+            {
+                // the room being deleted IS the faction's current MainExit - see if the template still
+                // defines one (its roomID may have simply moved) before giving up.
+                var plan = scr_System_Serializer.current.GetByNameOrID_MapPlan(owner.mapPlanID);
+                if (plan != null && plan.mainExit != null) owner.SetMainExit(plan.mainExit);
+
+                destination = owner.MainExit;
+                if (destination == null || destination == ri)
+                {
+                    Debug.LogError("Floor [" + displayName + "] room [" + ri.RefID + "] was faction [" + owner.ID + "]'s MainExit, and the template no longer defines a resolvable replacement. Cannot safely relocate its occupants.");
+                    throw new Exception("Faction [" + owner.ID + "] has no resolvable MainExit after its MainExit room was removed from the floor template.");
+                }
+            }
+            else
+            {
+                // faction has a MainExit and it isn't the room being deleted; if the faction simply
+                // never had one configured, debugRoom is still the right fallback (unrelated to this removal).
+                destination = owner.MainExit;
+                if (destination == null) destination = scr_System_CampaignManager.current.debugRoom;
+            }
+
+            foreach (var chara in new List<Character_Trainable>(ri.RoomChara))
+                scr_System_CampaignManager.current.Map.MoveCharaTo(chara, destination);
+
+            owner?.RemoveManagedRoom(ri.RefID);
+            rooms.Remove(ri);
+            scr_System_CampaignManager.current.UnregisterRoom(ri.RefID);
+
+            Debug.Log("Floor [" + displayName + "] room [" + ri.RefID + "] (faction [" + (owner != null ? owner.ID : "none") + "]) removed from template, occupants moved to [" + destination.DisplayName + "]");
+        }
+        pendingRoomRemovals.Clear();
+
+        // Rooms added to the template: instantiate them and attach each to whichever faction owns this
+        // floor's other rooms (unwrapping one Manageable_Subfaction.Parent hop if the sibling picked
+        // happens to be a tenant, so AddToFaction's own subfactionOwnerOverwrite redirect parents any
+        // brand-new tenant subfaction correctly).
+        Manageable defaultOwner = null;
+        foreach (var ri in rooms)
+        {
+            var o = ri.FactionOwner as Manageable;
+            var sub = o as Manageable_Subfaction;
+            var candidate = sub != null ? sub.Parent : o;
+            if (candidate != null) { defaultOwner = candidate; break; }
+        }
+
+        foreach (var rb in pendingRoomAdditions)
+        {
+            Room_Instance ri = new Room_Instance(FloorBase, rb);
+            ri.parentFloor = this;
+            scr_System_CampaignManager.current.Register(ri);
+            rooms.Add(ri);
+
+            if (defaultOwner != null) defaultOwner.AddToFaction(ri);
+
+            var faction = ri.FactionOwner as Manageable;
+            Debug.Log("Floor [" + displayName + "] room [" + rb.ID + "] added to template, attached to faction [" + (faction != null ? faction.ID : "none") + "].");
+        }
+        pendingRoomAdditions.Clear();
     }
 
     /// <summary>

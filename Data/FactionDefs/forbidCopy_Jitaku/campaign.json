@@ -3,9 +3,8 @@
         "factionInit":
         [
             {
-                "ID":"map_jitaku_keibiin",
+                "ID":"Katsuragi_Household",
                 "z_rotation":0.0,
-                "initializeFaction":"Katsuragi_Household",
                 "setPrivateRoomOwner":true,
                 "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 5 },
                 "floors":[

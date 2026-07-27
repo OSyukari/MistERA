@@ -8,6 +8,14 @@
                 "floorHeight": 482,
                 "AnchorType": "TopLeft",
                 "mapExit": "4ldk_floor_1L_frontDoor",
+                "exits":[
+                    {
+                        "ID":"North",
+                        "connectedRoom": "4ldk_floor_1L_frontDoor",
+                        "offsetX":512.0,
+                        "offsetY":-40
+                    }
+                ],
                 "rooms": [
                     {
                         "ID": "4ldk_floor_1L_kitchen",

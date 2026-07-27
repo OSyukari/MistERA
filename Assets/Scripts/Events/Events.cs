@@ -501,6 +501,16 @@ public class Event : I_SerializationCallbackReceiver
 
             CheckRelationship,
 
+            /// <summary>
+            /// [from, to, itemID, count, bool logIntoEventMessage]<br/>
+            /// from/to are target scopeKeys (or "self"), resolved to the actor's active faction/party
+            /// </summary>
+            TransferItemByKey,
+
+            /// <summary>
+            /// [string fromFactionID, string toFactionID, string itemID, int count, bool logIntoEventMessage]
+            /// </summary>
+            TransferItemByFactionID,
 
             /// <summary>
             /// [target, basestringID]

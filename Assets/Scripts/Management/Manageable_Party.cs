@@ -962,7 +962,7 @@ public class Manageable_Party : I_IsJobGiver
 
     [JsonProperty] FactionInventory _inventory = null;
     public FactionInventory Inventory { get {
-            if (this._inventory == null) this._inventory = new FactionInventory(this, new List<string>() { "food_meal" });
+            if (this._inventory == null) this._inventory = new FactionInventory(this);
             return _inventory; } }
 
 

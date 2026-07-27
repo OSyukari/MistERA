@@ -282,7 +282,15 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         var block = Instantiate(prefab_FactionBlock);
         block.transform.SetParent(FactionList, false);
-        block.factionTitle.text = faction.FactionDisplayName;
+        if (faction.ManagedFloors.Count < 2)
+        {
+            block.factionTitle.gameObject.SetActive(false);
+        }
+        else
+        {
+            block.factionTitle.gameObject.SetActive(true);
+            block.factionTitle.text = faction.FactionDisplayName;
+        }
 
         factionBlocksByID[faction.FactionOwnerRoot.ID] = block;
 

@@ -1158,9 +1158,7 @@ public class Map_Instance
         if (commercialPactGraphs.ContainsKey(b.ID)) commercialPactGraphs[b.ID].Remove(a.ID);
     }
 
-    bool initialized = false;
-
-    public void SerializationRebuilt()
+    public void SerializationRebuilt(bool buildpath)
     {
         /*
          EVERYTHING THAT NEED REBUILT
@@ -1174,7 +1172,7 @@ public class Map_Instance
 
         foreach (var i in Floors)
         {
-            i.SerializationRebuilt();
+            i.SerializationRebuilt(buildpath);
             foreach (var j in i.rooms)
             {
                 AddRoom(j, i);
@@ -1193,8 +1191,18 @@ public class Map_Instance
             }
         }
 
-        BuildPath();
-        initialized = true;
+        if (buildpath) BuildPath();
+    }
+
+    /// <summary>
+    /// Applies the room additions/removals each floor detected during SerializationRebuilt(false).
+    /// Must be called after Factions/Jobs/Items/Characters are restored (and their
+    /// OnAfterDeserialize() hooks have run) but before SerializationRebuilt(true) - see
+    /// scr_System_CampaignManager.LoadSerializable.
+    /// </summary>
+    public void ApplyPendingRoomChanges()
+    {
+        foreach (var f in Floors) f.ApplyPendingRoomChanges();
     }
 }
 

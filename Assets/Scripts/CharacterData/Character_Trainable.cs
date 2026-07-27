@@ -1103,6 +1103,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     public void InitializeFaction(Manageable m, bool isManager)
     {
         string initFactionID = (m == null ? "" : m.ID);
+        this.FactionManager.ReEstablishParentData(this);
         this.FactionManager.SetHomeFaction(initFactionID, isManager? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
     }
 

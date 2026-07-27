@@ -16,12 +16,13 @@
         "playerInitLocationFaction":"ErAV_miyama_Household",
         "initializeFactions":
         {
-            "jp_convenience_store_SunMart":"map_jp_convenience_store",
-            "Katsuragi_Household":"map_jitaku_keibiin",
-            "ErAV_miyama_Household":"map_erav_miyama_household",
-            "CoffinAnL_Household":"map_coffinanl",
-            "ErAV_KiryuGumi_Office":"map_erav_kiryugumi_office",
-            "jp_shopping_street":"map_jp_shopping_street"
+            "jp_convenience_store_SunMart":"jp_convenience_store_SunMart",
+            "Katsuragi_Household":"Katsuragi_Household",
+            "ErAV_miyama_Household":"ErAV_miyama_Household",
+            "CoffinAnL_Household":"CoffinAnL_Household",
+            "ErAV_KiryuGumi":"ErAV_KiryuGumi",
+            "ErAV_KiryuGumi_Office":"ErAV_KiryuGumi_Office",
+            "jp_shopping_street":"jp_shopping_street"
         },
         "doors":
         [
@@ -43,6 +44,11 @@
             {
                 "offset_x":480, "offset_y":190, "isPublic":true,
                 "factionID":"ErAV_miyama_Household",
+                "floorExitID":"4ldk_floor_1L_frontDoor"
+            },
+            {
+                "offset_x":750, "offset_y":260, "isPublic":false,
+                "factionID":"ErAV_KiryuGumi",
                 "floorExitID":"4ldk_floor_1L_frontDoor"
             },
             {
@@ -163,9 +169,45 @@
                 "factionID":"jp_ranch",
                 "floorExitID":"ranch_entrance"
             }
+        ],
+        "npcInit":
+        [
+            {
+                "initID":"init_erav_kanon",
+                "tags":["ErAV"],
+                "actorBaseID":"ErAV_Kanon",
+                "Homefaction": {
+                    "factionID": "ErAV_KiryuGumi",
+                    "guestStatus": "Member",
+                    "spawnFloorID": "house_floor_4ldk",
+                    "spawnRoomID": "4ldk_floor_2L_roomsingle2",
+                    "setRoomOwnership":true
+                },
+                "TempHomefaction":null,
+                "Workfactions":[
+                    { "factionID":"jp_high_school", "guestStatus":"Member" },
+                    { "factionID":"ErAV_KiryuGumi_Office", "guestStatus":"Manager" }]
+            },
+            {
+                "initID":"init_erav_kanade",
+                "actorBaseID":"ErAV_Kanade",
+                "Homefaction": {
+                    "factionID": "ErAV_miyama_Household",
+                    "guestStatus": "Member",
+                    "spawnFloorID": "house_floor_4ldk",
+                    "spawnRoomID": "4ldk_floor_2L_roomsingle1"
+                },
+                "TempHomefaction":null,
+                "Workfactions":[{ "factionID":"jp_high_school" }]
+            }
         ]
     }
 ],
+    "factionTemplate":
+    [
+        
+
+    ],
 "factionInit":[ ]
 
     },

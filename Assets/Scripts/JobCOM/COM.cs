@@ -36,6 +36,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
 
     [JsonIgnore]
+    [NonSerialized]
     public List<COM> childCOMs = new List<COM>();
     public void NotifyChild(COM child)
     {

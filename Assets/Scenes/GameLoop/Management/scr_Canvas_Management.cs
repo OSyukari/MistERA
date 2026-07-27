@@ -96,10 +96,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             co = StartCoroutine(loadbg(m.backgroundIMG));
         }
 
-        if (m is Manageable_HomeFaction) factionName.SetText(homef.Replace("$name$", m.FactionDisplayName), false, "management_faction_home_tooltip");
-        else if (m is Manageable_WorkFaction) factionName.SetText(workf.Replace("$name$", m.FactionDisplayName), false, "management_faction_work_tooltip");
+        var player = scr_System_CampaignManager.current.Player;
+        if (player.FactionManager.HomeFactions.Contains(m)) factionName.SetText(homef.Replace("$name$", m.FactionDisplayName), false, "management_faction_home_tooltip");
+        else if (player.FactionManager.WorkFactions.Contains(m)) factionName.SetText(workf.Replace("$name$", m.FactionDisplayName), false, "management_faction_work_tooltip");
         else factionName.SetText(otherf.Replace("$name$", m.FactionDisplayName));
-
 
         currentTab = Tab_Overview;
         initialized_faction_overview = false;
