@@ -2,6 +2,24 @@
     "_doc": "Kiryu-gumi office floor (where Kanon resides / commission hub). Top-down layout now uses the real floor plan 'office.png' (831x742) provided in this folder. Per-room first-person backgrounds are still placeholder (reused generic building-corridor art) - dedicated room art is a separate follow-up task. See Plan_ErAV_OpeningScene.md.",
 
     "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "ErAV_KiryuGumi_Office",
+                "z_rotation": 0.0,
+                "setPrivateRoomOwner": true,
+                "mainExit": { "roomID": "erav_kiryu_office_frontDoor", "exitCost": 5 },
+                "floors": [
+                    {
+                        "ID": "erav_kiryu_office",
+                        "nameOverwrite": "ErAV_KiryuGumi_Office"
+                    }
+                ],
+                "mealHours": [7, 12, 18],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22
+            }
+
+        ],
         "floorPlans": [
             {
                 "ID": "erav_kiryu_office",

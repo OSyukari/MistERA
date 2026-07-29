@@ -5,12 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 
 
 public class Manageable : I_Disposable, I_IsJobGiver
 {
+
+    public bool hiddenOnWorldMap = false;
+    public Dictionary<string, string> memberTypeOverride = new Dictionary<string, string>();
 
     [JsonIgnore] public virtual I_IsJobGiver getLocaleFaction { get { return this; } }
 
@@ -244,23 +246,74 @@ public class Manageable : I_Disposable, I_IsJobGiver
         mainExit_cache = null;
         int newRef = MainExit == null ? -1 : MainExit.RefID;
     }
-    public Manageable_GuestStatus GetStatus(Character_Trainable c)
+
+    public MemberType GetMemberType(Character_Trainable c)
     {
-        if (charaGuestStatus.TryGetValue(c.RefID, out var guestStatus)) return guestStatus;
-        else return Manageable_GuestStatus.None;
+        if (charaGuestStatus.TryGetValue(c.RefID, out var guestStatus)) return FactionUtility.GetMemberType(guestStatus);
+        else return FactionUtility.MemberType_None;
+    }
+    public MemberType GetMemberType(int c)
+    {
+        if (charaGuestStatus.TryGetValue(c, out var guestStatus)) return FactionUtility.GetMemberType(guestStatus);
+        else return FactionUtility.MemberType_None;
+    }
+
+    // -- Can* stubs: compile-only for now, no logic and no callers wired up yet -- //
+    public bool CanRescue(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        //return the status target character should have (the final status), not the temporary rescued status
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None) newstatus = FactionUtility.MemberType_Member;
+        return prevStatus.isPrisoner;
+    }
+    public bool CanTransfer(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None) newstatus = prevStatus;
+        return prevStatus.canBeTransferred;
+    }
+    public bool CanCapture(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None)
+        {
+            newstatus = FactionUtility.MemberType_Prisoner;
+            return true;
+        }
+        else return false;
+    }
+    public bool CanLiberate(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None) return prevStatus.isPrisoner;
+        else return false;
+    }
+    public bool CanConvert(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None)
+        {
+            if (prevStatus.memberConvertTarget != "")
+            {
+                newstatus = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(prevStatus.memberConvertTarget);
+                return newstatus != null;
+            }
+            else return false;
+        }
+        else return false;
     }
 
     public bool isManager(int charaRef)
     {
-        return charaGuestStatus.ContainsKey(charaRef) && charaGuestStatus[charaRef] == Manageable_GuestStatus.Manager;
+        var member = GetMemberType(charaRef);
+        if (member == FactionUtility.MemberType_None) return false;
+        return member.isManager;
     }
     public bool isMember(int charaRef)
     {
-        if (charaGuestStatus.TryGetValue(charaRef, out var status))
-        {
-            return status < Manageable_GuestStatus.Visitor;
-        }
-        else return false;
+        var member = GetMemberType(charaRef);
+        if (member == FactionUtility.MemberType_None) return false;
+        return member.isMember;
     }
     public bool isManagedChara(int chararef)
     {
@@ -277,23 +330,31 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public bool isVisitor(int charaRef)
     {
-        return charaGuestStatus.ContainsKey(charaRef) &&
-            charaGuestStatus[charaRef] == Manageable_GuestStatus.Visitor  && !scr_System_CampaignManager.current.FindInstanceByID(charaRef).isImprisoned;
+        var member = GetMemberType(charaRef);
+        if (member == FactionUtility.MemberType_None) return true;
+        return !member.isMember && !member.isManager && !member.isPrisoner && !scr_System_CampaignManager.current.FindInstanceByID(charaRef).isImprisoned;
     }
 
     public bool isPrisoner(int charaRef)
     {
-        if (charaGuestStatus.TryGetValue(charaRef, out var status) && status == Manageable_GuestStatus.Prisoner) return true;
-        return false;
+        var member = GetMemberType(charaRef);
+        if (member == FactionUtility.MemberType_None) return false;
+        else return member.isPrisoner;
     }
 
+    /// <summary>
+    /// Rewritten to use MemberType.SocialStandingLabel instead of the old isManager/isMember/isPrisoner/
+    /// isVisitor priority chain. A character with no status in this faction resolves to MemberType_None,
+    /// whose SocialStandingLabel is "" by data convention - so the empty-string check below reproduces
+    /// the old "not managed by this faction" fallback without needing a separate isManagedChara check.
+    /// </summary>
     public string GetCharaSocialStandingName(int charaRef)
     {
-        if (isManager(charaRef)) return socialStatus_baseString.Replace("$factionname$", FactionDisplayName).Replace("$status$", socialStatus_manager);
-        else if (isMember(charaRef)) return socialStatus_baseString.Replace("$factionname$", FactionDisplayName).Replace("$status$", socialStatus_member);
-        else if (isPrisoner(charaRef)) return socialStatus_baseString.Replace("$factionname$", FactionDisplayName).Replace("$status$", socialStatus_prisoner);
-        else if (isVisitor(charaRef)) return socialStatus_baseString.Replace("$factionname$", FactionDisplayName).Replace("$status$", socialStatus_visitor);
-        else return "";
+        var c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
+        if (c == null) return "";
+        var memberType = GetMemberType(c);
+        if (memberType == null || string.IsNullOrEmpty(memberType.SocialStandingLabel)) return "";
+        return socialStatus_baseString.Replace("$factionname$", FactionDisplayName).Replace("$status$", memberType.SocialStandingLabel);
     }
 
     [JsonProperty] string RelatioshipTypeID_stranger = "relationship_stranger";
@@ -402,7 +463,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// if accept, then write job package into charaSchedule
     /// </summary>
     [JsonProperty] protected Dictionary<int, Job_Schedule> charaSchedules;
-    [JsonProperty] protected Dictionary<int, Manageable_GuestStatus> charaGuestStatus;
+    [JsonProperty] protected Dictionary<int, string> charaGuestStatus = new Dictionary<int, string>();
+
+
     [JsonIgnore] public List<int> ManagedRefs{get{ if (charaSchedules == null) return new List<int>();
     return charaSchedules.Keys.ToList();}}
     //protected List<Job> availableJobs;
@@ -556,7 +619,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         this.ID = id;
         this.managedRoomRefs = new Dictionary<int, List<int>>();
         charaSchedules = new Dictionary<int, Job_Schedule>();
-        charaGuestStatus = new Dictionary<int, Manageable_GuestStatus>();
+        charaGuestStatus.Clear();
         this._inventory = new FactionInventory(this);
     }
 
@@ -651,6 +714,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public bool HasScheduleFor(Character_Trainable c, int hour)
     {
+        if (GetMemberTypeSchedule(c, hour) != null) return true;
         if (charaSchedules.TryGetValue(c.RefID, out var schedule))
         {
             return schedule.Get(hour).isActive;
@@ -664,8 +728,26 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else return null;
     }
 
+    /// <summary>
+    /// If c's current member type in this faction carries a workModule covering this hour, builds a
+    /// read-only HourlySchedule from it, or null if there's no such override for this hour. These
+    /// hours are fixed by the status itself (not editable through the Schedule UI) and take priority
+    /// over any loose/manually-assigned hour - see GetSchedule/HasScheduleFor.
+    /// </summary>
+    HourlySchedule GetMemberTypeSchedule(Character_Trainable c, int hour)
+    {
+        var module = GetMemberType(c).workModule;
+        if (module == null || !module.activeHours.Contains(hour)) return null;
+        var schedule = new HourlySchedule();
+        schedule.Set(module.jobPostID, module.workCommands);
+        return schedule;
+    }
+
     public HourlySchedule GetSchedule(Character_Trainable c, int hour)
     {
+        var memberTypeSchedule = GetMemberTypeSchedule(c, hour);
+        if (memberTypeSchedule != null) return memberTypeSchedule;
+
         if (charaSchedules.TryGetValue(c.RefID, out var setting) && setting != null) return setting.Get(hour);
         else return null;
     }
@@ -843,7 +925,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         }
 
-        if (filter.searchJobList && !FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, this.managedRoomRefs, chara, GetSchedule(chara).Get(currentHour), filter.checkBlacklist))
+        if (filter.searchJobList && !FactionUtility.TryFindValidJobInstances(jobPosts, out possibleJobs, this.managedRoomRefs, chara, GetSchedule(chara, currentHour), filter.checkBlacklist))
         {
             ss += $" found no valid [{tagoverride}] Job offered by Furnitures from chara[{chara.FirstName}] currenthour[{currentHour}], checkBlacklist[{filter.checkBlacklist}]";
             if (s != null) s.Add(ss);
@@ -864,6 +946,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (filter.skipPrivateRoom && j.ParentRoom.isRoomPrivate)
             {
                 if (detailog)  ss += $"\n{j.DisplayName} removed due to room private {j.ParentRoom.isRoomPrivate} and skipprivate {filter.skipPrivateRoom}";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
+            if (filter.excludePrisonRooms && j.ParentRoom.isRoomPrison)
+            {
+                if (detailog) ss += $"\n{j.DisplayName} removed due to room {j.ParentRoom.RefID} being a prison room and filter.excludePrisonRooms true";
                 possibleJobs.RemoveAt(i);
                 continue;
             }
@@ -949,7 +1037,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public List<Job_Furniture> GetValidJobs_Jobs(Character_Trainable chara, int currentHour, ref string s)
     {
         string ss = " (" + ID + ")";
-        var currentschedule = GetSchedule(chara).Get(currentHour);
+        var currentschedule = GetSchedule(chara, currentHour);
         if (currentschedule == null || currentschedule.comIDs.Count < 1)
         {
             ss += "no scheduled job";
@@ -1011,7 +1099,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (_managerRefs == null)
             {
                 _managerRefs = new List<int>();
-                foreach(var i in charaGuestStatus) if (i.Value == Manageable_GuestStatus.Manager) _managerRefs.Add(i.Key);
+                foreach (var i in charaGuestStatus)
+                {
+                    if (FactionUtility.TryGetMemberType(i.Value, out var status) && status.isManager)
+                    {
+                        _managerRefs.Add(i.Key);
+                    }
+                }
             }
             return _managerRefs; } }
     [JsonIgnore] public List<Character_Trainable> Managers { get { return ManagedChara.FindAll(x => ManagerRefs.Contains(x.RefID)); } }
@@ -1133,37 +1227,26 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else charaSchedules[c.RefID].Get(hour).Set(jobPostID, commands);
     }
 
+
     /// <summary>
     /// Can also be used to change guest status
     /// </summary>
     /// <param name="c"></param>
     /// <param name="guestStatus"></param>
-    public void AddToFaction(Character_Trainable c, Manageable_GuestStatus guestStatus, bool sendEvent = true)
+    public void AddToFaction(Character_Trainable c, MemberType guestStatus, bool sendEvent = true)
     {
+        // once the player has a foothold in a faction, its world-map door should no longer stay hidden
+        if (c.RefID == 0) hiddenOnWorldMap = false;
 
         //c.AddToFaction(this);
-        if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus);
-        else charaGuestStatus[c.RefID] = guestStatus;
+        if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus.ID);
+        else charaGuestStatus[c.RefID] = guestStatus.ID;
 
         if (!ManagedRefs.Contains(c.RefID)) charaSchedules.Add(c.RefID, new Job_Schedule());
         managedChara = null;
         _managerRefs = null;
 
-        if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner) FactionUtility.SendImprisonEvent(this, c);
-        // set manager roles
-        NotifyFactionMemberChange();
-    }
-
-    public void AddToFaction(int charaRef, Manageable_GuestStatus guestStatus)
-    {
-        if (charaRef < 0) return;
-        //c.AddToFaction(this);
-        if (!charaGuestStatus.ContainsKey(charaRef)) charaGuestStatus.Add(charaRef, guestStatus);
-        else charaGuestStatus[charaRef] = guestStatus;
-
-        if (!ManagedRefs.Contains(charaRef)) charaSchedules.Add(charaRef, new Job_Schedule());
-        managedChara = null;
-        _managerRefs = null;
+        if (sendEvent && guestStatus.isPrisoner) FactionUtility.SendImprisonEvent(this, c);
         // set manager roles
         NotifyFactionMemberChange();
     }
@@ -1356,6 +1439,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
             foreach (var com in j.allusableCOMs) AddJobPost(com, j as Job_Furniture);
         }
     }
+
+
 
     public void NotifyFurnitureChange(Room_Instance room)
     {
@@ -2337,6 +2422,29 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
     public string mapPlanID = "";
+
+    /// <summary>
+    /// This faction's own player-assignable shift statuses (see MapPlan.assignableMemberTypes),
+    /// filtered to non-manager member types that carry a paid workModule - these are what the
+    /// Management UI's schedule-assignment tab lets the player put a character into, replacing the
+    /// old raw JobPostsPresets assignment.
+    /// </summary>
+    [JsonIgnore]
+    public List<MemberType> AssignableMemberTypes
+    {
+        get
+        {
+            var list = new List<MemberType>();
+            var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+            if (plan == null) return list;
+            foreach (var id in plan.assignableMemberTypes)
+            {
+                if (FactionUtility.TryGetMemberType(id, out var type) && !type.isManager && type.workModule != null && type.workModule.hourlyPayout.Count > 0)
+                    list.Add(type);
+            }
+            return list;
+        }
+    }
 
     public void RefreshSalesInventory(MapPlan plan = null)
     {

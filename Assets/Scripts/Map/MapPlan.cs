@@ -11,6 +11,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     public List<MapPlan> factionInit = new List<MapPlan>();
     public List<Floor_Base> floorPlans = new List<Floor_Base>();
     public List<WorldPlan> worldInit = new List<WorldPlan>();
+    public List<MemberType> memberTypes = new List<MemberType>();
 
     public void RegisterAllID(List<string> message)
     {
@@ -37,6 +38,14 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             if (string.IsNullOrEmpty(o.worldID)) continue;
             if (!ID_Dictionary_World.TryAdd(o.worldID, o)) Debug.Log($"failed to add Index_WorldPlan id [{o.worldID}] due to duplicate");
         }
+
+        message.Add("Index_MemberType : registering ID with list length [" + memberTypes.Count + "]");
+
+        foreach (MemberType o in this.memberTypes)
+        {
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary_MemberType.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MemberType id [{o.ID}] due to duplicate");
+        }
     }
     Dictionary<string, MapPlan> ID_Dictionary_Map = new Dictionary<string, MapPlan>();
     /// <summary>
@@ -51,6 +60,10 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
 
     Dictionary<string, WorldPlan> ID_Dictionary_World = new Dictionary<string, WorldPlan>();
     public WorldPlan GetByID_WorldPlan(string id) { return ID_Dictionary_World.ContainsKey(id) ? ID_Dictionary_World[id] : null; }
+
+    Dictionary<string, MemberType> ID_Dictionary_MemberType = new Dictionary<string, MemberType>();
+    public MemberType GetByID_MemberType(string id) { return ID_Dictionary_MemberType.ContainsKey(id) ? ID_Dictionary_MemberType[id] : null; }
+
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Index_MapPlan;
@@ -58,6 +71,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.factionInit != null) this.factionInit.AddRange(l.factionInit);
         if (l.floorPlans != null) this.floorPlans.AddRange(l.floorPlans);
         if (l.worldInit != null) this.worldInit.AddRange(l.worldInit);
+        if (l.memberTypes != null) this.memberTypes.AddRange(l.memberTypes);
     }
     public void OnAfterDeserialize()
     {
@@ -93,12 +107,25 @@ public class MapPlan
 
     public bool setPrivateRoomOwner = false;
 
+    /// <summary>
+    /// open to public, everyone knows and have access to this location by default. Copied onto the
+    /// instantiated faction's Manageable.hiddenOnWorldMap (inverted) - see WorldManager.Instantiate.
+    /// </summary>
+    public bool isPublic = true;
+
     public int activeHoursStart = 0;
     public int activeHoursEnd = 0;
 
     public List<string> managerBaseIDs = new List<string>();
     public List<WorkHoursInit> workHours = null;
     public List<WorkModuleInit> workModules = new List<WorkModuleInit>();
+
+    /// <summary>
+    /// IDs of MemberType entries (from Index_MapPlan.memberTypes) this faction offers as player-
+    /// assignable shift statuses in the Management UI - see Manageable.AssignableMemberTypes, which
+    /// resolves these and filters to non-manager types carrying a paid workModule.
+    /// </summary>
+    public List<string> assignableMemberTypes = new List<string>();
     public List<string> explorationKeywords = new List<string>();
     public List<SalesInventoryInit> salesInventory = new List<SalesInventoryInit>();
     public string salesCurrency = "";

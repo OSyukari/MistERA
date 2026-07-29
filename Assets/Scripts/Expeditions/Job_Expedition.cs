@@ -365,7 +365,7 @@ public class Job_Expedition : Job
             bool success = true;
             foreach (var i in this.FactionOwner.ManagedChara)
             {
-                success = success && i.FactionManager.AddToParty(this.FactionOwner, Manageable_GuestStatus.Member, false);
+                success = success && i.FactionManager.AddToParty(this.FactionOwner, FactionUtility.MemberType_Member, false);
                 if (!success) break;
             }
             if (!success)

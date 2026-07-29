@@ -11,6 +11,8 @@ public class FindJobNode
     public double randomChance = 1.0;
     public string randomID = "";
 
+    public string behaviorOverrideID = "";
+
     public List<string> Tags = new List<string>();
     public virtual bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction,  bool resetJob, int currentHour, List<string> s)
     {

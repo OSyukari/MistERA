@@ -24,6 +24,16 @@ public class PathingRoomFilter
     public string matchCOMID = "";
     public string matchCOMTag = "";
 
+    /// <summary>
+    /// If true, furniture inside a prison room (Room_Instance.isRoomPrison) is excluded from this
+    /// search, regardless of the searching character's own status. Default false - prison rooms are
+    /// searched like any other room unless a node opts into excluding them. This replaces the old
+    /// blanket c.isImprisoned/isRoomPrison check that used to live inside
+    /// FactionUtility.TryFindValidNonJobInstances - that check confined every Prisoner-status character
+    /// to prison-only furniture for every search, even ones that shouldn't be restricted at all.
+    /// </summary>
+    public bool excludePrisonRooms = false;
+
 }
 
 public enum PathfindHeuristic
@@ -38,6 +48,40 @@ public enum PathfindHeuristic
 
 public static class FactionUtility
 {
+    // -- well-known base MemberType IDs, matching Data/MemberDefs/memberTypes.json -- //
+    public const string MemberTypeID_Manager = "membertype_manager";
+    public const string MemberTypeID_Member = "membertype_member";
+    public const string MemberTypeID_Hidden = "membertype_hidden";
+    public const string MemberTypeID_Visitor = "membertype_visitor";
+    public const string MemberTypeID_Prisoner = "membertype_prisoner";
+    public const string MemberTypeID_None = "membertype_none";
+
+    /// <summary>
+    /// Static fallback MemberType accessors, for use when a specific faction hasn't defined its own
+    /// version of a status (a faction's own MemberType list, once that exists, should be checked first).
+    /// Not cached, mirrors the existing Relationship_* getter pattern on Manageable (e.g.
+    /// Relationship_Prisoner) so a MasterList reload during play/editor use is always reflected.
+    /// </summary>
+    public static MemberType MemberType_Manager { get { return scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(MemberTypeID_Manager); } }
+    public static MemberType MemberType_Member { get { return scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(MemberTypeID_Member); } }
+    public static MemberType MemberType_Hidden { get { return scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(MemberTypeID_Hidden); } }
+    public static MemberType MemberType_Visitor { get { return scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(MemberTypeID_Visitor); } }
+    public static MemberType MemberType_Rescued { get { return scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(MemberTypeID_Visitor); } }
+    public static MemberType MemberType_Prisoner { get { return scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(MemberTypeID_Prisoner); } }
+    public static MemberType MemberType_None { get { return scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(MemberTypeID_None); } }
+
+    public static bool TryGetMemberType(string id, out MemberType type)
+    {
+        type = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(id);
+        return type != null;
+    }
+    public static MemberType GetMemberType(string id)
+    {
+        var type = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(id);
+        return type != null ? type : MemberType_None;
+    }
+
+
     public static void ParseMaintenanceCost(List<string> populate, Dictionary<string, List<int>> list)
     {
         foreach (KeyValuePair<string, List<int>> kvp in list)
@@ -180,7 +224,6 @@ public static class FactionUtility
     {
         list = new List<Job_Furniture>();
         var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-        var prisonRefID = c.isImprisoned && charaRoom.isRoomPrison ? charaRoom.RefID : -1;
 
         foreach (var key in jobs.Keys)
         {
@@ -221,17 +264,6 @@ public static class FactionUtility
                 else if (post.ParentRoom.isRoomPrivate && managedRoomRefs.TryGetValue(post.ParentRoom.RefID, out var owners) && owners.Count > 0 && !owners.Contains(c.RefID) && charaRoom != post.ParentRoom)
                 {
                     //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job isRoomPrivate Fail");
-                    continue;
-                }
-                else if (c.isImprisoned != post.ParentRoom.isRoomPrison)
-                {
-                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job isRoomPrison Fail");
-                    continue;
-                }
-                else if (prisonRefID != -1 && prisonRefID != post.ParentRoom.RefID)
-                {
-                    //Debug.Log($"Chara {c.CallName} is in jail{prisonRefID}{charaRoom.DisplayName}, cannot leave to {post.ParentRoom.RefID}{post.ParentRoom.DisplayName}");
-                    //if (post.ParentRoom.RefID == prisonRefID) Debug.LogError("Error jail job prisonRefID != post.ParentRoom.RefID Fail");
                     continue;
                 }
                 else if (c.isRestrained && c.Jail.ownerJob != post)

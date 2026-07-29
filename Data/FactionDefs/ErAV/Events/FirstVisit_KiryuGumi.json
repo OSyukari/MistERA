@@ -1,0 +1,193 @@
+{
+    "Events": {
+        "list": [
+            {
+                "_comment": "FirstVisit_KiryuGumi. OnDialogue event (trigger currently None until OnDialogue trigger type is implemented in engine). Fires when player talks to Kanon at Kiryu-gumi office for the first time. Branches: (A) accepted vs not-accepted Kanon's offer; (B) within accepted, punctual vs delayed vs very-delayed vs post-billing; (C) Kanade present check. TODO: all kojo variable conditions use placeholder 'hasKojoVariable' parameter - replace with actual engine-supported checks once finalized. TODO: set erav_kanon_firstvisit_done and erav_kanon_firstvisit_punctual at event end (skipped for now).",
+                "ID": "FirstVisit_KiryuGumi",
+                "allowDuplicate": false,
+                "trigger": "None",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refKeys": ["kanon"],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": ["ErAV_Kanon"],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refKeys": ["kanade"],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": ["ErAV_Kanade"],
+                        "minTargetCount": 0
+                    }
+                ],
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_FirstVisit_K01" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_K02" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "_accepted", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_kanon_offer" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "path_accepted" ] } ] },
+                            { "option": "_fallback_notaccepted", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "path_notaccepted" ] } ] }
+                        ]
+                    },
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "path_notaccepted", "portraitRefKey": "", "line": "event_FirstVisit_NA_pre" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "TODO: check erav_debt_month (before/after billing) and erav_debt_failed (paid/failed). Fallback = before billing.",
+                        "options": [
+                            { "option": "_na_paid", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_debt_failed" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "na_paid" ] } ] },
+                            { "option": "_na_failed", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_punishment_done" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "na_failed" ] } ] },
+                            { "option": "_fallback_beforebill", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "na_beforebill" ] } ] }
+                        ]
+                    },
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "na_beforebill", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "event_FirstVisit_NA01", "nextEntryLabel": "na_closing" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "na_paid", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_NA02", "nextEntryLabel": "na_closing" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "na_failed",
+                        "_comment": "TODO: check if player was also punished (erav_player_punished). Fallback = only Kanade punished.",
+                        "options": [
+                            { "option": "_both_punished", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_player_punished" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "na_failed_both" ] } ] },
+                            { "option": "_fallback_kanade_only", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "na_failed_kanade" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "na_failed_kanade", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_NA03", "nextEntryLabel": "na_closing" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "na_failed_both", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_NA03b", "nextEntryLabel": "na_closing" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "na_closing", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_NA_end", "isLast": true },
+
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "path_accepted",
+                        "_comment": "TODO: check erav_kanon_offer_day vs current day for timing, plus erav_debt_month for post-billing. Fallback = punctual.",
+                        "options": [
+                            { "option": "_ac_delayed", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_kanon_delayed" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_delayed" ] } ] },
+                            { "option": "_ac_verydelayed", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_kanon_verydelayed" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_verydelayed_n" ] } ] },
+                            { "option": "_ac_postbill_failed", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_punishment_done" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_postbill_failed" ] } ] },
+                            { "option": "_fallback_punctual", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_punctual" ] } ] }
+                        ]
+                    },
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_punctual", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_AC01", "nextEntryLabel": "biz_full" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_delayed", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_AC02", "nextEntryLabel": "biz_full" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_postbill_paid", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_AC04", "nextEntryLabel": "biz_full" },
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_verydelayed_n", "portraitRefKey": "", "line": "event_FirstVisit_AC03n", "nextEntryLabel": "ac_verydelayed_k" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_verydelayed_k", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_AC03k", "nextEntryLabel": "biz_minimal" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "ac_postbill_failed",
+                        "_comment": "TODO: check if player was also punished. Fallback = only Kanade punished.",
+                        "options": [
+                            { "option": "_both_punished", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_player_punished" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_pbf_both" ] } ] },
+                            { "option": "_fallback_kanade_only", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_pbf_kanade" ] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_pbf_kanade", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_AC05", "nextEntryLabel": "biz_minimal" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_pbf_both", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_AC05b", "nextEntryLabel": "biz_minimal" },
+
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_full", "portraitRefKey": "", "line": "event_FirstVisit_BIZ01n" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_BIZ02k" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "portraitRefKey": "",
+                        "line": "event_FirstVisit_BIZ03n",
+                        "Results": [
+                            { "Type": "TransferItemByFactionID", "arguments": [ "ErAV_KiryuGumi_Office", "ErAV_miyama_Household", "item_recording_camera", "1", "true" ] },
+                            { "Type": "TransferItemByFactionID", "arguments": [ "ErAV_KiryuGumi_Office", "ErAV_miyama_Household", "item_recording_camera_Tape", "3", "true" ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_BIZ04k" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_BIZ05k", "nextEntryLabel": "biz_casting_gender" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "biz_casting_gender",
+                        "options": [
+                            { "option": "_female", "self_chara_conditions": [ { "parameters": [ "isFemale" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "biz_casting_F_n" ] } ] },
+                            { "option": "_fallback", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "kanade_check" ] } ] }
+                        ]
+                    },
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_casting_F_n", "portraitRefKey": "", "line": "event_FirstVisit_BIZ_Fn", "nextEntryLabel": "biz_casting_F_k" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_casting_F_k", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "event_FirstVisit_BIZ_Fk", "nextEntryLabel": "kanade_check" },
+
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_minimal", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_FirstVisit_BIZ_M1k" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "hostile", "serious" ], "line": "event_FirstVisit_BIZ_M2k", "nextEntryLabel": "kanade_check" },
+
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "kanade_check",
+                        "_comment": "TODO: check if kanade target exists (present in room). Fallback = not present. TODO: also check erav_kanade_promise for 'where is your sister' variant.",
+                        "options": [
+                            { "option": "_kanade_present", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "kanade_present_n" ] } ] },
+                            { "option": "_fallback_absent", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_closing" ] } ] }
+                        ]
+                    },
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "kanade_present_n", "portraitRefKey": "", "line": "event_FirstVisit_KD01n" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "event_FirstVisit_KD01k" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_KD02k", "nextEntryLabel": "ac_closing" },
+
+
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_closing", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_FirstVisit_AC_end", "isLast": true }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_FirstVisit_K01": "$kanon.name$靠在办公桌后面。听到有人进来，她抬起头。",
+                "event_FirstVisit_K02": "「来了？坐。」",
+
+                "event_FirstVisit_NA_pre": "$kanon.name$搁下笔，打量了$self.name$几眼。",
+                "event_FirstVisit_NA01": "「还没改主意？倒也沉得住气。」",
+                "event_FirstVisit_NA02": "「利息按时交了。行。倒是没想到。」",
+                "event_FirstVisit_NA03": "「你妹妹的事，本小姐听说了。当初要是别那么自不量力，也不至于落到那个地步。……坐吧。」",
+                "event_FirstVisit_NA03b": "「你们俩的事本小姐都知道。……这就是自不量力的下场。没什么好说的。坐吧，说正事。」",
+                "event_FirstVisit_NA_end": "「没事的话，门在那边。本小姐还有事。」",
+
+                "event_FirstVisit_AC01": "「倒是准时。看来你把这件事放在心上了。」",
+                "event_FirstVisit_AC02": "「你可真沉得住气。答应的事拖了好几天才来。……算了。来了就好。」",
+                "event_FirstVisit_AC03n": "$kanon.name$没有抬头，只是翻了翻手里的文件。沉默了很久。",
+                "event_FirstVisit_AC03k": "「……本小姐还以为你改主意了。」",
+                "event_FirstVisit_AC04": "「拖了这么久才来。利息倒是按时交了……算你有点本事。」",
+                "event_FirstVisit_AC05": "「拖了这么久。你妹妹的事，本小姐不想再提第二遍。」",
+                "event_FirstVisit_AC05b": "「你和你妹妹都去过那个地方了。本小姐不想多提。……坐。」",
+
+                "event_FirstVisit_BIZ01n": "$kanon.name$站起身，走到靠墙的柜子前，拉开抽屉。",
+                "event_FirstVisit_BIZ02k": "「本小姐直说。桐生组底下拍AV卖钱。你当监督负责拍，拍好交给本小姐分销。赚到的钱够你还债。」",
+                "event_FirstVisit_BIZ03n": "她从抽屉里取出摄影机和几盘录像带，搁在桌上。",
+                "event_FirstVisit_BIZ04k": "「拿着。桐生组借你的。拍什么怎么拍你自己琢磨。」",
+                "event_FirstVisit_BIZ05k": "「至于演员……你妹妹要是愿意帮忙最好。实在不行本小姐这边也能介绍，收手续费。」",
+
+                "event_FirstVisit_BIZ_Fn": "$kanon.name$打量了$self.name$几眼。",
+                "event_FirstVisit_BIZ_Fk": "「话说回来……你自己也未必不行。监督女优两条路随你挑。」",
+
+                "event_FirstVisit_BIZ_M1k": "「拍AV卖钱。你负责拍，交给本小姐分销。赚到的够你还债。」",
+                "event_FirstVisit_BIZ_M2k": "「设备自己想办法。本小姐不养闲人。」",
+
+                "event_FirstVisit_KD01n": "$kanon.name$的视线越过$self.name$，落在后面的人身上。",
+                "event_FirstVisit_KD01k": "「……哦？带过来了。」",
+                "event_FirstVisit_KD02k": "「长得倒是不错。省得本小姐再去找人了。」",
+
+                "event_FirstVisit_AC_end": "「有什么不懂的，随时来问。门在那边。」"
+            }
+        }
+    }
+}

@@ -2,7 +2,7 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-"ui_debug_tooltip2":"6. 全局射精量X5\n7. 怀孕率*100%",
+"ui_debug_tooltip2":"EX1. 全局射精量X5\nEX2. 怀孕率*100%",
                 
 "ui_currentSexJob_swapTargets": "< 交换对象 >",
 "ui_currentSexJob_swapTargets_tooltip": "互换当前选择的指令执行和接受对象",

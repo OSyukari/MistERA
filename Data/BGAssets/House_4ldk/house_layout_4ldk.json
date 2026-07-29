@@ -158,7 +158,8 @@
                                 "cost": 1.0
                             }
                         ],
-                        "offsetY": 64
+                        "offsetY": 64,
+                        "roomImagePath": "BGAssets/Generated/house_2story_08.webp"
                     },
                     {
                         "ID": "4ldk_floor_1L_hallway",

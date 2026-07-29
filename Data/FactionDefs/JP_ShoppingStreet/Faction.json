@@ -269,8 +269,7 @@
                         "offsetX": 427,
                         "offsetY": 191,
                         "connects": [ ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "hallway_1",
@@ -279,8 +278,7 @@
                         "connects": [ 
                             { "ID": "jp_shopping_street_entrance", "cost": 1.0 }
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "hallway_2",
@@ -289,8 +287,7 @@
                         "connects": [ 
                             { "ID": "hallway_1", "cost": 1.0 }
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "hallway_3",
@@ -299,8 +296,7 @@
                         "connects": [
                             { "ID": "hallway_2", "cost": 1.0 }
                          ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "hallway_4",
@@ -309,8 +305,7 @@
                         "connects": [ 
                             { "ID": "hallway_3", "cost": 1.0 },
                             { "ID": "hallway_1", "cost": 1.0 }],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "clothing_room",
@@ -321,8 +316,7 @@
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "connects": [ 
                             { "ID": "hallway_3", "cost": 1.0 }],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "cinema_room",
@@ -333,8 +327,7 @@
                         "connects": [     
                             { "ID": "hallway_1", "cost": 1.0 },
                             { "ID": "hallway_2", "cost": 1.0 }                   ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "fastfood_counter",
@@ -346,8 +339,7 @@
                             { "ID": "hallway_1", "cost": 1.0 }                    
                         ],
                         "furnitureIDs":["furniture_marker_store_trade"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "electronics_room",
@@ -358,8 +350,7 @@
                         "connects": [    
                             { "ID": "hallway_3", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "furniture_room",
@@ -370,8 +361,7 @@
                         "connects": [    
                             { "ID": "hallway_2", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "bookstore_room",
@@ -382,8 +372,7 @@
                         "connects": [    
                             { "ID": "hallway_3", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "generalgoods_room",
@@ -394,8 +383,7 @@
                         "connects": [     
                             { "ID": "hallway_4", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
                         "ID": "sportswear_room",
@@ -406,8 +394,7 @@
                         "connects": [    
                             { "ID": "hallway_1", "cost": 1.0 }                    ],
                         "furnitureIDs":["furniture_marker_store_trade"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     }
                 ]
             }

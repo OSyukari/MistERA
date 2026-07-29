@@ -35,11 +35,11 @@
                 },
                 "AcceptanceCheck": {
                     "baseAcceptanceValue": 30,
-                    "SkillBonus_Receiver":["skill_sensitivity_V"]
+                    "SkillBonus_Doer":["skill_sensitivity_V"]
                 },
                 "DifficultyCheck": {
                     "baseD20Check": 15,
-                    "SkillBonus_Receiver":["skill_sensitivity_V"]
+                    "SkillBonus_Doer":["skill_sensitivity_V"]
                 },
                 "variants": [
                     {

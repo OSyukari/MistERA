@@ -149,7 +149,11 @@ public class Event : I_SerializationCallbackReceiver
         {
             public string baseID = "";
             public List<string> refKeys = new List<string>();
-            public Manageable_GuestStatus status = Manageable_GuestStatus.Member;
+            /// <summary>
+            /// MemberType ID (e.g. "membertype_member", "membertype_prisoner"), resolved via
+            /// MasterList.MapPlans.GetByID_MemberType. Was Manageable_GuestStatus.
+            /// </summary>
+            public string status = FactionUtility.MemberTypeID_Member;
         }
 
         public class GenEncounter
@@ -157,7 +161,11 @@ public class Event : I_SerializationCallbackReceiver
             public Dictionary<string, int> encounterWeights = new Dictionary<string, int>();
             public List<string> frontlineKeys = new List<string>();
             public List<string> supportKeys = new List<string>();
-            public Manageable_GuestStatus status = Manageable_GuestStatus.Member;
+            /// <summary>
+            /// MemberType ID (e.g. "membertype_member", "membertype_prisoner"), resolved via
+            /// MasterList.MapPlans.GetByID_MemberType. Was Manageable_GuestStatus.
+            /// </summary>
+            public string status = FactionUtility.MemberTypeID_Member;
 
             [JsonIgnore]
             public bool isValid

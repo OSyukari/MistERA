@@ -311,7 +311,7 @@ public class Floor_Instance : IDisposable, I_Disposable
     Func<TaggedEdge<int, Door_Instance>, double> edgeCost = entry => entry.Tag.Cost;
     AdjacencyGraph<int, TaggedEdge<int, Door_Instance>> graph = null;
     [JsonIgnore] public AdjacencyGraph<int, TaggedEdge<int, Door_Instance>> Graph { get { return graph; } }
-    private void BuildPath()
+    private void BuildPath(Room_Instance mainExit = null)
     {
         graph = new AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>();
 
@@ -363,7 +363,11 @@ public class Floor_Instance : IDisposable, I_Disposable
 
         // Verify if every room is connected. Unconnected room might need to be removed 
         foreach(var i in rooms){
-            if (!i.connectedInFloor) Debug.LogError("Room " + refID + " is orphaned after serialization, please handle.");
+            if (!i.connectedInFloor && (i.FactionOwner == null || i.FactionOwner.MainExit != i))
+            {
+                if (rooms.Count < 2) Debug.Log($"Room {refID} {i.DisplayName} in map {this.displayName} is orphaned after serialization, please handle.");
+                else Debug.LogError($"Room {refID} {i.DisplayName} in map {this.displayName} is orphaned after serialization, please handle.");
+            }
             else
             {
                 i.SameFloorGraphObserver = RunDijkstraForFloor(i.RefID);

@@ -357,8 +357,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         // isPlayerInitWorld is false here: the player's placement already came from the restored save.
         foreach (var worldID in currentWorldPlanIDs) map.AddWorldTemplate(worldID, false);
 
-        // same reconciliation for npcInit: InitializeNPC skips any actorBaseID already present in the
-        // restored save, so this only spawns NPCs added to a world's JSON after the save was made.
+        // same reconciliation for playerInit/npcInit: InitializePlayer/InitializeNPC skip once the player
+        // already has a home faction / the actorBaseID is already present in the restored save, so this only
+        // does anything for entries added to a world's JSON after the save was made.
+        WorldManager.ProcessPlayerInit(GetLoadedWorldPlans());
         foreach (var world in GetLoadedWorldPlans()) WorldManager.ProcessNPCInit(world);
 
         this.party = obj.Party;
@@ -1928,15 +1930,15 @@ public class scr_System_CampaignManager : MonoBehaviour
                     if (ri == null) continue;
 
                     Character_Trainable c = InstantiateCharacter_FromBaseID(ini.initArguments[2], ri);
-                    c.FactionManager.SetHomeFaction(g.ID, Manageable_GuestStatus.Member);
+                    c.FactionManager.SetHomeFaction(g.ID, FactionUtility.MemberType_Member);
 
-                    if (ini.initArguments.Count >=5 && Enum.TryParse<Manageable_GuestStatus>( ini.initArguments[4], out var guestStatus))
+                    if (ini.initArguments.Count >=5 && FactionUtility.TryGetMemberType( ini.initArguments[4], out var guestStatus))
                     {
                         c.FactionManager.SetTempHomeFaction(f.ID, guestStatus, false);
                     }
                     else
                     {
-                        c.FactionManager.SetTempHomeFaction(f.ID);
+                        c.FactionManager.SetTempHomeFaction(f.ID, FactionUtility.MemberType_Visitor);
                     }
 
                 }
@@ -1977,12 +1979,11 @@ public class scr_System_CampaignManager : MonoBehaviour
                 }
             }
 
-            //
-            // map.playerInitLocation
-            // move everyone in  currentRoom into initlocation room
-
-            // npcInit runs only after every campaign_init_world/campaign_init_map_extra above has finished
-            // generating its factions/floors, so NPCs can spawn into and be assigned to any faction in this campaign.
+            // playerInit/npcInit run only after every campaign_init_world/campaign_init_map_extra above has
+            // finished generating its factions/floors, so the player and NPCs can spawn into and be assigned
+            // to any faction in this campaign. Player goes first so its starting room is settled before any
+            // NPC placement that might care where the player ended up.
+            WorldManager.ProcessPlayerInit(GetLoadedWorldPlans());
             foreach (var world in GetLoadedWorldPlans()) WorldManager.ProcessNPCInit(world);
         }
 
@@ -2849,15 +2850,12 @@ public static class WorldManager
 
             if (map.managerBaseIDs != null && map.managerBaseIDs.Count > 0)
             {
+                // player manager promotion moved to the standalone playerInit (WorldPlan.playerInit /
+                // WorldManager.InitializePlayer) - this loop now only matches already-managed characters
+                // (e.g. NPCs swept in above) by BaseID.
                 foreach (string id in map.managerBaseIDs)
                 {
-                    if (id == "PLAYER")
-                    {
-                        org.AddToFaction(scr_System_CampaignManager.current.Player, Manageable_GuestStatus.Manager);
-                        if (scr_System_CampaignManager.current.Player.FactionManager.Faction_Home == null) scr_System_CampaignManager.current.Player.FactionManager.SetHomeFaction(org.ID, Manageable_GuestStatus.Manager);
-                        else scr_System_CampaignManager.current.Player.FactionManager.AddWorkFaction(org.ID, true);
-                    }
-                    else foreach (var i in org.ManagedChara) if (i.BaseID == id) org.AddToFaction(i, Manageable_GuestStatus.Manager);
+                    foreach (var i in org.ManagedChara) if (i.BaseID == id) org.AddToFaction(i, FactionUtility.MemberType_Manager);
                 }
             }
 
@@ -2876,6 +2874,7 @@ public static class WorldManager
             }
 
             org.mapPlanID = map.ID;
+            org.hiddenOnWorldMap = !map.isPublic;
             org.RefreshSalesInventory(map);
 
             org.explorationKeywords = map.explorationKeywords;
@@ -3009,10 +3008,82 @@ public static class WorldManager
     }
 
     /// <summary>
-    /// Spawns one NPCInit entry: picks a spawn room from Homefaction > TempHomefaction > Workfactions (first
-    /// one that resolves wins), instantiates the character there, then applies Home/TempHome/Work faction
-    /// membership (work factions in list order, most important first) with each entry's guest status and
-    /// optional room ownership. Must only run after every faction/map in the campaign has finished generating.
+    /// Picks a spawn room from an NPCInit's Homefaction > TempHomefaction > Workfactions (first one that
+    /// resolves wins) - shared by InitializeNPC (new character) and InitializePlayer (existing Player).
+    /// </summary>
+    static Room_Instance ResolveNPCInitSpawnRoom(NPCInit init)
+    {
+        var candidates = new List<NPCInit.FactionInit>();
+        if (init.Homefaction != null) candidates.Add(init.Homefaction);
+        if (init.TempHomefaction != null) candidates.Add(init.TempHomefaction);
+        if (init.Workfactions != null) candidates.AddRange(init.Workfactions);
+
+        foreach (var candidate in candidates)
+        {
+            Room_Instance spawnRoom = ResolveNPCInitRoom(candidate);
+            if (spawnRoom != null) return spawnRoom;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Applies an NPCInit's Home/TempHome/Work faction membership (work factions in list order, most
+    /// important first) with each entry's guest status and optional room ownership, onto an already-placed
+    /// character - shared by InitializeNPC (new character) and InitializePlayer (existing Player).
+    /// </summary>
+    static void ApplyFactionAssignments(Character_Trainable chara, NPCInit init)
+    {
+        if (init.Homefaction != null && FactionUtility.TryGetMemberType(init.Homefaction.guestStatus, out var status1))
+        {
+            // FindorAdd, not FindFactionByID: a Homefaction/Workfaction entry may point at an abstract
+            // bucket faction (e.g. "External") that no MapPlan ever instantiates, exactly like the old
+            // campaign_init_factionVisitor pattern this replaces - it must exist before SetHomeFaction can
+            // register guest status against it.
+            scr_System_CampaignManager.current.FindorAddHomeFactionByID(init.Homefaction.factionID);
+            chara.FactionManager.SetHomeFaction(init.Homefaction.factionID, status1);
+            if (init.Homefaction.setRoomOwnership)
+            {
+                Room_Instance r = ResolveNPCInitRoom(init.Homefaction);
+                if (r != null) chara.FactionManager.Faction_Home.AddRoomOwnership(chara.RefID, r.RefID);
+            }
+        }
+
+        if (init.TempHomefaction != null && FactionUtility.TryGetMemberType(init.TempHomefaction.guestStatus, out var status))
+        {
+            scr_System_CampaignManager.current.FindorAddHomeFactionByID(init.TempHomefaction.factionID);
+            chara.FactionManager.SetTempHomeFaction(init.TempHomefaction.factionID, status);
+            if (init.TempHomefaction.setRoomOwnership)
+            {
+                Room_Instance r = ResolveNPCInitRoom(init.TempHomefaction);
+                if (r != null) chara.FactionManager.Faction_Home_Temporary.AddRoomOwnership(chara.RefID, r.RefID);
+            }
+        }
+
+        if (init.Workfactions != null)
+        {
+            foreach (var w in init.Workfactions)
+            {
+                MemberType status2 = null;
+                if (FactionUtility.TryGetMemberType(w.guestStatus, out status2))
+                {
+                    scr_System_CampaignManager.current.FindorAddHomeFactionByID(w.factionID);
+                    chara.FactionManager.AddWorkFaction(w.factionID, status2);
+                    if (w.setRoomOwnership)
+                    {
+                        Room_Instance r = ResolveNPCInitRoom(w);
+                        Manageable workFaction = scr_System_CampaignManager.current.FindFactionByID(w.factionID);
+                        if (r != null && workFaction != null) workFaction.AddRoomOwnership(chara.RefID, r.RefID);
+                    }
+                }
+
+            }
+        }
+    }
+
+    /// <summary>
+    /// Spawns one NPCInit entry: resolves a spawn room, instantiates the character there, then applies
+    /// Home/TempHome/Work faction membership. Must only run after every faction/map in the campaign has
+    /// finished generating.
     /// </summary>
     public static void InitializeNPC(NPCInit init)
     {
@@ -3026,18 +3097,7 @@ public static class WorldManager
         var existingRefs = scr_System_CampaignManager.current.FindRefIDByBaseID(init.actorBaseID);
         if (existingRefs != null && existingRefs.Count > 0) return;
 
-        var candidates = new List<NPCInit.FactionInit>();
-        if (init.Homefaction != null) candidates.Add(init.Homefaction);
-        if (init.TempHomefaction != null) candidates.Add(init.TempHomefaction);
-        if (init.Workfactions != null) candidates.AddRange(init.Workfactions);
-
-        Room_Instance spawnRoom = null;
-        foreach (var candidate in candidates)
-        {
-            spawnRoom = ResolveNPCInitRoom(candidate);
-            if (spawnRoom != null) break;
-        }
-
+        Room_Instance spawnRoom = ResolveNPCInitSpawnRoom(init);
         if (spawnRoom == null)
         {
             Debug.LogError($"InitializeNPC [{init.initID}]: could not resolve a spawn room from Homefaction/TempHomefaction/Workfactions.");
@@ -3051,46 +3111,7 @@ public static class WorldManager
             return;
         }
 
-        if (init.Homefaction != null)
-        {
-            // FindorAdd, not FindFactionByID: a Homefaction/Workfaction entry may point at an abstract
-            // bucket faction (e.g. "External") that no MapPlan ever instantiates, exactly like the old
-            // campaign_init_factionVisitor pattern this replaces - it must exist before SetHomeFaction can
-            // register guest status against it.
-            scr_System_CampaignManager.current.FindorAddHomeFactionByID(init.Homefaction.factionID);
-            chara.FactionManager.SetHomeFaction(init.Homefaction.factionID, init.Homefaction.guestStatus);
-            if (init.Homefaction.setRoomOwnership)
-            {
-                Room_Instance r = ResolveNPCInitRoom(init.Homefaction);
-                if (r != null) chara.FactionManager.Faction_Home.AddRoomOwnership(chara.RefID, r.RefID);
-            }
-        }
-
-        if (init.TempHomefaction != null)
-        {
-            scr_System_CampaignManager.current.FindorAddHomeFactionByID(init.TempHomefaction.factionID);
-            chara.FactionManager.SetTempHomeFaction(init.TempHomefaction.factionID, init.TempHomefaction.guestStatus);
-            if (init.TempHomefaction.setRoomOwnership)
-            {
-                Room_Instance r = ResolveNPCInitRoom(init.TempHomefaction);
-                if (r != null) chara.FactionManager.Faction_Home_Temporary.AddRoomOwnership(chara.RefID, r.RefID);
-            }
-        }
-
-        if (init.Workfactions != null)
-        {
-            foreach (var w in init.Workfactions)
-            {
-                scr_System_CampaignManager.current.FindorAddHomeFactionByID(w.factionID);
-                chara.FactionManager.AddWorkFaction(w.factionID, w.guestStatus);
-                if (w.setRoomOwnership)
-                {
-                    Room_Instance r = ResolveNPCInitRoom(w);
-                    Manageable workFaction = scr_System_CampaignManager.current.FindFactionByID(w.factionID);
-                    if (r != null && workFaction != null) workFaction.AddRoomOwnership(chara.RefID, r.RefID);
-                }
-            }
-        }
+        ApplyFactionAssignments(chara, init);
     }
 
     /// <summary>
@@ -3102,5 +3123,45 @@ public static class WorldManager
     {
         if (world == null || world.npcInit == null) return;
         foreach (var init in world.npcInit) InitializeNPC(init);
+    }
+
+    /// <summary>
+    /// Player equivalent of InitializeNPC: resolves a spawn room from playerInit's Homefaction/
+    /// TempHomefaction/Workfactions, moves the player there (instead of instantiating a new character),
+    /// then applies the same Home/TempHome/Work faction membership. Skips once the player already has a
+    /// home faction - covers both fresh-campaign re-entry and save-load reconciliation, since the player's
+    /// placement/membership persists on the save exactly like any other assignment.
+    /// </summary>
+    public static void InitializePlayer(NPCInit init)
+    {
+        if (init == null) return;
+
+        var player = scr_System_CampaignManager.current.Player;
+        if (player.FactionManager.Faction_Home != null) return;
+
+        Room_Instance spawnRoom = ResolveNPCInitSpawnRoom(init);
+        if (spawnRoom == null)
+        {
+            Debug.LogError($"InitializePlayer [{init.initID}]: could not resolve a spawn room from Homefaction/TempHomefaction/Workfactions.");
+            return;
+        }
+
+        scr_System_CampaignManager.current.MoveAllCharaFromDebugToRoom(spawnRoom);
+        ApplyFactionAssignments(player, init);
+    }
+
+    /// <summary>
+    /// Scans every given world for a playerInit and fires only the last non-null one found - only one
+    /// world is meant to carry the campaign's playerInit, but if more than one loaded world happens to
+    /// define one, the most-recently-loaded entry wins instead of all of them firing.
+    /// </summary>
+    public static void ProcessPlayerInit(IEnumerable<WorldPlan> worlds)
+    {
+        NPCInit lastValid = null;
+        foreach (var world in worlds)
+        {
+            if (world != null && world.playerInit != null) lastValid = world.playerInit;
+        }
+        InitializePlayer(lastValid);
     }
 }

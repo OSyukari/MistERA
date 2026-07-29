@@ -129,6 +129,10 @@ public class Map_Instance
     }
 
 
+    public List<string> hiddenWorldID = new List<string>();
+    public List<string> hiddenFloorsID = new List<string>();
+
+
     //Dictionary<int, AdjacencyGraph<int, TaggedEdge<int, Door_Instance>>> graphs = null;
     //Dictionary<int, ArrayAdjacencyGraph<int, TaggedEdge<int, Door_Instance>>> graphsImmutable = null;
 

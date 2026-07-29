@@ -55,7 +55,9 @@ public class WorldPlan
         public string childWorldID = "";
 
         /// <summary>
-        /// open to public, everyone knows and have access to this location by default
+        /// Fallback used only while this door's faction hasn't been instantiated yet (owner faction
+        /// not found) - see canvas_RoomDisplay.LoadWorldTex. Once the faction exists, its own
+        /// Manageable.hiddenOnWorldMap (driven by MapPlan.isPublic) takes over and this is ignored.
         /// </summary>
         public bool isPublic = true;
 
@@ -85,6 +87,16 @@ public class WorldPlan
     public Dictionary<string, string> initializeFactions = new Dictionary<string, string>();
 
     public List<NPCInit> npcInit = new List<NPCInit>();
+
+    /// <summary>
+    /// Declarative player placement/faction-assignment for this world, reusing NPCInit's FactionInit
+    /// shape (Homefaction/TempHomefaction/Workfactions, first resolvable spawn room wins) but targeting
+    /// the already-existing Player character instead of instantiating a new one - see
+    /// WorldManager.InitializePlayer/ProcessPlayerInit. actorBaseID/tags/initID are unused for the player.
+    /// Only set on whichever world is this campaign's player-init world.
+    /// </summary>
+    public NPCInit playerInit = null;
+
     // how to check node connectivity?
     // build graph is not necessary
 

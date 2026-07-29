@@ -47,11 +47,23 @@ public class FindJobNodeRoot
 
     public void TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
+        var activeFaction = c.FactionManager.CurrentlyActiveFaction;
+        var memberType = activeFaction == null ? null : activeFaction.GetMemberType(c);
+
         foreach (var n in nodes)
         {
             if (c.Relationships.BehaviorInCooldown(n.cooldownID)) continue;
             if (n.randomChance < 1 && !Utility.RandomChance(n.randomChance)) continue;
-            if (n.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s))
+
+            // node order is preserved - only the behavior run at this position may be swapped
+            var node = n;
+            if (memberType != null)
+            {
+                var overrideNode = memberType.GetBehaviorOverride(n.behaviorOverrideID);
+                if (overrideNode != null) node = overrideNode;
+            }
+
+            if (node.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s))
             {
                 break;
             }

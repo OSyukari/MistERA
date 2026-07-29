@@ -79,7 +79,8 @@ public class initScript_Expeditions : MonoBehaviour
 
             foreach (var chara in m.ManagedChara)
             {
-                if (m.isVisitor(chara.RefID) || m.isPrisoner(chara.RefID)) continue;
+                if (!m.GetMemberType(chara).participatesInCombat) continue;
+               // if (m.isVisitor(chara.RefID) || m.isPrisoner(chara.RefID)) continue;
                 if (chara == scr_System_CampaignManager.current.Player) continue;
                 var box = Instantiate(prefab_teamButton);
                 box.selfRect.SetParent(list_EditCharaInParty, false);

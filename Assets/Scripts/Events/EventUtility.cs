@@ -107,7 +107,7 @@ public static class EventUtility
                                     var c = GenerateTargets(i);
                                     if (c != null)
                                     {
-                                        c.FactionManager.AddToParty(party, g.status, true);
+                                        c.FactionManager.AddToParty(party, scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(g.status), true);
 
                                         foreach (var key in g.frontlineKeys)
                                         {
@@ -124,7 +124,7 @@ public static class EventUtility
                                     var c = GenerateTargets(i);
                                     if (c != null)
                                     {
-                                        c.FactionManager.AddToParty(party, g.status, true);
+                                        c.FactionManager.AddToParty(party, scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(g.status), true);
 
                                         foreach (var key in g.supportKeys)
                                         {
@@ -158,7 +158,7 @@ public static class EventUtility
                     {
                         if (party != null)
                         {
-                            c.FactionManager.AddToParty(party, i.status, true);
+                            c.FactionManager.AddToParty(party, scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(i.status), true);
                         }
 
                         foreach (var key in i.refKeys)
@@ -367,7 +367,7 @@ public static class EventUtility
             case "NonPlayerFactionChara":
                 return !c.FactionManager.HasPlayerFaction;
             case "isPartyPrisoner":
-                return c.FactionManager.CurrentActiveParty != null && c.FactionManager.CurrentActiveParty.GetStatus(c) == Manageable_GuestStatus.Prisoner;
+                return c.FactionManager.CurrentActiveParty != null && c.FactionManager.CurrentActiveParty.GetMemberType(c).isPrisoner;
             default:
                 return true;
         }
@@ -1704,11 +1704,11 @@ public static class EventUtility
                     Manageable kidnapFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
                     if (kidnapFaction == null) return false;
 
-                    if (owner.Targets.TryGetValue(exec.arguments[0], out var victims) && Enum.TryParse<Manageable_GuestStatus>(exec.arguments[4],false, out var status))
+                    if (owner.Targets.TryGetValue(exec.arguments[0], out var victims) && FactionUtility.TryGetMemberType(exec.arguments[4], out var status))
                     {
                         if (victims.Count < 1) return false;
                         var victimsFaction = UtilityEX.GetActiveFactionFrom(victims);
-                        if (status != Manageable_GuestStatus.Prisoner && status != Manageable_GuestStatus.Visitor) return false;
+                        if (!status.isPrisoner && status.isMember) return false;
 
                         Manageable_Party kidnapLoc = null;
                         if (victimsFaction is Manageable_Party && victimsFaction.FactionOwnerRoot == kidnapFaction)
@@ -1737,14 +1737,14 @@ public static class EventUtility
                         Debug.Log($"PartyKidnap called on [{String.Join("|", exec.arguments)}]");
                     }
 
-                    if (owner.Targets.TryGetValue(exec.arguments[0], out var victims) && owner.Targets.TryGetValue(exec.arguments[1], out var kidnappers) &&  Enum.TryParse<Manageable_GuestStatus>(exec.arguments[4], false, out var status))
+                    if (owner.Targets.TryGetValue(exec.arguments[0], out var victims) && owner.Targets.TryGetValue(exec.arguments[1], out var kidnappers) && FactionUtility.TryGetMemberType(exec.arguments[4], out var status))
                     {
                         Debug.Log($"PartyKidnap scoped, victims {victims.Count} kidnappers {kidnappers.Count}");
                         if (victims.Count < 1 || kidnappers.Count < 1) return false;
                         Manageable_Party kidnapLoc = UtilityEX.GetActiveFactionFrom(kidnappers) as Manageable_Party;
                         Debug.Log($"PartyKidnap scoped, kidnapLoc {((kidnapLoc == null || kidnapLoc.MainExit == null) ? "null" : "exist")} status {status}");
                         if (kidnapLoc == null || kidnapLoc.MainExit == null) return false;
-                        if (status != Manageable_GuestStatus.Prisoner && status != Manageable_GuestStatus.Visitor) return false;
+                        if (!status.isPrisoner && status.isMember) return false;
 
                         var victimsFaction = UtilityEX.GetActiveFactionFrom(victims);
 
@@ -1887,7 +1887,7 @@ public static class EventUtility
         }
     }
 
-    internal static bool Kidnap(List<Character_Trainable> victims, Manageable_Party victimsFaction, List<Character_Trainable> kidnappers, Manageable_Party kidnapLoc, string kidnapExpID, Manageable_GuestStatus status, string kidnapMessage)
+    internal static bool Kidnap(List<Character_Trainable> victims, Manageable_Party victimsFaction, List<Character_Trainable> kidnappers, Manageable_Party kidnapLoc, string kidnapExpID, MemberType status, string kidnapMessage)
     {
         if (kidnapLoc == null || kidnapLoc.MainExit == null) return false;
 
@@ -1931,7 +1931,7 @@ public static class EventUtility
         {
             if (victimsFaction != null) victimsFaction.RemoveFromFaction(i);
             scr_System_CampaignManager.current.MoveCharacterTo(i, kidnapLoc.MainExit);
-            kidnapLoc.AddToFaction(i, Manageable_GuestStatus.Hidden);
+            kidnapLoc.AddToFaction(i, FactionUtility.MemberType_Hidden);
         }
 
         Debug.Log($"Starting new Exploration {kidnapExpID} exist? {kidnapExp != null} job exist? {kidnapLoc.Job != null} expexist? {kidnapLoc.Job != null && kidnapLoc.Job.Expedition != null}\nEndresult jobname {kidnapLoc.Job.DisplayName} jobref {kidnapLoc.Job.RefID} expref {kidnapLoc.Job.Expedition.RefID} roomref {kidnapLoc.Room.RefID} roomname {kidnapLoc.Room.DisplayName}");

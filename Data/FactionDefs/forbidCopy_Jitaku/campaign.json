@@ -5,6 +5,7 @@
             {
                 "ID":"Katsuragi_Household",
                 "z_rotation":0.0,
+                "isPublic":false,
                 "setPrivateRoomOwner":true,
                 "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 5 },
                 "floors":[

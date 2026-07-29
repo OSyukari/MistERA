@@ -1104,6 +1104,51 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             buttonText.SetTextPreInit($"{this.presetOwnerFaction.FactionDisplayName} : {preset.Name}");
         }
 
+        MemberType targetMemberType = null;
+        Manageable memberTypeOwnerFaction = null;
+
+        /// <summary>
+        /// Assigns a non-manager, paid-workModule MemberType (a faction's own player-assignable shift
+        /// status, see Manageable.AssignableMemberTypes) to a character instead of a raw JobPostPreset -
+        /// replaces the character's guestStatus in memberTypeOwnerFaction rather than editing loose
+        /// schedule hours, since the workModule's hours are read live off the MemberType (see
+        /// Manageable.GetMemberTypeSchedule) and aren't stored per-character.
+        /// </summary>
+        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText, MemberType memberType, Manageable memberTypeOwnerFaction) : base(parent)
+        {
+            this.buttonText = buttonText;
+            this.parent = parent;
+            this.button = box.button;
+            button.isButtonToggle = true;
+            this.description = box.description;
+
+            this.targetMemberType = memberType;
+            this.memberTypeOwnerFaction = memberTypeOwnerFaction;
+
+            var strs = new List<string>();
+            if (memberType != null && memberType.workModule != null)
+            {
+                // reuse JobPostPreset's display formatting (workCommands/activeHours/PrintPayout)
+                var display = new Manageable.JobPostPreset(memberType.workModule);
+                foreach (var cid in display.workCommands)
+                {
+                    var c_com = scr_System_Serializer.current.GetByNameOrID_COM(cid);
+                    if (c_com != null) strs.Add(c_com.DisplayName());
+                    else Debug.LogError($"CANNOT FIND WORK PRESET COMMAND {cid}");
+                }
+                description.text = LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
+                    .Replace("$description$", String.Join(",", strs))
+                    .Replace("$hour$", display.activeHours.Count.ToString())
+                    .Replace("$payout$", display.PrintPayout)
+                    .Replace("$additionalDescription$", "");
+            }
+            else description.text = "error";
+            box.notifyTarget = this;
+
+            buttonText.linkText = "";
+            buttonText.SetTextPreInit($"{this.memberTypeOwnerFaction.FactionDisplayName} : {(memberType != null ? memberType.DisplayName : "")}");
+        }
+
         COM highlightCOM = null;
         public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText,  COM highlightCOM) : base(parent)
         {
@@ -1201,6 +1246,55 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
                 return returnVal;
             }
+            else if (this.targetMemberType != null)
+            {
+                // assigning a MemberType replaces this faction's own guestStatus for chara outright -
+                // no per-hour wipe/overwrite bookkeeping needed, since a character only ever has one
+                // status per faction (unlike the loose per-hour JobPostPreset schedule above).
+                var chara = parent.currentChara;
+                var currentStatus = memberTypeOwnerFaction.GetMemberType(chara);
+
+                if (currentStatus == this.targetMemberType)
+                {
+                    unset = true;
+                    tooltip += "will unset\n";
+                    button.Toggle(true, true);
+                    return true;
+                }
+
+                unset = false;
+                var returnVal = true;
+                bool ttip_overwrite_home = false;
+
+                foreach (var hour in targetMemberType.workModule.activeHours)
+                {
+                    var f = chara.CurrentJobScheduleFaction(hour);
+                    if (f == null || f == memberTypeOwnerFaction)
+                    {
+                        // free hour, or already this faction's own schedule (about to be overwritten)
+                    }
+                    else if (chara.FactionManager.HomeFactions.Contains(f))
+                    {
+                        ttip_overwrite_home = true;
+                    }
+                    else
+                    {
+                        returnVal = false;
+                        tooltip += $"member type conflict with existing schedule from [{f.FactionDisplayName}]";
+                        break;
+                    }
+                }
+
+                if (returnVal)
+                {
+                    tooltip += "will overwrite previous member status, if any\n";
+                    if (!chara.FactionManager.HomeFactions.Contains(memberTypeOwnerFaction)) tooltip += "chara will be added to job faction\n";
+                }
+                if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
+
+                button.Toggle(true, false);
+                return returnVal;
+            }
             else
             {
                 if (this.highlightCOM == null)
@@ -1223,15 +1317,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            if (this.preset == null)
-            {
-                if (parent.currentHighlightJobCOM != highlightCOM) parent.currentHighlightJobCOM = highlightCOM;
-                else parent.currentHighlightJobCOM = null;
-            }
-            else
+            if (this.preset != null)
             {
                 var chara = parent.currentChara;
-                
+
                 for(int i = 0; i < 24; i++)
                 {   // first wipe. one faction can only assign a single job preset to a chara, so we first wipe existing
                     chara.FactionManager.SetSchedule(presetOwnerFaction, i, null);//.SetWorkHours(chara, i, null);
@@ -1245,21 +1334,29 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 {
                     chara.FactionManager.SetSchedule(presetOwnerFaction, null);
                 }
-               // for (int i = 0; i < 24; i++)
-               // {
-                    // first wipe
-                //    presetOwnerFaction.SetWorkHours(chara, i, null);
-                    //parent.currentChara.FactionManager.SetSchedule(presetOwnerFaction, i, null);
-                //}
-                //c.FactionManager.SetSchedule(parent.CurrentFaction, index, parent.CurrentHighlightJOBCOM);
                 parent.NotifyScheduleChanged();
             }
-
+            else if (this.targetMemberType != null)
+            {
+                var chara = parent.currentChara;
+                // mirrors SetSchedule(Manageable, JobPostPreset)'s AddWorkFaction/RemoveWorkFaction
+                // pattern - assigning a role registers memberTypeOwnerFaction as a work faction;
+                // unassigning removes chara from it entirely rather than just reverting status.
+                if (unset) chara.FactionManager.RemoveWorkFaction(memberTypeOwnerFaction.ID);
+                else chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType);
+                parent.NotifyScheduleChanged();
+            }
+            else
+            {
+                if (parent.currentHighlightJobCOM != highlightCOM) parent.currentHighlightJobCOM = highlightCOM;
+                else parent.currentHighlightJobCOM = null;
+            }
         }
 
         public void NotifyPointerEnter()
         {
             if (this.preset != null) parent.CurrentHighlightHours = this.preset.activeHours;
+            else if (this.targetMemberType != null) parent.CurrentHighlightHours = this.targetMemberType.workModule.activeHours;
             else parent.CurrentHighlightHours = null;
 
             //Debug.Log("NOTIFY POINTER ENTER");
@@ -1320,19 +1417,15 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
                 break;
             case JobAssignmentTab.jobPost:
-                var list2 = currentFaction.JobPostsPresets;
+                var list2 = currentFaction.AssignableMemberTypes;
 
-                
                 foreach (var c in list2)
                 {
-
-
-                    int hash = AssertUniqueHash(c.jobPostID.GetHashCode());
+                    int hash = AssertUniqueHash(c.ID.GetHashCode());
 
                     scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
                     RectTransform r = scr.GetComponent<RectTransform>();
                     r.SetParent(rectTransform, false);
-                    //scr.description.text = c.jobPostID;
 
                     scr_SelectableText comp = scr.button;
                     comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c, currentFaction));
@@ -1341,37 +1434,23 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     validatorsByID.Add(comp.optionID, comp.Validator);
                     comp.Validate();
                     tempListHash.Add(hash);
-                    /*
-                    scr_SelectableText comp = scr.button;
-
-                    comp.Initialize(this, new button_setHighlightCOM(this, comp, c, scr.description));
-                    comp.linkText = (c != null ? c.jobPostID : "");
-                    comp.SetText(c != null ? c.DisplayName() : "None");
-
-                    comp.optionID = hash;
-
-                    buttonsByID.Add(comp.optionID, comp);
-                    validatorsByID.Add(comp.optionID, comp.Validator);
-
-                    comp.Validate();
-
-                    tempListHash.Add(hash);
-                    */
                 }
 
                 break;
-            case JobAssignmentTab.externalJob: 
+            case JobAssignmentTab.externalJob:
 
-                foreach(var faction in currentFaction.CommercialPactFactions)
+                // CommercialPactFactions is trade-only now (bulk trading relationships) - work
+                // faction assignment instead reaches every faction connected in the same world
+                // (see Manageable.ConnectedFactions / Map.GetConnectedFactions).
+                foreach(var faction in currentFaction.ConnectedFactions)
                 {
-                    foreach(var c in faction.JobPostsPresets)
+                    foreach(var c in faction.AssignableMemberTypes)
                     {
-                        int hash = AssertUniqueHash(c.jobPostID.GetHashCode());
+                        int hash = AssertUniqueHash(c.ID.GetHashCode());
 
                         scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
                         RectTransform r = scr.GetComponent<RectTransform>();
                         r.SetParent(rectTransform, false);
-                        //scr.description.text = c.jobPostID;
 
                         scr_SelectableText comp = scr.button;
                         comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c, faction));
@@ -1774,7 +1853,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            if (isJoin) parent.currentParty.AddToFaction(c, Manageable_GuestStatus.Member);
+            if (isJoin) parent.currentParty.AddToFaction(c, FactionUtility.MemberType_Member);
             else parent.currentParty.RemoveFromFaction(c);
             parent.LoadParty(parent.currentParty);
         }

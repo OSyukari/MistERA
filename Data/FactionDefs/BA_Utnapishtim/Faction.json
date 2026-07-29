@@ -256,21 +256,21 @@
             "initID":"init_utnapishtim_debug_cinderella",
             "actorBaseID":"Campaign1_Nikke_Cinderella",
             "Homefaction": { "factionID":"External" },
-            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"Prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
+            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_debug_dorothy",
             "actorBaseID":"Campaign1_Nikke_Dorothy",
             "Homefaction": { "factionID":"External" },
-            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"Prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
+            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_debug_aemeath",
             "actorBaseID":"Wuwa_Aemeath",
             "Homefaction": { "factionID":"External" },
-            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"Prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
+            "TempHomefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_prisoner", "spawnFloorID":"floor_stockasset_medbay", "spawnRoomID":"medbay_isolation_room_1" },
             "Workfactions":[]
         }
     ]

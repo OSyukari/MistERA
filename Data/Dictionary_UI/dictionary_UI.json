@@ -31,6 +31,10 @@
 "ui_entry_memory_description_ordered_by": "听从$master$的指令",
 "ui_entry_memory_description_multiple_counts": "了$counts$次",
 
+"ui_entry_memory_daystring_today":"今天",
+"ui_entry_memory_daystring_days":"$count$天前",
+"ui_entry_memory_daystring_months":"$count$月前",
+"ui_entry_memory_daystring_years":"$count$年前",
 
 "ui_entry_memory_withRoomName": "在$roomname$$desc$",
 "ui_entry_memory_sleep_begin": "在$room$睡觉",
@@ -180,7 +184,7 @@
 
 
 "ui_debug": "<link=\"ui_debug_tooltip\">DEBUG</link>",
-"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n5. 囚犯无法拒绝任何指令\n6. 对话必定会选择聊天话题\n%%ui_debug_tooltip2%%",
+"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n5. 囚犯无法拒绝任何指令\n6. 对话必定会选择聊天话题\n7. 大地图会显示本该隐藏的地点\n%%ui_debug_tooltip2%%",
 
 "ui_quicksave": "快速保存",
 "ui_quicksave_tooltip": "将当前的游戏数据保存到本地存取",

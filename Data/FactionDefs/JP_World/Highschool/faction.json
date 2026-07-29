@@ -1,0 +1,307 @@
+{
+    
+    "MapPlans": {
+        
+        "factionInit": [
+            {
+                "ID": "jp_high_school",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_high_school",
+                "setPrivateRoomOwner": false,
+                "mainExit": { "roomID": "school_frontGate", "exitCost": 5 },
+                "floors": [
+                    {
+                        "ID": "floor_jp_high_school",
+                        "nameOverwrite": "jp_high_school"
+                    }
+                ],
+                "mealHours": [12],
+                "activeHoursStart": 8,
+                "activeHoursEnd": 18
+            }
+        ],
+        "floorPlans":[
+            {
+                "ID":"floor_jp_high_school",
+                "imagePath":"BGAssets/Generated/school_exterior_06.webp",
+                "floorWidth":400.0,
+                "floorHeight":400.0,
+                "resize":1.0,
+                "mapExit":"school_frontGate",
+                "rooms":[
+                    {
+                        "ID":"school_frontGate",
+                        "displayName":"Classroom",
+                        "offsetX":0.0,
+                        "offsetY":0.0,
+                        "connects": [],
+                        "furnitureIDs":["furniture_marker_jp_high_school_teacher_podium","furniture_marker_jp_high_school_student_desk"],
+                        "roomImagePath":"BGAssets/Generated/school_exterior_06.webp"
+                    }
+                ]
+            }
+        ],
+        "memberTypes":[
+            {
+                "ID": "membertype_jp_high_school_board",
+                "socialStandingKey": "membertype_jp_high_school_board",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": true,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true
+            },
+            {
+                "ID": "membertype_jp_high_school_teacher",
+                "socialStandingKey": "membertype_jp_high_school_teacher",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID":"jp_high_school_teacher_class",
+                    "workCommands":["jp_high_school_teachers_lesson"],
+                    "activeHours":[8,9,10,11,12,13,14,15,16]
+                },
+                "behaviorOverrides":{
+                    "behavior_job":{
+                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
+                        "evaluationHeuristic":"closest",
+                        "FindInJobFaction": true,
+                        "filter": {
+                            "matchCOMID":"jp_high_school_teachers_lesson",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":true,
+                            "searchNonJobList":false,
+                            "excludePrisonRooms":false
+                        }
+                    }
+                }
+            },
+            {
+                "ID": "membertype_jp_high_school_student",
+                "socialStandingKey": "membertype_jp_high_school_student",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID":"jp_high_school_student_class",
+                    "workCommands":["jp_high_school_student_lesson"],
+                    "activeHours":[8,9,10,11,12,13,14,15,16]
+                },
+                "behaviorOverrides":{
+                    "behavior_job":{
+                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
+                        "evaluationHeuristic":"closest",
+                        "FindInJobFaction": true,
+                        "filter": {
+                            "matchCOMID":"jp_high_school_student_lesson",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":true,
+                            "searchNonJobList":false,
+                            "excludePrisonRooms":false
+                        }
+                    }
+                }
+            }
+
+        ]
+    },
+    "Furnitures":
+    {
+        "list":
+        [
+            {
+                "ID":"furniture_marker_jp_high_school_student_desk",
+                "displayName":"学生课桌",
+                "recipe":[],
+                "furnitureSize":0,
+                "givesJob": [ { "comID":["jp_high_school_student_lesson"] } ]
+            },
+            {
+                "ID":"furniture_marker_jp_high_school_teacher_podium",
+                "displayName":"讲台",
+                "recipe":[],
+                "furnitureSize":0,
+                "givesJob": [ { "comID":["jp_high_school_teachers_lesson"] } ]
+            }
+        ]
+    },
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"jp_high_school_student_lesson",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_high_school_student_lesson_displayName",
+                "timeScale":45,
+                "comTags":["job","furniture","social","education"],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "jp_high_school_student_lesson_displayName"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 0
+                },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正在认真听讲" ]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$停下了听讲" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "$receiver.firstname$下课了" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$开始上课"]
+                        }
+                    ]
+
+                }
+            },
+            {
+                "ID":"jp_high_school_teachers_lesson",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_high_school_teachers_lesson_displayName",
+                "timeScale":45,
+                "comTags":["job","furniture","social","education"],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 3,
+                                    "cost_EN": 6
+                                }
+                            }
+                        },
+                        "displayName": "jp_high_school_teachers_lesson_displayName"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 0
+                },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正在讲课" ]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$停下了讲课" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "$receiver.firstname$的课上完了" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$开始讲课"]
+                        }
+                    ]
+
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "membertype_jp_high_school_board":"学校董事会成员",
+                "membertype_jp_high_school_teacher":"教师",
+                "membertype_jp_high_school_student":"学生",
+                "jp_high_school_student_lesson_displayName":"上课",
+                "jp_high_school_teachers_lesson_displayName":"授课",
+                "jp_high_school_student_class":"上学",
+
+                "school_frontGate":"XX私立高中"
+            }
+        }
+    }
+}

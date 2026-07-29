@@ -1754,6 +1754,11 @@ public abstract class ActionPackage
             foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
             {
                 var j = ep.Doer.GetSkill(i);
+                if (j == null)
+                {
+                    Debug.Log($"null skill check on {ep.Doer.FirstName} for skill {i}");
+                    continue;
+                }
                 var k = j.GetSkillLevel;
                 if (k <= 0) continue;
                 bonus += k;
@@ -1766,6 +1771,11 @@ public abstract class ActionPackage
                 foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Receiver)
                 {
                     var j = ep.Receiver.GetSkill(i);
+                    if (j == null)
+                    {
+                        Debug.Log($"null skill check on {ep.Receiver.FirstName} for skill {i}");
+                        continue;
+                    }
                     var k = j.GetSkillLevel;
                     if (k <= 0) continue;
                     bonus += k;

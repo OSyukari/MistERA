@@ -85,7 +85,7 @@ public class Character_Factions
     /// if factionID is empty, then create faction with character name
     /// </summary>
     /// <param name="homeFactionID"></param>
-    public void SetHomeFaction(string homeFactionID, Manageable_GuestStatus status = Manageable_GuestStatus.Member, bool sendEvent = true)
+    public void SetHomeFaction(string homeFactionID, MemberType status, bool sendEvent = true)
     {
         if (homeFactionID != FactionID_Home)
         {
@@ -111,7 +111,7 @@ public class Character_Factions
     /// if factionID is empty, set to null
     /// </summary>
     /// <param name="tempFactionID"></param>
-    public void SetTempHomeFaction(string tempFactionID, Manageable_GuestStatus status = Manageable_GuestStatus.Visitor, bool sendEvent = true)
+    public void SetTempHomeFaction(string tempFactionID, MemberType status, bool sendEvent = true)
     {
         if (tempFactionID != Faction_Home_Temporary_FactionID)
         {
@@ -293,7 +293,7 @@ public class Character_Factions
         }
     }
 
-    public void AddWorkFaction(string factionID, Manageable_GuestStatus status, bool sendEvent = true)
+    public void AddWorkFaction(string factionID, MemberType status, bool sendEvent = true)
     {
         Manageable targetFaction = Factions_Work.Find(x => x.ID == factionID);
         if (targetFaction == null) targetFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
@@ -302,7 +302,7 @@ public class Character_Factions
         else
         {
             targetFaction.AddToFaction(Owner, status, sendEvent);
-            if (!Factions_Work.Contains(targetFaction))  this.Factions_Work.Add(targetFaction);
+            if (!Factions_Work.Contains(targetFaction)) this.Factions_Work.Add(targetFaction);
             if (!FactionIDs_Work.Contains(targetFaction.ID)) this.FactionIDs_Work.Add(targetFaction.ID);
         }
 
@@ -311,17 +311,18 @@ public class Character_Factions
     }
 
     public void AddWorkFaction(string factionID, bool isManager = false)
-        => AddWorkFaction(factionID, isManager ? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
+        => AddWorkFaction(factionID, isManager ? FactionUtility.MemberType_Manager : FactionUtility.MemberType_Member);
     [JsonProperty] List<int> trackedPartyRef = new List<int>();
 
-    public bool AddToPartyAsTemp(I_IsJobGiver party, Manageable_GuestStatus status, Manageable_GuestStatus homeStatus, bool isLock = false)
+
+    public bool AddToPartyAsTemp(I_IsJobGiver party, MemberType status, MemberType homeStatus, bool isLock = false)
     {
         var p = party as Manageable_Party;
         if (p == null) return false;
 
         return AddToPartyAsTemp(p, status, homeStatus, isLock);
     }
-    public bool AddToPartyAsTemp(Manageable_Party party, Manageable_GuestStatus status, Manageable_GuestStatus homeStatus, bool isLock = false)
+    public bool AddToPartyAsTemp(Manageable_Party party, MemberType status, MemberType homeStatus, bool isLock = false)
     {
         //if (this.CurrentActiveParty != null && this.CurrentActiveParty != party) return false;
 
@@ -352,14 +353,14 @@ public class Character_Factions
         UpdateFactionPriorityList();
         return true;
     }
-    public bool AddToParty(I_IsJobGiver party, Manageable_GuestStatus status, bool setHomeFaction, bool isLock = false)
-    {
-        var p = party as Manageable_Party;
-        if (p == null) return false;
 
-        return AddToParty(p, status, setHomeFaction, isLock);
+    public bool AddToParty(I_IsJobGiver party, MemberType status, bool setHomeFaction, bool isLock = false)
+    {
+        if (party is Manageable_Party) return AddToParty(party as Manageable_Party, status, setHomeFaction, isLock);
+        else return false;
     }
-    public bool AddToParty(Manageable_Party party, Manageable_GuestStatus status, bool setHomeFaction, bool isLock = false)
+
+    public bool AddToParty(Manageable_Party party, MemberType status, bool setHomeFaction, bool isLock = false)
     {
         //if (this.CurrentActiveParty != null && this.CurrentActiveParty != party) return false;
 
@@ -576,7 +577,7 @@ public class Character_Factions
     {
         var v = CurrentJobScheduleFaction(hour);
         if(v == null) return privateSchedule.Get(hour).Name;
-        return v.GetSchedule(Owner).Get(hour).Name;
+        return v.GetSchedule(Owner, hour).Name;
     }
 
     public Manageable.HourlySchedule CurrentJobPost(int hour = -1)
@@ -584,7 +585,7 @@ public class Character_Factions
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
         var v = CurrentJobScheduleFaction((int)hour);
         if(v == null) return privateSchedule.Get(hour);
-        return v.GetSchedule(Owner).Get(hour);
+        return v.GetSchedule(Owner, hour);
     }
 
     [JsonProperty] protected Manageable.Job_Schedule privateSchedule =  new Manageable.Job_Schedule();

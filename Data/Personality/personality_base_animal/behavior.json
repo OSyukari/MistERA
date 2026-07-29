@@ -9,22 +9,51 @@
                         "Tags": [ "nsfw" ]
                     },
                     {
-                        "$type": "TryFindSleepNode, Assembly-CSharp"
+                        "$type": "TryFindSleepNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_sleep",
+                        "evaluationHeuristic":"ownership_Medium",
+                        "filter": {
+                            "matchCOMID":"com_furniture_sleep",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
+                        }
                     },
                     {
-                        "$type": "TryFindMealNode, Assembly-CSharp"
+                        "$type": "TryFindMealNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_meal",
+                        "evaluationHeuristic":"random",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
+                        }
                     },
                     {
                         "$type": "TryFindPartyExplorationJob, Assembly-CSharp"
                     },
                     {
-                        "$type": "TryFindScheduledJobNode, Assembly-CSharp"
+                        "$type": "TryFindScheduledJobNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_job"
                     },
                     {
                         "$type": "TryChangeLocaleNode, Assembly-CSharp"
                     },
                     {
-                        "$type": "TryFindRestNode, Assembly-CSharp"
+                        "$type": "TryFindRestNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_rest",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
+                        }
                     },
                     {
                         "$type": "TryFindSexNode_Animal, Assembly-CSharp",
@@ -35,13 +64,15 @@
                     },
                     {
                         "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_rest_fallback",
                         "evaluationHeuristic": "random",
                         "filter": {
                             "matchCOMTag": "rest",
                             "checkBlacklist": false,
                             "skipPrivateRoom": false,
                             "searchJobList": false,
-                            "searchNonJobList": true
+                            "searchNonJobList": true,
+                            "excludePrisonRooms":true
                         }
                     }
                 ]

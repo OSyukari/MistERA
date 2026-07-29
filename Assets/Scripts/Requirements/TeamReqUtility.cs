@@ -36,32 +36,21 @@ public static class TeamReqUtility
                 tooltip.Add($"{i.CallName} current job cannot be interrupted");
                 continue;
             }
-            var status = p.GetStatus(i);
-            switch (status)
+            var status = p.GetMemberType(i);
+            if (status.isPrisoner && !q.allowPrisoner)
             {
-                case Manageable_GuestStatus.Prisoner:
-                    if (!q.allowPrisoner)
-                    {
-                        tooltip.Add($"{i.CallName} is prisoner and not allowed");
-                        continue;
-                    }
-                    break;
-                case Manageable_GuestStatus.Hidden:
-                    if (!q.allowHidden)
-                    {
-                        tooltip.Add($"{i.CallName} is hidden and not allowed");
-                        continue;
-                    }
-                    break;
-                case Manageable_GuestStatus.Visitor:
-                    if (!q.allowVisitor)
-                    {
-                        tooltip.Add($"{i.CallName} is visitor and not allowed");
-                        continue;
-                    }
-                    break;
-                default:
-                    break;
+                tooltip.Add($"{i.CallName} is prisoner and not allowed");
+                continue;
+            }
+            if (status.isHidden && !q.allowHidden)
+            {
+                tooltip.Add($"{i.CallName} is hidden and not allowed");
+                continue;
+            }
+            if (!status.isMember && !q.allowVisitor)
+            {
+                tooltip.Add($"{i.CallName} is visitor and not allowed");
+                continue;
             }
 
             if (!q.allowMIA && i.FactionManager.isPartyLocked)
@@ -77,7 +66,7 @@ public static class TeamReqUtility
                     tooltip.Add($"{i.CallName} cannot fight and not allowed");
                     continue;
                 }
-                else if (status != Manageable_GuestStatus.Manager && status != Manageable_GuestStatus.Member && status != Manageable_GuestStatus.Visitor)
+                else if (!status.participatesInCombat)
                 {
                     tooltip.Add($"{i.CallName} guest status not allowed to fight");
                     continue;

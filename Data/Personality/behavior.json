@@ -11,12 +11,14 @@
                     },
                     {
                         "$type": "TryFindRedressNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_redress",
                         "evaluationHeuristic":"closest",
                         "filter": {
                             "checkBlacklist": true,
                             "skipPrivateRoom":false,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     },
                     {
@@ -24,23 +26,27 @@
                     },
                     {
                         "$type": "TryFindSleepNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_sleep",
                         "evaluationHeuristic":"ownership_Medium",
                         "filter": {
                             "matchCOMID":"com_furniture_sleep",
                             "checkBlacklist": false,
                             "skipPrivateRoom":false,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     },
                     {
                         "$type": "TryFindMealNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_meal",
                         "evaluationHeuristic":"random",
                         "filter": {
                             "checkBlacklist": true,
                             "skipPrivateRoom":false,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     },
                     {
@@ -49,6 +55,7 @@
                     },
                     {
                         "$type": "TryFindJobByIDNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_restroom",
                         "Tags": [ "nsfw" ],
                         "randomChance": 0.5,
                         "cooldownHours": 4,
@@ -59,25 +66,30 @@
                             "checkBlacklist": true,
                             "skipPrivateRoom":false,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     },
                     {
                         "$type": "TryFindScheduledJobNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_job",
                         "_comment":"hardcoded job search parameter"
                     },
                     {
                         "$type": "TryFindRestNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_rest",
                         "evaluationHeuristic":"closest",
                         "filter": {
                             "checkBlacklist": true,
                             "skipPrivateRoom":false,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     },
                     {
                         "$type": "TryFindPrivateRoomCleaning, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_cleaning_private",
                         "evaluationHeuristic":"closest",
                         "filter": {
                             "matchCOMID":"com_job_cleaning",
@@ -85,7 +97,8 @@
                             "checkBlacklist": true,
                             "skipPrivateRoom":false,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     },
                     {
@@ -93,24 +106,28 @@
                     },
                     {
                         "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_recreation",
                         "evaluationHeuristic": "random",
                         "filter": {
                             "matchCOMTag":"recreation",
                             "checkBlacklist": true,
                             "skipPrivateRoom":true,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     },
                     {
                         "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_rest_fallback",
                         "evaluationHeuristic": "random",
                         "filter": {
                             "matchCOMTag":"rest",
                             "checkBlacklist": false,
                             "skipPrivateRoom":false,
                             "searchJobList":false,
-                            "searchNonJobList":true
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
                         }
                     }
                 ]

@@ -68,16 +68,13 @@
                 "ID": "ErAV_miyama_Household",
                 "z_rotation": 0.0,
                 "setPrivateRoomOwner": true,
+                "isPublic": false,
                 "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 5 },
                 "floors": [
         {
             "ID": "house_floor_4ldk",
             "nameOverwrite": "ErAV_miyama_Household_Home",
             "Additional": [
-                { 
-                    "addClass": "map_init_playerLocation", 
-                    "map_init_playerLocation": { "roomID": "4ldk_floor_2L_roomsingle2" } 
-                },
                 {
                     "addClass":"map_init_roomNameOverwrite",
                     "arguments":["4ldk_floor_2L_roomdouble","ErAV_roomNameOverride_parents"]
@@ -87,65 +84,9 @@
                 ],
                 "mealHours": [7, 12, 18],
                 "activeHoursStart": 7,
-                "activeHoursEnd": 22,
-                "managerBaseIDs": ["ErAV_Player"]
-            },
-            {
-                "ID": "ErAV_KiryuGumi_Office",
-                "z_rotation": 0.0,
-                "setPrivateRoomOwner": true,
-                "mainExit": { "roomID": "erav_kiryu_office_frontDoor", "exitCost": 5 },
-                "floors": [
-                    {
-                        "ID": "erav_kiryu_office",
-                        "nameOverwrite": "ErAV_KiryuGumi_Office"
-                    }
-                ],
-                "mealHours": [7, 12, 18],
-                "activeHoursStart": 7,
-                "activeHoursEnd": 22
-            },
-            {
-                "ID": "ErAV_KiryuGumi",
-                "z_rotation": 0.0,
-                "mainExit": { "roomID": "erav_kiryu_office_frontDoor", "exitCost": 5 },
-                "floors": [ {  "ID": "house_floor_4ldk" } ],
-                "mealHours": [7, 12, 18],
-                "activeHoursStart": 7,
-                "activeHoursEnd": 22
-            },
-            {
-                "ID": "jp_high_school",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_high_school",
-                "setPrivateRoomOwner": true,
-                "mainExit": { "roomID": "erav_kiryu_office_frontDoor", "exitCost": 5 },
-                "floors": [
-                    {
-                        "ID": "erav_kiryu_office",
-                        "nameOverwrite": "ErAV_KiryuGumi_Office",
-                        "connectTo":
-                        {
-                            "fromExitID":"South",
-                            "targetFloorID":"house_floor_4ldk",
-                            "targetExitID":"North"
-                        }
-                    },
-                    {
-                        "ID": "house_floor_4ldk",
-                        "nameOverwrite": "kanon house",
-                        "Additional": [
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"4ldk_floor_2L_roomsingle2", "charaBaseID": [ "ErAV_Kanon" ] }
-                            }
-                        ]
-                    }
-                ],
-                "mealHours": [7, 12, 18],
-                "activeHoursStart": 7,
                 "activeHoursEnd": 22
             }
+            
         ]
     },
 
@@ -162,7 +103,7 @@
                 "ErAV_miyama_Household_Home": "宫间家宅",
                 "ErAV_roomNameOverride_parents": "父母的房间",
                 "ErAV_KiryuGumi_Office":"桐生组事务所",
-                "ErAV_KiryuGumi":"桐生组",
+                "ErAV_Kiryu_Household":"桐生家",
                 
                 "ErAV_Kanade_firstname": "奏",
                 "ErAV_Miyama_lastname": "宫间",

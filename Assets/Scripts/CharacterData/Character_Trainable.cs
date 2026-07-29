@@ -1104,7 +1104,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         string initFactionID = (m == null ? "" : m.ID);
         this.FactionManager.ReEstablishParentData(this);
-        this.FactionManager.SetHomeFaction(initFactionID, isManager? Manageable_GuestStatus.Manager : Manageable_GuestStatus.Member);
+        this.FactionManager.SetHomeFaction(initFactionID, isManager? FactionUtility.MemberType_Manager : FactionUtility.MemberType_Member);
     }
 
     [JsonProperty] protected BodyEquipLayer lastKnownLayer = BodyEquipLayer.Inner;

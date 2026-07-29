@@ -1,0 +1,204 @@
+{
+    "_comment": "Default/base MemberType set, replacing the old Manageable_GuestStatus enum (Manager, Member, Hidden, Visitor, Prisoner, None). Lives under MapPlans.memberTypes alongside factionInit/worldInit/floorPlans. Factions can add their own faction-unique/override MemberTypes elsewhere; these are just the shared defaults every faction falls back to (see FactionUtility.MemberType_Manager etc.).",
+    "MapPlans": {
+        "memberTypes": [
+            {
+                "ID": "membertype_manager",
+                "displayNameKey": "membertype_manager_displayName",
+                "socialStandingKey": "management_faction_socialStatus_manager",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": true,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true
+            },
+            {
+                "ID": "membertype_member",
+                "displayNameKey": "membertype_member_displayName",
+                "socialStandingKey": "management_faction_socialStatus_member",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true
+            },
+            {
+                "_comment": "Kept as a faction member for isMember/ordinal-parity purposes, matching the old Manageable_GuestStatus behavior (Hidden < Visitor). Deliberately reuses the Member social-standing label (a Hidden character was never shown a distinct label before), while displayNameKey stays honestly distinct for debug/tooltip use.",
+                "ID": "membertype_hidden",
+                "displayNameKey": "membertype_hidden_displayName",
+                "socialStandingKey": "management_faction_socialStatus_member",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": true,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": true,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": false,
+                "participatesInCombat": false
+            },
+            {
+                "ID": "membertype_visitor",
+                "displayNameKey": "membertype_visitor_displayName",
+                "socialStandingKey": "management_faction_socialStatus_visitor",
+                "isMember": false,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": true,
+                "canBeRescued": true,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": true,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": false
+            },
+            {
+                "ID": "membertype_prisoner",
+                "displayNameKey": "membertype_prisoner_displayName",
+                "socialStandingKey": "management_faction_socialStatus_prisoner",
+                "isMember": false,
+                "isPrisoner": true,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": true,
+                "canBeRescued": true,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": true,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": false,
+                "_comment_behaviorOverrides": "Narrows sleep/meal/cleaning/recreation/rest search to prison rooms upfront (via each node's own PrisonerJobRestriction.GetAllowedRoomRefs restrictRoomList) instead of relying on a blanket guestStatus-based check. Each override's filter mirrors its corresponding node's filter in Data/Personality/behavior.json, for otherwise-identical behavior (PathingRoomFilter.excludePrisonRooms defaults to false, so prison rooms are searched like any other room and no special flag is needed here - only nodes that want to actively exclude prison rooms would set excludePrisonRooms:true). Keys must match the behaviorOverrideID tagged on the corresponding node in Data/Personality/behavior.json. Deliberately NOT overridden: behavior_job (TryFindScheduledJobNode), the com_furniture_restroom TryFindJobByIDNode, and TryFindRestNode - prisoners aren't meant to be restricted for those (the latter two don't even have a behaviorOverrideID). Not yet consumed anywhere (the FindJobNodeRoot lookup that reads this dictionary isn't wired up yet) - this is staged ahead of that.",
+                "behaviorOverrides": {
+                    "behavior_sleep": {
+                        "$type": "TryFindSleepNode_Prisoner, Assembly-CSharp",
+                        "evaluationHeuristic": "ownership_Medium",
+                        "filter": {
+                            "matchCOMID": "com_furniture_sleep",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true
+                        }
+                    },
+                    "behavior_restroom":{
+                        "$type": "TryFindJobByIDNode, Assembly-CSharp",
+                        "Tags": [ "nsfw" ],
+                        "randomChance": 0.5,
+                        "cooldownHours": 4,
+                        "cooldownID": "com_furniture_restroom",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "matchCOMID":"com_furniture_restroom",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":false
+                        }
+                    },
+                    "behavior_meal": {
+                        "$type": "TryFindMealNode_Prisoner, Assembly-CSharp",
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true
+                        }
+                    },
+                    "behavior_redress":
+                    {
+                        "$type": "TryFindRedressNode, Assembly-CSharp",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":false
+                        }
+                    },
+                    "behavior_cleaning_private": {
+                        "$type": "TryFindPrivateRoomCleaning_Prisoner, Assembly-CSharp",
+                        "evaluationHeuristic": "closest",
+                        "filter": {
+                            "matchCOMID": "com_job_cleaning",
+                            "matchCOMTag": "production_cleaning",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true
+                        }
+                    },
+                    "behavior_recreation": {
+                        "$type": "TryFindNonJobByTagNode_Prisoner, Assembly-CSharp",
+                        "tag": "recreation",
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "matchCOMTag": "recreation",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": true,
+                            "searchJobList": false,
+                            "searchNonJobList": true
+                        }
+                    },
+                    "behavior_rest":{
+                        "$type": "TryFindRestNode, Assembly-CSharp",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":false
+                        }
+                    },
+                    "behavior_rest_fallback": {
+                        "$type": "TryFindNonJobByTagNode_Prisoner, Assembly-CSharp",
+                        "tag": "rest",
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "matchCOMTag": "rest",
+                            "checkBlacklist": false,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true
+                        }
+                    }
+                }
+            },
+            {
+                "_comment": "Sentinel/no-status type, returned when a character has no entry in a faction's charaGuestStatus dictionary. Never actually assigned to a real character.",
+                "ID": "membertype_none",
+                "displayNameKey": "membertype_none_displayName",
+                "socialStandingKey": "",
+                "isMember": false,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": false,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": false,
+                "participatesInCombat": false
+            }
+        ]
+    }
+}

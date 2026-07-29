@@ -1,0 +1,18 @@
+{
+    
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "ErAV_Kiryu_Household",
+                "z_rotation": 0.0,
+                "isPublic": false,
+                "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 5 },
+                "floors": [ {  "ID": "house_floor_4ldk",
+                        "nameOverwrite": "ErAV_Kiryu_Household" } ],
+                "mealHours": [7, 12, 18],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22
+            }
+        ]
+    }
+}

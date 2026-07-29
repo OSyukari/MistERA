@@ -266,8 +266,7 @@ public class Manageable_Party : I_IsJobGiver
         var list = charaGuestStatus.Keys.ToList();
         foreach(var i in list)
         {
-            var status = charaGuestStatus[i];
-            if (status == Manageable_GuestStatus.Prisoner || status == Manageable_GuestStatus.Visitor)
+            if (charaGuestStatus.TryGetValue(i, out var status) && FactionUtility.TryGetMemberType(status, out var s2) && s2.isPurgedOnPartyCleanup)
             {
                 var c = scr_System_CampaignManager.current.FindInstanceByID(i);
                 RemoveFromFaction(c);
@@ -374,10 +373,58 @@ public class Manageable_Party : I_IsJobGiver
         }
     }
 
-    public Manageable_GuestStatus GetStatus(Character_Trainable c)
+
+    public MemberType GetMemberType(Character_Trainable c)
     {
-        if (this.charaGuestStatus.TryGetValue(c.RefID, out var status)) return status;
-        else return Manageable_GuestStatus.Hidden;
+        if (charaGuestStatus.TryGetValue(c.RefID, out var guestStatus)) return FactionUtility.GetMemberType(guestStatus);
+        else return FactionUtility.MemberType_None;
+    }
+
+
+
+    // -- Can* stubs: compile-only for now, no logic and no callers wired up yet -- //
+    public bool CanRescue(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        //return the status target character should have (the final status), not the temporary rescued status
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None) newstatus = FactionUtility.MemberType_Member;
+        return prevStatus.isPrisoner;
+    }
+    public bool CanTransfer(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None) newstatus = prevStatus;
+        return prevStatus.canBeTransferred;
+    }
+    public bool CanCapture(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None)
+        {
+            newstatus = FactionUtility.MemberType_Prisoner;
+            return true;
+        }
+        else return false;
+    }
+    public bool CanLiberate(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None) return prevStatus.isPrisoner;
+        else return false;
+    }
+    public bool CanConvert(Character_Trainable c, MemberType prevStatus, out MemberType newstatus)
+    {
+        newstatus = GetMemberType(c);
+        if (newstatus == FactionUtility.MemberType_None)
+        {
+            if (prevStatus.memberConvertTarget != "")
+            {
+                newstatus = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MemberType(prevStatus.memberConvertTarget);
+                return newstatus != null;
+            }
+            else return false;
+        }
+        else return false;
     }
 
     public PartyAvailability GetAvailability(out string tooltip)
@@ -490,23 +537,25 @@ public class Manageable_Party : I_IsJobGiver
         _cachedSleepHours = false;
     }
 
+
+
     /// <summary>
     /// Can also be used to change guest status
     /// </summary>
     /// <param name="c"></param>
     /// <param name="guestStatus"></param>
-    public void AddToFaction(Character_Trainable c, Manageable_GuestStatus guestStatus, bool sendEvent = true)
+    public void AddToFaction(Character_Trainable c, MemberType guestStatus, bool sendEvent = true)
     {
         //c.AddToFaction(this);
-        if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus);
-        else charaGuestStatus[c.RefID] = guestStatus;
+        if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus.ID);
+        else charaGuestStatus[c.RefID] = guestStatus.ID;
 
         if (!charaPartyComposition.ContainsKey(c.RefID)) charaPartyComposition.Add(c.RefID, PartyComposition.frontline);
 
         // set manager roles
         if (!OwnerFaction.ManagedChara.Contains(c)) OwnerFaction.AddToFaction(c, guestStatus, false);
 
-        if (sendEvent && guestStatus == Manageable_GuestStatus.Prisoner)
+        if (sendEvent && guestStatus.isPrisoner)
         {
             FactionUtility.SendImprisonEvent(this, c);
             if (this.Job.isActive)
@@ -684,9 +733,9 @@ public class Manageable_Party : I_IsJobGiver
 
     public bool skipTryGetJob(Character_Trainable c)
     {
-        if (charaGuestStatus.TryGetValue(c.RefID, out var status))
+        if (charaGuestStatus.TryGetValue(c.RefID, out var status) && FactionUtility.TryGetMemberType(status, out var status2))
         {
-            return status == Manageable_GuestStatus.Hidden;
+            return status2.isHidden;
         }
         else return false;
     }
@@ -696,9 +745,9 @@ public class Manageable_Party : I_IsJobGiver
     }
     public bool isPrisoner(int c)
     {
-        if (charaGuestStatus.TryGetValue(c, out var status))
+        if (charaGuestStatus.TryGetValue(c, out var status) && FactionUtility.TryGetMemberType(status, out var status2))
         {
-            return status == Manageable_GuestStatus.Prisoner;
+            return status2.isPrisoner;
         }
         else return false;
     }
@@ -737,15 +786,15 @@ public class Manageable_Party : I_IsJobGiver
     }
     public bool isMember(int refID)
     {
-        if (charaGuestStatus.TryGetValue(refID, out var status))
+        if (charaGuestStatus.TryGetValue(refID, out var status) && FactionUtility.TryGetMemberType(status, out var status2))
         {
-            return status < Manageable_GuestStatus.Visitor;
+            return status2.isMember;
         }
         else return false;
     }
 
     [JsonProperty] protected Dictionary<int, PartyComposition> charaPartyComposition = new Dictionary<int, PartyComposition>();
-    [JsonProperty] protected Dictionary<int, Manageable_GuestStatus> charaGuestStatus = new Dictionary<int, Manageable_GuestStatus>();
+    [JsonProperty] protected Dictionary<int, string> charaGuestStatus = new Dictionary<int, string>();
     [JsonIgnore] public List<int> ManagedRefs { get { return charaGuestStatus.Keys.ToList();}}
     List<Character_Trainable> _managedChara = null;
     [JsonIgnore]
@@ -766,7 +815,7 @@ public class Manageable_Party : I_IsJobGiver
     {
         get
         {
-            return ManagedChara.FindAll(x => GetStatus(x) != Manageable_GuestStatus.Hidden);
+            return ManagedChara.FindAll(x => !GetMemberType(x).isHidden);
         }
     }
     [JsonProperty] protected Dictionary<int, List<int>> managedRoomRefs = null;
@@ -993,7 +1042,7 @@ public class Manageable_Party : I_IsJobGiver
         get
         {
             var v = new List<Character_Trainable>(OwnerFaction.Managers);
-            foreach (var i in this.charaGuestStatus) if (i.Value == Manageable_GuestStatus.Manager) v.Add(scr_System_CampaignManager.current.FindInstanceByID(i.Key));
+            foreach (var i in this.charaGuestStatus) if (FactionUtility.TryGetMemberType(i.Value, out var status) && status.isManager) v.Add(scr_System_CampaignManager.current.FindInstanceByID(i.Key));
             return v;
         }
     }
@@ -1040,5 +1089,7 @@ public class Manageable_Party : I_IsJobGiver
        // string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
        // s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
     }
+
+
 }
 

@@ -1387,7 +1387,7 @@ public static class UtilityEX
 
                     var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;
 
-                    c.FactionManager.SetTempHomeFaction(addTofaction.ID);
+                    c.FactionManager.SetTempHomeFaction(addTofaction.ID, FactionUtility.MemberType_Visitor);
                 }
                 break;
             case "spawnCharaPrisoner":
@@ -1408,7 +1408,7 @@ public static class UtilityEX
 
                     var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;
 
-                    c.FactionManager.SetTempHomeFaction(addTofaction.ID, Manageable_GuestStatus.Prisoner);
+                    c.FactionManager.SetTempHomeFaction(addTofaction.ID, FactionUtility.MemberType_Prisoner);
                 }
                 break;
             case "advReproCycle":

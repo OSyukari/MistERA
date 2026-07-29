@@ -144,7 +144,7 @@
                                         "refKeys": [
                                             "victims"
                                         ],
-                                        "status": "Prisoner"
+                                        "status": "membertype_prisoner"
                                     }
                                 ]
                             }
@@ -190,7 +190,7 @@
                                         "refKeys": [
                                             "victims"
                                         ],
-                                        "status": "Prisoner"
+                                        "status": "membertype_prisoner"
                                     }
                                 ]
                             }

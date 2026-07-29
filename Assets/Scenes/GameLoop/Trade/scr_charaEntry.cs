@@ -32,6 +32,20 @@ public class scr_charaEntry : MonoBehaviour
             UpdateUI();
         }
     }
+
+    /// <summary>
+    /// The MemberType a Can* check already resolved for the current TreatmentResult, computed exactly
+    /// once at button-validation time (Button_SetTreatment's constructor, or InitChara for the default
+    /// treatment) and stored here. Resolve() must read this directly rather than re-running Can* checks,
+    /// so the outcome acted on always matches what the player actually saw/selected.
+    /// </summary>
+    MemberType resolvedNewStatus = null;
+
+    public void SetTreatment(Treatment target, MemberType newStatus)
+    {
+        this.resolvedNewStatus = newStatus;
+        this.TreatmentResult = target;
+    }
     public enum Treatment
     {
         none,
@@ -46,6 +60,11 @@ public class scr_charaEntry : MonoBehaviour
 
     List<scr_itemEntry> managedLists = new List<scr_itemEntry>();
 
+    /// <summary>
+    /// No Can* calls here by design - eligibility and the resulting MemberType are decided exactly once,
+    /// at button-validation time (Button_SetTreatment's constructor, propagated via SetTreatment), and
+    /// stored in resolvedNewStatus. Re-checking here risked disagreeing with what the player actually saw.
+    /// </summary>
     public void Resolve()
     {
         if (this.TreatmentResult == Treatment.none)
@@ -54,28 +73,12 @@ public class scr_charaEntry : MonoBehaviour
         }
         else
         {
-
             var targetFaction = this.isTeamA ? this.parent.b : this.parent.a;
+            var newStats = resolvedNewStatus;
 
-            var prevStatus = innerChara.FactionManager.CurrentActiveParty == null ? Manageable_GuestStatus.Prisoner : innerChara.FactionManager.CurrentActiveParty.GetStatus(innerChara);
-            var newStats = targetFaction.FactionOwnerRoot.GetStatus(innerChara);
-
-            switch (this.TreatmentResult)
-            {
-                case Treatment.rescue:
-                    if (newStats == Manageable_GuestStatus.None) newStats = Manageable_GuestStatus.Member;
-                    // else maintain existing status
-                    break;
-                case Treatment.transfer: newStats = prevStatus; break;
-                case Treatment.capture: newStats = Manageable_GuestStatus.Prisoner; break;
-                default:
-                    newStats = Manageable_GuestStatus.None; break;
-            }
-
-            //Debug.LogError($"Chara Resolve Trade treatment {prevStatus} {newStats} {this.TreatmentResult}");
             if (TreatmentResult == Treatment.liberate && parent.liberateEventID != "")
             {
-                if (newStats == Manageable_GuestStatus.None)
+                if (newStats != null)
                 {
                     var ev = new EventInstance(innerChara, parent.liberateEventID, "");
                     ev.Targets.Add("party", isTeamA ? this.parent.b.ManagedChara : this.parent.a.ManagedChara);
@@ -86,13 +89,13 @@ public class scr_charaEntry : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError($"Liberating character {innerChara.CallName}, is legit? {newStats == Manageable_GuestStatus.None}");
+                    Debug.LogError($"Liberating character {innerChara.CallName} failed, no resolved status stored");
                 }
                 return;
             }
-            else if (newStats == Manageable_GuestStatus.None)
+            else if (newStats == null)
             {
-                Debug.LogError($"Chara Resolve Trade failed, undefined faction type");
+                Debug.LogError($"Chara Resolve Trade failed, no resolved status stored for {innerChara.CallName} treatment {TreatmentResult}");
                 return;
             }
             else if (targetFaction != null)
@@ -127,8 +130,12 @@ public class scr_charaEntry : MonoBehaviour
                 }
 
                 if (targetFaction is Manageable_Party)
-                { 
-                    if (this.innerChara.FactionManager.AddToPartyAsTemp(targetFaction, newStats == Manageable_GuestStatus.Prisoner ? Manageable_GuestStatus.Prisoner : Manageable_GuestStatus.Visitor, newStats))
+                {
+                    // party membership itself stays temporary/non-combat (Prisoner if that's what CanRescue/etc.
+                    // resolved to, Visitor otherwise) even when newStats represents a fuller status at the
+                    // faction-root level - matches CanRescue's documented "temporary rescued status" behavior.
+                    var tempStatus = newStats.isPrisoner ? newStats : FactionUtility.MemberType_Rescued;
+                    if (this.innerChara.FactionManager.AddToPartyAsTemp(targetFaction, tempStatus, newStats))
                     {
                         // do nothing
 
@@ -180,7 +187,11 @@ public class scr_charaEntry : MonoBehaviour
 
         if (parent.a.FactionOwnerRoot.isManagedChara(innerChara.RefID))
         {
-            canvas.RegisterBtn(this.btn_nothing, new Button_SetTreatment(canvas, this.btn_nothing, this, Treatment.rescue));
+            var defaultBtn = new Button_SetTreatment(canvas, this.btn_nothing, this, Treatment.rescue);
+            canvas.RegisterBtn(this.btn_nothing, defaultBtn);
+            // this is the default treatment, not a click - store its already-resolved status directly,
+            // same rule as everywhere else: the Can* check happens once, here, not again in Resolve().
+            resolvedNewStatus = defaultBtn.ResolvedNewStatus;
             _treatment = Treatment.rescue;
         }
         else
@@ -259,6 +270,15 @@ public class scr_charaEntry : MonoBehaviour
         bool deactivateSelf = false;
 
         string innerText = "";
+
+        /// <summary>
+        /// The Can* outcome for whichever treatment this button ends up representing, computed exactly
+        /// once here and never recomputed - entry.Resolve() reads it via SetTreatment, it doesn't
+        /// re-check. If the Can* call itself fails, the button deactivates rather than firing on click.
+        /// </summary>
+        MemberType resolvedNewStatus = null;
+        public MemberType ResolvedNewStatus { get { return resolvedNewStatus; } }
+
         public Button_SetTreatment(menu_Trade parent, scr_SelectableText text, scr_charaEntry entry, Treatment target) : base(parent)
         {
             this.parent = parent;
@@ -266,15 +286,18 @@ public class scr_charaEntry : MonoBehaviour
             this.entry = entry;
             this.target = target;
 
-            bool isRescue = false;
+            bool forceRescue = false;
             bool canbeLiberated = false;
+
+            var status = parent.b.FactionOwnerRoot.GetMemberType(entry.innerChara);
+            MemberType newstatus = null;
 
             if (entry.isTeamA || !parent.allowTransfer) deactivateSelf = true;
             else if (parent.a.FactionOwnerRoot.isManagedChara(entry.innerChara.RefID))
             {// if chara in A and not in B -> rescue
-                isRescue = true;
+                forceRescue = true;
             }
-            else if (parent.b.FactionOwnerRoot.isPrisoner(entry.innerChara.RefID) && parent.liberateEventID != "")
+            else if (parent.b.FactionOwnerRoot.CanRescue(entry.innerChara, status, out newstatus) && parent.liberateEventID != "")
             {// not in faction, can be liberate
                 canbeLiberated = true;
             }
@@ -287,7 +310,7 @@ public class scr_charaEntry : MonoBehaviour
             else if (!parent.allowTransfer) deactivateSelf = true;
             else if (target == Treatment.transfer)
             {
-                if (isRescue || !canbeLiberated) deactivateSelf = true;
+                if (forceRescue || !canbeLiberated) deactivateSelf = true;
                 else if (!parent.isHostile)
                 {
                     // non hostile faction allow transfer -> direct transfer
@@ -302,7 +325,7 @@ public class scr_charaEntry : MonoBehaviour
             }
             else if (target == Treatment.capture)
             {
-                if (!parent.allowHostile || isRescue) deactivateSelf = true;
+                if (!parent.allowHostile || forceRescue) deactivateSelf = true;
                 else if (!entry.innerChara.isHumanoid) deactivateSelf = true;
                 else
                 {
@@ -313,6 +336,31 @@ public class scr_charaEntry : MonoBehaviour
             else
             {
                 innerText = $"trade_chara_Treatment_{target}";
+            }
+
+            // Resolve the real Can* outcome for whichever treatment this button ended up as (this.target,
+            // which transfer may have just switched to liberate above), exactly once. A failed Can* check
+            // deactivates the button just like the other eligibility checks above. Treatment.none needs no
+            // Can* check at all - it's always valid (Resolve() short-circuits on it before ever touching
+            // resolvedNewStatus) - so it's excluded from this gate rather than falling into a "default:
+            // fail" case.
+            if (!deactivateSelf && this.target != Treatment.none)
+            {
+                var targetFaction = entry.isTeamA ? parent.b : parent.a;
+                var prevStatus = entry.innerChara.FactionManager.CurrentActiveParty == null
+                    ? FactionUtility.MemberType_Prisoner
+                    : entry.innerChara.FactionManager.CurrentActiveParty.GetMemberType(entry.innerChara);
+
+                bool success;
+                switch (this.target)
+                {
+                    case Treatment.rescue: success = targetFaction.FactionOwnerRoot.CanRescue(entry.innerChara, prevStatus, out resolvedNewStatus); break;
+                    case Treatment.transfer: success = targetFaction.FactionOwnerRoot.CanTransfer(entry.innerChara, prevStatus, out resolvedNewStatus); break;
+                    case Treatment.capture: success = targetFaction.FactionOwnerRoot.CanCapture(entry.innerChara, prevStatus, out resolvedNewStatus); break;
+                    case Treatment.liberate: success = targetFaction.FactionOwnerRoot.CanLiberate(entry.innerChara, prevStatus, out resolvedNewStatus); break;
+                    default: success = false; resolvedNewStatus = null; break;
+                }
+                if (!success) deactivateSelf = true;
             }
 
             if (deactivateSelf) this.text.gameObject.SetActive (false);
@@ -328,7 +376,7 @@ public class scr_charaEntry : MonoBehaviour
         }
         public void OnClickButton()
         {
-            entry.TreatmentResult = target;
+            entry.SetTreatment(target, resolvedNewStatus);
         }
     }
 }

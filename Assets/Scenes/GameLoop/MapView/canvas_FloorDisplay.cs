@@ -425,7 +425,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 MoveToRoom(onlyRoom);
                 return;
             }
-            else if (floornew.FloorBase == null || string.IsNullOrEmpty(floornew.FloorBase.imagePath))
+            else if (floornew.ConnectedDoors.Count < 1)// floornew.FloorBase == null || string.IsNullOrEmpty(floornew.FloorBase.imagePath))
             {
                 // already standing in this floor's only room and there's no image to show it with -
                 // jump to the parent world map instead, since there's nowhere useful to go from here locally
@@ -677,12 +677,31 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         foreach (var door in worldView.doors)
         {
             if (string.IsNullOrEmpty(door.floorExitID) && string.IsNullOrEmpty(door.childWorldID)) continue;
+
+            // a door leading to a floor is hidden while its owning faction hasn't been revealed to the
+            // player yet (Manageable.hiddenOnWorldMap, set from MapPlan.isPublic at faction instantiation
+            // and cleared the moment the player joins) - falls back to the door's own isPublic when the
+            // faction hasn't been instantiated at all yet. Child-world doors are unaffected.
+            if (!string.IsNullOrEmpty(door.floorExitID) && !scr_System_CampaignManager.current.DebugMode)
+            {
+                var owner = scr_System_CampaignManager.current.FindFactionByID(door.factionID);
+                bool hidden = owner != null ? owner.hiddenOnWorldMap : !door.isPublic;
+                if (hidden) continue;
+            }
+
             addWorldDoor(prefab_roomButton, picture.rectTransform, worldView, door);
         }
 
         cachedPath = null;
         connectionSegments = new List<(Vector2, Vector2, Color)>();
         connectionLines.SetSegments(connectionSegments);
+
+        // recenter the (potentially oversized) world map on the player's current location - falls back to
+        // the map's own center when the player's faction has no door here (e.g. a disconnected sub-world).
+        var originDoor = FindPlayerOriginDoor(worldView);
+        picture.rectTransform.anchoredPosition = originDoor != null
+            ? -ConvertOffset(originDoor.offset_x, originDoor.offset_y)
+            : Vector2.zero;
 
         ValidateAll();
     }

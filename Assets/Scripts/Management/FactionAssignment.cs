@@ -17,7 +17,7 @@ public class NPCInit
     public class FactionInit
     {
         public string factionID = "";
-        public Manageable_GuestStatus guestStatus = Manageable_GuestStatus.Member;
+        public string guestStatus = FactionUtility.MemberTypeID_Member;
         public string spawnFloorID = "";
         public string spawnRoomID = "";
         public bool setRoomOwnership = false;

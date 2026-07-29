@@ -9,163 +9,172 @@
         "AnchorType":"TopLeft",
         "worldWidth":833,
         "worldHeight":400,
-        "worldSizeMult":2,
+        "worldSizeMult":4,
 
         "travelDistancePerMinute":6.67,
 
-        "playerInitLocationFaction":"ErAV_miyama_Household",
+        "playerInit": {
+            "initID": "init_erav_player",
+            "Homefaction": {
+                "factionID": "ErAV_miyama_Household",
+                "guestStatus": "membertype_manager",
+                "spawnFloorID": "house_floor_4ldk",
+                "spawnRoomID": "4ldk_floor_2L_roomsingle2",
+                "setRoomOwnership": true
+            }
+        },
         "initializeFactions":
         {
             "jp_convenience_store_SunMart":"jp_convenience_store_SunMart",
             "Katsuragi_Household":"Katsuragi_Household",
             "ErAV_miyama_Household":"ErAV_miyama_Household",
-            "CoffinAnL_Household":"CoffinAnL_Household",
-            "ErAV_KiryuGumi":"ErAV_KiryuGumi",
+            "ErAV_Kiryu_Household":"ErAV_Kiryu_Household",
             "ErAV_KiryuGumi_Office":"ErAV_KiryuGumi_Office",
-            "jp_shopping_street":"jp_shopping_street"
+            "jp_shopping_street":"jp_shopping_street",
+            "jp_high_school":"jp_high_school"
         },
         "doors":
         [
             {
-                "offset_x":460, "offset_y":250, "isPublic":true,
+                "offset_x":460, "offset_y":250,
                 "factionID":"jp_convenience_store_SunMart",
                 "floorExitID":"store_1F_entrance"
             },
             {
-                "offset_x":430, "offset_y":220, "isPublic":true,
+                "offset_x":430, "offset_y":220, "isPublic":false,
                 "factionID":"Katsuragi_Household",
                 "floorExitID":"4ldk_floor_1L_frontDoor"
             },
             {
-                "offset_x":520, "offset_y":230, "isPublic":true,
+                "offset_x":520, "offset_y":230, "isPublic":false,
                 "factionID":"CoffinAnL_Household",
                 "floorExitID":"floor_2ldk_2floor_1_1L_frontDoor"
             },
             {
-                "offset_x":480, "offset_y":190, "isPublic":true,
+                "offset_x":480, "offset_y":190, "isPublic":false,
                 "factionID":"ErAV_miyama_Household",
                 "floorExitID":"4ldk_floor_1L_frontDoor"
             },
             {
                 "offset_x":750, "offset_y":260, "isPublic":false,
-                "factionID":"ErAV_KiryuGumi",
+                "factionID":"ErAV_Kiryu_Household",
                 "floorExitID":"4ldk_floor_1L_frontDoor"
             },
             {
-                "offset_x":650, "offset_y":260, "isPublic":true,
+                "offset_x":650, "offset_y":260,
                 "factionID":"ErAV_KiryuGumi_Office",
                 "floorExitID":"erav_kiryu_office_frontDoor"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":440, "offset_y":150, "isPublic":true,
+                "offset_x":440, "offset_y":150,
                 "factionID":"jp_park",
                 "floorExitID":"park_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":470, "offset_y":130, "isPublic":true,
+                "offset_x":470, "offset_y":130,
                 "factionID":"jp_high_school",
                 "floorExitID":"school_frontGate"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":620, "offset_y":110, "isPublic":true,
+                "offset_x":620, "offset_y":110,
                 "factionID":"jp_university",
                 "floorExitID":"university_frontGate"
             },
             {
-                "offset_x":560, "offset_y":210, "isPublic":true,
+                "offset_x":560, "offset_y":210,
                 "factionID":"jp_shopping_street",
                 "floorExitID":"jp_shopping_street_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":600, "offset_y":200, "isPublic":true,
+                "offset_x":600, "offset_y":200,
                 "factionID":"jp_family_restaurant",
                 "floorExitID":"restaurant_1F_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":560, "offset_y":310, "isPublic":true,
+                "offset_x":560, "offset_y":310,
                 "factionID":"jp_karaoke",
                 "floorExitID":"karaoke_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":640, "offset_y":200, "isPublic":true,
+                "offset_x":640, "offset_y":200,
                 "factionID":"jp_maid_cafe",
                 "floorExitID":"maidcafe_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":600, "offset_y":310, "isPublic":true,
+                "offset_x":600, "offset_y":310,
                 "factionID":"jp_arcade",
                 "floorExitID":"arcade_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":620, "offset_y":275, "isPublic":true,
+                "offset_x":620, "offset_y":275,
                 "factionID":"jp_gym",
                 "floorExitID":"gym_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":540, "offset_y":275, "isPublic":true,
+                "offset_x":540, "offset_y":275,
                 "factionID":"jp_beauty_salon",
                 "floorExitID":"beautysalon_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":580, "offset_y":275, "isPublic":true,
+                "offset_x":580, "offset_y":275,
                 "factionID":"jp_pet_shop",
                 "floorExitID":"petshop_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":680, "offset_y":310, "isPublic":true,
+                "offset_x":680, "offset_y":310,
                 "factionID":"jp_casino",
                 "floorExitID":"casino_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":700, "offset_y":275, "isPublic":true,
+                "offset_x":700, "offset_y":275,
                 "factionID":"jp_bar",
                 "floorExitID":"bar_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":500, "offset_y":300, "isPublic":true,
+                "offset_x":500, "offset_y":300,
                 "factionID":"jp_hospital",
                 "floorExitID":"hospital_1F_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":690, "offset_y":200, "isPublic":true,
+                "offset_x":690, "offset_y":200,
                 "factionID":"jp_train_station",
                 "floorExitID":"station_gate"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":350, "offset_y":240, "isPublic":true,
+                "offset_x":350, "offset_y":240,
                 "factionID":"jp_tourist_riverside",
                 "floorExitID":"riverside_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":200, "offset_y":310, "isPublic":true,
+                "offset_x":200, "offset_y":310,
                 "factionID":"jp_tourist_shrine",
                 "floorExitID":"shrine_torii"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":90, "offset_y":100, "isPublic":true,
+                "offset_x":90, "offset_y":100,
                 "factionID":"jp_farm",
                 "floorExitID":"farm_entrance"
             },
             {
                 "_comment":"placeholder - no factionInit yet",
-                "offset_x":60, "offset_y":300, "isPublic":true,
+                "offset_x":60, "offset_y":300,
                 "factionID":"jp_ranch",
                 "floorExitID":"ranch_entrance"
             }
@@ -177,28 +186,29 @@
                 "tags":["ErAV"],
                 "actorBaseID":"ErAV_Kanon",
                 "Homefaction": {
-                    "factionID": "ErAV_KiryuGumi",
-                    "guestStatus": "Member",
+                    "factionID": "ErAV_Kiryu_Household",
+                    "guestStatus": "membertype_member",
                     "spawnFloorID": "house_floor_4ldk",
                     "spawnRoomID": "4ldk_floor_2L_roomsingle2",
                     "setRoomOwnership":true
                 },
                 "TempHomefaction":null,
                 "Workfactions":[
-                    { "factionID":"jp_high_school", "guestStatus":"Member" },
-                    { "factionID":"ErAV_KiryuGumi_Office", "guestStatus":"Manager" }]
+                    { "factionID":"jp_high_school", "guestStatus":"membertype_jp_high_school_student" },
+                    { "factionID":"ErAV_KiryuGumi_Office", "guestStatus":"membertype_manager" }]
             },
             {
                 "initID":"init_erav_kanade",
                 "actorBaseID":"ErAV_Kanade",
                 "Homefaction": {
                     "factionID": "ErAV_miyama_Household",
-                    "guestStatus": "Member",
+                    "guestStatus": "membertype_member",
                     "spawnFloorID": "house_floor_4ldk",
-                    "spawnRoomID": "4ldk_floor_2L_roomsingle1"
+                    "spawnRoomID": "4ldk_floor_2L_roomsingle1",
+                    "setRoomOwnership": true
                 },
                 "TempHomefaction":null,
-                "Workfactions":[{ "factionID":"jp_high_school" }]
+                "Workfactions":[{ "factionID":"jp_high_school", "guestStatus":"membertype_jp_high_school_student" }]
             }
         ]
     }
@@ -218,7 +228,7 @@
                 "world_erav_modern_jp": "日本",
 
                 "jp_park": "公园",
-                "jp_high_school": "高中",
+                "jp_high_school": "XX私立高中",
                 "jp_university": "大学",
                 "jp_shopping_street": "商店街",
                 "jp_family_restaurant": "家庭餐厅",
