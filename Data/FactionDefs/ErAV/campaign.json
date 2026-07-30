@@ -83,6 +83,16 @@
         }
                 ],
                 "mealHours": [7, 12, 18],
+                "initializers":[
+                    {
+                        "initClass":"campaign_init_factionInventory",
+                        "initArguments":["Utnapishtim", "consumable_emergency_ration", "", "5"]
+                    },
+                    {
+                        "initClass":"campaign_init_factionInventory",
+                        "initArguments":["Utnapishtim", "currency_JPY", "", "1000"]
+                    }
+                ],
                 "activeHoursStart": 7,
                 "activeHoursEnd": 22
             }

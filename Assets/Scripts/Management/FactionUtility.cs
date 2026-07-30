@@ -462,21 +462,84 @@ public static class FactionUtility
 
     public static float Heuristic_Distance(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
     {
-        int roomId = j.ParentRoom.RefID;
-        if (cache.TryGetValue(roomId, out float cached))
+        return GetTravelMinutesToRoom(c, j.ParentRoom, cache);
+    }
+
+    /// <summary>
+    /// Travel time (in minutes/path-cost units) from the character's current room to the given room,
+    /// via the in-map floor/door graph. Used by Heuristic_Distance to rank job-furniture candidates.
+    /// </summary>
+    public static float GetTravelMinutesToRoom(Character_Trainable c, Room_Instance room, Dictionary<int, float> cache = null)
+    {
+        int roomId = room.RefID;
+        if (cache != null && cache.TryGetValue(roomId, out float cached))
             return cached;
 
         var map = scr_System_CampaignManager.current.Map;
 
         if (map.FindRoomByChara(c.RefID)?.RefID == roomId)
         {
-            cache[roomId] = 0f;
+            if (cache != null) cache[roomId] = 0f;
             return 0f;
         }
 
         var paths = map.FilterValidPathsOptimized(c, new List<int> { roomId }, false);
         float distance = paths.Count > 0 ? (float)paths.Keys.First() : float.MaxValue;
-        cache[roomId] = distance;
+        if (cache != null) cache[roomId] = distance;
         return distance;
+    }
+
+    /// <summary>
+    /// Travel-time buffer (minutes) added on top of the raw world-map travel time. Kept at 0 for now -
+    /// a positive buffer caused NPCs to physically arrive a minute or more before the hour flips over,
+    /// while currentJobFaction/currentHour (still the old hour) treats being at the destination as being
+    /// at the "wrong" locale and rallies them back home, causing a back-and-forth. Revisit alongside a
+    /// fix to that arrival-locale check before increasing this again.
+    /// </summary>
+    public const int NextHourTravelBuffer = 0;
+
+    /// <summary>
+    /// Decides whether it's time for a character to start heading toward next hour's scheduled
+    /// activity - whatever it is, not just work - based on: next hour actually having something
+    /// scheduled, that slot differing from the current hour's slot, the character not already being
+    /// at that faction's locale, and that faction only being reachable via actual world-map travel
+    /// (Map.TryGetWorldMapTravelMinutes) - factions linked directly within the same map are a cheap
+    /// sub-10-minute hop and are ignored here, since pre-empting a schedule for those isn't worth it.
+    /// Callers are responsible for the "don't interrupt if the current action is itself job-tagged (or
+    /// otherwise non-interruptible)" half of the rule - this only answers "is next hour's destination
+    /// worth leaving early for", not "is now a safe time to leave".
+    /// </summary>
+    public static bool ShouldTravelForNextHourSchedule(Character_Trainable c, I_IsJobGiver currentLocaleFaction, int currentHour, out Manageable nextFaction, out float travelMinutes)
+    {
+        nextFaction = null;
+        travelMinutes = 0f;
+
+        int nextHour = (currentHour + 1) % 24;
+        var nextSchedule = c.GetJobPost(nextHour);
+        if (nextSchedule == null || !nextSchedule.isActive) return false;
+
+        var currentSchedule = c.GetJobPost(currentHour);
+        if (currentSchedule != null && currentSchedule.jobID == nextSchedule.jobID
+            && Utility.ListContainsLoose(currentSchedule.comIDs, nextSchedule.comIDs)
+            && Utility.ListContainsLoose(nextSchedule.comIDs, currentSchedule.comIDs))
+        {
+            // same schedule carries into next hour - nothing to travel for
+            return false;
+        }
+
+        nextFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour);
+        if (nextFaction == null || (I_IsJobGiver)nextFaction == currentLocaleFaction) return false;
+
+        // Only worth pre-empting for actual world-map travel (typically 10-40+ minutes). Factions linked
+        // directly within a map (isConnectedFaction) are a cheap sub-10-minute hop - not worth interrupting
+        // a current action or skipping recreation/meal/rest for, so we deliberately ignore those here.
+        var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+        var fromRoot = charaRoom == null || charaRoom.FactionOwner == null ? null : charaRoom.FactionOwner.FactionOwnerRoot;
+        var toRoot = nextFaction.FactionOwnerRoot;
+        if (fromRoot == null || toRoot == null) return false;
+        if (!scr_System_CampaignManager.current.Map.TryGetWorldMapTravelMinutes(fromRoot, toRoot, out travelMinutes, out var worldID)) return false;
+
+        int minutesLeftInHour = 60 - scr_System_Time.current.getCurrentTime().Minute;
+        return minutesLeftInHour <= travelMinutes + NextHourTravelBuffer;
     }
 }

@@ -14,6 +14,7 @@ using UnityEngine;
 public class Door_Instance
 {
     float cost = 0.1f;
+    public string worldInstance = "";
     public Door_Instance(float cost)
     {
         if (cost < 0.1f)

@@ -44,7 +44,8 @@
                         "offsetY": 696,
                         "connects": [
                             { "ID": "erav_kiryu_office_hallway", "cost": 1.0 }
-                        ]
+                        ],
+                        "roomImagePath": "BGAssets/Generated/office_04.webp"
                     },
                     {
                         "ID": "erav_kiryu_office_hallway",
@@ -56,8 +57,7 @@
                             { "ID": "erav_kiryu_office_restroom", "cost": 1.0 },
                             { "ID": "erav_kiryu_office_lounge", "cost": 1.0 }
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/office_hallway_01.webp"
                     },
                     {
                         "ID": "erav_kiryu_office_bullpen",
@@ -70,8 +70,7 @@
                         "furnitureIDs": [
                             "furniture_computer_terminal"
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/office_interior_06.webp"
                     },
                     {
                         "ID": "erav_kiryu_office_kitchen",
@@ -85,8 +84,7 @@
                             "furniture_galley",
                             "furniture_round_table_4"
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/office_cafeteria_01.webp"
                     },
                     {
                         "ID": "erav_kiryu_office_kanonoffice",
@@ -97,8 +95,7 @@
                         "furnitureIDs": [
                             "furniture_bookshelves"
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/office_interior_03.webp"
                     },
                     {
                         "ID": "erav_kiryu_office_restroom",
@@ -110,8 +107,8 @@
                         "furnitureIDs": [
                             "furniture_bathroom_set"
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk118トイレd.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk118トイレb.png"
                     },
                     {
                         "ID": "erav_kiryu_office_lounge",
@@ -119,8 +116,7 @@
                         "offsetX": 687,
                         "offsetY": 536,
                         "connects": [ ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/office_lounge_07.webp"
                     }
                 ]
             }

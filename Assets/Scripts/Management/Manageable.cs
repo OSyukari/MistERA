@@ -738,6 +738,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         var module = GetMemberType(c).workModule;
         if (module == null || !module.activeHours.Contains(hour)) return null;
+        if (module.activeDays.Count > 0)
+        {
+            int dayInWeek = scr_System_Time.current.getCurrentDayInWeek();
+            if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) return null;
+        }
         var schedule = new HourlySchedule();
         schedule.Set(module.jobPostID, module.workCommands);
         return schedule;
@@ -1560,6 +1565,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 if (exp.keywords.Count < 1) continue;
                 if (!Utility.ListContainsStrict(this.explorationKeywords, exp.keywords)) continue;
             }
+            else continue;
             var expinstance = scr_System_CampaignManager.current.CreateExpedition(exp.ExpeditionID);
             if (expinstance != null) list.Add(expinstance);
         }

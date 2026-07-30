@@ -74,7 +74,8 @@
                 "workModule": {
                     "jobPostID":"jp_high_school_teacher_class",
                     "workCommands":["jp_high_school_teachers_lesson"],
-                    "activeHours":[8,9,10,11,12,13,14,15,16]
+                    "activeHours":[8,9,10,11,12,13,14,15,16],
+                    "activeDays":[1,1,1,1,1,0,0]
                 },
                 "behaviorOverrides":{
                     "behavior_job":{
@@ -109,7 +110,8 @@
                 "workModule": {
                     "jobPostID":"jp_high_school_student_class",
                     "workCommands":["jp_high_school_student_lesson"],
-                    "activeHours":[8,9,10,11,12,13,14,15,16]
+                    "activeHours":[8,9,10,11,12,13,14,15,16],
+                    "activeDays":[1,1,1,1,1,0,0]
                 },
                 "behaviorOverrides":{
                     "behavior_job":{

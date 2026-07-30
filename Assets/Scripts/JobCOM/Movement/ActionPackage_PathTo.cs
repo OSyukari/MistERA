@@ -153,6 +153,41 @@ public class ActionPackage_PathTo : ActionPackage
     {
         return isValid;
     }
+    protected override void PackageBegin(MessageCollect m = null)
+    {
+        base.PackageBegin();
+    }
+    public bool firstTick = true;
+    protected override void PackageTick(MessageCollect m = null)
+    {
+        base.PackageTick(m);
+        if (firstTick) CheckWorldDoors();
+    }
+
+    void CheckWorldDoors()
+    {
+        firstTick = false;
+        if (path == null || path.Count < 1) return;
+        var pc = path[0];
+        if (pc.Tag != null && pc.Tag.worldInstance != "")
+        {
+            var map = scr_System_CampaignManager.current.Map;
+            var transitRoom = map.GetOrCreateWorldTransitRoom(pc.Tag.worldInstance);
+            if (transitRoom == null)
+            {
+                Debug.LogError($"ActionPackage_PathTo.CheckWorldDoors: could not find/lazy-init WorldPlan [{pc.Tag.worldInstance}] to create a transit room - leaving {Doer.FirstName} in place");
+                return;
+            }
+            if (map.FindRoomByChara(Doer.RefID) == transitRoom) return; // already there
+            scr_System_CampaignManager.current.MoveCharacterTo(Doer, transitRoom);
+
+            if (scr_System_CampaignManager.current.DebugMode && Doer.RefID == 0)
+            {
+                var desc = new DescriptionCollector($"teleporting to world transit room, remaining time {duration}");
+                scr_UpdateHandler.current.AppendMessageBefore(desc, transitRoom);
+            }
+        }
+    }
 
     /// <summary>
     /// move one step along the path. Does not have EvaluationPackage attached to it !!!!
@@ -226,7 +261,12 @@ public class ActionPackage_PathTo : ActionPackage
             //if (askBreak && scr_UpdateHandler.current.PlayerQuery(QueryInitializer) == 0)  { }
 
             this.PathPop();
-            if (duration > 0) break;
+            if (duration > 0)
+            {
+                firstTick = true;
+                //CheckWorldDoors();
+                break;
+            }
         }
 
         

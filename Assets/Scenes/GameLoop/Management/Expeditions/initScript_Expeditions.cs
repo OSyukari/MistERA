@@ -52,6 +52,15 @@ public class initScript_Expeditions : MonoBehaviour
 
     bool initialized = false;
 
+    public string GetExpeditionTabTooltip(Manageable m)
+    {
+        if (m == null) return "faction null";
+        else if(m.SubFactions.Count > 0) return "";
+        else if (m.KidnapFactions.Count > 0) return "";
+        else if (m.GetAllValidExpeditions().Count > 0) return "";
+        else return "no valid expedition target";
+    }
+
     public void Initialize(scr_Canvas_Management canvas, Manageable m, bool loadPrev = false)
     {
         this.canvas = canvas;

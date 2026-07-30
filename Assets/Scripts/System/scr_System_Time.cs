@@ -123,6 +123,14 @@ public class scr_System_Time : MonoBehaviour
         return startDate;
     }
 
+    /// <summary>
+    /// Current day of week as an index matching MapPlan.WorkModuleInit.activeDays: 0 = Monday ... 6 = Sunday.
+    /// </summary>
+    public int getCurrentDayInWeek()
+    {
+        return ((int)currentDate.DayOfWeek + 6) % 7;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

@@ -259,8 +259,37 @@ public class Map_Instance
     /// </summary>
     [JsonIgnore] protected Dictionary<int, Room_Instance> Rooms;
 
-    // Orphaned room will NOT be updated 
+    // Orphaned room will NOT be updated
     [JsonProperty] protected Dictionary<int, Room_Instance> rooms_orphans = new Dictionary<int, Room_Instance>();
+
+    /// <summary>
+    /// worldID -> transit room refID. Room a traveler is placed in while dwelling out a world-map trip's
+    /// travel time (see ActionPackage_PathTo.CheckWorldDoors / Door_Instance.worldInstance) - one per world,
+    /// created lazily on first use and reused afterward.
+    /// </summary>
+    [JsonProperty] protected Dictionary<string, int> worldTransitRoomRefs = new Dictionary<string, int>();
+
+    /// <summary>
+    /// Returns null only if the WorldPlan itself can't be resolved by ID.
+    /// </summary>
+    public Room_Instance GetOrCreateWorldTransitRoom(string worldID)
+    {
+        if (worldTransitRoomRefs.TryGetValue(worldID, out int refID))
+        {
+            var existing = GetRoomByRef(refID);
+            if (existing != null) return existing;
+        }
+
+        var world = scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
+        if (world == null) return null;
+
+        var room = new Room_Instance(null, null);
+        room.displayNameOverwrite = worldID;
+        room.FactionOwner = scr_System_CampaignManager.current.FindOrAddFaction(worldID, "");
+        worldTransitRoomRefs[worldID] = scr_System_CampaignManager.current.Register(room);
+        //Debug.LogError($"creating world transit room {room.DisplayName} {room.DisplayNameShort}");
+        return room;
+    }
     /// <summary>
     /// Key - floorRefID
     /// Value - floorInstance
@@ -685,9 +714,9 @@ public class Map_Instance
 
     public void MoveCharaTo(Character_Trainable charaRef, Room_Instance newRoom)
     {
+        var oldRoom = FindRoomByChara(charaRef.RefID);
         if (charaRoomRef.ContainsKey(charaRef.RefID))
         {
-            var oldRoom = FindRoomByChara(charaRef.RefID);
             if (oldRoom == null)
             {
                 //Debug.LogError("old room null");
@@ -704,6 +733,30 @@ public class Map_Instance
         }
         charaRoomRef[charaRef.RefID] = newRoom.RefID;
         charaRef.NotifyMoveToRoom(newRoom);
+
+        // Faction arrival/departure report - skipped for rooms with no faction owner, for party/expedition
+        // camp rooms, and for the synthetic per-world faction a world-map transit room is owned by
+        // (GetOrCreateWorldTransitRoom) - none of those are "a place" worth reporting a visit to.
+        var oldFaction = ResolveNotifiableFaction(oldRoom);
+        var newFaction = ResolveNotifiableFaction(newRoom);
+        if (oldFaction != newFaction)
+        {
+            string time = scr_System_Time.current.getCurrentTime().ToString("HH:mm");
+            if (oldFaction != null)
+            {
+                var pathAp = charaRef.CurrentJob?.ActivePackages.Find(p => p.actorRefs.Contains(charaRef.RefID) && p is ActionPackage_PathTo) as ActionPackage_PathTo;
+                var destFaction = pathAp?.TargetRoom?.FactionOwner?.FactionOwnerRoot;
+                string msg = destFaction != null
+                    ? $"{charaRef.CallName} left {oldFaction.FactionDisplayName} for {destFaction.FactionDisplayName} at {time}"
+                    : $"{charaRef.CallName} left {oldFaction.FactionDisplayName} at {time}";
+                oldFaction.DailyReport.AddMiscRecord(msg, new List<string>());
+            }
+            if (newFaction != null)
+            {
+                newFaction.DailyReport.AddMiscRecord($"{charaRef.CallName} arrived at {newFaction.FactionDisplayName} at {time}", new List<string>());
+            }
+        }
+
         dirtyCharaRef.Add(charaRef.RefID);
         dirtyCharaRef = Utility.Distinct(dirtyCharaRef);
 
@@ -717,6 +770,23 @@ public class Map_Instance
             if (currentTargetRef > 0 && !scr_System_CampaignManager.current.isPlayerPartyMember(currentTargetRef)) scr_System_CampaignManager.current.ChangeCurrentTarget(0);
             if (job != null && job.ParentRoom != null && job.ParentRoom.RefID != newRoom.RefID) scr_System_CampaignManager.current.Player.ChangeCurrentJob(null);
         }
+    }
+
+    /// <summary>
+    /// The faction a room's visit should be reported against for arrival/departure purposes, or null if the
+    /// room isn't "a place": no owner, a party/expedition camp room, or the synthetic per-world faction a
+    /// world-map transit room is owned by (GetOrCreateWorldTransitRoom, keyed by WorldPlan.worldID - the
+    /// same IDs tracked in scr_System_CampaignManager.currentWorldPlanIDs).
+    /// </summary>
+    Manageable ResolveNotifiableFaction(Room_Instance room)
+    {
+        if (room == null || room.FactionOwner == null) return null;
+        if (room.FactionOwner is Manageable_Party) return null;
+        var root = room.FactionOwner.FactionOwnerRoot;
+        if (root == null) return null;
+        if (!root.isPlayerRelatedFaction) return null;
+        if (scr_System_CampaignManager.current.currentWorldPlanIDs.Contains(root.ID)) return null;
+        return root;
     }
 
     public void Clear()
@@ -757,8 +827,31 @@ public class Map_Instance
     /// Falls back to the flat legacy cost of 5 when no shared WorldPlan has a door for both factions (e.g. factions
     /// linked only via a commercial pact, or a faction with no door of its own on the world map).
     /// </summary>
-    protected float CrossFactionBridgeCost(Manageable fromFaction, Manageable toFaction)
+    Door_Instance GetFactionCrossingDoor(Manageable fromFaction, Manageable toFaction)
     {
+        if (TryGetWorldMapTravelMinutes(fromFaction, toFaction, out float minutes, out string worldID)) {
+            var door = new Door_Instance(minutes);
+            door.worldInstance = worldID;
+            return door;
+        }
+        else
+        {
+            return new Door_Instance(5f);
+        }
+    }
+
+    /// <summary>
+    /// True only when fromFaction/toFaction require actual world-map travel - i.e. they share a WorldPlan with
+    /// a door registered for each - as opposed to being linked directly within a map (isConnectedFaction; a
+    /// same-map hop, cheap enough that schedule/travel planning shouldn't bother pre-empting for it). When true,
+    /// outputs the same distance/travelDistancePerMinute cost GetFactionCrossingDoor uses for that edge.
+    /// </summary>
+    public bool TryGetWorldMapTravelMinutes(Manageable fromFaction, Manageable toFaction, out float travelMinutes, out string worldID)
+    {
+        travelMinutes = 0f;
+        worldID = "";
+        if (fromFaction == null || toFaction == null || fromFaction == toFaction) return false;
+
         // a subfaction (e.g. a mall shop) has no door of its own on the world map - its MainExit resolves to
         // its parent's room, so the door lookup below should key off whichever faction actually owns that
         // room instead of the (possibly virtual-tenant) faction passed in.
@@ -774,11 +867,12 @@ public class Map_Instance
             var doorA = world.doors.Find(d => d.factionID == fromDoorFactionID);
             var doorB = world.doors.Find(d => d.factionID == toDoorFactionID);
             if (doorA == null || doorB == null || world.travelDistancePerMinute <= 0f) continue;
-
+            worldID = world.worldID;
             float dist = Vector2.Distance(new Vector2(doorA.offset_x, doorA.offset_y), new Vector2(doorB.offset_x, doorB.offset_y));
-            return Mathf.CeilToInt(dist / world.travelDistancePerMinute);
+            travelMinutes = Mathf.CeilToInt(dist / world.travelDistancePerMinute);
+            return true;
         }
-        return 5f;
+        return false;
     }
 
     public bool isConnectedFaction(Manageable a, Manageable b)
@@ -949,7 +1043,7 @@ public class Map_Instance
                 if (Findpath(roomRef, fromFaction.MainExit,imprisoned, out var path1) && Findpath(toFaction.MainExit, targetRoom, imprisoned, out var path2))
                 {
                     if (path1 != null) temppath.AddRange(path1);
-                    temppath.Add(new TaggedEdge<int, Door_Instance>(fromFaction.MainExit.RefID, toFaction.MainExit.RefID, new Door_Instance(CrossFactionBridgeCost(fromFaction, toFaction))));
+                    temppath.Add(new TaggedEdge<int, Door_Instance>(fromFaction.MainExit.RefID, toFaction.MainExit.RefID, GetFactionCrossingDoor(fromFaction, toFaction)));
                     if (path2 != null) temppath.AddRange(path2);
 
                     path = temppath;

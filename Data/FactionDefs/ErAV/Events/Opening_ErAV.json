@@ -2,7 +2,7 @@
     "Events": {
         "list": [
             {
-                "_comment": "OnCampaignStart. Requires both kanade and kanon. Sets erav_kanon_offer=1 on agree (Q01 op1). Sets erav_kanade_promise=1 on accepting Kanade's request (AQ op1). Camera/tapes moved to FirstVisit_KiryuGumi (punctual branch). TODO: erav_kanon_offer_day needs dynamic day injection (engine support pending).",
+                "_comment": "OnCampaignStart. Requires both kanade and kanon. Sets erav_kanon_debt_total=30000000 at the principal reveal (L19). Sets erav_kanon_offer=1 on agree (Q01 op1). Sets erav_kanade_promise=1 on accepting Kanade's request (AQ op1). Camera/tapes moved to Kanon_Dialogue first-visit branch. TODO: erav_kanon_offer_day needs dynamic day injection (engine support pending).",
                 "ID": "Opening_ErAV",
                 "allowDuplicate": false,
                 "trigger": "OnCampaignStart",
@@ -38,7 +38,7 @@
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_L14" },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_OpeningErAV_L15" },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_L18" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_OpeningErAV_L19" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_OpeningErAV_L19", "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_debt_total", "30000000" ] } ] },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "hostile", "angry" ], "line": "event_OpeningErAV_L21" },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_L22" },
                     { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_L24" },
@@ -176,11 +176,11 @@
         "Entries": {
             "zh-cn": {
                 "event_OpeningErAV_L01": "双亲的葬礼在淅淅沥沥的雨中办完了。\n灵车远去，$self.name$牵着妹妹$kanade.name$的手回到那栋再不会有人迎接他们的房子。",
-                "event_OpeningErAV_L03": "推开门，屋里冷清得宛若结霜。遗像前的线香还冒着细细的青烟。\n$kanade.name$才十五岁。校服上别着的黑纱衬得她脸色愈发苍白。她哭得没了力气，却始终不肯松开$self.name$的衣角。",
+                "event_OpeningErAV_L03": "推开门，屋里冷清得像结了一层霜。遗像前的线香还冒着细细的青烟。\n$kanade.name$才十五岁。校服上别着的黑纱衬得她脸色愈发苍白。她哭得没了力气，却始终不肯松开$self.name$的衣角。",
                 "event_OpeningErAV_L05": "「……$self.name$，从今往后，就只剩我们两个了。」",
                 "event_OpeningErAV_L06": "「嗯……还有我在。别怕。」\n$self.name$把妹妹揽进怀里，却半句安慰的话也说不出口——自己心里同样是空荡荡的。",
                 "event_OpeningErAV_L08": "就在这时，门外忽然响起毫不客气的叩门声。\n$self.name$刚拉开门，三个剃着光头的黑衣男人已立在廊下。",
-                "event_OpeningErAV_L10": "当中那位身着华美和服的少女撑着纸伞，抬眼打量着屋内。雨珠顺着伞骨滑落。\n「深夜叨扰，失礼了。」\n「桐生歌音。桐生组的女儿，也是你们学校的学生会长。」",
+                "event_OpeningErAV_L10": "当中那位身着华美和服的少女撑着纸伞，抬眼打量着屋内。雨珠顺着伞骨滑落。\n「深夜叨扰，失礼了。」\n这张脸$self.name$认得。桐生歌音——学校的学生会长。只是这位学生会长还有另一重身份：这片街区背后的黑道组织，实际由她管事。两重身份向来互不相干，本不该有什么交集。此刻她却带着人，在父母葬礼当晚闯进了家门。",
                 "event_OpeningErAV_L13": "「本小姐今夜登门，不为别的，只为令尊留下的那笔账。」",
                 "event_OpeningErAV_L14": "「……账？」",
                 "event_OpeningErAV_L15": "「简而言之：连带保证。令尊宫间谦三，替人作了保。」\n「如今那个主债务人，查无此人——按约，账就落到保证人头上。」\n「令尊令堂皆已过世。作为继承人，这笔债自然转到你和令妹肩上。」",
@@ -188,10 +188,10 @@
                 "event_OpeningErAV_L19": "「本金，三千万。」\n「利息按月滚算，只增不减。单是利息，每月就要四十五万。」",
                 "event_OpeningErAV_L21": "「别想着赖账——连带保证的债，连破产都洗不掉。桐生组有的是办法：查封房产、扣押账户、断了你的生路。」",
                 "event_OpeningErAV_L22": "「三千万……四十五万……」\n$self.name$脑中嗡嗡作响。父亲生前从不提及钱财，原来竟埋下了如此巨大的隐患。",
-                "event_OpeningErAV_L24": "$kanon.name$的话语如同铁锤，砸得两人喘不过气。$kanade.name$攥紧$self.name$的衣袖，指节泛白。",
+                "event_OpeningErAV_L24": "$kanon.name$报出那串数字后，屋里一时静得只剩雨声。$kanade.name$攥紧$self.name$的衣袖，迟迟没有松开。",
                 "event_OpeningErAV_L25": "「$self.name$……三千万……我们，真的还得上吗？」",
-                "event_OpeningErAV_L26": "「哭也没用。本小姐把账算给你听：那笔利息换算成打工，就是四百多个小时。」\n「把自己累垮，每月也熬不出这么多工时，更遑论那三千万的本金。」\n「——靠正经营生，你们这辈子的光阴都填不满这个亏空。」",
-                "event_OpeningErAV_L29": "「不过——若你们当真走投无路，本小姐手上倒有条门路。来钱快。只是当中的道理，不是在这儿三言两语说得清的。」",
+                "event_OpeningErAV_L26": "「哭也没用。本小姐把账算给你听：那笔利息换算成打工，就是四百多个小时。」\n「把自己累垮，每月也熬不出这么多工时，更别说那三千万的本金。」\n「——靠正经工作，就算搭上一辈子，也填不满这笔债。」",
+                "event_OpeningErAV_L29": "「不过——若是当真没有别的办法，本小姐这边倒是有一条出路。」\n「来钱快。靠出卖身体挣钱，名声自然不好听，可总比去做那种地下的风俗生意强——至少，主动权握在你们自己手里。」\n「一辈子也还不清的债，和走这条路，哪个更划算，你们自己判断。」\n「详情明天再说。放学之后，到事务所来找本小姐。在那里，才能讲得清楚。」",
                 "event_OpeningErAV_L33": "$kanon.name$的目光从$self.name$身上移开，扫过躲在身后的$kanade.name$，停了停。",
 
                 "event_OpeningErAV_Q01": "「怎么样？要不要本小姐帮你们这个忙？」\n$kanon.name$从袖中取出名片搁在桌上，抬眼望向$self.name$。",
@@ -199,7 +199,7 @@
                 "event_OpeningErAV_Q01_op2": "拒绝",
 
                 "event_OpeningErAV_A01": "「明智。」「明天放学之后，到事务所来。名片上有地址。」「本小姐会安排好，到时候你来就行。」",
-                "event_OpeningErAV_A04": "话音落下，$kanon.name$拢了拢和服领口，转身朝门外走去。\n黑衣男人鱼贯跟上。临到门口，她忽又停下，背对着屋内。",
+                "event_OpeningErAV_A04": "话音落下，$kanon.name$拢了拢和服领口，转身朝门外走去。\n黑衣男人一个接一个跟在身后。临到门口，她忽又停下，背对着屋内。",
                 "event_OpeningErAV_A06": "「……对于你父母的事，本小姐很遗憾。」",
                 "event_OpeningErAV_A07": "门合上的瞬间，屋内只剩雨声与线香燃尽的轻响。",
                 "event_OpeningErAV_A08": "「$self.name$……」",
@@ -228,14 +228,14 @@
                 "event_OpeningErAV_R02": "「随你。只是记好——月底之前，四十五万的利息，分文不能少。」",
                 "event_OpeningErAV_R03": "「到了日子交不上，桐生组自有收账的法子。到时候，可别怪本小姐不讲情面。」",
                 "event_OpeningErAV_R04": "「哪天撑不住了，来事务所找本小姐。这扇门，始终为你开着。」",
-                "event_OpeningErAV_R05": "话音落下，$kanon.name$拢了拢和服领口，转身朝门外走去。\n黑衣男人鱼贯跟上。临到门口，她忽又停下，背对着屋内。",
+                "event_OpeningErAV_R05": "话音落下，$kanon.name$拢了拢和服领口，转身朝门外走去。\n黑衣男人一个接一个跟在身后。临到门口，她忽又停下，背对着屋内。",
                 "event_OpeningErAV_R07": "「……对于你父母的事，本小姐很遗憾。」",
                 "event_OpeningErAV_R08": "门合上的瞬间，屋内只剩雨声与线香燃尽的轻响。",
                 "event_OpeningErAV_R09": "「$self.name$……」",
                 "event_OpeningErAV_R09_F": "「姐姐……」",
                 "event_OpeningErAV_R09_M": "「哥哥……」",
                 "event_OpeningErAV_R10": "$kanade.name$嘴唇抖了抖，半晌才挤出几个字。",
-                "event_OpeningErAV_R11": "「四十五万……月底之前……我们、我们去哪儿弄这么多钱？」\n「打工……就算不眠不休，也……也填不上这个亏空啊……」",
+                "event_OpeningErAV_R11": "「四十五万……月底之前……我们、我们去哪儿弄这么多钱？」\n「打工……就算不眠不休，也……也填不上这笔债啊……」",
                 "event_OpeningErAV_R13": "「……交给我。我会想办法的。」",
                 "event_OpeningErAV_R14": "$self.name$把妹妹搂进怀里。窗外雨势渐歇，两人却都明白前路凶险。",
                 "event_OpeningErAV_R15": "那夜，两人谁也没合眼。等窗棂透进微白的晨光，雨已经停了。\n天亮了。摆在$self.name$面前的，是三千万的债与必须独自扛起的重担。"

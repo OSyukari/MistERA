@@ -96,6 +96,7 @@ public class scr_bgImageSwapper : MonoBehaviour
             Texture2D loaded = null;
             yield return AssetsLoader.LoadTextureCoroutine(a, texture => loaded = texture);
             image.sprite = scr_System_CentralControl.current.MakeSprite(a, loaded);
+            image.preserveAspect = true;
         }
     }
 

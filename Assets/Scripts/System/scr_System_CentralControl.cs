@@ -819,6 +819,8 @@ public class DisplaySettings
     public BoolSetting clearLogs = new BoolSetting(true, "clearLogs");
 
     public BoolSetting displayPlayerPortraitInLogs = new BoolSetting(true, "displayPlayerPortraitInLogs");
+
+    public BoolSetting asciiRenderEnabled = new BoolSetting(false, "asciiRenderEnabled");
 }
 
 [System.Serializable]

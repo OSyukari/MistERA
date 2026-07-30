@@ -706,6 +706,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         // check food and sleep need
         if (FactionManager != null) FactionManager.DailyNeedConsumption();
 
+        // membertype workModules can vary by day of week (activeDays), so which hours count as
+        // "occupied" for sleep purposes can change from one day to the next - rebuild privateSchedule
+        // here instead of assuming it stays valid across a day change.
+        if (FactionManager != null)
+        {
+            var scheduleRefreshMsg = new List<string>();
+            FactionManager.UpdateSchedule(ref scheduleRefreshMsg);
+        }
+
         List<Manageable.DailyReportHandler.MiscMessageEntry> updateMessage = new List<Manageable.DailyReportHandler.MiscMessageEntry>();
         this.Skills.UpdateAllSkills(updateMessage);
         this.Relationships.DailyRefresh(updateMessage);
@@ -1278,6 +1287,20 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 //if (package is ActionPackage_PathTo || (package.Duration > 10 && package.targetCOM.comTags.Contains("recreation"))) tryFinishJobUrgent = false;
                 if (package is ActionPackage_PathTo) tryFinishJob = false;
             }
+
+            if (tryFinishJob)
+            {   // current action would otherwise be left to finish uninterrupted - but as long as it isn't
+                // itself job-tagged (work always finishes first), break out early whenever it's time to
+                // start traveling for whatever's scheduled next hour, instead of coasting to completion.
+                bool currentIsJobAction = p.Exists(pp => pp.ComTags.Contains("job"));
+                if (!currentIsJobAction && FactionUtility.ShouldTravelForNextHourSchedule(this, currentLocaleFaction, currentHour, out var nextFaction, out var travelMinutes))
+                {
+                    tryFinishJob = false;
+                    resetJob = true;
+                    if (log) ss += $"| next hour's schedule at {nextFaction.FactionDisplayName} needs ~{travelMinutes}min world travel - interrupting current non-job action |";
+                }
+            }
+
             if (tryFinishJob && allInterrupted && maxInterruptWait <= maxWait)
             {
                 if (log) ss += "| waiting for interrupt to end |";

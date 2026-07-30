@@ -459,8 +459,35 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             var newLine = Instantiate(prefab_text_linkbutton);
             var text = newLine.GetComponent<scr_SelectableText>();
             text.SetText(faction.FactionDisplayName);
-            if (faction == currentFaction) text.Text.color = text.baseColor;
-            else text.Text.color = text.disableColor;// (true,true);
+            var member = faction.GetMemberType(c);
+            var hover = newLine.GetComponent<scr_HoverableText>();
+            bool setDays = false;
+            if (member != null && member.workModule != null && member.workModule.activeDays.Count > 0)
+            {
+                var module = member.workModule;
+                int dayInWeek = scr_System_Time.current.getCurrentDayInWeek();
+                if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) text.Text.color = text.disableColor;// (true,true);
+
+                if (hover != null) {
+                    var count = 0;
+                    List<int> days = new List<int>();
+                    for(int i = 0; i < module.activeDays.Count; i++)
+                    {
+                        if (module.activeDays[i] == 1)
+                        {
+                            count++;
+                            days.Add(i + 1);
+                        }
+                    }
+                    setDays = true;
+                    hover.SetExternalTooltip(LocalizeDictionary.QueryThenParse("ui_management_workfaction_activedays").Replace("$count$", $"{count}").Replace("$list$", String.Join(" ", days)));
+                }
+            }
+            else
+            {
+                text.Text.color = text.baseColor;
+            }
+            if (!setDays && hover != null) hover.SetExternalTooltip(LocalizeDictionary.QueryThenParse("ui_management_workfaction_alwaysActive"));
             newLine.SetParent(list_factionWork, false);
         }
 
@@ -520,6 +547,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public scr_menu_AddProductionOrder canvas_AddPO;
     public scr_Menu_AddTrade canvas_AddTR;
 
+
+
     public override void Initialize()
     {
         base.Initialize();
@@ -540,7 +569,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 case 3: // jobs tab
                     button.Initialize(this, new button_ChangeTab(this, button, Tab_Jobs, Initialize_FactionCharaList)); break;
                 case 4: // expeditions tab
-                    button.Initialize(this, new button_ChangeTab(this, button, Tab_Expeditions, Initialize_FactionExpsList)); break;
+                    button.Initialize(this, new button_ChangeTab(this, button, Tab_Expeditions, Initialize_FactionExpsList, Script_Expeditions.GetExpeditionTabTooltip)); break;
                 case 12:
                     button.Initialize(this, new button_modifyLinkFaction(this)); break;
                 case 20:    // add production order
@@ -733,36 +762,35 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         new scr_Canvas_Management parent;
         scr_SelectableText text;
         Initializer init;
+        Func<Manageable, string> disableTooltip = null;
        // scr_PointerEnterNotifier pointerhandler;
-        public button_ChangeTab(scr_Canvas_Management parent, scr_SelectableText text, RectTransform target, Initializer init = null) : base(parent)
+        public button_ChangeTab(scr_Canvas_Management parent, scr_SelectableText text, RectTransform target, Initializer init = null, Func<Manageable, string> disableTooltip = null) : base(parent)
         {
             this.parent = parent;
             this.text = text;
             this.target = target;
             this.init = init;
+            this.disableTooltip = disableTooltip;
            // pointerhandler = text.GetComponent<scr_PointerEnterNotifier>();
            // pointerhandler.Initialize(parent, text.optionID);
         }
 
         public override bool IsButtonValid()
         {
-
+            
+            if (disableTooltip != null) this.tooltip = disableTooltip(parent.CurrentFaction);
+            else this.tooltip = "";
             if (parent.currentTab != target)
             {
                 text.Toggle(true, false);
                 target.gameObject.SetActive(false);
-                //foreach (scr_SelectableText s in filters) if (!parent.currentTab_Filters.Contains(s)) s.gameObject.SetActive(false);
-
             }
             else
             {
                 text.Toggle(true, true);
                 target.gameObject.SetActive(true);
-                //foreach (scr_SelectableText s in filters) s.gameObject.SetActive(true);
-
-
             }
-            return true;
+            return this.tooltip == "";
         }
 
         public void OnClickButton()
@@ -1001,6 +1029,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         scr_SelectableText button;
         Image background;
         bool isActive = false;
+
+        string notmanager, canteditmanager, canteditplayer;
         public button_EditSchedule(scr_Canvas_Management parent, scr_SelectableText button, RectTransform scheduleRect, Image scheduleRectBG, List<RectTransform> comRects) : base(parent)
         {
             this.parent = parent;
@@ -1010,6 +1040,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             isActive = false;
             this.button = button;
             foreach (var i in comRects) i.gameObject.SetActive(false);
+
+            notmanager = LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_notmanager");
+            canteditmanager = LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_canteditmanager");
+            canteditplayer = LocalizeDictionary.QueryThenParse("ui_management_jobs_schedule_tooltip_canteditplayer");
         }
 
         public override bool IsButtonValid()
@@ -1018,12 +1052,17 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             if (parent.currentChara == null) return false;
             else if (!parent.currentFaction.isCharaManager(0))
             {
-                tooltip = "Player is not manager in faction [" + parent.currentFaction.ID + "]";
+                tooltip = notmanager.Replace("$name$", parent.currentFaction.FactionDisplayName);
                 return false;
             }
             else if (parent.currentChara.RefID == 0)
             {
-                tooltip = "Cannot assign schedule to player";
+                tooltip = canteditplayer;
+                return false;
+            }
+            else if (parent.currentFaction.isCharaManager(parent.currentChara))
+            {
+                tooltip = canteditmanager;
                 return false;
             }
             return true;

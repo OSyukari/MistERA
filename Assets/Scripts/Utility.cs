@@ -1355,6 +1355,12 @@ public static class UtilityEX
                     }
                 }
                 break;
+            case "ascii":
+                if (true)
+                {
+                    scr_System_CentralControl.current.DisplaySetting.asciiRenderEnabled.Toggle();
+                }
+                break;
             case "inspectjob":
                 if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int targetjobref))
                 {

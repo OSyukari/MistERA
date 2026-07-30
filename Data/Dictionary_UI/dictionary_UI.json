@@ -259,6 +259,11 @@
 "ui_management_overview_daily_trust": "$name$对$leader$的$score$$count$",
 "ui_management_overview_daily_skill": "$name$的$skill$升级 $prev$ -> $now$",
 "ui_management_overview_daily_failure": "缺乏资源：$name$",
+
+"ui_management_workfaction_alwaysActive":"工作制：一周七天",
+"ui_management_workfaction_activedays":"工作制：一周$count$天，$list$",
+
+
 "ui_header_player": "玩家：",
 "ui_header_target": "对象：",
 "ui_header_allmembers": "房间内角色：",
@@ -445,6 +450,10 @@
 "ui_management_jobs_schedule_jobpost_tooltip": "会清除当前的其他岗位设定",
 "ui_management_jobs_schedule_jobpost_ext": "外派工作岗位",
 "ui_management_jobs_schedule_jobpost_ext_tooltip": "会清除当前的其他岗位设定",
+
+"ui_management_jobs_schedule_tooltip_notmanager": "缺乏阵营 $name$ 的管理权限",
+"ui_management_jobs_schedule_tooltip_canteditmanager": "对象同为管理者，无法编辑日程",
+"ui_management_jobs_schedule_tooltip_canteditplayer": "无法编辑玩家的日程",
 
 "ui_management_mealprep_title": "准备$faction$的食材中……",
 "ui_management_mealprep_additive_title": "添加剂：$name$，当前持有 $count$，可适用的食品数 $food$",

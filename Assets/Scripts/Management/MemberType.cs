@@ -151,7 +151,8 @@ public class MemberType
     /// charaSchedules - instead Manageable.GetSchedule/HasScheduleFor read it live, for the hours it
     /// covers, on top of (and overriding) whatever loose/player-assigned hours exist. It's effectively
     /// read-only from the Schedule UI's point of view. Leave null for statuses that don't carry an
-    /// automatic schedule (e.g. board members, managers).
+    /// automatic schedule (e.g. board members, managers). Its activeDays additionally restricts which
+    /// days of the week it applies on (empty = every day).
     /// </summary>
     public MapPlan.WorkModuleInit workModule = null;
 

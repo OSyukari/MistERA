@@ -162,18 +162,32 @@ public class TryChangeLocaleNode : FindJobNode
         // if working, currentjob is not home
         // if not working, currentjob is home
         // if currentjobfaction != currentlocalefaction && currentlocale is not home, go to currentjob -> specific job for rallying?
-        if (currentJobFaction == null) return false;
-        //Debug.Log($"TryChangeLocaleNode on {c.FirstName}, currentJobFaction {(currentJobFaction == null ? "null" : currentJobFaction.FactionDisplayName)}, mainexit? {(currentJobFaction.MainExit == null ? "null" : "exist")}");
-        if (currentJobFaction.MainExit == null) return false;
-        if (currentJobFaction.FactionRallyJob == null) return false;
-        if (currentJobFaction != currentLocaleFaction && !c.FactionManager.HomeFactions.Contains(currentLocaleFaction))
+        if (currentJobFaction != null && currentJobFaction.MainExit != null && currentJobFaction.FactionRallyJob != null
+            && currentJobFaction != currentLocaleFaction && !c.FactionManager.HomeFactions.Contains(currentLocaleFaction))
         {
             var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-            if (charaRoom.FactionOwner == null) return false;
-            if (scr_System_CampaignManager.current.Map.isConnectedFaction(charaRoom.FactionOwner.FactionOwnerRoot, currentJobFaction.FactionOwnerRoot))
+            if (charaRoom.FactionOwner != null
+                && scr_System_CampaignManager.current.Map.isConnectedFaction(charaRoom.FactionOwner.FactionOwnerRoot, currentJobFaction.FactionOwnerRoot))
             {
                 c.ChangeCurrentJob(currentJobFaction.FactionRallyJob);
                 if (s != null) s.Add($"|trying to move toward currentjobfaction {currentJobFaction.FactionDisplayName} |");
+                return true;
+            }
+        }
+
+        // Not yet due at currentJobFaction (or already there / nothing scheduled this hour) - peek at next
+        // hour. If whatever's scheduled next hour is at a faction only reachable via world-map travel and
+        // it's time to start heading out, rally there early so the NPC arrives on time instead of
+        // departing late.
+        if (FactionUtility.ShouldTravelForNextHourSchedule(c, currentLocaleFaction, currentHour, out var nextFaction, out var travelMinutes)
+            && nextFaction.MainExit != null && nextFaction.FactionRallyJob != null)
+        {
+            var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+            if (charaRoom.FactionOwner != null
+                && scr_System_CampaignManager.current.Map.isConnectedFaction(charaRoom.FactionOwner.FactionOwnerRoot, nextFaction.FactionOwnerRoot))
+            {
+                c.ChangeCurrentJob(nextFaction.FactionRallyJob);
+                if (s != null) s.Add($"|heading early toward next-hour schedule at {nextFaction.FactionDisplayName}, ~{travelMinutes}min world travel|");
                 return true;
             }
         }

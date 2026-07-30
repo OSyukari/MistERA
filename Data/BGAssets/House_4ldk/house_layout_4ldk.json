@@ -119,6 +119,10 @@
                             {
                                 "ID": "4ldk_floor_1L_hallway",
                                 "cost": 1.0
+                            },
+                            {
+                                "ID": "4ldk_floor_1L_living",
+                                "cost": 1.0
                             }
                         ],
                         "furnitureIDs": [
@@ -166,14 +170,7 @@
                         "offsetX": 317,
                         "displayName":"map_hallway",
                         "offsetY": 193,
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg",
-                        "connects": [
-                            {
-                                "ID": "4ldk_floor_1L2L_stairs",
-                                "cost": 1.0
-                            }
-                        ]
+                        "roomImagePath": "BGAssets/Generated/house_hallway_03.webp"
                     },
                     {
                         "ID": "4ldk_floor_2L_roomsingle1",
@@ -270,27 +267,18 @@
                         "offsetY": 193,
                         "connects": [
                             {
-                                "ID": "4ldk_floor_1L2L_stairs",
+                                "ID": "4ldk_floor_1L_hallway",
                                 "cost": 1.0
                             }
                         ],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/house_hallway_04.webp"
                     },
                     {
                         "ID":"4ldk_floor_2L_balcony",
                         "displayName":"map_balcony",
                         "offsetX":745,
                         "offsetY":403,
-                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk118トイレd.png"
-                    },
-                    {
-                        "ID": "4ldk_floor_1L2L_stairs",
-                        "displayName":"map_stairs",
-                        "offsetX": 796,
-                        "offsetY": 85,
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
-                        "roomImagePath_Inactive_Night": "Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                        "roomImagePath": "BGAssets/Generated/house_balcony_03.webp"
                     }
                 ]
             }

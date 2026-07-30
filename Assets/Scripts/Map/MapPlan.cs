@@ -149,6 +149,13 @@ public class MapPlan
         public List<int> peakHours = new List<int>();
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
+        /// <summary>
+        /// Per-weekday toggle, index 0 = Monday ... index 6 = Sunday (matches
+        /// scr_System_Time.getCurrentDayInWeek()). 1 = active that day, 0 = inactive.
+        /// Leave empty to keep the module active every day (7/7), e.g. [1,1,1,1,1,0,0] for a
+        /// Monday-Friday student schedule.
+        /// </summary>
+        public List<int> activeDays = new List<int>();
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
         public List<ItemEntry> hourlyCost = new List<ItemEntry>();
     }

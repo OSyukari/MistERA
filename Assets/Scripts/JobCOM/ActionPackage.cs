@@ -474,11 +474,11 @@ public abstract class ActionPackage
 
     protected string DescriptionText(bool isDoer, int charaRef, bool withRoomName = false)
     {
-        if (targetCOM == null || COMVariantID < 0) return "";
+        if (targetCOM == null) return "";
 
         var roomName = this.RoomKey != -1 && withRoomName ? scr_System_CampaignManager.current.Map.GetRoomByRef(RoomKey).DisplayName : "";
 
-        string s =  targetCOM.GetVariantDescription(COMVariantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef);
+        string s = COMVariantID >= 0 ? targetCOM.GetVariantDescription(COMVariantID, isDoer, charaRef, roomName, DoerRefs, ReceiverRefs, masterRef) : targetCOM.DisplayName();
         bool refused = false;
         bool interrupted = false;
         foreach(var ep in packages)

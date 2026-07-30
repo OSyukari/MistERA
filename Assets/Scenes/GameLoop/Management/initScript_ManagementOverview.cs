@@ -120,7 +120,7 @@ public class initScript_ManagementOverview : MonoBehaviour
             {
                 popCountTooltip.Add(LocalizeDictionary.QueryThenParse("ui_management_overview_external")
                     .Replace("$name$",c.FirstName)
-                    .Replace("$location$", $"{room.DisplayName}({room.FactionOwner.FactionDisplayName})" ));
+                    .Replace("$location$", $"{room.DisplayName}({(room.FactionOwner == null? "no owner": room.FactionOwner.FactionDisplayName)})" ));
                 popCount += 1;
             }
         }
