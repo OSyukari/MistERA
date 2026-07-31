@@ -84,6 +84,7 @@ public class scr_Panel_BottomBar : scr_Menu
                 case 21: button.Initialize(this, new ButtonValidator_ChangeView(this, button, ViewMode.View_Room)); break;
                 case 22: button.Initialize(this, new ButtonValidator_Movement(this)); break;
                 case 30: button.Initialize(this, new ButtonValidator_Management(this, button)); break;
+                case 31: button.Initialize(this, new ButtonValidator_Quests(this, button)); break;
                 case 40: button.Initialize(this, new ButtonValidator_QuickSave(this)); break;
                 case 42: button.Initialize(this, new ButtonValidator_Load(this, button)); break;
                 case 50: button.Initialize(this, new ButtonValidator_OpenGuide(this, button)); break;
@@ -174,15 +175,22 @@ public class scr_Panel_BottomBar : scr_Menu
     {
         new scr_Panel_BottomBar parent;
         scr_SelectableText text;
+        string errorTooltip1;
         public ButtonValidator_InspectChara(scr_Menu parent, scr_SelectableText text) : base(parent)
         {
             this.parent = parent as scr_Panel_BottomBar;
             this.text = text;
+            errorTooltip1 = LocalizeDictionary.QueryThenParse("ui_load_tooltip_cannotLoadduringUpdate");
         }
         int charaRefID;
 
         public override bool IsButtonValid()
         {
+            if (scr_UpdateHandler.current.Lock)
+            {
+                this.tooltip = errorTooltip1;
+                return false;
+            }
             charaRefID = scr_System_CampaignManager.current.CurrentTargetRef;
             //Debug.Log("isbuttonvalid " + charaRefID + " " + scr_System_CentralControl.current.CanHaveSex(0, charaRefID));
             if (charaRefID > 0 && !scr_System_CampaignManager.current.displaySex) text.SetText("%%comManager_bottom_inspect%%");
@@ -248,6 +256,39 @@ public class scr_Panel_BottomBar : scr_Menu
     }
 
 
+
+    public RectTransform prefab_Canvas_Quests;
+    public class ButtonValidator_Quests : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Panel_BottomBar parent;
+        string errorTooltip1;
+        public ButtonValidator_Quests(scr_Menu parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent as scr_Panel_BottomBar;
+            this.text = text;
+            errorTooltip1 = LocalizeDictionary.QueryThenParse("ui_quicksave_tooltip_cannotSaveduringUpdate");
+        }
+
+        scr_SelectableText text;
+
+        public override bool IsButtonValid()
+        {
+            if (scr_UpdateHandler.current.Lock)
+            {
+                this.tooltip = errorTooltip1;
+                return false;
+            }
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            //, parent.m_Canvas.GetComponent<RectTransform>()
+            scr_canvas_missions manage = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_Canvas_Quests).GetComponent<scr_canvas_missions>();
+            //manage.Initialize();
+
+        }
+    }
     public RectTransform prefab_Canvas_Management;
     public class ButtonValidator_Management : ButtonValidator, I_ButtonClickable
     {
@@ -384,10 +425,18 @@ public class scr_Panel_BottomBar : scr_Menu
         {
             this.parent = parent as scr_Panel_BottomBar;
             this.text = text.GetComponent<scr_HoverableText>();
+            errorTooltip1 = LocalizeDictionary.QueryThenParse("ui_load_tooltip_cannotLoadduringUpdate");
         }
 
+        string errorTooltip1, errorTooltip2;
         public override bool IsButtonValid()
         {
+            this.tooltip = "";
+            if (scr_UpdateHandler.current.Lock)
+            {
+                this.tooltip = errorTooltip1;
+                return false;
+            }
 
             return true;
         }

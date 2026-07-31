@@ -15,6 +15,7 @@
                 "id": "personality_ErAV_Kanon",
                 "displayName": "ErAV_personality_Kanon_displayName",
                 "fallbackID": "personality_default",
+                "dialogueEventID":"Kanon_Dialogue",
                 "behaviorID": "",
                 "maxPrideValue": 100,
                 "entries_list": []

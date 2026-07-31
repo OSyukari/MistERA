@@ -1,197 +1,309 @@
 {
-    "ExplorationEvents":
-    {
-        "list":
-        [
-{
-    "eventID":"exp_event_Utnapishtim_crumblingFloor",
-    "eventString_Ongoing":"exp_event_Utnapishtim_crumblingFloor_ongoing",
-    "DurationMinutes":15,
-    "tags":["hazard","debug"],
-    "baseWeight":3,
-    "teamRequirement":{
-        "minTeamCount":1,
-        "maxTeamCount":99,
-        "charaReq_Select":{ "cost_EN":0, "cost_ST":0 }
-    },
-    "weightMods":[
-        {
-            "modValue":1000,
-            "teamRequirement":{
-                "debug_teamNameMatch":"crumblingFloor"
-            }
-        }
-    ],
-    "possibleResults":[
-        {
-            "baseWeight":1,
-            "resultText":"exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom",
-            "results_characters": [ ],
-            "results_factions":[
-                {
-                    "entry_results":{
-                        "randomLoot":{
-"weightedLoots":[
-{ "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 1, "itemCountOverride": false } }
-]
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_Utnapishtim_crumblingFloor",
+                "eventString_Ongoing": "exp_event_Utnapishtim_crumblingFloor_ongoing",
+                "DurationMinutes": 15,
+                "tags": [
+                    "hazard",
+                    "debug"
+                ],
+                "baseWeight": 3,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "maxTeamCount": 99,
+                    "charaReq_Select": {
+                        "cost_EN": 0,
+                        "cost_ST": 0
+                    }
+                },
+                "weightMods": [
+                    {
+                        "modValue": 1000,
+                        "teamRequirement": {
+                            "debug_teamNameMatch": "crumblingFloor"
                         }
                     }
-                }
-            ]
-        },
-        {
-            "baseWeight":6,
-            "resultText":"exp_event_Utnapishtim_crumblingFloor_result_evaded",
-            "results_characters": [ ]
-        },
-        {
-            "baseWeight":3,
-            "resultText":"exp_event_Utnapishtim_crumblingFloor_result_injured",
-            "results_characters":
-            [
-                { "entry_results":{ "type":"statMod_HP", "value":-2 } }
-            ]
-        },
-        {
-            "_comment":"mod weight, if already kidnapped weight become 0",
-            "teamRequirement":{ "allowMIA":false },
-            "weightMods":[
-                {
-                    "modValue":1000,
-                    "teamRequirement":{
-                        "debug_teamNameMatch":"MIA"
+                ],
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom",
+                        "results_characters": [],
+                        "results_factions": [
+                            {
+                                "entry_results": {
+                                    "randomLoot": {
+                                        "weightedLoots": [
+                                            {
+                                                "weight": 1,
+                                                "itemEntry": {
+                                                    "itemID": "consumable_emergency_ration",
+                                                    "itemNameOverwrite": "",
+                                                    "itemCount": 1,
+                                                    "itemCountOverride": false
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "baseWeight": 6,
+                        "resultText": "exp_event_Utnapishtim_crumblingFloor_result_evaded",
+                        "results_characters": []
+                    },
+                    {
+                        "baseWeight": 3,
+                        "resultText": "exp_event_Utnapishtim_crumblingFloor_result_injured",
+                        "results_characters": [
+                            {
+                                "entry_results": {
+                                    "type": "statMod_HP",
+                                    "value": -2
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "_comment": "mod weight, if already kidnapped weight become 0",
+                        "teamRequirement": {
+                            "allowMIA": false
+                        },
+                        "weightMods": [
+                            {
+                                "modValue": 1000,
+                                "teamRequirement": {
+                                    "debug_teamNameMatch": "MIA"
+                                }
+                            }
+                        ],
+                        "baseWeight": 1,
+                        "resultText": "exp_event_Utnapishtim_crumblingFloor_result_event",
+                        "eventID": "exp_event_Utnapishtim_crumblingFloor_MIA"
                     }
-                }
-            ],
-            "baseWeight":1,
-            "resultText":"exp_event_Utnapishtim_crumblingFloor_result_event",
-            "eventID":"exp_event_Utnapishtim_crumblingFloor_MIA"
-        }
-    ]
-}
+                ]
+            }
         ]
-
     },
     "Events": {
         "list": [
-{                
+            {
                 "ID": "exp_event_Utnapishtim_crumblingFloor_MIA",
                 "events": [
-{
-    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-    "options":[
-        {   
-            "self_chara_conditions":[
-                {"parameters":["isPlayer"]}
-            ],
-            "target_chara_conditions":
-            {
-                "party":[{"parameters":["exists"]}]
-            },
-            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_choice"]} ] 
-        },
-        {   
-            "target_chara_conditions":
-            {
-                "party":[{"parameters":["exists"]}]
-            },
-            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_mia"]} ] 
-        },
-        {   
-            "option": "silent fail branch",
-            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_error"]} ] 
-        }
-    ]
-},
-
-{
-    "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-    "label":"br_choice",
-        "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
-    "question":"exp_event_Utnapishtim_crumblingFloor_MIA_ev01",
-    "options":[
-        {   
-            "option": "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op01",
-            "self_chara_conditions":[ { "parameters":["getStat","stats_derived_extended_mp","gte","1"] } ],
-            "Results": [ { "Type":"ModStatEXValue", "arguments":["self","stats_derived_extended_mp","-1"]},
-                            { "Type":"JumpToLabel", "arguments":["","br_avoid"]} ] 
-        },
-        {   
-            "option": "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02", 
-            "Results": [ { "Type":"JumpToLabel", "arguments":["","br_mia"]} ] 
-        }
-    ]
-},
-{
-    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "label": "br_avoid",
-        "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
-    "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev02",
-    "Results":[ { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]} ],
-    "isLast": true
-},
-{
-    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "label": "br_mia",
-        "portraitRefKey":"party", "portraitSelfTagsOverride":["serious"],
-    "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev03",
-    "Results":[
-        { "Type":"ExecuteCallbackPermissive" , "arguments":["ResolveEvent"]},
-        { "Type":"PartyMIA" , "arguments":["party","AlwaysHostile", "expedition_Utnapishtim_wreck", "exp_event_Utnapishtim_crumblingFloor_MIA_message","Visitor"]}
-    ],
-    "isLast": true
-},
-{
-    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-    "label": "br_error",
-    "line": "exp_event_error99",
-    "isLast": true
-}
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isPlayer"
+                                        ]
+                                    }
+                                ],
+                                "target_chara_conditions": {
+                                    "party": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_choice"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "target_chara_conditions": {
+                                    "party": [
+                                        {
+                                            "parameters": [
+                                                "exists"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_mia"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "silent fail branch",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_error"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "br_choice",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": [
+                                "serious"
+                            ]
+                        },
+                        "question": "exp_event_Utnapishtim_crumblingFloor_MIA_ev01",
+                        "options": [
+                            {
+                                "option": "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op01",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "getStat",
+                                            "stats_derived_extended_mp",
+                                            "gte",
+                                            "1"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModStatEXValue",
+                                        "arguments": [
+                                            "self",
+                                            "stats_derived_extended_mp",
+                                            "-1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_avoid"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_mia"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_avoid",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": [
+                                "serious"
+                            ]
+                        },
+                        "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev02",
+                        "Results": [
+                            {
+                                "Type": "ExecuteCallbackPermissive",
+                                "arguments": [
+                                    "ResolveEvent"
+                                ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_mia",
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": [
+                                "serious"
+                            ]
+                        },
+                        "line": "exp_event_Utnapishtim_crumblingFloor_MIA_ev03",
+                        "Results": [
+                            {
+                                "Type": "ExecuteCallbackPermissive",
+                                "arguments": [
+                                    "ResolveEvent"
+                                ]
+                            },
+                            {
+                                "Type": "PartyMIA",
+                                "arguments": [
+                                    "party",
+                                    "AlwaysHostile",
+                                    "expedition_Utnapishtim_wreck",
+                                    "exp_event_Utnapishtim_crumblingFloor_MIA_message",
+                                    "Visitor"
+                                ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_error",
+                        "line": "exp_event_error99",
+                        "isLast": true
+                    }
                 ]
             }
-
         ]
     },
-    "Dictionary":
-    {
-        "Entries":
-        {
-            "zh-cn":
-            {
-"exp_event_Utnapishtim_crumblingFloor":"地板塌陷",
-"exp_event_Utnapishtim_crumblingFloor_ongoing":"$names$脚下的地板突然崩塌！",
-"exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom":"$names$发现地板塌陷后揭露了一个隐藏隔间",
-"exp_event_Utnapishtim_crumblingFloor_result_evaded":"$names$及时躲避了地板塌陷",
-"exp_event_Utnapishtim_crumblingFloor_result_injured":"$names$被卷入地板塌陷，受到了伤害",
-"exp_event_Utnapishtim_crumblingFloor_result_event":"$names$被卷入地板塌陷！",
-
-"exp_event_Utnapishtim_crumblingFloor_MIA":"地板塌陷！",
-
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev01":"$party.name$被卷入了坍塌中，可能会导致与主队伍失去联系",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op01":"用大人的卡片保护队员（MP-1）",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02":"接受结果（队员MIA）",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev02":"$party.name$成功逃离了塌陷",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev03":"$party.name$被卷入地板塌陷，与主队伍失去了联系！",
-"exp_event_Utnapishtim_crumblingFloor_MIA_message":"$names$被卷入地板塌陷，与主队伍失去了联系！"
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_Utnapishtim_crumblingFloor": "地板塌陷",
+                "exp_event_Utnapishtim_crumblingFloor_ongoing": "$names$脚下的地板突然崩塌！",
+                "exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom": "$names$发现地板塌陷后揭露了一个隐藏隔间",
+                "exp_event_Utnapishtim_crumblingFloor_result_evaded": "$names$及时躲避了地板塌陷",
+                "exp_event_Utnapishtim_crumblingFloor_result_injured": "$names$被卷入地板塌陷，受到了伤害",
+                "exp_event_Utnapishtim_crumblingFloor_result_event": "$names$被卷入地板塌陷！",
+                "exp_event_Utnapishtim_crumblingFloor_MIA": "地板塌陷！",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev01": "$party.name$被卷入了坍塌中，可能会导致与主队伍失去联系",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op01": "用大人的卡片保护队员（MP-1）",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02": "接受结果（队员MIA）",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev02": "$party.name$成功逃离了塌陷",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev03": "$party.name$被卷入地板塌陷，与主队伍失去了联系！",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_message": "$names$被卷入地板塌陷，与主队伍失去了联系！"
             },
-            "en-us":
-            {
-"exp_event_Utnapishtim_crumblingFloor":"Floor Collapse",
-"exp_event_Utnapishtim_crumblingFloor_ongoing":"The floor beneath $names$ suddenly collapses!",
-"exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom":"$names$ discovers a hidden compartment revealed by the collapsed floor.",
-"exp_event_Utnapishtim_crumblingFloor_result_evaded":"$names$ managed to dodge the collapsing floor in time.",
-"exp_event_Utnapishtim_crumblingFloor_result_injured":"$names$ was caught in the floor collapse and took damage.",
-"exp_event_Utnapishtim_crumblingFloor_result_event":"$names$ is caught in the floor collapse!",
-
-"exp_event_Utnapishtim_crumblingFloor_MIA":"Floor Collapse!",
-
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev01":"$party.name$ has been swept away by the collapse and may lose contact with the main squad.",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op01":"Protect the squad member with the Adult's Card (MP-1)",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02":"Accept the result (Member MIA)",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev02":"$party.name$ successfully escaped the collapse.",
-"exp_event_Utnapishtim_crumblingFloor_MIA_ev03":"$party.name$ was swept away by the floor collapse and lost contact with the main squad!",
-"exp_event_Utnapishtim_crumblingFloor_MIA_message":"$names$ was swept away by the floor collapse and lost contact with the main squad!"
-
+            "en-us": {
+                "exp_event_Utnapishtim_crumblingFloor": "Floor Collapse",
+                "exp_event_Utnapishtim_crumblingFloor_ongoing": "The floor beneath $names$ suddenly collapses!",
+                "exp_event_Utnapishtim_crumblingFloor_result_hiddenRoom": "$names$ discovers a hidden compartment revealed by the collapsed floor.",
+                "exp_event_Utnapishtim_crumblingFloor_result_evaded": "$names$ managed to dodge the collapsing floor in time.",
+                "exp_event_Utnapishtim_crumblingFloor_result_injured": "$names$ was caught in the floor collapse and took damage.",
+                "exp_event_Utnapishtim_crumblingFloor_result_event": "$names$ is caught in the floor collapse!",
+                "exp_event_Utnapishtim_crumblingFloor_MIA": "Floor Collapse!",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev01": "$party.name$ has been swept away by the collapse and may lose contact with the main squad.",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op01": "Protect the squad member with the Adult's Card (MP-1)",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev01_op02": "Accept the result (Member MIA)",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev02": "$party.name$ successfully escaped the collapse.",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_ev03": "$party.name$ was swept away by the floor collapse and lost contact with the main squad!",
+                "exp_event_Utnapishtim_crumblingFloor_MIA_message": "$names$ was swept away by the floor collapse and lost contact with the main squad!"
             }
         }
     }

@@ -36,8 +36,9 @@ public class actionData_Action : MonoBehaviour
 
         var attack = instance == null || instance.actionRef == null ? null : instance.actionRef as CombatAction_Attack;
         var atkInstance = instance == null || instance.actionRef == null ? null : instance.Attack;
+        var targetHasStats = instance != null && instance.targetRef != null && instance.Handler.ActorStats.ContainsKey(instance.targetRef.RefID);
         action_tracking.SetText(_tracking.Replace("$tracking$", attack == null ? " - " : $"{atkInstance.tracking}")
-                .Replace("$mov$", instance == null || instance.targetRef == null ? " - " : $"{instance.Handler.ActorStats[instance.targetRef.RefID].Evasion_Pre}"));
+                .Replace("$mov$", !targetHasStats ? " - " : $"{instance.Handler.ActorStats[instance.targetRef.RefID].Evasion_Pre}"));
 
         action_distance.SetText(_distance.Replace("$range$", attack == null ? " - " : $"{attack.range}")
             .Replace("$distance$", attack == null || instance.targetRef == null ? " - " : $"{instance.Distance}"));

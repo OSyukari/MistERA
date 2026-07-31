@@ -164,10 +164,52 @@ public class scr_menu_question : scr_Menu
         button.Validate();
     }
 
-    public void FinalizeQuestion()
+    public QuestionBoxCollector FinalizeQuestion()
     {
         var box = new QuestionBoxCollector(this);
         scr_System_CampaignManager.current.FinalizeLog_Question(box, evInstance == null || evInstance.Self == null ? null : evInstance.Self.CurrentRoom);
+        return box;
+    }
+
+    /// <summary>
+    /// Destroys this box's currently-live interactive option buttons, so it can be re-initialized
+    /// (e.g. into the read-only "answered" rendering via ShowAnswered) without leftover stale buttons.
+    /// </summary>
+    private void ClearOptions()
+    {
+        foreach (var opt in options)
+        {
+            if (opt.button != null) Destroy(opt.button.gameObject);
+        }
+        options.Clear();
+        buttonsByID.Clear();
+        validatorsByID.Clear();
+        defaultCancel = null;
+    }
+
+    QuestionBoxCollector pendingAnsweredCollector = null;
+
+    /// <summary>
+    /// Called on the sibling of whichever box just answered this question (see Message_Question.ResolveSibling),
+    /// so it reflects the same chosen answer read-only instead of remaining live/clickable with stale state.
+    /// Does NOT re-render synchronously: this is invoked from deep inside the OTHER box's click handler
+    /// (which can itself be re-entrantly advancing the event / destroying and rebuilding log entries via
+    /// scr_panel_logs.AnimateOneStep), so touching Grid/layout/TMP APIs on this box right now can hit a
+    /// half-destroyed object. Instead, just remember the collector and apply it lazily on the next Update
+    /// tick, once the current call stack has fully unwound.
+    /// </summary>
+    public void ShowAnswered(QuestionBoxCollector collector)
+    {
+        pendingAnsweredCollector = collector;
+    }
+
+    private void Update()
+    {
+        if (pendingAnsweredCollector == null) return;
+        var collector = pendingAnsweredCollector;
+        pendingAnsweredCollector = null;
+        ClearOptions();
+        InitializeWithArgs(m_Canvas, collector, logs);
     }
 
 
@@ -212,18 +254,23 @@ public class scr_menu_question : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return selected || (parent.Active && EventUtility.isValid( option,instance));
+            if (selected) return true;
+            if (parent.InnerQuestion != null && parent.InnerQuestion.answered) return false;
+            return parent.Active && EventUtility.isValid( option,instance);
         }
 
         public void OnClickButton()
         {
+            if (parent.InnerQuestion != null && parent.InnerQuestion.answered) return;
             if (!selected)
             {
+                if (parent.InnerQuestion != null) parent.InnerQuestion.answered = true;
                 parent.Active = false;
                 selected = true;
-                parent.FinalizeQuestion();
+                var collector = parent.FinalizeQuestion();
                 scr_UpdateHandler.current.InvokeEventStatus(EventStatus.running, true);
                 EventUtility.Execute(instance, option, true);// option.Execute(instance, true);
+                parent.InnerQuestion?.ResolveSibling(parent, collector);
             }
         }
     }

@@ -11,16 +11,76 @@ public class scr_bgImageSwapper : MonoBehaviour
 {
     // Start is called before the first frame update
     public bool monitorCurrentRoom = false;
+
+    /// <summary>
+    /// The room-view instance (monitorCurrentRoom == true) that events can apply a SetBGImage override to.
+    /// Other instances (e.g. the combat background) never register themselves here.
+    /// </summary>
+    public static scr_bgImageSwapper current = null;
+    public Image darkCover;
+    bool hasOverride = false;
+
+    /// <summary>
+    /// Reserved for future work: re-apply a historical entry's bg image override as the player scrolls
+    /// past it in the logs panel. Intentionally unused for now - no ScrollRect tracking is wired up.
+    /// </summary>
+    public bool ReapplyOnScroll = false;
+
     private void Start()
     {
         image.color = disabledColor;
         if (monitorCurrentRoom)
         {
+            current = this;
             scr_System_CampaignManager.current.Observer_CurrentRoom += OnRoomChange;
             scr_System_Time.current.Observer_globalTime_Day += OnDailyUpdate;
             OnRoomChange(0, scr_System_CampaignManager.current.CurrentRoom);
             scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
+            scr_System_CampaignManager.current.Observer_CurrentViewMode += OnViewModeChange;
+            scr_System_CampaignManager.current.Observer_MessageDisplay += ApplyOverride;
         }
+    }
+
+    private void OnViewModeChange(ViewMode vm, bool lockView)
+    {
+        ClearOverride();
+    }
+
+    /// <summary>
+    /// Applies an event-driven background image override on top of the normal room background.
+    /// Empty path clears the override and restores the normal room-driven image.
+    /// </summary>
+    public void ApplyOverride(UISpec spec)
+    {
+        //if (darkCover != null) darkCover.gameObject.SetActive(spec == null || spec.displayMode != LogsDisplayMode.AVG);
+        var path = spec.BGImagePath;
+
+        if (path == "")
+        {
+            ClearOverride();
+            return;
+        }
+
+        hasOverride = true;
+        if (lastImagePath != path)
+        {
+            lastImagePath = path;
+            image.color = activeColor;
+            if (co != null)
+            {
+                StopCoroutine(co);
+                co = null;
+            }
+            co = StartCoroutine(roomchange(path));
+        }
+    }
+
+    public void ClearOverride()
+    {
+        if (!hasOverride) return;
+        hasOverride = false;
+        lastImagePath = ""; // force reload even if it matches the last room image path
+        OnRoomChange(0, scr_System_CampaignManager.current.CurrentRoom);
     }
     private void OnHourUpdate(TimeSpan t)
     {
@@ -39,6 +99,7 @@ public class scr_bgImageSwapper : MonoBehaviour
     {
         if (updateSequence != 0) return;
         if (!this.gameObject.activeInHierarchy) return;
+        if (hasOverride) return; // event background override active, skip ambient room image updates
         if (room.Base.roomImagePath != "")
         {
             var imagepath = room.Base.roomImagePath;

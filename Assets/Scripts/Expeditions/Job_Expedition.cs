@@ -62,7 +62,7 @@ public class SerializableEventPackage
     public Dictionary<string, List<int>> Targets = new Dictionary<string, List<int>>();
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
     public bool overrideTargetScope = false;
-    public List<Event.EventScope_Target> targetScopes = new List<Event.EventScope_Target>();
+    public List<EventScope_Target> targetScopes = new List<EventScope_Target>();
     public bool overrideTargetGen = false;
     public List<Event.GenerationParameters> targetGens = new List<Event.GenerationParameters>();
     [JsonIgnore]

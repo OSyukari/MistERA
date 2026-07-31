@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 public class scr_System_CampaignManager_Serializable
 {
     public Dictionary<int, Job> Jobs;
@@ -586,21 +585,18 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="tooltip"></param>
     public void AddLog(KojoCollector kol, bool animate = false, bool rightAlign = false, string tooltip = "", Dictionary<string, string> replaceStrings = null)
     {
-        var m = kol.collect;
-        if (m == null) return;
+        if (kol.collect == null) return;
+        AddLog_Recursive(kol.collect, animate, rightAlign, tooltip, replaceStrings);
+    }
+
+    void AddLog_Recursive(MessageCollect_KojoEntry m, bool animate, bool rightAlign, string tooltip, Dictionary<string, string> replaceStrings)
+    {
         if (m.message != null && m.message.Length > 0)
         {
             Message_Text msg = new Message_Text(m, rightAlign || m.rightAlign, tooltip, replaceStrings);
             Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
         }
-        foreach (var next in m.nexts) 
-        { 
-            if (next.message != null && next.message.Length > 0)
-            {
-                Message_Text msg = new Message_Text(next, rightAlign || next.rightAlign, tooltip, replaceStrings);
-                Observer_MessageLogs?.Invoke(LogManager.AddLog(msg), animate);
-            }
-        }
+        foreach (var next in m.nexts) AddLog_Recursive(next, animate, rightAlign || m.rightAlign, tooltip, replaceStrings);
     }
 
     public bool shortenLogsPrint = true;
@@ -621,22 +617,23 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="line"></param>
     /// <param name="animate">whether on add line invoke a ui update</param>
-    public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool rA, bool animate = true)
+    public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool rA, bool animate = true, UISpec displaySnapshot = null)
     {
         // here we need to process line into translated
         //Debug.Log($"Event Addline {line}");
         Message_Text log = null;
+        var spec = displaySnapshot ?? line.UISpec;
 
         var content = UtilityEX.ParseEventEntry(instance, line.line);
         if (content.Length < 1) return;
         //Debug.Log($"AddLog_Line parsed content: {content}");
-        if (line.portraitRefKey == "self" && instance.Self != null && instance.Self.RefID != 0)
+        if (spec.PortraitRefKey == "self" && instance.Self != null && instance.Self.RefID != 0)
         {
             var msglog = new Message_Text(instance.Self, line, content, rA, "", default, instance);
             //msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
-        else if (instance.Targets.TryGetValue(line.portraitRefKey, out var targetrefs))
+        else if (instance.Targets.TryGetValue(spec.PortraitRefKey, out var targetrefs))
         {
             var msglog = new Message_Text(targetrefs, line, null, "", default, instance);
             msglog.AddMessage(content, rA);
@@ -645,6 +642,16 @@ public class scr_System_CampaignManager : MonoBehaviour
         else
         {
             log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false) as Message_Text;
+        }
+
+        if (log != null)
+        {
+            log.Display.PortraitRefKey = spec.PortraitRefKey;
+            log.Display.SelfTags = spec.SelfTags;
+            log.Display.TargetTags = spec.TargetTags;
+            log.Display.BGImagePath = spec.BGImagePath;
+            log.Display.displayMode = spec.displayMode;
+            log.Display.infoDisplay = spec.infoDisplay;
         }
 
         //
@@ -669,8 +676,8 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 foreach (var c in export) desc.AddPortraitRef(c.RefID);
             }
-            desc.displayTagsOverride_Self.AddRange(log.tagsOverride_self);
-            desc.displayTagsOverride_Target.AddRange(log.tagsOverride_target);
+            desc.displayTagsOverride_Self.AddRange(log.Display.SelfTags);
+            desc.displayTagsOverride_Target.AddRange(log.Display.TargetTags);
             desc.message = content;
 
             instance.Self.CurrentRoom.NotifyDescCollect(desc);
@@ -685,16 +692,17 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="question"></param>
     /// <param name="animate">whether on add line invoke a ui update</param>
-    public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true) 
+    public void AddLog_Question(EventInstance parent, Event.EventEntry.EventEntry_Question question, bool animate = true, UISpec displaySnapshot = null)
     {
         //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
         MessageLog log = null;
-        if (question.portraitRefKey == "self")
+        var spec = displaySnapshot ?? question.UISpec;
+        if (spec.PortraitRefKey == "self")
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"AddLog_Question Self {parent.Self.RefID}");
             log = LogManager.AddLog(new Message_Question(parent.Self == null ? null : parent.Self.PortraitManager,question,  parent, question));
         }
-        else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
+        else if (parent.Targets.TryGetValue(spec.PortraitRefKey, out var targetrefs))
         {
             log = LogManager.AddLog(new Message_Question(targetrefs, question, parent, question));
         }
@@ -704,6 +712,15 @@ public class scr_System_CampaignManager : MonoBehaviour
             PortraitManager portraitRef = null;
             log = LogManager.AddLog(new Message_Question(portraitRef, question, parent, question));
         }
+        if (log != null)
+        {
+            log.Display.PortraitRefKey = spec.PortraitRefKey;
+            log.Display.SelfTags = spec.SelfTags;
+            log.Display.TargetTags = spec.TargetTags;
+            log.Display.BGImagePath = spec.BGImagePath;
+            log.Display.displayMode = spec.displayMode;
+            log.Display.infoDisplay = spec.infoDisplay;
+        }
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
     /// <summary>
@@ -712,16 +729,17 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="parent"></param>
     /// <param name="question"></param>
     /// <param name="animate">whether on add line invoke a ui update</param>
-    public void AddLog_InputField(EventInstance parent, Event.EventEntry.EventEntry_InputField question, bool animate = true)
+    public void AddLog_InputField(EventInstance parent, Event.EventEntry.EventEntry_InputField question, bool animate = true, UISpec displaySnapshot = null)
     {
         //scr_UpdateHandler.current.FlushCollectedLogs(true, false);
         MessageLog log = null;
-        if (question.portraitRefKey == "self")
+        var spec = displaySnapshot ?? question.UISpec;
+        if (spec.PortraitRefKey == "self")
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"AddLog_Question Self {parent.Self.RefID}");
             log = LogManager.AddLog(new Message_InputField(parent.Self == null ? null : parent.Self.PortraitManager, question, parent, question));
         }
-        else if (parent.Targets.TryGetValue(question.portraitRefKey, out var targetrefs))
+        else if (parent.Targets.TryGetValue(spec.PortraitRefKey, out var targetrefs))
         {
             log = LogManager.AddLog(new Message_InputField(targetrefs, question, parent, question));
         }
@@ -730,6 +748,16 @@ public class scr_System_CampaignManager : MonoBehaviour
             Debug.Log("null AddLog_Question portraitref");
             PortraitManager portraitRef = null;
             log = LogManager.AddLog(new Message_InputField(portraitRef, question, parent, question));
+            
+        }
+        if (log != null)
+        {
+            log.Display.PortraitRefKey = spec.PortraitRefKey;
+            log.Display.SelfTags = spec.SelfTags;
+            log.Display.TargetTags = spec.TargetTags;
+            log.Display.BGImagePath = spec.BGImagePath;
+            log.Display.displayMode = spec.displayMode;
+            log.Display.infoDisplay = spec.infoDisplay;
         }
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
@@ -758,6 +786,19 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
+
+    /// <summary>
+    /// Fires when a message is actually drawn on screen (not just queued - see Observer_MessageLogs),
+    /// carrying its resolved UISpec, so UI elements can react to bgImagePath/displayMode/infoDisplay
+    /// at the exact drawing moment. Invoked from scr_panel_logs.AnimateOneStep.
+    /// </summary>
+    public event Action<UISpec> Observer_MessageDisplay;
+
+    public void InvokeMessageDisplay(UISpec display)
+    {
+        Debug.Log($"InvokeMessageDisplay info {display.infoDisplay} mode {display.displayMode}");
+        Observer_MessageDisplay?.Invoke(display);
+    }
 
 
     public event Action<PortraitManager, I_hasPortrait> Observer_LogsCharaChange;

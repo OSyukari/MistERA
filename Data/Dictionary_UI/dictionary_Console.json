@@ -11,7 +11,8 @@
 "console_modrelationshipwith_tooltip":"modrelationshipwith [targetRefID] trust|fear|goodwill|badwill|desire [value]",
 "console_modpersonalityscore_tooltip":"modpersonalityscore pride|corruption|mood|stress|lust [value]",
 "console_ingestItem_tooltip":"ingestItem [itemBaseID] [ingestTag]\nRequire current Target",
-"console_ascii_tooltip":"ascii\nToggle ascii render setting"
+"console_ascii_tooltip":"ascii\nToggle ascii render setting",
+"console_showQuestStages_tooltip":"showQuestStages [optional string questID]\nOutput all quest stage validation in log"
 
 
             }

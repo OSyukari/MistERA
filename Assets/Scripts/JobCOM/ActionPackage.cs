@@ -1613,7 +1613,7 @@ public abstract class ActionPackage
             bool exist = false;
             foreach (var kol in responses)
             {
-                exist = exist || kol.collect.message.Length > 0;
+                exist = exist || kol.isValid;
                 desc.Load(kol.collect);
             }
             if (exist && single) break;
@@ -2372,8 +2372,7 @@ public abstract class ActionPackage
             bool logged = false;
             foreach (var kol in responses)
             {
-                if (kol.collect == null) continue;
-                if (kol.collect.message.Length < 1) continue;
+                if (!kol.isValid) continue;
                 logged = true;
                 //if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{kol.collect.message}</align>" : kol.collect.message);
                 // if (visible)
@@ -2447,7 +2446,7 @@ public abstract class ActionPackage
             foreach (var kol in responses)
             {
                 //m.AddMessage_Before(kol, visible, recordingRoom, rightAlign);
-                exist = exist || kol.collect.message.Length > 0;
+                exist = exist || kol.isValid;
                 desc.Load(kol.collect);
                 //if (recordingRoom != null) recordingRoom.NotifyKojoCollect(kol);
             }
@@ -2535,7 +2534,7 @@ public abstract class ActionPackage
             {
                 //ss.Add(kol.collect.message);
                 desc.Load(kol.collect);
-                exist = exist || kol.collect.message.Length > 0;
+                exist = exist || kol.isValid;
                 //m.AddMessage_After(kol, visible, recordingRoom, rightAlign);
             }
             if (single && !ep.isPlayerEP) break;
@@ -2692,7 +2691,7 @@ public abstract class ActionPackage
                 bool hasresponse = false;
                 foreach (var kol in responses)
                 {
-                    if (kol.collect.message.Length < 1) continue;
+                    if (!kol.isValid) continue;
                     exist = true;
                     hasresponse = true;
                     desc.Load(kol.collect);

@@ -36,8 +36,20 @@ public class KojoCollector : I_ResultStorage, I_Records
     {
         get
         {
-            return collect != null && (collect.message != "" || collect.nexts.Count > 0);
+            if (collect == null) return false;
+            var dump = new List<string>();
+            DumpMessage(dump);
+            return dump.Count > 0;
         }
+    }
+
+    /// <summary>
+    /// Recursively collects every non-empty message carried by this collector's result tree
+    /// (its own message plus every next, at any depth) instead of callers reading collect.message/.nexts directly.
+    /// </summary>
+    public void DumpMessage(List<string> list)
+    {
+        if (collect != null) collect.DumpMessage(list);
     }
     public void LoadRelevantActors(List<int> list)
     {

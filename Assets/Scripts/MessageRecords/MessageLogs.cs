@@ -241,9 +241,9 @@ public class Message_Text : MessageLog
     }
     public Message_Text(Character_Trainable chara, I_hasPortrait handler, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , handler, time, parentEvent)
     {
-        this.tagsOverride_self = handler == null ? new List<string>() : handler.SelfPortraitTag;
-        this.tagsOverride_target = handler == null ? new List<string>() : handler.TargetPortraitTag;
-        if (tagsOverride_self != null && tagsOverride_self.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride_self)}");
+        this.Display.SelfTags = handler == null ? new List<string>() : handler.SelfPortraitTag;
+        this.Display.TargetTags = handler == null ? new List<string>() : handler.TargetPortraitTag;
+        if (Display.SelfTags != null && Display.SelfTags.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", Display.SelfTags)}");
 
         AddMessage(messages, rA);
         this.tooltip = tooltip;
@@ -260,9 +260,9 @@ public class Message_Text : MessageLog
     public Message_Text(MessageCollect_KojoEntry m, bool ra, string tooltip, Dictionary<string, string> replaceStrings = null)
     {
         var chara = scr_System_CampaignManager.current.FindInstanceByID(m.PortraitRefID);
-        this.PortraitRef = chara == null ? null : chara.PortraitManager;
-        this.tagsOverride_self = m.selfPortraitTag;
-        this.tagsOverride_target = m.targetPortraitTag;
+        this.Display.PortraitRef = chara == null ? null : chara.PortraitManager;
+        this.Display.SelfTags = m.selfPortraitTag;
+        this.Display.TargetTags = m.targetPortraitTag;
 
         //if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
 
@@ -283,22 +283,22 @@ public class Message_Text : MessageLog
         if (desc.PortraitRefs.Count == 1)
         {
             var chara = scr_System_CampaignManager.current.FindInstanceByID(desc.PortraitRefs[0]);
-            if (chara != null) this.PortraitRef = chara.PortraitManager;
+            if (chara != null) this.Display.PortraitRef = chara.PortraitManager;
         }
         else if (desc.PortraitRefs.Count > 1)
         {
             foreach (var c in desc.PortraitRefs)
             {
                 var chara = scr_System_CampaignManager.current.FindInstanceByID(c);
-                if (chara != null) this.multipleChara.Add(chara);
+                if (chara != null) this.Display.MultipleChara.Add(chara);
             }
         }
         var msg = isDirectlyRelated ? desc.message : desc.message_excludeRelated;
         if (replaceStrings != null) foreach (var kvp in replaceStrings) msg = msg.Replace(kvp.Key, kvp.Value);
         AddMessage(msg, rightAlign);
         this.tooltip = desc.tooltip;
-        this.tagsOverride_self = desc.displayTagsOverride_Self;
-        this.tagsOverride_target = desc.displayTagsOverride_Target;
+        this.Display.SelfTags = desc.displayTagsOverride_Self;
+        this.Display.TargetTags = desc.displayTagsOverride_Target;
 
         //if (tagsOverride != null && tagsOverride.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", tagsOverride)}");
 
@@ -313,7 +313,7 @@ public class Message_Text : MessageLog
         get 
         {
             if (this.Messages.Any(x => !x.rightAlign)) return true;
-            return (multipleChara.Count > 0 || PortraitRef != null) && SelfPortraitTag != null && SelfPortraitTag.Count > 0;
+            return (Display.MultipleChara.Count > 0 || Display.PortraitRef != null) && SelfPortraitTag != null && SelfPortraitTag.Count > 0;
         } 
     }
     /// <summary>
@@ -350,24 +350,44 @@ public class Message_Text : MessageLog
     }
     public override bool isValid { get { return true; } }
 
-    scr_MessageLogBox selfBox = null;
-    scr_HoverableText currentLine = null;
+    /// <summary>
+    /// One linked UI box this message paints into. A message can be shown in more than one box at once
+    /// (e.g. the ERA scrolling list and the AVG single-message panel) - Draw()/Animate() fan out the
+    /// identical, synchronized content to every registered target instead of tracking just one.
+    /// </summary>
+    private class DrawTarget
+    {
+        public scr_MessageLogBox box;
+        public scr_HoverableText prefab;
+        public scr_HoverableText currentLine;
+    }
+    private List<DrawTarget> targets = new List<DrawTarget>();
+
     /// <summary>
     /// Return bool on whether logs panel should inhibit next auto draw calls
     /// </summary>
     /// <param name="skipImage"></param>
-    /// <param name="box"></param>
-    /// <param name="linePrefab"></param>
+    /// <param name="boxA">Primary draw target (e.g. ERA list box).</param>
+    /// <param name="prefabA">Line prefab to instantiate under boxA.</param>
+    /// <param name="boxB">Optional second draw target (e.g. AVG panel box), kept in sync with boxA.</param>
+    /// <param name="prefabB">Line prefab to instantiate under boxB.</param>
     /// <returns></returns>
-    public bool Draw(bool skipImage, scr_MessageLogBox box, scr_HoverableText linePrefab)
+    public bool Draw(bool skipImage, scr_MessageLogBox boxA, scr_HoverableText prefabA, scr_MessageLogBox boxB = null, scr_HoverableText prefabB = null)
     {
         //Debug.Log($"Draw text, skipImage? {skipImage} display? {DisplaPortrait} tags {String.Join("|", tagsOverride)}");
         //if (skipImage || !DisplaPortrait) Debug.Log($"SkipImage? {skipImage}");
         var returnval = base.Draw(skipImage || !DisplaPortrait);
-        this.selfBox = box;
-        this.prefab_LogLine = linePrefab;
-
-        box.Initialize(PortraitRef);
+        targets.Clear();
+        if (boxA != null)
+        {
+            targets.Add(new DrawTarget { box = boxA, prefab = prefabA });
+            boxA.Initialize(Display.PortraitRef);
+        }
+        if (boxB != null)
+        {
+            targets.Add(new DrawTarget { box = boxB, prefab = prefabB });
+            boxB.Initialize(Display.PortraitRef);
+        }
         if(canAnimate()) Animate();
 
         return returnval;
@@ -375,7 +395,6 @@ public class Message_Text : MessageLog
 
 
     List<string> msg = new List<string>();
-    protected scr_HoverableText prefab_LogLine;
 
     [JsonIgnore] public bool animateAllOverride = false;
 
@@ -385,22 +404,17 @@ public class Message_Text : MessageLog
         {
             msg = lines[0];
             lines.RemoveAt(0);
-            currentLine = UnityEngine.Object.Instantiate(prefab_LogLine);
-            currentLine.transform.SetParent(selfBox.transform, false);
-            if (this.tooltip != "") currentLine.SetExternalTooltip(tooltip);
+            foreach (var t in targets)
+            {
+                t.currentLine = UnityEngine.Object.Instantiate(t.prefab);
+                t.currentLine.transform.SetParent(t.box.transform, false);
+                if (this.tooltip != "") t.currentLine.SetExternalTooltip(tooltip);
+            }
         }
-        currentLine.SetText(String.Join("\n", msg));
+        var text = String.Join("\n", msg);
+        foreach (var t in targets) t.currentLine.SetText(text);
         //Debug.Log($"Animate CurrentLine {currentLine.Text}, nextLine? {(lines.Count > 0 ? String.Join("\n", lines[0]) : "-")}");
         msg.Clear();
-
-        /*
-        while (msg.Count > 0 && currentLine != null)
-        {
-            Debug.Log($"Animate CurrentLine {}");
-            var inner = currentLine.Text;
-            currentLine.SetText((inner.Length > 0 ? inner + "\n" : "") + msg[0]);// += (currentLine.text.Length > 0 ? "\n" : "") + msg[0];
-            msg.RemoveAt(0);
-        }*/
 
         if ((animateAllOverride || Input.GetMouseButton(1)) && this.canAnimate()) Animate();
     }
@@ -429,7 +443,7 @@ public class Message_LLMQuery : MessageLog
 
     public Message_LLMQuery(PortraitManager portraitRef, List<string> tags, LLMRequest request, DateTime time = default) : base(portraitRef, time, null)
     {
-        this.tagsOverride_self = tags;
+        this.Display.SelfTags = tags;
         this.request = request;
     }
 
@@ -455,7 +469,7 @@ public class Message_LLMQuery : MessageLog
         //if (skipImage || !DisplaPortrait) Debug.Log($"SkipImage? {skipImage}");
         var returnval = base.Draw(skipImage || !DisplaPortrait);
 
-        box.Initialize(PortraitRef);
+        box.Initialize(Display.PortraitRef);
         if (canAnimate()) Animate();
 
         return returnval;
@@ -472,38 +486,39 @@ public abstract class MessageLog : I_hasPortrait
 
     public EventInstance parentEvent = null;
 
+    /// <summary>
+    /// Consolidated UI-display settings for this log entry (portrait ref/tags, background image override).
+    /// </summary>
+    [JsonIgnore] public UISpec Display = new UISpec();
+
     public List<Character_Trainable> PortraitRefExport
     {
         get
         {
-            if (multipleChara.Count > 0) return multipleChara;
-            if (PortraitRef != null) return new List<Character_Trainable>() { PortraitRef.Owner };
+            if (Display.MultipleChara.Count > 0) return Display.MultipleChara;
+            if (Display.PortraitRef != null) return new List<Character_Trainable>() { Display.PortraitRef.Owner };
             return new List<Character_Trainable>();
 
         }
     }
 
-    public PortraitManager PortraitRef = null;
-    public List<Character_Trainable> multipleChara = new List<Character_Trainable>();
-    public List<string> tagsOverride_self = new List<string>();
-    public List<string> tagsOverride_target = new List<string>();
     public abstract bool DisplaPortrait { get; }
     public bool WaitForPortrait
     {
         get
         {
-            if (PortraitRef != null && PortraitRef.Owner.RefID != 0) return true;
-            if (multipleChara != null && multipleChara.Count >= 1 && multipleChara[0] != null && multipleChara[0].RefID != 0) return true;
+            if (Display.PortraitRef != null && Display.PortraitRef.Owner.RefID != 0) return true;
+            if (Display.MultipleChara != null && Display.MultipleChara.Count >= 1 && Display.MultipleChara[0] != null && Display.MultipleChara[0].RefID != 0) return true;
             return false;
         }
     }
     public DateTime time;
-    
+
     public virtual bool isValid { get { return true; } }
 
     public MessageLog(PortraitManager portraitRef, DateTime time = default, EventInstance parentEvent = null)
     {
-        this.PortraitRef = portraitRef;
+        this.Display.PortraitRef = portraitRef;
         this.parentEvent = parentEvent;
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();
@@ -511,9 +526,9 @@ public abstract class MessageLog : I_hasPortrait
     public MessageLog(List<Character_Trainable> multipleChara, I_hasPortrait handler, DateTime time = default, EventInstance parentEvent = null)
     {
         multipleChara.RemoveAll(x => x == null);
-        this.multipleChara = multipleChara;
-        this.tagsOverride_self = handler.SelfPortraitTag;
-        this.tagsOverride_target = handler.TargetPortraitTag;
+        this.Display.MultipleChara = multipleChara;
+        this.Display.SelfTags = handler.SelfPortraitTag;
+        this.Display.TargetTags = handler.TargetPortraitTag;
         this.parentEvent = parentEvent;
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();
@@ -521,7 +536,7 @@ public abstract class MessageLog : I_hasPortrait
     public MessageLog() { }
 
     public abstract void Animate();
-   
+
     /// <summary>
     /// if return true, means we need to wait
     /// </summary>
@@ -534,25 +549,25 @@ public abstract class MessageLog : I_hasPortrait
         else return false;
        // else Debug.Log("Skipped drawing!");
     }
-    [JsonIgnore] public List<string> SelfPortraitTag { get { return this.tagsOverride_self; } }
-    [JsonIgnore] public List<string> TargetPortraitTag { get { return this.tagsOverride_target; } }
+    [JsonIgnore] public List<string> SelfPortraitTag { get { return this.Display.SelfTags; } }
+    [JsonIgnore] public List<string> TargetPortraitTag { get { return this.Display.TargetTags; } }
     public bool ForceDraw()
     {
         if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits)
         {
-            Debug.Log($"Forcedraw! {(PortraitRef == null ? "null" : PortraitRef.Owner.FirstName)} {multipleChara.Count}");
+            Debug.Log($"Forcedraw! {(Display.PortraitRef == null ? "null" : Display.PortraitRef.Owner.FirstName)} {Display.MultipleChara.Count}");
 
         }
-        
-        if (PortraitRef != null && PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.PortraitRef, this);
-        else if (this.multipleChara.Count > 0)
+
+        if (Display.PortraitRef != null && Display.PortraitRef.Owner.RefID > 0) scr_System_CampaignManager.current.Log_TrySetChara(this.Display.PortraitRef, this);
+        else if (this.Display.MultipleChara.Count > 0)
         {
-            var result = scr_System_CampaignManager.current.Log_TrySetChara(this.multipleChara, this);
+            var result = scr_System_CampaignManager.current.Log_TrySetChara(this.Display.MultipleChara, this);
             if (result == null) return false;
             else return result.Owner.RefID != 0;
         }
 
-        if (PortraitRef == null) return false;
-        else return PortraitRef.Owner.RefID != 0;
+        if (Display.PortraitRef == null) return false;
+        else return Display.PortraitRef.Owner.RefID != 0;
     }
 }

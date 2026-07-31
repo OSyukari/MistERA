@@ -119,6 +119,44 @@ public class EventManager
         }
     }
 
+    /// <summary>
+    /// Exclusive dispatch: collects every Event with matching trigger that validates for chara,
+    /// but starts only the single highest-priority one (see Event.priority), instead of starting
+    /// every match like Trigger(chara, trigger) does. Used by OnDialogue so a character-specific
+    /// event beats a generic fallback. Returns the started EventInstance, or null if none validated.
+    /// </summary>
+    public EventInstance Trigger(Character_Trainable chara, EventTrigger trigger, bool exclusive)
+    {
+        if (!exclusive)
+        {
+            Trigger(chara, trigger);
+            return null;
+        }
+        if (trigger <= EventTrigger.None) return null;
+
+        EventInstance best = null;
+        Event bestDef = null;
+        bool tie = false;
+        foreach (var i in scr_System_Serializer.current.MasterList.Events.list)
+        {
+            if (i.trigger != trigger) continue;
+            var candidate = new EventInstance(chara, i.ID, "");
+            if (!candidate.isValid) continue;
+
+            if (best == null || i.priority > bestDef.priority) { best = candidate; bestDef = i; tie = false; }
+            else if (i.priority == bestDef.priority) tie = true;
+        }
+        if (tie) Debug.LogWarning($"EventManager.Trigger exclusive: multiple {trigger} events tied at priority {bestDef.priority}; picked {bestDef.ID}");
+        if (best != null)
+        {
+#if UNITY_EDITOR
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Trigger {trigger} exclusive Hit event {best.Name} on {chara.FirstName}");
+#endif
+            StartEvent(best, false);
+        }
+        return best;
+    }
+
 
 
     scr_System_CampaignManager _cnManager = null;

@@ -54,7 +54,7 @@ public class EventInstance
     public bool overrideTargetGen = false;
     public bool overrideTargetScope = false;
     public List<Event.GenerationParameters> OverrideTargetGen = new List<Event.GenerationParameters>();
-    public List<Event.EventScope_Target> OverrideTargetScope = new List<Event.EventScope_Target>();
+    public List<EventScope_Target> OverrideTargetScope = new List<EventScope_Target>();
 
     bool firstInit = true;
     public bool displayOverride = false;
@@ -138,6 +138,13 @@ public class EventInstance
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
     public MessageCollect message = new MessageCollect(true);
     public string CurrentInput = "";
+    /// <summary>
+    /// Running display setting for this event, seeded from Event.UISpec (the event's template) whenever
+    /// a different event is loaded, and mutable at runtime (e.g. by the SetBGImage result). Each printed
+    /// Line/Question/InputField overwrites this with its own authored fields (see EventUtility) and the
+    /// merged result is snapshotted at queue time, not read live at draw time.
+    /// </summary>
+    public UISpec CurrentUISpec = new UISpec();
     /// <summary>
     /// TargetRef == -1 for null target
     /// </summary>
@@ -237,6 +244,10 @@ public class EventInstance
         if (nextEvent == null) this.Clear($"EventInstance cannot find event with id {eventID}");
         else
         {
+            // entering a different event (including the very first load) resets the running display
+            // setting to that event's own template, rather than carrying over the previous event's state
+            if (nextEvent != currentEvent) CurrentUISpec = nextEvent.UISpec.Clone();
+
             // at this point eventid will never be ""
             // so here we only accept either empty or non empty label
             // empty label = start from first, nonempty = start from albel

@@ -43,6 +43,8 @@ public class CharaReq
 
     public List<string> requireAbsentJobwithCOMTag = new List<string>();
     public List<string> requireExistingJobwithCOMTag = new List<string>();
+
+
     public void Read(CharaReq req)
     {
         this.BodyTags.AddRange(req.BodyTags);
@@ -75,5 +77,73 @@ public class CharaReq
         this.requireFullHP = this.requireFullHP || req.requireFullHP;
         this.requireMissingHP = this.requireMissingHP || req.requireMissingHP;
 
+    }
+}
+
+public class RequireStatValue
+{
+    public string statID = "";
+    public LogicalOperand operand = LogicalOperand.none;
+    public string value = "";
+    [JsonIgnore] public bool isValid { get { return this.statID != "" && operand != LogicalOperand.none && value != ""; } }
+    public bool Validate(Character_Trainable chara)
+    {
+        if (chara == null) return false;
+        return chara.CompareStatValue(statID, operand, value);
+    }
+}
+
+public class RequireStatusValue
+{
+    public string statusID = "";
+    public bool checkExistOnly = false;
+    public bool checkSeverityIndex = false;
+    public LogicalOperand operand = LogicalOperand.none;
+    public float value = 0;
+    [JsonIgnore]
+    public bool isValid
+    {
+        get
+        {
+            if (this.statusID == "") return false;
+            if (!checkExistOnly && operand == LogicalOperand.none) return false;
+            if (checkSeverityIndex && value < 0) return false;
+            return true;
+        }
+    }
+    public bool Validate(Character_Trainable chara)
+    {
+        // Exact hits first: a substring match could silently resolve an aggregate
+        // id (e.g. chara_status_pain) to one of its sub-statuses (chara_status_pain_sex)
+        var status = chara.Stats.FindStatusByExactID(statusID);
+        var statusEx = status != null ? null : chara.Stats.FindStatusEXByExactID(statusID);
+        if (status == null && statusEx == null) status = chara.Stats.GetStatusByStringMatch(statusID);
+        if (status == null && statusEx == null) statusEx = chara.Stats.GetStatusEXByStringMatch(statusID);
+
+        if (checkExistOnly) return status != null || statusEx != null;
+        if (status == null && statusEx == null) return false;
+        if (checkSeverityIndex) return Utility.CompareValue(status != null ? status.SeverityIndex : statusEx.SeverityIndex, operand, value);
+        else return Utility.CompareValue(status != null ? status.Severity : statusEx.Severity, operand, value);
+    }
+}
+
+public class RequireKojoVariable
+{
+    public bool isDailyVariable = false;
+    public string variableID = "";
+    public bool checkExistOnly = false;
+    public LogicalOperand operand = LogicalOperand.none;
+    public int value = 0;
+    /// <summary>
+    /// Optional. If filled, the currently-scoped variable's value is stored into the caller's
+    /// append-string collector under this key (e.g. for quest stage display via $key$ substitution).
+    /// </summary>
+    public string appendStringKey = "";
+
+    [JsonIgnore] public bool isValid { get { return this.variableID != "" && (checkExistOnly || operand != LogicalOperand.none); } }
+    public bool Validate(Character_Relationship rel)
+    {
+        if (checkExistOnly) return (rel.Owner.Relationships.GetKojoVariableExist(isDailyVariable, rel, variableID) == (value != 0));
+        else return Utility.CompareValue(rel.Owner.Relationships.GetKojoVariable(isDailyVariable, rel, variableID), operand, value);
     }
 }

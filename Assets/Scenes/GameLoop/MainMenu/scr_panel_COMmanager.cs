@@ -587,12 +587,16 @@ public class scr_panel_COMmanager : scr_Menu
                     button.gameObject.SetActive(false);
 #endif
                     break;
-                case -7412:  //change relationship
-#if UNITY_EDITOR
-                    button.Initialize(this, new ButtonValidator_ChangeRelationship(this, button));
-#else
-                    button.gameObject.SetActive(false);
-#endif
+                case -7412: // talk to
+                    if (scr_System_CentralControl.current.isSafeMode)
+                    {
+                        button.gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        // button.Initialize(this, new ButtonValidator_ChangeRelationship(this, button));
+                        button.Initialize(this, new ButtonValidator_TalkToChara(this, button));
+                    }
                     break;
                 default:
                     //button.Initialize(this, button_alwaysValid);
@@ -2765,13 +2769,12 @@ public class scr_panel_COMmanager : scr_Menu
     }
 
     public scr_menu_changeRel prefab_ChangeRel;
-
-    public class ButtonValidator_ChangeRelationship : ButtonValidator, I_ButtonClickable
+    public class ButtonValidator_TalkToChara : ButtonValidator, I_ButtonClickable
     {
         new scr_panel_COMmanager parent;
         scr_SelectableText text;
 
-        public ButtonValidator_ChangeRelationship(scr_panel_COMmanager parent, scr_SelectableText text) : base(parent)
+        public ButtonValidator_TalkToChara(scr_panel_COMmanager parent, scr_SelectableText text) : base(parent)
         {
             this.parent = parent;
             this.text = text;
@@ -2794,8 +2797,21 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
+            var target = scr_System_CampaignManager.current.CurrentTarget;
+
             scr_menu_changeRel detail = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.prefab_ChangeRel).GetComponent<scr_menu_changeRel>();
-            detail.InitializeWithArgument(scr_System_CampaignManager.current.CurrentTarget, scr_System_CampaignManager.current.Player);
+            detail.InitializeWithArgument(target, scr_System_CampaignManager.current.Player);
+
+            // fire OnDialogue globally: every OnDialogue-triggered Event checks CampaignManager.current.CurrentTarget
+            // itself (via TargetScope.CurrentTarget) and only the single highest-priority match runs
+            var started = scr_UpdateHandler.current.EventHandler.Trigger(scr_System_CampaignManager.current.Player, EventTrigger.OnDialogue, true);
+
+            if (started != null)
+            {
+                scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
+                scr_UpdateHandler.current.EventHandler.Run();
+                scr_System_CampaignManager.current.NotifyUpdate(false);
+            }
         }
     }
     public class ButtonValidator_DebugAddItemToRoom : ButtonValidator, I_ButtonClickable

@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 
 
 public static class EventUtility
@@ -249,8 +247,21 @@ public static class EventUtility
     /// <param name="ev"></param>
     /// <param name="c"></param>
     /// <returns></returns>
-    public static bool isValid(Event.CharaCondition r, EventInstance ev, Character_Trainable c)
+    public static bool isValid(Event_CharaCondition r, EventInstance ev, Character_Trainable c)
     {
+        if (r.requireKojoVariable != null && r.requireKojoVariable.isValid)
+        {
+            if (c == null) return false;
+            Character_Trainable relationTarget = c;
+            if (r.relationshipTargetKey != "" && r.relationshipTargetKey != "self")
+            {
+                if (!ev.Targets.TryGetValue(r.relationshipTargetKey, out var targets) || targets.Count < 1) return false;
+                relationTarget = targets[0];
+            }
+            var rel = c.Relationships.FindRelationshipWith(relationTarget);
+            return rel != null && r.requireKojoVariable.Validate(rel);
+        }
+
         if (r.parameters.Count < 1) return true;
         else if (c == null) return false;
 
@@ -368,6 +379,10 @@ public static class EventUtility
                 return !c.FactionManager.HasPlayerFaction;
             case "isPartyPrisoner":
                 return c.FactionManager.CurrentActiveParty != null && c.FactionManager.CurrentActiveParty.GetMemberType(c).isPrisoner;
+            case "isActiveFaction":
+                if (r.parameters.Count < 2) return false;
+                I_IsJobGiver active = c.FactionManager.CurrentActiveParty != null ? (I_IsJobGiver)c.FactionManager.CurrentActiveParty : c.FactionManager.CurrentlyActiveFaction;
+                return active != null && active.FactionOwnerRoot != null && active.FactionOwnerRoot.ID == r.parameters[1];
             default:
                 return true;
         }
@@ -381,7 +396,7 @@ public static class EventUtility
     /// <param name="self"></param>
     /// <param name="library"></param>
     /// <returns></returns>
-    public static bool FindTargets(Event.EventScope_Target scope, EventInstance ev, Character_Trainable self, ref Dictionary<string, List<Character_Trainable>> library)
+    public static bool FindTargets(EventScope_Target scope, EventInstance ev, Character_Trainable self, ref Dictionary<string, List<Character_Trainable>> library)
     {
         if (scope.refKeys.Count < 1) return false;
 
@@ -394,6 +409,15 @@ public static class EventUtility
 
             switch (scope.baseScope)
             {
+                case TargetScope.CurrentTarget:
+                    var currentTarget = scr_System_CampaignManager.current.CurrentTarget;
+                    if (currentTarget != null)
+                    {
+                        bool isvalid = true;
+                        foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, currentTarget)) isvalid = false;
+                        if (isvalid && !list.Contains(currentTarget)) list.Add(currentTarget);
+                    }
+                    break;
                 case TargetScope.BaseID_Unrestricted:
                     if (scope.extraScopeArguments.Count >= 1)
                     {
@@ -578,10 +602,15 @@ public static class EventUtility
         if (owner.isVisible && block.line != "")
         {
             bool rA = !owner.isPlayerRelated;
-            
+
+            // snapshot before this entry's own Results run, so a SetBGImage attached here only affects entries printed after it
+            var snap = owner.CurrentUISpec.Overwrite(block.UISpec);
+            // sticky fields (e.g. bgImagePath) this entry overrides become the new running default for entries after it
+            block.UISpec.PersistInto(owner.CurrentUISpec);
+
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, block, rA, false));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, block, rA, false, snap));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
 
@@ -600,7 +629,9 @@ public static class EventUtility
 
         if (owner.isVisible)
         {
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Question(owner, block, false));
+            var snap = owner.CurrentUISpec.Overwrite(block.UISpec);
+            block.UISpec.PersistInto(owner.CurrentUISpec);
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Question(owner, block, false, snap));
             //scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
             owner.Notify(EventStatus.waiting);
         }
@@ -624,7 +655,9 @@ public static class EventUtility
 
         if (owner.isVisible)
         {
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_InputField(owner, block, false));
+            var snap = owner.CurrentUISpec.Overwrite(block.UISpec);
+            block.UISpec.PersistInto(owner.CurrentUISpec);
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_InputField(owner, block, false, snap));
             //scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
             owner.Notify(EventStatus.waiting);
         }
@@ -790,7 +823,11 @@ public static class EventUtility
                     }
                     // var requestlist = exec.arguments[0] == "self" && owner.Self != null ? new List<Character_Trainable>() { owner.Self } : owner.Targets[exec.arguments[0]];
                     //var targetlist = owner.Targets[exec.arguments[1]];
-                    if (requestlist.Count < 1 || targetlist.Count < 1) return false;
+                    if (requestlist.Count < 1 || targetlist.Count < 1)
+                    {
+                        Debug.LogError($"GetKojoEntry earlyexit requestlist.Count < 1 || targetlist.Count < 1");
+                        return false;
+                    }
                     if (exec.arguments[2].Length < 1 || exec.arguments[3].Length < 1) return false;
                     List<string> texts = new List<string>();
                     foreach(var i in requestlist)
@@ -804,17 +841,15 @@ public static class EventUtility
                         {
                             kol.ReplaceString("$self$", i.FirstName);
                             kol.ReplaceString("$target$", randtarget.FirstName);
-                            if (kol.collect.message.Length > 0) texts.Add(kol.collect.message);
-                            foreach(var next in kol.collect.nexts)
-                            {
-                                if (next.message.Length > 0) texts.Add(next.message);
-                            }
+                            kol.DumpMessage(texts);
                         }
                         //var msg = i.Relationships.Personality.GetKOJOMessage(exec.arguments[2], new List<EvaluationPackage>(), new List<EvaluationPackage>(), rel);
                        // msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
                         //if (msg.message.Length > 0) texts.Add(msg.message);
                     }
                     if (texts.Count > 0) owner.AppendStrings.Add(exec.arguments[3], texts);
+
+                    Debug.Log($"GetKojoEntry result {exec.arguments[3]} : {String.Join(" | ", texts)}");
                     return texts.Count > 0;
                 }
                 else return false;
@@ -857,11 +892,7 @@ public static class EventUtility
                         {
                             kol.ReplaceString("$self$", i.FirstName);
                             kol.ReplaceString("$target$", randtarget.FirstName);
-                            if (kol.collect.message.Length > 0) texts.Add(kol.collect.message);
-                            foreach (var next in kol.collect.nexts)
-                            {
-                                if (next.message.Length > 0) texts.Add(next.message);
-                            }
+                            kol.DumpMessage(texts);
                         }
                         //var msg = i.Relationships.Personality.GetKOJOMessage(exec.arguments[2], new List<EvaluationPackage>(), new List<EvaluationPackage>(), rel);
                         // msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
@@ -940,17 +971,23 @@ public static class EventUtility
                         var msg1 = new KojoCollector(c, pl2.targetCOM.ID, "_Tryjoin");
                         msg1.LoadRel(rel);
                         msg1 = c.Relationships.GetKOJOMessage_Suffix(msg1, null);
-                        ev.AppendStrings.Add("kojo_tryjoin", msg1 == null || msg1.collect == null || msg1.collect.message.Length < 1 ? empty : new List<string>() { msg1.collect.message });
+                        var texts1 = new List<string>();
+                        msg1?.DumpMessage(texts1);
+                        ev.AppendStrings.Add("kojo_tryjoin", texts1.Count > 0 ? texts1 : empty);
 
                         var msg2 = new KojoCollector(c, pl2.targetCOM.ID, "_Joined");
                         msg2.LoadRel(rel);
                         msg2 = c.Relationships.GetKOJOMessage_Suffix(msg2, null);
-                        ev.AppendStrings.Add("kojo_joined", msg2 == null || msg2.collect == null || msg2.collect.message.Length < 1 ? empty : new List<string>() { msg2.collect.message });
+                        var texts2 = new List<string>();
+                        msg2?.DumpMessage(texts2);
+                        ev.AppendStrings.Add("kojo_joined", texts2.Count > 0 ? texts2 : empty);
 
                         var msg3 = new KojoCollector(c, pl2.targetCOM.ID, "_Join_Refused");
                         msg3.LoadRel(rel);
                         msg3 = c.Relationships.GetKOJOMessage_Suffix(msg3, null);
-                        ev.AppendStrings.Add("kojo_join_refused", msg3 == null || msg3.collect == null || msg3.collect.message.Length < 1 ? empty : new List<string>() { msg3.collect.message });
+                        var texts3 = new List<string>();
+                        msg3?.DumpMessage(texts3);
+                        ev.AppendStrings.Add("kojo_join_refused", texts3.Count > 0 ? texts3 : empty);
 
                         return true;
                     }
@@ -1018,6 +1055,28 @@ public static class EventUtility
                     }
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.RevealFaction:
+                if (exec.arguments.Count >= 1)
+                {
+                    var revealFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[0]);
+                    if (revealFaction == null) return false;
+
+                    revealFaction.hiddenOnWorldMap = false;
+
+                    if (exec.arguments.Count >= 2 && bool.TryParse(exec.arguments[1], out var revealLogMessage) && revealLogMessage)
+                    {
+                        var message = LocalizeDictionary.QueryThenParse("event_revealFaction").Replace("$faction_name$", revealFaction.FactionDisplayName);
+                        var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
+                        if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                    }
+
+                    return true;
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.SetBGImage:
+                owner.CurrentUISpec.BGImagePath = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
+                return true;
             case Event.EventEntry.ExecutionType.CheckRelationship:
                 if (exec.arguments.Count >= 2 && exec.arguments[0] != exec.arguments[1])
                 {

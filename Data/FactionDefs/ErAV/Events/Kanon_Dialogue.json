@@ -2,156 +2,1006 @@
     "Events": {
         "list": [
             {
-                "_comment": "Kanon_Dialogue. OnDialogue entry (trigger None until OnDialogue trigger type is implemented in engine). Fires when player talks to Kanon. First-branch dispatches 4 cases: (1) offer==1 && !firstvisit_done && in office -> first-visit narrative; (2) in office (else) -> greeting + debt progress; (3) offer==1 && !firstvisit_done && not in office -> 'come to my office'; (4) not in office (else) -> defer to greeting kojo (placeholder). OnDialogue_Options events are displayed by the engine AFTER this event finishes. DESIGN NOTES: Kanon does NOT know about any promise regarding Kanade -> kanade handling is presence-only, never asks 'where is your sister'. Punishment/victim commentary branches on erav_last_victim (Kanon took part in the punishment event, and may herself be the victim when value==4); on-time payment clears it to 0. TODO: placeholder conditions need real engine support — isActiveFaction (plan §15 Q3), notHasKojoVariable / kojoVariable value & day arithmetic (§15 Q2/Q4), targetExists for kanade-in-room, greeting kojo collection function for branch 4 (§15 Q2).",
+                "_comment": "Kanon_Dialogue. OnDialogue entry. Fires when player talks to Kanon. First-branch dispatches 4 cases: (1) offer==1 && !firstvisit_done && in office -> first-visit narrative; (2) in office (else) -> greeting + debt progress; (3) offer==1 && !firstvisit_done && not in office -> 'come to my office'; (4) not in office (else) -> defer to greeting kojo (placeholder). OnDialogue_Options events are displayed by the engine AFTER this event finishes. DESIGN NOTES: Kanon does NOT know about any promise regarding Kanade -> kanade handling is presence-only, never asks 'where is your sister'. Punishment/victim commentary branches on erav_last_victim (Kanon took part in the punishment event, and may herself be the victim when value==4); on-time payment clears it to 0. TODO: placeholder conditions still need real engine support — kojoVariableEquals / kojoVariableNotEquals / daySinceKojoVariable value & day arithmetic (§15 Q2/Q4), targetExists for kanade-in-room, greeting kojo collection function for branch 4 (§15 Q2). isActiveFaction is now implemented (EventUtility.isValid), and the firstvisit checks now use requireKojoVariable (erav_kanon_offer eq 1); ac_closing advances erav_kanon_offer from 1 to 2 instead of writing erav_kanon_firstvisit_done.",
                 "ID": "Kanon_Dialogue",
                 "allowDuplicate": false,
-                "trigger": "None",
+                "trigger": "OnDialogue",
                 "SelfValidator": {
                     "chara_conditions": [
-                        { "parameters": [ "exists" ] },
-                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] }
+                        {
+                            "parameters": [
+                                "exists"
+                            ]
+                        },
+                        {
+                            "parameters": [
+                                "isActorBaseID",
+                                "ErAV_Player"
+                            ]
+                        }
                     ]
                 },
+                "TargetValidators": [
+                    {
+                        "refkeys": [
+                            "kanon"
+                        ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            {
+                                "parameters": [
+                                    "isActorBaseID",
+                                    "ErAV_Kanon"
+                                ]
+                            }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
                 "events": [
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "kd_K01" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_K02" },
-
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "_comment": "First-branch: 4 cases, first match wins.",
                         "options": [
-                            { "option": "_in_office_firstvisit", "self_chara_conditions": [ { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }, { "parameters": [ "hasKojoVariable", "erav_kanon_offer" ] }, { "parameters": [ "notHasKojoVariable", "erav_kanon_firstvisit_done" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "branch1" ] } ] },
-                            { "option": "_in_office_else", "self_chara_conditions": [ { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "branch2" ] } ] },
-                            { "option": "_not_in_office_firstvisit", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_kanon_offer" ] }, { "parameters": [ "notHasKojoVariable", "erav_kanon_firstvisit_done" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "branch3" ] } ] },
-                            { "option": "_fallback_not_in_office_else", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "branch4" ] } ] }
+                            {
+                                "option": "_in_office_firstvisit",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isActiveFaction",
+                                            "ErAV_KiryuGumi_Office"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "kd_K01"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_not_in_office_firstvisit",
+                                "self_chara_conditions": [
+                                    {
+                                        "relationshipTargetKey": "self",
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanon_offer",
+                                            "operand": "eq",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "GetKojoEntry",
+                                        "arguments": [
+                                            "kanon",
+                                            "self",
+                                            "DailyGreeting",
+                                            "greeting"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "branch3"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_not_in_office_else",
+                                "Results": [
+                                    {
+                                        "Type": "GetKojoEntry",
+                                        "arguments": [
+                                            "kanon",
+                                            "self",
+                                            "DailyGreeting",
+                                            "greeting"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "branch4"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "kd_K01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_K02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "First-branch: 4 cases, first match wins.",
+                        "options": [
+                            {
+                                "option": "_in_office_firstvisit",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isActiveFaction",
+                                            "ErAV_KiryuGumi_Office"
+                                        ]
+                                    },
+                                    {
+                                        "relationshipTargetKey": "self",
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanon_offer",
+                                            "operand": "eq",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "branch1"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_in_office_else",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "branch2"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "branch1",
                         "_comment": "First-visit narrative. Punctuality by current_day - erav_kanon_offer_day; post-billing overrides. Writes erav_kanon_firstvisit_punctual per path; erav_kanon_firstvisit_done written at ac_closing. Day conditions TODO (plan §15 Q4).",
                         "options": [
-                            { "option": "_postbill", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_debt_month" ] } ], "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_firstvisit_punctual", "2" ] }, { "Type": "JumpToLabel", "arguments": [ "", "ac_postbill_branch" ] } ] },
-                            { "option": "_verydelayed", "self_chara_conditions": [ { "parameters": [ "daySinceKojoVariable", "erav_kanon_offer_day", "7" ] } ], "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_firstvisit_punctual", "2" ] }, { "Type": "JumpToLabel", "arguments": [ "", "ac_verydelayed_n" ] } ] },
-                            { "option": "_delayed", "self_chara_conditions": [ { "parameters": [ "daySinceKojoVariable", "erav_kanon_offer_day", "2" ] } ], "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_firstvisit_punctual", "1" ] }, { "Type": "JumpToLabel", "arguments": [ "", "ac_delayed" ] } ] },
-                            { "option": "_fallback_punctual", "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_firstvisit_punctual", "0" ] }, { "Type": "JumpToLabel", "arguments": [ "", "ac_punctual" ] } ] }
+                            {
+                                "option": "_postbill",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "hasKojoVariable",
+                                            "erav_debt_month"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModSelfKojoVariable",
+                                        "arguments": [
+                                            "self",
+                                            "false",
+                                            "erav_kanon_firstvisit_punctual",
+                                            "2"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_postbill_branch"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_verydelayed",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "daySinceKojoVariable",
+                                            "erav_kanon_offer_day",
+                                            "7"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModSelfKojoVariable",
+                                        "arguments": [
+                                            "self",
+                                            "false",
+                                            "erav_kanon_firstvisit_punctual",
+                                            "2"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_verydelayed_n"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_delayed",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "daySinceKojoVariable",
+                                            "erav_kanon_offer_day",
+                                            "2"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModSelfKojoVariable",
+                                        "arguments": [
+                                            "self",
+                                            "false",
+                                            "erav_kanon_firstvisit_punctual",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_delayed"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_punctual",
+                                "Results": [
+                                    {
+                                        "Type": "ModSelfKojoVariable",
+                                        "arguments": [
+                                            "self",
+                                            "false",
+                                            "erav_kanon_firstvisit_punctual",
+                                            "0"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_punctual"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_punctual", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_AC01", "nextEntryLabel": "biz_full" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_delayed", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_AC02", "nextEntryLabel": "biz_full" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_verydelayed_n", "portraitRefKey": "", "line": "kd_AC03n", "nextEntryLabel": "ac_verydelayed_k" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_verydelayed_k", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_AC03k", "nextEntryLabel": "biz_minimal" },
-
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ac_punctual",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_AC01",
+                        "nextEntryLabel": "biz_full"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ac_delayed",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_AC02",
+                        "nextEntryLabel": "biz_full"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ac_verydelayed_n",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "kd_AC03n",
+                        "nextEntryLabel": "ac_verydelayed_k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ac_verydelayed_k",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_AC03k",
+                        "nextEntryLabel": "biz_minimal"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "ac_postbill_branch",
                         "_comment": "Post-billing: split by whether punishment already happened.",
                         "options": [
-                            { "option": "_failed", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_punishment_done" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_pbf_branch" ] } ] },
-                            { "option": "_fallback_paid", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_postbill_paid" ] } ] }
+                            {
+                                "option": "_failed",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "hasKojoVariable",
+                                            "erav_punishment_done"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_pbf_branch"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_paid",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_postbill_paid"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_postbill_paid", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_AC04", "nextEntryLabel": "biz_full" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ac_postbill_paid",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_AC04",
+                        "nextEntryLabel": "biz_full"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "ac_pbf_branch",
                         "_comment": "Punishment happened before first visit. Branch on erav_last_victim. Kanon took part; she may be the victim (value==4). TODO: kojoVariableEquals placeholder.",
                         "options": [
-                            { "option": "_victim_kanon", "self_chara_conditions": [ { "parameters": [ "kojoVariableEquals", "erav_last_victim", "4" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_pbf_kanon" ] } ] },
-                            { "option": "_fallback_victim_other", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_pbf_other" ] } ] }
+                            {
+                                "option": "_victim_kanon",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "kojoVariableEquals",
+                                            "erav_last_victim",
+                                            "4"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_pbf_kanon"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_victim_other",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_pbf_other"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_pbf_kanon", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_pbf_kanon", "nextEntryLabel": "biz_minimal" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "ac_pbf_other", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_pbf_other", "nextEntryLabel": "biz_minimal" },
-
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_full", "portraitRefKey": "", "line": "kd_BIZ01n" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_BIZ02k" },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "portraitRefKey": "",
+                        "label": "ac_pbf_kanon",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_pbf_kanon",
+                        "nextEntryLabel": "biz_minimal"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ac_pbf_other",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_pbf_other",
+                        "nextEntryLabel": "biz_minimal"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "biz_full",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "kd_BIZ01n"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_BIZ02k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
                         "line": "kd_BIZ03n",
                         "Results": [
-                            { "Type": "TransferItemByFactionID", "arguments": [ "ErAV_KiryuGumi_Office", "ErAV_miyama_Household", "item_recording_camera", "1", "true" ] },
-                            { "Type": "TransferItemByFactionID", "arguments": [ "ErAV_KiryuGumi_Office", "ErAV_miyama_Household", "item_recording_camera_Tape", "3", "true" ] }
+                            {
+                                "Type": "TransferItemByFactionID",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "ErAV_miyama_Household",
+                                    "item_recording_camera",
+                                    "1",
+                                    "true"
+                                ]
+                            },
+                            {
+                                "Type": "TransferItemByFactionID",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "ErAV_miyama_Household",
+                                    "item_recording_camera_Tape",
+                                    "3",
+                                    "true"
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_BIZ04k" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_BIZ05k" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_BIZ06k" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "kd_BIZ07k" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_BIZ08k", "nextEntryLabel": "biz_casting_gender" },
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_minimal", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_BIZ_M1k" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "hostile", "serious" ], "line": "kd_BIZ_M2k", "nextEntryLabel": "kanade_check" },
-
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_BIZ04k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_BIZ05k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_BIZ06k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "happy"
+                            ]
+                        },
+                        "line": "kd_BIZ07k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_BIZ08k",
+                        "nextEntryLabel": "biz_casting_gender"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "biz_minimal",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_BIZ_M1k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "hostile",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_BIZ_M2k",
+                        "nextEntryLabel": "kanade_check"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "biz_casting_gender",
                         "options": [
-                            { "option": "_female", "self_chara_conditions": [ { "parameters": [ "isFemale" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "biz_casting_F_n" ] } ] },
-                            { "option": "_fallback", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "kanade_check" ] } ] }
+                            {
+                                "option": "_female",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isFemale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "biz_casting_F_n"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "kanade_check"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_casting_F_n", "portraitRefKey": "", "line": "kd_BIZ_Fn", "nextEntryLabel": "biz_casting_F_k" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "biz_casting_F_k", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "kd_BIZ_Fk", "nextEntryLabel": "kanade_check" },
-
-
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "biz_casting_F_n",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "kd_BIZ_Fn",
+                        "nextEntryLabel": "biz_casting_F_k"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "biz_casting_F_k",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "happy"
+                            ]
+                        },
+                        "line": "kd_BIZ_Fk",
+                        "nextEntryLabel": "kanade_check"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "kanade_check",
                         "_comment": "Presence-only. Kanon does not know about any promise, so absent -> no remark, straight to closing. TODO: 'targetExists kanade' = kanade actually present in the room.",
                         "options": [
-                            { "option": "_kanade_present", "self_chara_conditions": [ { "parameters": [ "targetExists", "kanade" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "kanade_present_n" ] } ] },
-                            { "option": "_fallback_absent", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ac_closing" ] } ] }
+                            {
+                                "option": "_kanade_present",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "targetExists",
+                                            "kanade"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "kanade_present_n"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_absent",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ac_closing"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "kanade_present_n", "portraitRefKey": "", "line": "kd_KD01n", "nextEntryLabel": "kanade_present_k1" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "kanade_present_k1", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "kd_KD01k", "nextEntryLabel": "kanade_present_k2" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "kanade_present_k2", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_KD02k", "nextEntryLabel": "ac_closing" },
-
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kanade_present_n",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "kd_KD01n",
+                        "nextEntryLabel": "kanade_present_k1"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kanade_present_k1",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "happy"
+                            ]
+                        },
+                        "line": "kd_KD01k",
+                        "nextEntryLabel": "kanade_present_k2"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kanade_present_k2",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_KD02k",
+                        "nextEntryLabel": "ac_closing"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "ac_closing",
-                        "portraitRefKey": "kanon",
-                        "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ],
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
                         "line": "kd_AC_end",
-                        "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_firstvisit_done", "1" ] } ],
+                        "Results": [
+                            {
+                                "Type": "ModSelfKojoVariable",
+                                "arguments": [
+                                    "self",
+                                    "false",
+                                    "erav_kanon_offer",
+                                    "1"
+                                ]
+                            }
+                        ],
                         "isLast": true
                     },
-
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "branch2", "portraitRefKey": "", "line": "kd_GR_pre" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "branch2",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "kd_GR_pre"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "_comment": "Debt-progress greeting, victim-based. Order: post-billing+kanon-victim, post-billing+other-victim, post-billing+good(offer), post-billing+good(refuse), fallback pre-billing. TODO: kojoVariableEquals / kojoVariableNotEquals placeholders.",
                         "options": [
-                            { "option": "_gr_kanon_victim", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_debt_month" ] }, { "parameters": [ "kojoVariableEquals", "erav_last_victim", "4" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "gr_kanon" ] } ] },
-                            { "option": "_gr_other_victim", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_debt_month" ] }, { "parameters": [ "kojoVariableNotEquals", "erav_last_victim", "0" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "gr_other" ] } ] },
-                            { "option": "_gr_good_offer", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_debt_month" ] }, { "parameters": [ "hasKojoVariable", "erav_kanon_offer" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "gr_good_offer" ] } ] },
-                            { "option": "_gr_good_refuse", "self_chara_conditions": [ { "parameters": [ "hasKojoVariable", "erav_debt_month" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "gr_good_refuse" ] } ] },
-                            { "option": "_fallback_prebill", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "gr_prebill" ] } ] }
+                            {
+                                "option": "_gr_kanon_victim",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "hasKojoVariable",
+                                            "erav_debt_month"
+                                        ]
+                                    },
+                                    {
+                                        "parameters": [
+                                            "kojoVariableEquals",
+                                            "erav_last_victim",
+                                            "4"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "gr_kanon"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_gr_other_victim",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "hasKojoVariable",
+                                            "erav_debt_month"
+                                        ]
+                                    },
+                                    {
+                                        "parameters": [
+                                            "kojoVariableNotEquals",
+                                            "erav_last_victim",
+                                            "0"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "gr_other"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_gr_good_offer",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "hasKojoVariable",
+                                            "erav_debt_month"
+                                        ]
+                                    },
+                                    {
+                                        "parameters": [
+                                            "hasKojoVariable",
+                                            "erav_kanon_offer"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "gr_good_offer"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_gr_good_refuse",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "hasKojoVariable",
+                                            "erav_debt_month"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "gr_good_refuse"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_prebill",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "gr_prebill"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "gr_prebill", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "kd_GR_prebill", "nextEntryLabel": "gr_end" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "gr_kanon", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_GR_kanon", "nextEntryLabel": "gr_end" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "gr_other", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_GR_other", "nextEntryLabel": "gr_end" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "gr_good_offer", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_GR_good_offer", "nextEntryLabel": "gr_end" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "gr_good_refuse", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "happy" ], "line": "kd_GR_good_refuse", "nextEntryLabel": "gr_end" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "gr_end", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "kd_GR_end", "isLast": true },
-
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "branch3", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "kd_OV1", "isLast": true },
-
-
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "gr_prebill",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "happy"
+                            ]
+                        },
+                        "line": "kd_GR_prebill",
+                        "nextEntryLabel": "gr_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "gr_kanon",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_GR_kanon",
+                        "nextEntryLabel": "gr_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "gr_other",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_GR_other",
+                        "nextEntryLabel": "gr_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "gr_good_offer",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_GR_good_offer",
+                        "nextEntryLabel": "gr_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "gr_good_refuse",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "happy"
+                            ]
+                        },
+                        "line": "kd_GR_good_refuse",
+                        "nextEntryLabel": "gr_end"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "gr_end",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "kd_GR_end",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "branch3",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "kd_OV1",
+                        "isLast": true
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "branch4",
                         "_comment": "TODO: replace this line with a greeting-kojo collection function call (plan §15 Q2). Until then, a generic placeholder greeting.",
-                        "portraitRefKey": "kanon",
-                        "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ],
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
                         "line": "kd_GK1",
                         "isLast": true
                     }
@@ -159,57 +1009,45 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
                 "kd_K01": "$kanon.name$靠在办公桌后面，听见有人进来，抬起头。",
                 "kd_K02": "「来了。坐。」",
-
-                "kd_AC01": "「倒是准时。看来你是把本小姐的话放在心上了。」",
+                "kd_AC01": "「倒是准时。看来你是把我的话放在心上了。」",
                 "kd_AC02": "「拖了好几天才来。答应过的事，倒看不出你有半分上心。……罢了，既然来了，坐下说。」",
                 "kd_AC03n": "$kanon.name$没有抬头，只翻弄着桌上的文件，任屋里安静下去。",
-                "kd_AC03k": "「……本小姐还当你改了主意。」",
+                "kd_AC03k": "「……我还当你改了主意。」",
                 "kd_AC04": "「拖到今日才来。利息倒是按月结清了，算你还有几分本事。」",
-                "kd_pbf_kanon": "「上回那笔账的收尾，是本小姐替你担下来的。其中滋味，不必细说。你打算就这么看着，还是认真考虑本小姐当初的提议？」",
-                "kd_pbf_other": "「上回那件事如何收场，你自己清楚。照这样下去，你撑不了多久。趁早想清楚自己的底线在哪里——本小姐当初的提议，始终有效。」",
-
+                "kd_pbf_kanon": "「上回那笔账的收尾，是我替你担下来的。其中滋味，不必细说。你打算就这么看着，还是认真考虑我当初的提议？」",
+                "kd_pbf_other": "「上回那件事如何收场，你自己清楚。照这样下去，你撑不了多久。趁早想清楚自己的底线在哪里——我当初的提议，始终有效。」",
                 "kd_BIZ01n": "$kanon.name$起身走到靠墙的柜子前，拉开抽屉。",
-                "kd_BIZ02k": "「把话说明白——桐生组做的是成人影像这桩生意，拍出来，卖出去。你来当监督，负责拍摄，拍成了交到本小姐这里分销。这一行赚得快，足够你还清那笔债。」",
+                "kd_BIZ02k": "「把话说明白——桐生组做的是成人影像这桩生意，拍出来，卖出去。你来当监督，负责拍摄，拍成了交到我这里分销。这一行赚得快，足够你还清那笔债。」",
                 "kd_BIZ03n": "她从抽屉里取出摄影机和几盘空白录像带，搁到桌上。",
                 "kd_BIZ04k": "「这些先拿去用，算桐生组借给你的。拍什么、怎么拍，由你自己斟酌。」",
-                "kd_BIZ05k": "「销售收入由事务所统一经手。你只需在毕业前把债还清，提前还清也随你。渠道、发行那些琐事，本小姐这边会处理好，款项当场结清。」",
-                "kd_BIZ06k": "「只要你肯用心去做，桐生组保你们兄妹平安无事。若是做得好，本小姐还能拨出些许自由活动的时间给你。」",
-                "kd_BIZ07k": "「事务所的人手由本小姐安排，顺带也替本小姐盯着你——这层意思，你该明白。」",
-                "kd_BIZ08k": "「至于女优的人选，本小姐手里有一份名单，都是事先考察过的。你想看的话，回头拿给你。」",
-
+                "kd_BIZ05k": "「销售收入由事务所统一经手。你只需在毕业前把债还清，提前还清也随你。渠道、发行那些琐事，我这边会处理好，款项当场结清。」",
+                "kd_BIZ06k": "「只要你肯用心去做，桐生组保你们兄妹平安无事。若是做得好，我还能拨出些许自由活动的时间给你。」",
+                "kd_BIZ07k": "「事务所的人手由我安排，顺带也替我盯着你——这层意思，你该明白。」",
+                "kd_BIZ08k": "「至于女优的人选，我手里有一份名单，都是事先考察过的。你想看的话，回头拿给你。」",
                 "kd_BIZ_Fn": "$kanon.name$的目光在$self.name$身上停留了片刻。",
                 "kd_BIZ_Fk": "「说起来，凭你这副模样，自己出场也未必不行。监督也好，女优也好，两条路都摆在你面前，由你自己选。」",
-
-                "kd_BIZ_M1k": "「成人影像这桩生意，你负责拍，拍成交给本小姐分销，赚的足够你还债。其余的话不必重复。」",
-                "kd_BIZ_M2k": "「设备自己去想办法。本小姐这里，不养闲人。」",
-
+                "kd_BIZ_M1k": "「成人影像这桩生意，你负责拍，拍成交给我分销，赚的足够你还债。其余的话不必重复。」",
+                "kd_BIZ_M2k": "「设备自己去想办法。我这里，不养闲人。」",
                 "kd_KD01n": "$kanon.name$的视线越过$self.name$，落到跟在身后的人身上，停了片刻。",
                 "kd_KD01k": "「这孩子，长相倒是不错。」",
-                "kd_KD02k": "「拍片的时候说不定用得上。回头要是有了这个心思，本小姐这边可以替你安排。」",
-
+                "kd_KD02k": "「拍片的时候说不定用得上。回头要是有了这个心思，我这边可以替你安排。」",
                 "kd_AC_end": "「还有什么不明白的，随时来问。门在那边。」",
-
                 "kd_GR_pre": "$kanon.name$搁下笔，抬眼看了看$self.name$。",
                 "kd_GR_prebill": "「怎么，还没改主意？看样子，是打算硬撑到底了。」",
-                "kd_GR_kanon": "「上回那笔账，最后是本小姐替你去的。滋味说不上好受。你到底打算就这么看着，还是认真考虑本小姐当初的提议？」",
-                "kd_GR_other": "「上回那笔账怎么收的，你心里有数。再这么下去，你迟早撑不住。本小姐当初的提议始终有效，要不要重新考虑，你自己决定。」",
+                "kd_GR_kanon": "「上回那笔账，最后是我替你去的。滋味说不上好受。你到底打算就这么看着，还是认真考虑我当初的提议？」",
+                "kd_GR_other": "「上回那笔账怎么收的，你心里有数。再这么下去，你迟早撑不住。我当初的提议始终有效，要不要重新考虑，你自己决定。」",
                 "kd_GR_good_offer": "「最近的片子卖得还算可以，利息也按月结清了。照这样下去，那笔债总能还完。」",
-                "kd_GR_good_refuse": "「利息居然月月没拖过。你是当真打算靠自己还清这笔债……本小姐多少有些意外。」",
-                "kd_GR_end": "「没别的事的话，门在那边。本小姐还有事要忙。」",
-
-                "kd_OV1": "「这儿不是谈正事的地方。明天放学之后到事务所来找本小姐，地址名片上写着。」",
-
-                "kd_GK1": "「……有事？」"
+                "kd_GR_good_refuse": "「利息居然月月没拖过。你是当真打算靠自己还清这笔债……我多少有些意外。」",
+                "kd_GR_end": "「没别的事的话，门在那边。我还有事要忙。」",
+                "kd_OV1": "「这儿不是谈正事的地方。不是告诉你之后到事务所来找我吗？地址名片上写着。」\n\n$greeting$",
+                "kd_GK1": "$greeting$"
             },
-            "en-us": {
-
-            }
+            "en-us": {}
         }
     }
 }

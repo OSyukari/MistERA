@@ -20,19 +20,21 @@ public class Masterlist_Event : MonoBehaviour
 public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallbackReceiver
 {
     public List<Event> list = new List<Event>();
+    public List<MissionTracker> quests = new List<MissionTracker>();
 
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Index_Events;
         if (l == null) return;
-        else if (l.list == null) return;
         else
         {
-            this.list.AddRange(l.list);
+            if (l.list != null) this.list.AddRange(l.list);
+            if (l.quests != null) this.quests.AddRange(l.quests);
         }
     }
 
     Dictionary<string, Event> ID_Dictionary = new Dictionary<string, Event>();
+    Dictionary<string, MissionTracker> Quest_ID_Dictionary = new Dictionary<string, MissionTracker>();
 
     public void OnAfterDeserialize()
     {
@@ -47,10 +49,25 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
             if (string.IsNullOrEmpty(i.ID)) continue;
             if (!ID_Dictionary.TryAdd(i.ID, i)) Debug.Log($"failed to add Index_Events id [{i.ID}] due to duplicate");
         }
+
+        s.Add($"Index_Events : registering questIDs with list length [{quests.Count}]");
+        foreach (var q in quests)
+        {
+            if (string.IsNullOrEmpty(q.questID)) continue;
+            if (!Quest_ID_Dictionary.TryAdd(q.questID, q)) Debug.Log($"failed to add Index_Events quest id [{q.questID}] due to duplicate");
+        }
     }
 
     public Event GetByID(string ID)
     { return ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null; }
+
+    [JsonIgnore] public Dictionary<string, MissionTracker> AllQuests
+    {
+        get { return Quest_ID_Dictionary; }
+    }
+
+    public MissionTracker GetQuestByID(string ID)
+    { return Quest_ID_Dictionary.ContainsKey(ID) ? Quest_ID_Dictionary[ID] : null; }
 }
 
 public enum EventTrigger
@@ -60,7 +77,9 @@ public enum EventTrigger
     /// </summary>
     None,
     OnCampaignStart,
-    OnEnterRoom
+    OnEnterRoom,
+    OnDialogue,
+    OnDialogue_Options
 }
 /// <summary>
 /// Ordered, 3 first are considered member of faction, and the rest is not (temp visitor / prisoner)
@@ -79,12 +98,54 @@ public enum TargetScope
 {
     None,
     BaseID_Unrestricted,
+    /// <summary>
+    /// Resolves scr_System_CampaignManager.current.CurrentTarget directly (the character the
+    /// player is currently interacting with), independent of self's room. Ignores extraScopeArguments.
+    /// </summary>
+    CurrentTarget,
     AllCharaInSelfRoom,
     AllCharaInSelfRoom_ExcludeSelf,
     ScopeWithinRef,
     ScopeInRoomExceptRef
 }
 
+public class EventScope_Target
+{
+    public List<string> refKeys = new List<string>();
+    public TargetScope baseScope = TargetScope.None;
+    public List<string> extraScopeArguments = new List<string>();
+    public List<Event_CharaCondition> chara_conditions = new List<Event_CharaCondition>();
+    public int minTargetCount = -1;
+    public int maxTargetCount = -1;
+    /// <summary>
+    /// Allow event and limit target selection to maxTargetCount even if scoped target count is higher
+    /// </summary>
+    public bool pickAmongValidTargets = false;
+    /// <summary>
+    /// return true if pickAmongValidTargets and validtargetcount > maxTargetCount 
+    /// </summary>
+    public bool mustHaveMoreValidTargets = false;
+    /// <summary>
+    /// Allow event to go on if minTargetCount is disrespected. No effect on other scopes
+    /// </summary>
+    public bool allowEventOnMinTargetCountMiss = false;
+}
+/// <summary>
+/// Allowed chara_conditions parameters:<br/>
+/// -> see EventUtility.isValid(Event.Event_CharaCondition r<br/><br/>
+/// If baseScope is target generation, then check the following<br/>
+/// -> see 
+/// </summary>
+public class Event_CharaCondition
+{
+    public List<string> parameters = new List<string>();
+    public RequireKojoVariable requireKojoVariable = null;
+    /// <summary>
+    /// Which bound refKey (from EventInstance.Targets) to resolve the Character_Relationship against
+    /// when validating requireKojoVariable. "self" resolves the character's own self-relationship.
+    /// </summary>
+    public string relationshipTargetKey = "self";
+}
 public class Event : I_SerializationCallbackReceiver
 {
     public string ID = "";
@@ -92,6 +153,7 @@ public class Event : I_SerializationCallbackReceiver
     public int cooldownTime = 0;
     public bool cooldownRestrictSelf = false;
     public bool cooldownRestrictTarget = true;
+
     /// <summary>
     /// Since there is jump involved, Event itself should not be managing the flow
     /// Event only responsible for query and nothing more
@@ -100,18 +162,27 @@ public class Event : I_SerializationCallbackReceiver
     public List<EventEntry> events = new List<EventEntry>();
 
 
+    [JsonProperty("UISpec")] public UISpec UISpec = UISpec.Template();
 
     /// <summary>
     /// trigger keyword will allow it to be called whenever something happens
     /// </summary>
     public EventTrigger trigger = EventTrigger.None;
 
+    /// <summary>
+    /// Only consulted when a trigger dispatch runs in exclusive/single-match mode (see
+    /// EventManager.Trigger(chara, trigger, exclusive:true), currently used by OnDialogue).
+    /// Highest priority among validated candidates wins. A generic fallback event should set
+    /// this well below 0 (e.g. -1000) so any more specific event beats it.
+    /// </summary>
+    public int priority = 0;
+
     //
     public EventScope_Self SelfValidator = new EventScope_Self();
 
     public class EventScope_Self
     {
-        public List<CharaCondition> chara_conditions = new List<CharaCondition>();
+        public List<Event_CharaCondition> chara_conditions = new List<Event_CharaCondition>();
         public List<RoomCondition> room_conditions = new List<RoomCondition>();
     }
 
@@ -120,16 +191,7 @@ public class Event : I_SerializationCallbackReceiver
         public List<string> parameters = new List<string>();
     }
 
-    /// <summary>
-    /// Allowed chara_conditions parameters:<br/>
-    /// -> see EventUtility.isValid(Event.CharaCondition r<br/><br/>
-    /// If baseScope is target generation, then check the following<br/>
-    /// -> see 
-    /// </summary>
-    public class CharaCondition
-    {
-        public List<string> parameters = new List<string>();
-    }
+
 
     public class GenerationParameters
     {
@@ -185,27 +247,7 @@ public class Event : I_SerializationCallbackReceiver
         public bool allowScope = false;
     }
 
-    public class EventScope_Target
-    {
-        public List<string> refKeys = new List<string>();
-        public TargetScope baseScope = TargetScope.None;
-        public List<string> extraScopeArguments = new List<string>();
-        public List<CharaCondition> chara_conditions = new List<CharaCondition>();
-        public int minTargetCount = -1;
-        public int maxTargetCount = -1;
-        /// <summary>
-        /// Allow event and limit target selection to maxTargetCount even if scoped target count is higher
-        /// </summary>
-        public bool pickAmongValidTargets = false;
-        /// <summary>
-        /// return true if pickAmongValidTargets and validtargetcount > maxTargetCount 
-        /// </summary>
-        public bool mustHaveMoreValidTargets = false;
-        /// <summary>
-        /// Allow event to go on if minTargetCount is disrespected. No effect on other scopes
-        /// </summary>
-        public bool allowEventOnMinTargetCountMiss = false;
-    }
+    
 
 
     public EventEntry GetEntryWithLabel(string label)
@@ -243,12 +285,10 @@ public class Event : I_SerializationCallbackReceiver
         public string nextEventID = "";
         public string nextEntryLabel = "";
 
-        public string portraitRefKey = "";
-        public List<string> portraitSelfTagsOverride = new List<string>();
-        public List<string> portraitTargetTagsOverride = new List<string>();
+        [JsonProperty("UISpec")] public UISpec UISpec = UISpec.Template();
 
-        [JsonIgnore] public List<string> SelfPortraitTag { get { return portraitSelfTagsOverride; } }
-        [JsonIgnore] public List<string> TargetPortraitTag { get { return portraitTargetTagsOverride; } }
+        [JsonIgnore] public List<string> SelfPortraitTag { get { return UISpec.SelfTags; } }
+        [JsonIgnore] public List<string> TargetPortraitTag { get { return UISpec.TargetTags; } }
 
 
         //public List<Query> queries = new List<Query>();
@@ -332,8 +372,8 @@ public class Event : I_SerializationCallbackReceiver
             public string tooltip = "";
 
             public List<Condition> conditions = new List<Condition>();
-            public List<CharaCondition> self_chara_conditions = new List<CharaCondition>();
-            public Dictionary<string, List<CharaCondition>> target_chara_conditions = new Dictionary<string, List<CharaCondition>>();
+            public List<Event_CharaCondition> self_chara_conditions = new List<Event_CharaCondition>();
+            public Dictionary<string, List<Event_CharaCondition>> target_chara_conditions = new Dictionary<string, List<Event_CharaCondition>>();
             public bool isDefaultCancel = false;
             public bool isDefaultAccept = false;
 
@@ -523,9 +563,21 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>
             /// [target, basestringID]
             /// </summary>
-            LogMemoryEntry
+            LogMemoryEntry,
 
-            
+
+            /// <summary>
+            /// [string targetID, bool logmessage] <br/>
+            /// find target faction instance and flag it as hiddenOnWorldMap = false
+            /// logmessage is optional. if present and true, then add a message "$faction_name$ can now be explored"
+            /// </summary>
+            RevealFaction,
+
+            /// <summary>
+            /// [optional string imagePath] - sets/clears the currently active event background image; empty or omitted argument clears it
+            /// </summary>
+            SetBGImage
+
         }
     }
 

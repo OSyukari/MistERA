@@ -435,6 +435,7 @@ public class Character_Factions
     }
     public void RemovePartyTracker(Manageable_Party party)
     {
+        if (this.CurrentParty == party) this.CurrentParty = null;
         trackedPartyRef.Remove(party.Job.RefID);
     }
 

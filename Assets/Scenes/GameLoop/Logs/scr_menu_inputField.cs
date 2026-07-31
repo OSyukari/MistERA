@@ -81,6 +81,51 @@ public class scr_menu_inputField : scr_Menu
         if (defaultCancel != null && logs != null) logs.Observer_OnClick += OnClick;
     }
 
+    Dictionary<string, string> replaceStrings = null;
+
+    /// <summary>
+    /// Read-only playback rendering (mirrors scr_menu_question's collector-based overload): shows the
+    /// already-committed question+typed-answer text with no live input field or clickable options.
+    /// </summary>
+    public void InitializeWithArgs(Canvas mainCanvas, QuestionBoxCollector collect, scr_panel_logs logs, Dictionary<string, string> replaceStrings = null)
+    {
+        if (!initialized) Initialize();
+        this.logs = logs;
+        this.replaceStrings = replaceStrings;
+        SetCanvas(mainCanvas, true);
+
+        var cmes = collect.message;
+        if (this.replaceStrings != null)
+        {
+            foreach (var kvp in this.replaceStrings)
+            {
+                cmes = cmes.Replace(kvp.Key, kvp.Value);
+            }
+        }
+
+        this.Text.SetText(cmes);
+        this.inputField.gameObject.SetActive(false);
+        foreach (var option in collect.options)
+        {
+            var button = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
+            button.transform.SetParent(this.Grid.transform, false);
+            preferredLen = Math.Max(preferredLen, button.GetComponent<TMP_Text>().preferredWidth);
+
+            var optext = option.message;
+            if (this.replaceStrings != null)
+            {
+                foreach (var kvp in this.replaceStrings)
+                {
+                    optext = optext.Replace(kvp.Key, kvp.Value);
+                }
+            }
+
+            button.SetText(Utility.WrapTextColor(optext, option.selected ? scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color : scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
+            button.SetExternalTooltip(option.tooltip);
+        }
+        this.Active = false;
+    }
+
     public override void Initialize()
     {
         base.Initialize();
@@ -138,10 +183,52 @@ public class scr_menu_inputField : scr_Menu
         button.Validate();
     }
 
-    public void FinalizeQuestion()
+    public QuestionBoxCollector FinalizeQuestion()
     {
         var box = new QuestionBoxCollector(this);
         scr_System_CampaignManager.current.FinalizeLog_Question(box, evInstance == null || evInstance.Self == null ? null : evInstance.Self.CurrentRoom);
+        return box;
+    }
+
+    /// <summary>
+    /// Destroys this box's currently-live interactive option buttons, so it can be re-initialized
+    /// (e.g. into the read-only "answered" rendering via ShowAnswered) without leftover stale buttons.
+    /// </summary>
+    private void ClearOptions()
+    {
+        foreach (var opt in options)
+        {
+            if (opt.button != null) Destroy(opt.button.gameObject);
+        }
+        options.Clear();
+        buttonsByID.Clear();
+        validatorsByID.Clear();
+        defaultCancel = null;
+    }
+
+    QuestionBoxCollector pendingAnsweredCollector = null;
+
+    /// <summary>
+    /// Called on the sibling of whichever box just answered this question (see Message_InputField.ResolveSibling),
+    /// so it reflects the same committed answer read-only instead of remaining live/editable with stale state.
+    /// Does NOT re-render synchronously: this is invoked from deep inside the OTHER box's click handler
+    /// (which can itself be re-entrantly advancing the event / destroying and rebuilding log entries via
+    /// scr_panel_logs.AnimateOneStep), so touching Grid/layout/TMP APIs on this box right now can hit a
+    /// half-destroyed object. Instead, just remember the collector and apply it lazily on the next Update
+    /// tick, once the current call stack has fully unwound.
+    /// </summary>
+    public void ShowAnswered(QuestionBoxCollector collector)
+    {
+        pendingAnsweredCollector = collector;
+    }
+
+    private void Update()
+    {
+        if (pendingAnsweredCollector == null) return;
+        var collector = pendingAnsweredCollector;
+        pendingAnsweredCollector = null;
+        ClearOptions();
+        InitializeWithArgs(m_Canvas, collector, logs);
     }
 
 
@@ -189,19 +276,24 @@ public class scr_menu_inputField : scr_Menu
 
         public override bool IsButtonValid()
         {
-            return selected || (parent.Active && EventUtility.isValid( option,instance));
+            if (selected) return true;
+            if (parent.InnerQuestion != null && parent.InnerQuestion.answered) return false;
+            return parent.Active && EventUtility.isValid( option,instance);
         }
 
         public void OnClickButton()
         {
+            if (parent.InnerQuestion != null && parent.InnerQuestion.answered) return;
             if (!selected)
             {
+                if (parent.InnerQuestion != null) parent.InnerQuestion.answered = true;
                 parent.Active = false;
                 selected = true;
                 if (commitResponse) parent.evInstance.CurrentInput = parent.inputField.text;
-                parent.FinalizeQuestion();
+                var collector = parent.FinalizeQuestion();
                 scr_UpdateHandler.current.InvokeEventStatus(EventStatus.running, true);
                 EventUtility.Execute(instance, option, true);// option.Execute(instance, true);
+                parent.InnerQuestion?.ResolveSibling(parent, collector);
             }
         }
     }

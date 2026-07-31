@@ -597,6 +597,13 @@
 "com_special_timestop_begin": "时间停止",
 "com_special_timestop_end": "结束时停",
 
+"ui_mission_title": "任务日志",
+"ui_mission_left_title": "任务列表",
+"ui_mission_center_title": "任务：$title$",
+
+"com_special_talkTo": "交谈",
+"com_special_talkTo_tooltip": "打开一个更详细的二级面板",
+
 "com_special_changeRel": "改变人际关系",
 "com_special_changeRel_notarget": "没有可改变关系的目标对象",
 "com_special_changeRel_tooltip": "可以提议改变双方的个人关系",
@@ -622,6 +629,8 @@
 "event_transferItem_screen_giveTo":"$fromFaction$将$entry$交给了$toFaction$",
 "event_transferItem_screen_gain":"$toFaction$获得了$entry$",
 "event_transferItem_screen_loss":"$fromFaction$失去了$entry$",
+
+"event_revealFaction":"【可以前往 $faction_name$ 了】",
 
 "management_setschedule_single":"",
 "management_setschedule_jobpost":"",

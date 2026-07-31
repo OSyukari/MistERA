@@ -134,7 +134,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "modrelationshipwith",
         "modpersonalityscore",
         "ingestItem",
-        "ascii"
+        "ascii",
+        "showQuestStages"
     };
 
     string[] devConsoleCommands = new string[]

@@ -1,0 +1,178 @@
+{
+    "Events":{
+        "quests":[
+            {
+                "questID":"erav_debt_tracker",
+                "prerequisites_comment":"phase 1: prerequisites do target scoping only (no requirements). phase 2: prerequisiteRequirements runs requirements against the now-scoped refKeys. for optional prereq, allow miss",
+                "prerequisites":[
+                    {
+                        "refKeys":["hero"],
+                        "baseScope":"BaseID_Unrestricted",
+                        "extraScopeArguments":["ErAV_Player"],
+                        "minTargetCount":1,
+                        "maxTargetCount":1
+                    },
+                    {
+                        "refKeys":["kanon"],
+                        "baseScope":"BaseID_Unrestricted", "extraScopeArguments":["ErAV_Kanon"],
+                        "minTargetCount":1, "maxTargetCount":1
+                    },
+                    {
+                        "refKeys":["kanade"],
+                        "baseScope":"BaseID_Unrestricted", "extraScopeArguments":["ErAV_Kanade"],
+                        "minTargetCount":1, "maxTargetCount":1
+                    }
+                ],
+                "prerequisiteRequirements":{
+                    "hero":[
+                        {
+                            "requireKojoVariables":[
+                                {
+                                    "variableID":"erav_kanon_debt_total",
+                                    "isDailyVariable":false,
+                                    "checkExistOnly":true,
+                                    "value":1,
+                                    "appendStringKey":"debt_value"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "stages":[
+{
+    "ID":"erav_debt_tracker_01",
+    "_comment":"debt exist",
+    "chara_requirement":{
+        "hero":[
+            {
+                "requireKojoVariables":[
+                    {
+                        "variableID":"erav_kanon_debt_total",
+                        "isDailyVariable":false,
+                        "operand":"gt",
+                        "value":"0"
+                    }
+                ]
+            }
+        ]
+    },
+    "stages":[
+        {
+            "ID":"erav_debt_tracker_01_00",
+            "_comment":"optional: find other ways to earn money.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_offer",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"0"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_01",
+            "_comment":"meet kanon in her office after school\nif prereq exist and not satisfied, stage is hidden.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_offer",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"1"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_01_kanade",
+            "_comment":"optional: bring kanade along\nif prereq exist and not satisfied, stage is hidden.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_offer",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"1"
+                            },
+                            {
+                                "variableID":"erav_kanade_promise",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"1"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_02",
+            "_comment":"optional: work under kanon to clear your debt\nif prereq exist and not satisfied, stage is hidden.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_offer",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"2"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }                            
+    ]
+},
+{
+    "ID":"erav_debt_tracker_02",
+    "_comment":"debt cleared",
+    "chara_requirement":{
+        "hero":[
+            {
+                "requireKojoVariables":[
+                    {
+                        "variableID":"erav_kanon_debt_total",
+                        "isDailyVariable":false,
+                        "operand":"lte",
+                        "value":"0"
+                    }
+                ]
+            }
+        ]
+    }
+}
+                ]
+            }
+            
+        ]
+    },
+    
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+"erav_debt_tracker":"偿还欠债",
+"erav_debt_tracker_01":"想办法还上30M日元的欠债，剩余欠款$debt_value$",
+"erav_debt_tracker_01_00":"拒绝了歌音的提案。\n得想别的办法还上这笔债。",
+"erav_debt_tracker_01_01":"放学后去%%ErAV_KiryuGumi_Office%%会见歌音",
+"erav_debt_tracker_01_01_kanade":"可选：带上奏一起去见歌音",
+"erav_debt_tracker_01_02":"接受了歌音的提案，拍片赚钱吧",
+"erav_debt_tracker_02":"已还请欠债。"
+
+            }
+        }
+    }
+}

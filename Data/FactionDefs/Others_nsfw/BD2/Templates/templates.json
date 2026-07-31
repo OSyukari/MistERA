@@ -15,5 +15,35 @@
                 ]
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "BD2_emma_title":"难伺候的问题学生",
+                "BD2_maria_title":"大魔法师",
+                "BD2_arines_title":"活力的祭司",
+                "BD2_ingrid_title":"卡迪斯的子弹",
+                "BD2_cynthia_title":"酷寒中的热气",
+                "BD2_julie_title":"恢复师",
+                "BD2_lydia_title":"实习枪兵",
+                "BD2_rigenette_title":"小猎人",
+                "BD2_beatrice_title":"部族的大战士"
+            },
+            "en-us":
+            {
+                "BD2_emma_title":"Haggard Delinquent",
+                "BD2_maria_title":"Archmage",
+                "BD2_arines_title":"Priest of Vitality",
+                "BD2_ingrid_title":"Kardis' Bullet",
+                "BD2_cynthia_title":"Warmth Within the Severe Cold",
+                "BD2_julie_title":"Healer",
+                "BD2_lydia_title":"Apprentice Spearman",
+                "BD2_rigenette_title":"Little Hunter",
+                "BD2_beatrice_title":"Mighty Warrior of the Tribe"
+            }
+        }
     }
 }

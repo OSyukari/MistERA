@@ -474,6 +474,12 @@ public static class UtilityEX
                     if (!collect.Contains(c.CallName)) collect.Add(c.CallName);
                 }
                 return true;
+            case "firstname":
+                if (c != null)
+                {
+                    if (!collect.Contains(c.FirstName)) collect.Add(c.FirstName);
+                }
+                return true;
             case "room_name":
                 var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
                 if (room != null)
@@ -1355,6 +1361,43 @@ public static class UtilityEX
                     }
                 }
                 break;
+            case "showQuestStages":
+                if (true)
+                {
+                    List<MissionTracker> questList;
+                    if (parsed.Count() >= 2 && parsed[1] != "")
+                    {
+                        var single = Masterlist_Event.Instance.Events.GetQuestByID(parsed[1]);
+                        if (single == null)
+                        {
+                            Debug.LogError($"showQuestStages: cannot find quest [{parsed[1]}]");
+                            break;
+                        }
+                        questList = new List<MissionTracker>() { single };
+                    }
+                    else questList = Masterlist_Event.Instance.Events.quests;
+
+                    List<string> results = new List<string>();
+
+                    foreach (var quest in questList)
+                    {
+                        var result = QuestUtility.Evaluate(quest, results);
+                        if (result == null)
+                        {
+                            results.Add($"Quest [{quest.questID}]: prerequisites not satisfied (hidden)");
+                            continue;
+                        }
+
+                        var refKeySummary = String.Join(", ", result.refKeys.Select(kvp => $"{kvp.Key}=[{String.Join("/", kvp.Value.Select(c => c.FirstName))}]"));
+                        results.Add($"Quest [{quest.questID}]: refKeys {refKeySummary}");
+                        LogQuestStages(result.stages, 1, results);
+                    }
+
+                    Debug.Log($"showQuestStages result {results.Count}:\n{String.Join("\n", results)}");
+
+                    //parsedSuccessful = true;
+                }
+                break;
             case "ascii":
                 if (true)
                 {
@@ -1543,6 +1586,16 @@ public static class UtilityEX
         }
 
         if (parsedSuccessful) Debug.Log(s);
+    }
+
+    static void LogQuestStages(List<QuestStageResult> results, int depth, List<string> resultss)
+    {
+        foreach (var result in results)
+        {
+            var display = QuestUtility.ParseQuestEntry(result.ID, result.AppendStrings);
+            resultss.Add($"{new string(' ', depth * 2)}{result.ID} ({(result.isValid ? "valid" : "invalid")}): {display}");
+            LogQuestStages(result.subStages, depth + 1, resultss);
+        }
     }
 
     static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Base source)

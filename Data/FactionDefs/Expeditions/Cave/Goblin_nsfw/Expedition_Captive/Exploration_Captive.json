@@ -7,13 +7,14 @@
                 "removeOnComplete": true,
                 "rescueEventID": "expedition_cave_goblin_captive_rescue",
                 "backgroundImagePath": "Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
-                "EventRate": 0.10,
+                "EventRate": 0.1,
                 "MaxExplorationRate": 1200,
                 "DescriptionText": [],
                 "EventIDs": [],
                 "FeatureKeywords": [
                     "captive",
-                    "goblin","nsfw"
+                    "goblin",
+                    "nsfw"
                 ],
                 "keywords": [
                     "Utnapishtim"
@@ -96,10 +97,12 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "br_trade",
-                        "portraitRefKey": "party",
-                        "portraitSelfTagsOverride": [
-                            "serious"
-                        ],
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": [
+                                "serious"
+                            ]
+                        },
                         "question": "expedition_cave_goblin_captive_rescue_event_ev01",
                         "options": [
                             {
@@ -158,10 +161,12 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_abort",
-                        "portraitRefKey": "party",
-                        "portraitSelfTagsOverride": [
-                            "serious"
-                        ],
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": [
+                                "serious"
+                            ]
+                        },
                         "line": "expedition_cave_goblin_captive_rescue_event_ev02",
                         "Results": [
                             {
@@ -176,10 +181,12 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_lootEnd",
-                        "portraitRefKey": "party",
-                        "portraitSelfTagsOverride": [
-                            "serious"
-                        ],
+                        "UISpec": {
+                            "portraitRefKey": "party",
+                            "selfTags": [
+                                "serious"
+                            ]
+                        },
                         "line": "expedition_cave_goblin_captive_rescue_event_ev03",
                         "Results": [
                             {
@@ -221,9 +228,7 @@
                 "expedition_cave_goblin_captive_rescue_event_ev01_op02": "Start rescue immediately",
                 "expedition_cave_goblin_captive_rescue_event_ev02": "$party.name$ retreated temporarily\nPlease ensure the rescue target has no unsettled events!",
                 "expedition_cave_goblin_captive_rescue_event_ev03": "$party.name$ successfully rescued $victims.name$",
-
                 "expedition_cave_goblin_captive_rescue_event_ev04": "Rescue operation failed!"
-
             }
         }
     }

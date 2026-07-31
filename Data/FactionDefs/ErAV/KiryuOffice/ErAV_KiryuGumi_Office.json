@@ -6,6 +6,7 @@
             {
                 "ID": "ErAV_KiryuGumi_Office",
                 "z_rotation": 0.0,
+                "isPublic": false,
                 "setPrivateRoomOwner": true,
                 "mainExit": { "roomID": "erav_kiryu_office_frontDoor", "exitCost": 5 },
                 "floors": [

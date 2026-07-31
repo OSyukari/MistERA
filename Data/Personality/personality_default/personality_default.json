@@ -284,21 +284,6 @@
                                 "requirement": {
                                     "requireKojoVariable": {
                                         "isDailyVariable": true,
-                                        "variableID": "ALWAYSFALSE",
-                                        "checkExistOnly": true,
-                                        "value": 1
-                                    }
-                                },
-                                "_comment": "this will never met requirement. disabled for now.",
-                                "responses": [
-                                    "kojo_default_event_greeting_03"
-                                ],
-                                "keepLooking": true
-                            },
-                            {
-                                "requirement": {
-                                    "requireKojoVariable": {
-                                        "isDailyVariable": true,
                                         "variableID": "dailyGreeting",
                                         "checkExistOnly": true,
                                         "value": 0
@@ -316,8 +301,12 @@
                                             "value": 1
                                         }
                                     }
-                                ],
-                                "keepLooking": true
+                                ]
+                            },
+                            {
+                                "responses": [
+                                    "kojo_default_event_greeting_03"
+                                ]
                             }
                         ]
                     },

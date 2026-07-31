@@ -31,7 +31,7 @@ public class ExpResults
     /// If query fail (because no npc with this baseID exist), then generate<br/>
     /// 1st key is event identifier, 2nd key is character baseID
     /// </summary>
-    public List<Event.EventScope_Target> TargetValidators = new List<Event.EventScope_Target>();
+    public List<EventScope_Target> TargetValidators = new List<EventScope_Target>();
     public bool overrideTargetScope = false;
 
     public List<Event.GenerationParameters> TargetGenerations = new List<Event.GenerationParameters>();

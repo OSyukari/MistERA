@@ -49,7 +49,7 @@
     "firstName": "Lydia",
     "middleName": "",
     "lastName": "",
-    "title":"Apprentice Spearman",
+    "title":"BD2_lydia_title",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
     "race": "humanRace_human",

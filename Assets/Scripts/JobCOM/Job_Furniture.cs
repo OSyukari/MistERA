@@ -372,17 +372,23 @@ public class Job_Furniture : Job
                     var msg1 = new KojoCollector(c, pl2.targetCOM.ID, "_Tryjoin");
                     msg1.LoadRel(rel);
                     msg1 = c.Relationships.GetKOJOMessage_Suffix(msg1, null);
-                    ev.AppendStrings.Add("kojo_tryjoin", msg1 == null || msg1.collect == null || msg1.collect.message.Length < 1 ? empty : new List<string>() { msg1.collect.message });
+                    var texts1 = new List<string>();
+                    msg1?.DumpMessage(texts1);
+                    ev.AppendStrings.Add("kojo_tryjoin", texts1.Count > 0 ? texts1 : empty);
 
                     var msg2 = new KojoCollector(c, pl2.targetCOM.ID, "_Joined");
                     msg2.LoadRel(rel);
                     msg2 = c.Relationships.GetKOJOMessage_Suffix(msg2, null);
-                    ev.AppendStrings.Add("kojo_joined", msg2 == null || msg2.collect == null || msg2.collect.message.Length < 1 ? empty : new List<string>() { msg2.collect.message });
+                    var texts2 = new List<string>();
+                    msg2?.DumpMessage(texts2);
+                    ev.AppendStrings.Add("kojo_joined", texts2.Count > 0 ? texts2 : empty);
 
                     var msg3 = new KojoCollector(c, pl2.targetCOM.ID, "_Join_Refused");
                     msg3.LoadRel(rel);
                     msg3 = c.Relationships.GetKOJOMessage_Suffix(msg3, null);
-                    ev.AppendStrings.Add("kojo_join_refused", msg3 == null || msg3.collect == null || msg3.collect.message.Length < 1 ? empty : new List<string>() { msg3.collect.message });
+                    var texts3 = new List<string>();
+                    msg3?.DumpMessage(texts3);
+                    ev.AppendStrings.Add("kojo_join_refused", texts3.Count > 0 ? texts3 : empty);
 
                     var addMems = new List<Action>();
                     ev.FunctionCalls.Add("OnRefusedJoin", addMems);

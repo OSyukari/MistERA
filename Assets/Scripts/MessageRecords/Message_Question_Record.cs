@@ -10,7 +10,7 @@ public class Message_Question_Record : MessageLog
     {
         get
         {
-            return multipleChara.Count > 0 || PortraitRef != null;
+            return Display.MultipleChara.Count > 0 || Display.PortraitRef != null;
         }
     }
 
@@ -33,9 +33,9 @@ public class Message_Question_Record : MessageLog
     Dictionary<string, string> replaceStrings = null;
     public void Draw(bool skipImage, Canvas mainCanvas, scr_menu_question questionBox, scr_panel_logs logs = null)
     {
-        // question log always draw
+        // question log always draw, unless the panel drawing it isn't the currently active display
         //questionBox.InnerQuestion = this;
-        base.Draw(false);
+        base.Draw(skipImage);
         questionBox.InitializeWithArgs(mainCanvas, collect, logs, replaceStrings);
     }
 }

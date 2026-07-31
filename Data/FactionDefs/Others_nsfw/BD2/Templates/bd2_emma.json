@@ -49,7 +49,7 @@
     "firstName": "Emma",
     "middleName": "",
     "lastName": "",
-    "title":"Haggard Delinquent",
+    "title":"BD2_emma_title",
     "nameDisplayFormat": "chara_fullname_firstToLast",
     "origin": "charOrigin_none",
     "race": "humanRace_human",

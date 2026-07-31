@@ -148,6 +148,14 @@ public class Character_Personality
 
     [JsonProperty] string behaviorID = "";
 
+    // Dialogue Event ID
+    [JsonProperty] protected string dialogueEventID = "";
+    [JsonIgnore] public string DialogueEventID { get {
+        if (!string.IsNullOrEmpty(dialogueEventID)) return dialogueEventID;
+        if (Fallback != null) return Fallback.DialogueEventID;
+        return dialogueEventID;
+    } }
+
     FindJobNodeRoot _behavior = null;
     [JsonIgnore]
     public FindJobNodeRoot Behavior { get

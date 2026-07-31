@@ -8,170 +8,870 @@
                 "trigger": "OnCampaignStart",
                 "SelfValidator": {
                     "chara_conditions": [
-                        { "parameters": [ "exists" ] },
-                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] }
+                        {
+                            "parameters": [
+                                "exists"
+                            ]
+                        },
+                        {
+                            "parameters": [
+                                "isActorBaseID",
+                                "ErAV_Player"
+                            ]
+                        }
                     ]
                 },
-                "TargetValidators":[
+                "UISpec": {
+                    "bgImagePath": "ErAV/CG/funeral_01.webp",
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
+                "TargetValidators": [
                     {
-                        "refKeys":["kanade"],
-                        "baseScope":"BaseID_Unrestricted",
-                        "extraScopeArguments":["ErAV_Kanade"],
-                        "minTargetCount":1
-
+                        "refKeys": [
+                            "kanade"
+                        ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [
+                            "ErAV_Kanade"
+                        ],
+                        "minTargetCount": 1
                     },
                     {
-                        "refKeys":["kanon"],
-                        "baseScope":"BaseID_Unrestricted",
-                        "extraScopeArguments":["ErAV_Kanon"],
-                        "minTargetCount":1
+                        "refKeys": [
+                            "kanon"
+                        ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [
+                            "ErAV_Kanon"
+                        ],
+                        "minTargetCount": 1
                     }
                 ],
                 "events": [
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_L01" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_L03" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "tearful", "sad" ], "line": "event_OpeningErAV_L05" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_L06" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_L08" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_OpeningErAV_L10" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_OpeningErAV_L13" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_L14" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_OpeningErAV_L15" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_L18" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_OpeningErAV_L19", "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_debt_total", "30000000" ] } ] },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "hostile", "angry" ], "line": "event_OpeningErAV_L21" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_L22" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_L24" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "worry", "sad" ], "line": "event_OpeningErAV_L25" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_OpeningErAV_L26" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_OpeningErAV_L29" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_L33" },
-
                     {
-                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-                        "portraitRefKey": "kanon",
-                        "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ],
-                        "question": "event_OpeningErAV_Q01",
-                        "options": [
-                            { "option": "event_OpeningErAV_Q01_op1", "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanon_offer", "1" ] }, { "Type": "JumpToLabel", "arguments": [ "", "br_agree" ] } ] },
-                            { "option": "event_OpeningErAV_Q01_op2", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_refuse" ] } ] }
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_L01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_L03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "tearful",
+                                "sad"
+                            ],
+                            "displayMode":"AVG",
+                            "infoDisplay":"Hide"
+                        },
+                        "line": "event_OpeningErAV_L05"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "self"
+                        },
+                        "line": "event_OpeningErAV_L06"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_L08"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_L10"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ],
+                            "bgImagePath": "ErAV/CG/Opening_ErAV_01.webp"
+                        },
+                        "line": "event_OpeningErAV_L13"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "self"
+                        },
+                        "line": "event_OpeningErAV_L14"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_L15"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "self"
+                        },
+                        "line": "event_OpeningErAV_L18"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_L19",
+                        "Results": [
+                            {
+                                "Type": "ModSelfKojoVariable",
+                                "arguments": [
+                                    "self",
+                                    "false",
+                                    "erav_kanon_debt_total",
+                                    "30000000"
+                                ]
+                            }
                         ]
                     },
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "br_agree", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "serious" ], "line": "event_OpeningErAV_A01" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_A04" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "sorry", "sad" ], "line": "event_OpeningErAV_A06" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_A07" },
-    {
-        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-        "options":[
-            {   
-                "option": "female branch",
-                "self_chara_conditions":[ { "parameters":["isFemale"] } ],
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","A08_F"]}] 
-            },
-            {   
-                "option": "male branch",
-                "self_chara_conditions":[ { "parameters":["isMale"] } ],
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","A08_M"]}] 
-            },
-            {   
-                "option": "fallback branch",
-                "Results": [ { "Type":"JumpToLabel", "arguments":["","A08_A"]}] 
-            }
-        ]
-    },
-                    
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "portraitRefKey": "kanade",
-                        "label":"A08_F",
-                        "portraitSelfTagsOverride": [ "shy", "hesitated", "sad" ],
-                        "line": "event_OpeningErAV_A08_F",
-                        "nextEntryLabel":"A09"
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "hostile",
+                                "angry"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_L21"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "portraitRefKey": "kanade",
-                        "label":"A08_M",
-                        "portraitSelfTagsOverride": [ "shy", "hesitated", "sad" ],
-                        "line": "event_OpeningErAV_A08_M",
-                        "nextEntryLabel":"A09"
+                        "UISpec": {
+                            "portraitRefKey": "self"
+                        },
+                        "line": "event_OpeningErAV_L22"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "portraitRefKey": "kanade",
-                        "label":"A08_A",
-                        "portraitSelfTagsOverride": [ "shy", "hesitated", "sad" ],
-                        "line": "event_OpeningErAV_A08",
-                        "nextEntryLabel":"A09"
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_L24"
                     },
-
-
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label":"A09", "portraitRefKey": "", "line": "event_OpeningErAV_A09" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "worry",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_L25"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_L26"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_L29"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_L33"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "question": "event_OpeningErAV_Q01",
+                        "options": [
+                            {
+                                "option": "event_OpeningErAV_Q01_op1",
+                                "Results": [
+                                    {
+                                        "Type": "ModSelfKojoVariable",
+                                        "arguments": [
+                                            "self",
+                                            "false",
+                                            "erav_kanon_offer",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_agree"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "event_OpeningErAV_Q01_op2",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_refuse"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_agree",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "serious"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_A01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_A04"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "sorry",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_A06"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_A07"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options": [
-                            { "option": "female branch", "self_chara_conditions": [ { "parameters": [ "isFemale" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "A10_F" ] } ] },
-                            { "option": "male branch", "self_chara_conditions": [ { "parameters": [ "isMale" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "A10_M" ] } ] },
-                            { "option": "fallback branch", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "A10_A" ] } ] }
+                            {
+                                "option": "female branch",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isFemale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "A08_F"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "male branch",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isMale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "A08_M"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "fallback branch",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "A08_A"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "A10_F", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "shy", "hesitated" ], "line": "event_OpeningErAV_A10_F", "nextEntryLabel": "AQ" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "A10_M", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "shy", "hesitated" ], "line": "event_OpeningErAV_A10_M", "nextEntryLabel": "AQ" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "A10_A", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "shy", "hesitated" ], "line": "event_OpeningErAV_A10", "nextEntryLabel": "AQ" },
-
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "shy",
+                                "hesitated",
+                                "sad"
+                            ]
+                        },
+                        "label": "A08_F",
+                        "line": "event_OpeningErAV_A08_F",
+                        "nextEntryLabel": "A09"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "shy",
+                                "hesitated",
+                                "sad"
+                            ]
+                        },
+                        "label": "A08_M",
+                        "line": "event_OpeningErAV_A08_M",
+                        "nextEntryLabel": "A09"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "shy",
+                                "hesitated",
+                                "sad"
+                            ]
+                        },
+                        "label": "A08_A",
+                        "line": "event_OpeningErAV_A08",
+                        "nextEntryLabel": "A09"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "A09",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_A09"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "female branch",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isFemale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "A10_F"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "male branch",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isMale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "A10_M"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "fallback branch",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "A10_A"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "A10_F",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "shy",
+                                "hesitated"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_A10_F",
+                        "nextEntryLabel": "AQ"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "A10_M",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "shy",
+                                "hesitated"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_A10_M",
+                        "nextEntryLabel": "AQ"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "A10_A",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "shy",
+                                "hesitated"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_A10",
+                        "nextEntryLabel": "AQ"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "AQ",
-                        "portraitRefKey": "kanade",
-                        "portraitSelfTagsOverride": [ "shy", "happy" ],
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "shy",
+                                "hesitated"
+                            ]
+                        },
                         "question": "event_OpeningErAV_AQ",
                         "options": [
-                            { "option": "event_OpeningErAV_AQ_op1", "Results": [ { "Type": "ModSelfKojoVariable", "arguments": [ "self", "false", "erav_kanade_promise", "1" ] }, { "Type": "JumpToLabel", "arguments": [ "", "br_kaccept" ] } ] },
-                            { "option": "event_OpeningErAV_AQ_op2", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "br_krefuse" ] } ] }
+                            {
+                                "option": "event_OpeningErAV_AQ_op1",
+                                "Results": [
+                                    {
+                                        "Type": "ModSelfKojoVariable",
+                                        "arguments": [
+                                            "self",
+                                            "false",
+                                            "erav_kanade_promise",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_kaccept"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "event_OpeningErAV_AQ_op2",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "br_krefuse"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "br_kaccept", "portraitRefKey": "self", "line": "event_OpeningErAV_AC01" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "happy" ], "line": "event_OpeningErAV_AC02" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_AC03" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "isLast": true, "line": "event_OpeningErAV_AC04" },
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "br_krefuse", "portraitRefKey": "self", "line": "event_OpeningErAV_RC01" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "hesitated", "sad" ], "line": "event_OpeningErAV_RC02" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_RC03" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "isLast": true, "line": "event_OpeningErAV_RC05" },
-
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "br_refuse", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "smug", "surprised" ], "line": "event_OpeningErAV_R01" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "focused", "serious" ], "line": "event_OpeningErAV_R02" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "hostile", "angry" ], "line": "event_OpeningErAV_R03" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "confident", "relaxed" ], "line": "event_OpeningErAV_R04" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_R05" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanon", "portraitSelfTagsOverride": [ "yakuza", "sorry", "sad" ], "line": "event_OpeningErAV_R07" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_R08" },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_kaccept",
+                        "UISpec": {
+                            "portraitRefKey": "self"
+                        },
+                        "line": "event_OpeningErAV_AC01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "happy"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_AC02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_AC03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "isLast": true,
+                        "line": "event_OpeningErAV_AC04",
+                        "Results": [
+                            {
+                                "Type": "RevealFaction",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "true"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_krefuse",
+                        "UISpec": {
+                            "portraitRefKey": "self"
+                        },
+                        "line": "event_OpeningErAV_RC01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "hesitated",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_RC02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_RC03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "isLast": true,
+                        "line": "event_OpeningErAV_RC05",
+                        "Results": [
+                            {
+                                "Type": "RevealFaction",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "true"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_refuse",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "surprised"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "hostile",
+                                "angry"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R04"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_R05"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "sorry",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R07"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_R08"
+                    },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options": [
-                            { "option": "female branch", "self_chara_conditions": [ { "parameters": [ "isFemale" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "R09_F" ] } ] },
-                            { "option": "male branch", "self_chara_conditions": [ { "parameters": [ "isMale" ] } ], "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "R09_M" ] } ] },
-                            { "option": "fallback branch", "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "R09_A" ] } ] }
+                            {
+                                "option": "female branch",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isFemale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "R09_F"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "male branch",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isMale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "R09_M"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "fallback branch",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "R09_A"
+                                        ]
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "R09_F", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "worry", "sad" ], "line": "event_OpeningErAV_R09_F", "nextEntryLabel": "R10" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "R09_M", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "worry", "sad" ], "line": "event_OpeningErAV_R09_M", "nextEntryLabel": "R10" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "R09_A", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "worry", "sad" ], "line": "event_OpeningErAV_R09", "nextEntryLabel": "R10" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "R10", "portraitRefKey": "", "line": "event_OpeningErAV_R10" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "kanade", "portraitSelfTagsOverride": [ "fear", "sad" ], "line": "event_OpeningErAV_R11" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "self", "line": "event_OpeningErAV_R13" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "line": "event_OpeningErAV_R14" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "portraitRefKey": "", "isLast": true, "line": "event_OpeningErAV_R15" }
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "R09_F",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "worry",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R09_F",
+                        "nextEntryLabel": "R10"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "R09_M",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "worry",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R09_M",
+                        "nextEntryLabel": "R10"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "R09_A",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "worry",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R09",
+                        "nextEntryLabel": "R10"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "R10",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_R10"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [
+                                "fear",
+                                "sad"
+                            ]
+                        },
+                        "line": "event_OpeningErAV_R11"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "self"
+                        },
+                        "line": "event_OpeningErAV_R13"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "event_OpeningErAV_R14"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "isLast": true,
+                        "line": "event_OpeningErAV_R15",
+                        "Results": [
+                            {
+                                "Type": "RevealFaction",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "true"
+                                ]
+                            }
+                        ]
+                    }
                 ]
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
@@ -181,7 +881,7 @@
                 "event_OpeningErAV_L06": "「嗯……还有我在。别怕。」\n$self.name$把妹妹揽进怀里，却半句安慰的话也说不出口——自己心里同样是空荡荡的。",
                 "event_OpeningErAV_L08": "就在这时，门外忽然响起毫不客气的叩门声。\n$self.name$刚拉开门，三个剃着光头的黑衣男人已立在廊下。",
                 "event_OpeningErAV_L10": "当中那位身着华美和服的少女撑着纸伞，抬眼打量着屋内。雨珠顺着伞骨滑落。\n「深夜叨扰，失礼了。」\n这张脸$self.name$认得。桐生歌音——学校的学生会长。只是这位学生会长还有另一重身份：这片街区背后的黑道组织，实际由她管事。两重身份向来互不相干，本不该有什么交集。此刻她却带着人，在父母葬礼当晚闯进了家门。",
-                "event_OpeningErAV_L13": "「本小姐今夜登门，不为别的，只为令尊留下的那笔账。」",
+                "event_OpeningErAV_L13": "「我今夜登门，不为别的，只为令尊留下的那笔账。」",
                 "event_OpeningErAV_L14": "「……账？」",
                 "event_OpeningErAV_L15": "「简而言之：连带保证。令尊宫间谦三，替人作了保。」\n「如今那个主债务人，查无此人——按约，账就落到保证人头上。」\n「令尊令堂皆已过世。作为继承人，这笔债自然转到你和令妹肩上。」",
                 "event_OpeningErAV_L18": "「连带保证……父亲他……怎么会……」",
@@ -190,17 +890,15 @@
                 "event_OpeningErAV_L22": "「三千万……四十五万……」\n$self.name$脑中嗡嗡作响。父亲生前从不提及钱财，原来竟埋下了如此巨大的隐患。",
                 "event_OpeningErAV_L24": "$kanon.name$报出那串数字后，屋里一时静得只剩雨声。$kanade.name$攥紧$self.name$的衣袖，迟迟没有松开。",
                 "event_OpeningErAV_L25": "「$self.name$……三千万……我们，真的还得上吗？」",
-                "event_OpeningErAV_L26": "「哭也没用。本小姐把账算给你听：那笔利息换算成打工，就是四百多个小时。」\n「把自己累垮，每月也熬不出这么多工时，更别说那三千万的本金。」\n「——靠正经工作，就算搭上一辈子，也填不满这笔债。」",
-                "event_OpeningErAV_L29": "「不过——若是当真没有别的办法，本小姐这边倒是有一条出路。」\n「来钱快。靠出卖身体挣钱，名声自然不好听，可总比去做那种地下的风俗生意强——至少，主动权握在你们自己手里。」\n「一辈子也还不清的债，和走这条路，哪个更划算，你们自己判断。」\n「详情明天再说。放学之后，到事务所来找本小姐。在那里，才能讲得清楚。」",
+                "event_OpeningErAV_L26": "「哭也没用。我把账算给你听：那笔利息换算成打工，就是四百多个小时。」\n「把自己累垮，每月也熬不出这么多工时，更别说那三千万的本金。」\n「——靠正经工作，就算搭上一辈子，也填不满这笔债。」",
+                "event_OpeningErAV_L29": "「不过——若是当真没有别的办法，我这边倒是有一条出路。」\n「来钱快。靠出卖身体挣钱，名声自然不好听，可总比去做那种地下的风俗生意强——至少，主动权握在你们自己手里。」\n「一辈子也还不清的债，和走这条路，哪个更划算，你们自己判断。」\n「详情明天再说。放学之后，到事务所来找我。在那里，才能讲得清楚。」",
                 "event_OpeningErAV_L33": "$kanon.name$的目光从$self.name$身上移开，扫过躲在身后的$kanade.name$，停了停。",
-
-                "event_OpeningErAV_Q01": "「怎么样？要不要本小姐帮你们这个忙？」\n$kanon.name$从袖中取出名片搁在桌上，抬眼望向$self.name$。",
+                "event_OpeningErAV_Q01": "「怎么样？要不要我帮你们这个忙？」\n$kanon.name$从袖中取出名片搁在桌上，抬眼望向$self.name$。",
                 "event_OpeningErAV_Q01_op1": "答应",
                 "event_OpeningErAV_Q01_op2": "拒绝",
-
-                "event_OpeningErAV_A01": "「明智。」「明天放学之后，到事务所来。名片上有地址。」「本小姐会安排好，到时候你来就行。」",
+                "event_OpeningErAV_A01": "「明智。」\n「明天放学之后，到事务所来。名片上有地址。」\n「我会安排好，到时候你来就行。」",
                 "event_OpeningErAV_A04": "话音落下，$kanon.name$拢了拢和服领口，转身朝门外走去。\n黑衣男人一个接一个跟在身后。临到门口，她忽又停下，背对着屋内。",
-                "event_OpeningErAV_A06": "「……对于你父母的事，本小姐很遗憾。」",
+                "event_OpeningErAV_A06": "「……对于你父母的事，我很遗憾。」",
                 "event_OpeningErAV_A07": "门合上的瞬间，屋内只剩雨声与线香燃尽的轻响。",
                 "event_OpeningErAV_A08": "「$self.name$……」",
                 "event_OpeningErAV_A08_F": "「姐姐……」",
@@ -209,27 +907,23 @@
                 "event_OpeningErAV_A10": "「……那个人走的时候，一直在看我。我也不知道她是什么意思……可是，也许我能帮上什么忙。明天你去事务所，带我一起去，行吗？」",
                 "event_OpeningErAV_A10_F": "「……姐姐，那个人走的时候，一直在看我。我也不知道她是什么意思……可是，也许我能帮上什么忙。明天你去事务所，带我一起去，行吗？」",
                 "event_OpeningErAV_A10_M": "「……哥哥，那个人走的时候，一直在看我。我也不知道她是什么意思……可是，也许我能帮上什么忙。明天你去事务所，带我一起去，行吗？」",
-
                 "event_OpeningErAV_AQ": "$kanade.name$攥着裙摆，抬眼望着$self.name$，等着回答。",
-                "event_OpeningErAV_AQ_op1": "带上她",
+                "event_OpeningErAV_AQ_op1": "答应带上她",
                 "event_OpeningErAV_AQ_op2": "拒绝",
-
                 "event_OpeningErAV_AC01": "「……好。明天一起去。」",
                 "event_OpeningErAV_AC02": "「嗯。」$kanade.name$用力点了点头。",
                 "event_OpeningErAV_AC03": "$self.name$轻轻揉了揉妹妹的头。窗外，雨势渐歇。",
                 "event_OpeningErAV_AC04": "那夜，两人谁也没合眼，可心里多少踏实了些。等窗棂透进微白的晨光，雨已经停了。\n天亮了。摆在面前的，是三千万的债——可至少，明天还有地方可去，身边还有$kanade.name$。",
-
                 "event_OpeningErAV_RC01": "「……明天的事我自己去就行。你在家等着。」",
                 "event_OpeningErAV_RC02": "「可是……$self.name$……」",
                 "event_OpeningErAV_RC03": "$kanade.name$的眼眶又红了。她张了张嘴，终究没再坚持，只是默默攥紧衣角。\n$self.name$把妹妹搂进怀里。窗外的雨势渐歇，可沉甸甸压在心头的，并不只是债务。",
                 "event_OpeningErAV_RC05": "那夜，两人谁也没合眼。等窗棂透进微白的晨光，雨已经停了。\n天亮了。明天还得去见那个人。这条路，$self.name$只能独自走。摆在面前的，是三千万与必须扛起的重担。",
-
                 "event_OpeningErAV_R01": "「哦？宁可自己扛？」",
                 "event_OpeningErAV_R02": "「随你。只是记好——月底之前，四十五万的利息，分文不能少。」",
-                "event_OpeningErAV_R03": "「到了日子交不上，桐生组自有收账的法子。到时候，可别怪本小姐不讲情面。」",
-                "event_OpeningErAV_R04": "「哪天撑不住了，来事务所找本小姐。这扇门，始终为你开着。」",
+                "event_OpeningErAV_R03": "「到了日子交不上，桐生组自有收账的法子。到时候，可别怪我不讲情面。」",
+                "event_OpeningErAV_R04": "「哪天撑不住了，来事务所找我。这扇门，始终为你开着。」",
                 "event_OpeningErAV_R05": "话音落下，$kanon.name$拢了拢和服领口，转身朝门外走去。\n黑衣男人一个接一个跟在身后。临到门口，她忽又停下，背对着屋内。",
-                "event_OpeningErAV_R07": "「……对于你父母的事，本小姐很遗憾。」",
+                "event_OpeningErAV_R07": "「……对于你父母的事，我很遗憾。」",
                 "event_OpeningErAV_R08": "门合上的瞬间，屋内只剩雨声与线香燃尽的轻响。",
                 "event_OpeningErAV_R09": "「$self.name$……」",
                 "event_OpeningErAV_R09_F": "「姐姐……」",
@@ -240,9 +934,7 @@
                 "event_OpeningErAV_R14": "$self.name$把妹妹搂进怀里。窗外雨势渐歇，两人却都明白前路凶险。",
                 "event_OpeningErAV_R15": "那夜，两人谁也没合眼。等窗棂透进微白的晨光，雨已经停了。\n天亮了。摆在$self.name$面前的，是三千万的债与必须独自扛起的重担。"
             },
-            "en-us": {
-                
-            }
+            "en-us": {}
         }
     }
 }

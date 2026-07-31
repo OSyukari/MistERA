@@ -505,6 +505,15 @@ public class MessageCollect_KojoEntry
         if (this.timestamp == DateTime.MinValue) this.timestamp = scr_System_Time.current.getCurrentTime();
     }
 
+    /// <summary>
+    /// Recursively collects every non-empty message in this node and its nexts, depth-first.
+    /// </summary>
+    public void DumpMessage(List<string> list)
+    {
+        if (!string.IsNullOrEmpty(this.message)) list.Add(this.message);
+        foreach (var next in this.nexts) next.DumpMessage(list);
+    }
+
     public void AddRelevantActors(List<Character_Trainable> cs)
     {
         foreach (var c in cs) AddRelevantActor(c);

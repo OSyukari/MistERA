@@ -576,6 +576,11 @@ public class Manageable_Party : I_IsJobGiver
         if (c == null) return;
         charaGuestStatus.Remove(c.RefID);
 
+        // c may still think this is their active party (e.g. UI-driven roster removal
+        // does not route through Character_Factions.RemoveFromParty), which would let
+        // CurrentActiveParty keep resolving to this party and re-draft c into it.
+        //if (c.FactionManager.CurrentParty == this) c.FactionManager.CurrentParty = null;
+
         c.FactionManager.RemovePartyTracker(this);
         InternalUpdate();
 

@@ -282,7 +282,7 @@ public class CombatInstance
         foreach (var kvp in ActorStats)
         {
             //if (kvp.Key == dummyRef.RefID) kvp.Value.RestoreAll();
-            if (kvp.Value.CanPush && kvp.Value.isPostureBroken)
+            if (kvp.Value.CanAct && kvp.Value.CanPush && kvp.Value.isPostureBroken)
             {
                 kvp.Value.RecoverPosture(true);
                 var name = scr_System_CampaignManager.current.FindInstanceByID(kvp.Key).FirstName;

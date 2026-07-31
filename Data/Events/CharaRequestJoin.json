@@ -166,10 +166,12 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "br_choice",
-                        "portraitRefKey": "self",
-                        "portraitSelfTagsOverride": [
-                            "curious"
-                        ],
+                        "UISpec": {
+                            "portraitRefKey": "self",
+                            "selfTags": [
+                                "curious"
+                            ]
+                        },
                         "question": "event_RequestJoin_Job_ev01",
                         "options": [
                             {
@@ -226,11 +228,13 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_refuse",
-                        "portraitRefKey": "self",
-                        "portraitSelfTagsOverride": [
-                            "awkward",
-                            "disappointed"
-                        ],
+                        "UISpec": {
+                            "portraitRefKey": "self",
+                            "selfTags": [
+                                "awkward",
+                                "disappointed"
+                            ]
+                        },
                         "isLast": true,
                         "line": "event_RequestJoin_Job_ev02"
                     },
@@ -275,11 +279,13 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "br_join",
-                        "portraitRefKey": "self",
-                        "portraitSelfTagsOverride": [
-                            "happy",
-                            "confident"
-                        ],
+                        "UISpec": {
+                            "portraitRefKey": "self",
+                            "selfTags": [
+                                "happy",
+                                "confident"
+                            ]
+                        },
                         "isLast": true,
                         "line": "event_RequestJoin_Job_ev03"
                     },

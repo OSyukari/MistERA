@@ -249,6 +249,7 @@ public class scr_Menu_Combat : scr_Menu
     {
         if (currentActiveCombat != null ) currentActiveCombat.Observer_InstanceUpdate -= OnInstanceUpdate;
         currentActiveCombat = null;
+        CurrentTarget = null;
 
         foreach(var i in TemporaryButtonRefs)
         {
@@ -714,7 +715,20 @@ public class scr_Menu_Combat : scr_Menu
         public void OnClickButton()
         {
             // finalize combat and run
-            if (parent.currentActiveCombat.Ongoing) parent.currentActiveCombat.Run();
+            if (parent.currentActiveCombat.Ongoing)
+            {
+                bool isRoundStart = parent.currentActiveCombat.TurnEnded;
+                parent.currentActiveCombat.Run();
+
+                // round start: drop a stored target that can no longer act (e.g. killed last round)
+                // so the player doesn't keep attacking a corpse by mistake. Manual re-selection still allowed.
+                if (isRoundStart && parent.CurrentTarget != null
+                    && parent.currentActiveCombat.ActorStats.TryGetValue(parent.CurrentTarget.RefID, out var targetStats)
+                    && !targetStats.CanAct)
+                {
+                    parent.CurrentTarget = null;
+                }
+            }
             else
             {
                 parent.UnloadCombatInstance();

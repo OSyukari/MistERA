@@ -65,8 +65,11 @@ public class Character_Body
         foreach(var kojoID in string_tempList)
         {
             var result = Owner.Relationships.Personality.GetKOJOMessage(kojoID, relation, tempList2[kojoID].Distinct().ToList(), null);
-            if (result == null || result.message.Length < 1) continue;
-            _cached_bodyDescriptions.Add(result.message);
+            if (result == null) continue;
+            var dump = new List<string>();
+            result.DumpMessage(dump);
+            if (dump.Count < 1) continue;
+            _cached_bodyDescriptions.AddRange(dump);
             _cached_internalTags.Add(LocalizeDictionary.QueryThenParse(kojoID));
         }
 
