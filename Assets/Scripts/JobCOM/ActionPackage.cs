@@ -1643,7 +1643,7 @@ public abstract class ActionPackage
             foreach (var ep in packages)
             {
                 if (ep.skipCheckResult) continue; // skip player alone package
-                var res = ep.GetCheckResult(false);
+                var res = ep.GetCheckResult(true);
                 if (res.Length < 1) continue;
                 checkResults.Add(res);
             }

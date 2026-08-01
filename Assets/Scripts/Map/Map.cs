@@ -284,6 +284,7 @@ public class Map_Instance
         if (world == null) return null;
 
         var room = new Room_Instance(null, null);
+        room.roomImageOverride = world.mapImagePath;
         room.displayNameOverwrite = worldID;
         room.FactionOwner = scr_System_CampaignManager.current.FindOrAddFaction(worldID, "");
         worldTransitRoomRefs[worldID] = scr_System_CampaignManager.current.Register(room);

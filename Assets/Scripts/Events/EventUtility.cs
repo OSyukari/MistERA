@@ -50,6 +50,8 @@ public static class EventUtility
         var targetGens = instance.overrideTargetGen ? instance.OverrideTargetGen : ev.TargetGeneration;
         if (targetGens.Count > 0 && !instance.generated)
         {
+            if (instance.forbidGeneration) return false;
+
             instance.generated = true;
 
             foreach(var generationParameters in targetGens)
@@ -252,14 +254,23 @@ public static class EventUtility
         if (r.requireKojoVariable != null && r.requireKojoVariable.isValid)
         {
             if (c == null) return false;
-            Character_Trainable relationTarget = c;
+            Character_Trainable relationTarget = ev.Self;
             if (r.relationshipTargetKey != "" && r.relationshipTargetKey != "self")
             {
                 if (!ev.Targets.TryGetValue(r.relationshipTargetKey, out var targets) || targets.Count < 1) return false;
                 relationTarget = targets[0];
             }
             var rel = c.Relationships.FindRelationshipWith(relationTarget);
-            return rel != null && r.requireKojoVariable.Validate(rel);
+            if (rel == null) return false;
+
+            if (r.requireKojoVariable.appendStringKey != "")
+            {
+                var value = c.Relationships.GetKojoVariable(r.requireKojoVariable.isDailyVariable, rel, r.requireKojoVariable.variableID);
+                if (!ev.AppendStrings.ContainsKey(r.requireKojoVariable.appendStringKey)) ev.AppendStrings.Add(r.requireKojoVariable.appendStringKey, new List<string>());
+                ev.AppendStrings[r.requireKojoVariable.appendStringKey].Add(value.ToString());
+            }
+
+            return r.requireKojoVariable.Validate(rel);
         }
 
         if (r.parameters.Count < 1) return true;
@@ -268,6 +279,11 @@ public static class EventUtility
         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
 
         var debug = scr_System_CentralControl.current.LogPrefs.DLog_Events;
+
+        if (r.requireKojoVariable != null)
+        {
+            // TODO
+        }
 
         switch (r.parameters[0])
         {
@@ -687,6 +703,7 @@ public static class EventUtility
             {
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Execute Branch {p.option} isvalid and executed");
                 executed = true;
+
                 break;
             }
             else
@@ -701,6 +718,18 @@ public static class EventUtility
 
     public static bool Execute(EventInstance owner, Event.EventEntry.Options ops, bool sendNotify = false)
     {
+        if (owner.isVisible && ops.line != "")
+        {
+            bool rA = !owner.isPlayerRelated;
+
+            // snapshot before this option's own Results run, so a SetBGImage attached here only affects entries printed after it
+            var snap = owner.CurrentUISpec.Overwrite(ops.UISpec);
+            // sticky fields (e.g. bgImagePath) this option overrides become the new running default for entries after it
+            ops.UISpec.PersistInto(owner.CurrentUISpec);
+
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, ops, rA, false, snap));
+        }
+
         // allow next to be overridden by any of results
         bool continue_notify = true;
         foreach (var op in ops.Results)
@@ -1068,7 +1097,8 @@ public static class EventUtility
                         var message = LocalizeDictionary.QueryThenParse("event_revealFaction").Replace("$faction_name$", revealFaction.FactionDisplayName);
                         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
                         if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                        var snap = owner.CurrentUISpec.Clone();
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
                     }
 
                     return true;
@@ -1183,7 +1213,8 @@ public static class EventUtility
 
                         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
                         owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                        var snap = owner.CurrentUISpec.Clone();
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
                     }
 
                     return true;
@@ -1241,7 +1272,8 @@ public static class EventUtility
 
                         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
                         owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                        var snap = owner.CurrentUISpec.Clone();
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
                     }
 
                     return true;
@@ -1418,7 +1450,7 @@ public static class EventUtility
                             desc.relevantActors = Utility.Distinct(desc.relevantActors);
                         }
                         if (owner.Self != null) owner.Self.CurrentRoom.NotifyDescCollect(desc);
-                        scr_System_CampaignManager.current.AddLog(desc, owner.Self);
+                        scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, owner.CurrentUISpec.Clone());
                         
                         return true;
                     }
@@ -1480,7 +1512,8 @@ public static class EventUtility
                     if (desc != null)
                     {
                         if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true));
+                        var snap = owner.CurrentUISpec.Clone();
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
                     }
                 }
                 return true;
@@ -1616,6 +1649,32 @@ public static class EventUtility
                     }
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.SetSelfKojoVariable:
+                if (exec.arguments.Count >= 4)
+                {
+                    if (exec.arguments[2].Length > 0 && bool.TryParse(exec.arguments[1], out var isdaily) && int.TryParse(exec.arguments[3], out var val))
+                    {
+                        List<Character_Trainable> tgts = new List<Character_Trainable>();
+
+                        if (exec.arguments[0] == "self" && owner.Self != null) tgts.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[0], out tgts))
+                        {
+
+                        }
+                        else return false;
+
+                        foreach (var c in tgts)
+                        {
+                            if (c == null) continue;
+                            var rel = c.Relationships.FindRelationshipWith(c);
+                            if (rel == null) continue;
+                            c.Relationships.SetKojoVariable(isdaily, rel, exec.arguments[2], val);
+                        }
+
+                        return true;
+                    }
+                }
+                return false;
             case Event.EventEntry.ExecutionType.RemoveRelKojoVariable:
                 /// [selfkey, targetKey, isdaily, stringkey]
                 if (exec.arguments.Count >= 4)
@@ -1660,7 +1719,47 @@ public static class EventUtility
                 }
                 return false;
 
-            case Event.EventEntry.ExecutionType.ModRelfKojoVariable:
+            case Event.EventEntry.ExecutionType.SetRelKojoVariable:
+                /// [selfkey, targetKey, isdaily, stringkey, value]
+                if (exec.arguments.Count >= 5)
+                {
+                    if (exec.arguments[3].Length > 0 && bool.TryParse(exec.arguments[2], out var isdaily) && int.TryParse(exec.arguments[4], out var val))
+                    {
+                        List<Character_Trainable> from = new List<Character_Trainable>();
+                        List<Character_Trainable> to = new List<Character_Trainable>();
+
+                        if (exec.arguments[0] == "self" && owner.Self != null) from.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[0], out from))
+                        {
+
+                        }
+                        else return false;
+
+                        if (exec.arguments[1] == "self" && owner.Self != null) to.Add(owner.Self);
+                        else if (owner.Targets.TryGetValue(exec.arguments[1], out to))
+                        {
+
+                        }
+                        else return false;
+
+                        foreach (var c1 in from)
+                        {
+                            if (c1 == null) continue;
+
+                            foreach (var c2 in to)
+                            {
+                                if (c2 == null) continue;
+
+                                var rel = c1.Relationships.FindRelationshipWith(c2);
+                                if (rel == null) continue;
+                                c1.Relationships.SetKojoVariable(isdaily, rel, exec.arguments[3], val);
+                            }
+                        }
+                        return true;
+                    }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.ModRelKojoVariable:
                 /// [selfkey, targetKey, isdaily, stringkey, value]
                 if (exec.arguments.Count >= 5)
                 {

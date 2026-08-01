@@ -140,7 +140,7 @@ public class EventManager
         foreach (var i in scr_System_Serializer.current.MasterList.Events.list)
         {
             if (i.trigger != trigger) continue;
-            var candidate = new EventInstance(chara, i.ID, "");
+            var candidate = new EventInstance(chara, i.ID, "", forbidGeneration:true);
             if (!candidate.isValid) continue;
 
             if (best == null || i.priority > bestDef.priority) { best = candidate; bestDef = i; tie = false; }

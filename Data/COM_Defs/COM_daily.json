@@ -10,7 +10,8 @@
                 "action",
                 "player",
                 "followRequest",
-                "NonInteraction"
+                "NonInteraction",
+                "dialogueOnly"
             ],
             "requirements":{
                 "requirement":{ 
@@ -66,7 +67,8 @@
                 "action",
                 "player",
                 "followRequest",
-                "NonInteraction"
+                "NonInteraction",
+                "dialogueOnly"
             ],
             "requirements":{
                 "requirement":{ 

@@ -121,6 +121,27 @@
                     }
                 ]
             }
+        ],
+        "memberTypes":[
+            {
+                "ID": "membertype_erav_kiryu_office_leader",
+                "socialStandingKey": "membertype_erav_kiryu_office_leader",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": true,
+                "isHidden": false,
+                "canBeTransferred": false,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "activeHours":[8,9,10,11,12,13,14,15,16,17,18,19,20,21],
+                    "activeDays":[1,1,1,1,1,1,1]
+                }
+            }
         ]
     },
     "Dictionary": {
@@ -130,6 +151,7 @@
                 "erav_kiryu_office_bullpen_displayName": "事务所",
                 "erav_kiryu_office_kitchen_displayName": "茶水间",
                 
+                "membertype_erav_kiryu_office_leader":"桐生组的掌权人",
                 "erav_kiryu_office_hallway_displayName": "走廊",
                 "erav_kiryu_office_kanonoffice_displayName": "歌音的办公室",
                 "erav_kiryu_office_restroom_displayName": "洗手间",

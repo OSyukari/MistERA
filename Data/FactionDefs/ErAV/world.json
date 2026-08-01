@@ -195,7 +195,7 @@
                 "TempHomefaction":null,
                 "Workfactions":[
                     { "factionID":"jp_high_school", "guestStatus":"membertype_jp_high_school_student" },
-                    { "factionID":"ErAV_KiryuGumi_Office", "guestStatus":"membertype_manager" }]
+                    { "factionID":"ErAV_KiryuGumi_Office", "guestStatus":"membertype_erav_kiryu_office_leader" }]
             },
             {
                 "initID":"init_erav_kanade",

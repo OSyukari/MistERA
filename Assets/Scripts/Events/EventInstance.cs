@@ -15,6 +15,12 @@ public class EventInstance
 {
     public bool generated = false;
     public bool scoped = false;
+    /// <summary>
+    /// When true, Validate() refuses (returns false) any Event that would need to run
+    /// TargetGeneration, instead of generating - for passive validity checks (e.g. building
+    /// a UI button list) that must not spawn characters/factions as a side effect.
+    /// </summary>
+    public bool forbidGeneration = false;
     scr_UpdateHandler _updateHandler = null;
     protected scr_UpdateHandler updateHandler
     {
@@ -150,10 +156,11 @@ public class EventInstance
     /// </summary>
     /// <param name="targetRef"></param>
     /// <param name="maxCallStack"></param>
-    public EventInstance(Character_Trainable eventSelf, string eventID, string label, int maxCallStack = 100, bool immediateInit = true)
+    public EventInstance(Character_Trainable eventSelf, string eventID, string label, int maxCallStack = 100, bool immediateInit = true, bool forbidGeneration = false)
     {
         this.Self = eventSelf;
         this.maxCallStack = maxCallStack;
+        this.forbidGeneration = forbidGeneration;
         // init stuff
         if (immediateInit) LoadNext(eventID, label);
         //Start();

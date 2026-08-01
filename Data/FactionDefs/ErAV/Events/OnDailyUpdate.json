@@ -1,0 +1,64 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "ErAV_DailyUpdate",
+                "allowDuplicate": false,
+                "trigger": "OnDailyUpdate",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] }
+                    ]
+                },
+                
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options":[
+                            {
+                                "option": "kanon accept but late branch. INCREMENT LATE DAY COUNT BY 1",
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanon_offer",
+                                            "operand": "eq",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "ModSelfKojoVariable",
+                                        "arguments": [
+                                            "self",
+                                            "false",
+                                            "erav_kanon_offer_late",
+                                            "1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": ["", "eventEnd"]
+                                    }
+                                ]
+                            },
+                            {
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": ["", "eventEnd"]
+                                    }
+                                ]
+                            }
+                        ]
+                    },{
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "eventEnd",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    }
+}

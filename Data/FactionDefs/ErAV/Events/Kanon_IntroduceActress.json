@@ -1,0 +1,318 @@
+{
+    "Events": {
+        "list": [
+            {
+                "_comment": "Kanon_IntroduceActress. OnDialogue_Options. Only visible once erav_kanon_offer==2. Big roster questionbox (currently one entry: Kanade) plus an exit choice, per plan §9/§0 (erav_introduced_<actressID> registry). Picking a candidate writes erav_introduced_ErAV_Kanade=1 regardless of the accept/refuse outcome, then shows Kanon's pitch + a short self-intro from the candidate's own POV, then an accept/refuse questionbox: accept ends the event, refuse loops back to the roster (ia_select). Each actress gets her own TargetValidators entry with allowEventOnMinTargetCountMiss=true (so a missing candidate doesn't block the whole event/roster, only leaves her refkey unbound) plus a matching target_chara_conditions requirement on her roster option, per EventUtility.isValid(Options,...) (EventUtility.cs:567-584) checked by scr_menu_question.cs's Button_OptionBtn.IsButtonValid -- every option always renders a button, this just disables it when the refkey didn't resolve. Kanade is pulled in via BaseID_Unrestricted (same technique as Opening_ErAV.json / quest.json's prerequisites). No currency is deducted for the handling fee -- there's no ExecutionType for it yet -- so the fee is framed as coming out of future earnings instead of an upfront charge.",
+                "ID": "Kanon_IntroduceActress",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": {
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_offer",
+                                "operand": "eq",
+                                "value": 2
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] },
+                            { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "kanade" ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [ "ErAV_Kanade" ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    },
+                    {
+                        "refkeys": [ "Jitaku_Sayaka" ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [ "Jitaku_Sayaka" ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    },
+                    {
+                        "refkeys": [ "Jitaku_Shouko" ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [ "Jitaku_Shouko" ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    },
+                    {
+                        "refkeys": [ "Jitaku_Yuki" ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [ "Jitaku_Yuki" ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ia_select",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "question": "kia_L01",
+                        "options": [
+                            {
+                                "option": "Kanon_IntroduceActress_Kanade",
+                                "target_chara_conditions": {
+                                    "kanade": [
+                                        { "parameters": [ "exists" ] },
+                                        {
+                                            "relationshipTargetKey":"self",
+                                            "requireKojoVariable": {
+                                                "variableID": "erav_actress_status",
+                                                "operand": "eq",
+                                                "value": 1
+                                            }
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_kanade_intro" ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "Kanon_IntroduceActress_Jitaku_Sayaka",
+                                "target_chara_conditions": {
+                                    "Jitaku_Sayaka": [
+                                        { "parameters": [ "exists" ] },
+                                        {
+                                            "relationshipTargetKey":"self",
+                                            "requireKojoVariable": {
+                                                "variableID": "erav_actress_status",
+                                                "operand": "eq",
+                                                "value": 1
+                                            }
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_jitaku_sayaka_intro" ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "kia_Q01_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_end" ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_kanade_intro",
+                        "UISpec": {
+                            "portraitRefKey": "kanade"
+                        },
+                        "line": "Kanon_IntroduceActress_Kanade_Intro"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade"
+                        },
+                        "line": "Kanon_IntroduceActress_Kanade_Monologue"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_IntroduceActress_Kanade_Comment"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanade"
+                        },
+                        "question": "Kanon_IntroduceActress_Kanade_Choice",
+                        "options": [
+                            {
+                                "option": "Kanon_IntroduceActress_Select",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_kanade_accept" ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "Kanon_IntroduceActress_CancelSelect",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_refuse" ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_kanade_accept",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "Kanon_IntroduceActress_Kanade_Select",
+                        "Results": [
+                            {
+                                "Type": "SetRelKojoVariable",
+                                "arguments": [ "kanade", "self", "false", "erav_actress_status", "1" ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_jitaku_sayaka_intro",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "Kanon_IntroduceActress_JitakuSayaka_Intro"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "Jitaku_Sayaka"
+                        },
+                        "line": "Kanon_IntroduceActress_JitakuSayaka_SelfIntro"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_IntroduceActress_JitakuSayaka_Comment"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "Jitaku_Sayaka"
+                        },
+                        "question": "Kanon_IntroduceActress_JitakuSayaka_Choice",
+                        "options": [
+                            {
+                                "option": "Kanon_IntroduceActress_Select",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_jitaku_sayaka_accept" ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "Kanon_IntroduceActress_CancelSelect",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_refuse" ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_jitaku_sayaka_accept",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "Kanon_IntroduceActress_JitakuSayaka_Select",
+                        "Results": [
+                            {
+                                "Type": "SetRelKojoVariable",
+                                "arguments": [ "Jitaku_Sayaka", "self","false", "erav_actress_status", "1" ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_refuse",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_IntroduceActress_Cancel",
+                        "nextEntryLabel": "ia_select"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_end",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "Kanon_IntroduceActress_End",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanon_IntroduceActress":"请求介绍女优",
+                "kia_L01": "「人选倒有几个。要看吗？」\n歌音从抽屉里取出名单，摊在桌上。",
+                "kia_Q01_op2": "算了",
+                "Kanon_IntroduceActress_Select": "招募女优",
+                "Kanon_IntroduceActress_CancelSelect": "暂时不必",
+                "Kanon_IntroduceActress_Cancel":"「不合心意？那看别的。」",
+                
+                "Kanon_IntroduceActress_Kanade": "%%ErAV_Miyama_lastname%%%%ErAV_Kanade_firstname%%",
+                "Kanon_IntroduceActress_Kanade_Intro":"$self.name$翻开歌音递来的名单。第一页是$kanade.name$的照片。\n照片下方是几行简短的评估：\n十五岁。学年成绩首位，教师公认的优等生。性格温顺清秀，有献身倾向。运动天分不足，对流行敏感，容易受周围影响。\n备注栏里只有一行字——「本人自愿。」",
+                "Kanon_IntroduceActress_Kanade_Monologue":"「$self.name$遇到了难处……我得想个办法。」\n「三千万的债。光靠打工的话，两个人怎么都还不清。那个人开的条件，虽然说不出口——可总比什么路都走不通强。」\n「书念得好有什么用。我不像$self.name$那么能干，运动也不行。别的忙帮不上……但是这副身体，也许能。」\n「$self.name$一定会反对的。可是——我已经决定了。就算$self.name$生气，我也会去做。」",
+                "Kanon_IntroduceActress_Kanade_Comment":"$kanon.name$合上名单。\n「十五岁，处女，优等生，亲妹妹——这四个条件凑齐的人选，市面上可没处找。」\n「近亲题材的片子从来不缺买家。这层关系，本身就是卖点。」",
+                "Kanon_IntroduceActress_Kanade_Choice":"对象：宫间奏\n介绍费：0",
+                "Kanon_IntroduceActress_Kanade_Select":"$kanon.name$在名单上勾了$kanade.name$的名字。\n「好。手续我这边处理。等办妥了就把人交给你——往后怎么用，你是监督，自己判断。」",
+
+                "Kanon_IntroduceActress_Jitaku_Sayaka":"%%Jitaku_Katsuragi_lastname%%%%Jitaku_Sayaka_firstname%%",
+                "Kanon_IntroduceActress_JitakuSayaka_Intro":"(first, an objective introduction of Jitaku_Sayaka that MC reads on the document)",
+                "Kanon_IntroduceActress_JitakuSayaka_SelfIntro":"(second, an intro from Jitaku_Sayaka's own pov. must be in-character)",
+                "Kanon_IntroduceActress_JitakuSayaka_Comment":"(3rd, a short comment from Kanon, in-character, on Jitaku_Sayaka)",
+                "Kanon_IntroduceActress_JitakuSayaka_Choice":"(4th, choice screen summarize actress info and required payment)",
+                "Kanon_IntroduceActress_JitakuSayaka_Select":"(Kanon respond that she'll make the preparations)",
+
+                "Kanon_IntroduceActress_End": "「想好了再过来。名单不变。」"
+            },
+            "en-us": {}
+        }
+    }
+}

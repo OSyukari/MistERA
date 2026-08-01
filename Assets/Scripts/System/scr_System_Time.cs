@@ -168,6 +168,8 @@ public class scr_System_Time : MonoBehaviour
         Observer_globalTime_Day?.Invoke(1); // faction/settlement update
         Observer_globalTime_Day?.Invoke(2); // character update
         Observer_globalTime_Day?.Invoke(3);
+
+        scr_UpdateHandler.current.EventHandler.Trigger(scr_System_CampaignManager.current.Player, EventTrigger.OnDailyUpdate);
     }
 
     private void UpdateMinute(int amount, int realTime)

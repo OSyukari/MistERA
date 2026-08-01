@@ -1,0 +1,268 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "Kanon_Opt_AcceptOffer",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": {
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_offer",
+                                "operand": "eq",
+                                "value": 0
+                            }
+                        },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_debt_total",
+                                "operand": "gt",
+                                "value": 0
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_in_office",
+                                "target_chara_conditions":{
+                                    "kanon":[
+                                        { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_accept_question" ] }
+                                ]
+                            },
+                            {
+                                "option": "fallback_not inoffice",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_not_in_office" ] }
+                                ]
+                            }
+
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_not_in_office",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "focused", "serious" ]
+                        },
+                        "line": "Kanon_Opt_AcceptOffer_NotInOffice",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label":"br_accept_question",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "question": "Kanon_Opt_AcceptOffer_Option1",
+                        "options": [
+                            {
+                                "option": "Kanon_Opt_AcceptOffer_Option1_op1",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "br_accept" ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "Kanon_Opt_AcceptOffer_Option1_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "br_decline" ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_decline",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_Opt_AcceptOffer_Refuse",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_accept",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Explain01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [                                 
+                                "yakuza",
+                                "confident",
+                                "relaxed" ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Explain02",
+                        "Results": [
+                            {
+                                "Type": "TransferItemByFactionID",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "ErAV_miyama_Household",
+                                    "item_recording_camera",
+                                    "1",
+                                    "true"
+                                ]
+                            },
+                            {
+                                "Type": "TransferItemByFactionID",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "ErAV_miyama_Household",
+                                    "item_recording_camera_Tape",
+                                    "3",
+                                    "true"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Explain03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Explain04",
+                        "nextEntryLabel": "biz_casting_gender"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "biz_casting_gender",
+                        "options": [
+                            {
+                                "option": "_female",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [
+                                            "isFemale"
+                                        ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "Kanon_Dialogue_inoffice_femalePlayer"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "Kanon_Dialogue_inoffice_End"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+{
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "Kanon_Dialogue_inoffice_femalePlayer",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "happy"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_femalePlayer",
+                        "nextEntryLabel": "Kanon_Dialogue_inoffice_End"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label":"Kanon_Dialogue_inoffice_End",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_End",
+                        "Results": [
+                            {
+                                "Type": "SetSelfKojoVariable",
+                                "arguments": [ "self", "false", "erav_kanon_offer", "2" ]
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanon_Opt_AcceptOffer":"关于那个提议",
+                "Kanon_Opt_AcceptOffer_Option1": "歌音搁下手里的文件，抬眼看向$self.name$。\n「怎么，改主意了？」\n「你来拍片，我们负责卖掉——用这钱还债。那晚说的条件没变。想好了就说。」",
+                "Kanon_Opt_AcceptOffer_Option1_op1": "接受提议",
+                "Kanon_Opt_AcceptOffer_Option1_op2": "还没想好",
+                "Kanon_Opt_AcceptOffer_Refuse": "「随你。若是改了主意，随时过来就是。」",
+                "Kanon_Opt_AcceptOffer_NotInOffice": "「这儿不是谈正事的地方。那件事，到事务所再说。」"
+            },
+            "en-us": {}
+        }
+    }
+}

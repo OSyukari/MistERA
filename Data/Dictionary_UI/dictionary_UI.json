@@ -604,6 +604,11 @@
 "com_special_talkTo": "交谈",
 "com_special_talkTo_tooltip": "打开一个更详细的二级面板",
 
+"com_special_dialogues": "互动选项",
+"menu_dialogue_title": "与$target$的互动选项",
+"menu_dialogue_title_coms":"行动类",
+"menu_dialogue_title_events":"事件类",
+
 "com_special_changeRel": "改变人际关系",
 "com_special_changeRel_notarget": "没有可改变关系的目标对象",
 "com_special_changeRel_tooltip": "可以提议改变双方的个人关系",

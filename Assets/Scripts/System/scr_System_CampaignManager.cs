@@ -477,11 +477,11 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="record"></param>
     /// <param name="visible"></param>
     /// <param name="animate"></param>
-    public void AddLog(I_Records record, Character_Trainable visible,  bool animate = false, Dictionary<string, string> replaceStrings = null)
+    public void AddLog(I_Records record, Character_Trainable visible,  bool animate = false, Dictionary<string, string> replaceStrings = null, UISpec displaySnapshot = null)
     {
         if (record == null) return;
 
-        if (record is DescriptionCollector) 
+        if (record is DescriptionCollector)
         {
             var desc = record as DescriptionCollector;
             if (desc == null) return;
@@ -496,7 +496,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 //Debug.LogError($"{scr_System_Time.current.getCurrentTime()}: AddLog {desc.message}, {desc.message_excludeRelated}");
             }
-            var log = LogManager.AddLog(desc, visible, replaceStrings);
+            var log = LogManager.AddLog(desc, visible, replaceStrings, displaySnapshot);
             if (log != null) Observer_MessageLogs?.Invoke(log, animate);
 
         }
@@ -619,23 +619,32 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="animate">whether on add line invoke a ui update</param>
     public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool rA, bool animate = true, UISpec displaySnapshot = null)
     {
+        AddLog_LineContent(instance, line, line.line, displaySnapshot ?? line.UISpec, rA);
+    }
+
+    public void AddLog_Line(EventInstance instance, Event.EventEntry.Options option, bool rA, bool animate = true, UISpec displaySnapshot = null)
+    {
+        AddLog_LineContent(instance, option, option.line, displaySnapshot ?? option.UISpec, rA);
+    }
+
+    private void AddLog_LineContent(EventInstance instance, I_hasPortrait handler, string rawLine, UISpec spec, bool rA)
+    {
         // here we need to process line into translated
         //Debug.Log($"Event Addline {line}");
         Message_Text log = null;
-        var spec = displaySnapshot ?? line.UISpec;
 
-        var content = UtilityEX.ParseEventEntry(instance, line.line);
+        var content = UtilityEX.ParseEventEntry(instance, rawLine);
         if (content.Length < 1) return;
         //Debug.Log($"AddLog_Line parsed content: {content}");
         if (spec.PortraitRefKey == "self" && instance.Self != null && instance.Self.RefID != 0)
         {
-            var msglog = new Message_Text(instance.Self, line, content, rA, "", default, instance);
+            var msglog = new Message_Text(instance.Self, handler, content, rA, "", default, instance);
             //msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
         else if (instance.Targets.TryGetValue(spec.PortraitRefKey, out var targetrefs))
         {
-            var msglog = new Message_Text(targetrefs, line, null, "", default, instance);
+            var msglog = new Message_Text(targetrefs, handler, null, "", default, instance);
             msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
@@ -644,16 +653,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false) as Message_Text;
         }
 
-        if (log != null)
-        {
-            log.Display.PortraitRefKey = spec.PortraitRefKey;
-            log.Display.SelfTags = spec.SelfTags;
-            log.Display.TargetTags = spec.TargetTags;
-            log.Display.BGImagePath = spec.BGImagePath;
-            log.Display.displayMode = spec.displayMode;
-            log.Display.infoDisplay = spec.infoDisplay;
-        }
-
+        if (log != null) log.Display.LoadDataFrom(spec);
         //
         if (log != null && instance.Self != null && instance.Self.CurrentRoom != null && instance.Self.CurrentRoom.HasRecording)
         {
@@ -712,15 +712,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             PortraitManager portraitRef = null;
             log = LogManager.AddLog(new Message_Question(portraitRef, question, parent, question));
         }
-        if (log != null)
-        {
-            log.Display.PortraitRefKey = spec.PortraitRefKey;
-            log.Display.SelfTags = spec.SelfTags;
-            log.Display.TargetTags = spec.TargetTags;
-            log.Display.BGImagePath = spec.BGImagePath;
-            log.Display.displayMode = spec.displayMode;
-            log.Display.infoDisplay = spec.infoDisplay;
-        }
+        if (log != null) log.Display.LoadDataFrom(spec);
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
     /// <summary>
@@ -750,15 +742,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             log = LogManager.AddLog(new Message_InputField(portraitRef, question, parent, question));
             
         }
-        if (log != null)
-        {
-            log.Display.PortraitRefKey = spec.PortraitRefKey;
-            log.Display.SelfTags = spec.SelfTags;
-            log.Display.TargetTags = spec.TargetTags;
-            log.Display.BGImagePath = spec.BGImagePath;
-            log.Display.displayMode = spec.displayMode;
-            log.Display.infoDisplay = spec.infoDisplay;
-        }
+        if (log != null) log.Display.LoadDataFrom(spec);
         Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
     }
 
@@ -1567,9 +1551,12 @@ public class scr_System_CampaignManager : MonoBehaviour
             {
                 scr_UpdateHandler.current.Animating = false;
                 EnableCanvasAnchor();
+                Observer_MessageDisplay?.Invoke(defaultUI);
             }
         }
     }
+
+    UISpec defaultUI = new UISpec();
 
     public event Action<int, Job> Observer_PlayerJob;
     public void NotifyPlayerJobChange(int jobRefID, Job job)

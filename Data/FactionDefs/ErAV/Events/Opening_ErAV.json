@@ -2,7 +2,6 @@
     "Events": {
         "list": [
             {
-                "_comment": "OnCampaignStart. Requires both kanade and kanon. Sets erav_kanon_debt_total=30000000 at the principal reveal (L19). Sets erav_kanon_offer=1 on agree (Q01 op1). Sets erav_kanade_promise=1 on accepting Kanade's request (AQ op1). Camera/tapes moved to Kanon_Dialogue first-visit branch. TODO: erav_kanon_offer_day needs dynamic day injection (engine support pending).",
                 "ID": "Opening_ErAV",
                 "allowDuplicate": false,
                 "trigger": "OnCampaignStart",
@@ -22,7 +21,7 @@
                     ]
                 },
                 "UISpec": {
-                    "bgImagePath": "ErAV/CG/funeral_01.webp",
+                    "bgImagePath": "ErAV/CG/Opening_ErAV_00.webp",
                     "displayMode":"AVG",
                     "infoDisplay":"Hide"
                 },
@@ -154,12 +153,21 @@
                         "line": "event_OpeningErAV_L19",
                         "Results": [
                             {
-                                "Type": "ModSelfKojoVariable",
+                                "Type": "SetSelfKojoVariable",
                                 "arguments": [
                                     "self",
                                     "false",
                                     "erav_kanon_debt_total",
                                     "30000000"
+                                ]
+                            },
+                            {
+                                "Type": "SetSelfKojoVariable",
+                                "arguments": [
+                                    "self",
+                                    "false",
+                                    "erav_debt_month",
+                                    "0"
                                 ]
                             }
                         ]
@@ -248,7 +256,7 @@
                                 "option": "event_OpeningErAV_Q01_op1",
                                 "Results": [
                                     {
-                                        "Type": "ModSelfKojoVariable",
+                                        "Type": "SetSelfKojoVariable",
                                         "arguments": [
                                             "self",
                                             "false",
@@ -533,7 +541,7 @@
                                 "option": "event_OpeningErAV_AQ_op1",
                                 "Results": [
                                     {
-                                        "Type": "ModSelfKojoVariable",
+                                        "Type": "SetSelfKojoVariable",
                                         "arguments": [
                                             "self",
                                             "false",
@@ -660,6 +668,17 @@
                                 "surprised"
                             ]
                         },
+                        "Results":[
+                            {
+                                "Type": "SetSelfKojoVariable",
+                                "arguments": [
+                                    "self",
+                                    "false",
+                                    "erav_kanon_offer",
+                                    "0"
+                                ]
+                            }
+                        ],
                         "line": "event_OpeningErAV_R01"
                     },
                     {
@@ -673,18 +692,6 @@
                             ]
                         },
                         "line": "event_OpeningErAV_R02"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "hostile",
-                                "angry"
-                            ]
-                        },
-                        "line": "event_OpeningErAV_R03"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
@@ -822,20 +829,13 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "R10",
                         "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "event_OpeningErAV_R10"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
                             "portraitRefKey": "kanade",
                             "selfTags": [
                                 "fear",
                                 "sad"
                             ]
                         },
-                        "line": "event_OpeningErAV_R11"
+                        "line": "event_OpeningErAV_R10"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
@@ -883,7 +883,7 @@
                 "event_OpeningErAV_L10": "当中那位身着华美和服的少女撑着纸伞，抬眼打量着屋内。雨珠顺着伞骨滑落。\n「深夜叨扰，失礼了。」\n这张脸$self.name$认得。桐生歌音——学校的学生会长。只是这位学生会长还有另一重身份：这片街区背后的黑道组织，实际由她管事。两重身份向来互不相干，本不该有什么交集。此刻她却带着人，在父母葬礼当晚闯进了家门。",
                 "event_OpeningErAV_L13": "「我今夜登门，不为别的，只为令尊留下的那笔账。」",
                 "event_OpeningErAV_L14": "「……账？」",
-                "event_OpeningErAV_L15": "「简而言之：连带保证。令尊宫间谦三，替人作了保。」\n「如今那个主债务人，查无此人——按约，账就落到保证人头上。」\n「令尊令堂皆已过世。作为继承人，这笔债自然转到你和令妹肩上。」",
+                "event_OpeningErAV_L15": "「简而言之：连带保证。令尊宫间谦三，替人作了保。」\n「如今那个主债务人，查无此人——于是按约，账就落到保证人头上。」\n「令尊令堂皆已过世。作为继承人，这笔债自然转到你和令妹肩上。」",
                 "event_OpeningErAV_L18": "「连带保证……父亲他……怎么会……」",
                 "event_OpeningErAV_L19": "「本金，三千万。」\n「利息按月滚算，只增不减。单是利息，每月就要四十五万。」",
                 "event_OpeningErAV_L21": "「别想着赖账——连带保证的债，连破产都洗不掉。桐生组有的是办法：查封房产、扣押账户、断了你的生路。」",
@@ -919,17 +919,15 @@
                 "event_OpeningErAV_RC03": "$kanade.name$的眼眶又红了。她张了张嘴，终究没再坚持，只是默默攥紧衣角。\n$self.name$把妹妹搂进怀里。窗外的雨势渐歇，可沉甸甸压在心头的，并不只是债务。",
                 "event_OpeningErAV_RC05": "那夜，两人谁也没合眼。等窗棂透进微白的晨光，雨已经停了。\n天亮了。明天还得去见那个人。这条路，$self.name$只能独自走。摆在面前的，是三千万与必须扛起的重担。",
                 "event_OpeningErAV_R01": "「哦？宁可自己扛？」",
-                "event_OpeningErAV_R02": "「随你。只是记好——月底之前，四十五万的利息，分文不能少。」",
-                "event_OpeningErAV_R03": "「到了日子交不上，桐生组自有收账的法子。到时候，可别怪我不讲情面。」",
-                "event_OpeningErAV_R04": "「哪天撑不住了，来事务所找我。这扇门，始终为你开着。」",
+                "event_OpeningErAV_R02": "「随你。只是记好——月底之前，四十五万的利息，分文不能少。」\n「到了日子交不上，桐生组自有收账的法子。到时候，可别怪我不讲情面。」",
+                "event_OpeningErAV_R04": "「要是改主意的话，来事务所找我。」",
                 "event_OpeningErAV_R05": "话音落下，$kanon.name$拢了拢和服领口，转身朝门外走去。\n黑衣男人一个接一个跟在身后。临到门口，她忽又停下，背对着屋内。",
                 "event_OpeningErAV_R07": "「……对于你父母的事，我很遗憾。」",
                 "event_OpeningErAV_R08": "门合上的瞬间，屋内只剩雨声与线香燃尽的轻响。",
                 "event_OpeningErAV_R09": "「$self.name$……」",
                 "event_OpeningErAV_R09_F": "「姐姐……」",
                 "event_OpeningErAV_R09_M": "「哥哥……」",
-                "event_OpeningErAV_R10": "$kanade.name$嘴唇抖了抖，半晌才挤出几个字。",
-                "event_OpeningErAV_R11": "「四十五万……月底之前……我们、我们去哪儿弄这么多钱？」\n「打工……就算不眠不休，也……也填不上这笔债啊……」",
+                "event_OpeningErAV_R10": "$kanade.name$嘴唇抖了抖，半晌才挤出几个字。\n「四十五万……月底之前……我们、我们去哪儿弄这么多钱？」\n「打工……就算不眠不休，也……也填不上这笔债啊……」",
                 "event_OpeningErAV_R13": "「……交给我。我会想办法的。」",
                 "event_OpeningErAV_R14": "$self.name$把妹妹搂进怀里。窗外雨势渐歇，两人却都明白前路凶险。",
                 "event_OpeningErAV_R15": "那夜，两人谁也没合眼。等窗棂透进微白的晨光，雨已经停了。\n天亮了。摆在$self.name$面前的，是三千万的债与必须独自扛起的重担。"

@@ -538,7 +538,17 @@ public class scr_System_Serializer : MonoBehaviour
             }
             if (skipped) continue;
             //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
-            MasterList l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName),UtilityEX.SerializerSettings);
+            MasterList l;
+            try
+            {
+                l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to parse masterlist file [{file.FullName}], skipping. Reason: {e.Message}");
+                skippedFiles.Add($"Skipping file {file.Name} due to parse failure: {e.Message}");
+                continue;
+            }
             if (l != null)
             {
                 MasterList.MergeWith(l);

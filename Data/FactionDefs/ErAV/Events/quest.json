@@ -33,6 +33,13 @@
                                     "checkExistOnly":true,
                                     "value":1,
                                     "appendStringKey":"debt_value"
+                                },
+                                {
+                                    "variableID":"erav_debt_month",
+                                    "isDailyVariable":false,
+                                    "checkExistOnly":true,
+                                    "value":1,
+                                    "appendStringKey":"debt_pay_count"
                                 }
                             ]
                         }
@@ -94,6 +101,32 @@
             }
         },
         {
+            "ID":"erav_debt_tracker_01_01_late",
+            "_comment":"late",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_offer",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"1"
+                            },
+                            {
+                                "variableID":"erav_kanon_offer_late",
+                                "isDailyVariable":false,
+                                "operand":"gt",
+                                "value":"0",
+                                "appendStringKey":"late_count"
+                                
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
             "ID":"erav_debt_tracker_01_01_kanade",
             "_comment":"optional: bring kanade along\nif prereq exist and not satisfied, stage is hidden.",
             "chara_requirement":{
@@ -111,6 +144,24 @@
                                 "isDailyVariable":false,
                                 "operand":"eq",
                                 "value":"1"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_02_kanade",
+            "_comment":"",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanade_promise",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"2"
                             }
                         ]
                     }
@@ -165,10 +216,12 @@
         "Entries": {
             "zh-cn": {
 "erav_debt_tracker":"偿还欠债",
-"erav_debt_tracker_01":"想办法还上30M日元的欠债，剩余欠款$debt_value$",
-"erav_debt_tracker_01_00":"拒绝了歌音的提案。\n得想别的办法还上这笔债。",
+"erav_debt_tracker_01":"想办法还上30M日元的欠债，剩余欠款$debt_value$。偿款次数$debt_pay_count$",
+"erav_debt_tracker_01_00":"拒绝了歌音的提案。得想别的办法还上这笔债。",
 "erav_debt_tracker_01_01":"放学后去%%ErAV_KiryuGumi_Office%%会见歌音",
-"erav_debt_tracker_01_01_kanade":"可选：带上奏一起去见歌音",
+"erav_debt_tracker_01_01_late":"迟到了$late_count$天",
+"erav_debt_tracker_01_01_kanade":"约定了带上奏一起去见歌音",
+"erav_debt_tracker_01_02_kanade":"没有带上奏，单独去见了歌音",
 "erav_debt_tracker_01_02":"接受了歌音的提案，拍片赚钱吧",
 "erav_debt_tracker_02":"已还请欠债。"
 

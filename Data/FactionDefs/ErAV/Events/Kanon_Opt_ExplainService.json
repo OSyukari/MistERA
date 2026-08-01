@@ -1,0 +1,119 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "Kanon_Opt_ExplainService",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": {
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_offer",
+                                "operand": "gte",
+                                "value": 2
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_in_office",
+                                "target_chara_conditions":{
+                                    "kanon":[
+                                        { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_begin" ] }
+                                ]
+                            },
+                            {
+                                "option": "fallback_not inoffice",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_not_in_office" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_not_in_office",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "focused", "serious" ]
+                        },
+                        "line": "Kanon_Opt_AcceptOffer_NotInOffice",
+                        "isLast": true
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label":"br_begin",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kes_L01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "kes_L02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "smug", "happy" ]
+                        },
+                        "line": "kes_L03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kes_L04",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanon_Opt_ExplainService":"询问经营详情",
+                "kes_L01": "「问生意上的事？好。」\n「片子交到我这里，销售的事你不用管。桐生组有固定的买家——熟客按月定量拿货，剩下的走几家长期合作的店面。只要片子在架上，每周都能有进账。」",
+                "kes_L02": "「片子拍得多了，各色题材的市场反应自然分得出来——哪些卖得好，哪些有人指名。做得久了，会有常客下单要特定的花样，价钱比批发高得多。这种单子我看情况往下分。接得住，进账更快。」",
+                "kes_L03": "「还有件事。你手下的女优，可以借给外面的片商去拍。对方出钱，桐生组抽成，剩下的归你。人出去两三天就回来。」\n「不过话说在前头——人在外头出了事，不是每次都能替你收拾。」",
+                "kes_L04": "「等名气做起来，自然有报酬更厚的委托找上门。不过眼下——先把手里的事做出样子再说。」"
+            },
+            "en-us": {}
+        }
+    }
+}

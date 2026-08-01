@@ -858,6 +858,7 @@ public class scr_panel_COMmanager : scr_Menu
                         // if (c.ParentCOM != null) continue;
 
                         if (c.hidden) continue;
+                        if (c.comTags.Contains("dialogueOnly")) continue;
                         if (c.comTags.Contains("interaction") || c.comTags.Contains("action"))
                         {
                            // Debug.Log("Making Player COM " + c.ID);

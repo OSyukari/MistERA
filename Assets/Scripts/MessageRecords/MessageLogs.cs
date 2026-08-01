@@ -88,7 +88,7 @@ public class MessageLogManager
         this.currentPortrait = null;
     }
 
-    public MessageLog AddLog(DescriptionCollector desc, Character_Trainable chara, Dictionary<string, string> replaceStrings = null)
+    public MessageLog AddLog(DescriptionCollector desc, Character_Trainable chara, Dictionary<string, string> replaceStrings = null, UISpec displaySnapshot = null)
     {
         if (desc == null) return null;
         if (!desc.VisibleTo(chara)) return null;
@@ -96,7 +96,8 @@ public class MessageLogManager
         else if (!desc.DirectlyRelated(chara) && desc.message_excludeRelated.Length < 1) return null;
         bool rA = desc.RightAlign(chara);
 
-        Message_Text log = new Message_Text(desc, desc.DirectlyRelated(chara), rA, replaceStrings);       
+        Message_Text log = new Message_Text(desc, desc.DirectlyRelated(chara), rA, replaceStrings);
+        if (displaySnapshot != null) log.Display.LoadDataFrom(displaySnapshot);
         return AddLog(log);
     }
 

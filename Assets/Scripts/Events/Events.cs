@@ -79,7 +79,8 @@ public enum EventTrigger
     OnCampaignStart,
     OnEnterRoom,
     OnDialogue,
-    OnDialogue_Options
+    OnDialogue_Options,
+    OnDailyUpdate
 }
 /// <summary>
 /// Ordered, 3 first are considered member of faction, and the rest is not (temp visitor / prisoner)
@@ -105,6 +106,7 @@ public enum TargetScope
     CurrentTarget,
     AllCharaInSelfRoom,
     AllCharaInSelfRoom_ExcludeSelf,
+    AllCharaInSelfRoom_AllowParty,
     ScopeWithinRef,
     ScopeInRoomExceptRef
 }
@@ -139,6 +141,12 @@ public class EventScope_Target
 public class Event_CharaCondition
 {
     public List<string> parameters = new List<string>();
+    /// <summary>
+    /// If requireKojoVariable.appendStringKey is set, the currently-scoped variable's value is stored
+    /// into the owning EventInstance.AppendStrings under that key (once a relationship is resolved,
+    /// regardless of whether the requirement passes) — queryable via $key$ substitution in event text,
+    /// the same way QuestUtility stores requireKojoVariables.appendStringKey values for quest text.
+    /// </summary>
     public RequireKojoVariable requireKojoVariable = null;
     /// <summary>
     /// Which bound refKey (from EventInstance.Targets) to resolve the Character_Relationship against
@@ -363,13 +371,19 @@ public class Event : I_SerializationCallbackReceiver
         /// check command validator
         /// self validator and executor will need to read local string data
         /// </summary>
-        public class Options
+        public class Options : I_hasPortrait
         {
             public string option = "";
             /// <summary>
             /// if tooltip key exist as a key in AppendStrings, then take content from appendstring as tooltip
             /// </summary>
             public string tooltip = "";
+
+            public string line = "";
+            [JsonProperty("UISpec")] public UISpec UISpec = UISpec.Template();
+
+            [JsonIgnore] public List<string> SelfPortraitTag { get { return UISpec.SelfTags; } }
+            [JsonIgnore] public List<string> TargetPortraitTag { get { return UISpec.TargetTags; } }
 
             public List<Condition> conditions = new List<Condition>();
             public List<Event_CharaCondition> self_chara_conditions = new List<Event_CharaCondition>();
@@ -436,11 +450,19 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>
             /// [self/targetkey, isdaily, stringkey, value]
             /// </summary>
+            SetSelfKojoVariable,
+            /// <summary>
+            /// [selfkey, targetKey, isdaily, stringkey, value]
+            /// </summary>
+            SetRelKojoVariable,
+            /// <summary>
+            /// [self/targetkey, isdaily, stringkey, value]
+            /// </summary>
             ModSelfKojoVariable,
             /// <summary>
             /// [selfkey, targetKey, isdaily, stringkey, value]
             /// </summary>
-            ModRelfKojoVariable,
+            ModRelKojoVariable,
             /// <summary>
             /// [selfkey, isdaily, stringkey]
             /// </summary>

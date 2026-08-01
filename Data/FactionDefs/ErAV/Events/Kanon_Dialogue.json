@@ -2,7 +2,6 @@
     "Events": {
         "list": [
             {
-                "_comment": "Kanon_Dialogue. OnDialogue entry. Fires when player talks to Kanon. First-branch dispatches 4 cases: (1) offer==1 && !firstvisit_done && in office -> first-visit narrative; (2) in office (else) -> greeting + debt progress; (3) offer==1 && !firstvisit_done && not in office -> 'come to my office'; (4) not in office (else) -> defer to greeting kojo (placeholder). OnDialogue_Options events are displayed by the engine AFTER this event finishes. DESIGN NOTES: Kanon does NOT know about any promise regarding Kanade -> kanade handling is presence-only, never asks 'where is your sister'. Punishment/victim commentary branches on erav_last_victim (Kanon took part in the punishment event, and may herself be the victim when value==4); on-time payment clears it to 0. TODO: placeholder conditions still need real engine support — kojoVariableEquals / kojoVariableNotEquals / daySinceKojoVariable value & day arithmetic (§15 Q2/Q4), targetExists for kanade-in-room, greeting kojo collection function for branch 4 (§15 Q2). isActiveFaction is now implemented (EventUtility.isValid), and the firstvisit checks now use requireKojoVariable (erav_kanon_offer eq 1); ac_closing advances erav_kanon_offer from 1 to 2 instead of writing erav_kanon_firstvisit_done.",
                 "ID": "Kanon_Dialogue",
                 "allowDuplicate": false,
                 "trigger": "OnDialogue",
@@ -21,6 +20,10 @@
                         }
                     ]
                 },
+                "UISpec": {
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
                 "TargetValidators": [
                     {
                         "refkeys": [
@@ -36,38 +39,51 @@
                             }
                         ],
                         "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [
+                            "kanade"
+                        ],
+                        "baseScope": "AllCharaInSelfRoom_ExcludeSelf",
+                        "chara_conditions": [
+                            {
+                                "parameters": [
+                                    "isActorBaseID",
+                                    "ErAV_Kanade"
+                                ]
+                            }
+                        ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    },
+                    {
+                        "refkeys": [
+                            "victim"
+                        ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
                     }
                 ],
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "First-branch: 4 cases, first match wins.",
+                        "_comment": "Top-level split: kanon in her office vs. anywhere else.",
                         "options": [
                             {
-                                "option": "_in_office_firstvisit",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "isActiveFaction",
-                                            "ErAV_KiryuGumi_Office"
-                                        ]
-                                    }
-                                ],
+                                "option": "_in_office",
+                                "target_chara_conditions":{
+                                    "kanon":[
+                                        { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                                    ]
+                                },
                                 "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "kd_K01"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "Kanon_Dialogue_inoffice_begin" ] }
                                 ]
                             },
                             {
                                 "option": "_not_in_office_firstvisit",
                                 "self_chara_conditions": [
                                     {
-                                        "relationshipTargetKey": "self",
                                         "requireKojoVariable": {
                                             "variableID": "erav_kanon_offer",
                                             "operand": "eq",
@@ -77,19 +93,10 @@
                                 ],
                                 "Results": [
                                     {
-                                        "Type": "GetKojoEntry",
-                                        "arguments": [
-                                            "kanon",
-                                            "self",
-                                            "DailyGreeting",
-                                            "greeting"
-                                        ]
-                                    },
-                                    {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "branch3"
+                                            "Kanon_Dialogue_NotInOffice"
                                         ]
                                     }
                                 ]
@@ -110,7 +117,7 @@
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "branch4"
+                                            "br_greeting"
                                         ]
                                     }
                                 ]
@@ -119,13 +126,7 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "kd_K01"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "Kanon_Dialogue_inoffice_begin",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -134,23 +135,211 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_K02"
+                        "line": "Kanon_Dialogue_inoffice",
+                        "nextEntryLabel": "debt_status_check"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "debt_status_check",
+                        "_comment": "Block A - debt-cycle commentary. Only fires once at least one repayment cycle has passed (erav_debt_month >= 1). Independent of, and always evaluated before, the job-offer block below.",
+                        "options": [
+                            {
+                                "option": "debt_month_reached",
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_debt_month",
+                                            "operand": "gte",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_check" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_no_debt_commentary",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
+                                ]
+                            }
+                        ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "First-branch: 4 cases, first match wins.",
+                        "label": "debt_status_victim_check",
+                        "_comment": "Player failed to pay back this cycle -> a victim was taken as payment.",
                         "options": [
                             {
-                                "option": "_in_office_firstvisit",
+                                "option": "has_victim",
+                                "target_chara_conditions": {
+                                    "victim": [
+                                        { "parameters": [ "exists" ] }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_identify" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_no_victim",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_no_victim_check" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "debt_status_victim_identify",
+                        "options": [
+                            {
+                                "option": "victim_is_kanon",
+                                "target_chara_conditions": {
+                                    "victim": [
+                                        { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_kanon_line" ] }
+                                ]
+                            },
+                            {
+                                "option": "victim_is_kanade",
+                                "target_chara_conditions": {
+                                    "victim": [
+                                        { "parameters": [ "isActorBaseID", "ErAV_Kanade" ] }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_kanade_line" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_victim_is_other",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_other_line" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "debt_status_victim_kanon_line",
+                        "_comment": "Kanon herself was taken as payment. She talks about being forced to have sex to cover the player's debt, and asks whether the player enjoys seeing her taken by other managers.",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Debt_VictimKanon",
+                        "nextEntryLabel": "job_offer_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "debt_status_victim_kanade_line",
+                        "_comment": "Kanade was taken as payment. Kanon comments on Kanade being gangbanged to cover the debt, and that the player should work harder or reconsider their limits.",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Debt_VictimKanade",
+                        "nextEntryLabel": "job_offer_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "debt_status_victim_other_line",
+                        "_comment": "Some other girl was taken as payment. Same follow-up remark as the Kanade case - work harder, or reconsider limits.",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Debt_VictimOther",
+                        "nextEntryLabel": "job_offer_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "debt_status_no_victim_check",
+                        "_comment": "Player paid back in full this cycle - no victim taken.",
+                        "options": [
+                            {
+                                "option": "progress_good",
+                                "_comment": "erav_kanon_offer >= 2 means the player is repaying through the job Kanon set up for them.",
                                 "self_chara_conditions": [
                                     {
-                                        "parameters": [
-                                            "isActiveFaction",
-                                            "ErAV_KiryuGumi_Office"
-                                        ]
-                                    },
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanon_offer",
+                                            "operand": "gte",
+                                            "value": 2
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_progress_good_line" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_progress_other_means",
+                                "_comment": "Player is not working Kanon's job (offer < 2) yet still paid - money came from elsewhere.",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_progress_other_means_line" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "debt_status_progress_good_line",
+                        "_comment": "Comment on good repayment progress via the job.",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "confident",
+                                "relaxed"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Debt_ProgressGood",
+                        "nextEntryLabel": "job_offer_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "debt_status_progress_other_means_line",
+                        "_comment": "Comment on the player somehow getting the money through other means, and wondering how long that can last.",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Debt_OtherMeans",
+                        "nextEntryLabel": "job_offer_check"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "job_offer_check",
+                        "_comment": "Block B - the job-offer / first-meeting flow. Only fires exactly on erav_kanon_offer == 1 (the single visit where the player takes Kanon up on her offer). Independent of, and always evaluated after, the debt block above.",
+                        "options": [
+                            {
+                                "option": "offer_active",
+                                "self_chara_conditions": [
                                     {
-                                        "relationshipTargetKey": "self",
                                         "requireKojoVariable": {
                                             "variableID": "erav_kanon_offer",
                                             "operand": "eq",
@@ -159,149 +348,119 @@
                                     }
                                 ],
                                 "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "branch1"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_check" ] }
                                 ]
                             },
                             {
-                                "option": "_in_office_else",
+                                "option": "_fallback_offer_inactive",
                                 "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "branch2"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kanon_dialogue_generic_closing" ] }
                                 ]
                             }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "branch1",
-                        "_comment": "First-visit narrative. Punctuality by current_day - erav_kanon_offer_day; post-billing overrides. Writes erav_kanon_firstvisit_punctual per path; erav_kanon_firstvisit_done written at ac_closing. Day conditions TODO (plan §15 Q4).",
+                        "label": "job_offer_flavor_check",
+                        "_comment": "Opening remark before the job introduction. Victim-exists takes priority over punctuality. erav_kanon_offer_late thresholds are currently never satisfied (day-arithmetic to compute lateness from erav_kanon_offer_day is not implemented yet) so this always falls through to punctual until that lands.",
                         "options": [
                             {
-                                "option": "_postbill",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "hasKojoVariable",
-                                            "erav_debt_month"
-                                        ]
-                                    }
-                                ],
+                                "option": "flavor_victim_consequence",
+                                "_comment": "Player already saw a victim taken this cycle - Kanon remarks the player now knows the consequences of not paying up.",
+                                "target_chara_conditions": {
+                                    "victim": [
+                                        { "parameters": [ "exists" ] }
+                                    ]
+                                },
                                 "Results": [
-                                    {
-                                        "Type": "ModSelfKojoVariable",
-                                        "arguments": [
-                                            "self",
-                                            "false",
-                                            "erav_kanon_firstvisit_punctual",
-                                            "2"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_postbill_branch"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_consequences_line" ] }
                                 ]
                             },
                             {
-                                "option": "_verydelayed",
+                                "option": "flavor_very_late",
                                 "self_chara_conditions": [
                                     {
-                                        "parameters": [
-                                            "daySinceKojoVariable",
-                                            "erav_kanon_offer_day",
-                                            "7"
-                                        ]
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanon_offer_late",
+                                            "isDailyVariable": false,
+                                            "operand": "gte",
+                                            "value": 3
+                                        }
                                     }
                                 ],
                                 "Results": [
-                                    {
-                                        "Type": "ModSelfKojoVariable",
-                                        "arguments": [
-                                            "self",
-                                            "false",
-                                            "erav_kanon_firstvisit_punctual",
-                                            "2"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_verydelayed_n"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_verydelayed_line" ] }
                                 ]
                             },
                             {
-                                "option": "_delayed",
+                                "option": "flavor_late",
                                 "self_chara_conditions": [
                                     {
-                                        "parameters": [
-                                            "daySinceKojoVariable",
-                                            "erav_kanon_offer_day",
-                                            "2"
-                                        ]
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanon_offer_late",
+                                            "isDailyVariable": false,
+                                            "operand": "gte",
+                                            "value": 1
+                                        }
                                     }
                                 ],
                                 "Results": [
-                                    {
-                                        "Type": "ModSelfKojoVariable",
-                                        "arguments": [
-                                            "self",
-                                            "false",
-                                            "erav_kanon_firstvisit_punctual",
-                                            "1"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_delayed"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_delayed_line" ] }
                                 ]
                             },
                             {
-                                "option": "_fallback_punctual",
+                                "option": "_fallback_flavor_punctual",
                                 "Results": [
-                                    {
-                                        "Type": "ModSelfKojoVariable",
-                                        "arguments": [
-                                            "self",
-                                            "false",
-                                            "erav_kanon_firstvisit_punctual",
-                                            "0"
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_punctual"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_punctual_line" ] }
                                 ]
                             }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_punctual",
+                        "label": "job_offer_flavor_consequences_line",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_firstMeeting_consequences",
+                        "nextEntryLabel": "job_intro_explain_business"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "job_offer_flavor_verydelayed_line",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_firstMeeting_verydelayed",
+                        "nextEntryLabel": "job_intro_explain_business"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "job_offer_flavor_delayed_line",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "focused",
+                                "serious"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_firstMeeting_delayed",
+                        "nextEntryLabel": "job_intro_explain_business"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "job_offer_flavor_punctual_line",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -310,142 +469,23 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_AC01",
-                        "nextEntryLabel": "biz_full"
+                        "line": "Kanon_Dialogue_inoffice_firstMeeting_punctual",
+                        "nextEntryLabel": "job_intro_explain_business"
                     },
+
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_delayed",
+                        "label": "job_intro_explain_business",
                         "UISpec": {
                             "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
+                            "selfTags": [ "yakuza", "focused", "serious" ]
                         },
-                        "line": "kd_AC02",
-                        "nextEntryLabel": "biz_full"
+                        "line": "Kanon_Dialogue_inoffice_Explain01",
+                        "nextEntryLabel": "job_intro_explain_equipment"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_verydelayed_n",
-                        "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "kd_AC03n",
-                        "nextEntryLabel": "ac_verydelayed_k"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_verydelayed_k",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_AC03k",
-                        "nextEntryLabel": "biz_minimal"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "ac_postbill_branch",
-                        "_comment": "Post-billing: split by whether punishment already happened.",
-                        "options": [
-                            {
-                                "option": "_failed",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "hasKojoVariable",
-                                            "erav_punishment_done"
-                                        ]
-                                    }
-                                ],
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_pbf_branch"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "_fallback_paid",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_postbill_paid"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_postbill_paid",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_AC04",
-                        "nextEntryLabel": "biz_full"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "ac_pbf_branch",
-                        "_comment": "Punishment happened before first visit. Branch on erav_last_victim. Kanon took part; she may be the victim (value==4). TODO: kojoVariableEquals placeholder.",
-                        "options": [
-                            {
-                                "option": "_victim_kanon",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "kojoVariableEquals",
-                                            "erav_last_victim",
-                                            "4"
-                                        ]
-                                    }
-                                ],
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_pbf_kanon"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "_fallback_victim_other",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_pbf_other"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_pbf_kanon",
+                        "label": "job_intro_explain_equipment",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -454,49 +494,7 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_pbf_kanon",
-                        "nextEntryLabel": "biz_minimal"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_pbf_other",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_pbf_other",
-                        "nextEntryLabel": "biz_minimal"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "biz_full",
-                        "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "kd_BIZ01n"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_BIZ02k"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "kd_BIZ03n",
+                        "line": "Kanon_Dialogue_inoffice_Explain02",
                         "Results": [
                             {
                                 "Type": "TransferItemByFactionID",
@@ -518,10 +516,12 @@
                                     "true"
                                 ]
                             }
-                        ]
+                        ],
+                        "nextEntryLabel": "job_intro_explain_terms"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "job_intro_explain_terms",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -530,22 +530,12 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_BIZ04k"
+                        "line": "Kanon_Dialogue_inoffice_Explain03",
+                        "nextEntryLabel": "job_intro_explain_recruitment"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_BIZ05k"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "job_intro_explain_recruitment",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -554,65 +544,15 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_BIZ06k"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "smug",
-                                "happy"
-                            ]
-                        },
-                        "line": "kd_BIZ07k"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "confident",
-                                "relaxed"
-                            ]
-                        },
-                        "line": "kd_BIZ08k",
-                        "nextEntryLabel": "biz_casting_gender"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "biz_minimal",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_BIZ_M1k"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "hostile",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_BIZ_M2k",
-                        "nextEntryLabel": "kanade_check"
+                        "line": "Kanon_Dialogue_inoffice_Explain04",
+                        "nextEntryLabel": "job_intro_gender_check"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "biz_casting_gender",
+                        "label": "job_intro_gender_check",
                         "options": [
                             {
-                                "option": "_female",
+                                "option": "player_is_female",
                                 "self_chara_conditions": [
                                     {
                                         "parameters": [
@@ -621,117 +561,21 @@
                                     }
                                 ],
                                 "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "biz_casting_F_n"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_actress_option_line" ] }
                                 ]
                             },
                             {
-                                "option": "_fallback",
+                                "option": "_fallback_not_female",
                                 "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "kanade_check"
-                                        ]
-                                    }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_kanade_check" ] }
                                 ]
                             }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "biz_casting_F_n",
-                        "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "kd_BIZ_Fn",
-                        "nextEntryLabel": "biz_casting_F_k"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "biz_casting_F_k",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "smug",
-                                "happy"
-                            ]
-                        },
-                        "line": "kd_BIZ_Fk",
-                        "nextEntryLabel": "kanade_check"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "label": "kanade_check",
-                        "_comment": "Presence-only. Kanon does not know about any promise, so absent -> no remark, straight to closing. TODO: 'targetExists kanade' = kanade actually present in the room.",
-                        "options": [
-                            {
-                                "option": "_kanade_present",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "targetExists",
-                                            "kanade"
-                                        ]
-                                    }
-                                ],
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "kanade_present_n"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "_fallback_absent",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "ac_closing"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "kanade_present_n",
-                        "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "kd_KD01n",
-                        "nextEntryLabel": "kanade_present_k1"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "kanade_present_k1",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "smug",
-                                "happy"
-                            ]
-                        },
-                        "line": "kd_KD01k",
-                        "nextEntryLabel": "kanade_present_k2"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "kanade_present_k2",
+                        "label": "job_intro_actress_option_line",
+                        "_comment": "Female player is also offered the option to perform as an actress, not just direct.",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -740,12 +584,65 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_KD02k",
-                        "nextEntryLabel": "ac_closing"
+                        "line": "Kanon_Dialogue_inoffice_femalePlayer",
+                        "nextEntryLabel": "job_intro_kanade_check"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "job_intro_kanade_check",
+                        "_comment": "Presence resolved via the 'kanade' TargetValidator scope (AllCharaInSelfRoom_ExcludeSelf + isActorBaseID ErAV_Kanade, minTargetCount 1 with allowEventOnMinTargetCountMiss so absence doesn't block the event). If she's not there but is still owed an answer on her promise (erav_kanade_promise == 1, tracked on her own record), quietly resolve it without a remark - Kanon doesn't comment on a promise involving someone who isn't in the room.",
+                        "options": [
+                            {
+                                "option": "kanade_present",
+                                "target_chara_conditions": {
+                                    "kanade": []
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_kanade_presence_line" ] }
+                                ]
+                            },
+                            {
+                                "option": "kanade_absent_promise_pending",
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanade_promise",
+                                            "operand": "eq",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_kanade_promise", "2" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_closing" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_kanade_absent",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_closing" ] }
+                                ]
+                            }
+                        ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "ac_closing",
+                        "label": "job_intro_kanade_presence_line",
+                        "_comment": "Kanon notes Kanade's presence and that she could be useful.",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
+                                "yakuza",
+                                "smug",
+                                "happy"
+                            ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Kanade",
+                        "nextEntryLabel": "job_offer_closing"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "job_offer_closing",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -757,12 +654,12 @@
                         "line": "kd_AC_end",
                         "Results": [
                             {
-                                "Type": "ModSelfKojoVariable",
+                                "Type": "SetSelfKojoVariable",
                                 "arguments": [
                                     "self",
                                     "false",
                                     "erav_kanon_offer",
-                                    "1"
+                                    "2"
                                 ]
                             }
                         ],
@@ -770,147 +667,8 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "branch2",
-                        "UISpec": {
-                            "portraitRefKey": ""
-                        },
-                        "line": "kd_GR_pre"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "Debt-progress greeting, victim-based. Order: post-billing+kanon-victim, post-billing+other-victim, post-billing+good(offer), post-billing+good(refuse), fallback pre-billing. TODO: kojoVariableEquals / kojoVariableNotEquals placeholders.",
-                        "options": [
-                            {
-                                "option": "_gr_kanon_victim",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "hasKojoVariable",
-                                            "erav_debt_month"
-                                        ]
-                                    },
-                                    {
-                                        "parameters": [
-                                            "kojoVariableEquals",
-                                            "erav_last_victim",
-                                            "4"
-                                        ]
-                                    }
-                                ],
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "gr_kanon"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "_gr_other_victim",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "hasKojoVariable",
-                                            "erav_debt_month"
-                                        ]
-                                    },
-                                    {
-                                        "parameters": [
-                                            "kojoVariableNotEquals",
-                                            "erav_last_victim",
-                                            "0"
-                                        ]
-                                    }
-                                ],
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "gr_other"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "_gr_good_offer",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "hasKojoVariable",
-                                            "erav_debt_month"
-                                        ]
-                                    },
-                                    {
-                                        "parameters": [
-                                            "hasKojoVariable",
-                                            "erav_kanon_offer"
-                                        ]
-                                    }
-                                ],
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "gr_good_offer"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "_gr_good_refuse",
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "hasKojoVariable",
-                                            "erav_debt_month"
-                                        ]
-                                    }
-                                ],
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "gr_good_refuse"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "option": "_fallback_prebill",
-                                "Results": [
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "gr_prebill"
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "gr_prebill",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "smug",
-                                "happy"
-                            ]
-                        },
-                        "line": "kd_GR_prebill",
-                        "nextEntryLabel": "gr_end"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "gr_kanon",
+                        "label": "kanon_dialogue_generic_closing",
+                        "_comment": "Reached when erav_kanon_offer != 1, i.e. the job-offer block did not fire this visit (debt commentary, if any, already ran above).",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -919,68 +677,13 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_GR_kanon",
-                        "nextEntryLabel": "gr_end"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "gr_other",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "kd_GR_other",
-                        "nextEntryLabel": "gr_end"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "gr_good_offer",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "confident",
-                                "relaxed"
-                            ]
-                        },
-                        "line": "kd_GR_good_offer",
-                        "nextEntryLabel": "gr_end"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "gr_good_refuse",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "smug",
-                                "happy"
-                            ]
-                        },
-                        "line": "kd_GR_good_refuse",
-                        "nextEntryLabel": "gr_end"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "gr_end",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "confident",
-                                "relaxed"
-                            ]
-                        },
-                        "line": "kd_GR_end",
+                        "line": "Kanon_Dialogue_inoffice_End",
                         "isLast": true
                     },
+
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "branch3",
+                        "label": "Kanon_Dialogue_NotInOffice",
                         "UISpec": {
                             "portraitRefKey": "kanon",
                             "selfTags": [
@@ -988,12 +691,12 @@
                                 "serious"
                             ]
                         },
-                        "line": "kd_OV1",
+                        "line": "Kanon_Dialogue_NotInOffice",
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "branch4",
+                        "label": "br_greeting",
                         "_comment": "TODO: replace this line with a greeting-kojo collection function call (plan §15 Q2). Until then, a generic placeholder greeting.",
                         "UISpec": {
                             "portraitRefKey": "kanon",
@@ -1002,7 +705,7 @@
                                 "relaxed"
                             ]
                         },
-                        "line": "kd_GK1",
+                        "line": "$greeting$",
                         "isLast": true
                     }
                 ]
@@ -1012,40 +715,29 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "kd_K01": "$kanon.name$靠在办公桌后面，听见有人进来，抬起头。",
-                "kd_K02": "「来了。坐。」",
-                "kd_AC01": "「倒是准时。看来你是把我的话放在心上了。」",
-                "kd_AC02": "「拖了好几天才来。答应过的事，倒看不出你有半分上心。……罢了，既然来了，坐下说。」",
-                "kd_AC03n": "$kanon.name$没有抬头，只翻弄着桌上的文件，任屋里安静下去。",
-                "kd_AC03k": "「……我还当你改了主意。」",
-                "kd_AC04": "「拖到今日才来。利息倒是按月结清了，算你还有几分本事。」",
-                "kd_pbf_kanon": "「上回那笔账的收尾，是我替你担下来的。其中滋味，不必细说。你打算就这么看着，还是认真考虑我当初的提议？」",
-                "kd_pbf_other": "「上回那件事如何收场，你自己清楚。照这样下去，你撑不了多久。趁早想清楚自己的底线在哪里——我当初的提议，始终有效。」",
-                "kd_BIZ01n": "$kanon.name$起身走到靠墙的柜子前，拉开抽屉。",
-                "kd_BIZ02k": "「把话说明白——桐生组做的是成人影像这桩生意，拍出来，卖出去。你来当监督，负责拍摄，拍成了交到我这里分销。这一行赚得快，足够你还清那笔债。」",
-                "kd_BIZ03n": "她从抽屉里取出摄影机和几盘空白录像带，搁到桌上。",
-                "kd_BIZ04k": "「这些先拿去用，算桐生组借给你的。拍什么、怎么拍，由你自己斟酌。」",
-                "kd_BIZ05k": "「销售收入由事务所统一经手。你只需在毕业前把债还清，提前还清也随你。渠道、发行那些琐事，我这边会处理好，款项当场结清。」",
-                "kd_BIZ06k": "「只要你肯用心去做，桐生组保你们兄妹平安无事。若是做得好，我还能拨出些许自由活动的时间给你。」",
-                "kd_BIZ07k": "「事务所的人手由我安排，顺带也替我盯着你——这层意思，你该明白。」",
-                "kd_BIZ08k": "「至于女优的人选，我手里有一份名单，都是事先考察过的。你想看的话，回头拿给你。」",
-                "kd_BIZ_Fn": "$kanon.name$的目光在$self.name$身上停留了片刻。",
-                "kd_BIZ_Fk": "「说起来，凭你这副模样，自己出场也未必不行。监督也好，女优也好，两条路都摆在你面前，由你自己选。」",
-                "kd_BIZ_M1k": "「成人影像这桩生意，你负责拍，拍成交给我分销，赚的足够你还债。其余的话不必重复。」",
-                "kd_BIZ_M2k": "「设备自己去想办法。我这里，不养闲人。」",
-                "kd_KD01n": "$kanon.name$的视线越过$self.name$，落到跟在身后的人身上，停了片刻。",
-                "kd_KD01k": "「这孩子，长相倒是不错。」",
-                "kd_KD02k": "「拍片的时候说不定用得上。回头要是有了这个心思，我这边可以替你安排。」",
+                "Kanon_Dialogue_inoffice": "$kanon.name$靠在办公桌后面，听见有人进来，抬起头。\n「来了。坐。」",
+
+                "Kanon_Dialogue_inoffice_Debt_VictimKanon": "",
+                "Kanon_Dialogue_inoffice_Debt_VictimKanade": "",
+                "Kanon_Dialogue_inoffice_Debt_VictimOther": "",
+                "Kanon_Dialogue_inoffice_Debt_ProgressGood": "",
+                "Kanon_Dialogue_inoffice_Debt_OtherMeans": "",
+
+                "Kanon_Dialogue_inoffice_firstMeeting_consequences": "",
+                "Kanon_Dialogue_inoffice_firstMeeting_punctual": "「倒是准时。看来你是把我的话放在心上了。」",
+                "Kanon_Dialogue_inoffice_firstMeeting_delayed": "「拖了好几天才来。答应过的事，倒看不出你有半分上心。……罢了，既然来了，坐下说。」",
+                "Kanon_Dialogue_inoffice_firstMeeting_verydelayed": "「……我还当你改了主意。」",
+
+                "Kanon_Dialogue_inoffice_Explain01": "$kanon.name$起身走到靠墙的柜子前，拉开抽屉。\n「把话说明白——桐生组做的是成人影像这桩生意，拍出来，卖出去。你来当监督，负责拍摄，拍成了交到我这里分销。这一行赚得快，足够你还清那笔债。」",
+                "Kanon_Dialogue_inoffice_Explain02": "她从抽屉里取出摄影机和几盘空白录像带，搁到桌上。\n「这些先拿去用，算桐生组借给你的。拍什么、怎么拍，由你自己斟酌。」",
+                "Kanon_Dialogue_inoffice_Explain03": "「销售收入由事务所统一经手。你只需在毕业前把债还清，提前还清也随你。渠道、发行那些琐事，我这边会处理好，款项当场结清。」\n「只要你肯用心去做，桐生组保你们兄妹平安无事。若是做得好，我还能拨出些许自由活动的时间给你。」\n「事务所的人手由我安排，顺带也替我盯着你——这层意思，你该明白。」",
+                "Kanon_Dialogue_inoffice_Explain04": "「你负责拍AV，我们负责销售，赚的足够你还债。」\n「至于女优的人选，我手里有一份名单，都是事先考察过的。你想看的话，回头拿给你。」",
+
+                "Kanon_Dialogue_inoffice_femalePlayer": "$kanon.name$的目光在$self.name$身上停留了片刻。\n「说起来，凭你这副模样，自己出场也未必不行。监督也好，女优也好，两条路都摆在你面前，由你自己选。」",
+                "Kanon_Dialogue_inoffice_Kanade": "$kanon.name$的视线越过$self.name$，落到跟在身后的$kanade.name$身上，停了片刻。\n「这孩子，长相倒是不错。」\n「拍片的时候说不定用得上。回头要是有了这个心思，我这边可以替你安排。」",
                 "kd_AC_end": "「还有什么不明白的，随时来问。门在那边。」",
-                "kd_GR_pre": "$kanon.name$搁下笔，抬眼看了看$self.name$。",
-                "kd_GR_prebill": "「怎么，还没改主意？看样子，是打算硬撑到底了。」",
-                "kd_GR_kanon": "「上回那笔账，最后是我替你去的。滋味说不上好受。你到底打算就这么看着，还是认真考虑我当初的提议？」",
-                "kd_GR_other": "「上回那笔账怎么收的，你心里有数。再这么下去，你迟早撑不住。我当初的提议始终有效，要不要重新考虑，你自己决定。」",
-                "kd_GR_good_offer": "「最近的片子卖得还算可以，利息也按月结清了。照这样下去，那笔债总能还完。」",
-                "kd_GR_good_refuse": "「利息居然月月没拖过。你是当真打算靠自己还清这笔债……我多少有些意外。」",
-                "kd_GR_end": "「没别的事的话，门在那边。我还有事要忙。」",
-                "kd_OV1": "「这儿不是谈正事的地方。不是告诉你之后到事务所来找我吗？地址名片上写着。」\n\n$greeting$",
-                "kd_GK1": "$greeting$"
+                "Kanon_Dialogue_inoffice_End": "「没别的事的话，门在那边。我还有事要忙。」",
+                "Kanon_Dialogue_NotInOffice": "「这儿不是谈正事的地方。不是告诉你之后到事务所来找我吗？地址名片上写着。」"
             },
             "en-us": {}
         }

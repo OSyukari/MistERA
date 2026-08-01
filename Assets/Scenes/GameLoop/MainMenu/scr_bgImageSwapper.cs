@@ -100,9 +100,9 @@ public class scr_bgImageSwapper : MonoBehaviour
         if (updateSequence != 0) return;
         if (!this.gameObject.activeInHierarchy) return;
         if (hasOverride) return; // event background override active, skip ambient room image updates
-        if (room.Base.roomImagePath != "")
+        if (room != null && room.RoomImagePath != "")
         {
-            var imagepath = room.Base.roomImagePath;
+            var imagepath = room.RoomImagePath;
 
             if (room.FactionOwner is Manageable)
             {
@@ -112,16 +112,16 @@ public class scr_bgImageSwapper : MonoBehaviour
                 {
 
                 }
-                else if (room.ActivityState == RoomActivityState.AlwaysActive 
+                else if (room.ActivityState == RoomActivityState.AlwaysActive
                     || (room.ActivityState == RoomActivityState.DayOnly && faction.IsActiveHour())
                     || (room.ActivityState == RoomActivityState.NightOnly && !faction.IsActiveHour()))
                 {
                     // active
-                    if (!faction.isWorldDay && room.Base.roomImagePath_Night != "") imagepath = room.Base.roomImagePath_Night;
+                    if (!faction.isWorldDay && room.Base != null && room.Base.roomImagePath_Night != "") imagepath = room.Base.roomImagePath_Night;
                     // else default
 
                 }
-                else // inactive
+                else if (room.Base != null) // inactive
                 {
                     if (!faction.isWorldDay && room.Base.roomImagePath_Inactive_Night != "") imagepath = room.Base.roomImagePath_Inactive_Night;
                     else imagepath = room.Base.roomImagePath_Inactive;

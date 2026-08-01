@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using UnityEngine;
 
 public enum LogsDisplayMode
 {
@@ -78,6 +79,21 @@ public class UISpec
         if (overrides.infoDisplay != InfoTabDisplayMode.Dontcare) result.infoDisplay = overrides.infoDisplay;
         return result;
     }
+
+    /// <summary>
+    /// Call by newly constructed messagelog entry to load data from override
+    /// </summary>
+    /// <param name="overrides"></param>
+    public void LoadDataFrom(UISpec spec)
+    {
+        PortraitRefKey = spec.PortraitRefKey;
+        SelfTags = spec.SelfTags;
+        TargetTags = spec.TargetTags;
+        BGImagePath = spec.BGImagePath;
+        displayMode = spec.displayMode;
+        infoDisplay = spec.infoDisplay;
+    }
+
 
     /// <summary>
     /// Copies this UISpec's non-default "sticky" fields into `registry`, so an entry's own override

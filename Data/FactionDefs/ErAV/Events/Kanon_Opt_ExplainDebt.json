@@ -1,0 +1,118 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "Kanon_Opt_ExplainDebt",
+                "allowDuplicate":false,
+                "trigger": "OnDialogue_Options",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "relationshipTargetKey":"self",
+                            "requireKojoVariable":
+                            {
+                                "variableID": "erav_kanon_debt_total",
+                                "isDailyVariable": false,
+                                "checkExistOnly": true,
+                                "value": 1
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] },
+                            { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "UISpec": {
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "Kanon_Opt_ExplainDebt_begin"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanon_debt_total", "operand": "gt", "value": 0,
+                                            "appendStringKey": "debt_value"
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "Kanon_Opt_ExplainDebt_detail" ]
+                                    }
+                                ]
+                            },
+                            
+                            {
+                                "option": "_cleared",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "Kanon_Opt_ExplainDebt_cleared" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "Kanon_Opt_ExplainDebt_cleared",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "smug", "happy" ]
+                        },
+                        "line": "Kanon_Opt_ExplainDebt_cleared",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "Kanon_Opt_ExplainDebt_detail",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_Opt_ExplainDebt_detail"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "hostile", "serious" ]
+                        },
+                        "line": "Kanon_Opt_ExplainDebt_detail_2",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanon_Opt_ExplainDebt":"询问债务详细",
+                "Kanon_Opt_ExplainDebt_begin": "歌音把文件推到$self.name$面前。「想知道自己欠了多少？」",
+                "Kanon_Opt_ExplainDebt_cleared": "歌音核对过记录。「那笔账你已经还清了。」\n「安心过你的日子吧。」",
+                "Kanon_Opt_ExplainDebt_detail": "「本金还剩 $debt_value$ 日元。」",
+                "Kanon_Opt_ExplainDebt_detail_2": "「利息按月滚算，分文不少。每月四十五万，月底前必须结清。本金还多少随你，只要别拖。」\n「付不上利息，就拿身子来抵。你的也好，你妹妹的也好——到时候由不得你挑。」"
+            },
+            "en-us": {}
+        }
+    }
+}

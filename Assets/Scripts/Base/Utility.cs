@@ -180,6 +180,8 @@ public static class Utility
 
         switch (operand)
         {
+            case LogicalOperand.alwaysTrue:
+                return true;
             case LogicalOperand.eq:
                 return value1 == value2;
             case LogicalOperand.neq:
@@ -203,6 +205,8 @@ public static class Utility
 
         switch (operand)
         {
+            case LogicalOperand.alwaysTrue:
+                return true;
             case LogicalOperand.eq:
                 return value1 == value2;
             case LogicalOperand.neq:
@@ -236,6 +240,8 @@ public static class Utility
 
         switch (operand)
         {
+            case LogicalOperand.alwaysTrue:
+                return true;
             case LogicalOperand.eq:
                 return value1 == value;
             case LogicalOperand.neq:
@@ -254,6 +260,8 @@ public static class Utility
 
         switch (operand)
         {
+            case LogicalOperand.alwaysTrue:
+                return true;
             case LogicalOperand.eq:
             case LogicalOperand.gte:
             case LogicalOperand.lte:

@@ -2,10 +2,8 @@ using Newtonsoft.Json;
 using QuikGraph;
 using QuikGraph.Algorithms.Observers;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 /// <summary>
 /// Parent owner of the room handle initialization,
@@ -552,6 +550,19 @@ public class Room_Instance: IDisposable, I_Disposable
         if (this.roomJobFurnitures == null) this.roomJobFurnitures=new List<FurnitureInstance>();
         if (!this.roomJobFurnitures.Contains(i)) roomJobFurnitures.Add(i);
         //if (!this.furnituresMergedCache.Contains(i)) this.furnituresMergedCache.Add(i);
+    }
+
+    public string roomImageOverride = "";
+
+    [JsonIgnore]
+    public string RoomImagePath
+    {
+        get
+        {
+            if (roomImageOverride != "") return roomImageOverride;
+            if (this.Base != null) return this.Base.roomImagePath;
+            return "";
+        }
     }
 
 /// <summary>

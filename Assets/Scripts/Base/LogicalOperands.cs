@@ -6,5 +6,6 @@ public enum LogicalOperand
     eq,
     neq,
     gt,
-    lt
+    lt,
+    alwaysTrue
 }
