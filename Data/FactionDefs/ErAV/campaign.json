@@ -90,7 +90,7 @@
                     },
                     {
                         "initClass":"campaign_init_factionInventory",
-                        "initArguments":["Utnapishtim", "currency_JPY", "", "1000"]
+                        "initArguments":["Utnapishtim", "currency_JPY", "", "10000"]
                     }
                 ],
                 "activeHoursStart": 7,
