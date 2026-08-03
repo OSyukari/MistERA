@@ -193,12 +193,21 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [
+                                        "yakuza",
+                                        "smug",
+                                        "happy"
+                                    ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_femalePlayer",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "Kanon_Dialogue_inoffice_femalePlayer"
+                                            "Kanon_Dialogue_inoffice_End"
                                         ]
                                     }
                                 ]
@@ -216,20 +225,6 @@
                                 ]
                             }
                         ]
-                    },
-{
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "Kanon_Dialogue_inoffice_femalePlayer",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "smug",
-                                "happy"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_femalePlayer",
-                        "nextEntryLabel": "Kanon_Dialogue_inoffice_End"
                     },
 
                     {

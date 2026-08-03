@@ -327,7 +327,7 @@ public class Job_Expedition : Job
             }
             else if (status == ExpeditionStatus.gathering)
             {
-                status = ExpeditionStatus.returning;
+                status = ExpeditionStatus.queued;
                 statusTooltip = "gathering expedition members failed, retry tomorrow";
                 AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_cancel_missing"), new List<string>(), new List<int> {  });
             }
@@ -339,6 +339,7 @@ public class Job_Expedition : Job
             foreach(var c in FactionOwner.ManagedChara)
             {
                 if (scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID) != this.FactionOwner_Party.MainExit) wait = true;
+                else if (ShouldRest(c)) wait = true;
             }
             if (!wait)
             {

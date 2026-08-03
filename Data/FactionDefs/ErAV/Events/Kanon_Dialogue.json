@@ -44,7 +44,7 @@
                         "refkeys": [
                             "kanade"
                         ],
-                        "baseScope": "AllCharaInSelfRoom_ExcludeSelf",
+                        "baseScope": "AllCharaInSelfRoom",
                         "chara_conditions": [
                             {
                                 "parameters": [
@@ -197,78 +197,51 @@
                         "options": [
                             {
                                 "option": "victim_is_kanon",
+                                "_comment": "Kanon herself was taken as payment. She talks about being forced to have sex to cover the player's debt, and asks whether the player enjoys seeing her taken by other managers.",
                                 "target_chara_conditions": {
                                     "victim": [
                                         { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] }
                                     ]
                                 },
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Debt_VictimKanon",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_kanon_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
                                 ]
                             },
                             {
                                 "option": "victim_is_kanade",
+                                "_comment": "Kanade was taken as payment. Kanon comments on Kanade being gangbanged to cover the debt, and that the player should work harder or reconsider their limits.",
                                 "target_chara_conditions": {
                                     "victim": [
                                         { "parameters": [ "isActorBaseID", "ErAV_Kanade" ] }
                                     ]
                                 },
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Debt_VictimKanade",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_kanade_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
                                 ]
                             },
                             {
                                 "option": "_fallback_victim_is_other",
+                                "_comment": "Some other girl was taken as payment. Same follow-up remark as the Kanade case - work harder, or reconsider limits.",
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Debt_VictimOther",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_victim_other_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "debt_status_victim_kanon_line",
-                        "_comment": "Kanon herself was taken as payment. She talks about being forced to have sex to cover the player's debt, and asks whether the player enjoys seeing her taken by other managers.",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_Debt_VictimKanon",
-                        "nextEntryLabel": "job_offer_check"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "debt_status_victim_kanade_line",
-                        "_comment": "Kanade was taken as payment. Kanon comments on Kanade being gangbanged to cover the debt, and that the player should work harder or reconsider their limits.",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_Debt_VictimKanade",
-                        "nextEntryLabel": "job_offer_check"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "debt_status_victim_other_line",
-                        "_comment": "Some other girl was taken as payment. Same follow-up remark as the Kanade case - work harder, or reconsider limits.",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_Debt_VictimOther",
-                        "nextEntryLabel": "job_offer_check"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -277,7 +250,7 @@
                         "options": [
                             {
                                 "option": "progress_good",
-                                "_comment": "erav_kanon_offer >= 2 means the player is repaying through the job Kanon set up for them.",
+                                "_comment": "erav_kanon_offer >= 2 means the player is repaying through the job Kanon set up for them. Comment on good repayment progress via the job.",
                                 "self_chara_conditions": [
                                     {
                                         "requireKojoVariable": {
@@ -287,48 +260,28 @@
                                         }
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "confident", "relaxed" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Debt_ProgressGood",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_progress_good_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
                                 ]
                             },
                             {
                                 "option": "_fallback_progress_other_means",
-                                "_comment": "Player is not working Kanon's job (offer < 2) yet still paid - money came from elsewhere.",
+                                "_comment": "Player is not working Kanon's job (offer < 2) yet still paid - money came from elsewhere. Comment on the player somehow getting the money through other means, and wondering how long that can last.",
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Debt_OtherMeans",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "debt_status_progress_other_means_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_check" ] }
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "debt_status_progress_good_line",
-                        "_comment": "Comment on good repayment progress via the job.",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "confident",
-                                "relaxed"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_Debt_ProgressGood",
-                        "nextEntryLabel": "job_offer_check"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "debt_status_progress_other_means_line",
-                        "_comment": "Comment on the player somehow getting the money through other means, and wondering how long that can last.",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_Debt_OtherMeans",
-                        "nextEntryLabel": "job_offer_check"
                     },
 
                     {
@@ -372,8 +325,13 @@
                                         { "parameters": [ "exists" ] }
                                     ]
                                 },
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_firstMeeting_consequences",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_consequences_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_explain_business" ] }
                                 ]
                             },
                             {
@@ -388,8 +346,13 @@
                                         }
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_firstMeeting_verydelayed",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_verydelayed_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_explain_business" ] }
                                 ]
                             },
                             {
@@ -404,73 +367,27 @@
                                         }
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "focused", "serious" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_firstMeeting_delayed",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_delayed_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_explain_business" ] }
                                 ]
                             },
                             {
                                 "option": "_fallback_flavor_punctual",
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "confident", "relaxed" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_firstMeeting_punctual",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_flavor_punctual_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_explain_business" ] }
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "job_offer_flavor_consequences_line",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_firstMeeting_consequences",
-                        "nextEntryLabel": "job_intro_explain_business"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "job_offer_flavor_verydelayed_line",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_firstMeeting_verydelayed",
-                        "nextEntryLabel": "job_intro_explain_business"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "job_offer_flavor_delayed_line",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "focused",
-                                "serious"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_firstMeeting_delayed",
-                        "nextEntryLabel": "job_intro_explain_business"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "job_offer_flavor_punctual_line",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "confident",
-                                "relaxed"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_firstMeeting_punctual",
-                        "nextEntryLabel": "job_intro_explain_business"
                     },
 
                     {
@@ -553,6 +470,7 @@
                         "options": [
                             {
                                 "option": "player_is_female",
+                                "_comment": "Female player is also offered the option to perform as an actress, not just direct.",
                                 "self_chara_conditions": [
                                     {
                                         "parameters": [
@@ -560,8 +478,13 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "confident", "relaxed" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_femalePlayer",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_actress_option_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_kanade_check" ] }
                                 ]
                             },
                             {
@@ -573,32 +496,23 @@
                         ]
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "job_intro_actress_option_line",
-                        "_comment": "Female player is also offered the option to perform as an actress, not just direct.",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "confident",
-                                "relaxed"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_femalePlayer",
-                        "nextEntryLabel": "job_intro_kanade_check"
-                    },
-                    {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "job_intro_kanade_check",
                         "_comment": "Presence resolved via the 'kanade' TargetValidator scope (AllCharaInSelfRoom_ExcludeSelf + isActorBaseID ErAV_Kanade, minTargetCount 1 with allowEventOnMinTargetCountMiss so absence doesn't block the event). If she's not there but is still owed an answer on her promise (erav_kanade_promise == 1, tracked on her own record), quietly resolve it without a remark - Kanon doesn't comment on a promise involving someone who isn't in the room.",
                         "options": [
                             {
                                 "option": "kanade_present",
+                                "_comment": "Kanon notes Kanade's presence and that she could be useful.",
                                 "target_chara_conditions": {
                                     "kanade": []
                                 },
+                                "UISpec": {
+                                    "portraitRefKey": "kanon",
+                                    "selfTags": [ "yakuza", "smug", "happy" ]
+                                },
+                                "line": "Kanon_Dialogue_inoffice_Kanade",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "job_intro_kanade_presence_line" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "job_offer_closing" ] }
                                 ]
                             },
                             {
@@ -624,21 +538,6 @@
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "job_intro_kanade_presence_line",
-                        "_comment": "Kanon notes Kanade's presence and that she could be useful.",
-                        "UISpec": {
-                            "portraitRefKey": "kanon",
-                            "selfTags": [
-                                "yakuza",
-                                "smug",
-                                "happy"
-                            ]
-                        },
-                        "line": "Kanon_Dialogue_inoffice_Kanade",
-                        "nextEntryLabel": "job_offer_closing"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",

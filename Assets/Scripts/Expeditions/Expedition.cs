@@ -98,6 +98,15 @@ public class Expedition
     public int DurationHour = 0;
     public float EventRate = 0.05f;
     public List<string> DescriptionText = new List<string>();
+
+    public string CustomDescription = "";
+    [JsonIgnore] public string DisplayCustomDescription
+    {
+        get
+        {
+            return CustomDescription == "" ? "" : LocalizeDictionary.QueryThenParse(CustomDescription);
+        }
+    }
     // we need a collection of events
 
 

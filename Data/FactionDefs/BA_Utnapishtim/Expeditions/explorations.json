@@ -6,8 +6,9 @@
     "ExpeditionID":"expedition_Utnapishtim_engines",
     "HasStartHour":false,
     "ForceStartHour":0,
-    "DurationHour":26,
+    "DurationHour":30,
     "isUnique":true, "canExplore":true,
+    "CustomDescription":"",
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
     "EventIDs":[],
     "keywords":["Utnapishtim"],
@@ -21,10 +22,12 @@
     "ExpeditionID":"expedition_Utnapishtim_cargo",
     "HasStartHour":false,
     "ForceStartHour":0,
-    "DurationHour":16,
+    "DurationHour":6,
     "isUnique":true, "canExplore":true,
+    "EventRate":0.1,
+    "CustomDescription":"expedition_Utnapishtim_cargo_description",
     "backgroundImagePath":"Media_UI_Scenario_Background/BG_UndergroundPassage_Night.jpg",
-    "EventIDs":[],
+    "EventIDs":["exp_event_Utnapishtim_foodCache"],
     "FeatureKeywords":["Utnapishtim"],
     "keywords":["Utnapishtim"],
     "Events":
@@ -73,6 +76,7 @@
             {
 "expedition_Utnapishtim_engines":"生命守护者 引擎",
 "expedition_Utnapishtim_cargo":"生命守护者 货运区",
+"expedition_Utnapishtim_cargo_description":"货运区囤积着大量维生物资。\n在此处更容易找到食物、水等基本生存所需的物品。",
 
 "expedition_Utnapishtim_exploring_1":"$names$在战舰的破损管道间穿行，空气稀薄，每一步都小心避开裸露的电线。",
 "expedition_Utnapishtim_exploring_2":"$names$搜索着昏暗的货舱，脚下金属板微微震动，但四周没有异常迹象。",
@@ -108,6 +112,7 @@
             {
 "expedition_Utnapishtim_engines":"Utnapishtim Engines",
 "expedition_Utnapishtim_cargo":"Utnapishtim Cargo Bay",
+"expedition_Utnapishtim_cargo_description":"The cargo bay still holds large stockpiles of life-support supplies, making it easier to find food, water, and other basic necessities here.",
 
 "expedition_Utnapishtim_exploring_1":"$names$ navigates through the battleship's broken pipes. The air is thin, and every step is taken carefully to avoid exposed wires.",
 "expedition_Utnapishtim_exploring_2":"$names$ searches the dim cargo hold. The metal plating underfoot vibrates slightly, but there are no signs of anomalies around.",

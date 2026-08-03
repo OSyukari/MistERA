@@ -1111,6 +1111,24 @@ public static class UtilityEX
             tags.Add(tag.ToString());
         }
         tags.AddRange(c.ActorKeywords);
+
+        var activeFaction = c.FactionManager.CurrentlyActiveFaction;
+        var activeParty = c.FactionManager.CurrentActiveParty;
+        if (activeParty != null)
+        {
+            tags.Add(activeParty.FactionID);
+            tags.AddRange(activeParty.GetMemberType(c).portraitTags);
+        }
+        else if (activeFaction != null)
+        {
+            tags.Add(activeFaction.FactionID);
+            tags.AddRange(activeFaction.GetMemberType(c).portraitTags);
+        }
+        else if (c.CurrentRoom != null && c.CurrentRoom.FactionOwner != null)
+        {
+            tags.Add(c.CurrentRoom.FactionOwner.FactionID);
+        }
+
         if (scr_System_Time.current.TimeResume && !c.CanActInTimeStop) tags.Add("timeResume");
         else if(c.isTimeStopped) tags.Add("timestop");
         if (c.isSleeping) {

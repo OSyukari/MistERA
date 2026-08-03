@@ -552,7 +552,8 @@
 "ui_management_expeditionJob_returning": "探索$expName$ 返程中", 
 "ui_management_expeditionJob_cancel": "取消探索计划", 
 "ui_management_expeditionJob_abort": "放弃探索", 
-"ui_management_expeditionJob_start": "召集队员中", 
+"job_party_gathering": "安排外出探索",
+"ui_management_expeditionJob_start": "召集队员中",
 "ui_management_expeditionJob_start_final": "探索开始", 
 "ui_management_expeditionJob_cancel_missing": "人员不齐，探索延后", 
 "ui_management_expeditionJob_end": "探索结束", 
@@ -574,7 +575,7 @@
 "ui_management_expeditionConfig_recurring_tooltip": "启用该选项的话，小队会在从远征归来后的下一次 出发时点 重复该远征\n\n下方可以定义小队重复执行的冷却天数", 
 "ui_management_expeditionConfig_recurringCooldown": "重复冷却天数：$count$", 
 "ui_management_expeditionConfig_prioritizeResting": "<link=ui_management_expeditionConfig_prioritizeResting_tooltip>优先休息</link>", 
-"ui_management_expeditionConfig_prioritizeResting_tooltip": "启用该选项的话，小队成员HP不满时会优先休息\n不启用的话，小队成员会优先探索，直到 ST EN低于50% 或者 HP小于1", 
+"ui_management_expeditionConfig_prioritizeResting_tooltip": "启用该选项的话，小队成员HP不满时会优先休息直到回满\n不启用的话，小队成员会优先探索，直到 ST EN低于50% 意识涣散 或者 HP小于1\n如果在召集队员阶段，角色已经被（该设定）判定为需要休息的话，该角色就不会响应召集\n队伍会在1小时后取消召集，明天再试", 
 
 "ui_management_expeditionConfig": "小队设置：$settings$", 
 
@@ -1258,6 +1259,7 @@
 "ui_management_expeditionJob_returning": "Returning from $expName$",
 "ui_management_expeditionJob_cancel": "Cancel Exploration Plan",
 "ui_management_expeditionJob_abort": "Abort Exploration",
+"job_party_gathering": "Scheduled to Depart",
 "ui_management_expeditionJob_start": "Gathering Team Members",
 "ui_management_expeditionJob_start_final": "Exploration Start",
 "ui_management_expeditionJob_cancel_missing": "Personnel missing, exploration postponed",

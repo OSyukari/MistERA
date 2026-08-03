@@ -56,7 +56,11 @@ public class SkillManager
     /// </summary>
     public void FinalizeExperience()
     {
-        experienceLogs = experienceLogs.Concat(experienceLogs_currentRound).GroupBy(p => p.Key).ToDictionary(g => g.Key, g => (g.Count() > 1 ? g.First().Value + g.Last().Value : g.Last().Value));
+        foreach (var kvp in experienceLogs_currentRound)
+        {
+            experienceLogs.TryGetValue(kvp.Key, out var existing);
+            experienceLogs[kvp.Key] = existing + kvp.Value;
+        }
         experienceLogs_currentRound.Clear();
     }
 

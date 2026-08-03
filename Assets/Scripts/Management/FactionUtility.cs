@@ -56,6 +56,43 @@ public static class FactionUtility
     public const string MemberTypeID_Prisoner = "membertype_prisoner";
     public const string MemberTypeID_None = "membertype_none";
 
+
+    static Manageable.HourlySchedule _Job_PartyGathering = null;
+
+    public static Manageable.HourlySchedule Job_PartyGathering
+    {
+        get
+        {
+            if (_Job_PartyGathering == null)
+            {
+                _Job_PartyGathering = new Manageable.HourlySchedule("job_party_gathering");
+                _Job_PartyGathering.AllowOverride = false;
+            }
+            return _Job_PartyGathering;
+        }
+    }
+
+
+    /// <summary>
+    /// True if c is rostered in a party whose expedition is queued/gathering and whose fixed
+    /// gathering hour is `hour`. Ignores daysLookahead - status stays queued and re-checks
+    /// startHour every day until it fires, so any occurrence of that hour counts as committed.
+    /// </summary>
+    public static bool TryGetPartyGatheringOverride(Character_Trainable c, int hour, out Manageable.HourlySchedule schedule)
+    {
+        schedule = null;
+        foreach (var partyref in c.FactionManager.TrackedPartyRef)
+        {
+            var job = scr_System_CampaignManager.current.FindJobInstanceByID(partyref) as Job_Expedition;
+            if (job == null) continue;
+            if (job.status != Job_Expedition.ExpeditionStatus.queued && job.status != Job_Expedition.ExpeditionStatus.gathering) continue;
+            if (job.startHour != hour) continue;
+            schedule = Job_PartyGathering;
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Static fallback MemberType accessors, for use when a specific faction hasn't defined its own
     /// version of a status (a faction's own MemberType list, once that exists, should be checked first).
@@ -515,7 +552,8 @@ public static class FactionUtility
         travelMinutes = 0f;
 
         int nextHour = (currentHour + 1) % 24;
-        var nextSchedule = c.GetJobPost(nextHour);
+        int daysLookahead = (currentHour + 1) / 24;
+        var nextSchedule = c.GetJobPost(nextHour, daysLookahead);
         if (nextSchedule == null || !nextSchedule.isActive) return false;
 
         var currentSchedule = c.GetJobPost(currentHour);
@@ -527,7 +565,7 @@ public static class FactionUtility
             return false;
         }
 
-        nextFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour);
+        nextFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour, daysLookahead);
         if (nextFaction == null || (I_IsJobGiver)nextFaction == currentLocaleFaction) return false;
 
         // Only worth pre-empting for actual world-map travel (typically 10-40+ minutes). Factions linked

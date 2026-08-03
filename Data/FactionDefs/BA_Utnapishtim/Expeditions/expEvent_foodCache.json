@@ -1,0 +1,73 @@
+{
+    "ExplorationEvents":
+    {
+        "list":
+        [
+{
+    "eventID":"exp_event_Utnapishtim_foodCache",
+    "eventString_Ongoing":"exp_event_Utnapishtim_foodCache_ongoing",
+    "DurationMinutes":15,
+    "baseWeight":5,
+    "teamRequirement":{
+        "minTeamCount":1,
+        "maxTeamCount":99,
+        "charaReq_Select":{ "cost_EN":5, "cost_ST":0 }
+    },
+    "possibleResults":[
+        {
+            "baseWeight":6,
+            "resultText":"exp_event_Utnapishtim_foodCache_result_stocked",
+            "results_characters": [ ],
+            "results_factions":[
+                {
+                    "entry_results":{
+                        "randomLoot":{
+                            "weightedLoots":[
+                                { "weight":1, "itemEntry":{ "itemID": "consumable_emergency_ration", "itemNameOverwrite": "", "itemCount": 3, "itemCountOverride": false } }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "baseWeight":3,
+            "resultText":"exp_event_Utnapishtim_foodCache_result_empty",
+            "results_characters": [ ]
+        },
+        {
+            "baseWeight":1,
+            "resultText":"exp_event_Utnapishtim_foodCache_result_spoiled",
+            "results_characters":
+            [
+                { "entry_results":{ "type":"statMod_HP", "value":-1 } }
+            ]
+        }
+    ]
+}
+        ]
+
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+"exp_event_Utnapishtim_foodCache":"密封的食品储柜",
+"exp_event_Utnapishtim_foodCache_ongoing":"$names$在货运区深处找到了一个密封完好的食品储柜",
+"exp_event_Utnapishtim_foodCache_result_stocked":"$names$撬开了储柜，里面整齐地码放着大量应急口粮",
+"exp_event_Utnapishtim_foodCache_result_empty":"$names$撬开了储柜，但里面的物资早已被搬空",
+"exp_event_Utnapishtim_foodCache_result_spoiled":"$names$撬开储柜时不慎打翻了已经变质的食品，刺鼻的气味让人一阵反胃"
+            },
+            "en-us":
+            {
+"exp_event_Utnapishtim_foodCache":"Sealed Food Locker",
+"exp_event_Utnapishtim_foodCache_ongoing":"$names$ finds a well-sealed food locker deep in the cargo bay.",
+"exp_event_Utnapishtim_foodCache_result_stocked":"$names$ pries the locker open to find it neatly stacked with a large supply of emergency rations.",
+"exp_event_Utnapishtim_foodCache_result_empty":"$names$ pries the locker open, but the supplies inside were already cleared out long ago.",
+"exp_event_Utnapishtim_foodCache_result_spoiled":"$names$ accidentally spills a batch of spoiled food while prying the locker open, the pungent smell turning stomachs."
+            }
+        }
+    }
+}

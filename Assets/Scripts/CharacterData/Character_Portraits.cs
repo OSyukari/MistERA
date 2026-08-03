@@ -275,17 +275,35 @@ public class PortraitManager
     }
     protected void DrawNeutralPortrait(scr_CharPortraitBox box)
     {
-        if (_cache_NeutralPortrait == null)
+        CharaPortrait handler;
+        string path;
+
+        if (_cache_ActivityPortrait != null)
         {
-            GetValidPortrait(new List<string>(), null, out _cache_NeutralPortrait, out _cache_NeutralPortrait_path, out _cache_NeutralPortrait_icon);
-            tags_neutral.Clear();
+            handler = _cache_ActivityPortrait;
+            path = _cache_ActivityPortrait_path;
         }
-        if (box.currentHandler != _cache_NeutralPortrait || box.currentPortrait != _cache_NeutralPortrait_path)
+        else
         {
-            box.currentHandler = _cache_NeutralPortrait;
-           // box.currentPortrait = _cache_NeutralPortrait_path;
+            if (_cache_NeutralPortrait == null)
+            {
+                tags_neutral = GetOwnerActionTagsByPriority();
+                tags_neutral_target = GetOwnerActionTargetTagsByPriority();
+                GetValidPortrait(tags_neutral, tags_neutral_target, out _cache_NeutralPortrait, out _cache_NeutralPortrait_path, out _cache_NeutralPortrait_icon);
+
+            }
+            handler = _cache_NeutralPortrait;
+            path = _cache_NeutralPortrait_path;
+
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawNeutralPortrait Tags [{String.Join(" ", tags_neutral)}] with path {_cache_NeutralPortrait_path}, is same? {box.currentHandler == _cache_NeutralPortrait}");
+        }
+
+        if (box.currentHandler != handler || box.currentPortrait != path)
+        {
+            box.currentHandler = handler;
+           // box.currentPortrait = path;
             scr_System_CampaignManager.current.CurrentTargetEXPortrait = box.currentHandler;
-            box.Draw(_cache_NeutralPortrait.DrawPortrait(box, _cache_NeutralPortrait_path));
+            box.Draw(handler.DrawPortrait(box, path));
         }
     }
 
@@ -408,6 +426,7 @@ public class PortraitManager
     public List<string> GetOwnerActionTagsByPriority()
     {
         var result = new List<string>();
+        UtilityEX.GetActorTag(ref result, Owner);
         if (Owner.InteractionJob.isActive)
         {
             Owner.InteractionJob.GetActorAPTags(Owner.RefID, result);
@@ -484,7 +503,7 @@ public class PortraitManager
     public void DrawPortrait(scr_CharPortraitBox box, I_hasPortrait handler = null)
     {
         if (box.isCurrentTargetEXBox) DrawNeutralPortrait(box);
-        else if (box.isCurrentTargetBox) DrawActivityPortrait(box, handler);
+        else if (box.isCurrentTargetEXBox || box.isCurrentTargetBox) DrawActivityPortrait(box, handler);
         else
         {
             DrawNeutralPortrait(box);

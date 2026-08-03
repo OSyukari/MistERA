@@ -421,6 +421,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         timeSinceLastEat = Math.Min(24, timeSinceLastEat + 1);
         this.Relationships.HourlyRefresh();
         //Debug.Log($"{FirstName} Observer_GlobalHour: conscious? {Stats.isConsciousnessUnconscious} sleep? {hasStatKeyword("sleep")} lastSleep {timeSinceLastSleep}, lastEat {timeSinceLastEat}");
+
+        // membertype workModules can vary by day of week (activeDays), so which hours count as
+        // "occupied" for sleep purposes can change from one day to the next - rebuild privateSchedule
+        // every hour (instead of once/day) so a schedule change is picked up as soon as it's within the
+        // rolling 24h lookahead. UpdateSchedule no-ops on its own if the character is currently asleep.
+        if (FactionManager != null)
+        {
+            var scheduleRefreshMsg = new List<string>();
+            FactionManager.UpdateSchedule(ref scheduleRefreshMsg, false);
+        }
+
+
     }
     /// <summary>
     /// Externally set timesincelastsleep to 0
@@ -705,15 +717,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         // check food and sleep need
         if (FactionManager != null) FactionManager.DailyNeedConsumption();
-
-        // membertype workModules can vary by day of week (activeDays), so which hours count as
-        // "occupied" for sleep purposes can change from one day to the next - rebuild privateSchedule
-        // here instead of assuming it stays valid across a day change.
-        if (FactionManager != null)
-        {
-            var scheduleRefreshMsg = new List<string>();
-            FactionManager.UpdateSchedule(ref scheduleRefreshMsg);
-        }
 
         List<Manageable.DailyReportHandler.MiscMessageEntry> updateMessage = new List<Manageable.DailyReportHandler.MiscMessageEntry>();
         this.Skills.UpdateAllSkills(updateMessage);
@@ -1075,13 +1078,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
 
 
-    public Manageable.HourlySchedule GetJobPost(int hour = -1)
+    public Manageable.HourlySchedule GetJobPost(int hour = -1, int daysLookahead = 0)
     {
         if (FactionManager == null) return null;
         else
         {
             if(hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
-            return FactionManager.CurrentJobPost(hour);
+            return FactionManager.CurrentJobPost(hour, daysLookahead);
         }
     }
 
@@ -1687,7 +1690,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             if (Stats.Stamina != null && Stats.Stamina.ValuePercentile < 0.5) return true;
             if (Stats.Energy != null && Stats.Energy.ValuePercentile < 0.5) return true;
-            if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_NeedResting)) return true;
+            if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_ConsReduced)) return true;
             return false;
         } }
 
@@ -2228,7 +2231,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             int minutes = 0;
             for (int i = 0; i < Stats.SleepHours; i++)
             {
-                var post = GetJobPost((currentHour + i) % 24);
+                int hour = (currentHour + i) % 24;
+                int daysLookahead = (currentHour + i) / 24;
+                var post = GetJobPost(hour, daysLookahead);
                 if (post != null && post.comIDs.Contains("com_furniture_sleep"))
                     minutes += i == 0 ? (60 - currentMinute) : 60;
                 else

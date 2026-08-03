@@ -713,7 +713,7 @@ public class Map_Instance
         roomFloorRef_Immutable = new ReadOnlyDictionary<int, int>(roomFloorRef);
     }
 
-    public void MoveCharaTo(Character_Trainable charaRef, Room_Instance newRoom)
+    public void MoveCharaTo(Character_Trainable charaRef, Room_Instance newRoom, bool silent = false)
     {
         var oldRoom = FindRoomByChara(charaRef.RefID);
         if (charaRoomRef.ContainsKey(charaRef.RefID))
@@ -743,7 +743,7 @@ public class Map_Instance
         if (oldFaction != newFaction)
         {
             string time = scr_System_Time.current.getCurrentTime().ToString("HH:mm");
-            if (oldFaction != null)
+            if (oldFaction != null && !silent)
             {
                 var pathAp = charaRef.CurrentJob?.ActivePackages.Find(p => p.actorRefs.Contains(charaRef.RefID) && p is ActionPackage_PathTo) as ActionPackage_PathTo;
                 var destFaction = pathAp?.TargetRoom?.FactionOwner?.FactionOwnerRoot;
@@ -752,7 +752,7 @@ public class Map_Instance
                     : $"{charaRef.CallName} left {oldFaction.FactionDisplayName} at {time}";
                 oldFaction.DailyReport.AddMiscRecord(msg, new List<string>());
             }
-            if (newFaction != null)
+            if (newFaction != null && !silent)
             {
                 newFaction.DailyReport.AddMiscRecord($"{charaRef.CallName} arrived at {newFaction.FactionDisplayName} at {time}", new List<string>());
             }

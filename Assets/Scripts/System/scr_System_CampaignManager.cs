@@ -780,7 +780,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void InvokeMessageDisplay(UISpec display)
     {
-        Debug.Log($"InvokeMessageDisplay info {display.infoDisplay} mode {display.displayMode}");
+        //Debug.Log($"InvokeMessageDisplay info {display.infoDisplay} mode {display.displayMode}");
         Observer_MessageDisplay?.Invoke(display);
     }
 
@@ -978,9 +978,9 @@ public class scr_System_CampaignManager : MonoBehaviour
     public void ClearExecutedAPs()
     {
         executedPackagesByRoom.Clear();
-        foreach(var i in specialUpdateJobs)
+        for (int i = specialUpdateJobs.Count - 1; i >= 0; i--)
         {
-            if (Index_JobReferenceID.TryGetValue(i, out var job)) job.LastUpdate();
+            if (Index_JobReferenceID.TryGetValue(specialUpdateJobs[i], out var job)) job.LastUpdate();
         }
         for (int i = specialUpdateRooms.Count - 1; i >= 0; i--)
         {
@@ -1072,7 +1072,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         updateTime = 0;
 
         //string s = "ExistPlayerPackage : ";
-        var status = Player.Stats.GetStatusByStringMatch("chara_status_sleeping");
+        var status = Player.Stats.GetStatusByStringMatch(StatsUtility.Status_Sleeping);
 
         if (Player.isSleeping && status != null && status.duration > 0 && status.Severity > 0)
         {
@@ -2341,7 +2341,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
         foreach (var i in charaInDebug)
         {
-            MoveCharacterTo(i, room);
+            MoveCharacterTo(i, room, true);
             Debug.Log("CampaignManager: MoveCharaToRoom character refID [" + i + "] registered to room [" + room.DisplayName + "]");
 
         }
@@ -2383,7 +2383,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         MoveCharacterTo(FindInstanceByID(charaRef), Map.GetRoomByRef(targetRoomRef));
     }
-    public void MoveCharacterTo(Character_Trainable charaRef, Room_Instance targetRoomRef)
+    public void MoveCharacterTo(Character_Trainable charaRef, Room_Instance targetRoomRef, bool silent = false)
     {
         bool playerMoved = false;
         bool updateScene = false;
@@ -2396,7 +2396,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         //if (charaLocation[charaRef] == currentRoomRef) updateTarget = true;
         //else if (targetRoomRef == currentRoomRef && currentTarget < 1) updateTarget = true;
 
-        Map.MoveCharaTo(charaRef, targetRoomRef);
+        Map.MoveCharaTo(charaRef, targetRoomRef, silent);
 
         if (charaRef.RefID == 0)
         {
@@ -2408,7 +2408,7 @@ public class scr_System_CampaignManager : MonoBehaviour
                 // do we break team if timestop ?
                 //charaLocation[i] = targetRoomRef; // move party members
                 var teammate = FindInstanceByID(i);
-                MoveCharacterTo(teammate, targetRoomRef);
+                MoveCharacterTo(teammate, targetRoomRef, silent);
 
                 if (teammate.CurrentJob != null)
                 {
@@ -2550,7 +2550,7 @@ public class scr_System_CampaignManager : MonoBehaviour
             c = Register(c);
         }
 
-        MoveCharacterTo(c, room);
+        MoveCharacterTo(c, room, true);
         //Debug.LogError("Adding charaRef "+c.RefID +" to roomRef "+room.RefID);
         //Debug.Log("CampaignManager: Instantiate character baseID [" + c.baseID + "] with refID [" + c.RefID + "] registered to room ["+room.RefID+"]");
 
@@ -2982,7 +2982,7 @@ public static class WorldManager
                                     var cc = scr_System_CampaignManager.current.FindInstanceByID(c[0]);
                                     if (cc != null)
                                     {
-                                        scr_System_CampaignManager.current.MoveCharacterTo(cc, r);
+                                        scr_System_CampaignManager.current.MoveCharacterTo(cc, r, true);
                                         continue;
                                     }
                                 }

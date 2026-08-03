@@ -10,6 +10,7 @@ using UnityEngine;
 
 public class Manageable : I_Disposable, I_IsJobGiver
 {
+    [JsonIgnore] public string FactionID { get { return this.ID; } }
 
     public bool hiddenOnWorldMap = false;
     public Dictionary<string, string> memberTypeOverride = new Dictionary<string, string>();
@@ -712,9 +713,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
 
-    public bool HasScheduleFor(Character_Trainable c, int hour)
+    public bool HasScheduleFor(Character_Trainable c, int hour, int daysLookahead = 0)
     {
-        if (GetMemberTypeSchedule(c, hour) != null) return true;
+        if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out _)) return true;
+        if (GetMemberTypeSchedule(c, hour, daysLookahead) != null) return true;
         if (charaSchedules.TryGetValue(c.RefID, out var schedule))
         {
             return schedule.Get(hour).isActive;
@@ -733,14 +735,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// read-only HourlySchedule from it, or null if there's no such override for this hour. These
     /// hours are fixed by the status itself (not editable through the Schedule UI) and take priority
     /// over any loose/manually-assigned hour - see GetSchedule/HasScheduleFor.
+    /// <br/> daysLookahead: 0 = today (default), 1 = tomorrow, etc. - pass a nonzero value when hour
+    /// belongs to a future day, e.g. a sleep lookahead that crosses midnight.
     /// </summary>
-    HourlySchedule GetMemberTypeSchedule(Character_Trainable c, int hour)
+    HourlySchedule GetMemberTypeSchedule(Character_Trainable c, int hour, int daysLookahead = 0)
     {
         var module = GetMemberType(c).workModule;
         if (module == null || !module.activeHours.Contains(hour)) return null;
         if (module.activeDays.Count > 0)
         {
-            int dayInWeek = scr_System_Time.current.getCurrentDayInWeek();
+            int dayInWeek = (scr_System_Time.current.getCurrentDayInWeek() + daysLookahead) % 7;
             if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) return null;
         }
         var schedule = new HourlySchedule();
@@ -748,9 +752,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
         return schedule;
     }
 
-    public HourlySchedule GetSchedule(Character_Trainable c, int hour)
+    public HourlySchedule GetSchedule(Character_Trainable c, int hour, int daysLookahead = 0)
     {
-        var memberTypeSchedule = GetMemberTypeSchedule(c, hour);
+        if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out var sc)) return sc;
+        var memberTypeSchedule = GetMemberTypeSchedule(c, hour, daysLookahead);
         if (memberTypeSchedule != null) return memberTypeSchedule;
 
         if (charaSchedules.TryGetValue(c.RefID, out var setting) && setting != null) return setting.Get(hour);
@@ -1740,6 +1745,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         public HourlySchedule Get(int hour)
         {
+            if (hour < 0 || hour > 23)
+            {
+                Debug.LogError("error manageable getschedule out of bound, clamping");
+                hour = Math.Clamp(hour, 0, 23);
+            }
             if(schedule[hour] == null) schedule[hour] = new HourlySchedule();
             return schedule[hour];
         }
@@ -1753,6 +1763,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 foreach (int hour in jobHours) schedule[hour].Set(initializeJob);
             }
 
+        }
+
+        public void CopyFrom(Job_Schedule target, int hour)
+        {
+            this.Get(hour).CopyFrom(target.Get(hour));
         }
 
         public bool HasWorkHoursWithCOM(int hour, string comID)
@@ -1792,11 +1807,31 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public class HourlySchedule
     {
-
+        public bool AllowOverride = true;
         public string jobID = "";
         public List<string> comIDs = new List<string>();
 
-        public HourlySchedule(){}
+        public bool Equals(COM com)
+        {
+            if (this.jobID != "") return false;
+            if (com == null && comIDs.Count > 0) return false;
+            if (comIDs.Count != 1) return false;
+            return comIDs.Contains(com.ID);
+        }
+
+        public HourlySchedule(){ }
+        public HourlySchedule(string debugid) {
+            this.jobID = debugid;
+        }
+
+        public void CopyFrom(HourlySchedule target)
+        {
+            this.jobID = target.jobID;
+            this.comIDs.Clear();
+            this.comIDs.AddRange(target.comIDs);
+            cache_name = "";
+            cache_com = null;
+        }
 
         public void Set(COM com)
         {
@@ -1893,7 +1928,6 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
     }
-
 
     public class TradeOrder
     {

@@ -192,7 +192,7 @@ public class Status_Instance
     public bool SeverityAdd(float f, float externalCap = -1)
     {
         if (Math.Abs(f) < float.Epsilon) return false;
-       // if (!this.BaseRef.allowNaturalRemoval && this.BaseRef.statusID == "chara_status_sleeping" && this.Owner.Debug_ForceDeepSleep) return false;
+       // if (!this.BaseRef.allowNaturalRemoval && this.BaseRef.statusID == StatsUtility.Status_Sleeping && this.Owner.Debug_ForceDeepSleep) return false;
 
         var initialS = this.SeverityIndex;
 

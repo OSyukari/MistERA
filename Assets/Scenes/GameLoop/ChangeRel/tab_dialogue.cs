@@ -17,7 +17,7 @@ public class tab_dialogue : MonoBehaviour
 
         menu.title.SetText(LocalizeDictionary.QueryThenParse("menu_dialogue_title")
             .Replace("$source$", menu.CurrentRel.Target.FirstName)
-            .Replace("$target$", menu.CurrentTarget.FirstName));//
+            .Replace("$target$", menu.CurrentTarget.FullName));//
 
         if (initialize) return;
         initialize = true;

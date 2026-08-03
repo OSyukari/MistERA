@@ -338,12 +338,21 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "shy",
+                                        "hesitated",
+                                        "sad"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_A08_F",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "A08_F"
+                                            "A09"
                                         ]
                                     }
                                 ]
@@ -357,71 +366,47 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "shy",
+                                        "hesitated",
+                                        "sad"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_A08_M",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "A08_M"
+                                            "A09"
                                         ]
                                     }
                                 ]
                             },
                             {
                                 "option": "fallback branch",
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "shy",
+                                        "hesitated",
+                                        "sad"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_A08",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "A08_A"
+                                            "A09"
                                         ]
                                     }
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "shy",
-                                "hesitated",
-                                "sad"
-                            ]
-                        },
-                        "label": "A08_F",
-                        "line": "event_OpeningErAV_A08_F",
-                        "nextEntryLabel": "A09"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "shy",
-                                "hesitated",
-                                "sad"
-                            ]
-                        },
-                        "label": "A08_M",
-                        "line": "event_OpeningErAV_A08_M",
-                        "nextEntryLabel": "A09"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "shy",
-                                "hesitated",
-                                "sad"
-                            ]
-                        },
-                        "label": "A08_A",
-                        "line": "event_OpeningErAV_A08",
-                        "nextEntryLabel": "A09"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
@@ -443,12 +428,20 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "shy",
+                                        "hesitated"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_A10_F",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "A10_F"
+                                            "AQ"
                                         ]
                                     }
                                 ]
@@ -462,68 +455,45 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "shy",
+                                        "hesitated"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_A10_M",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "A10_M"
+                                            "AQ"
                                         ]
                                     }
                                 ]
                             },
                             {
                                 "option": "fallback branch",
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "shy",
+                                        "hesitated"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_A10",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "A10_A"
+                                            "AQ"
                                         ]
                                     }
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "A10_F",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "shy",
-                                "hesitated"
-                            ]
-                        },
-                        "line": "event_OpeningErAV_A10_F",
-                        "nextEntryLabel": "AQ"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "A10_M",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "shy",
-                                "hesitated"
-                            ]
-                        },
-                        "line": "event_OpeningErAV_A10_M",
-                        "nextEntryLabel": "AQ"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "A10_A",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "shy",
-                                "hesitated"
-                            ]
-                        },
-                        "line": "event_OpeningErAV_A10",
-                        "nextEntryLabel": "AQ"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
@@ -743,12 +713,20 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "worry",
+                                        "sad"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_R09_F",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "R09_F"
+                                            "R10"
                                         ]
                                     }
                                 ]
@@ -762,68 +740,45 @@
                                         ]
                                     }
                                 ],
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "worry",
+                                        "sad"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_R09_M",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "R09_M"
+                                            "R10"
                                         ]
                                     }
                                 ]
                             },
                             {
                                 "option": "fallback branch",
+                                "UISpec": {
+                                    "portraitRefKey": "kanade",
+                                    "selfTags": [
+                                        "worry",
+                                        "sad"
+                                    ]
+                                },
+                                "line": "event_OpeningErAV_R09",
                                 "Results": [
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
                                             "",
-                                            "R09_A"
+                                            "R10"
                                         ]
                                     }
                                 ]
                             }
                         ]
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "R09_F",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "worry",
-                                "sad"
-                            ]
-                        },
-                        "line": "event_OpeningErAV_R09_F",
-                        "nextEntryLabel": "R10"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "R09_M",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "worry",
-                                "sad"
-                            ]
-                        },
-                        "line": "event_OpeningErAV_R09_M",
-                        "nextEntryLabel": "R10"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "R09_A",
-                        "UISpec": {
-                            "portraitRefKey": "kanade",
-                            "selfTags": [
-                                "worry",
-                                "sad"
-                            ]
-                        },
-                        "line": "event_OpeningErAV_R09",
-                        "nextEntryLabel": "R10"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",

@@ -29,6 +29,7 @@
     "portrait_offset_x": 6.858727,    "portrait_offset_y": -389.2971,    "portrait_offset_size": 0.55,
     "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
+    "RequireSelfContextKeys":["Utnapishtim"],
     "Variants":
     [
         
@@ -71,17 +72,18 @@
 {
     "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-    "portrait_offset_x": 5.962,     "portrait_offset_y": -328.107,  "portrait_offset_size": 0.55,
+              "portrait_offset_x": 5.962,
+              "portrait_offset_y": -281.004028,
+              "portrait_offset_size": 0.45,
     "icon_offset_x":0.0,            "icon_offset_y":0.0,            "icon_offset_size":0.8,
 
     "icon_path":"Rin/Rin_Ark_Uniform_Icon.png",    "_comment":"default L2D, no expression",
 
-    "Disable":true,
 
     "straightAlpha":true,
     "materialTexturePaths":["Rin/Rin_raiddungeon.png"],    "atlasJSON_path":"Rin/Rin_raiddungeon.atlas",    "skeletonJSON_path":"Rin/Rin_raiddungeon.skel",
 
-    "idleAnimName":"Idle_01", "addonAnimName":"0aa0"
+    "idleAnimName":"Idle_01", "addonAnimName":"Idle_01"
 
 }
         ],

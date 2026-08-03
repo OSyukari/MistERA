@@ -15,6 +15,7 @@
                 "icon_offset_size":0.8,
 
                 "Disable":false,
+    "RequireSelfContextKeys":["Utnapishtim"],
 
 "Variants":
 [
@@ -57,9 +58,9 @@
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-                "portrait_offset_x": 29.302,
-                "portrait_offset_y": -331.505,
-                "portrait_offset_size": 0.55,
+              "portrait_offset_x": 22.6246014,
+              "portrait_offset_y": -246.511078,
+              "portrait_offset_size": 0.45,
 
                 "icon_offset_x":0.0,
                 "icon_offset_y":0.0,
@@ -72,7 +73,7 @@
                 "materialTexturePaths":["Ayumu/NP0013_quest.png"],
                 "atlasJSON_path":"Ayumu/NP0013_quest.atlas",
                 "skeletonJSON_path":"Ayumu/NP0013_quest.skel",
-                "idleAnimName":"Idle_01", "addonAnimName":"00"
+                "idleAnimName":"Idle_01", "addonAnimName":"Idle_01"
 
             }
         ],

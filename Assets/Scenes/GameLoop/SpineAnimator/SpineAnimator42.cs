@@ -188,7 +188,7 @@ public class SpineAnimator42 : SpineAnimatorBase
                 addonAnim = list.Length > 0 ? list[0] : null;
                 var names = new List<string>();
                 foreach (var i in list) names.Add(i.Name);
-                Debug.Log($"Spine animation name mismatch\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
+                Debug.Log($"Spine animation name mismatch with {addonAnimName}\nAtlasPath {atlasPath}\nValid Anims: {String.Join("|", names)}");
             }
             if (addonAnim != null)
             {

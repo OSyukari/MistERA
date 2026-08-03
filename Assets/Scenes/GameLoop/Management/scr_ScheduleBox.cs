@@ -32,7 +32,7 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         desc = LocalizeDictionary.QueryThenParse("management_schedule_box_description");
         desc_noplan = LocalizeDictionary.QueryThenParse("management_schedule_box_none");
     }
-
+    Manageable.HourlySchedule schedule = null;
     public void Refresh()
     {
         if (parent == null || parent.currentChara == null) 
@@ -42,7 +42,13 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         }
         int currentHour = scr_System_Time.current.getCurrentTime().Hour;
         c = parent.currentChara;
-        comName = c.CurrentJobName(index);
+
+        schedule = this.isActive ? c.FactionManager.CurrentJobPost(index) 
+            : c.FactionManager.GetUiSchedule(index);
+
+        comName = schedule.Name;
+
+       // comName = c.FactionManager.GetUiSchedule(0, index).Name; // today's slot from the calendar-anchored 48h registry, not the rolling window
         faction = c.CurrentJobScheduleFaction(index); // get job faction at hour[index]
 
         factionPriority = c.FactionManager.Factions;
@@ -55,14 +61,24 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         text.text = (current ? "> " : "") + index + "H - " + desc.Replace("$com$", comName != "" ? comName : desc_noplan)
                                          .Replace("$faction$", faction != null ? faction.FactionDisplayName : desc_personal) + (current ? " <" : "");
 
-        if (indexCurrent < indexCOM) this.text.color = disableColor;
+        canOverride = true;
+        if (indexCurrent < indexCOM)
+        {
+            this.text.color = disableColor;
+        }
         else if (parent.CurrentHighlightHours != null && parent.CurrentHighlightHours.Contains(this.index))
         {
             this.text.color = faction == null ? highlightColor : conflictColor;
         }
+        else if (!schedule.AllowOverride)
+        {
+            canOverride = false;
+        }
         else this.text.color = faction == parent.CurrentFaction ? baseColor : disableColor;
         
     }
+    bool canOverride = false;
+
     public Color32 baseColor, disableColor, highlightColor, conflictColor;
     string comName = "";
     Manageable faction = null;
@@ -74,6 +90,7 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
     public void SetActive(bool active)
     {
         this.isActive = active;
+        Refresh();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -90,17 +107,25 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         
         if (!isActive) return;
         if (c == null) return;
-
+        if (!canOverride) return;
         //Debug.Log("OnPointerDown");
 
         List<Manageable> factionPriority = c.FactionManager.Factions;
         int indexCurrent = factionPriority.IndexOf(parent.CurrentFaction);
 
-        int indexCOM = (faction == null? -1: factionPriority.IndexOf(faction)) ;
+        int indexCOM = (faction == null? -1: faction is Manageable ? factionPriority.IndexOf(faction) : 99) ;
         //COM com = c.CurrentJobSchedule(index);
         // indexCurrent >= 0; indexCurrent < 0
         // indexCOM >= 0; indexCOM < 0
-        if (indexCurrent >= indexCOM)
+
+        var currentActive = c.FactionManager.CurrentJobPost(index);
+
+        if (parent.CurrentFaction == faction && currentActive.Equals( parent.CurrentHighlightJOBCOM))
+        {
+            // unset
+            c.FactionManager.SetSchedule(parent.CurrentFaction, index, null);
+        }
+        else if (indexCurrent >= indexCOM)
         {
             //Debug.Log("ScheduleBox OnPointerDown from index[" + index + "] setting com [" + (com == null?"null": c.CurrentJobSchedule(index).ID) + "] to ["+ (parent.CurrentHighlightJOBCOM == null ? "null" : parent.CurrentHighlightJOBCOM.ID) + "]");
 
@@ -112,5 +137,6 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         {
             Debug.Log($"ScheduleBox OPD index {indexCurrent} not gte {indexCOM}, ignored");
         }
+        Refresh();
     }
 }

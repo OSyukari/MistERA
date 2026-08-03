@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class scr_SelectExp : MonoBehaviour
 {
-    public scr_HoverableText expName, expDuration, expFeatures;
+    public scr_HoverableText expName, expDuration, expFeatures, expDescription;
 
     string duration, force, feature;
     DateTime time;
@@ -23,12 +23,17 @@ public class scr_SelectExp : MonoBehaviour
         if (exp == null)
         {
             expName.SetText(" - ");
+            expDescription.gameObject.SetActive(false);
             expDuration.gameObject.SetActive(false);
             expFeatures.gameObject.SetActive(false);
             return;
         }
 
         expName.SetText(exp.Base.DisplayName);
+
+        expDescription.gameObject.SetActive(true);
+        expDescription.SetText(exp.Base.DisplayCustomDescription);
+
         expDuration.gameObject.SetActive(true);
         expDuration.SetText(duration.Replace("$time$",$"{exp.Base.DurationHour}")+(exp.Base.HasStartHour ? $"\n{force.Replace("$time$", time.AddHours(exp.Base.ForceStartHour).ToShortTimeString())}" : ""));
         expFeatures.gameObject.SetActive(true);

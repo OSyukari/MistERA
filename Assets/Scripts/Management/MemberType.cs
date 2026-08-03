@@ -157,6 +157,13 @@ public class MemberType
     public MapPlan.WorkModuleInit workModule = null;
 
     /// <summary>
+    /// Optional tags contributed by this member status (e.g. "prisoner", "clergy"), merged into the
+    /// actor's tag set (Utility.GetActorTag) when this is the character's current MemberType in their
+    /// active faction or active party. Empty by default.
+    /// </summary>
+    public List<string> portraitTags = new List<string>();
+
+    /// <summary>
     /// Looks up a behavior override for the given FindJobNode.behaviorOverrideID, or null if this
     /// member type doesn't override that node.
     /// </summary>

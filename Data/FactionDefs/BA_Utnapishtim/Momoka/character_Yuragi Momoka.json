@@ -13,6 +13,7 @@
                 "icon_offset_y":0.0,
                 "icon_offset_size":0.8,
 
+                "RequireSelfContextKeys":["Utnapishtim"],
                 "Disable":false,
 
 "Variants":
@@ -54,15 +55,14 @@
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",
 
-                "portrait_offset_x": -21.207,
-                "portrait_offset_y": -313.4,
-                "portrait_offset_size": 0.55,
+              "portrait_offset_x": 13.5158386,
+              "portrait_offset_y": -346.7872,
+              "portrait_offset_size": 0.55,
 
                 "icon_offset_x":0.0,
                 "icon_offset_y":0.0,
                 "icon_offset_size":0.8,
 
-                "Disable":true,
                 "icon_path":"Momoka/Momoka_Ark_Uniform_Icon.png",
                 "_comment":"default L2D",
 
@@ -71,7 +71,7 @@
                 "materialTexturePaths":["Momoka/Momoka_weekdungeon.png"],
                 "atlasJSON_path":"Momoka/Momoka_weekdungeon.atlas",
                 "skeletonJSON_path":"Momoka/Momoka_weekdungeon.skel",
-                "idleAnimName":"Idle_01", "addonAnimName":"00"
+                "idleAnimName":"Idle_01", "addonAnimName":"Idle_01"
 
             }
         ],

@@ -265,7 +265,7 @@ public class Floor_Instance : IDisposable, I_Disposable
             }
 
             foreach (var chara in new List<Character_Trainable>(ri.RoomChara))
-                scr_System_CampaignManager.current.Map.MoveCharaTo(chara, destination);
+                scr_System_CampaignManager.current.Map.MoveCharaTo(chara, destination, true);
 
             owner?.RemoveManagedRoom(ri.RefID);
             rooms.Remove(ri);

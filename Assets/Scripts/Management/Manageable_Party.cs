@@ -31,6 +31,15 @@ public enum PartyAvailability
 
 public class Manageable_Party : I_IsJobGiver
 {
+    [JsonIgnore]
+    public string FactionID
+    {
+        get
+        {
+            return this.ID;
+        }
+    }
+
     [JsonIgnore] public virtual I_IsJobGiver getLocaleFaction { get { return this; } }
 
     public List<Job_Furniture> GetValidJobs_Heuristics(
@@ -567,6 +576,12 @@ public class Manageable_Party : I_IsJobGiver
 
         c.FactionManager.AddPartyTracker(this);
         InternalUpdate();
+
+        // Roster membership can newly put a fixed gathering hour in scope (or the party may
+        // already be queued/gathering) - let c immediately re-plan around it rather than
+        // waiting for the next hourly tick. See FactionUtility.TryGetPartyGatheringOverride.
+        var scheduleRefreshMsg = new List<string>();
+        c.FactionManager.UpdateSchedule(ref scheduleRefreshMsg);
     }
 
     [JsonProperty] protected bool _remove_dirty = false;
@@ -583,6 +598,10 @@ public class Manageable_Party : I_IsJobGiver
 
         c.FactionManager.RemovePartyTracker(this);
         InternalUpdate();
+
+        // Leaving the roster may release a gathering-hour commitment - re-plan immediately.
+        var scheduleRefreshMsg = new List<string>();
+        c.FactionManager.UpdateSchedule(ref scheduleRefreshMsg);
 
         if (DeletingBlocker) return;
         CleanupDetection();
@@ -1094,7 +1113,6 @@ public class Manageable_Party : I_IsJobGiver
        // string s = "Faction [" + ID + "] manage at hour [" + currentHour + "]";
        // s += "\n" + Inventory.PrintContent();// + " _ " + String.Join(" ", Inventory.PrintTracker());
     }
-
 
 }
 

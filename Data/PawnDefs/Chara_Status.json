@@ -64,8 +64,8 @@
                 { "displayable":false, "threshold":0 },
                 { "displayable":false, "threshold":1 },
                 { "displayName":"chara_status_pain_1", "threshold":2 },
-                { "displayName":"chara_status_pain_2", "tags":["needRest"], "threshold":3 },
-                { "displayName":"chara_status_pain_3", "tags":["needRest","consciousness_reduced"], "threshold":4 },
+                { "displayName":"chara_status_pain_2", "threshold":3 },
+                { "displayName":"chara_status_pain_3", "tags":["consciousness_reduced"], "threshold":4 },
                 { "displayName":"chara_status_pain_4", "tags":["consciousness_unconscious"], "threshold":5 }
             ]
         }

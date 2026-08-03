@@ -551,7 +551,7 @@ public class StatsManager : I_StatsManager
     {
         get
         {
-            return this.GetStatusByStringMatch("chara_status_sleeping") != null;
+            return this.GetStatusByStringMatch(StatsUtility.Status_Sleeping) != null;
         }
     }
     [JsonIgnore] public float Energy_InteractionCost { get { return -2f; } }
@@ -936,11 +936,11 @@ public class StatsManager : I_StatsManager
                         Debug.LogError($"status {curr.ID} severity at 0 while duration still at {curr.duration}");
                         RemoveStatusByStringMatch(key);
                     }
-                    else if (curr.BaseRef.statusID == "chara_status_sleeping")
+                    else if (curr.BaseRef.statusID == StatsUtility.Status_Sleeping)
                     {
                         refresh = true;
                         float totalMissing = curr.duration + Owner.ScheduledSleepMissingMinutes;
-                        Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", totalMissing, (int)(totalMissing * 0.5f));
+                        Owner.Stats.AddOrModStatus(StatsUtility.Status_SleepDeprived, totalMissing, (int)(totalMissing * 0.5f));
                         Owner.ScheduledSleepMissingMinutes = 0;
                         Debug.Log($"status {curr.ID} severity at 0 while duration still at {curr.duration}, replacing with chara_status_sleep_deprived");
                         Owner.WakeUp(false);
@@ -966,12 +966,12 @@ public class StatsManager : I_StatsManager
                             refresh = curr.SeverityMods.Count > 0;
                             RemoveStatusByStringMatch(key);
                         }
-                        else if (curr.BaseRef.statusID == "chara_status_sleeping")
+                        else if (curr.BaseRef.statusID == StatsUtility.Status_Sleeping)
                         {
                             Owner.FullRest();
                             if (Owner.ScheduledSleepMissingMinutes > 0)
                             {
-                                Owner.Stats.AddOrModStatus("chara_status_sleep_deprived", Owner.ScheduledSleepMissingMinutes, (int)(Owner.ScheduledSleepMissingMinutes * 0.5f));
+                                Owner.Stats.AddOrModStatus(StatsUtility.Status_SleepDeprived, Owner.ScheduledSleepMissingMinutes, (int)(Owner.ScheduledSleepMissingMinutes * 0.5f));
                                 Owner.ScheduledSleepMissingMinutes = 0;
                             }
                             Owner.WakeUp(false);

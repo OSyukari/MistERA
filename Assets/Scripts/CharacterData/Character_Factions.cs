@@ -439,6 +439,15 @@ public class Character_Factions
         trackedPartyRef.Remove(party.Job.RefID);
     }
 
+    /// <summary>
+    /// Job.RefID of every party this character is currently rostered in (roster membership,
+    /// not just the active/locked party) - kept in sync by AddPartyTracker/RemovePartyTracker
+    /// on both the UI roster-edit path (Manageable_Party.AddToFaction/RemoveFromFaction) and
+    /// the gathering-join path (AddToParty/RemoveFromParty). See
+    /// FactionUtility.TryGetPartyGatheringOverride.
+    /// </summary>
+    [JsonIgnore] public List<int> TrackedPartyRef { get { return trackedPartyRef; } }
+
 
     /// <summary>
     /// Workfaction for now does not allow setting single, so if target is not registered as home it will skip setting
@@ -564,12 +573,12 @@ public class Character_Factions
     /// </summary>
     /// <param name="hour"></param>
     /// <returns></returns>
-    public Manageable CurrentJobScheduleFaction(int hour = -1)
+    public Manageable CurrentJobScheduleFaction(int hour = -1, int daysLookahead = 0)
     {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
         foreach (var faction in Factions)
         {
-            if (faction.HasScheduleFor(this.Owner, hour)) return faction;
+            if (faction.HasScheduleFor(this.Owner, hour, daysLookahead)) return faction;
         }
         return null;
     }
@@ -581,16 +590,34 @@ public class Character_Factions
         return v.GetSchedule(Owner, hour).Name;
     }
 
-    public Manageable.HourlySchedule CurrentJobPost(int hour = -1)
+    public Manageable.HourlySchedule CurrentJobPost(int hour = -1, int daysLookahead = 0)
     {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
-        var v = CurrentJobScheduleFaction((int)hour);
+        var v = CurrentJobScheduleFaction((int)hour, daysLookahead);
         if(v == null) return privateSchedule.Get(hour);
-        return v.GetSchedule(Owner, hour);
+        return v.GetSchedule(Owner, hour, daysLookahead);
     }
 
     [JsonProperty] protected Manageable.Job_Schedule privateSchedule =  new Manageable.Job_Schedule();
+    [JsonProperty] protected Manageable.Job_Schedule pastSchedule = new Manageable.Job_Schedule();
     [JsonIgnore] public bool HasSleepSchedule { get { return privateSchedule.HasWorkHoursWithCOM("com_furniture_sleep"); } }
+
+    /// <summary>
+    /// UI-only accessor spanning today (dayOffset 0) and tomorrow (dayOffset 1), safe for a schedule
+    /// preview to read even for already-elapsed hours - unlike CurrentJobPost/GetJobPost (which read
+    /// the rolling 24h privateSchedule, re-anchored every hourly recompute and NOT calendar-stable),
+    /// hours before "now" here are frozen as historical record and never rewritten.
+    /// </summary>
+    public Manageable.HourlySchedule GetUiSchedule(int hour)
+    {
+        if (FactionUtility.TryGetPartyGatheringOverride(Owner, hour, out var sc)) return sc;
+
+        var faction = CurrentJobScheduleFaction(hour, 0);
+        if (faction != null) return faction.GetSchedule(Owner, hour, 0);
+        var currentHour = scr_System_Time.current.getCurrentTime().Hour;
+        if (hour < currentHour) return pastSchedule.Get(hour);
+        else return privateSchedule.Get(hour);
+    }
 
     [JsonIgnore]
     public bool HasPlayerFaction
@@ -667,119 +694,207 @@ public class Character_Factions
 
 
     /// <summary>
-    /// New sleep scheduling algorithm (design 2.3).<br/>
+    /// How many hours of occupancy data ValidateSchedule/RecomputePrivateSchedule look ahead when
+    /// placing sleep. Wider than privateSchedule's 24-slot output on purpose, so a wake-time search
+    /// anchored near the edge of a single day already has the next day's occupancy in view instead of
+    /// only discovering the correct placement several hourly recomputes later once the rolling window
+    /// has slid far enough to see it directly.
+    /// </summary>
+    private const int ScheduleLookaheadHours = 36;
+
+    /// <summary>
+    /// Recomputes and writes privateSchedule (the rolling 24h window) for the given currentHour.
+    /// Extracted out of UpdateSchedule so callers can always run the 48h UI-registry propagation
+    /// afterward, regardless of which of this method's several early-return paths was taken.<br/>
+    /// Sleep scheduling algorithm (design 2.3+).<br/>
     /// Happy path: aligns wake to faction DayStartHour (or 6:00 for 24/24 factions), trait offset clamped within free hours.<br/>
     /// Conflict path: fits sleep in longest free block with 1-hour buffer before work; trait offset ignored.<br/>
-    /// Replace UpdateSchedule() with this once approved.
+    /// Operates on a rolling 24h horizon anchored at the current hour (meant to be re-run every hour, not
+    /// once per day) so a day-of-week schedule change (e.g. weekday vs weekend work hours) is picked up
+    /// as soon as it comes into range, instead of only at the previous midnight's recompute.
     /// </summary>
-    public void UpdateSchedule(ref List<string> s)
+    private void RecomputePrivateSchedule(ref List<string> s, int currentHour)
     {
-        var scheduleValidation  = ValidateSchedule(ref s);
+        var scheduleValidation  = ValidateSchedule(ref s, null, false, currentHour);
         privateSchedule.Clear();
 
-        var consecutiveSleepHours = scheduleValidation.Item1;
-        var consecutiveRestHour   = scheduleValidation.Item2;
-        var sleepHours            = Owner.Stats.SleepHours;
+        var consecutiveFreeRun  = scheduleValidation.Item1; // indexed by r = hours-from-now, see ValidateSchedule
+        var consecutiveRestHour = scheduleValidation.Item2;
+        var sleepHours          = Owner.Stats.SleepHours;
 
         if (sleepHours == 0 || HomeFactions.Count < 1) return;
         if (consecutiveRestHour < sleepHours) return; // ValidateSchedule already logged the warning
 
-        // CanWakeAt(w): all sleepHours hours immediately before w are free
-        bool CanWakeAt(int w) => consecutiveSleepHours[(w - 1 + 24) % 24] >= sleepHours;
+        // CanWakeAt(r): all sleepHours hours immediately before relative hour r are free.
+        // r is an offset from "now" (0..ScheduleLookaheadHours-1), not a wrapping absolute hour.
+        // Requires r > sleepHours (not just r > 0) so the resulting sleep block - hours
+        // [r-sleepHours, r-1] - always starts at r==1 ("next hour") at the earliest, never r==0
+        // ("now"). A recompute triggered mid-hour (e.g. from a player's SetSchedule edit) must never
+        // mark the current hour as sleep, since doing so would immediately trip UpdateSchedule's
+        // sleeping-guard and freeze further edits until game-clock time moves past it.
+        // r>=ScheduleLookaheadHours is rejected outright since it falls outside the computed horizon.
+        bool CanWakeAt(int r) => r > sleepHours && r <= ScheduleLookaheadHours - 1 && consecutiveFreeRun[r - 1] >= sleepHours;
 
-        // WriteSleep(wakeHour): fills sleepHours hours ending just before wakeHour
-        void WriteSleep(int wakeHour)
+        // CanWakeAtWithBuffer(r): same as CanWakeAt, but also requires relative hour r itself to
+        // be free, so the character never wakes directly into a job with zero prep/travel time.
+        bool CanWakeAtWithBuffer(int r) => CanWakeAt(r) && consecutiveFreeRun[r] > 0;
+
+        // WriteSleep(wakeR): fills sleepHours hours ending just before relative hour wakeR,
+        // converting back to absolute hour-of-day only at the point of writing.
+        void WriteSleep(int wakeR)
         {
             for (int i = 0; i < sleepHours; i++)
             {
-                int h = (wakeHour - sleepHours + i + 24) % 24;
-                privateSchedule.Get(h).Set("com_furniture_sleep");
+                int r = wakeR - sleepHours + i;
+                int absHour = (currentHour + r) % 24;
+                if (absHour >= currentHour && currentHour + r > 23) continue;
+                privateSchedule.Get(absHour).Set("com_furniture_sleep");
             }
         }
 
         var homeFaction = HomeFactions[0];
         int targetWake  = homeFaction.HasDayNight ? homeFaction.DayStartHour : 6;
-        //Debug.LogError($"UpdateSchedule {consecutiveRestHour} {String.Join("|", consecutiveSleepHours)}");
+        // Convert to relative-hour space: the next occurrence of targetWake from "now" (today if
+        // still ahead, tomorrow if already passed) - this is what makes "wake at 6am" unambiguous
+        // regardless of the current hour, instead of assuming it always means "today at 6am".
+        int targetWakeR = (targetWake - currentHour + 24) % 24;
+        // targetWakeR in [0, sleepHours] is unreachable as a fresh wake point - reaching it would
+        // require having already started sleeping before "now", which CanWakeAt's r > sleepHours
+        // guard above forbids. (targetWakeR==0, currentHour==targetWake exactly, is just the most
+        // obvious case of this - but 1..sleepHours are equally impossible, just less obviously so.)
+        // Its real next occurrence is a full cycle away, so re-anchor the search there. With the
+        // wider ScheduleLookaheadHours-hour lookahead, targetWakeR+24 is (for realistic sleepHours)
+        // a directly checkable candidate, so Step 2 below can confirm "wake at tomorrow's exact
+        // target hour" outright instead of Step 3's search silently accepting whatever immediate
+        // forward slot happens to be free (which, for a jobless/free character, is literally r ==
+        // sleepHours+1 - sleep starting the very next hour, in the middle of the day).
+        if (targetWakeR <= sleepHours) targetWakeR += 24;
+        //Debug.LogError($"UpdateSchedule {consecutiveRestHour} {String.Join("|", consecutiveFreeRun)}");
 
-        // Step 2: Happy path — sleep aligned to faction day start
-        if (CanWakeAt(targetWake))
+        // Step 2: Happy path — sleep aligned to faction day start.
+        // Requires a free buffer hour at targetWakeR itself; if a job sits right at targetWakeR
+        // (zero buffer), this gate fails and we fall through to Step 3, which searches for a
+        // wake hour that leaves at least 1 free hour before the job.
+        if (CanWakeAtWithBuffer(targetWakeR))
         {
             // GetStatValue returns 0 safely when stat_derived_wakeupOffset is not yet defined
             int traitOffset = (int)Owner.Stats.GetStatValue("stats_derived_wakeupOffset");
-            int desiredWake = (targetWake - traitOffset + 24) % 24;
+            int desiredWakeR = targetWakeR - traitOffset;
 
-            if (!CanWakeAt(desiredWake))
+            if (desiredWakeR < 0 || desiredWakeR > ScheduleLookaheadHours - 1 || !CanWakeAtWithBuffer(desiredWakeR))
             {
-                // Clamp: step back toward targetWake one hour at a time
+                // Clamp: step back toward targetWakeR one hour at a time
                 int step = traitOffset > 0 ? 1 : -1;
                 for (int n = 1; n <= Math.Abs(traitOffset); n++)
                 {
-                    desiredWake = (desiredWake + step + 24) % 24;
-                    if (CanWakeAt(desiredWake)) break;
+                    desiredWakeR += step;
+                    if (desiredWakeR >= 0 && desiredWakeR <= ScheduleLookaheadHours - 1 && CanWakeAtWithBuffer(desiredWakeR)) break;
                 }
-                if (!CanWakeAt(desiredWake)) desiredWake = targetWake; // full fallback
+                if (desiredWakeR < 0 || desiredWakeR > ScheduleLookaheadHours - 1 || !CanWakeAtWithBuffer(desiredWakeR)) desiredWakeR = targetWakeR; // full fallback
             }
 
-            WriteSleep(desiredWake);
+            WriteSleep(desiredWakeR);
             return;
         }
 
-        // Step 3: Conflict path — bidirectional search from targetWake, traits ignored.
+        // Step 3: Conflict path — bidirectional search from targetWakeR, traits ignored.
         // At each distance n, check backward first (prefers later wake = more night-aligned).
-        for (int n = 1; n < 24; n++)
+        // Bounded by the horizon edges [0, ScheduleLookaheadHours-1] - unlike absolute-hour
+        // arithmetic, going past either edge means "outside the horizon we just computed", not
+        // "wrap to yesterday".
+        for (int n = 1; n <= ScheduleLookaheadHours - 1; n++)
         {
-            int bw = (targetWake - n + 24) % 24;
-            if (CanWakeAt(bw) && consecutiveSleepHours[bw] > 0) { WriteSleep(bw); return; }
+            int bw = targetWakeR - n;
+            if (bw >= 0 && CanWakeAtWithBuffer(bw)) { WriteSleep(bw); return; }
 
-            int fw = (targetWake + n) % 24;
-            if (CanWakeAt(fw) && consecutiveSleepHours[fw] > 0) { WriteSleep(fw); return; }
+            int fw = targetWakeR + n;
+            if (fw <= ScheduleLookaheadHours - 1 && CanWakeAtWithBuffer(fw)) { WriteSleep(fw); return; }
         }
 
         // Step 4: Fallback — no free buffer hour exists (block length == sleepHours exactly).
         // Find nearest CanWakeAt without the buffer requirement.
-        for (int n = 0; n < 24; n++)
+        for (int n = 0; n <= ScheduleLookaheadHours - 1; n++)
         {
-            int bw = (targetWake - n + 24) % 24;
-            if (CanWakeAt(bw)) { WriteSleep(bw); return; }
-            int fw = (targetWake + n) % 24;
-            if (n > 0 && CanWakeAt(fw)) { WriteSleep(fw); return; }
+            int bw = targetWakeR - n;
+            if (bw >= 0 && CanWakeAt(bw)) { WriteSleep(bw); return; }
+            int fw = targetWakeR + n;
+            if (n > 0 && fw <= ScheduleLookaheadHours - 1 && CanWakeAt(fw)) { WriteSleep(fw); return; }
         }
+    }
+
+    /// <summary>
+    /// Wipe and rebuild personal sleep schedule.<br/>
+    /// Use this whenever an external schedule modification has taken place<br/>
+    /// To modify a given chara's schedule, it's preferable to use SetSchedule() as it calls every necessary update internally.<br/>
+    /// If the character is currently mid-sleep, this is a no-op (see the guard below) - recomputing
+    /// here (e.g. from an hourly tick) could shift or cancel a sleep block already in progress.<br/>
+    /// First rebuilds privateSchedule (the rolling 24h window used by gameplay/AI reads), then
+    /// propagates that result into uiSchedule48 (the calendar-anchored 48h window used by UI reads) -
+    /// see PersonalScheduleWindow48.ApplyRollingWindow.
+    /// </summary>
+    public void UpdateSchedule(ref List<string> s, bool fullrebuild = true)
+    {
+        int currentHour = scr_System_Time.current.getCurrentTime().Hour;
+
+        if (privateSchedule.HasWorkHoursWithCOM(currentHour, "com_furniture_sleep"))
+        {
+            // dont do anything
+        }
+        else
+        {
+            RecomputePrivateSchedule(ref s, currentHour);
+        }
+
+        var job = CurrentJobScheduleFaction(currentHour);
+        if (job != null) pastSchedule.CopyFrom(job.GetSchedule(Owner), currentHour);
+        else pastSchedule.CopyFrom(privateSchedule, currentHour);
     }
 
     /// <summary>
     /// Check if chara has enough sleep hours.<br/>
     /// Run this if there is no external modification to schedule (just to ckeck warnings) <br/>
-    /// If a modification has taken place, use UpdateSchedule() instead
+    /// If a modification has taken place, use UpdateSchedule() instead<br/>
+    /// Walks a linear ScheduleLookaheadHours-hour horizon starting at startHour (defaults to the
+    /// current game hour), not a fixed midnight-anchored day, so hours that fall on a future day are
+    /// checked against that day's actual day-of-week schedule (daysLookahead) instead of assuming
+    /// today's schedule repeats.
     /// </summary>
     /// <param name="s"></param>
-    public Tuple<int[], int> ValidateSchedule(ref List<string> s, List<int> extraSchedule = null, bool extraDebug = false)
+    public Tuple<int[], int> ValidateSchedule(ref List<string> s, List<int> extraSchedule = null, bool extraDebug = false, int startHour = -1)
     {
+        if (startHour == -1) startHour = scr_System_Time.current.getCurrentTime().Hour;
+
         int consecutiveRestHour = 0;
         int counter = 0;
-        int[] consecutiveSleepHours = new int[24];
+        // Indexed by r = hours-from-now (0..ScheduleLookaheadHours-1), NOT absolute hour-of-day -
+        // this is a linear horizon starting at startHour, not a repeating daily cycle. Deliberately
+        // wider than privateSchedule's 24-slot output - see ScheduleLookaheadHours.
+        int[] consecutiveFreeRun = new int[ScheduleLookaheadHours];
 
-        for(int i = 0; i < 48; i++)
+        for (int r = 0; r < ScheduleLookaheadHours; r++)
         {
-            if (CurrentJobScheduleFaction(i%24) != null || (extraSchedule != null && extraSchedule.Contains(i%24))) counter = 0;
+            int absHour = (startHour + r) % 24;
+            int daysLookahead = (startHour + r) / 24;
+            if (CurrentJobScheduleFaction(absHour, daysLookahead) != null || (extraSchedule != null && extraSchedule.Contains(absHour))) counter = 0;
             else
             {
-                if (counter < 24) counter++;
+                counter++;
                 consecutiveRestHour = Math.Max(consecutiveRestHour, counter);
             }
-            consecutiveSleepHours[i%24] = counter;
+            consecutiveFreeRun[r] = counter;
         }
 
-        int listMax = consecutiveSleepHours.Max();
+        int listMax = consecutiveFreeRun.Max();
         int sleepHours = Owner.Stats.SleepHours;
 
         if(extraDebug && s != null) s.Add("Required Sleep hours [" + sleepHours + "]");
 
         if (consecutiveRestHour < sleepHours && s != null) s.Add(Utility.WrapTextColor("Does not have enough freetime for a full rest", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color) );
-        else if (extraDebug && s != null) s.Add("Max Consecutive free hours [" + consecutiveRestHour + "] listMax ["+ listMax+ "] indexOflistMax [" + Array.IndexOf(consecutiveSleepHours, consecutiveSleepHours.Max()).ToString() + "]");
-        if (extraDebug && s != null) s.Add("\n"+String.Join(" ", consecutiveSleepHours));
+        else if (extraDebug && s != null) s.Add("Max Consecutive free hours [" + consecutiveRestHour + "] listMax ["+ listMax+ "] indexOflistMax [" + Array.IndexOf(consecutiveFreeRun, consecutiveFreeRun.Max()).ToString() + "]");
+        if (extraDebug && s != null) s.Add("\n"+String.Join(" ", consecutiveFreeRun));
 
         // if we dont have enough consecutive time, we wipe everything and everytime character rest it falls dead sleep
-        return new Tuple<int[], int>(consecutiveSleepHours, consecutiveRestHour);
+        return new Tuple<int[], int>(consecutiveFreeRun, consecutiveRestHour);
 
     }
 }
