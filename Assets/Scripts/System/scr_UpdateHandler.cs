@@ -103,6 +103,11 @@ public class scr_UpdateHandler : MonoBehaviour
     public void SendLLMRequest(string s, bool updateUI =false)
     {
         var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        if (llm == null)
+        {
+            Debug.LogError("SendLLMRequest: no LLM preset selected, aborting.");
+            return;
+        }
         var payload = new LLMRequest();
         payload.model = llm.model;
 
@@ -148,6 +153,13 @@ public class scr_UpdateHandler : MonoBehaviour
     }
     public void SendLLMRequest(LLMRequest s, bool updateUI = false)
     {
+        var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        if (llm == null)
+        {
+            Debug.LogError("SendLLMRequest: no LLM preset selected, aborting.");
+            return;
+        }
+
         LLMStatus = LLMStatus.active;
         if (updateUI)
         {
@@ -155,7 +167,6 @@ public class scr_UpdateHandler : MonoBehaviour
             scr_System_CampaignManager.current.AddLog_LLM(s);
         }
 
-        var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
         var baseUrl = llm.endpoint;
 
         // --- FIX: Remove top_k if using Google's OpenAI endpoint ---
@@ -304,6 +315,12 @@ public class scr_UpdateHandler : MonoBehaviour
         Observer_LLMStatus?.Invoke(LLMStatus);
 
         var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        if (llm == null)
+        {
+            Debug.LogError("SendLLMRequest_Routine: no LLM preset selected, aborting.");
+            onResponseReceived?.Invoke(false, "no LLM preset selected");
+            yield break;
+        }
         var endpoint = llm.endpoint;
         var apiKey = llm.key;
 

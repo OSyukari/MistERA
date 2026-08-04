@@ -122,7 +122,7 @@ public class MemberType
     /// Type-level default: does a member of this status take part in combat at all.
     /// Deliberately not named canFight to avoid collision with Character_Trainable.canFight,
     /// which is a different, instance-level "is this specific character currently physically able to fight" check.
-    /// Replaces the old TeamReqUtility combat-eligibility check
+    /// Replaces the old team-requirement combat-eligibility check (see Requirement_Manageable_Party.Validate)
     /// (status != Manager &amp;&amp; status != Member &amp;&amp; status != Visitor).
     /// </summary>
     public bool participatesInCombat = true;

@@ -14,9 +14,9 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
         demoCharaList = new List<scr_Gender_demoChara>();
     }
-
+    public panel_llm panelLLM;
     //public RectTransform SelfRect;
-    public RectTransform ContentPanel, DisplayPanel, LLMPanel;
+    public RectTransform ContentPanel, DisplayPanel;
     public scr_SelectableText ContentButton, DisplayButton;
 
     [HideInInspector] public RectTransform CurrentPanel;
@@ -214,7 +214,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                     case 0011: // Display button
                         button.Initialize(this, new ButtonValidator_OptionPanel(this, button, DisplayPanel)); break;
                     case 0012: // Display button
-                        button.Initialize(this, new ButtonValidator_OptionPanel(this, button, LLMPanel)); break;
+                        button.Initialize(this, new ButtonValidator_OptionPanel(this, button, panelLLM.selfRect, panelLLM.LoadPanel)); break;
 
                     case 0100: // ColorPicker Apply button
                         button.Initialize(this, new ButtonValidator_ApplyColor(this, button)); break;
@@ -243,6 +243,13 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                     case 1000: // LLM enable button
                         button.Initialize(this, new buttonValidator_toggleLLM(this, button)); break;
 
+                    case 1700: // LLM create new preset
+                        button.Initialize(this, new panel_llm.ButtonValidator_CreateNew(this, button)); break;
+                    case 1701: // LLM save new preset
+                        button.Initialize(this, new panel_llm.ButtonValidator_SaveCreate(this)); break;
+                    case 1702: // LLM cancel new preset
+                        button.Initialize(this, new panel_llm.ButtonValidator_CancelCreate(this)); break;
+
                     case 9999:  //exit without saving
                         button.Initialize(this, button_alwaysValid); break;
                     case -1:
@@ -268,193 +275,18 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             ContentButton.gameObject.SetActive(false);
         }
 
-        var mmm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
-
-
-
-        foreach (var text in dropdown_api.options)
-        {
-            text.text = LocalizeDictionary.QueryThenParse(text.text);
-        }
-
-
-        url_custom.text = mmm.endpoint;
-        pwd_custom.text = mmm.key;
-
-        dropdown_api.value = mmm.APIType;
-
         ValidateAll();
 
-       // 
+       //
 
     }
 
-
-    public TMP_Dropdown dropdown_api;
-    public RectTransform box_customAPI;
-    public TMP_Text api_title;
-    public void OnAPIChange(int i)
+    public void RegisterButton(int id, scr_SelectableText btn, ButtonValidator validator)
     {
-        box_customAPI.gameObject.SetActive(i == 0);
-        var mmm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
-
-        api_title.text = LocalizeDictionary.QueryThenParse($"ui_prefs_llm_apisetting_completion_api_{i}");
-
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = pwd_custom.text;
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.APIType = i;
-
-        switch (i)
-        {
-            case 0: // custom endpoint
-                OnContentChange_url(url_custom.text);
-                break;
-            case 1: // google ai studio
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://generativelanguage.googleapis.com/v1beta/openai/models";
-                break;
-            case 2: // claude anthropic
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.anthropic.com/v1/messages";
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.anthropic.com/v1/models";
-                break;
-            case 3: // openai
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.openai.com/v1/chat/completions";
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.openai.com/v1/models";
-                break;
-            case 4: // z.ai coding plan
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.z.ai/api/coding/paas/v4/chat/completions";
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.z.ai/api/coding/paas/v4/models";
-                break;
-            case 5: // deepseek
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.endpoint = "https://api.deepseek.com/chat/completions";
-                scr_System_CentralControl.current.LLMSetting.chatCompletionModel.modellist = "https://api.deepseek.com/models";
-                break;
-            default:
-                break;
-
-        }
-
-        scr_System_CentralControl.current.StoreLLMSetting();
-
-        RefreshModels();
+        buttonsByID.Add(id, btn);
+        validatorsByID.Add(id, validator);
     }
-
-
-    public TMP_InputField url_custom, pwd_custom;
-    public void OnContentChange_model(int s)
-    {
-        Debug.Log($"model value change to index {s} { modelsDropdown.options[s].text}");
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.model = modelsDropdown.options[s].text;
-        scr_System_CentralControl.current.StoreLLMSetting();
-    }
-    public void OnContentChange_url(string s)
-    {
-        var url = s;
-        if (url.Contains("/chat/completions")) url = url.Replace("/chat/completions", "");
-
-        var mmm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
-        if (mmm.APIType == 0)
-        {
-            mmm.endpoint = url;
-            if (!mmm.endpoint.Contains("/chat/completions")) mmm.endpoint += "/chat/completions";
-            mmm.modellist = url;
-            if (!mmm.modellist.Contains("/models")) mmm.modellist += "/models";
-        }
-        scr_System_CentralControl.current.StoreLLMSetting();
-        RefreshModels();
-    }
-    public void OnContentChange_pwd(string s)
-    {
-        scr_System_CentralControl.current.LLMSetting.chatCompletionModel.key = s;
-        scr_System_CentralControl.current.StoreLLMSetting();
-        RefreshModels();
-    }
-
-    Coroutine refreshModels = null;
-
-    protected void RefreshModels()
-    {
-        var mm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
-        if (refreshModels != null)
-        {
-            StopCoroutine(refreshModels);
-            refreshModels = null;
-        }
-        refreshModels = StartCoroutine(GetAvailableModel(mm.modellist, mm.key, OnModelFound));
-    }
-
-    protected void OnModelFound(ModelList model, UnityWebRequest request) 
-    {
-        if (model == null)
-        {
-            errorMSG.SetText(Utility.WrapTextColor($"Failed to fetch models: {request.error}", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color));
-            return;
-        }
-        else
-        {
-            errorMSG.SetText("");
-        }
-
-        string existing = scr_System_CentralControl.current.LLMSetting.chatCompletionModel.model;
-        int newvalue = 0;
-
-        List<string> modelnames = new List<string>();
-
-        for(int i = 0; i < model.data.Count; i++)
-        {
-            modelnames.Add(model.data[i].id);
-            if (model.data[i].id == existing) newvalue = i;
-        }
-        //Debug.Log($"Found {model.data.Count} models: {String.Join(" ", modelnames)}");
-
-        modelsDropdown.ClearOptions();
-        modelsDropdown.AddOptions(modelnames);
-        modelsDropdown.value = newvalue;
-
-        OnContentChange_model(newvalue);
-
-    }
-    public scr_HoverableText errorMSG;
-
-    public TMP_Dropdown modelsDropdown;
-
-    [Serializable] public class ModelList { public List<ModelData> data; }
-    [Serializable] public class ModelData { public string id; }
-    /// <summary>
-    /// Fetches available models from a custom URL and returns the first ID found.
-    /// </summary>
-    public IEnumerator GetAvailableModel(string baseUrl, string apiKey, Action<ModelList, UnityWebRequest> onModelFound)
-    {
-        using (UnityWebRequest request = UnityWebRequest.Get(baseUrl))
-        {
-
-            if (baseUrl.Contains("anthropic"))
-            {
-                request.SetRequestHeader("x-api-key", apiKey);
-                request.SetRequestHeader("anthropic-version", "2023-06-01");
-                //request.SetRequestHeader("Accept", "application/json");
-            }
-            else
-            {
-                request.SetRequestHeader("Authorization", "Bearer " + apiKey);
-            }
-
-            yield return request.SendWebRequest();
-
-            if (request.result == UnityWebRequest.Result.Success)
-            {
-                // Simple JSON parsing (Consider using a proper JSON library like Newtonsoft for complex nested objects)
-                ModelList list = JsonUtility.FromJson<ModelList>(request.downloadHandler.text);
-                if (list != null && list.data.Count > 0)
-                {
-                    onModelFound?.Invoke(list, request);
-                }
-            }
-            else
-            {
-                onModelFound?.Invoke(null, request);
-            }
-        }
-    }
+    
 
     public override void ValidateAll()
     {
@@ -734,11 +566,13 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         new scr_MenuCanvas_UserPrefs parent;
         scr_SelectableText selfButton;
         RectTransform targetPanel;
-        public ButtonValidator_OptionPanel(scr_MenuCanvas_UserPrefs parent, scr_SelectableText selfButton, RectTransform targetPanel) : base(parent)
+        Action<scr_MenuCanvas_UserPrefs> initScript = null;
+        public ButtonValidator_OptionPanel(scr_MenuCanvas_UserPrefs parent, scr_SelectableText selfButton, RectTransform targetPanel, Action<scr_MenuCanvas_UserPrefs> initScript = null) : base(parent)
         {
             this.parent = parent;
             this.selfButton = selfButton;
             this.targetPanel = targetPanel;
+            this.initScript = initScript;
         }
 
         public override bool IsButtonValid()
@@ -759,6 +593,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
 
         void I_ButtonClickable.OnClickButton()
         {
+            initScript?.Invoke(parent);
             parent.CurrentPanel = targetPanel;
         }
     }
@@ -862,7 +697,6 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         }
     }
 
-    public RectTransform rect_llm_enabled, rect_llm_disabled;
 
     class buttonValidator_toggleLLM: ButtonValidator, I_ButtonClickable
     {
@@ -878,8 +712,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         {
             bool oldval = scr_System_CentralControl.current.LLMSetting.enabled;
             selfButton.Toggle(true, oldval);
-            parent.rect_llm_enabled.gameObject.SetActive(oldval);
-            parent.rect_llm_disabled.gameObject.SetActive(!oldval);
+            parent.panelLLM.rect_llm_enabled.gameObject.SetActive(oldval);
             return true;
         }
 

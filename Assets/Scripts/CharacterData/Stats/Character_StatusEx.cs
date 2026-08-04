@@ -220,6 +220,7 @@ public class StatusEx_Instance : I_CacheValues
     [JsonIgnore] readonly List<string> _extraTooltips = new List<string>();
     [JsonIgnore] bool _extraTooltipsDirty = false;
     [JsonIgnore] readonly List<Stat_Modifier> _modScratch = new List<Stat_Modifier>();
+    [JsonIgnore] readonly List<Status_Instance> _statusScratch = new List<Status_Instance>();
 
     [JsonIgnore] public string ModString
     {
@@ -230,7 +231,9 @@ public class StatusEx_Instance : I_CacheValues
             if (_extraTooltipsDirty)
             {
                 _extraTooltips.Clear();
-                foreach (var inst in owner.FindStatusByID(BaseRef.variationMode.stringData))
+                _statusScratch.Clear();
+                owner.FindStatusByID(BaseRef.variationMode.stringData, _statusScratch);
+                foreach (var inst in _statusScratch)
                 {
                     // A source currently sitting in a non-displayable ("no effect") variant has
                     // nothing to report. Checked via the variant flag rather than raw Severity==0,
@@ -264,8 +267,9 @@ public class StatusEx_Instance : I_CacheValues
             float i = severity;
             storage.SetBase(i, 1);
 
-            List<Status_Instance> listSI = owner.FindStatusByID(BaseRef.variationMode.stringData);
-            foreach (var inst in listSI)
+            _statusScratch.Clear();
+            owner.FindStatusByID(BaseRef.variationMode.stringData, _statusScratch);
+            foreach (var inst in _statusScratch)
             {
                 i += inst.Severity;
             }
@@ -290,7 +294,9 @@ public class StatusEx_Instance : I_CacheValues
 
             Status_Instance winner = null;
             int winnerIndex = 0;
-            foreach (var inst in owner.FindStatusByID(BaseRef.variationMode.stringData))
+            _statusScratch.Clear();
+            owner.FindStatusByID(BaseRef.variationMode.stringData, _statusScratch);
+            foreach (var inst in _statusScratch)
             {
                 if (!inst.SeverityDisplayable) continue;
                 int index = inst.SeverityIndex;
@@ -320,7 +326,7 @@ public class StatusEx_Instance : I_CacheValues
 
             _modScratch.Clear();
             owner.GetModifiers(_modScratch, this, BaseRef.statusID);
-            if (BaseRef.constant && BaseRef.noDisplay && BaseRef.capModded && owner.Owner.Relationships != null) _modScratch.AddRange(owner.Owner.Relationships.GetMoodlet(BaseRef.statusID));
+            if (BaseRef.constant && BaseRef.noDisplay && BaseRef.capModded && owner.Owner.Relationships != null) owner.Owner.Relationships.GetMoodlet(BaseRef.statusID, _modScratch);
 
             float finalResult = UtilityEX.ParseStatMods(this, storage, _modScratch);
             storage.SetFinalOverride(finalResult, 1);

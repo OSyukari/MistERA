@@ -105,7 +105,7 @@ public class scr_System_CentralControl : MonoBehaviour
         string llmpath = Application.persistentDataPath + "/llmSetting.json";
         FileInfo llmfile = new System.IO.FileInfo(llmpath);
         string s = JsonConvert.SerializeObject(_llmSetting, Formatting.Indented, UtilityEX.SerializerSettings);
-        File.WriteAllText(llmfile.FullName, s);
+        File.WriteAllText(llmfile.FullName, LLM_KeyProtector.EncryptToBase64(s));
     }
 
 
@@ -259,15 +259,23 @@ public class scr_System_CentralControl : MonoBehaviour
         if (!File.Exists(llmpath))
         {
             this._llmSetting = new LLM_Setting();
-            string s = JsonConvert.SerializeObject(this._llmSetting, Formatting.Indented, UtilityEX.SerializerSettings);
             llmfile.Directory.Create();
-            File.WriteAllText(llmfile.FullName, s);
-
+            StoreLLMSetting();
         }
         else
         {
-            LLM_Setting s = JsonConvert.DeserializeObject<LLM_Setting>(File.ReadAllText(llmfile.FullName), UtilityEX.SerializerSettings);
-            this._llmSetting = s;
+            try
+            {
+                string json = LLM_KeyProtector.DecryptFromBase64(File.ReadAllText(llmfile.FullName));
+                this._llmSetting = JsonConvert.DeserializeObject<LLM_Setting>(json, UtilityEX.SerializerSettings);
+            }
+            catch
+            {
+                // old plaintext file, wrong Windows user, or corrupted data - reset rather than migrate
+                Debug.LogWarning($"Failed to decrypt {llmpath}, resetting LLM settings.");
+                this._llmSetting = new LLM_Setting();
+                StoreLLMSetting();
+            }
         }
     }
 

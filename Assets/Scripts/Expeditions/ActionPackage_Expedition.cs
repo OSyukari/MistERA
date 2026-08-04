@@ -39,10 +39,10 @@ public class ActionPackage_Expedition : ActionPackage
     {
         int weight = SourceEV.baseWeight;
 
-        if (!TeamReqUtility.Validate(doer, SourceEV.teamRequirement, p, out tooltip, out var hadlock)) return -1;
+        if (!SourceEV.teamRequirement.Validate(doer, p, out tooltip, out var hadlock)) return -1;
         foreach (var wmod in SourceEV.weightMods)
         {
-            if (TeamReqUtility.Validate(doer, wmod.teamRequirement, p, out var discard, out hadlock))
+            if (wmod.teamRequirement.Validate(doer, p, out var discard, out hadlock))
             {
                 weight += wmod.modValue;
             }
@@ -170,7 +170,7 @@ public class ActionPackage_Expedition : ActionPackage
 
             foreach (var i in this.Actors)
             {
-                TeamReqUtility.ApplyCost(SourceEV.teamRequirement, i, r == null ? null : r.Tooltips);
+                SourceEV.teamRequirement.ApplyCost(i, r == null ? null : r.Tooltips);
 
                 foreach(var j in result.results_characters)
                 {

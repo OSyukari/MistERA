@@ -1039,6 +1039,7 @@ public abstract class ActionPackage
                 if (!isValid) break;
                 EvaluationPackage t = new EvaluationPackage(c_doer, null, targetCOM, this);
                 this.isValid = this.isValid && t.Evaluate();
+                t.ApplyPersonalityMods();
 
                 if (this.isValid)
                 {
@@ -1061,6 +1062,7 @@ public abstract class ActionPackage
                     if (!isValid) break;
                     EvaluationPackage t = new EvaluationPackage(c_doer, null, targetCOM, this);
                     this.isValid = this.isValid && t.Evaluate();
+                    t.ApplyPersonalityMods();
 
                     if (this.isValid)
                     {
@@ -1096,6 +1098,7 @@ public abstract class ActionPackage
 
                         EvaluationPackage t = new EvaluationPackage(c_doer, c_receiver, targetCOM, this);
                         this.isValid = this.isValid && t.Evaluate();
+                        t.ApplyPersonalityMods();
 
                         if (this.isValid)
                         {
@@ -1527,6 +1530,7 @@ public abstract class ActionPackage
         foreach(var ep in packages)
         {
             ep.Evaluate(true);
+            ep.ApplyPersonalityMods();
             if (!returnVal) break;
 
             if (!ep.Request(false, forceAccept)) returnVal = false;
@@ -1731,7 +1735,7 @@ public abstract class ActionPackage
             tags.AddRange(ep.ExtraCOMTags);
             if (multiActor) ep.AddExtraCOMTags("interaction");
         }
-        tags = Utility.Distinct(tags);
+        Utility.DistinctInPlace(tags);
 
         foreach (var ep in packages)
         {
@@ -2729,7 +2733,7 @@ public abstract class ActionPackage
             if (ep.DoerRef == refID) list.AddRange(ep.DoerTargetTag);
             else if (ep.ReceiverRef == refID) list.AddRange(ep.ReceiverTargetTag);
         }
-        list = Utility.Distinct(list);
+        Utility.DistinctInPlace(list);
         return list;
     }
 
@@ -2741,7 +2745,7 @@ public abstract class ActionPackage
             if (ep.DoerRef == refID) list.AddRange(ep.DoerSelfTag);
             else if (ep.ReceiverRef == refID) list.AddRange(ep.ReceiverSelfTag);
         }
-        list = Utility.Distinct(list);
+        Utility.DistinctInPlace(list);
         return list;
     }
 

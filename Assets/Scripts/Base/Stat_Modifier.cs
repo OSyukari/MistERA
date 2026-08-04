@@ -145,6 +145,10 @@ public class Stat_Modifier
     public int tick = -1;
 
     public Stat_Modifier_Type valueType = Stat_Modifier_Type.none;
+
+    /// <summary>
+    /// DO NOT SET THIS VALUE DIRECTLY, USE THE HELPER FUNCTIONS
+    /// </summary>
     public string valueString = "";
 
     /// <summary>
@@ -163,7 +167,11 @@ public class Stat_Modifier
             if (!init)
             {
                 init = true;
-                _valueFloat = float.Parse(valueString);
+                if (float.TryParse(valueString, out var result)) _valueFloat = result;
+                else
+                {
+                    Debug.LogError($"parse ValueFloat failure [{valueString}] [{valueString_backup}]");
+                }
             }
             return _valueFloat;
         } }
@@ -176,6 +184,8 @@ public class Stat_Modifier
     {
         this.valueType = Stat_Modifier_Type.number;
         this._valueFloat = value;
+        this.valueString = value.ToString();
+        //Debug.Log($"SetNumber [{value}] [{valueString}]");
         this.init = true;
     }
 

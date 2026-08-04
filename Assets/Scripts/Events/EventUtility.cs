@@ -1447,7 +1447,7 @@ public static class EventUtility
                                     desc.relevantActors.Add(cs.RefID);
                                 }
                             }
-                            desc.relevantActors = Utility.Distinct(desc.relevantActors);
+                            Utility.DistinctInPlace(desc.relevantActors);
                         }
                         if (owner.Self != null) owner.Self.CurrentRoom.NotifyDescCollect(desc);
                         scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, owner.CurrentUISpec.Clone());

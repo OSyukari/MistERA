@@ -32,8 +32,8 @@ public class COM_UseItemCOM : COM
 
         if (!item.Tags.Contains("noFactionReq"))
         {
-            if (this.requirements.requireFactionExisting == null) this.requirements.requireFactionExisting = new COM_Requirements.RequireFactionExisting();
-            this.requirements.requireFactionExisting.inventoryItemBaseID = targetItem.ID;
+            if (this.requirements.requireFaction == null) this.requirements.requireFaction = new Requirement_Faction();
+            this.requirements.requireFaction.inventoryItemBaseID = targetItem.ID;
         }
 
 

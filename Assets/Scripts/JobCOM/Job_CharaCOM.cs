@@ -196,7 +196,7 @@ public class Job_CharaCOM : Job
         //if (p == null) p = packages_previous.Find(x => x.actorRefs.Contains(charaRef));
         List<string> tags = new List<string>();
         foreach(var p in ps) tags.AddRange(p.ComTags);
-        tags = Utility.Distinct(tags);//.Distinct().ToList();
+        Utility.DistinctInPlace(tags);
         if (tags.Contains("unsafe")) return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM_unsafe").Replace("$target$", String.Join(",",names));
         else if (tags.Contains("safe")) return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM_touch").Replace("$target$", String.Join(",", names));
         else return LocalizeDictionary.QueryThenParse("chara_currentjob_charaCOM").Replace("$target$", String.Join(",", names));

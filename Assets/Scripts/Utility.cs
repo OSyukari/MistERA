@@ -792,11 +792,11 @@ public static class UtilityEX
             if (ep.Doer != null) doers.Add(ep.Doer.CallName);
             if (ep.Receiver != null && ep.Receiver != ep.Doer) receivers.Add(ep.Receiver.CallName);
         }
-        doers = Utility.Distinct(doers);
-        receivers = Utility.Distinct(receivers);
+        Utility.DistinctInPlace(doers);
+        Utility.DistinctInPlace(receivers);
         actors.AddRange(doers);
         actors.AddRange(receivers);
-        actors = Utility.Distinct(actors);
+        Utility.DistinctInPlace(actors);
 
         if (doers.Count > 0)
         {
@@ -916,7 +916,7 @@ public static class UtilityEX
             if (a.CurrentJob != null) a.CurrentJob.GetActorAPTags(a.RefID, ownerTags,  ownerAPs);   // get a currentjob all self
             foreach (var status in a.Stats.StatusInstances) ownerTags.AddRange(status.Tags);    // get a statsinstancekeywords
             GetActorTag(ref ownerTags, a);
-            ownerTags = Utility.Distinct(ownerTags);
+            Utility.DistinctInPlace(ownerTags);
         }
 
         if (b != null)
@@ -925,7 +925,7 @@ public static class UtilityEX
             if (b.CurrentJob != null) b.CurrentJob.GetActorAPTags(b.RefID, targetTags);  // get a currentjob all self
             foreach (var status in b.Stats.StatusInstances) targetTags.AddRange(status.Tags);    // get a statsinstancekeywords
             GetActorTag(ref targetTags, b);
-            targetTags = Utility.Distinct(targetTags);
+            Utility.DistinctInPlace(targetTags);
         }
     }
     public static void GetEPsFrom(Character_Trainable a, Character_Trainable b, out List<EvaluationPackage> ownerEPs, out List<EvaluationPackage> targetEPs)
@@ -970,7 +970,7 @@ public static class UtilityEX
             if (a.CurrentJob != null) a.CurrentJob.GetActorAPs(a.RefID, APs);   // get a currentjob all self
         }
 
-        APs = Utility.Distinct(APs);
+        Utility.DistinctInPlace(APs);
     }
 
     public static void GetJobInteractionTagsFrom(Character_Trainable a, Character_Trainable b, COM targetCOM, Job job, ref List<string> ownerTags, ref List<string> extraComTags, ref List<string> extraTargetTags)
@@ -1017,8 +1017,8 @@ public static class UtilityEX
             }
 
         }
-        ownerTags = ownerTags.Distinct().ToList();
-        extraTargetTags = extraTargetTags.Distinct().ToList();
+        Utility.DistinctInPlace(ownerTags);
+        Utility.DistinctInPlace(extraTargetTags);
     }
 
 
@@ -1088,9 +1088,9 @@ public static class UtilityEX
             GetActorTag(ref extraTargetTags, b);
             // if a cannot act then a cannot react then it doesnt make sense to add target gender experience
         }
-        ownerTags = Utility.Distinct(ownerTags);
-        extraComTags = Utility.Distinct(extraComTags);
-        extraTargetTags = Utility.Distinct(extraTargetTags);
+        Utility.DistinctInPlace(ownerTags);
+        Utility.DistinctInPlace(extraComTags);
+        Utility.DistinctInPlace(extraTargetTags);
 
         if (extraTargetTags.Contains("timestop") || extraTargetTags.Contains("sleeping") || extraTargetTags.Contains("unconscious")) extraComTags.Remove("service");
     }
@@ -1117,11 +1117,15 @@ public static class UtilityEX
         if (activeParty != null)
         {
             tags.Add(activeParty.FactionID);
+            tags.AddRange(activeParty.factionTags);
+            tags.AddRange(activeParty.localeTags);
             tags.AddRange(activeParty.GetMemberType(c).portraitTags);
         }
         else if (activeFaction != null)
         {
             tags.Add(activeFaction.FactionID);
+            tags.AddRange(activeFaction.factionTags);
+            tags.AddRange(activeFaction.localeTags);
             tags.AddRange(activeFaction.GetMemberType(c).portraitTags);
         }
         else if (c.CurrentRoom != null && c.CurrentRoom.FactionOwner != null)
@@ -1137,7 +1141,7 @@ public static class UtilityEX
         }
         else if (c.Stats.isConsciousnessUnconscious) tags.Add("unconscious");
 
-        tags = Utility.Distinct(tags);
+        Utility.DistinctInPlace(tags);
         //if (c.Climaxing) tags.Add("climax");  this will make it too easy to get climax exp
     }
 
@@ -1616,23 +1620,6 @@ public static class UtilityEX
         }
     }
 
-    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Base source)
-    {
-        return modifier.ValidateAccess(isStatEx, isStatDerived, false, false);
-    }
-    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Base source)
-    {
-        return modifier.ValidateAccess(isStatEx, isStatDerived, true, false);
-    }
-    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, Stats_Derived_Extended_Instance source)
-    {
-        return modifier.ValidateAccess(isStatEx, isStatDerived, true, true);
-    }
-    static bool isValidQuery(bool isStatEx, bool isStatDerived, Stat_Modifier modifier, StatusEx_Instance source)
-    {
-        return modifier.ValidateAccess(isStatEx, isStatDerived, true, true, true, true);
-    }
-
     public static ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPoolProvider().CreateStringBuilderPool();
 
 
@@ -1650,13 +1637,13 @@ public static class UtilityEX
         var statsDerivedList = scr_System_Serializer.current.index_StatsDerived.list;
 
         storage.Reset();
-        // pre-assigne validator function
-        Func<Stat_Modifier, bool> validator = null;
-        // Assign the correct validator based on type
-        if (source is Stats_Base sb)                            validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, sb);
-        else if (source is Stats_Derived_Base db)               validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, db);
-        else if (source is Stats_Derived_Extended_Instance ex)  validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, ex);
-        else if (source is StatusEx_Instance sex)               validator = (m) => isValidQuery(m._isStatEX, m._isStatDerived, m, sex);
+        // Pick the access flags for this source's static type once, instead of allocating a
+        // closure+delegate per call just to redirect to ValidateAccess with fixed literals.
+        bool allowStatBase, allowStatDerived, allowStatEX, allowStatus, allowStatusEX;
+        if (source is Stats_Base)                            { allowStatBase = false; allowStatDerived = false; allowStatEX = false; allowStatus = false; allowStatusEX = false; }
+        else if (source is Stats_Derived_Base)               { allowStatBase = true;  allowStatDerived = false; allowStatEX = false; allowStatus = false; allowStatusEX = false; }
+        else if (source is Stats_Derived_Extended_Instance)  { allowStatBase = true;  allowStatDerived = true;  allowStatEX = false; allowStatus = false; allowStatusEX = false; }
+        else if (source is StatusEx_Instance)                { allowStatBase = true;  allowStatDerived = true;  allowStatEX = true;  allowStatus = true;  allowStatusEX = false; }
         else
         {
             Debug.LogError("source is of unknown type");
@@ -1677,7 +1664,7 @@ public static class UtilityEX
                 foreach (var i in statsDerivedList) if (modifier.valueString == i.ID) { modifier._isStatDerived = true; break; }
             }
 
-            if (!validator(modifier))
+            if (!modifier.ValidateAccess(modifier._isStatEX, modifier._isStatDerived, allowStatBase, allowStatDerived, allowStatEX, allowStatus, allowStatusEX))
             {
                 continue;
             }

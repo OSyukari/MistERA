@@ -42,11 +42,11 @@ public class EventInstance
             List<Character_Trainable> actors_self = new List<Character_Trainable>(), actors_ev = new List<Character_Trainable>();
 
             foreach (var target in this.Targets) actors_self.AddRange(target.Value);
-            actors_self = Utility.Distinct(actors_self);
+            Utility.DistinctInPlace(actors_self);
             actors_self.Remove(null);
 
             foreach (var target in ev.Targets) actors_ev.AddRange(target.Value);
-            actors_ev = Utility.Distinct(actors_ev);
+            Utility.DistinctInPlace(actors_ev);
             actors_ev.Remove(null);
 
             if (actors_self.Count < 1 || actors_ev.Count < 1) return false;
@@ -100,7 +100,7 @@ public class EventInstance
                         relevantActors.Add(c.RefID);
                     }
                 }
-                relevantActors = Utility.Distinct(relevantActors);
+                Utility.DistinctInPlace(relevantActors);
             }
             return relevantActors;
         }

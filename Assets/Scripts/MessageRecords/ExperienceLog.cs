@@ -250,7 +250,7 @@ public class ExperienceLog
         List<int> keys = new List<int>();
         keys.AddRange(StatLog.Keys);
         keys.AddRange(ExpLog.Keys);
-        keys = Utility.Distinct(keys);
+        Utility.DistinctInPlace(keys);
 
         foreach (var key in keys)
         {

@@ -127,6 +127,18 @@ public class MapPlan
     /// </summary>
     public List<string> assignableMemberTypes = new List<string>();
     public List<string> explorationKeywords = new List<string>();
+
+    /// <summary>
+    /// Faction-identity tags merged into a managed character's tag set (Utility.GetActorTag) via
+    /// the instantiated faction's Manageable.factionTags - see WorldManager.Instantiate.
+    /// </summary>
+    public List<string> factionTags = new List<string>();
+
+    /// <summary>
+    /// Location/zone tags (e.g. "downtown", "docks") merged into a managed character's tag set via
+    /// the instantiated faction's Manageable.localeTags - see WorldManager.Instantiate.
+    /// </summary>
+    public List<string> localeTags = new List<string>();
     public List<SalesInventoryInit> salesInventory = new List<SalesInventoryInit>();
     public string salesCurrency = "";
     public List<int> mealHours = new List<int>();

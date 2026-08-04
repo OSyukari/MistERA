@@ -31,6 +31,8 @@ public interface I_IsJobGiver
     [JsonIgnore] public FactionInventory Inventory { get; }
     [JsonIgnore] public List<Character_Trainable> Managers { get; }
     [JsonIgnore] public List<Character_Trainable> ManagedChara { get; }
+    [JsonIgnore] public List<string> factionTags { get; }
+    [JsonIgnore] public List<string> localeTags { get; }
     [JsonIgnore] public bool isPlayerFaction { get; }
     [JsonIgnore] public bool isPlayerRelatedFaction { get; }
     /// <summary>

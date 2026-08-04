@@ -50,6 +50,7 @@ public class scr_Panel_CurrentCharList : scr_Menu
 
     private void UpdateChara()
     {
+        //if (scr_UpdateHandler.current.Updating && !scr_UpdateHandler.current.isLastUpdate()) return;
         var room = scr_System_CampaignManager.current.CurrentRoom;
         List<int> removeList = new List<int>();
         foreach (int charaRef in buttonsByID.Keys)

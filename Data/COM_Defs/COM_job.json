@@ -94,7 +94,7 @@
                     "requirement": {
                         "treatReceiverAsDoer": true
                     },
-                    "requireFactionExisting": {
+                    "requireFaction": {
                         "jobKeyword": "production_cooking"
                     }
                 },
@@ -176,7 +176,7 @@
                     "requirement": {
                         "treatReceiverAsDoer":true
                     },
-                    "requireFactionExisting": {
+                    "requireFaction": {
                         "jobKeyword": "production_chemistry"
                     }
                 },
@@ -259,7 +259,7 @@
                     "requirement": {
                         "treatReceiverAsDoer":true
                     },
-                    "requireFactionExisting": {
+                    "requireFaction": {
                         "jobKeyword": "production_engineering"
                     }
                 },

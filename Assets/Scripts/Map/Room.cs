@@ -726,12 +726,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
     string cleanlinessStringRef = string.Empty;
 
-    Stat_Modifier cleanlinessMod = new Stat_Modifier()
-    {
-        ModString = "room_CleaningStatus",
-        type = Stat_Modifier.StatMod_Type.addBase,
-        statID = "chara_status_mood"
-    };
+    Dictionary<CleaningStatus, Stat_Modifier> cleanlinessMod_cache = new Dictionary<CleaningStatus, Stat_Modifier>();
 
     public Stat_Modifier GetCleanlinessMod(Character_Trainable c)
     {
@@ -739,28 +734,39 @@ public class Room_Instance: IDisposable, I_Disposable
         var cl = RoomCleanliness(c);
         if (cl == CleaningStatus.None) return null;
 
+        // cl is one of a handful of enum values; the resulting DisplayName/value pair depends only on
+        // cl itself, so build each variant once and reuse it instead of re-localizing/re-allocating every call.
+        if (cleanlinessMod_cache.TryGetValue(cl, out var cleanlinessMod)) return cleanlinessMod;
+
         if (cleanlinessStringRef == string.Empty)
         {
             cleanlinessStringRef = LocalizeDictionary.QueryThenParse("room_CleaningStatus");
         }
 
+        cleanlinessMod = new Stat_Modifier()
+        {
+            ModString = "room_CleaningStatus",
+            type = Stat_Modifier.StatMod_Type.addBase,
+            statID = "chara_status_mood"
+        };
         cleanlinessMod.DisplayName = cleanlinessStringRef.Replace("$status$", LocalizeDictionary.QueryThenParse($"room_CleaningStatus_{cl}") );
-        
+
         switch (cl)
         {
             case CleaningStatus.Clean:
-                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"{1}");
+                cleanlinessMod.SetNumber(1);
                 break;
             case CleaningStatus.Dirty:
-                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"-{1}");
+                cleanlinessMod.SetNumber(-1);
                 break;
             case CleaningStatus.Very_Dirty:
-                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"-{2}");
+                cleanlinessMod.SetNumber(-2);
                 break;
             default:
-                cleanlinessMod.SetValueTypeAndString(Stat_Modifier_Type.number, $"{0}");
+                cleanlinessMod.SetNumber(0);
                 break;
         }
+        cleanlinessMod_cache[cl] = cleanlinessMod;
         return cleanlinessMod;
     }
 

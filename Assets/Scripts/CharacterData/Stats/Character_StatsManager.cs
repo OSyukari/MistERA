@@ -26,6 +26,10 @@ public interface I_StatsManager
     public StatusEx_Instance GetStatusEXByStringMatch(string s);
     public Stats_Derived_Instance GetDerivedStat(string statID);
     public List<Status_Instance> FindStatusByID(string statID);
+    /// <summary>
+    /// Appends matching status instances into <paramref name="results"/>. Caller owns and clears the list.
+    /// </summary>
+    public void FindStatusByID(string statID, List<Status_Instance> results);
     public void SetStatusSeverity(string statusID, float severity);
 
     [JsonIgnore] public Stats_Derived_Extended_Instance HP { get; }
@@ -160,8 +164,12 @@ public class StatsManager : I_StatsManager
     public List<Status_Instance> FindStatusByID(string statID)
     {
         var l = new List<Status_Instance>();
-        foreach (var i in _statusInstances) if (i.Key.Contains(statID)) l.Add(i.Value);
+        FindStatusByID(statID, l);
         return l;
+    }
+    public void FindStatusByID(string statID, List<Status_Instance> results)
+    {
+        foreach (var i in _statusInstances) if (i.Key.Contains(statID)) results.Add(i.Value);
     }
     public Status_Instance FindStatusByExactID(string statID)
     {
@@ -447,7 +455,7 @@ public class StatsManager : I_StatsManager
                     {
                         _permanentTags.AddRange(j.Tags);
                     }
-                    _permanentTags = Utility.Distinct(_permanentTags);
+                    Utility.DistinctInPlace(_permanentTags);
                 }
                 // add owner race origin template tags
                 //

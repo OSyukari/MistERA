@@ -17,7 +17,7 @@ public class DifficultyModifiers
 {
     public int modifierScore = 0;
 
-    public TeamReq teamRequirement = null;
+    public Requirement_Manageable_Party teamRequirement = null;
 
     public int GetScore(List<Character_Trainable> actor, I_IsJobGiver faction, out List<string> tooltips)
     {
@@ -26,7 +26,7 @@ public class DifficultyModifiers
             tooltips = new List<string>();
             return 0;
         }
-        if( TeamReqUtility.Validate(actor, teamRequirement, faction, out tooltips, out var hadlock)) return modifierScore;
+        if (teamRequirement.Validate(actor, faction, out tooltips, out var hadlock)) return modifierScore;
         else return 0;
     }
 

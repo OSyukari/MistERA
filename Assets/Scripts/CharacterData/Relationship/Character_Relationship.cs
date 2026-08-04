@@ -62,6 +62,14 @@ public class Character_Relationship
     public List<Stat_Modifier> GetMoodletModifiers()
     {
         List<Stat_Modifier> results = new List<Stat_Modifier>(3);
+        GetMoodletModifiers(results);
+        return results;
+    }
+    /// <summary>
+    /// Appends this relationship's moodlet modifiers into <paramref name="results"/>. Caller owns and clears the list.
+    /// </summary>
+    public void GetMoodletModifiers(List<Stat_Modifier> results)
+    {
         if (!initialized_moodlet)
         {
             stressMod = new Stat_Modifier();
@@ -83,19 +91,17 @@ public class Character_Relationship
         var tf = Trust_Raw - Fear_Raw;
         if (tf >= 25 || tf <= -25)
         {// trust > fear + 50
-            stressMod.SetValueTypeAndString(Stat_Modifier_Type.number, tf >= 25 ? $"{1}" : $"-{1}");
+            stressMod.SetNumber(tf >= 25 ? 1 : -1);
             results.Add(stressMod);
         }
 
         var gb = Goodwill_Raw - Badwill_Raw;
         if (gb >= 25 || gb <= -25)
         {
-            moodMod.SetValueTypeAndString(Stat_Modifier_Type.number, gb >= 25 ? $"{1}" : $"-{1}");
+            moodMod.SetNumber(gb >= 25 ? 1 : -1);
             results.Add(moodMod);
 
         }
-
-        return results;
     }
 
     /// <summary>

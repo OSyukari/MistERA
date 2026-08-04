@@ -98,7 +98,7 @@ public class CombatStatManager : I_StatsManager
         foreach (var kvp in Owner.Body.CombatActions) if (kvp.Value.Count > 0) allvalids.AddRange(kvp.Value);
         foreach(var kvp in Owner.Inventory.CombatActions) if (kvp.Value.Count > 0) allvalids.AddRange(kvp.Value);
 
-        allvalids = Utility.Distinct(allvalids);
+        Utility.DistinctInPlace(allvalids);
 
         foreach (var preset in scr_System_Serializer.current.MasterList.CombatActionPresets.list)
         {
@@ -175,7 +175,13 @@ public class CombatStatManager : I_StatsManager
 
     public List<Status_Instance> FindStatusByID(string statID)
     {
-        return this.StatusInstances.FindAll(x => x.ID.Contains(statID));
+        var l = new List<Status_Instance>();
+        FindStatusByID(statID, l);
+        return l;
+    }
+    public void FindStatusByID(string statID, List<Status_Instance> results)
+    {
+        foreach (var i in _statusInstances) if (i.Key.Contains(statID)) results.Add(i.Value);
     }
     StatsManager Parent = null;
     public CombatStatManager(Character_Trainable Owner, StatsManager stats)

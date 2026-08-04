@@ -1,0 +1,47 @@
+{
+    "_doc": "Dedicated personality placeholders for ErAV characters. They currently fall back to personality_default (fallbackID); dedicated kojo/response content will be added later. Empty entries_list + empty pride dicts are safe (only foreach-iterated; KOJO/behavior route through the fallback).",
+
+    "Character_Personalities": {
+        "list": [
+            {
+                "id": "personality_ErAV_Kanade",
+                "displayName": "ErAV_personality_Kanade_displayName",
+                "fallbackID": "personality_default",
+                "maxPrideValue": 100,
+                "AcceptanceMods": [
+                    {
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_partyInvite", "isDoer": false },
+                        "Requirement_KojoVariables": [
+                            { "scope": "Target_Target", "require": { "isDailyVariable": false, "variableID": "erav_kanade_promise", "checkExistOnly": false, "operand": "eq", "value": 1 } }
+                        ],
+                        "Result_ActionPackage": { "injectCOMTag": "erav_kanade_promise_accept" },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_kanade_promise_accept_reason" }
+                    }
+                ],
+                "entries_list": [
+                    {
+                        "ID": "com_interaction_partyInvite",
+                        "variants": [
+                            {
+                                "requirement": { "targetTags": ["erav_kanade_promise_accept"] },
+                                "responses": ["com_interaction_partyInvite_erav_kanade_promise_accept"]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "erav_kanade_promise_accept_reason": "履行约定",
+                "com_interaction_partyInvite_erav_kanade_promise_accept": "(kanade's reaction to player)"
+            },
+            "en-us": {
+                "erav_kanade_promise_accept_reason": "Fulfilling the promise"
+            }
+        }
+    }
+}

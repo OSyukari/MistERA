@@ -42,6 +42,13 @@ public class Manageable_Party : I_IsJobGiver
 
     [JsonIgnore] public virtual I_IsJobGiver getLocaleFaction { get { return this; } }
 
+    [JsonIgnore]
+    public List<string> factionTags
+    {
+        get { return this.OwnerFaction != null ? this.OwnerFaction.factionTags : new List<string>(); }
+    }
+    public List<string> localeTags { get; set; } = new List<string>();
+
     public List<Job_Furniture> GetValidJobs_Heuristics(
         Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic,
         int maxCount,
@@ -229,7 +236,7 @@ public class Manageable_Party : I_IsJobGiver
                 pauseHours.AddRange(SleepHours);
 
             }
-            pauseHours = Utility.Distinct(pauseHours);
+            Utility.DistinctInPlace(pauseHours);
             var error = 0;
 
             if (pauseHours.Count > 22) error = 999;

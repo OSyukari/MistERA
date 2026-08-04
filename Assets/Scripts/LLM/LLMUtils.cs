@@ -15,14 +15,26 @@ public class LLM_Setting
     public bool enabled = true;
     public class ChatCompletion
     {
+        public string id = System.Guid.NewGuid().ToString();
         public int APIType = 0;
         public string modellist = "";
         public string endpoint = "";
         public string key = "";
         public string model = "";
+        public string comment = "";
     }
 
-    public ChatCompletion chatCompletionModel = new ChatCompletion();
+    public string currentPresetId = null;
+    public List<ChatCompletion> chatCompletionModels = new List<ChatCompletion>();
+
+    [JsonIgnore]
+    public ChatCompletion chatCompletionModel
+    {
+        get
+        {
+            return currentPresetId == null ? null : chatCompletionModels.Find(c => c.id == currentPresetId);
+        }
+    }
 }
 
 

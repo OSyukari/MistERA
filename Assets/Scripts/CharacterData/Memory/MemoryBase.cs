@@ -46,7 +46,7 @@ public class Memory_Entry
     //  [JsonIgnore] public bool isTouchMemory { get { return !isSexTouchMemory && this.Tags.Contains("touch") ; } }
 
     //  [JsonIgnore] public bool isOnlyRefuseMemory { get { return this.interactions.Find(x => x.response != Memory_Response.Refuse) == null; } }
-    [JsonProperty] public List<string> selfTags = new List<string>();
+    public List<string> selfTags = new List<string>();
     List<string> targetTags = new List<string>();
 
     public void ReEstablishParent(Character_Trainable c)
@@ -261,10 +261,10 @@ public class Memory_Entry
             return false;
         }
 
-        if (other.Tags.Contains("initSex")) return false;
+        if (other.HasTag("initSex")) return false;
 
-        if (other.Tags.Contains("expeditionEnd")) return false;
-        if (other.Tags.Contains("expedition") && selfTags.Contains("expedition") && !selfTags.Contains("expeditionEnd")) return true;
+        if (other.HasTag("expeditionEnd")) return false;
+        if (other.HasTag("expedition") && selfTags.Contains("expedition") && !selfTags.Contains("expeditionEnd")) return true;
 
         else if (MergeWithAll || other.MergeWithAll)
         {
@@ -374,6 +374,7 @@ public class Memory_Entry
         Actions.Clear();
         targetRefs = null;
         targets = null;
+        tagsCache = null;
         targetTags.Clear();
         memInstanceDescriptionCache = new List<string>();
         float scoreMod_Mood = 0, scoreMod_Stress = 0, scoreMod_Lust = 0;
@@ -509,9 +510,18 @@ public class Memory_Entry
         return result;
     }
 
-
-    [JsonIgnore] public List<string> Tags { get { return Enumerable.Concat(selfTags, targetTags).ToList(); } }
-
+    public bool HasTag(string tag)
+    {
+        if (this.selfTags.Contains(tag)) return true;
+        if (this.targetTags.Contains(tag)) return true;
+        return false;
+    }
+    private List<string> tagsCache = null;
+    [JsonIgnore] public List<string> Tags { get {
+            if (tagsCache == null) tagsCache = Enumerable.Concat(selfTags, targetTags).ToList();
+            return tagsCache;
+        } }
+    [JsonIgnore] public int TagsCount { get { return selfTags.Count + targetTags.Count; } }
     [JsonIgnore] public string PrintTags { get
         {
             return "Relevant Tags:\n[" + String.Join(" ", selfTags) + "]\n[" + String.Join(",",targetTags)+"]";
@@ -524,7 +534,7 @@ public class Memory_Entry
     /// <returns></returns>
     public bool Tick(int t)
     {
-        if (Tags.Contains("important")) duration = -1;
+        if (HasTag("important")) duration = -1;
         else if (duration > 0) duration = Math.Max(duration - t, 0);
 
         return duration == 0;
@@ -536,7 +546,7 @@ public class Memory_Entry
         if ((targetRef == -1 || this.TargetRefs.Contains(targetRef))
             && (targetCOM == "" || hasInteractionWithCOMID(targetCOM))
             && (comTags == null || Utility.ListContainsStrict(this.Tags, comTags))
-            && (!requireConsciousness || (!this.Tags.Contains("unconscious") && (!this.Tags.Contains("sleeping") && (Owner.CanActInTimeStop || !this.Tags.Contains("timestop")))))) return true;
+            && (!requireConsciousness || (!HasTag("unconscious") && (!HasTag("sleeping") && (Owner.CanActInTimeStop || !HasTag("timestop")))))) return true;
         return false; 
     }
 
@@ -727,7 +737,7 @@ public class Memory_Entry
 
         List<string> additional = new List<string>();
         if (entryDescription.Length > 0) additional.Add(entryDescription);
-        if (!scr_System_CentralControl.current.isSafeMode && Tags.Count > 0) additional.Add(PrintTags);
+        if (!scr_System_CentralControl.current.isSafeMode && TagsCount > 0) additional.Add(PrintTags);
         additional.AddRange(MemInstanceDescriptions);
 
         if (scr_System_CentralControl.current.isSafeMode) additional.Add($"Statmod: Check{cache_score.ToString("+0;-#")} Mood{moodSum} Stress{stressSum}");

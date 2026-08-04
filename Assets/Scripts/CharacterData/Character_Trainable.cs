@@ -1937,7 +1937,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     }
                 }
             }
-            tags = Utility.Distinct(tags);
+            Utility.DistinctInPlace(tags);
 
 
             if (tags.Count > 1)

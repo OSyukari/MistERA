@@ -394,7 +394,7 @@ public class Map_Instance
                 if (i.isDoer(xx)) selfTags.AddRange(i.DoerTargetTag);
                 else if (i.isReceiver(xx)) selfTags.AddRange(i.ReceiverTargetTag);
             }
-            selfTags = Utility.Distinct(selfTags);
+            Utility.DistinctInPlace(selfTags);
 
             List<int> ignoreList = new List<int>();
 
@@ -522,7 +522,7 @@ public class Map_Instance
 
             List<string> selfTags = new List<string>();
             foreach (var i in xxEPs) selfTags.AddRange(i.ActorTargetTags(xx.RefID));
-            selfTags = Utility.Distinct(selfTags);
+            Utility.DistinctInPlace(selfTags);
 
             List<int> ignoreList = new List<int>();
 
@@ -759,7 +759,7 @@ public class Map_Instance
         }
 
         dirtyCharaRef.Add(charaRef.RefID);
-        dirtyCharaRef = Utility.Distinct(dirtyCharaRef);
+        Utility.DistinctInPlace(dirtyCharaRef);
 
         if (charaRef.CanActInTimeStop && scr_System_Time.current.TimeStop) charaRef.MovedInTimeStop = true;
 

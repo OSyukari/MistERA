@@ -138,13 +138,12 @@ public class MemoryManager
         var t = 1;
         // ClearCache();
         bool clearcache = false;
-        var list = new List<long>(this.entries.Keys);
         if (Owner.Stats.isConsciousnessUnconscious) t *= 2;
-        foreach(var i in list)// var entry in entries.Values)
+        for (int i = entries.Count - 1; i >= 0; i--)
         {
-            var entry = entries[i];
+            var entry = entries.Values[i];
             clearcache = (entry.Tick(t) && entry.HasStatMod) || clearcache;
-            if (entry.Duration == 0) entries.Remove(i);//.RemoveAt(i);
+            if (entry.Duration == 0) entries.RemoveAt(i);
         }
         if (clearcache) ClearCache();
     }
@@ -357,7 +356,7 @@ public class MemoryManager
             }
 
             // Cache Logic
-            statmod.valueString = newVal.ToString();
+            statmod.SetNumber(newVal);
             recentMemoryCache.Add(statmod);
 
             compareList.Add(newVal);

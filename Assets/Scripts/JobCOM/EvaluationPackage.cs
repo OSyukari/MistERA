@@ -178,7 +178,7 @@ public partial class EvaluationPackage : I_ResultStorage
                 actorRefs.Add(DoerRef);
                 actorRefs.Add(ReceiverRef);
                 actorRefs.AddRange(additionalActorRefs);
-                actorRefs = Utility.Distinct(actorRefs);
+                Utility.DistinctInPlace(actorRefs);
                 actorRefs.Remove(-1);
             }
             return actorRefs;
@@ -199,7 +199,7 @@ public partial class EvaluationPackage : I_ResultStorage
                     actors.AddRange(additionalActors);
                 }
 
-                actors = Utility.Distinct(actors);
+                Utility.DistinctInPlace(actors);
                 actors.Remove(null);
             }
             return actors; } }
@@ -412,7 +412,7 @@ public partial class EvaluationPackage : I_ResultStorage
     public void AddExtraCOMTags(string s)
     {
         this.injectedCOMTags.Add(s);
-        this.injectedCOMTags = Utility.Distinct(this.injectedCOMTags);
+        Utility.DistinctInPlace(this.injectedCOMTags);
         InvalidateTagCache();
     }
     public void AddExtraActorTags(string doer, string receiver)
@@ -786,8 +786,21 @@ public partial class EvaluationPackage : I_ResultStorage
     public APJSON epjson = null;
 
     string diceroll_autosuccess = LocalizeDictionary.QueryThenParse("ui_diceroll_autosuccess");
+    string diceroll_autofailure = LocalizeDictionary.QueryThenParse("ui_diceroll_autofailure");
     string diceroll_success = LocalizeDictionary.QueryThenParse("ui_diceroll_success");
     string diceroll_failure = LocalizeDictionary.QueryThenParse("ui_diceroll_failure");
+
+    /// <summary>
+    /// Returns the auto-success/auto-failure display text when the outcome is guaranteed
+    /// (either the rate is at an extreme, or a PersonalityAcceptanceMod forced the response),
+    /// or null when the normal dice-roll text should be shown instead.
+    /// </summary>
+    private string DiceRollAutoText(int rate, Memory_Response forcedResponse)
+    {
+        if (forcedResponse >= Memory_Response.Accept || rate >= 100) return diceroll_autosuccess;
+        if ((forcedResponse > Memory_Response.None && forcedResponse < Memory_Response.Accept) || rate <= 0) return diceroll_autofailure;
+        return null;
+    }
 
     /// <summary>
     /// Internal method. Run after data initialized. 
@@ -811,6 +824,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = epjson.command_result >= Memory_Response.Accept;
             else if (forceSuccess >= Memory_Response.Accept) returnVal = true;
             else if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) returnVal = false;
+            else if (forcedResponse_doer != Memory_Response.None) returnVal = forcedResponse_doer >= Memory_Response.Accept;
             else if (requestRate >= 100) returnVal = true;
             else if (requestRate <= 0) returnVal = false;
             else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure 
@@ -818,14 +832,15 @@ public partial class EvaluationPackage : I_ResultStorage
             else returnVal = diceroll >= reverseRate;
         }
 
-        RollAttitude(ref attitudeRate_pos_doer, ref attitudeRate_neg_doer, ref attitude_doer);
+        RollAttitude(ref attitudeRate_pos_doer, ref attitudeRate_neg_doer, ref attitude_doer, true);
 
         if (returnVal) response = Memory_Response.Accept;
         else response = Memory_Response.Refuse;
 
         List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
-        checkResults_doer = $"{Doer.FirstName}: D20{(mods.Count > 0 ? " + "+ String.Join(" + ", mods) : "")} = {(requestRate >= 100 ? diceroll_autosuccess : ($"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}" ))}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_doer})";
-        checkResults_doer_short = $"({Doer.FirstName}) {targetCOM.DisplayName(VariantID)}: {(requestRate >= 100 ? diceroll_autosuccess : $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
+        var autoDoer = DiceRollAutoText(requestRate, forcedResponse_doer);
+        checkResults_doer = $"{Doer.FirstName}: D20{(mods.Count > 0 ? " + "+ String.Join(" + ", mods) : "")} = {(autoDoer ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}" )}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_doer})";
+        checkResults_doer_short = $"({Doer.FirstName}) {targetCOM.DisplayName(VariantID)}: {(autoDoer ?? $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
         return returnVal;
     }
@@ -862,6 +877,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = true;
             else if (forceSuccess >= Memory_Response.Accept) returnVal = true;
             else if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) returnVal = false;
+            else if (forcedResponse_receiver != Memory_Response.None) returnVal = forcedResponse_receiver >= Memory_Response.Accept;
             else if (responseRate == 0) returnVal = false;
             else if (responseRate == 100) returnVal = true;
             else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure 
@@ -871,13 +887,14 @@ public partial class EvaluationPackage : I_ResultStorage
             if (returnVal) response = Memory_Response.Accept;
             else response = Memory_Response.Refuse;
 
-            RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver);
+            RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver, false);
             List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
 
 
 
-            checkResults_receiver = $"{Receiver.FirstName}: D20{(mods.Count > 0 ? " + "+String.Join(" + ", mods) : "")} = {(responseRate >= 100 ? diceroll_autosuccess : ($"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}"))}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_receiver})";
-            checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(responseRate >= 100 ? diceroll_autosuccess : $"({responseRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
+            var autoReceiver = DiceRollAutoText(responseRate, forcedResponse_receiver);
+            checkResults_receiver = $"{Receiver.FirstName}: D20{(mods.Count > 0 ? " + "+String.Join(" + ", mods) : "")} = {(autoReceiver ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}")}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_receiver})";
+            checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(autoReceiver ?? $"({responseRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
         }
         return returnVal;
@@ -1015,11 +1032,77 @@ public partial class EvaluationPackage : I_ResultStorage
     [JsonProperty] Modifiers modifiers = new Modifiers();
     [JsonProperty] Modifiers modifiers_child = new Modifiers();
 
-    private void RollAttitude(ref int attitudeRate_pos, ref int attitudeRate_neg, ref Memory_Attitude attitude_begin)
+    // ------------------------
+    // PersonalityAcceptanceMod support: forced response/attitude overrides + a named attitude-rate modifier.
+    // ------------------------
+
+    Memory_Response forcedResponse_doer = Memory_Response.None, forcedResponse_receiver = Memory_Response.None;
+    Memory_Attitude forcedAttitude_doer = Memory_Attitude.None, forcedAttitude_receiver = Memory_Attitude.None;
+
+    public void SetForcedResponse(bool isDoer, Memory_Response r, string explanation = "")
+    {
+        if (isDoer) forcedResponse_doer = r;
+        else forcedResponse_receiver = r;
+
+        if (explanation != "")
+        {
+            int refID = isDoer ? DoerRef : ReceiverRef;
+            modifiers.AddModifier(refID, LocalizeDictionary.QueryThenParse(explanation), 0);
+        }
+    }
+
+    public void SetForcedAttitude(bool isDoer, Memory_Attitude a)
+    {
+        if (isDoer) forcedAttitude_doer = a;
+        else forcedAttitude_receiver = a;
+    }
+
+    public void AddAttitudeModifier(bool isDoer, string explanation, int value)
+    {
+        if (isDoer)
+        {
+            if (value > 0) attitudeRate_pos_doer = Math.Clamp(attitudeRate_pos_doer + value, 0, 100);
+            else attitudeRate_neg_doer = Math.Clamp(attitudeRate_neg_doer - value, 0, 100);
+        }
+        else
+        {
+            if (value > 0) attitudeRate_pos_receiver = Math.Clamp(attitudeRate_pos_receiver + value, 0, 100);
+            else attitudeRate_neg_receiver = Math.Clamp(attitudeRate_neg_receiver - value, 0, 100);
+        }
+        tooltip.Add($"{explanation}{value.ToString("+0;-#")}");
+    }
+
+    List<PersonalityAcceptanceMod> _doerAcceptanceMods = null;
+    List<PersonalityAcceptanceMod> _receiverAcceptanceMods = null;
+
+    public void ApplyPersonalityMods()
+    {
+        if (_doerAcceptanceMods == null)
+        {
+            _doerAcceptanceMods = new List<PersonalityAcceptanceMod>();
+            if (Doer != null) Doer.Relationships.Personality.CollectApplicableAcceptanceMods(Doer, true, Receiver, this, ref tooltip, _doerAcceptanceMods);
+        }
+        foreach (var mod in _doerAcceptanceMods) mod.Apply(this, Doer, Receiver);
+
+        if (Receiver != null)
+        {
+            if (_receiverAcceptanceMods == null)
+            {
+                _receiverAcceptanceMods = new List<PersonalityAcceptanceMod>();
+                Receiver.Relationships.Personality.CollectApplicableAcceptanceMods(Receiver, false, Doer, this, ref tooltip, _receiverAcceptanceMods);
+            }
+            foreach (var mod in _receiverAcceptanceMods) mod.Apply(this, Receiver, Doer);
+        }
+    }
+
+    private void RollAttitude(ref int attitudeRate_pos, ref int attitudeRate_neg, ref Memory_Attitude attitude_begin, bool isDoerRole)
     {
         int diceroll = Dice(1, 100, 0);
 
+        Memory_Attitude forcedAttitude = isDoerRole ? forcedAttitude_doer : forcedAttitude_receiver;
+
         if (epjson != null && epjson.participant_attitude != Memory_Attitude.None) attitude_begin = epjson.participant_attitude;
+        else if (forcedAttitude != Memory_Attitude.None) attitude_begin = forcedAttitude;
         else if (diceroll >= (100 - attitudeRate_pos)) attitude_begin = Memory_Attitude.Like;
         else if (diceroll <= attitudeRate_neg) attitude_begin = Memory_Attitude.Dislike;
         else attitude_begin = Memory_Attitude.Neutral;
@@ -1402,11 +1485,11 @@ public partial class EvaluationPackage : I_ResultStorage
 
             injectedReceiverTags.AddRange(com.requirements.requirement.req_Doers.BodyTags);
             injectedReceiverTags.AddRange(com.variants[variantID].requirements.requirement.req_Doers.BodyTags);
-            injectedReceiverTags = Utility.Distinct(injectedReceiverTags);
+            Utility.DistinctInPlace(injectedReceiverTags);
 
             injectedDoerTags.AddRange(com.requirements.requirement.req_Receivers.BodyTags);
             injectedDoerTags.AddRange(com.variants[variantID].requirements.requirement.req_Receivers.BodyTags);
-            injectedDoerTags = Utility.Distinct(injectedDoerTags);
+            Utility.DistinctInPlace(injectedDoerTags);
 
             InvalidateTagCache();
 

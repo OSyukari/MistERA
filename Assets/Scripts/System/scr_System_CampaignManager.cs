@@ -2907,6 +2907,8 @@ public static class WorldManager
 
             org.explorationKeywords = map.explorationKeywords;
             org.mealHours = map.mealHours;
+            org.factionTags = map.factionTags;
+            org.localeTags = map.localeTags;
         }
 
         return list;

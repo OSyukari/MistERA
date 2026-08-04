@@ -62,12 +62,12 @@
 
 "ui_prefs_llm_llmSetting_on": "启用",
 
-"ui_prefs_llm_apisetting": "API设定",
 "ui_prefs_llm_apisetting_disabled": "需要先启用语言模型",
 "ui_prefs_llm_apisetting_toggle": "开关语言模型输出框的显示",
 "ui_prefs_llm_apisetting_descriptions": "所有API相关设定（包括Key）都会存储于Application.persistentDataPath中（Windows系统下在Appdata\\LocalLow\\Silent Forest\\Mist Era\\\n使用自定义端口时，请使用localhost而非127.0.0.1",
 
-"ui_prefs_llm_apisetting_completion_title": "聊天补全模型",
+"ui_prefs_llm_apisetting_completion_title": "聊天补全模型：$modelname$",
+"ui_prefs_llm_apisetting_completion_title_initializing": "聊天补全模型：初始化中……",
 "ui_prefs_llm_apisetting_completion_api_type": "API来源",
 "ui_prefs_llm_apisetting_completion_dropdown_0": "自制接口（OpenAI兼容）",
 "ui_prefs_llm_apisetting_completion_dropdown_1": "Google AI Studio",
@@ -75,6 +75,15 @@
 "ui_prefs_llm_apisetting_completion_dropdown_3": "OpenAI",
 "ui_prefs_llm_apisetting_completion_dropdown_4": "Z.AI 编程计划",
 "ui_prefs_llm_apisetting_completion_dropdown_5": "DeepSeek",
+
+"ui_prefs_llm_apipreset_none": "无API配置，请创建或启用API配置",
+"ui_prefs_llm_apipreset_enabled": "已启用",
+
+"ui_prefs_llm_apipreset_create": "创建API配置",
+"ui_prefs_llm_apipreset_enable": "启用",
+"ui_prefs_llm_apipreset_delete": "删除",
+"ui_prefs_llm_apipreset_cancel": "取消",
+"ui_prefs_llm_apipreset_save": "保存配置",
 
 "ui_prefs_llm_apisetting_completion_customurl": "自制接口URL",
 
@@ -86,6 +95,7 @@
 "ui_prefs_llm_apisetting_completion_api_5": "DeepSeek API Key",
 
 "ui_prefs_llm_apisetting_completion_models": "选择模型",
+"ui_prefs_llm_apisetting_comment": "附注",
 
 
 "ui_comPanel_LLM_title": "<link=\"ui_comPanel_LLM_title_tooltip\">AI聊天输入窗口</link>",
@@ -675,6 +685,7 @@
 "ui_ActionPackage_ItemUse_Recording_END": "<align=\"center\">录像回放结束</align>",
 
 "ui_diceroll_autosuccess":"必定接受",
+"ui_diceroll_autofailure":"必定拒绝",
 "ui_diceroll_success":"接受",
 "ui_diceroll_failure":"拒绝",
 
@@ -1152,6 +1163,7 @@
 "ui_movement_charaInRoom":"<align=\"center\">Chara in room: $names$</align>",
 
 "ui_diceroll_autosuccess":"Automatic Success",
+"ui_diceroll_autofailure":"Automatic Failure",
 "ui_diceroll_success":"Success",
 "ui_diceroll_failure":"Failure",
 

@@ -295,7 +295,18 @@ public class scr_System_Serializer : MonoBehaviour
                 File.WriteAllText(safeFile.FullName, s);
                 Debug.Log($"creating/updating safeList in {safeListpath}");
             }
+            else
+            {
+                string safeListpath = Application.dataPath + " /MasterList.json";
+                var s = JsonConvert.SerializeObject(MasterList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
+                if (File.Exists(safeListpath)) File.Delete(safeListpath);
 
+                FileInfo safeFile = new System.IO.FileInfo(safeListpath);
+                safeFile.Directory.Create();
+                File.WriteAllText(safeFile.FullName, s);
+                Debug.Log($"creating/updating Masterlist in {safeListpath}");
+
+            }
 #endif
 
             scr_System_CentralControl.current.NotifyLoadComplete();

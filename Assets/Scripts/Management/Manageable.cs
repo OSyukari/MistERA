@@ -2450,6 +2450,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     }
     public List<string> explorationKeywords = new List<string>();
+    public List<string> factionTags { get; set; } = new List<string>();
+    public List<string> localeTags { get; set; } = new List<string>();
     public List<JobPostPreset> JobPostsPresets = new List<JobPostPreset>();
     public void AddJobPost(MapPlan.WorkModuleInit module)
     {
@@ -2579,13 +2581,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
             this.workCommands = new List<string>();
             this.workCommands.AddRange(module.workCommands);
-            this.workCommands = Utility.Distinct(this.workCommands);
+            Utility.DistinctInPlace(this.workCommands);
             this.workCommands.RemoveAll(x => x.Length < 1);
 
             //Debug.LogError($"new module {module.jobPostID} jobs |{String.Join(",", module.workCommands)}| selfcommands |{String.Join(",", this.workCommands)}|");
 
             this.activeHours = new List<int>(module.activeHours);
-            this.activeHours = Utility.Distinct(this.activeHours);
+            Utility.DistinctInPlace(this.activeHours);
             this.activeHours.RemoveAll(x => x < 0 || x > 23);
 
             foreach (var item in module.hourlyPayout)

@@ -590,7 +590,7 @@ public class RelationshipManager
             if (c == Owner) continue;
             var rel = FindRelationshipWith(c);
             if (rel.Target == null) continue;
-            moodlets.AddRange(rel.GetMoodletModifiers());
+            rel.GetMoodletModifiers(moodlets);
         }
         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(Owner.RefID);
         if (room != null)
@@ -605,8 +605,15 @@ public class RelationshipManager
     public List<Stat_Modifier> GetMoodlet(string statID)
     {
         var list = new List<Stat_Modifier>(moodlets.Count);
-        foreach(var i in moodlets) if (i.statID == statID) list.Add(i);
+        GetMoodlet(statID, list);
         return list;
+    }
+    /// <summary>
+    /// Appends matching moodlet modifiers into <paramref name="results"/>. Caller owns and clears the list.
+    /// </summary>
+    public void GetMoodlet(string statID, List<Stat_Modifier> results)
+    {
+        foreach (var i in moodlets) if (i.statID == statID) results.Add(i);
     }
 
 

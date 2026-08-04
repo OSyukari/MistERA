@@ -767,7 +767,7 @@ public class Character_Body
                 List<int> actors = new List<int>();
                 if (Owner.CurrentJob != null) actors.AddRange(Owner.CurrentJob.actorRefID);
                 actors.AddRange(Owner.InteractionJob.actorRefID);
-                actors = Utility.Distinct(actors);
+                Utility.DistinctInPlace(actors);
 
                 if (desc != null)
                 {

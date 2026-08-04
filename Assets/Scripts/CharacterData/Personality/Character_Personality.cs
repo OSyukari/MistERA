@@ -148,14 +148,6 @@ public class Character_Personality
 
     [JsonProperty] string behaviorID = "";
 
-    // Dialogue Event ID
-    [JsonProperty] protected string dialogueEventID = "";
-    [JsonIgnore] public string DialogueEventID { get {
-        if (!string.IsNullOrEmpty(dialogueEventID)) return dialogueEventID;
-        if (Fallback != null) return Fallback.DialogueEventID;
-        return dialogueEventID;
-    } }
-
     FindJobNodeRoot _behavior = null;
     [JsonIgnore]
     public FindJobNodeRoot Behavior { get
@@ -169,6 +161,33 @@ public class Character_Personality
         } }
 
     public double maxPrideValue = 100;
+
+    public List<PersonalityAcceptanceMod> AcceptanceMods = new List<PersonalityAcceptanceMod>();
+
+    /// <summary>
+    /// Filters AcceptanceMods (and their nested Children, recursively) down to the ones fully valid
+    /// (self/target/faction/Kojo) for this self/target/EP context, writing into the caller-owned results
+    /// list instead of allocating a new one. A node only has its children checked if it validates itself
+    /// (pruning), and only nodes with their own Result get added — pure branch nodes are invisible in the output.
+    /// </summary>
+    public void CollectApplicableAcceptanceMods(Character_Trainable self, bool isDoer, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results)
+    {
+        results.Clear();
+        if (AcceptanceMods == null) return;
+        foreach (var mod in AcceptanceMods)
+            CollectAcceptanceModRecursive(mod, self, target, ep, ref tooltip, results);
+    }
+
+    private void CollectAcceptanceModRecursive(PersonalityAcceptanceMod node, Character_Trainable self, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results)
+    {
+        if (node == null || !node.Validate(self, target, ep, ref tooltip, out _)) return;
+
+        if (node.Result_ActionPackage != null || node.Result_EvaluationPackage != null) results.Add(node);
+
+        if (node.Children != null)
+            foreach (var child in node.Children)
+                CollectAcceptanceModRecursive(child, self, target, ep, ref tooltip, results);
+    }
 
     public Dictionary<PrideLevel, PrideMod> pride_increase = new Dictionary<PrideLevel, PrideMod>();
     public Dictionary<PrideLevel, PrideMod> pride_decrease = new Dictionary<PrideLevel, PrideMod>();

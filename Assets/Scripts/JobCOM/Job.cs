@@ -128,11 +128,13 @@ public class Job : IDisposable, I_Disposable
     //[NonSerialized] public Manageable FactionOwner = null;
     [JsonProperty] protected SortedDictionary<int, COM_Match> actorRefIDStorage = new SortedDictionary<int, COM_Match>();
     [JsonProperty] protected Dictionary<int, DateTime> actorJoinTime = new Dictionary<int, DateTime>();
+    protected List<int> _actorRefID_cache = null;
     [JsonIgnore] public virtual List<int> actorRefID
     {
         get
         {
-            return actorRefIDStorage.Keys.ToList();
+            if (_actorRefID_cache == null) _actorRefID_cache = actorRefIDStorage.Keys.ToList();
+            return _actorRefID_cache;
         }
     }
 
@@ -326,6 +328,7 @@ public class Job : IDisposable, I_Disposable
         actorJobComplete.Remove(charaRef);
         actorRemove.Remove(charaRef);
         _actors_cache = null;
+        _actorRefID_cache = null;
     }
 
     public class COM_Match
@@ -390,6 +393,7 @@ public class Job : IDisposable, I_Disposable
         actorJobComplete.Remove(charaRef);
         actorRemove.Add(charaRef);
         _actors_cache = null;
+        _actorRefID_cache = null;
     }
 
     [JsonIgnore] public int RefID { get { return jobRefID; } }
@@ -422,6 +426,7 @@ public class Job : IDisposable, I_Disposable
     public List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, string comID, bool allowInvalid = false, COM filter = null, List<string> debug = null)
     {
         actorRefIDStorage.Add(c.RefID, new COM_Match(comID));
+        _actorRefID_cache = null;
         return MakePackages(c, allowParent, allowChild, allowInvalid, filter, debug);
     }
 
@@ -431,11 +436,11 @@ public class Job : IDisposable, I_Disposable
         if (actorRefIDStorage.ContainsKey(c.RefID) || allowInvalid)
         {
             var possibleCOMs = allowInvalid ? allusableCOMs : actorRefIDStorage[c.RefID].Match(this);
-            //possibleCOMs = possibleCOMs.FindAll(x => (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd)));
+            //possibleCOMs = possibleCOMs.FindAll(x => (!x.hasFactionReq || x.requirements.requireFaction.Validate(FactionOwner, out var reqd)));
 
             foreach (var com in possibleCOMs)
             {
-                if (com.hasFactionReq && !com.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
+                if (com.hasFactionReq && !com.requirements.requireFaction.Validate(FactionOwner, out var reqd))
                 {
                     if (debug != null) debug.Add($"{com.ID} skipped by failing faction req");
                     continue;
@@ -481,7 +486,7 @@ public class Job : IDisposable, I_Disposable
 
         foreach (var com in possibleCOMs)
         {
-            if (!com.hasFactionReq || (com.requirements.requireFactionExisting.Validate(FactionOwner, out var r)))
+            if (!com.hasFactionReq || (com.requirements.requireFaction.Validate(FactionOwner, out var r)))
             {
                 bool haspackage = false;
                 if (allowChild && com.GenerateAP != null)
@@ -715,6 +720,7 @@ public class Job : IDisposable, I_Disposable
         this.actorRemove.Clear();
         this.actorJoinTime.Clear();
         this.actorRefIDStorage.Clear();
+        _actorRefID_cache = null;
         this.packages_completed.Clear();
         this.m.Clear();
     }

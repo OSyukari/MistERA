@@ -60,6 +60,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
 
     public void Refresh()
     {
+        //if (scr_UpdateHandler.current.Updating && !scr_UpdateHandler.current.isLastUpdate()) return;
         var chara = Chara;
         if (chara != null)
         {

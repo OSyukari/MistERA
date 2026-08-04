@@ -40,6 +40,7 @@ public class scr_Panel_CurrentChars : MonoBehaviour
 
     private void UpdateCharaCache()
     {
+        //if (scr_UpdateHandler.current.Updating && !scr_UpdateHandler.current.isLastUpdate()) return;
         for (int i = trackedRefs.Count - 1; i >= 0; i--)
         {
             if (!scr_System_CampaignManager.current.CharaRefInCurrentRoom.Contains(trackedRefs[i])) trackedRefs.RemoveAt(i);

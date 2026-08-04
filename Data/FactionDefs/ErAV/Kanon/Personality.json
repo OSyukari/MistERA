@@ -4,22 +4,23 @@
     "Character_Personalities": {
         "list": [
             {
-                "id": "personality_ErAV_Kanade",
-                "displayName": "ErAV_personality_Kanade_displayName",
-                "fallbackID": "personality_default",
-                "behaviorID": "",
-                "maxPrideValue": 100,
-                "entries_list": []
-            },
-            {
                 "id": "personality_ErAV_Kanon",
                 "displayName": "ErAV_personality_Kanon_displayName",
                 "fallbackID": "personality_default",
-                "dialogueEventID":"Kanon_Dialogue",
-                "behaviorID": "",
                 "maxPrideValue": 100,
                 "entries_list": []
             }
         ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+
+            },
+            "en-us": {
+
+            }
+        }
     }
 }

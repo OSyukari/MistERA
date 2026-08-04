@@ -42,7 +42,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     {
         if (child == null) return;
         childCOMs.Add(child);
-        childCOMs = Utility.Distinct(childCOMs);
+        Utility.DistinctInPlace(childCOMs);
     }
 
     public bool hidden = false;
@@ -477,7 +477,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         int index = -1;
         bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
         //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
-        if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(sourceJob.FactionOwner, out var tooltips))
+        if (this.requirements.requireFaction != null && !requirements.requireFaction.Validate(sourceJob.FactionOwner, out var tooltips))
         {
             if (logging) tooltip.Add(tooltips);
             return -1;
@@ -581,7 +581,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         {
             var var = variants[i];
 
-            if (this.requirements.requireFactionExisting != null && !requirements.requireFactionExisting.Validate(sourceJob.FactionOwner, out var tooltips2))
+            if (this.requirements.requireFaction != null && !requirements.requireFaction.Validate(sourceJob.FactionOwner, out var tooltips2))
             {
                 s2.Add($"{DisplayName(i)}: {tooltips2}");
                 continue;

@@ -54,6 +54,7 @@ public class scr_Menu_Faction : MonoBehaviour
 
     private void refreshFaction()
     {
+        //if (scr_UpdateHandler.current.Updating && !scr_UpdateHandler.current.isLastUpdate()) return;
         //Debug.Log("CAMPAIGNMANAGER NOTIFY UPDATE -> refreshFaction");
         var targetFactionList = scr_System_CampaignManager.current.Player.FactionManager.ManagerFactions;
 

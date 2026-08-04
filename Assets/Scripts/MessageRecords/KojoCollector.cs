@@ -55,7 +55,7 @@ public class KojoCollector : I_ResultStorage, I_Records
     {
         if (list == null) return;
         relevantActorRefs.AddRange(list);
-        relevantActorRefs = Utility.Distinct(relevantActorRefs);
+        Utility.DistinctInPlace(relevantActorRefs);
     }
     public bool DirectlyRelated(Character_Trainable c)
     {

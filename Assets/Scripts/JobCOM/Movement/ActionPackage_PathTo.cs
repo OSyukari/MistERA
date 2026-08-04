@@ -215,7 +215,7 @@ public class ActionPackage_PathTo : ActionPackage
 
 
 
-            scr_System_CampaignManager.current.MoveCharacterTo(Doer, pc.Target);
+            scr_System_CampaignManager.current. MoveCharacterTo(Doer, pc.Target);
 
             // Leave room message
             var s_prev = LocalizeDictionary.QueryThenParse("ui_movement_leavesRoom").Replace("$self$", Doer.FirstName).Replace("$room$", prev == null ? "null" : prev.DisplayNameShort);

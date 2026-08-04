@@ -67,8 +67,12 @@ public class Job_PlayerCOM : Job
     {
         get
         {
-            if (!actorRefIDStorage.ContainsKey(0)) actorRefIDStorage.Add(0, new COM_Match());
-            return actorRefIDStorage.Keys.ToList();
+            if (_actorRefID_cache == null)
+            {
+                if (!actorRefIDStorage.ContainsKey(0)) actorRefIDStorage.Add(0, new COM_Match());
+                _actorRefID_cache = actorRefIDStorage.Keys.ToList();
+            }
+            return _actorRefID_cache;
         }
     }
 

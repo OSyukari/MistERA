@@ -258,13 +258,13 @@ public class Job_Furniture : Job
             {
                 if (!ValidCOMs.Contains(com)) continue;
                 if (!CanCOMAcceptMoreActor(com, c)) continue;
-                if (com.hasFactionReq && !com.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd)) continue;
+                if (com.hasFactionReq && !com.requirements.requireFaction.Validate(FactionOwner, out var reqd)) continue;
                 if (com.hasFactionReq && com.isJobCOM && (m == null || !m.GetProductionOrder(this, out var xxx, out var po))) continue;
 
                 /*
                 possibleCOMs = possibleCOMs.FindAll(x => ValidCOMs.Contains(x)
                                                         && CanCOMAcceptMoreActor(x, c)
-                                                        && (!x.hasFactionReq || x.requirements.requireFactionExisting.Validate(FactionOwner, out var reqd))
+                                                        && (!x.hasFactionReq || x.requirements.requireFaction.Validate(FactionOwner, out var reqd))
                                                         && (!x.hasFactionReq || !x.isJobCOM || (m != null && m.GetProductionOrder(this, out var xxx, out var po)))
                                                     );*/
                 //if (possibleCOMs.Count < 1) Debug.LogError($"Furniture instance {this.DisplayName} has no possblejobcoms for chara {c.FirstName} at step 2");

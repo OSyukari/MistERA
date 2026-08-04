@@ -107,7 +107,7 @@ public class DescriptionCollector : I_Records
         if (kojo.PortraitRefID != -1)
         {
             this.portraitRefs.Add(kojo.PortraitRefID);
-            portraitRefs = Utility.Distinct(portraitRefs);
+            Utility.DistinctInPlace(portraitRefs);
         }
 
         if (kojo.message.Length > 0)
@@ -123,7 +123,7 @@ public class DescriptionCollector : I_Records
         Utility.DistinctInPlace(displayTagsOverride_Target);
 
         this.relevantActors.AddRange(kojo.relevantActors);
-        this.relevantActors = Utility.Distinct(relevantActors);
+        Utility.DistinctInPlace(relevantActors);
 
         foreach (var next in kojo.nexts) Load(next);
     }
@@ -132,12 +132,12 @@ public class DescriptionCollector : I_Records
     {
         relevantActors.Add(rel.Owner.RefID);
         relevantActors.Add(rel.Target.RefID);
-        relevantActors = Utility.Distinct(relevantActors);
+        Utility.DistinctInPlace(relevantActors);
     }
     public void LoadActors(List<int> actors)
     {
         relevantActors.AddRange(actors);
-        relevantActors = Utility.Distinct(relevantActors);
+        Utility.DistinctInPlace(relevantActors);
     }
     public void LoadActors(List<Character_Trainable> actors, bool isrelevant, bool isportrait)
     {
@@ -150,7 +150,7 @@ public class DescriptionCollector : I_Records
     public void LoadPortraits(List<int> actors, bool exceptPlayer)
     {
         portraitRefs.AddRange(actors);
-        portraitRefs = Utility.Distinct(portraitRefs);
+        Utility.DistinctInPlace(portraitRefs);
         if (exceptPlayer) portraitRefs.Remove(scr_System_CampaignManager.current.Player.RefID);
     }
     public void LoadActors(int actor, bool isrelevant, bool isportrait)
@@ -158,12 +158,12 @@ public class DescriptionCollector : I_Records
         if (isrelevant)
         {
             relevantActors.Add(actor);
-            relevantActors = Utility.Distinct(relevantActors);
+            Utility.DistinctInPlace(relevantActors);
         }
         if (isportrait)
         {
             portraitRefs.Add(actor);
-            portraitRefs = Utility.Distinct(portraitRefs);
+            Utility.DistinctInPlace(portraitRefs);
         }
 
     }
