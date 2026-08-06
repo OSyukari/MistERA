@@ -213,10 +213,54 @@ public class Job_CharaCOM : Job
         {
 
             Debug.LogError("Error setting Job_CharaCOM FactionOwner");
-            
+
         }
     }
 
+    private List<I_IsJobGiver> _validInventoryFactionsCache = null;
+    private int _validInventoryFactionsCacheHour = -1;
+
+    /// <summary>
+    /// Call whenever Owner's faction membership changes (hooked from Character_Trainable.NotifyFactionChange,
+    /// same pattern RelationshipManager already uses) - the hour-scoped cache below only catches
+    /// schedule-driven changes to CurrentlyActiveFaction/locale, not membership edits.
+    /// </summary>
+    public void InvalidateInventoryFactionsCache()
+    {
+        _validInventoryFactionsCache = null;
+    }
+
+    /// <summary>
+    /// Job_CharaCOM has no real "employer" - unlike scheduled/furniture jobs, item use through free/self
+    /// commands should be able to draw from any faction the character actually has access to: home
+    /// faction(s) unconditionally; a work faction if they manage it or are a plain member currently
+    /// on-shift there; or wherever they're physically standing right now (locale), provided they're
+    /// actually a member there too (merely being physically present in someone else's territory doesn't
+    /// grant access). Cached per game-hour (the granularity at which CurrentlyActiveFaction/room can
+    /// change) to avoid re-allocating/re-scanning on every validation/execution call within the same hour.
+    /// </summary>
+    public override List<I_IsJobGiver> GetValidInventoryFactions()
+    {
+        int currentHour = scr_System_Time.current.getCurrentTime().Hour;
+        if (_validInventoryFactionsCache != null && _validInventoryFactionsCacheHour == currentHour)
+            return _validInventoryFactionsCache;
+
+        var list = new List<I_IsJobGiver>();
+        foreach (var f in Owner.FactionManager.HomeFactions)
+            if (f != null && !list.Contains(f)) list.Add(f);
+        foreach (var f in Owner.FactionManager.WorkFactions)
+        {
+            if (f == null || list.Contains(f)) continue;
+            bool eligible = f.isCharaManager(Owner) || (f.isMember(Owner.RefID) && f == Owner.FactionManager.CurrentlyActiveFaction);
+            if (eligible) list.Add(f);
+        }
+        var locale = Owner.FactionManager.CurrentLocaleFaction;
+        if (locale != null && !list.Contains(locale) && locale.isMember(Owner.RefID)) list.Add(locale);
+
+        _validInventoryFactionsCache = list;
+        _validInventoryFactionsCacheHour = currentHour;
+        return list;
+    }
 
 }
 

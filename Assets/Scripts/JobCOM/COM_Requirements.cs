@@ -627,7 +627,14 @@ public class COM_Requirements
     }
 
     public Requirement_Faction requireFaction = null;
-    
+
+    /// <summary>
+    /// Separate from requireFaction: resolved against the job (Job.GetValidInventoryFactions()), not a
+    /// single faction, so item availability follows job-type-specific rules (single explicit faction for
+    /// scheduled/furniture jobs, the character's accessible factions for Job_CharaCOM). Only set by
+    /// COM_UseItemCOM/COM_Recording.
+    /// </summary>
+    public Requirement_Inventory requireInventory = null;
 
     public RequireContaining requireContaining = null;
     [System.Serializable]

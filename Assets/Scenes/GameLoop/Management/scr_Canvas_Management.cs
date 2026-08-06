@@ -101,6 +101,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         else if (player.FactionManager.WorkFactions.Contains(m)) factionName.SetText(workf.Replace("$name$", m.FactionDisplayName), false, "management_faction_work_tooltip");
         else factionName.SetText(otherf.Replace("$name$", m.FactionDisplayName));
 
+        factionName.SetExternalTooltip(m.ID);
+
         currentTab = Tab_Overview;
         initialized_faction_overview = false;
         initialized_faction_productions = false;
@@ -2013,8 +2015,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         string tempdisable = "temporarily disabled";
         public override bool IsButtonValid()
         {
-            this.tooltip = tempdisable;
-            return false;
 
             var mainExit = parent.CurrentFaction.MainExit;
             this.tooltip = "current faction main exit: " + (mainExit == null ? "null" : ((mainExit.parentFloor == null ? "nullFloor" : mainExit.parentFloor.displayName) +" "+ parent.CurrentFaction.MainExit.DisplayName));

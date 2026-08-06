@@ -19,6 +19,17 @@ public class WorldPlan
     // if duplicate faction, add to same world with different factionID
 
     public string worldID = "";
+
+    /// <summary>
+    /// If set, this WorldPlan inherits from another WorldPlan at resolution time (Index_MapPlan.GetByID_WorldPlan):
+    /// initializeFactions/doors/npcInit are unioned with the parent's (this world's own entries win on key
+    /// collision), and playerInit plus any display field left at its default (mapImagePath "", AnchorType default,
+    /// worldWidth/worldHeight/worldSizeMult/travelDistancePerMinute &lt;= 0, playerInitLocationFaction "") fall
+    /// back to the parent's value. Supports chains (parent can itself have a parentWorldID); cycles are broken
+    /// safely by the resolver.
+    /// </summary>
+    public string parentWorldID = "";
+
     public string mapImagePath = "";
 
     // map alignment axis

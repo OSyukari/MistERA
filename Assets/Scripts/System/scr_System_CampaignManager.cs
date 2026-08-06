@@ -1652,6 +1652,8 @@ public class scr_System_CampaignManager : MonoBehaviour
             return playerPointer;
         } }
 
+    public bool IsPlayer(Character_Trainable c) => c != null && c.RefID == 0;
+
     public int CurrentTargetRef { get {
             if (currentTarget >= 0) return currentTarget;
             else return 0; } }

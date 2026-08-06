@@ -1,5 +1,68 @@
 {
+    "_doc": "CoffinAnL debug campaign. 'world_coffinAnL_overlay' (below) sets parentWorldID to the shared generic modern-Japan base world 'world_modern_jp' (JP_World/world_modern_jp.json) and inherits its factions/doors/npcInit at resolution time (Index_MapPlan.GetByID_WorldPlan) - only what it actually adds (CoffinAnL_Household + playerInit) needs to be listed here.",
+
+    "CampaignSettings": {
+        "list": [
+            {
+                "ID": "campaign_coffinAnL",
+                "extraOptions": [
+                    {
+                        "ID": "campaign_coffinAnL_start_andrew",
+                        "forbidPCSelect": "TCoAaL_Char_Andrew",
+                        "initializers": [
+                            { "initClass": "campaign_init_world", "initArguments": ["world_coffinAnL_overlay", "true"] }
+                        ]
+                    },
+                    {
+                        "ID": "campaign_coffinAnL_start_leiley",
+                        "forbidPCSelect": "TCoAaL_Char_Ashley",
+                        "initializers": [
+                            { "initClass": "campaign_init_world", "initArguments": ["world_coffinAnL_overlay", "true"] }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
     "MapPlans":{
+        "worldInit":[
+            {
+                "worldID":"world_coffinAnL_overlay",
+                "parentWorldID":"world_modern_jp",
+                "mapImagePath":"ErAV/156274_BlogPostFeatureImage21_120617.jpg",
+
+                "AnchorType":"TopLeft",
+                "worldWidth":833,
+                "worldHeight":400,
+                "worldSizeMult":4,
+
+                "travelDistancePerMinute":6.67,
+                "playerInit": {
+                    "initID": "init_coffinAnL_player",
+                    "Homefaction": {
+                        "factionID": "CoffinAnL_Household",
+                        "guestStatus": "membertype_manager",
+                        "spawnFloorID": "floor_2ldk_2floor_1",
+                        "spawnRoomID": "floor_2ldk_2floor_1_2L_room",
+                        "setRoomOwnership": true
+                    }
+                },
+                "initializeFactions":
+                {
+                    "CoffinAnL_Household":"CoffinAnL_Household"
+                },
+                "doors":
+                [
+                    {
+                        "offset_x":520, "offset_y":230, "isPublic":false,
+                        "factionID":"CoffinAnL_Household",
+                        "floorExitID":"floor_2ldk_2floor_1_1L_frontDoor"
+                    }
+                ],
+                "npcInit":[]
+            }
+        ],
         "factionInit":
         [
             {
@@ -44,7 +107,8 @@
                 "TCoAaL_Graves_lastname": "格雷夫斯",
                 "TCoAaL_Renee_firstname": "蕾妮",
                 "TCoAaL_Andrew_firstname": "安德鲁",
-                "TCoAaL_Ashley_firstname": "艾希莉"
+                "TCoAaL_Ashley_firstname": "艾希莉",
+                "world_coffinAnL_overlay":"日本"
             },
             "en-us":
             {

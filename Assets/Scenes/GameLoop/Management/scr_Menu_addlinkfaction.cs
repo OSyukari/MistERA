@@ -27,7 +27,7 @@ public class scr_Menu_addlinkfaction : scr_Menu, IPointerClickHandler
             bool alreadyLinked = pactFactions.Contains(faction);
             bool eligible = faction.Currency != null
                 && faction.salesInventory != null && faction.salesInventory.entries.Count > 0
-                && scr_System_CampaignManager.current.Map.isConnectedFaction(sourceFaction, faction);
+                && (scr_System_CampaignManager.current.Map.isConnectedFaction(sourceFaction, faction) || scr_System_CampaignManager.current.DebugMode);
 
             if (!alreadyLinked && !eligible) continue;
 

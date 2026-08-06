@@ -92,6 +92,7 @@ public class Job : IDisposable, I_Disposable
         }
         set
         {
+            _validInventoryFactionsCache = null;
             var a = value as Manageable;
             var b = value as Manageable_Party;
             if (b != null)
@@ -113,6 +114,20 @@ public class Job : IDisposable, I_Disposable
                 Debug.LogError("Error setting FactionOwner");
             }
         }
+    }
+
+    private List<I_IsJobGiver> _validInventoryFactionsCache = null;
+    /// <summary>
+    /// Which faction(s) requireInventory should search for item availability. Default matches the
+    /// existing single-FactionOwner behavior exactly (scheduled/furniture jobs); Job_CharaCOM overrides
+    /// this to the character's accessible factions instead of just their single CurrentlyActiveFaction.
+    /// Cached (invalidated by the FactionOwner setter) so repeated validation/execution calls within the
+    /// same faction-owner state don't re-allocate a new list every time.
+    /// </summary>
+    public virtual List<I_IsJobGiver> GetValidInventoryFactions()
+    {
+        if (_validInventoryFactionsCache == null) _validInventoryFactionsCache = new List<I_IsJobGiver> { FactionOwner };
+        return _validInventoryFactionsCache;
     }
 
     public virtual List<ActionPackage> GetConflictPackages(ActionPackage a)
@@ -445,6 +460,11 @@ public class Job : IDisposable, I_Disposable
                     if (debug != null) debug.Add($"{com.ID} skipped by failing faction req");
                     continue;
                 }
+                if (com.requirements.requireInventory != null && !com.requirements.requireInventory.Validate(this, out var reqdInv))
+                {
+                    if (debug != null) debug.Add($"{com.ID} skipped by failing inventory req");
+                    continue;
+                }
 
                 if (filter != null)
                 {
@@ -486,7 +506,9 @@ public class Job : IDisposable, I_Disposable
 
         foreach (var com in possibleCOMs)
         {
-            if (!com.hasFactionReq || (com.requirements.requireFaction.Validate(FactionOwner, out var r)))
+            bool factionReqOk = !com.hasFactionReq || com.requirements.requireFaction.Validate(FactionOwner, out var r);
+            bool inventoryReqOk = com.requirements.requireInventory == null || com.requirements.requireInventory.Validate(this, out var rInv);
+            if (factionReqOk && inventoryReqOk)
             {
                 bool haspackage = false;
                 if (allowChild && com.GenerateAP != null)

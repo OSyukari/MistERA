@@ -1368,17 +1368,38 @@ public static class UtilityEX
                     Debug.LogError($"parse console command {parsed[0]} error");
                 }
                 break;
-            case "addItem":
-                if (parsed.Count() >= 4 && int.TryParse(parsed[1], out int addItemToRef) && int.TryParse(parsed[3], out int addItemCount))
+            case "addItemToChara":
+                if (parsed.Count() >= 4)
                 {
-                    var chara = scr_System_CampaignManager.current.FindInstanceByID(addItemToRef);
-                    var item = Masterlist_Items.GetByID(parsed[2]);
-                    if (item != null && chara != null) 
+                    if (int.TryParse(parsed[1], out int addItemToRef) && int.TryParse(parsed[3], out int addItemCount))
                     {
-                        for(int i = 0; i < addItemCount; i++)
+                        var chara = scr_System_CampaignManager.current.FindInstanceByID(addItemToRef);
+                        var item = Masterlist_Items.GetByID(parsed[2]);
+                        if (item != null && chara != null)
                         {
-                            var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
-                            chara.Inventory.AddItem(itemInstance);
+                            for (int i = 0; i < addItemCount; i++)
+                            {
+                                var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
+                                chara.Inventory.AddItem(itemInstance);
+                            }
+                        }
+                    }
+                }
+                break;
+            case "addItemToFaction":
+                if (parsed.Count() >= 4)
+                {
+                    if (int.TryParse(parsed[3], out int addItemCount))
+                    {
+                        var chara = scr_System_CampaignManager.current.FindFactionByID(parsed[1]);
+                        var item = Masterlist_Items.GetByID(parsed[2]);
+                        if (item != null && chara != null)
+                        {
+                            for (int i = 0; i < addItemCount; i++)
+                            {
+                                var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
+                                chara.Inventory.AddItem(itemInstance);
+                            }
                         }
                     }
                 }

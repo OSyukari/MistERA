@@ -87,7 +87,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         get
         {
-            return FactionManager.CurrentlyActiveFaction != null && FactionManager.CurrentlyActiveFaction.isPrisoner(this.RefID);
+            var party = FactionManager.CurrentActiveParty;
+            if (party != null && party.isPrisoner(this.RefID)) return true;
+
+            var locale = FactionManager.CurrentLocaleFaction;
+            return locale != null && locale.GetMemberType(this).isPrisoner;
         }
     }
     [JsonIgnore]
@@ -752,6 +756,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     public void NotifyFactionChange()
     {
         this.Relationships.NotifyFactionChange();
+        this.InteractionJob?.InvalidateInventoryFactionsCache();
     }
 
     // Recovery
@@ -1691,6 +1696,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (Stats.Stamina != null && Stats.Stamina.ValuePercentile < 0.5) return true;
             if (Stats.Energy != null && Stats.Energy.ValuePercentile < 0.5) return true;
             if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_ConsReduced)) return true;
+            if (Stats.hasStatusTag(StatsUtility.Stat_Tag_NeedRest)) return true;
             return false;
         } }
 

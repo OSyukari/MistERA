@@ -40,22 +40,6 @@
                                 "initArguments": ["world_erav_modern_jp", "true"] 
                             }
                         ]
-                    },
-                    {
-                    "ID": "campaign_coffinAnL_start_andrew",
-                    "forbidPCSelect":"TCoAaL_Char_Andrew",
-                        "initializers": [
-                            { "initClass": "campaign_init_playerNameIDs", "initArguments": ["ErAV_Player", "", "", "ErAV_Miyama_lastname", ""] },
-                            { "initClass": "campaign_init_world", "initArguments": ["world_erav_modern_jp", "true"] }
-                        ]
-                    },
-                    {
-                    "ID": "campaign_coffinAnL_start_leiley",
-                    "forbidPCSelect":"TCoAaL_Char_Ashley",
-                        "initializers": [
-                            { "initClass": "campaign_init_playerNameIDs", "initArguments": ["ErAV_Player", "", "", "ErAV_Miyama_lastname", ""] },
-                            { "initClass": "campaign_init_world", "initArguments": ["world_erav_modern_jp", "true"] }
-                        ]
                     }
                 ]
             }

@@ -482,6 +482,11 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (logging) tooltip.Add(tooltips);
             return -1;
         }
+        if (this.requirements.requireInventory != null && !requirements.requireInventory.Validate(sourceJob, out var tooltipsInv))
+        {
+            if (logging) tooltip.Add(tooltipsInv);
+            return -1;
+        }
         if (!requirements.requireExisting.ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
         {
             return -2;
@@ -584,6 +589,11 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (this.requirements.requireFaction != null && !requirements.requireFaction.Validate(sourceJob.FactionOwner, out var tooltips2))
             {
                 s2.Add($"{DisplayName(i)}: {tooltips2}");
+                continue;
+            }
+            if (this.requirements.requireInventory != null && !requirements.requireInventory.Validate(sourceJob, out var tooltips2Inv))
+            {
+                s2.Add($"{DisplayName(i)}: {tooltips2Inv}");
                 continue;
             }
             if (!requirements.requireExisting.ValidateCondition(s, doerRefIDs, receiverRefIDs, this, var))

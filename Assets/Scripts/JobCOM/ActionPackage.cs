@@ -2056,7 +2056,14 @@ public abstract class ActionPackage
                         {
                             var filmcrew = this.receiver.Count > 0 ? this.receiver[0] : this.doer[0];
 
-                            existingJob = new Job_Recording(this.job.FactionOwner, targetcomp2.RecorderItem.ID, targetcomp2.Recorder, this.RoomKey, filmcrew);
+                            // Same reasoning as the COM_UseItemCOM fix above: the recorder item may only
+                            // have validated via requireInventory against a non-active faction - resolve
+                            // the same way instead of only checking job.FactionOwner.
+                            I_IsJobGiver recordingFaction = targetCOM.requirements.requireInventory != null
+                                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job)
+                                : this.job.FactionOwner;
+
+                            existingJob = new Job_Recording(recordingFaction, targetcomp2.RecorderItem.ID, targetcomp2.Recorder, this.RoomKey, filmcrew);
                             scr_System_CampaignManager.current.Register(existingJob);
                         }
                     }
@@ -2166,9 +2173,15 @@ public abstract class ActionPackage
         if (targetCOM is COM_UseItemCOM && (targetCOM as COM_UseItemCOM).InnerItem != null)
         {
             var item = (targetCOM as COM_UseItemCOM).InnerItem;
-            if (item != null && this.job.FactionOwner != null && this.job.FactionOwner.Inventory != null)
+            // requireInventory (job.GetValidInventoryFactions()) may have validated this item as
+            // available via a faction other than job.FactionOwner - resolve the same way here instead of
+            // only checking job.FactionOwner, or a validated item could silently fail to be found.
+            I_IsJobGiver itemFaction = targetCOM.requirements.requireInventory != null
+                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job)
+                : this.job.FactionOwner;
+            if (item != null && itemFaction != null && itemFaction.Inventory != null)
             {
-                var itemInstance = this.job.FactionOwner.Inventory.GetItem(item.ID);
+                var itemInstance = itemFaction.Inventory.GetItem(item.ID);
                 if (itemInstance != null)
                 {
                     foreach (var actor in this.Actors)

@@ -1075,6 +1075,15 @@ public class StatsManager : I_StatsManager
         return false;
     }
 
+    public bool hasStatusTag(string s)
+    {
+        foreach (var i in StatusInstances)
+        {
+            if (i.Tags.Contains(s)) return true;
+        }
+        return false;
+    }
+
 
 
     [JsonIgnore] public bool isConsciousnessUnconscious { get { return hasStatusEXTag(StatsUtility.Stat_Tag_Unconscious); } }

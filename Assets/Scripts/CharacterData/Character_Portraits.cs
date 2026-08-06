@@ -426,6 +426,8 @@ public class PortraitManager
     public List<string> GetOwnerActionTagsByPriority()
     {
         var result = new List<string>();
+        if (Owner == null || Owner.InteractionJob == null) return result;
+
         UtilityEX.GetActorTag(ref result, Owner);
         if (Owner.InteractionJob.isActive)
         {
@@ -449,6 +451,7 @@ public class PortraitManager
     public List<string> GetOwnerActionTargetTagsByPriority()
     {
         var result = new List<string>();
+        if (Owner == null || Owner.InteractionJob == null) return result;
         if (Owner.InteractionJob.isActive)
         {
             Owner.InteractionJob.GetActorAPTargetTags(Owner.RefID, result);

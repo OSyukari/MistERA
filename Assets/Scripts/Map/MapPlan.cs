@@ -59,7 +59,56 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     public Floor_Base GetByID_FloorBase(string id) { return ID_Dictionary_Floor.ContainsKey(id) ? ID_Dictionary_Floor[id] : null; }
 
     Dictionary<string, WorldPlan> ID_Dictionary_World = new Dictionary<string, WorldPlan>();
-    public WorldPlan GetByID_WorldPlan(string id) { return ID_Dictionary_World.ContainsKey(id) ? ID_Dictionary_World[id] : null; }
+    Dictionary<string, WorldPlan> ResolvedWorldCache = new Dictionary<string, WorldPlan>();
+
+    /// <summary>
+    /// Looks up a WorldPlan by ID, resolving its parentWorldID chain (if any) into a merged copy on first
+    /// request and caching the result - see ResolveWorldPlanInheritance for the merge rules. Callers (
+    /// Map.AddWorldTemplate, scr_System_CampaignManager.GetLoadedWorldPlans, etc.) always get back a single,
+    /// fully-merged WorldPlan, so a child world and its parent behave as one world/travel graph rather than
+    /// two separately-instantiated ones.
+    /// </summary>
+    public WorldPlan GetByID_WorldPlan(string id)
+    {
+        if (!ID_Dictionary_World.ContainsKey(id)) return null;
+        if (ResolvedWorldCache.TryGetValue(id, out var resolved)) return resolved;
+        resolved = ResolveWorldPlanInheritance(id, new HashSet<string>());
+        ResolvedWorldCache[id] = resolved;
+        return resolved;
+    }
+
+    WorldPlan ResolveWorldPlanInheritance(string id, HashSet<string> visited)
+    {
+        var self = ID_Dictionary_World[id];
+        if (string.IsNullOrEmpty(self.parentWorldID) || !visited.Add(id)) return self;
+        if (!ID_Dictionary_World.ContainsKey(self.parentWorldID))
+        {
+            Debug.LogError($"WorldPlan [{id}]: parentWorldID [{self.parentWorldID}] not found");
+            return self;
+        }
+        var parent = ResolveWorldPlanInheritance(self.parentWorldID, visited);
+
+        var merged = new WorldPlan
+        {
+            worldID = self.worldID,
+            parentWorldID = self.parentWorldID,
+            mapImagePath = string.IsNullOrEmpty(self.mapImagePath) ? parent.mapImagePath : self.mapImagePath,
+            AnchorType = self.AnchorType != default ? self.AnchorType : parent.AnchorType,
+            worldWidth = self.worldWidth > 0f ? self.worldWidth : parent.worldWidth,
+            worldHeight = self.worldHeight > 0f ? self.worldHeight : parent.worldHeight,
+            worldSizeMult = self.worldSizeMult > 0f ? self.worldSizeMult : parent.worldSizeMult,
+            travelDistancePerMinute = self.travelDistancePerMinute > 0f ? self.travelDistancePerMinute : parent.travelDistancePerMinute,
+            playerInitLocationFaction = string.IsNullOrEmpty(self.playerInitLocationFaction) ? parent.playerInitLocationFaction : self.playerInitLocationFaction,
+            playerInit = self.playerInit ?? parent.playerInit,
+            initializeFactions = new Dictionary<string, string>(parent.initializeFactions),
+            doors = new List<WorldPlan.DoorConnection>(parent.doors),
+            npcInit = new List<NPCInit>(parent.npcInit),
+        };
+        foreach (var kvp in self.initializeFactions) merged.initializeFactions[kvp.Key] = kvp.Value;
+        merged.doors.AddRange(self.doors);
+        merged.npcInit.AddRange(self.npcInit);
+        return merged;
+    }
 
     Dictionary<string, MemberType> ID_Dictionary_MemberType = new Dictionary<string, MemberType>();
     public MemberType GetByID_MemberType(string id) { return ID_Dictionary_MemberType.ContainsKey(id) ? ID_Dictionary_MemberType[id] : null; }

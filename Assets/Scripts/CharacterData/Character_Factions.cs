@@ -280,7 +280,7 @@ public class Character_Factions
     { get
         {
             var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
-            return room.FactionOwner as I_IsJobGiver;
+            return room == null ? null : room.FactionOwner as I_IsJobGiver;
         } }
 
     [JsonIgnore]

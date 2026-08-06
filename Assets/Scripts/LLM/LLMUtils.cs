@@ -860,8 +860,15 @@ public class LLM_WorldState
             var nextHourFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour);
 
             RefID = c.RefID;
-            Description = $"{c.Race.DisplayName} {c.RaceTemplate.DisplayName} {c.FactionManager.CurrentlyActiveFactionStatus}";
-            if (scr_System_CampaignManager.current.Player == c) Description += ", IS PLAYER CHARACTER";
+            bool isPlayer = scr_System_CampaignManager.current.IsPlayer(c);
+            // Player can hold standing in multiple factions at once (home + work factions), unlike
+            // NPCs whose sandbox behavior only ever depends on their single CurrentlyActiveFaction -
+            // list all of them so the LLM knows about roles the player isn't currently active in.
+            string factionStatus = isPlayer
+                ? String.Join(", ", c.FactionManager.Factions.Where(f => f != null).Select(f => $"{f.FactionDisplayName}: {f.GetCharaSocialStandingName(c.RefID)}"))
+                : c.FactionManager.CurrentlyActiveFactionStatus;
+            Description = $"{c.Race.DisplayName} {c.RaceTemplate.DisplayName} {factionStatus}";
+            if (isPlayer) Description += ", IS PLAYER CHARACTER";
             CurrentlyDoing = c.GetJobDescription();
             var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
             if (room != null) CurrentLocation = $"{(room.parentFloor != null ? $"{room.parentFloor.displayName}, " : "" )}{room.DisplayName}";
