@@ -32,7 +32,7 @@ public class Womb_Infertile : BodyInternal_Womb
 
     }
 
-    public override int ovulation()
+    public override int ovulation(bool forceOvulate = false)
     {
         return 0;
     }

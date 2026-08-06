@@ -2901,6 +2901,20 @@ public static class WorldManager
                 org.SetMainExit(map.mainExit);
             }
 
+            foreach (var fd in map.floorDoors)
+            {
+                scr_System_CampaignManager.current.Map.RegisterFactionFloorDoor(new FloorDoor
+                {
+                    cost = fd.cost,
+                    sourceFaction = string.IsNullOrEmpty(fd.sourceFaction) ? map.ID : fd.sourceFaction,
+                    sourceFloor = fd.sourceFloor,
+                    sourceExit = fd.sourceExit,
+                    targetFaction = fd.targetFaction,
+                    targetFloor = fd.targetFloor,
+                    targetExit = fd.targetExit
+                });
+            }
+
             org.mapPlanID = map.ID;
             org.hiddenOnWorldMap = !map.isPublic;
             org.RefreshSalesInventory(map);

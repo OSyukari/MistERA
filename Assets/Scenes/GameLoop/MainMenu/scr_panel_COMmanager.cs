@@ -2342,7 +2342,8 @@ public class scr_panel_COMmanager : scr_Menu
         { 
 
             bool setting = scr_System_CentralControl.current.LLMSetting.enabled;
-            var currentVal = parent.GetCOMFilter(filter) && setting;
+            bool haspreset = scr_System_CentralControl.current.LLMSetting.currentPresetId != null;
+            var currentVal = parent.GetCOMFilter(filter) && setting && haspreset;
             if (currentVal)
             {
                 text.Toggle(true, true);
@@ -2352,13 +2353,13 @@ public class scr_panel_COMmanager : scr_Menu
                 text.Toggle(true, false);
             }
             parent.LLMRect.gameObject.SetActive(currentVal);
-            if (setting)
+            if (!setting || !haspreset)
             {
-                this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_toggle");
+                this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_disabled");
             }
             else
             {
-                this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_disabled");
+                this.tooltip = LocalizeDictionary.QueryThenParse("ui_prefs_llm_apisetting_toggle");
             }
             return setting;
         }

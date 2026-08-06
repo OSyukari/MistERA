@@ -184,8 +184,8 @@ public class Character_Personality
 
         if (node.Result_ActionPackage != null || node.Result_EvaluationPackage != null) results.Add(node);
 
-        if (node.Children != null)
-            foreach (var child in node.Children)
+        if (node.AcceptanceMods != null)
+            foreach (var child in node.AcceptanceMods)
                 CollectAcceptanceModRecursive(child, self, target, ep, ref tooltip, results);
     }
 

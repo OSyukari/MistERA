@@ -1,0 +1,164 @@
+{
+    "_doc": "ErAV Kiryu-gumi film studio faction. Has its own dedicated floorPlan 'erav_kiryu_filmstudio'. Its floor's West exit is door-connected to ErAV_KiryuGumi_Office's floor's East exit via floorDoors, so the two locations are walkable into one another. Not listed in world.json's initializeFactions - it is only instantiated on demand via the InitializeFaction event Results Type.",
+
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "ErAV_KiryuGumi_Filmstudio",
+                "z_rotation": 0.0,
+                "isPublic": false,
+                "setPrivateRoomOwner": false,
+                "mainExit": { "roomID": "erav_kiryu_filmstudio_lounge", "exitCost": 5 },
+                "floors": [
+                    { "ID": "erav_kiryu_filmstudio", "nameOverwrite": "ErAV_KiryuGumi_Filmstudio" }
+                ],
+                "floorDoors": [
+                    {
+                        "sourceFloor": "erav_kiryu_filmstudio",
+                        "sourceExit": "West",
+                        "targetFaction": "ErAV_KiryuGumi_Office",
+                        "targetFloor": "erav_kiryu_office",
+                        "targetExit": "East"
+                    }
+                ],
+                "mealHours": [7, 12, 18],
+                "activeHoursStart": 7,
+                "activeHoursEnd": 22
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "erav_kiryu_filmstudio",
+                "imagePath": "ErAV/KiryuOffice/filmstudio.png",
+                "floorWidth": 1024,
+                "floorHeight": 683,
+                "AnchorType": "TopLeft",
+                "mapExit": "erav_kiryu_filmstudio_lounge",
+                "exits":[
+                    {
+                        "ID":"West",
+                        "connectedRoom": "erav_kiryu_filmstudio_lounge",
+                        "offsetX":-40,
+                        "offsetY":371
+                    }
+                ],
+                "rooms": [
+                    {
+                        "ID": "erav_kiryu_filmstudio_lounge",
+                        "displayName": "map_lounge",
+                        "offsetX": 165,
+                        "offsetY": 340,
+                        "connects": [],
+                        "roomImagePath": "BGAssets/Generated/office_lounge_07.webp"
+                    },
+                    {
+                        "ID": "erav_kiryu_filmstudio_hallway",
+                        "displayName": "map_hallway",
+                        "offsetX": 805,
+                        "offsetY": 331,
+                        "connects": [
+                            { "ID": "erav_kiryu_filmstudio_lounge", "cost": 1.0 }
+                        ],
+                        "roomImagePath": "BGAssets/Generated/office_hallway_01.webp"
+                    },
+                    {
+                        "ID": "erav_kiryu_filmstudio_dressing",
+                        "displayName": "map_dressing",
+                        "offsetX": 744,
+                        "offsetY": 505,
+                        "connects": [
+                            { "ID": "erav_kiryu_filmstudio_hallway", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [],
+                        "roomImagePath": "BGAssets/Generated/office_interior_06.webp"
+                    },
+                    {
+                        "ID": "erav_kiryu_filmstudio_office",
+                        "displayName": "map_office",
+                        "offsetX": 807,
+                        "offsetY": 180,
+                        "connects": [
+                            { "ID": "erav_kiryu_filmstudio_hallway", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [],
+                        "roomImagePath": "BGAssets/Generated/office_cafeteria_01.webp"
+                    },
+                    {
+                        "ID": "erav_kiryu_filmstudio_bathroom",
+                        "displayName": "map_restroom",
+                        "offsetX": 162,
+                        "offsetY": 164,
+                        "connects": [
+                            { "ID": "erav_kiryu_filmstudio_lounge", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bathroom_set"
+                        ],
+                        "roomImagePath": "BGAssets/House_Jitaku/bgi-jk118トイレd.png",
+                        "roomImagePath_Night": "BGAssets/House_Jitaku/bgi-jk118トイレb.png"
+                    },
+                    {
+                        "ID": "erav_kiryu_filmstudio_bedroom",
+                        "displayName": "map_bedroom",
+                        "offsetX": 446,
+                        "offsetY": 152,
+                        "connects": [
+                            { "ID": "erav_kiryu_filmstudio_lounge", "cost": 1.0 }
+                        ],
+                        "roomImagePath": "BGAssets/Generated/office_lounge_07.webp"
+                    }
+                ]
+            }
+        ],
+        "memberTypes":[
+            {
+                "ID": "membertype_erav_kiryu_filmstudio_director",
+                "socialStandingKey": "membertype_erav_kiryu_filmstudio_director",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": true,
+                "isHidden": false,
+                "canBeTransferred": false,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "activeHours":[8,9,10,11,12,13,14,15,16,17,18,19,20,21],
+                    "activeDays":[1,1,1,1,1,1,1]
+                },
+                "portraitTags":[ ]
+            },
+            {
+                "ID": "membertype_erav_kiryu_filmstudio_actor",
+                "socialStandingKey": "membertype_erav_kiryu_filmstudio_actor",
+                "isMember": true,
+                "isManager": false,
+                "canBeTransferred": false,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "activeHours":[10,11,12,13,14,15,16,17,18,19],
+                    "activeDays":[1,1,1,1,1,1,1]
+                },
+                "portraitTags":[  ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "ErAV_KiryuGumi_Filmstudio": "摄影工作室",
+                "membertype_erav_kiryu_filmstudio_director":"监督",
+                "membertype_erav_kiryu_filmstudio_actor":"演员"
+            },
+            "en-us": {
+            }
+        }
+    }
+}

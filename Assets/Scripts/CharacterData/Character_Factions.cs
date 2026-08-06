@@ -312,6 +312,14 @@ public class Character_Factions
 
     public void AddWorkFaction(string factionID, bool isManager = false)
         => AddWorkFaction(factionID, isManager ? FactionUtility.MemberType_Manager : FactionUtility.MemberType_Member);
+
+    public void PrioritizeWorkFaction(string factionID)
+    {
+        if (!FactionIDs_Work.Contains(factionID)) return;
+        FactionIDs_Work.Remove(factionID);
+        FactionIDs_Work.Insert(0, factionID);
+        UpdateFactionPriorityList();
+    }
     [JsonProperty] List<int> trackedPartyRef = new List<int>();
 
 
@@ -450,7 +458,8 @@ public class Character_Factions
 
 
     /// <summary>
-    /// Workfaction for now does not allow setting single, so if target is not registered as home it will skip setting
+    /// Setting a command requires sourceFaction to actually be one of the character's own factions
+    /// (home or work) - unsetting (selectedCOM == null) is always allowed.
     /// </summary>
     /// <param name="sourceFaction"></param>
     /// <param name="hour"></param>
@@ -459,13 +468,57 @@ public class Character_Factions
     {
         //string message = "";
 
-        if (selectedCOM != null && !HomeFactions.Contains(sourceFaction))
+        if (selectedCOM != null && !HomeFactions.Contains(sourceFaction) && !WorkFactions.Contains(sourceFaction))
         {
-            Debug.LogError($"setschedule single target {sourceFaction.FactionDisplayName} not in homefactions, return");
+            Debug.LogError($"setschedule single target {sourceFaction.FactionDisplayName} not in home or work factions, return");
             return;
         }
         sourceFaction.SetWorkHour(Owner, hour, selectedCOM);
-        
+
+        List<string> s = new List<string>();
+        UpdateSchedule(ref s);
+    }
+
+    /// <summary>
+    /// Toggles the customOverride "Sandbox" flag for a single hour on sourceFaction - see
+    /// Manageable.SetWorkHourSandbox/HourlySchedule.Sandbox. Sandbox specifically represents being
+    /// dispatched to work at sourceFaction, so it only makes sense for a faction the character is
+    /// actually employed by (unlike SetSchedule(Manageable, int, COM), which also allows home factions).
+    /// </summary>
+    public void SetScheduleSandbox(Manageable sourceFaction, int hour, bool sandbox)
+    {
+        if (sandbox && !WorkFactions.Contains(sourceFaction))
+        {
+            Debug.LogError($"setschedulesandbox target {sourceFaction.FactionDisplayName} not in workfactions, return");
+            return;
+        }
+        sourceFaction.SetWorkHourSandbox(Owner, hour, sandbox);
+
+        List<string> s = new List<string>();
+        UpdateSchedule(ref s);
+    }
+
+    /// <summary>
+    /// Whether sourceFaction is currently using the player's own charaSchedules entries (comIDs and/or
+    /// Sandbox) instead of its shared workModule schedule - see Manageable.GetUseCustomOverride. Scoped
+    /// per faction: toggling this for one work faction (e.g. an externalJob) has no effect on any other
+    /// faction's own schedule for this character.
+    /// </summary>
+    public bool GetUseCustomOverride(Manageable sourceFaction)
+    {
+        return sourceFaction != null && sourceFaction.GetUseCustomOverride(Owner);
+    }
+
+    /// <summary>
+    /// Flips whether sourceFaction reads this character's schedule from charaSchedules (true) or the
+    /// shared workModule (false) - see Manageable.SetUseCustomOverride. Purely a read-path switch:
+    /// toggling it back and forth never touches the underlying per-hour data.
+    /// </summary>
+    public void SetUseCustomOverride(Manageable sourceFaction, bool value)
+    {
+        if (sourceFaction == null) return;
+        sourceFaction.SetUseCustomOverride(Owner, value);
+
         List<string> s = new List<string>();
         UpdateSchedule(ref s);
     }

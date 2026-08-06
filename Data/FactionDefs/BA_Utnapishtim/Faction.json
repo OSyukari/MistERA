@@ -297,38 +297,40 @@
                                 "addClass":"map_init_playerLocation",
                                 "map_init_playerLocation":{ "roomID":"lounge2_exec_suite_1" }
                             }
-                        ],
-                        "connectTo":
-                        {
-                            "fromExitID":"North",
-                            "targetFloorID":"floor_stockasset_bridge",
-                            "targetExitID":"South"
-                        }
-                        
+                        ]
                     },
                     {
                         "ID":"floor_stockasset_hydroponics",
                         "nameOverwrite":"campaign1_map_utnapishtim_faming",
-                        "Additional":[],
-                        "connectTo":
-                            {
-                                "fromExitID":"East",
-                                "targetFloorID":"floor_stockasset_lounge2",
-                                "targetExitID":"West"
-                            }
-                        
+                        "Additional":[]
                     },
                     {
                         "ID":"floor_stockasset_medbay",
                         "nameOverwrite":"campaign1_map_utnapishtim_medical",
-                        "Additional":[],
-                        "connectTo":
-                            {
-                                "fromExitID":"West",
-                                "targetFloorID":"floor_stockasset_lounge2",
-                                "targetExitID":"East"
-                            }
-                        
+                        "Additional":[]
+                    }
+                ],
+                "floorDoors":[
+                    {
+                        "sourceFloor":"floor_stockasset_lounge2",
+                        "sourceExit":"North",
+                        "targetFaction":"Utnapishtim",
+                        "targetFloor":"floor_stockasset_bridge",
+                        "targetExit":"South"
+                    },
+                    {
+                        "sourceFloor":"floor_stockasset_hydroponics",
+                        "sourceExit":"East",
+                        "targetFaction":"Utnapishtim",
+                        "targetFloor":"floor_stockasset_lounge2",
+                        "targetExit":"West"
+                    },
+                    {
+                        "sourceFloor":"floor_stockasset_medbay",
+                        "sourceExit":"West",
+                        "targetFaction":"Utnapishtim",
+                        "targetFloor":"floor_stockasset_lounge2",
+                        "targetExit":"East"
                     }
                 ],
                 "salesCurrency":"currency_pyroxene",

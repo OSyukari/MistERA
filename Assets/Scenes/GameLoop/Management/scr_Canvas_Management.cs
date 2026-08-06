@@ -400,7 +400,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         if (c != null) SetCurrentChara(c);
     }
 
-    COM currentHighlightJobCOM = null;
+    I_ScheduleOption currentScheduleOption = null;
     public List<int> _currentHighlightHours = new List<int>();
     public List<int> CurrentHighlightHours { get
         {
@@ -414,7 +414,16 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     }
 
 
-    public COM CurrentHighlightJOBCOM { get { return currentHighlightJobCOM; } }
+    public I_ScheduleOption CurrentScheduleOption { get { return currentScheduleOption; } }
+
+    /// <summary>
+    /// The action a click/drag gesture on the 24-hour grid resolves to - decided once by
+    /// scr_ScheduleBox.OnPointerDown and replayed unchanged as the pointer drags over further boxes,
+    /// then reset to None on release. Unlike CurrentScheduleOption, scr_ScheduleBox isn't a nested
+    /// class here, so this needs a real public setter.
+    /// </summary>
+    ScheduleClickMode currentScheduleClickMode = ScheduleClickMode.None;
+    public ScheduleClickMode CurrentScheduleClickMode { get { return currentScheduleClickMode; } set { currentScheduleClickMode = value; } }
 
 
 
@@ -1074,7 +1083,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             {
                 isActive = !isActive;
                 //parent.RefreshCurrentChara();
-                parent.currentHighlightJobCOM = null;
+                parent.currentScheduleOption = null;
                 parent.SetCurrentChara(parent.currentChara);
                // parent.ValidateAll();
             }
@@ -1093,7 +1102,335 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
     }
 
-    public class button_setHighlightCOM : ButtonValidator, I_ButtonClickable
+    /// <summary>
+    /// The "use default behavior" toggle - flips Manageable.UseCustomOverride for the current
+    /// faction+character (see Character_Factions.GetUseCustomOverride/SetUseCustomOverride). Shown
+    /// "on"/blue whenever UseCustomOverride is currently off (i.e. the predefined workModule schedule
+    /// is in effect). Toggling never touches the underlying per-hour data, only which source is
+    /// currently read - injected alongside the Sandbox option under the same allowCustomOverride gate,
+    /// see OnChildActive.
+    /// </summary>
+    public class button_UseDefaultBehavior : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText button;
+        scr_button_setHighlightCOM box;
+
+        public button_UseDefaultBehavior(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText button) : base(parent)
+        {
+            this.parent = parent;
+            this.button = button;
+            this.box = box;
+            box.description.text = "(add default's workhours per day and workday per week info here)";
+            button.isButtonToggle = true;
+        }
+
+        public override bool IsButtonValid()
+        {
+            bool usingDefault = parent.currentChara == null || parent.CurrentFaction == null
+                || !parent.currentChara.FactionManager.GetUseCustomOverride(parent.CurrentFaction);
+
+            bool canUseDefault = parent.CurrentFaction.GetMemberType(parent.currentChara).workModule != null
+                && parent.CurrentFaction.GetMemberType(parent.currentChara).workModule.activeHours.Count > 0;
+
+            if (!canUseDefault)
+            {
+                button.Toggle(true, false);
+                tooltip = "no default assignment available";
+                return false;
+            }
+            else
+            {
+                button.Toggle(true, usingDefault);
+                return true;
+            }
+
+        }
+
+        public void OnClickButton()
+        {
+            if (parent.currentChara == null || parent.CurrentFaction == null) return;
+            bool useCustom = parent.currentChara.FactionManager.GetUseCustomOverride(parent.CurrentFaction);
+            parent.currentChara.FactionManager.SetUseCustomOverride(parent.CurrentFaction, !useCustom);
+            parent.NotifyScheduleChanged();
+        }
+    }
+
+    /// <summary>
+    /// Shared behavior for picker buttons that select an I_ScheduleOption as parent.CurrentScheduleOption
+    /// (see button_ScheduleCommand/button_ScheduleSandbox) - selecting toggles the button and highlights
+    /// it, clicking again deselects. No hour-specific hover highlight, since a single command/Sandbox
+    /// pick doesn't correspond to a fixed set of hours the way a MemberType's workModule does.
+    /// </summary>
+    public abstract class button_ScheduleOption : ButtonValidator, I_ButtonClickable, I_ScheduleHoverNotifiable
+    {
+        protected new scr_Canvas_Management parent;
+        protected scr_SelectableText button;
+        protected TMP_Text description;
+        protected I_ScheduleOption option;
+
+        protected button_ScheduleOption(scr_Canvas_Management parent, scr_button_setHighlightCOM box, I_ScheduleOption option) : base(parent)
+        {
+            this.parent = parent;
+            this.button = box.button;
+            this.button.isButtonToggle = true;
+            this.description = box.description;
+            this.option = option;
+            box.notifyTarget = this;
+        }
+
+        public override bool IsButtonValid()
+        {
+            tooltip = "";
+            button.Toggle(true, parent.CurrentScheduleOption == option);
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.currentScheduleOption = parent.currentScheduleOption != option ? option : null;
+        }
+
+        public virtual void NotifyPointerEnter()
+        {
+            parent.CurrentHighlightHours = null;
+            parent.ValidateAll();
+        }
+        public void NotifyPointerExit()
+        {
+            parent.CurrentHighlightHours = null;
+            parent.ValidateAll();
+        }
+    }
+
+    /// <summary>
+    /// Picks a specific COM as the current schedule "paint tool" - clicking one of the 24 hour boxes
+    /// while this is selected assigns/unassigns that command on the clicked hour.
+    /// </summary>
+    public class button_ScheduleCommand : button_ScheduleOption
+    {
+        readonly COM com;
+
+        public button_ScheduleCommand(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText, COM com)
+            : base(parent, box, com != null ? new ScheduleOption_COM(com) : null)
+        {
+            this.com = com;
+            if (com == null) description.text = "";
+
+            buttonText.linkText = com != null ? com.tooltipID : "";
+            buttonText.SetTextPreInit(com != null ? com.DisplayName() : "None");
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (com == null) return false;
+
+            bool usingDefault = parent.currentChara == null || parent.CurrentFaction == null
+                || !parent.currentChara.FactionManager.GetUseCustomOverride(parent.CurrentFaction);
+
+            bool canUseDefault = parent.CurrentFaction.GetMemberType(parent.currentChara).workModule != null
+                && parent.CurrentFaction.GetMemberType(parent.currentChara).workModule.activeHours.Count > 0; 
+
+            if (canUseDefault && usingDefault)
+            {
+                if (parent.CurrentScheduleOption == option) parent.currentScheduleOption = null;
+                button.Toggle(true, false);
+                tooltip = "cannot set individual com when using default job assignment";
+                description.text = parent.CurrentFaction.GetJobCOMAlertInfo(com, true);
+                return false;
+            }
+            else
+            {
+                button.Toggle(true, parent.CurrentScheduleOption == option);
+                tooltip = "";
+                description.text = parent.CurrentFaction.GetJobCOMAlertInfo(com, true);
+                return true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// The customOverride "Sandbox" pseudo-command as the current schedule paint tool - only injected
+    /// into the singleCOM tab's picker list when the currently-managed character's MemberType allows
+    /// it, see OnChildActive.
+    /// </summary>
+    public class button_ScheduleSandbox : button_ScheduleOption
+    {
+        public button_ScheduleSandbox(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText)
+            : base(parent, box, new ScheduleOption_Sandbox())
+        {
+            description.text = "character will stay and sandbox";
+
+            buttonText.linkText = "";
+            buttonText.SetTextPreInit(LocalizeDictionary.QueryThenParse("management_schedule_box_sandbox"));
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (parent.currentChara == null || parent.CurrentFaction == null) return false;
+
+            bool usingDefault = !parent.currentChara.FactionManager.GetUseCustomOverride(parent.CurrentFaction);
+
+            // no activeHours on the current MemberType's workModule means there's no default schedule
+            // to speak of, so this character can never be "using default" - Sandbox stays available.
+            bool canUseDefault = parent.CurrentFaction.GetMemberType(parent.currentChara).workModule != null
+                && parent.CurrentFaction.GetMemberType(parent.currentChara).workModule.activeHours.Count > 0;
+
+            if (!canUseDefault)
+            {
+                button.Toggle(true, false);
+                tooltip = "no default assignment available";
+                return false;
+            }
+            else if (usingDefault)
+            {
+                if (parent.CurrentScheduleOption == option) parent.currentScheduleOption = null;
+                button.Toggle(true, false);
+                tooltip = "cannot set individual com when using default job assignment";
+                return false;
+            }
+            else
+            {
+                button.Toggle(true, parent.CurrentScheduleOption == option);
+                tooltip = "";
+                return true;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Assigns a non-manager, paid-workModule MemberType (a faction's own player-assignable shift
+    /// status, see Manageable.AssignableMemberTypes) to a character instead of a raw JobPostPreset -
+    /// replaces the character's guestStatus in memberTypeOwnerFaction rather than editing loose
+    /// schedule hours, since the workModule's hours are read live off the MemberType (see
+    /// Manageable.GetMemberTypeSchedule) and aren't stored per-character. Not an I_ScheduleOption pick:
+    /// this replaces the character's whole status in memberTypeOwnerFaction outright, with its own
+    /// hour-range conflict checking, rather than acting on a single clicked hour.
+    /// </summary>
+    public class button_ScheduleMemberType : ButtonValidator, I_ButtonClickable, I_ScheduleHoverNotifiable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText button;
+        TMP_Text description;
+
+        MemberType targetMemberType;
+        Manageable memberTypeOwnerFaction;
+        bool unset = false;
+
+        public button_ScheduleMemberType(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText, MemberType memberType, Manageable memberTypeOwnerFaction) : base(parent)
+        {
+            this.parent = parent;
+            this.button = box.button;
+            button.isButtonToggle = true;
+            this.description = box.description;
+
+            this.targetMemberType = memberType;
+            this.memberTypeOwnerFaction = memberTypeOwnerFaction;
+            box.notifyTarget = this;
+
+            var strs = new List<string>();
+            if (memberType != null && memberType.workModule != null)
+            {
+                // reuse JobPostPreset's display formatting (workCommands/activeHours/PrintPayout)
+                var display = new Manageable.JobPostPreset(memberType.workModule);
+                foreach (var cid in display.workCommands)
+                {
+                    var c_com = scr_System_Serializer.current.GetByNameOrID_COM(cid);
+                    if (c_com != null) strs.Add(c_com.DisplayName());
+                    else Debug.LogError($"CANNOT FIND WORK PRESET COMMAND {cid}");
+                }
+                description.text = LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
+                    .Replace("$description$", String.Join(",", strs))
+                    .Replace("$hour$", display.activeHours.Count.ToString())
+                    .Replace("$payout$", display.PrintPayout)
+                    .Replace("$additionalDescription$", "");
+            }
+            else description.text = "error";
+
+            buttonText.linkText = "";
+            buttonText.SetTextPreInit($"{this.memberTypeOwnerFaction.FactionDisplayName} : {(memberType != null ? memberType.DisplayName : "")}");
+        }
+
+        public override bool IsButtonValid()
+        {
+            tooltip = "";
+            // assigning a MemberType replaces this faction's own guestStatus for chara outright -
+            // no per-hour wipe/overwrite bookkeeping needed, since a character only ever has one
+            // status per faction (unlike the loose per-hour JobPostPreset schedule).
+            var chara = parent.currentChara;
+            var currentStatus = memberTypeOwnerFaction.GetMemberType(chara);
+
+            if (currentStatus == this.targetMemberType)
+            {
+                unset = true;
+                tooltip += "will unset\n";
+                button.Toggle(true, true);
+                return true;
+            }
+
+            unset = false;
+            var returnVal = true;
+            bool ttip_overwrite_home = false;
+
+            foreach (var hour in targetMemberType.workModule.activeHours)
+            {
+                var f = chara.CurrentJobScheduleFaction(hour);
+                if (f == null || f == memberTypeOwnerFaction)
+                {
+                    // free hour, or already this faction's own schedule (about to be overwritten)
+                }
+                else if (chara.FactionManager.HomeFactions.Contains(f))
+                {
+                    ttip_overwrite_home = true;
+                }
+                else
+                {
+                    returnVal = false;
+                    tooltip += $"member type conflict with existing schedule from [{f.FactionDisplayName}]";
+                    break;
+                }
+            }
+
+            if (returnVal)
+            {
+                tooltip += "will overwrite previous member status, if any\n";
+                if (!chara.FactionManager.HomeFactions.Contains(memberTypeOwnerFaction)) tooltip += "chara will be added to job faction\n";
+            }
+            if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
+
+            button.Toggle(true, false);
+            return returnVal;
+        }
+
+        public void OnClickButton()
+        {
+            var chara = parent.currentChara;
+            // mirrors SetSchedule(Manageable, JobPostPreset)'s AddWorkFaction/RemoveWorkFaction
+            // pattern - assigning a role registers memberTypeOwnerFaction as a work faction;
+            // unassigning removes chara from it entirely rather than just reverting status.
+            if (unset) chara.FactionManager.RemoveWorkFaction(memberTypeOwnerFaction.ID);
+            else chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType);
+            parent.NotifyScheduleChanged();
+        }
+
+        public void NotifyPointerEnter()
+        {
+            parent.CurrentHighlightHours = this.targetMemberType.workModule.activeHours;
+            parent.ValidateAll();
+        }
+        public void NotifyPointerExit()
+        {
+            parent.CurrentHighlightHours = null;
+            parent.ValidateAll();
+        }
+    }
+
+    /// <summary>
+    /// Assigns a JobPostPreset (a faction-wide bundle of hours+commands) to a character. Not currently
+    /// instantiated anywhere in the live UI - superseded by button_ScheduleMemberType's per-status
+    /// assignment - but left as-is since it's undecided whether this path gets removed or reused.
+    /// </summary>
+    public class button_setHighlightCOM : ButtonValidator, I_ButtonClickable, I_ScheduleHoverNotifiable
     {
         new scr_Canvas_Management parent;
         scr_SelectableText button;
@@ -1143,260 +1480,108 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             buttonText.SetTextPreInit($"{this.presetOwnerFaction.FactionDisplayName} : {preset.Name}");
         }
 
-        MemberType targetMemberType = null;
-        Manageable memberTypeOwnerFaction = null;
-
-        /// <summary>
-        /// Assigns a non-manager, paid-workModule MemberType (a faction's own player-assignable shift
-        /// status, see Manageable.AssignableMemberTypes) to a character instead of a raw JobPostPreset -
-        /// replaces the character's guestStatus in memberTypeOwnerFaction rather than editing loose
-        /// schedule hours, since the workModule's hours are read live off the MemberType (see
-        /// Manageable.GetMemberTypeSchedule) and aren't stored per-character.
-        /// </summary>
-        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText, MemberType memberType, Manageable memberTypeOwnerFaction) : base(parent)
-        {
-            this.buttonText = buttonText;
-            this.parent = parent;
-            this.button = box.button;
-            button.isButtonToggle = true;
-            this.description = box.description;
-
-            this.targetMemberType = memberType;
-            this.memberTypeOwnerFaction = memberTypeOwnerFaction;
-
-            var strs = new List<string>();
-            if (memberType != null && memberType.workModule != null)
-            {
-                // reuse JobPostPreset's display formatting (workCommands/activeHours/PrintPayout)
-                var display = new Manageable.JobPostPreset(memberType.workModule);
-                foreach (var cid in display.workCommands)
-                {
-                    var c_com = scr_System_Serializer.current.GetByNameOrID_COM(cid);
-                    if (c_com != null) strs.Add(c_com.DisplayName());
-                    else Debug.LogError($"CANNOT FIND WORK PRESET COMMAND {cid}");
-                }
-                description.text = LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
-                    .Replace("$description$", String.Join(",", strs))
-                    .Replace("$hour$", display.activeHours.Count.ToString())
-                    .Replace("$payout$", display.PrintPayout)
-                    .Replace("$additionalDescription$", "");
-            }
-            else description.text = "error";
-            box.notifyTarget = this;
-
-            buttonText.linkText = "";
-            buttonText.SetTextPreInit($"{this.memberTypeOwnerFaction.FactionDisplayName} : {(memberType != null ? memberType.DisplayName : "")}");
-        }
-
-        COM highlightCOM = null;
-        public button_setHighlightCOM(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText,  COM highlightCOM) : base(parent)
-        {
-            this.buttonText = buttonText;
-            this.parent = parent;
-            this.button = box.button;
-            button.isButtonToggle = true;
-            this.description = box.description;
-
-            this.highlightCOM = highlightCOM;
-            if (highlightCOM == null) description.text = "";
-
-            buttonText.linkText = (highlightCOM != null ? highlightCOM.tooltipID : "");
-            buttonText.SetTextPreInit(highlightCOM != null ? highlightCOM.DisplayName() : "None");
-        }
-
         public override bool IsButtonValid()
         {
             tooltip = "";
-            if (this.preset != null)
+            // check if preset hours are occupied by any other faction else than self and/or home
+            // if occupied, false.
+            // else, true
+
+            // on click:
+            // non home will register work faction and overwrite home
+            // home will wipe all other home preset and write self (ensuring no 2 job)
+            // one faction only one preset
+            // different faction preset can coexist as long as schedule no conflict
+            var returnVal = true;
+            var chara = parent.currentChara;
+            bool ttip_overwrite_home = false;
+
+            // self = home | job
+            // target = null | home | job
+
+            // home -> null, job -> null, home -> home, job -> home, allow
+            // home -> job, job -> job, DISALLOW
+            // nothing happens
+
+            // if this is currently set, flag toggled and allow click (to cancel it)
+            // if this is not currently set and there is conflict, disallow clicking
+
+            foreach (var hour in preset.activeHours)
             {
-                // check if preset hours are occupied by any other faction else than self and/or home
-                // if occupied, false.
-                // else, true
-
-                // on click:
-                // non home will register work faction and overwrite home
-                // home will wipe all other home preset and write self (ensuring no 2 job)
-                // one faction only one preset
-                // different faction preset can coexist as long as schedule no conflict
-                var returnVal = true;
-                var chara = parent.currentChara;
-                bool ttip_overwrite_home = false;
-                bool ttip_external = false;
-
-                // self = home | job
-                // target = null | home | job
-
-                // home -> null, job -> null, home -> home, job -> home, allow
-                // home -> job, job -> job, DISALLOW
-                // nothing happens
-
-                // if this is currently set, flag toggled and allow click (to cancel it)
-                // if this is not currently set and there is conflict, disallow clicking
-
-                foreach (var hour in preset.activeHours)
+                var f = chara.CurrentJobScheduleFaction(hour);
+                if (f == null)
                 {
-                    var f = chara.CurrentJobScheduleFaction(hour);
-                    if (f == null)
+                    // allow set
+                    unset = false;
+                }
+                else if (f == this.presetOwnerFaction)  // same faction overwrite ?
+                {
+                    // same faction
+                    var existingJobID = this.presetOwnerFaction.GetSchedule(chara).Get(hour).jobID;
+                    if (existingJobID == this.preset.jobPostID)
                     {
-                        // allow set
-                        unset = false;
-                    }
-                    else if (f == this.presetOwnerFaction)  // same faction overwrite ?
-                    {
-                        // same faction
-                        var existingJobID = this.presetOwnerFaction.GetSchedule(chara).Get(hour).jobID;
-                        if (existingJobID == this.preset.jobPostID)
-                        {
-                            // chara has already assigned identical jobpost, allow unset
-                            unset = true;
-                            button.Toggle(true, true);
-                            break;
-                        }
-                    }
-                    else if (chara.FactionManager.HomeFactions.Contains(f)) // target is home and self is obviously not home
-                    {
-                        // allow overwriting homefaction
-                        unset = false;
-                        ttip_overwrite_home = true;
-                    }
-                    else
-                    {
-                        returnVal = false;
-                        tooltip += $"job preset conflict with existing schedule from [{f.FactionDisplayName}]";
+                        // chara has already assigned identical jobpost, allow unset
+                        unset = true;
+                        button.Toggle(true, true);
                         break;
                     }
                 }
-
-                if (returnVal)
+                else if (chara.FactionManager.HomeFactions.Contains(f)) // target is home and self is obviously not home
                 {
-                    tooltip += "will overwrite previous job setting, if any\n";
-                    if (!chara.FactionManager.HomeFactions.Contains(presetOwnerFaction)) tooltip += "chara will be added to job faction\n";
-                    List<string> s = new List<string>();
-                    if (!unset) chara.FactionManager.ValidateSchedule(ref s, preset.activeHours);
-                    this.tooltip += String.Join("\n", s)+"\n";
-                }
-                if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
-                if (unset)
-                {
-                    tooltip += "will unset\n";
-                    button.Toggle(true, true);
-                }
-                else if (returnVal) button.Toggle(true, false);
-
-                return returnVal;
-            }
-            else if (this.targetMemberType != null)
-            {
-                // assigning a MemberType replaces this faction's own guestStatus for chara outright -
-                // no per-hour wipe/overwrite bookkeeping needed, since a character only ever has one
-                // status per faction (unlike the loose per-hour JobPostPreset schedule above).
-                var chara = parent.currentChara;
-                var currentStatus = memberTypeOwnerFaction.GetMemberType(chara);
-
-                if (currentStatus == this.targetMemberType)
-                {
-                    unset = true;
-                    tooltip += "will unset\n";
-                    button.Toggle(true, true);
-                    return true;
-                }
-
-                unset = false;
-                var returnVal = true;
-                bool ttip_overwrite_home = false;
-
-                foreach (var hour in targetMemberType.workModule.activeHours)
-                {
-                    var f = chara.CurrentJobScheduleFaction(hour);
-                    if (f == null || f == memberTypeOwnerFaction)
-                    {
-                        // free hour, or already this faction's own schedule (about to be overwritten)
-                    }
-                    else if (chara.FactionManager.HomeFactions.Contains(f))
-                    {
-                        ttip_overwrite_home = true;
-                    }
-                    else
-                    {
-                        returnVal = false;
-                        tooltip += $"member type conflict with existing schedule from [{f.FactionDisplayName}]";
-                        break;
-                    }
-                }
-
-                if (returnVal)
-                {
-                    tooltip += "will overwrite previous member status, if any\n";
-                    if (!chara.FactionManager.HomeFactions.Contains(memberTypeOwnerFaction)) tooltip += "chara will be added to job faction\n";
-                }
-                if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
-
-                button.Toggle(true, false);
-                return returnVal;
-            }
-            else
-            {
-                if (this.highlightCOM == null)
-                {
-                    return false;
-                }
-                if (parent.currentHighlightJobCOM == highlightCOM)
-                {
-                    button.Toggle(true, true);
+                    // allow overwriting homefaction
+                    unset = false;
+                    ttip_overwrite_home = true;
                 }
                 else
                 {
-                    button.Toggle(true, false);
+                    returnVal = false;
+                    tooltip += $"job preset conflict with existing schedule from [{f.FactionDisplayName}]";
+                    break;
                 }
-                description.text = parent.CurrentFaction.GetJobCOMAlertInfo(highlightCOM, true);
-
-                return true;
             }
+
+            if (returnVal)
+            {
+                tooltip += "will overwrite previous job setting, if any\n";
+                if (!chara.FactionManager.HomeFactions.Contains(presetOwnerFaction)) tooltip += "chara will be added to job faction\n";
+                List<string> s = new List<string>();
+                if (!unset) chara.FactionManager.ValidateSchedule(ref s, preset.activeHours);
+                this.tooltip += String.Join("\n", s)+"\n";
+            }
+            if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
+            if (unset)
+            {
+                tooltip += "will unset\n";
+                button.Toggle(true, true);
+            }
+            else if (returnVal) button.Toggle(true, false);
+
+            return returnVal;
         }
 
         public void OnClickButton()
         {
-            if (this.preset != null)
-            {
-                var chara = parent.currentChara;
+            var chara = parent.currentChara;
 
-                for(int i = 0; i < 24; i++)
-                {   // first wipe. one faction can only assign a single job preset to a chara, so we first wipe existing
-                    chara.FactionManager.SetSchedule(presetOwnerFaction, i, null);//.SetWorkHours(chara, i, null);
-                }
-
-                if(!unset)
-                {   // then, if not unset, set this preset
-                    chara.FactionManager.SetSchedule(presetOwnerFaction, this.preset);
-                }
-                else
-                {
-                    chara.FactionManager.SetSchedule(presetOwnerFaction, null);
-                }
-                parent.NotifyScheduleChanged();
+            for(int i = 0; i < 24; i++)
+            {   // first wipe. one faction can only assign a single job preset to a chara, so we first wipe existing
+                chara.FactionManager.SetSchedule(presetOwnerFaction, i, null);//.SetWorkHours(chara, i, null);
             }
-            else if (this.targetMemberType != null)
-            {
-                var chara = parent.currentChara;
-                // mirrors SetSchedule(Manageable, JobPostPreset)'s AddWorkFaction/RemoveWorkFaction
-                // pattern - assigning a role registers memberTypeOwnerFaction as a work faction;
-                // unassigning removes chara from it entirely rather than just reverting status.
-                if (unset) chara.FactionManager.RemoveWorkFaction(memberTypeOwnerFaction.ID);
-                else chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType);
-                parent.NotifyScheduleChanged();
+
+            if(!unset)
+            {   // then, if not unset, set this preset
+                chara.FactionManager.SetSchedule(presetOwnerFaction, this.preset);
             }
             else
             {
-                if (parent.currentHighlightJobCOM != highlightCOM) parent.currentHighlightJobCOM = highlightCOM;
-                else parent.currentHighlightJobCOM = null;
+                chara.FactionManager.SetSchedule(presetOwnerFaction, null);
             }
+            parent.NotifyScheduleChanged();
         }
 
         public void NotifyPointerEnter()
         {
-            if (this.preset != null) parent.CurrentHighlightHours = this.preset.activeHours;
-            else if (this.targetMemberType != null) parent.CurrentHighlightHours = this.targetMemberType.workModule.activeHours;
-            else parent.CurrentHighlightHours = null;
+            parent.CurrentHighlightHours = this.preset.activeHours;
 
             //Debug.Log("NOTIFY POINTER ENTER");
 
@@ -1427,6 +1612,52 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         {
             case JobAssignmentTab.singleCOM:
 
+                // only allow sandbox option in non-homefactions
+                if (currentChara != null && !currentChara.FactionManager.HomeFactions.Contains(CurrentFaction) &&
+                    currentFaction.GetMemberType(currentChara).allowCustomOverride)
+                {
+                    // default toggle
+
+                    int useDefaultHash = AssertUniqueHash("schedule_usedefault_toggle".GetHashCode());
+
+                    scr_button_setHighlightCOM useDefaultScr = Instantiate(prefab_setHighlightCOM);
+                    RectTransform useDefaultRect = useDefaultScr.GetComponent<RectTransform>();
+                    useDefaultRect.SetParent(rectTransform, false);
+                    scr_SelectableText useDefaultComp = useDefaultScr.button;
+
+                    useDefaultScr.description.text = "";
+                    useDefaultComp.linkText = "";
+                    useDefaultComp.SetTextPreInit(LocalizeDictionary.QueryThenParse("management_schedule_box_usedefault"));
+                    useDefaultComp.Initialize(this, new button_UseDefaultBehavior(this, useDefaultScr, useDefaultComp));
+                    useDefaultComp.optionID = useDefaultHash;
+
+                    buttonsByID.Add(useDefaultComp.optionID, useDefaultComp);
+                    validatorsByID.Add(useDefaultComp.optionID, useDefaultComp.Validator);
+
+                    useDefaultComp.Validate();
+
+                    tempListHash.Add(useDefaultHash);
+
+                    // sandbox command
+
+                    int sandboxHash = AssertUniqueHash("schedule_sandbox_option".GetHashCode());
+
+                    scr_button_setHighlightCOM sandboxScr = Instantiate(prefab_setHighlightCOM);
+                    RectTransform sandboxRect = sandboxScr.GetComponent<RectTransform>();
+                    sandboxRect.SetParent(rectTransform, false);
+                    scr_SelectableText sandboxComp = sandboxScr.button;
+
+                    sandboxComp.Initialize(this, new button_ScheduleSandbox(this, sandboxScr, sandboxComp));
+                    sandboxComp.optionID = sandboxHash;
+
+                    buttonsByID.Add(sandboxComp.optionID, sandboxComp);
+                    validatorsByID.Add(sandboxComp.optionID, sandboxComp.Validator);
+
+                    sandboxComp.Validate();
+
+                    tempListHash.Add(sandboxHash);
+                }
+
                 List<COM> list = new List<COM>();
                 list.AddRange(currentFaction.JobPosts);
                 list.RemoveAll(x => x == null);
@@ -1441,7 +1672,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     r.SetParent(rectTransform, false);
                     scr_SelectableText comp = scr.button;
 
-                    comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c));
+                    comp.Initialize(this, new button_ScheduleCommand(this, scr, comp, c));
                     comp.optionID = hash;
 
                     buttonsByID.Add(comp.optionID, comp);
@@ -1467,7 +1698,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     r.SetParent(rectTransform, false);
 
                     scr_SelectableText comp = scr.button;
-                    comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c, currentFaction));
+                    comp.Initialize(this, new button_ScheduleMemberType(this, scr, comp, c, currentFaction));
                     comp.optionID = hash;
                     buttonsByID.Add(comp.optionID, comp);
                     validatorsByID.Add(comp.optionID, comp.Validator);
@@ -1478,10 +1709,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 break;
             case JobAssignmentTab.externalJob:
 
-                // CommercialPactFactions is trade-only now (bulk trading relationships) - work
-                // faction assignment instead reaches every faction connected in the same world
-                // (see Manageable.ConnectedFactions / Map.GetConnectedFactions).
-                foreach(var faction in currentFaction.ConnectedFactions)
+                // External job posting requires both a commercial pact and actual physical/world
+                // reachability - see Manageable.ExternalJobFactions / Map.GetExternalJobFactions.
+                foreach(var faction in currentFaction.ExternalJobFactions)
                 {
                     foreach(var c in faction.AssignableMemberTypes)
                     {
@@ -1492,7 +1722,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                         r.SetParent(rectTransform, false);
 
                         scr_SelectableText comp = scr.button;
-                        comp.Initialize(this, new button_setHighlightCOM(this, scr, comp, c, faction));
+                        comp.Initialize(this, new button_ScheduleMemberType(this, scr, comp, c, faction));
                         comp.optionID = hash;
                         buttonsByID.Add(comp.optionID, comp);
                         validatorsByID.Add(comp.optionID, comp.Validator);
@@ -1780,8 +2010,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         }
 
+        string tempdisable = "temporarily disabled";
         public override bool IsButtonValid()
         {
+            this.tooltip = tempdisable;
+            return false;
+
             var mainExit = parent.CurrentFaction.MainExit;
             this.tooltip = "current faction main exit: " + (mainExit == null ? "null" : ((mainExit.parentFloor == null ? "nullFloor" : mainExit.parentFloor.displayName) +" "+ parent.CurrentFaction.MainExit.DisplayName));
 

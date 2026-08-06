@@ -101,16 +101,6 @@
                     "displayName":"comManager_com_followCarry_stop"
                 }
             ],
-            "description_begin":
-            {
-                "Entries":[ 
-                    {
-                        "keepLooking":true,
-                        "texts": ["comManager_com_follow_stop_begin_1"]
-                    }
-                ]
-                
-            },
             "description_after":
             {
                 "Entries":[

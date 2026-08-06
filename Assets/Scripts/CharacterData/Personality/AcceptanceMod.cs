@@ -100,5 +100,5 @@ public class PersonalityAcceptanceMod
     // ------------------------
 
     // nested mods, checked only if this node validates — lets shared conditions live once on the parent
-    public List<PersonalityAcceptanceMod> Children = new List<PersonalityAcceptanceMod>();
+    public List<PersonalityAcceptanceMod> AcceptanceMods = new List<PersonalityAcceptanceMod>();
 }

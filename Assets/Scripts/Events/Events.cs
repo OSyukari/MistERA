@@ -583,9 +583,34 @@ public class Event : I_SerializationCallbackReceiver
             TransferItemByFactionID,
 
             /// <summary>
+            /// [string factionInitID] - instantiates the given factionInit (MapPlan) if not already present in the
+            /// campaign's faction registry, then rebuilds map pathing. No-op if the faction already exists.
+            /// </summary>
+            InitializeFaction,
+
+            /// <summary>
             /// [target, basestringID]
             /// </summary>
             LogMemoryEntry,
+
+            /// <summary>
+            /// [string scopeKey, string factionID, string memberTypeID, bool setAsTemp, bool overwriteExisting] <br/>
+            /// Resolves scopeKey to a list of characters (via owner.Targets, or "self" for owner.Self) and sets
+            /// their home faction (or temporary home faction if setAsTemp) to factionID with the given member type.
+            /// overwriteExisting is optional (default false): if false, a character already managed by the target
+            /// faction is left untouched.
+            /// </summary>
+            SetHomeFaction,
+
+            /// <summary>
+            /// [string scopeKey, string factionID, string memberTypeID, bool highPriority, bool overwriteExisting] <br/>
+            /// Resolves scopeKey to a list of characters and adds factionID to their work factions with the given
+            /// member type. If highPriority, the faction (new or existing) is moved to the front of the character's
+            /// work faction list; otherwise a new entry is appended and an existing one keeps its position.
+            /// overwriteExisting is optional (default false): if false, a character already managed by the target
+            /// faction keeps their current member type (only the ordering, per highPriority, is still applied).
+            /// </summary>
+            SetWorkFaction,
 
 
             /// <summary>

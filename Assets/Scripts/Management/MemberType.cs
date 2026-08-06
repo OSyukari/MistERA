@@ -157,6 +157,16 @@ public class MemberType
     public MapPlan.WorkModuleInit workModule = null;
 
     /// <summary>
+    /// If true (the default), the Schedule UI additionally lets the player control, per hour, whether
+    /// a character holding this status is sandboxed (present) at this faction - see
+    /// Manageable.HourlySchedule.Sandbox and Manageable.HasCustomOverride. Defaults on so every
+    /// ordinary status is overridable with no authoring needed; set false for a "special job" status
+    /// whose scheduling must stay fully hardcoded (e.g. something like a fixed lesson dispatch) and
+    /// should never be player-editable.
+    /// </summary>
+    public bool allowCustomOverride = true;
+
+    /// <summary>
     /// Optional tags contributed by this member status (e.g. "prisoner", "clergy"), merged into the
     /// actor's tag set (Utility.GetActorTag) when this is the character's current MemberType in their
     /// active faction or active party. Empty by default.

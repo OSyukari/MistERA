@@ -62,7 +62,7 @@
 
 "ui_prefs_llm_llmSetting_on": "启用",
 
-"ui_prefs_llm_apisetting_disabled": "需要先启用语言模型",
+"ui_prefs_llm_apisetting_disabled": "需要先启用语言模型且启用API预设",
 "ui_prefs_llm_apisetting_toggle": "开关语言模型输出框的显示",
 "ui_prefs_llm_apisetting_descriptions": "所有API相关设定（包括Key）都会存储于Application.persistentDataPath中（Windows系统下在Appdata\\LocalLow\\Silent Forest\\Mist Era\\\n使用自定义端口时，请使用localhost而非127.0.0.1",
 
@@ -636,6 +636,8 @@
 "management_jobpost_payout_currency":"$count$ $item$",
 "management_jobpost_payout_item":"$item$ x$count$",
 "management_schedule_box_none":"无预定",
+"management_schedule_box_sandbox":"驻守",
+"management_schedule_box_usedefault":"使用默认职位安排",
 
 "event_transferItem_gain":"获得了$entry$",
 "event_transferItem_loss":"失去了$entry$",
@@ -1138,6 +1140,8 @@
 "management_jobpost_payout_currency":"$count$ $item$",
 "management_jobpost_payout_item":"$item$ x$count$",
 "management_schedule_box_none":"No Schedule",
+"management_schedule_box_sandbox":"Sandbox",
+"management_schedule_box_usedefault":"Use Default Job Assignment",
 
 "management_setschedule_single":"",
 "management_setschedule_jobpost":"",

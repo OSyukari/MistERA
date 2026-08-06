@@ -488,21 +488,30 @@ public class Manageable : I_Disposable, I_IsJobGiver
             // first check if chara is in faction
             if (!isCharaInManagedSpace(cSchedule.Key)) continue;
 
-            // check if chara previous hour is jobpost
-            if (cSchedule.Value == null || cSchedule.Value.Get(currentHour).jobID == "") continue;
-            var _jobpost = this.JobPostsPresets.Find(x => x.jobPostID == cSchedule.Value.Get(currentHour).jobID);
-            if (_jobpost == null) continue;
+            // pay wage whenever the previous hour was active - a specific command, or just Sandboxed
+            if (cSchedule.Value == null || !cSchedule.Value.Get(currentHour).isActive) continue;
 
             var c = scr_System_CampaignManager.current.FindInstanceByID(cSchedule.Key);
-            var targetFaction = c == null ? null : c.FactionManager.HomeFactions[0];
+            if (c == null) continue;
+
+            // prefer the explicit JobPostPreset payout if the hour was assigned through that path,
+            // otherwise fall back to the character's current status's own workModule payout - this is
+            // what actually carries wage data for plain-COM and Sandbox-only hours, which never write
+            // a jobID into charaSchedules.
+            var jobID = cSchedule.Value.Get(currentHour).jobID;
+            List<ItemEntry> payout = jobID != "" ? this.JobPostsPresets.Find(x => x.jobPostID == jobID)?.hourlyPayout : null;
+            if (payout == null) payout = GetMemberType(c).workModule?.hourlyPayout;
+            if (payout == null) continue;
+
+            var targetFaction = c.FactionManager.HomeFactions.Count > 0 ? c.FactionManager.HomeFactions[0] : null;
             if(targetFaction == null) continue;
 
             // self will pay wage to targetfaction
-            foreach(var pay in _jobpost.hourlyPayout)
+            foreach(var pay in payout)
             {
                 AddPayment(targetFaction, null, pay, 1);
             }
-            
+
         }
     }
 
@@ -716,7 +725,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public bool HasScheduleFor(Character_Trainable c, int hour, int daysLookahead = 0)
     {
         if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out _)) return true;
-        if (GetMemberTypeSchedule(c, hour, daysLookahead) != null) return true;
+        if (!HasCustomOverride(c) && GetMemberTypeSchedule(c, hour, daysLookahead) != null) return true;
         if (charaSchedules.TryGetValue(c.RefID, out var schedule))
         {
             return schedule.Get(hour).isActive;
@@ -731,10 +740,40 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
     /// <summary>
+    /// True once c's current member type allows customOverride AND the player has explicitly turned
+    /// on Job_Schedule.UseCustomOverride for this faction. While false, GetMemberTypeSchedule keeps
+    /// driving every hour as normal (whatever the player has staged in charaSchedules is preserved but
+    /// inactive); once true, the shared workModule schedule is discarded entirely in favor of
+    /// charaSchedules - see GetSchedule/HasScheduleFor.
+    /// </summary>
+    bool HasCustomOverride(Character_Trainable c)
+    {
+        if (!GetMemberType(c).allowCustomOverride) return false;
+        return GetUseCustomOverride(c);
+    }
+
+    /// <summary>
+    /// Raw accessor for Job_Schedule.UseCustomOverride, without the allowCustomOverride permission
+    /// check that HasCustomOverride applies to the actual scheduling read-path - used by the Schedule
+    /// UI to reflect/toggle the player's explicit choice directly.
+    /// </summary>
+    public bool GetUseCustomOverride(Character_Trainable c)
+    {
+        return charaSchedules.TryGetValue(c.RefID, out var setting) && setting != null && setting.UseCustomOverride ;
+    }
+
+    public void SetUseCustomOverride(Character_Trainable c, bool value)
+    {
+        if (!charaSchedules.ContainsKey(c.RefID)) return;
+        charaSchedules[c.RefID].UseCustomOverride = value;
+    }
+
+    /// <summary>
     /// If c's current member type in this faction carries a workModule covering this hour, builds a
     /// read-only HourlySchedule from it, or null if there's no such override for this hour. These
     /// hours are fixed by the status itself (not editable through the Schedule UI) and take priority
-    /// over any loose/manually-assigned hour - see GetSchedule/HasScheduleFor.
+    /// over any loose/manually-assigned hour - see GetSchedule/HasScheduleFor. Superseded entirely
+    /// (for every hour, not just this one) once HasCustomOverride(c) is true.
     /// <br/> daysLookahead: 0 = today (default), 1 = tomorrow, etc. - pass a nonzero value when hour
     /// belongs to a future day, e.g. a sleep lookahead that crosses midnight.
     /// </summary>
@@ -747,16 +786,17 @@ public class Manageable : I_Disposable, I_IsJobGiver
             int dayInWeek = (scr_System_Time.current.getCurrentDayInWeek() + daysLookahead) % 7;
             if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) return null;
         }
-        var schedule = new HourlySchedule();
-        schedule.Set(module.jobPostID, module.workCommands);
-        return schedule;
+        return module.CachedSchedule;
     }
 
     public HourlySchedule GetSchedule(Character_Trainable c, int hour, int daysLookahead = 0)
     {
         if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out var sc)) return sc;
-        var memberTypeSchedule = GetMemberTypeSchedule(c, hour, daysLookahead);
-        if (memberTypeSchedule != null) return memberTypeSchedule;
+        if (!HasCustomOverride(c))
+        {
+            var memberTypeSchedule = GetMemberTypeSchedule(c, hour, daysLookahead);
+            if (memberTypeSchedule != null) return memberTypeSchedule;
+        }
 
         if (charaSchedules.TryGetValue(c.RefID, out var setting) && setting != null) return setting.Get(hour);
         else return null;
@@ -1222,6 +1262,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (!charaSchedules.ContainsKey(c.RefID)) return; // Debug.LogError($"Setting work for {c.FirstName} but target not registerd");
         else charaSchedules[c.RefID].Get(hour).Set(targetCOM == null ? "" : targetCOM.ID);
+    }
+
+    /// <summary>
+    /// Toggles the customOverride "Sandbox" flag for a single hour - see HourlySchedule.Sandbox and
+    /// Manageable.HasCustomOverride. This method should only be called by Character_Factions.SetScheduleSandbox.
+    /// </summary>
+    public void SetWorkHourSandbox(Character_Trainable c, int hour, bool sandbox)
+    {
+        if (!charaSchedules.ContainsKey(c.RefID)) return;
+        charaSchedules[c.RefID].Get(hour).Sandbox = sandbox;
     }
     /// <summary>
     /// This method should only be called by Character.FactionManager.SetSchedule
@@ -1726,8 +1776,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
     /// <summary>
-    /// Commercial pact links (management UI: trade orders, external job assignment). Populated independently of
-    /// ConnectedFactions, but a pact also grants connectivity on its own - see Map_Instance.isConnectedFaction.
+    /// Commercial pact links (management UI: bulk trading relationships only). Populated independently of
+    /// ConnectedFactions and does NOT grant connectivity on its own - see Map_Instance.commercialPactGraphs.
     /// </summary>
     [JsonIgnore] public List<Manageable> CommercialPactFactions
     {
@@ -1737,11 +1787,59 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
+    /// <summary>
+    /// Factions eligible for external job posting: commercial pact AND physically/world reachable -
+    /// see Map_Instance.GetExternalJobFactions.
+    /// </summary>
+    [JsonIgnore] public List<Manageable> ExternalJobFactions
+    {
+        get
+        {
+            return scr_System_CampaignManager.current.Map.GetExternalJobFactions(this.ID);
+        }
+    }
+
+    /// <summary>
+    /// Factions eligible as trade partners: commercial pact OR physically/world reachable -
+    /// see Map_Instance.GetTradePartnerFactions.
+    /// </summary>
+    [JsonIgnore] public List<Manageable> TradePartnerFactions
+    {
+        get
+        {
+            return scr_System_CampaignManager.current.Map.GetTradePartnerFactions(this.ID);
+        }
+    }
+
+    /// <summary>
+    /// WorldPlan.worldID values this faction is a member of (i.e. appears in that world's initializeFactions).
+    /// Rebuilt from scratch in Map_Instance.BuildPath() - not persisted, not mutated directly.
+    /// </summary>
+    [JsonIgnore] public List<string> worldConnection = new List<string>();
+
+    /// <summary>
+    /// Other factions this one is directly door-connected to (Map_Instance.factionFloorDoorConnections),
+    /// tracked on both sides. Used by the floor-list UI to merge a door-connected companion's floors into an
+    /// already-drawn faction's block instead of giving it a separate one, and to resolve a world for factions
+    /// (like an on-demand-instantiated annex) with no worldConnection of their own. Rebuilt from scratch in
+    /// Map_Instance.BuildPath() - not persisted, not mutated directly.
+    /// </summary>
+    [JsonIgnore] public List<Manageable> factionConnection = new List<Manageable>();
+
 
     public class Job_Schedule
     {
         [JsonProperty]
         protected HourlySchedule[] schedule = new HourlySchedule[24];
+
+        /// <summary>
+        /// Explicit per-character-per-faction switch for whether this character's own charaSchedules
+        /// entries (as opposed to the shared workModule) should drive their schedule here - see
+        /// Manageable.HasCustomOverride/GetUseCustomOverride/SetUseCustomOverride. Toggling this off
+        /// and back on preserves whatever the player already set per hour; it only changes which
+        /// source is currently being read, not the underlying data.
+        /// </summary>
+        public bool UseCustomOverride = false;
 
         public HourlySchedule Get(int hour)
         {
@@ -1811,6 +1909,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
         public string jobID = "";
         public List<string> comIDs = new List<string>();
 
+        /// <summary>
+        /// For MemberType.allowCustomOverride statuses: marks this hour as "sandboxed" (present at
+        /// this faction) even without a specific command assigned. See TryFindScheduledJobNode_CustomOverride
+        /// for how this combines with comIDs to decide whether to run a command or fall back to the
+        /// status's own original behavior.
+        /// </summary>
+        public bool Sandbox = false;
+
         public bool Equals(COM com)
         {
             if (this.jobID != "") return false;
@@ -1829,6 +1935,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             this.jobID = target.jobID;
             this.comIDs.Clear();
             this.comIDs.AddRange(target.comIDs);
+            this.Sandbox = target.Sandbox;
             cache_name = "";
             cache_com = null;
         }
@@ -1915,7 +2022,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 return cache_name;
             } }
 
-        [JsonIgnore] public bool isActive { get { return this.comIDs.Count > 0; } }
+        [JsonIgnore] public bool isActive { get { return this.comIDs.Count > 0 || this.Sandbox; } }
 
         [JsonIgnore]
         public COM getRandCOM

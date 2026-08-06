@@ -23,7 +23,7 @@ public class Room_Base
     /// at room-attachment time - see Manageable.AddToFaction(Floor_Instance,...). Purely a room→faction
     /// ownership assignment; unrelated to (and safe regardless of ordering against) the physical floor/room
     /// connectivity graphs (Map_Instance.BuildPath / Floor_Instance.BuildPath), which are built solely from
-    /// Room_Base.connects / MapPlan_Floor.connectTo and never reference FactionOwner.
+    /// Room_Base.connects / Map_Instance.factionFloorDoorConnections and never reference FactionOwner.
     /// </summary>
     public string subfactionOwnerOverwrite = "";
 

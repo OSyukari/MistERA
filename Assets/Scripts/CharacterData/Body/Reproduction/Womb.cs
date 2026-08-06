@@ -525,7 +525,12 @@ public abstract class BodyInternal_Womb
     }
 
     [JsonProperty] protected float accumulateOvuPower = 0f;
-    public virtual int ovulation()
+    /// <summary>
+    /// C# boolean argument passed by value so safe to modify
+    /// </summary>
+    /// <param name="forceOvulate"></param>
+    /// <returns></returns>
+    public virtual int ovulation(bool forceOvulate = false)
     {
         float ovuPower = Utility.getRandwithVariation(BaseTemplate.ovulationQuantityAverage, BaseTemplate.ovulationQuantityVariation);
 
@@ -533,10 +538,11 @@ public abstract class BodyInternal_Womb
 
         var motherFertilityMult = source.Owner.Stats.GetStatValue(ReproductionUtility.stat_fertility_mult);
         accumulateOvuPower += ovuPower * BaseTemplate.fertility / BaseTemplate.ovulationQuantityAverage * motherFertilityMult;
-        while (accumulateOvuPower > 1.0f)
+        while (accumulateOvuPower > 1.0f || forceOvulate)
         {
+            forceOvulate = false;
             eggs.Add(new Ovum(this, source.Owner, BaseTemplate));
-            accumulateOvuPower -= 1f;
+            if (accumulateOvuPower > 1.0f) accumulateOvuPower -= 1f;
             isOvumRelease = true;
         }
         if (accumulateOvuPower > 0f && UnityEngine.Random.Range(0f, 1f) < accumulateOvuPower)

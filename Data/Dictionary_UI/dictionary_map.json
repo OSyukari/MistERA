@@ -1,0 +1,45 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                
+        "map_entrance":"门厅",
+        "map_frontdoor":"前门",
+        "map_hallway":"走廊",
+        "map_balcony":"阳台",
+        "map_stairs":"楼梯",
+        "map_toilet":"厕所",
+        "map_livingroom":"客厅",
+        "map_shower":"淋浴室",
+        "map_bath":"浴室",
+        "map_kitchen":"厨房",
+        "map_laundry":"洗衣间",
+        "map_singleSuite":"单人套房",
+        "map_singleRoom":"单人房",
+        "map_doubleRoom":"双人房",
+        "map_execSuite":"商务套房",
+        "map_storeroom":"仓库",
+
+        "map_office":"办公室",
+        "map_restroom":"厕所",
+        "map_bedroom":"卧室",
+        "map_lounge":"休息室",
+        "map_cafeteria":"餐厅",
+        "map_dressing":"更衣间",
+
+        "map_prisoncell_single":"单人牢房",
+        "map_prisoncell_double":"双人牢房"
+
+    },
+            
+            "en-us":
+            {
+                
+
+            }
+        }
+    }
+}

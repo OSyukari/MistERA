@@ -234,11 +234,19 @@
                             "portraitRefKey": "kanon",
                             "selfTags": [ "yakuza", "confident", "relaxed" ]
                         },
-                        "line": "Kanon_Dialogue_inoffice_End",
+                        "line": "kd_AC_end",
                         "Results": [
                             {
                                 "Type": "SetSelfKojoVariable",
                                 "arguments": [ "self", "false", "erav_kanon_offer", "2" ]
+                            },
+                            {
+                                "Type": "InitializeFaction",
+                                "arguments": [ "ErAV_KiryuGumi_Filmstudio" ]
+                            },
+                            {
+                                "Type": "SetWorkFaction",
+                                "arguments": [ "self", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_director", "false", "true" ]
                             }
                         ],
                         "isLast": true

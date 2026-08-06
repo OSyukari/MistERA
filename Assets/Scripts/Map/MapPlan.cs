@@ -105,6 +105,13 @@ public class MapPlan
     public List<MapPlan_Floor> floors = new List<MapPlan_Floor>();
     public Map_MainExit mainExit = null;
 
+    /// <summary>
+    /// Cross-faction door connections declared by this factionInit. Resolved into
+    /// Map_Instance.factionFloorDoorConnections at instantiation time (WorldManager.Instantiate) - see Door.cs.
+    /// sourceFaction may be left blank; it defaults to this MapPlan's own ID.
+    /// </summary>
+    public List<FloorDoor> floorDoors = new List<FloorDoor>();
+
     public bool setPrivateRoomOwner = false;
 
     /// <summary>
@@ -170,6 +177,27 @@ public class MapPlan
         public List<int> activeDays = new List<int>();
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
         public List<ItemEntry> hourlyCost = new List<ItemEntry>();
+
+        [JsonIgnore] Manageable.HourlySchedule _cachedSchedule = null;
+        /// <summary>
+        /// Lazily-built HourlySchedule for jobPostID/workCommands, shared by every character holding
+        /// this status - see Manageable.GetMemberTypeSchedule, which used to allocate a fresh instance
+        /// on every hour query. Safe to share since it's read-only (nothing mutates the returned
+        /// object) and jobPostID/workCommands never change for a given module.
+        /// </summary>
+        [JsonIgnore]
+        public Manageable.HourlySchedule CachedSchedule
+        {
+            get
+            {
+                if (_cachedSchedule == null)
+                {
+                    _cachedSchedule = new Manageable.HourlySchedule();
+                    _cachedSchedule.Set(jobPostID, workCommands);
+                }
+                return _cachedSchedule;
+            }
+        }
     }
 
     public class WorkHoursInit
@@ -184,25 +212,7 @@ public class MapPlan
         public string ID = "";
         public List<MapPlan_FloorInit> Additional = new List<MapPlan_FloorInit>();
         public string nameOverwrite = "";
-        public MapPlan_FloorDoors connectTo = new MapPlan_FloorDoors();
-
-
-        [JsonIgnore]
-        public MapPlan_FloorDoors Exit
-        {
-            get { return this.connectTo; }
-        }
-
     }
-
-
-    public class MapPlan_FloorDoors
-    {
-        public string fromExitID = "";
-        public string targetFloorID = "";
-        public string targetExitID = "";
-    }
-
 
     public class MapPlan_FloorInit
     {

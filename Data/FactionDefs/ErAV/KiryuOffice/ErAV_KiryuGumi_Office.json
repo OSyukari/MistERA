@@ -35,6 +35,12 @@
                         "connectedRoom": "erav_kiryu_office_frontDoor",
                         "offsetX":415.5,
                         "offsetY":782
+                    },
+                    {
+                        "ID":"East",
+                        "connectedRoom": "erav_kiryu_office_frontDoor",
+                        "offsetX":871,
+                        "offsetY":371
                     }
                 ],
                 "rooms": [
@@ -50,7 +56,7 @@
                     },
                     {
                         "ID": "erav_kiryu_office_hallway",
-                        "displayName": "erav_kiryu_office_hallway_displayName",
+                        "displayName": "map_hallway",
                         "offsetX": 378,
                         "offsetY": 538,
                         "connects": [
@@ -75,7 +81,7 @@
                     },
                     {
                         "ID": "erav_kiryu_office_kitchen",
-                        "displayName": "erav_kiryu_office_kitchen_displayName",
+                        "displayName": "map_cafeteria",
                         "offsetX": 150,
                         "offsetY": 120,
                         "connects": [
@@ -100,7 +106,7 @@
                     },
                     {
                         "ID": "erav_kiryu_office_restroom",
-                        "displayName": "erav_kiryu_office_restroom_displayName",
+                        "displayName": "map_restroom",
                         "offsetX": 65,
                         "offsetY": 630,
                         "connects": [
@@ -113,7 +119,7 @@
                     },
                     {
                         "ID": "erav_kiryu_office_lounge",
-                        "displayName": "erav_kiryu_office_lounge_displayName",
+                        "displayName": "map_lounge",
                         "offsetX": 687,
                         "offsetY": 536,
                         "connects": [ ],
@@ -150,24 +156,16 @@
             "zh-cn": {
                 "erav_kiryu_office_frontDoor_displayName": "正门",
                 "erav_kiryu_office_bullpen_displayName": "事务所",
-                "erav_kiryu_office_kitchen_displayName": "茶水间",
                 
                 "membertype_erav_kiryu_office_leader":"掌权人",
-                "erav_kiryu_office_hallway_displayName": "走廊",
-                "erav_kiryu_office_kanonoffice_displayName": "歌音的办公室",
-                "erav_kiryu_office_restroom_displayName": "洗手间",
-                "erav_kiryu_office_lounge_displayName": "休息室"
+                "erav_kiryu_office_kanonoffice_displayName": "歌音的办公室"
             },
             "en-us": {
 
                 "erav_kiryu_office_frontDoor_displayName": "Front Door",
                 "erav_kiryu_office_bullpen_displayName": "Office Floor",
-                "erav_kiryu_office_kitchen_displayName": "Kitchenette",
                 
-                "erav_kiryu_office_hallway_displayName": "Hallway",
-                "erav_kiryu_office_kanonoffice_displayName": "Kanon's Office",
-                "erav_kiryu_office_restroom_displayName": "Restroom",
-                "erav_kiryu_office_lounge_displayName": "Lounge"
+                "erav_kiryu_office_kanonoffice_displayName": "Kanon's Office"
             }
         }
     }

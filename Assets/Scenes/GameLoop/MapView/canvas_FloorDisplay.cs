@@ -223,25 +223,58 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     {
         //Debug.Log("initfloorlist");
         var currentFaction = scr_System_CampaignManager.current.CurrentRoom.FactionOwner;
-        BuildFaction(currentFaction);
-        
-        foreach (var connect in currentFaction.ConnectedFactions)
+
+        // first, start from current room, and floor and faction, recursively build a or multiple list of everything to be built
+        // the built data need to distinguish between faction with standalone button and faction built inside other faction
+        var plan = BuildFactionDrawPlan(currentFaction.FactionOwnerRoot);
+        foreach (var faction in plan.Keys)
+            foreach (var w in faction.worldConnection) if (!trackedWorld.Contains(w)) trackedWorld.Add(w);
+
+        // then, go through the list and build each faction
+        foreach (var kvp in plan) if (kvp.Value == kvp.Key) BuildFaction(kvp.Key);
+        foreach (var kvp in plan)
+            if (kvp.Value != kvp.Key && factionBlocksByID.TryGetValue(kvp.Value.FactionOwnerRoot.ID, out var hostBlock))
+                AddFloorButtons(hostBlock, kvp.Key);
+
+        // only once every faction (including merged-in companions) has finished drawing into its block can we
+        // tell what actually ended up under it. A block left with no floor at all (e.g. its host faction was
+        // hidden-from-world-map and no visible companion merged into it) gets removed outright instead of
+        // showing an empty rect; otherwise its title visibility is decided from the final child count (a
+        // block hosting just one floor of its own but merged with a companion's floor ends up with 2+
+        // children and should show its title, so this checks floorList.childCount rather than the host
+        // faction's own ManagedFloors.Count).
+        foreach (var key in new List<string>(factionBlocksByID.Keys))
         {
-            BuildFaction(connect);
+            var block = factionBlocksByID[key];
+            if (block.floorList.childCount == 0)
+            {
+                factionBlocksByID.Remove(key);
+                Destroy(block.gameObject);
+            }
+            else
+            {
+                block.factionTitle.gameObject.SetActive(block.floorList.childCount >= 2);
+            }
         }
 
         InitWorldList();
 
-        var currentWorlds = scr_System_CampaignManager.current.FindWorldsContainingFaction(currentFaction.FactionOwnerRoot.ID);
-        selectedWorldID = currentWorlds.Count > 0 ? currentWorlds[0].worldID : "";
+        selectedWorldID = ResolveWorldID(currentFaction.FactionOwnerRoot, new HashSet<Manageable>());
 
         RefreshFactionVisibility();
     }
 
     protected void InitWorldList()
     {
-        foreach (var world in scr_System_CampaignManager.current.GetLoadedWorldPlans())
+        var worldIDs = new List<string>();
+        foreach (var w in scr_System_CampaignManager.current.GetLoadedWorldPlans()) if (!worldIDs.Contains(w.worldID)) worldIDs.Add(w.worldID);
+        foreach (var id in trackedWorld) if (!worldIDs.Contains(id)) worldIDs.Add(id);
+
+        foreach (var worldID in worldIDs)
         {
+            var world = scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
+            if (world == null) continue;
+
             var btn = Instantiate(prefab_WorldButton);
             btn.transform.SetParent(WorldList, false);
 
@@ -261,41 +294,138 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         WorldPlan world = selectedWorldID == "" ? null : scr_System_Serializer.current.GetByNameOrID_WorldPlan(selectedWorldID);
         foreach (var kvp in factionBlocksByID)
         {
-            kvp.Value.gameObject.SetActive(world == null || world.initializeFactions.ContainsKey(kvp.Key));
+            bool visible = world == null || world.initializeFactions.ContainsKey(kvp.Key);
+            if (!visible && world != null)
+            {
+                var faction = scr_System_CampaignManager.current.FindFactionByID(kvp.Key);
+                if (faction != null) visible = IsFactionInWorld(faction, world, new HashSet<Manageable>());
+            }
+            kvp.Value.gameObject.SetActive(visible);
         }
+    }
+
+    /// <summary>
+    /// True if faction (or any faction reachable through its factionConnection chain) belongs to world - used
+    /// so a door-connected annex faction with no worldConnection of its own (e.g. ErAV_KiryuGumi_Filmstudio)
+    /// doesn't get its block hidden once selectedWorldID resolves to a connected neighbor's world.
+    /// </summary>
+    private bool IsFactionInWorld(Manageable faction, WorldPlan world, HashSet<Manageable> visited)
+    {
+        if (faction == null || visited.Contains(faction)) return false;
+        visited.Add(faction);
+        if (world.initializeFactions.ContainsKey(faction.ID)) return true;
+        foreach (var connected in faction.factionConnection)
+            if (IsFactionInWorld(connected, world, visited)) return true;
+        return false;
     }
 
     List<int> noDestroyList = new List<int>();
 
-    protected void BuildFaction(I_IsJobGiver faction)
+
+
+
+    List<string> trackedWorld = new List<string>();
+
+    /// <summary>
+    /// Discovers every faction reachable from startFaction (recursively through ConnectedFactions) and resolves
+    /// each to a host faction whose block it should be drawn in (itself = standalone). Resolved from data alone
+    /// (worldConnection/factionConnection) before anything is built, so the outcome is independent of build
+    /// order/viewing direction - see ResolveHost.
+    /// </summary>
+    private Dictionary<Manageable, Manageable> BuildFactionDrawPlan(Manageable startFaction)
+    {
+        var discovered = new List<Manageable> { startFaction };
+        var seen = new HashSet<Manageable> { startFaction };
+        for (int i = 0; i < discovered.Count; i++)
+        {
+            foreach (var connect in discovered[i].ConnectedFactions)
+                if (seen.Add(connect)) discovered.Add(connect);
+        }
+
+        var hosts = new Dictionary<Manageable, Manageable>();
+        foreach (var faction in discovered) ResolveHost(faction, hosts, new HashSet<Manageable>());
+        return hosts;
+    }
+
+    /// <summary>
+    /// faction -> the faction whose block it should be drawn in (itself = standalone). Memoized into hosts so
+    /// each faction is resolved once; visiting guards against a factionConnection cycle with no world-connected
+    /// anchor in it. A subfaction (e.g. a mall shop tenant) always resolves to its Parent's host instead of
+    /// falling into the "no anchor - stand alone" case below - its rooms are a per-room-owned subset of the
+    /// Parent's own floor (see Manageable.AddToFaction/Room_Base.subfactionOwnerOverwrite), not a distinct
+    /// floor of its own, so it must never independently draw a block (AddFloorButtons dedupes by floor
+    /// identity as a backstop, but this keeps the floor's button attributed to the right block instead of
+    /// racing on build order).
+    /// </summary>
+    private Manageable ResolveHost(Manageable faction, Dictionary<Manageable, Manageable> hosts, HashSet<Manageable> visiting)
+    {
+        if (hosts.TryGetValue(faction, out var resolved)) return resolved;
+
+        if (faction is Manageable_Subfaction sub && sub.Parent != null)
+        {
+            var parentHost = ResolveHost(sub.Parent, hosts, visiting);
+            hosts[faction] = parentHost;
+            return parentHost;
+        }
+
+        if (faction.worldConnection.Count > 0 || !visiting.Add(faction))
+        {
+            hosts[faction] = faction;
+            return faction;
+        }
+
+        foreach (var connected in faction.factionConnection)
+        {
+            var host = ResolveHost(connected, hosts, visiting);
+            if (host.worldConnection.Count > 0)
+            {
+                hosts[faction] = host;
+                return host;
+            }
+        }
+
+        hosts[faction] = faction; // no world-connected anchor reachable - stand alone as a last resort
+        return faction;
+    }
+
+    protected scr_factionBlock BuildFaction(I_IsJobGiver faction)
     {
         if (faction == null)
         {
            // Debug.LogError("initfaction error faction null");
-            return;
+            return null;
         }
         else if (faction.MainExit == null)
         {
-            return;
+            return null;
            // Debug.Log("initffactionblock " + faction.FactionDisplayName);
         }
 
         var block = Instantiate(prefab_FactionBlock);
         block.transform.SetParent(FactionList, false);
-        if (faction.ManagedFloors.Count < 2)
-        {
-            block.factionTitle.gameObject.SetActive(false);
-        }
-        else
-        {
-            block.factionTitle.gameObject.SetActive(true);
-            block.factionTitle.text = faction.FactionDisplayName;
-        }
+        block.factionTitle.text = faction.FactionDisplayName;
 
         factionBlocksByID[faction.FactionOwnerRoot.ID] = block;
 
+        AddFloorButtons(block, faction);
+
+        return block;
+    }
+
+    private void AddFloorButtons(scr_factionBlock block, I_IsJobGiver faction)
+    {
+        // a faction hidden from the world map is still tracked (discovered, host-resolved, contributes to
+        // trackedWorld) but its own floors stay undrawn unless debug mode is on - matches the world-map door
+        // pin visibility rule (canvas_FloorDisplay.cs addWorldDoor).
+        if (faction is Manageable m && m.hiddenOnWorldMap && !scr_System_CampaignManager.current.DebugMode) return;
+
         foreach(var floor in faction.ManagedFloors)
         {
+            // a floor can be jointly owned by a host faction and a subfaction tenant (per-room
+            // subfactionOwnerOverwrite, e.g. a mall shop) - both list the same Floor_Instance in their own
+            // ManagedFloors, so skip it here if some earlier faction in this pass already drew it.
+            if (buttonsByID.ContainsKey(floor.GetHashCode())) continue;
+
             var btn = Instantiate(block.buttonPrefab);
             btn.transform.SetParent(block.floorList, false);
 
@@ -429,12 +559,12 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             {
                 // already standing in this floor's only room and there's no image to show it with -
                 // jump to the parent world map instead, since there's nowhere useful to go from here locally
-                var ownerID = onlyRoom.FactionOwner?.FactionOwnerRoot?.ID;
-                if (!string.IsNullOrEmpty(ownerID))
+                var owner = onlyRoom.FactionOwner?.FactionOwnerRoot;
+                if (owner != null)
                 {
-                    var world = scr_System_CampaignManager.current.FindWorldsContainingFaction(ownerID)
-                        .Find(w => !string.IsNullOrEmpty(w.mapImagePath));
-                    if (world != null) { OpenWorldMap(world); return; }
+                    var worldID = ResolveWorldID(owner, new HashSet<Manageable>());
+                    var world = string.IsNullOrEmpty(worldID) ? null : scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
+                    if (world != null && !string.IsNullOrEmpty(world.mapImagePath)) { OpenWorldMap(world); return; }
                 }
             }
         }
@@ -538,16 +668,36 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         }
         else if (floor != null && floor.rooms.Count > 0)
         {
-            var ownerID = floor.rooms[0].FactionOwner?.FactionOwnerRoot?.ID;
-            if (!string.IsNullOrEmpty(ownerID))
+            var owner = floor.rooms[0].FactionOwner?.FactionOwnerRoot;
+            if (owner != null)
             {
-                parentWorld = scr_System_CampaignManager.current.FindWorldsContainingFaction(ownerID)
-                    .Find(w => !string.IsNullOrEmpty(w.mapImagePath));
+                var worldID = ResolveWorldID(owner, new HashSet<Manageable>());
+                var world = string.IsNullOrEmpty(worldID) ? null : scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
+                if (world != null && !string.IsNullOrEmpty(world.mapImagePath)) parentWorld = world;
             }
         }
 
         if (parentWorld != null) OpenWorldMap(parentWorld);
         else Notify(-9999);
+    }
+
+    /// <summary>
+    /// Resolves the world a faction belongs to via its cached worldConnection, falling back to whichever world
+    /// a door-connected faction belongs to (searched recursively through factionConnection) for a faction with
+    /// no world membership of its own - e.g. an on-demand-instantiated annex faction like ErAV_KiryuGumi_Filmstudio,
+    /// door-connected to ErAV_KiryuGumi_Office but never listed in any WorldPlan.initializeFactions.
+    /// </summary>
+    private string ResolveWorldID(Manageable faction, HashSet<Manageable> visited)
+    {
+        if (faction == null || visited.Contains(faction)) return "";
+        visited.Add(faction);
+        if (faction.worldConnection.Count > 0) return faction.worldConnection[0];
+        foreach (var connected in faction.factionConnection)
+        {
+            var found = ResolveWorldID(connected, visited);
+            if (!string.IsNullOrEmpty(found)) return found;
+        }
+        return "";
     }
 
     private static WorldPlan FindWorldByChildWorldID(string worldID)

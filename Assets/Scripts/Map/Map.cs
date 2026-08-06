@@ -30,6 +30,12 @@ public class Map_Instance
                 Debug.Log($"WorldManager Instantiate map error, cannot find mapID {mapTemplateID}");
                 return;
             }
+            // pre-register the faction so WorldManager.Instantiate's internal FindorAddHomeFactionByID finds it
+            // already present instead of self-healing - the self-heal path recursively calls Instantiate again,
+            // producing a second orphaned set of floors never added to Map_Instance.floors (see FindorAddSubfactionByID
+            // for the same precaution).
+            var targetFactionID = factionOverride != "" ? factionOverride : template.ID;
+            scr_System_CampaignManager.current.FindOrAddFaction(targetFactionID, template.ID);
             foreach (var fl in WorldManager.Instantiate( template, factionOverride, disablePlayerInit, disableCharaInstantiation))
             {
                 if(!floors.ContainsKey(fl.Key)) floors.Add(fl.Key, fl.Value);
@@ -167,45 +173,62 @@ public class Map_Instance
 
         }
 
-        foreach(var kvp_plan in mapTemplateInstances)
+        void ConnectFloorExits(Tuple<int, string, int, Floor_Base.FloorPlan_Exit> floorExit, Tuple<int, string, int, Floor_Base.FloorPlan_Exit> targetExit, float cost)
         {
-            foreach (MapPlan.MapPlan_Floor floor in kvp_plan.Value.floors)
+            Door_Instance dinst = new Door_Instance(cost);
+
+            var floorA = FindFloorByRefID(floorExit.Item3);
+            var roomA = floorA.FindRoom(floorExit.Item4.connectedRoom);
+            var floorB = FindFloorByRefID(targetExit.Item3);
+            var roomB = floorB.FindRoom(targetExit.Item4.connectedRoom);
+
+            floorGraph.AddVerticesAndEdge(new TaggedEdge<Floor_Instance, Door_Instance>(floorA, floorB, dinst));
+            floorGraph.AddVerticesAndEdge(new TaggedEdge<Floor_Instance, Door_Instance>(floorB, floorA, dinst));
+
+            floorA.ConnectedDoors.Add(dinst, roomA);
+            floorB.ConnectedDoors.Add(dinst, roomB);
+
+            floorDoorQuickSearch.Add(roomA.RefID, roomB.RefID);
+            floorDoorQuickSearch.Add(roomB.RefID, roomA.RefID);
+
+            FloorLayout.Add(new Tuple<int, int>(floorExit.Item3, targetExit.Item3), new Vector2(floorExit.Item4.offsetX, floorExit.Item4.offsetY));
+            FloorLayout.Add(new Tuple<int, int>(targetExit.Item3, floorExit.Item3), new Vector2(targetExit.Item4.offsetX, targetExit.Item4.offsetY));
+        }
+
+        // factionFloorDoorConnections covers both same-faction (source == target) and cross-faction door links,
+        // resolving each side by the owning faction's MapPlan.ID rather than by mapTemplateInstanceID - see Door.cs.
+        foreach (var fd in factionFloorDoorConnections)
+        {
+            Tuple<int, string, int, Floor_Base.FloorPlan_Exit> floorExit = availableExits.Find(x => mapTemplateInstances.ContainsKey(x.Item1) && mapTemplateInstances[x.Item1].ID == fd.sourceFaction && x.Item2 == fd.sourceFloor && x.Item4.ID == fd.sourceExit);
+            Tuple<int, string, int, Floor_Base.FloorPlan_Exit> targetExit = availableExits.Find(x => mapTemplateInstances.ContainsKey(x.Item1) && mapTemplateInstances[x.Item1].ID == fd.targetFaction && x.Item2 == fd.targetFloor && x.Item4.ID == fd.targetExit);
+
+            if (floorExit != null && targetExit != null)
             {
-                Tuple<int, string, int, Floor_Base.FloorPlan_Exit> floorExit = availableExits.Find(x => (x.Item1 == kvp_plan.Key && x.Item2 == floor.ID && x.Item4.ID == floor.connectTo.fromExitID));
-                Tuple<int, string, int, Floor_Base.FloorPlan_Exit> targetExit = availableExits.Find(x => (x.Item1 == kvp_plan.Key && x.Item2 == floor.connectTo.targetFloorID && x.Item4.ID == floor.connectTo.targetExitID));
+                availableExits.Remove(floorExit);
+                availableExits.Remove(targetExit);
+                ConnectFloorExits(floorExit, targetExit, fd.cost);
+            }
+        }
 
-                if (floorExit != null && targetExit != null)
-                {
-                    availableExits.Remove(floorExit);
-                    availableExits.Remove(targetExit);
-
-                    /*
-                    Debug.Log("MapInstance [" + baseTemplate + "] building path across floor between " +
-                        "[" + floorExit.Item1 + " "+ floorExit.Item2 + " " + floorExit.Item3 + " " + floorExit.Item3.connectedRoom + " " + 
-                        Rooms[FindFloorByRefID(floorExit.Item2).FindRoom(floorExit.Item3.connectedRoom).refID].displayName + "] " +
-                        "and [" + targetExit.Item1 + " " + targetExit.Item2 + " " + targetExit.Item3 + " " + targetExit.Item3.connectedRoom + " " + 
-                        Rooms[FindFloorByRefID(targetExit.Item2).FindRoom(targetExit.Item3.connectedRoom).refID].displayName + "]");
-                    */
-                    Door_Instance dinst = new Door_Instance(1f);
-
-                    var floorA = FindFloorByRefID(floorExit.Item3);
-                    var roomA = floorA.FindRoom(floorExit.Item4.connectedRoom);
-                    var floorB = FindFloorByRefID(targetExit.Item3);
-                    var roomB = floorB.FindRoom(targetExit.Item4.connectedRoom);
-
-                    floorGraph.AddVerticesAndEdge(new TaggedEdge<Floor_Instance, Door_Instance>( floorA, floorB, dinst));
-                    floorGraph.AddVerticesAndEdge(new TaggedEdge<Floor_Instance, Door_Instance>(floorB, floorA, dinst));
-
-                    //Debug.Log("adding quicksearch [" + i + "] ["+j+"]");
-                    floorA.ConnectedDoors.Add(dinst, roomA);
-                    floorB.ConnectedDoors.Add(dinst, roomB);
-
-                    floorDoorQuickSearch.Add(roomA.RefID, roomB.RefID);
-                    floorDoorQuickSearch.Add(roomB.RefID, roomA.RefID);
-
-                    FloorLayout.Add(new Tuple<int, int>(floorExit.Item3, targetExit.Item3), new Vector2(floorExit.Item4.offsetX, floorExit.Item4.offsetY));
-                    FloorLayout.Add(new Tuple<int, int>(targetExit.Item3, floorExit.Item3), new Vector2(targetExit.Item4.offsetX, targetExit.Item4.offsetY));
-                }
+        // refresh each faction's cached Manageable.worldConnection/factionConnection trackers (UI-facing, not
+        // persisted) - rebuilt fresh here rather than mutated eagerly at instantiation time, so out-of-order
+        // instantiation (e.g. InitializeFaction adding a faction after its door-connected neighbor) and
+        // save/reload (BuildPath reruns via SerializationRebuilt) both self-correct.
+        var loadedWorlds = scr_System_CampaignManager.current.GetLoadedWorldPlans();
+        foreach (var faction in scr_System_CampaignManager.current.Factions)
+        {
+            faction.worldConnection.Clear();
+            foreach (var w in loadedWorlds) if (w.initializeFactions.ContainsKey(faction.ID)) faction.worldConnection.Add(w.worldID);
+            faction.factionConnection.Clear();
+        }
+        foreach (var fd in factionFloorDoorConnections)
+        {
+            var source = scr_System_CampaignManager.current.FindFactionByID(fd.sourceFaction);
+            var target = scr_System_CampaignManager.current.FindFactionByID(fd.targetFaction);
+            if (source != null && target != null && source != target)
+            {
+                if (!source.factionConnection.Contains(target)) source.factionConnection.Add(target);
+                if (!target.factionConnection.Contains(source)) target.factionConnection.Add(source);
             }
         }
 
@@ -825,8 +848,9 @@ public class Map_Instance
     /// <summary>
     /// Real travel time (in minutes) between two factions' doors on a WorldPlan they share, mirroring the
     /// distance/travelDistancePerMinute calc shown on the world-map tooltip (canvas_RoomDisplay.TravelTimeMinutesString).
-    /// Falls back to the flat legacy cost of 5 when no shared WorldPlan has a door for both factions (e.g. factions
-    /// linked only via a commercial pact, or a faction with no door of its own on the world map).
+    /// Falls back to the flat legacy cost of 5 when no shared WorldPlan has a door for both factions (e.g. a
+    /// faction connected only via campaign_init_factionConnect with no matching world door, or a door-only
+    /// annex faction - see ResolveDoorOwningFaction - whose resolved neighbor also has none).
     /// </summary>
     Door_Instance GetFactionCrossingDoor(Manageable fromFaction, Manageable toFaction)
     {
@@ -853,13 +877,10 @@ public class Map_Instance
         worldID = "";
         if (fromFaction == null || toFaction == null || fromFaction == toFaction) return false;
 
-        // a subfaction (e.g. a mall shop) has no door of its own on the world map - its MainExit resolves to
-        // its parent's room, so the door lookup below should key off whichever faction actually owns that
-        // room instead of the (possibly virtual-tenant) faction passed in.
-        string fromDoorFactionID = fromFaction.MainExit != null && fromFaction.MainExit.FactionOwner != null
-            ? fromFaction.MainExit.FactionOwner.FactionOwnerRoot.ID : fromFaction.ID;
-        string toDoorFactionID = toFaction.MainExit != null && toFaction.MainExit.FactionOwner != null
-            ? toFaction.MainExit.FactionOwner.FactionOwnerRoot.ID : toFaction.ID;
+        var fromDoorFaction = ResolveDoorOwningFaction(fromFaction, new HashSet<Manageable>()) ?? fromFaction;
+        var toDoorFaction = ResolveDoorOwningFaction(toFaction, new HashSet<Manageable>()) ?? toFaction;
+        string fromDoorFactionID = fromDoorFaction.ID;
+        string toDoorFactionID = toDoorFaction.ID;
 
         foreach (var world in scr_System_CampaignManager.current.FindWorldsContainingFaction(fromDoorFactionID))
         {
@@ -876,13 +897,35 @@ public class Map_Instance
         return false;
     }
 
+    /// <summary>
+    /// Resolves the faction whose own world-map door should represent faction for cross-faction travel
+    /// cost purposes: faction itself (or the physical owner of its MainExit room, for subfactions - a mall
+    /// shop's MainExit resolves to its parent's room) if it has a door in some shared world; otherwise the
+    /// nearest faction reachable through factionConnection that does - e.g. ErAV_KiryuGumi_Filmstudio (no
+    /// door of its own) resolves to ErAV_KiryuGumi_Office.
+    /// </summary>
+    private Manageable ResolveDoorOwningFaction(Manageable faction, HashSet<Manageable> visited)
+    {
+        if (faction == null || visited.Contains(faction)) return null;
+        visited.Add(faction);
+
+        var owner = faction.MainExit != null && faction.MainExit.FactionOwner != null
+            ? faction.MainExit.FactionOwner.FactionOwnerRoot : faction;
+        if (scr_System_CampaignManager.current.GetLoadedWorldPlans().Any(w => w.doors.Exists(d => d.factionID == owner.ID)))
+            return owner;
+
+        foreach (var connected in faction.factionConnection)
+        {
+            var resolved = ResolveDoorOwningFaction(connected, visited);
+            if (resolved != null) return resolved;
+        }
+        return null;
+    }
+
     public bool isConnectedFaction(Manageable a, Manageable b)
     {
         if (a == null || b == null) return false;
         if (a == b) return true;
-        if (factionGraphs.TryGetValue(a.ID, out var lists) && lists.Contains(b.ID)) return true;
-        // a commercial pact also grants connectivity, as if manually connected, even with no other path
-        if (commercialPactGraphs.TryGetValue(a.ID, out var pactLists) && pactLists.Contains(b.ID)) return true;
 
         // a subfaction (e.g. a mall shop) is a virtual tenant with no physical presence of its own on the
         // world map - it's reachable wherever its parent (e.g. the mall) is, regardless of whether it ended up
@@ -890,6 +933,24 @@ public class Map_Instance
         if (a is Manageable_Subfaction subA && subA.Parent != null && isConnectedFaction(subA.Parent, b)) return true;
         if (b is Manageable_Subfaction subB && subB.Parent != null && isConnectedFaction(a, subB.Parent)) return true;
 
+        return IsTransitivelyConnected(a, b, new HashSet<Manageable>());
+    }
+
+    /// <summary>
+    /// BFS/DFS over GetConnectedFactions (which merges factionGraphs and factionFloorDoorConnections -
+    /// commercialPactGraphs deliberately does not grant connectivity, see its own doc comment) so
+    /// connectivity is transitive - e.g. a door-only-connected annex faction (ErAV_KiryuGumi_Filmstudio,
+    /// one hop from ErAV_KiryuGumi_Office) is reachable from anything Office's world-mesh reaches, not
+    /// just Office itself. visited guards against revisiting a faction across cycles/dense meshes.
+    /// </summary>
+    private bool IsTransitivelyConnected(Manageable a, Manageable b, HashSet<Manageable> visited)
+    {
+        if (!visited.Add(a)) return false;
+        foreach (var next in GetConnectedFactions(a.ID))
+        {
+            if (next == b) return true;
+            if (IsTransitivelyConnected(next, b, visited)) return true;
+        }
         return false;
     }
 
@@ -1155,6 +1216,21 @@ public class Map_Instance
         );
     }
 
+    // serialized
+    [JsonProperty] List<FloorDoor> factionFloorDoorConnections = new List<FloorDoor>();
+
+    /// <summary>
+    /// Registers a factionInit-declared cross/same-faction door (MapPlan.floorDoors), deduplicated by
+    /// FloorDoor.isIdentical, so repeated calls (e.g. an InitializeFaction Result re-running) are harmless.
+    /// BuildPath() consumes this list to connect the two floors' exits directly.
+    /// </summary>
+    public void RegisterFactionFloorDoor(FloorDoor door)
+    {
+        if (door == null) return;
+        if (factionFloorDoorConnections.Any(d => d.isIdentical(door))) return;
+        factionFloorDoorConnections.Add(door);
+    }
+
     /// <summary>
     /// This list will be used when creating player move button and when update existing
     /// </summary>
@@ -1165,9 +1241,12 @@ public class Map_Instance
         var list = new List<Manageable>();
 
         bool hasFactionLink = factionGraphs.ContainsKey(factionID);
-        // a commercial pact also grants connectivity, as if manually connected, even with no other path
-        bool hasPactLink = commercialPactGraphs.ContainsKey(factionID);
-        if (!hasFactionLink && !hasPactLink) return list;
+        // a commercial pact does not grants connectivity
+        //bool hasPactLink = commercialPactGraphs.ContainsKey(factionID);
+        // a factionFloorDoorConnections entry also grants connectivity, same as a manual factionGraphs link
+        bool hasDoorLink = factionFloorDoorConnections.Any(d => d.sourceFaction == factionID || d.targetFaction == factionID);
+        //if (!hasFactionLink && !hasPactLink && !hasDoorLink) return list;
+        if (!hasFactionLink && !hasDoorLink) return list;
 
         var selfFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
         if (selfFaction == null || selfFaction.MainExit == null)
@@ -1178,7 +1257,12 @@ public class Map_Instance
 
         var ids = new List<string>();
         if (hasFactionLink) ids.AddRange(factionGraphs[factionID]);
-        if (hasPactLink) foreach (var i in commercialPactGraphs[factionID]) if (!ids.Contains(i)) ids.Add(i);
+        //if (hasPactLink) foreach (var i in commercialPactGraphs[factionID]) if (!ids.Contains(i)) ids.Add(i);
+        if (hasDoorLink) foreach (var d in factionFloorDoorConnections)
+        {
+            if (d.sourceFaction == factionID && d.targetFaction != factionID && !ids.Contains(d.targetFaction)) ids.Add(d.targetFaction);
+            if (d.targetFaction == factionID && d.sourceFaction != factionID && !ids.Contains(d.sourceFaction)) ids.Add(d.sourceFaction);
+        }
 
         foreach (var i in ids)
         {
@@ -1210,10 +1294,11 @@ public class Map_Instance
     }
 
     /// <summary>
-    /// Commercial pact links between factions (management UI: trade orders, external job assignment). Kept as a
-    /// separate list from `factionGraphs` (populated independently, e.g. from the addlinkfaction UI), but a pact
-    /// also grants connectivity on its own: isConnectedFaction/GetConnectedFactions treat it the same as a manual
-    /// factionGraphs link, even with no other path between the two factions.
+    /// Commercial pact links between factions (management UI: bulk trading relationships only - see
+    /// scr_Menu_AddTrade). Kept as a separate list from `factionGraphs` (populated independently, e.g. from
+    /// the addlinkfaction UI) and deliberately does NOT grant connectivity on its own: isConnectedFaction/
+    /// GetConnectedFactions ignore commercialPactGraphs entirely - two factions must be door-, world-, or
+    /// directly-connected (factionGraphs/factionFloorDoorConnections) regardless of any pact between them.
     /// </summary>
     [JsonProperty] Dictionary<string, List<string>> commercialPactGraphs = new Dictionary<string, List<string>>();
 
@@ -1227,6 +1312,40 @@ public class Map_Instance
             var j = scr_System_CampaignManager.current.FindFactionByID(i);
             if (j == null) continue;
             list.Add(j);
+        }
+        return list;
+    }
+
+    /// <summary>
+    /// Factions eligible for external job posting: must have BOTH a commercial pact AND be actually pathable
+    /// (isConnectedFaction) - a pact alone doesn't guarantee a worker can physically get there, and physical
+    /// reachability alone isn't enough to justify sending a worker without an established relationship.
+    /// </summary>
+    public List<Manageable> GetExternalJobFactions(string factionID)
+    {
+        var list = new List<Manageable>();
+        var self = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        if (self == null) return list;
+        foreach (var faction in GetCommercialPactFactions(factionID))
+            if (isConnectedFaction(self, faction)) list.Add(faction);
+        return list;
+    }
+
+    /// <summary>
+    /// Factions eligible as trade partners: either a commercial pact (a long-distance trade agreement) OR
+    /// physically/world connected (isConnectedFaction) - immediate neighbors can trade informally with no
+    /// pact required.
+    /// </summary>
+    public List<Manageable> GetTradePartnerFactions(string factionID)
+    {
+        var list = new List<Manageable>();
+        var self = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        if (self == null) return list;
+        foreach (var faction in GetCommercialPactFactions(factionID)) list.Add(faction);
+        foreach (var faction in scr_System_CampaignManager.current.Factions)
+        {
+            if (faction == self || list.Contains(faction)) continue;
+            if (isConnectedFaction(self, faction)) list.Add(faction);
         }
         return list;
     }

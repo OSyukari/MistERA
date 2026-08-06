@@ -1600,7 +1600,7 @@ public static class UtilityEX
                     }
                     foreach(var womb in target.wombs)
                     {
-                        womb.ovulation();
+                        womb.ovulation(true);
                     }
                 }
 

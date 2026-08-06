@@ -3,6 +3,29 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 
+/// <summary>
+/// faction floor door to faction floor door
+/// </summary>
+
+public class FloorDoor
+{
+    public float cost = 1f;
+
+    public string sourceFaction = "";
+    public string sourceFloor = "";
+    public string sourceExit = "";
+
+    public string targetFaction = "";
+    public string targetFloor = "";
+    public string targetExit = "";
+
+    public bool isIdentical(FloorDoor other)
+    {
+        if (other == null) return false;
+        return sourceFaction == other.sourceFaction && sourceFloor == other.sourceFloor && sourceExit == other.sourceExit
+            && targetFaction == other.targetFaction && targetFloor == other.targetFloor && targetExit == other.targetExit;
+    }
+}
 
 
 /// <summary>

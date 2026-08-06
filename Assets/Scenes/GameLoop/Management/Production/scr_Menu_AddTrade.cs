@@ -23,7 +23,7 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
             MakeRecipeButton(entry.Value, sourceFaction, sourceFaction);
         }
 
-        foreach(var connect in sourceFaction.CommercialPactFactions)
+        foreach(var connect in sourceFaction.TradePartnerFactions)
         {
             foreach(var entry in connect.salesInventory.Inventory)
             {

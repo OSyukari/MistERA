@@ -190,7 +190,11 @@
                         "Results": [
                             {
                                 "Type": "SetRelKojoVariable",
-                                "arguments": [ "kanade", "self", "false", "erav_actress_status", "1" ]
+                                "arguments": [ "kanade", "self", "false", "erav_actress_status", "2" ]
+                            },
+                            {
+                                "Type": "SetWorkFaction",
+                                "arguments": [ "kanade", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_actor", "false", "true" ]
                             }
                         ],
                         "isLast": true
@@ -257,7 +261,11 @@
                         "Results": [
                             {
                                 "Type": "SetRelKojoVariable",
-                                "arguments": [ "Jitaku_Sayaka", "self","false", "erav_actress_status", "1" ]
+                                "arguments": [ "Jitaku_Sayaka", "self","false", "erav_actress_status", "2" ]
+                            },
+                            {
+                                "Type": "SetWorkFaction",
+                                "arguments": [ "Jitaku_Sayaka", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_actor", "false", "true" ]
                             }
                         ],
                         "isLast": true

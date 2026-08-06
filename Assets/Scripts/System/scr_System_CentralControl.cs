@@ -75,6 +75,7 @@ public class scr_System_CentralControl : MonoBehaviour
     {
         get
         {
+            if (_llmSetting == null) LoadLLMSetting();
             return _llmSetting;
         }
     }
@@ -254,6 +255,11 @@ public class scr_System_CentralControl : MonoBehaviour
             LoadSerializable(s);
         }
 
+        LoadLLMSetting();
+    }
+
+    private void LoadLLMSetting()
+    {
         string llmpath = Application.persistentDataPath + "/llmSetting.json";
         FileInfo llmfile = new System.IO.FileInfo(llmpath);
         if (!File.Exists(llmpath))

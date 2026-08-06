@@ -1279,6 +1279,71 @@ public static class EventUtility
                     return true;
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.InitializeFaction:
+                if (exec.arguments.Count >= 1 && exec.arguments[0] != "")
+                {
+                    if (scr_System_CampaignManager.current.FindFactionByID(exec.arguments[0]) != null) return true; // already initialized, no-op
+                    if (scr_System_Serializer.current.GetByNameOrID_MapPlan(exec.arguments[0]) == null) return false;
+                    scr_System_CampaignManager.current.Map.AddMapTemplate(exec.arguments[0]);
+                    return true;
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.SetHomeFaction:
+                if (exec.arguments.Count >= 3 && exec.arguments[1] != "" && exec.arguments[2] != "")
+                {
+                    List<Character_Trainable> homeTargets;
+                    if (exec.arguments[0] == "self") homeTargets = new List<Character_Trainable>() { owner.Self };
+                    else if (!owner.Targets.TryGetValue(exec.arguments[0], out homeTargets))
+                    {
+                        Debug.LogError($"SetHomeFaction missing target scopeKey {exec.arguments[0]}");
+                        return false;
+                    }
+
+                    var homeFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
+                    if (homeFaction == null) return false;
+                    if (!FactionUtility.TryGetMemberType(exec.arguments[2], out var homeMemberType)) return false;
+
+                    bool setAsTemp = exec.arguments.Count >= 4 && bool.TryParse(exec.arguments[3], out var setAsTempParsed) && setAsTempParsed;
+                    bool overwriteExistingHome = exec.arguments.Count >= 5 && bool.TryParse(exec.arguments[4], out var owHomeParsed) && owHomeParsed;
+
+                    foreach (var c in homeTargets)
+                    {
+                        if (c == null) continue;
+                        if (homeFaction.isManagedChara(c.RefID) && !overwriteExistingHome) continue;
+
+                        if (setAsTemp) c.FactionManager.SetTempHomeFaction(exec.arguments[1], homeMemberType);
+                        else c.FactionManager.SetHomeFaction(exec.arguments[1], homeMemberType);
+                    }
+                    return true;
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.SetWorkFaction:
+                if (exec.arguments.Count >= 3 && exec.arguments[1] != "" && exec.arguments[2] != "")
+                {
+                    List<Character_Trainable> workTargets;
+                    if (exec.arguments[0] == "self") workTargets = new List<Character_Trainable>() { owner.Self };
+                    else if (!owner.Targets.TryGetValue(exec.arguments[0], out workTargets))
+                    {
+                        Debug.LogError($"SetWorkFaction missing target scopeKey {exec.arguments[0]}");
+                        return false;
+                    }
+
+                    var workFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
+                    if (workFaction == null) return false;
+                    if (!FactionUtility.TryGetMemberType(exec.arguments[2], out var workMemberType)) return false;
+
+                    bool highPriority = exec.arguments.Count >= 4 && bool.TryParse(exec.arguments[3], out var hpParsed) && hpParsed;
+                    bool overwriteExistingWork = exec.arguments.Count >= 5 && bool.TryParse(exec.arguments[4], out var owWorkParsed) && owWorkParsed;
+
+                    foreach (var c in workTargets)
+                    {
+                        if (c == null) continue;
+                        if (!workFaction.isManagedChara(c.RefID) || overwriteExistingWork) c.FactionManager.AddWorkFaction(exec.arguments[1], workMemberType);
+                        if (highPriority) c.FactionManager.PrioritizeWorkFaction(exec.arguments[1]);
+                    }
+                    return true;
+                }
+                return false;
             case Event.EventEntry.ExecutionType.InterruptAP:
                 if (exec.arguments.Count < 3)
                 {

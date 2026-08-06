@@ -218,7 +218,7 @@
 "erav_debt_tracker":"偿还欠债",
 "erav_debt_tracker_01":"想办法还上30M日元的欠债，剩余欠款$debt_value$。偿款次数$debt_pay_count$",
 "erav_debt_tracker_01_00":"拒绝了歌音的提案。得想别的办法还上这笔债。",
-"erav_debt_tracker_01_01":"放学后去%%ErAV_KiryuGumi_Office%%会见歌音",
+"erav_debt_tracker_01_01":"放学后去%%ErAV_KiryuGumi_Office%%与歌音【交谈】",
 "erav_debt_tracker_01_01_late":"迟到了$late_count$天",
 "erav_debt_tracker_01_01_kanade":"约定了带上奏一起去见歌音",
 "erav_debt_tracker_01_02_kanade":"没有带上奏，单独去见了歌音",

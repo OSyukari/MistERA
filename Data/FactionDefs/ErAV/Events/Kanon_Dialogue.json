@@ -512,6 +512,8 @@
                                 },
                                 "line": "Kanon_Dialogue_inoffice_Kanade",
                                 "Results": [
+                                    { "Type": "SetSelfKojoVariable", "arguments": [ "self", "false", "erav_kanade_promise", "3" ] },
+                                    { "Type": "SetRelKojoVariable", "arguments": [ "kanade", "self", "false", "erav_actress_status", "1" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "job_offer_closing" ] }
                                 ]
                             },
@@ -560,6 +562,14 @@
                                     "erav_kanon_offer",
                                     "2"
                                 ]
+                            },
+                            {
+                                "Type": "InitializeFaction",
+                                "arguments": [ "ErAV_KiryuGumi_Filmstudio" ]
+                            },
+                            {
+                                "Type": "SetWorkFaction",
+                                "arguments": [ "self", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_director", "false", "true" ]
                             }
                         ],
                         "isLast": true
@@ -633,8 +643,8 @@
                 "Kanon_Dialogue_inoffice_Explain04": "「你负责拍AV，我们负责销售，赚的足够你还债。」\n「至于女优的人选，我手里有一份名单，都是事先考察过的。你想看的话，回头拿给你。」",
 
                 "Kanon_Dialogue_inoffice_femalePlayer": "$kanon.name$的目光在$self.name$身上停留了片刻。\n「说起来，凭你这副模样，自己出场也未必不行。监督也好，女优也好，两条路都摆在你面前，由你自己选。」",
-                "Kanon_Dialogue_inoffice_Kanade": "$kanon.name$的视线越过$self.name$，落到跟在身后的$kanade.name$身上，停了片刻。\n「这孩子，长相倒是不错。」\n「拍片的时候说不定用得上。回头要是有了这个心思，我这边可以替你安排。」",
-                "kd_AC_end": "「还有什么不明白的，随时来问。门在那边。」",
+                "Kanon_Dialogue_inoffice_Kanade": "$kanon.name$的视线越过$self.name$，落到跟在身后的$kanade.name$身上，停了片刻。\n「这孩子，长相倒是不错。」\n「拍片的时候说不定用得上。回头要是有了这个心思，我这边可以替你安排。」\n\n【可以招募$kanade.name$成为女优了】",
+                "kd_AC_end": "「还有什么不明白的，随时来问。门在那边。」\n\n【$self.name$成为了%%ErAV_KiryuGumi_Filmstudio%%的%%membertype_erav_kiryu_filmstudio_director%%】",
                 "Kanon_Dialogue_inoffice_End": "「没别的事的话，门在那边。我还有事要忙。」",
                 "Kanon_Dialogue_NotInOffice": "「这儿不是谈正事的地方。不是告诉你之后到事务所来找我吗？地址名片上写着。」"
             },
