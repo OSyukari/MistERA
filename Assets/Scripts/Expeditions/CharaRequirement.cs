@@ -38,6 +38,12 @@ public class CharaReq
     public bool requireMale = false;
     public bool requireFemale = false;
 
+    // membertype requirement: does the character hold MemberType requireMemberType, either only in
+    // their currently-active faction/party (requireMemberTypeCurrentActive) or in any faction they
+    // belong to (see Character_Factions.HasMemberTypeInAnyFaction)
+    public string requireMemberType = "";
+    public bool requireMemberTypeCurrentActive = false;
+
     public List<string> requireInflatedBodyTags = new List<string>();
     public List<string> requireExtremeInflatedBodyTags = new List<string>();
 
@@ -59,6 +65,9 @@ public class CharaReq
         requireAction = requireAction && req.requireAction;
         requireMale = this.requireMale || req.requireMale;
         requireFemale = this.requireFemale || req.requireFemale;
+
+        if (this.requireMemberType == "" && req.requireMemberType != "") this.requireMemberType = req.requireMemberType;
+        this.requireMemberTypeCurrentActive = this.requireMemberTypeCurrentActive || req.requireMemberTypeCurrentActive;
 
         requireUnconscious = requireUnconscious || req.requireUnconscious;
         requireFollowing = requireFollowing || req.requireFollowing;

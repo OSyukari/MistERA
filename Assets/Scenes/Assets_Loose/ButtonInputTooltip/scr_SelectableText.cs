@@ -11,7 +11,21 @@ public class scr_SelectableText : MonoBehaviour, IPointerEnterHandler, IPointerE
     protected TextMeshProUGUI text = null;
     protected scr_HoverableText hoverable = null;
 
+    public scr_HoverableText Hover
+    {
+        get
+        {
+            if (hoverable == null)
+            {
+                hoverable = GetComponent<scr_HoverableText>();
+            }
+            return hoverable;
+        }
+    }
+
     protected scr_Menu parent;
+
+
 
 
     RectTransform _selfRect = null;

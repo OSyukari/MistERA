@@ -292,6 +292,45 @@ public class Character_Factions
             return CurrentlyActiveFaction.GetCharaSocialStandingName(Owner.RefID);
         }
     }
+    [JsonIgnore]
+    public string CurrentlyActiveFactionTooltip
+    {
+        get
+        {
+            if (CurrentlyActiveFaction == null) return "";
+            return CurrentlyActiveFaction.GetCharaSocialStandingTooltip(Owner.RefID);
+        }
+    }
+
+    /// <summary>
+    /// The character's current MemberType, preferring an active party over the active faction
+    /// (mirrors Utility.GetActorTag's portraitTags precedence). Null if neither is present.
+    /// </summary>
+    [JsonIgnore]
+    public MemberType CurrentActiveMemberType
+    {
+        get
+        {
+            var party = CurrentActiveParty;
+            if (party != null) return party.GetMemberType(Owner);
+            var faction = CurrentlyActiveFaction;
+            return faction != null ? faction.GetMemberType(Owner) : null;
+        }
+    }
+
+    /// <summary>
+    /// True if this character currently holds MemberType memberTypeID in any faction they belong to
+    /// (HomeFactions + WorkFactions), regardless of which faction/party is currently active. Does not
+    /// check party membership (parties are tracked separately via TrackedPartyRef) since MemberType
+    /// authorship for this kind of check is expected to be faction-scoped (e.g. a job post).
+    /// </summary>
+    public bool HasMemberTypeInAnyFaction(string memberTypeID)
+    {
+        if (string.IsNullOrEmpty(memberTypeID)) return false;
+        foreach (var faction in Factions)
+            if (faction != null && faction.GetMemberType(Owner)?.ID == memberTypeID) return true;
+        return false;
+    }
 
     public void AddWorkFaction(string factionID, MemberType status, bool sendEvent = true)
     {

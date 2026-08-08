@@ -1,0 +1,78 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_initiateSex_erAV",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "love",
+                                "happy",
+                                "blush",
+                                "affectionate",
+                                "smile"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "1.1 监督 好感/恋人关系 甘愿配合",
+                            "responses": [
+                                "com_interaction_initiateSex_erAV_Warm_1",
+                                "com_interaction_initiateSex_erAV_Warm_2",
+                                "com_interaction_initiateSex_erAV_Warm_3",
+                                "com_interaction_initiateSex_erAV_Warm_4"
+                            ]
+                        },
+                        {
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "awkward",
+                                "nervous",
+                                "obedient",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "1.2 监督 普通同事关系 职责所在",
+                            "responses": [
+                                "com_interaction_initiateSex_erAV_Dutiful_1",
+                                "com_interaction_initiateSex_erAV_Dutiful_2",
+                                "com_interaction_initiateSex_erAV_Dutiful_3",
+                                "com_interaction_initiateSex_erAV_Dutiful_4"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_interaction_initiateSex_erAV_Warm_1": "$self$脸颊泛红，主动贴近$target$监督，指尖轻轻勾住他的衣领。\n\n\"监督今天也要亲自确认吗？\"她眼里带着笑意，声音压得又软又低，\"那我可得好好表现给你看。\"",
+                "com_interaction_initiateSex_erAV_Warm_2": "$self$放下手里的剧本，抬眼看向走近的$target$监督，唇角弯起一个只属于他的笑。\n\n\"别人在的时候我会好好演戏的，\"她拉过他的手贴上自己的腰，\"不过监督想现在开始的话……我不介意提前进入状态哦。\"",
+                "com_interaction_initiateSex_erAV_Warm_3": "$self$踮起脚尖，主动在监督唇边啄了一下，才慢慢退开解开衣扣。\n\n\"要是别的监督，我才不会这么乖乖配合呢。\"她把额头抵上$target$的肩膀，声音里满是撒娇的意味，\"就当是……犒劳一下我们家监督好啦。\"",
+                "com_interaction_initiateSex_erAV_Warm_4": "$self$闻言就笑了，顺从地靠进$target$怀里，手指绕上他的后颈。\n\n\"监督的要求，我什么时候拒绝过？\"她声音轻轻的，带着毫不掩饰的依赖，\"而且……和监督一起拍，本来就是我最喜欢的部分。\"",
+                "com_interaction_initiateSex_erAV_Dutiful_1": "$self$微微一怔，随即收起表情，礼貌地点了点头。\n\n\"好的，监督。\"她把剧本放到一边，开始配合地解开衣扣，神情间还带着几分生涩的紧张。",
+                "com_interaction_initiateSex_erAV_Dutiful_2": "$self$深吸一口气，把即将脱口而出的犹豫咽了回去。\n\n\"我明白，这是工作的一部分。\"她挺直背脊，尽量让自己的声音听起来平稳，尽管耳根已经悄悄红了。",
+                "com_interaction_initiateSex_erAV_Dutiful_3": "$self$对上监督的视线，只是很职业地应了一声\"是\"，便转身开始按流程准备。\n\n心里其实还没适应这种事，但既然签了合同，她告诉自己，这就只是拍摄的一环而已。",
+                "com_interaction_initiateSex_erAV_Dutiful_4": "$self$捏了捏衣角，勉强稳住语气看向$target$监督。\n\n\"我、我会好好配合的……\"她轻声说着，动作却比语气僵硬得多，显然还没能完全放松下来。"
+            },
+            "en-us": {
+                "com_interaction_initiateSex_erAV_Warm_1": "$self$'s cheeks flush as she leans in on her own, hooking a fingertip into Director $target$'s collar.\n\n\"Checking things personally again today, Director?\" Her eyes glint with amusement, voice dropping soft and low. \"Then I'd better perform well for you.\"",
+                "com_interaction_initiateSex_erAV_Warm_2": "$self$ sets down the script and looks up as Director $target$ approaches, a smile curving her lips that belongs to him alone.\n\n\"I'll act properly once the others are around,\" she says, drawing his hand to her waist. \"But if the director wants to start now... I wouldn't mind getting into character a little early.\"",
+                "com_interaction_initiateSex_erAV_Warm_3": "$self$ rises on her toes to peck the director on the lips before slowly stepping back to undo her buttons.\n\n\"I wouldn't go along this easily for just any director, you know.\" She rests her forehead on $target$'s shoulder, voice full of unhidden fondness. \"Consider it... a little reward for our director.\"",
+                "com_interaction_initiateSex_erAV_Warm_4": "$self$ laughs at that, melting obediently into $target$'s arms, fingers looping around the back of his neck.\n\n\"Since when have I ever turned the director down?\" she murmurs, the dependence in her voice utterly unguarded. \"Besides... filming together with you has always been my favorite part.\"",
+                "com_interaction_initiateSex_erAV_Dutiful_1": "$self$ blinks in mild surprise, then composes her expression and nods politely.\n\n\"Understood, Director.\" She sets the script aside and begins undoing her buttons in cooperation, a trace of stiff nervousness still showing through.",
+                "com_interaction_initiateSex_erAV_Dutiful_2": "$self$ takes a slow breath, swallowing the hesitation that almost slipped out.\n\n\"I understand, it's part of the job.\" She straightens her back, trying to keep her voice level, even as the tips of her ears quietly redden.",
+                "com_interaction_initiateSex_erAV_Dutiful_3": "$self$ meets the director's eyes and gives a crisp, professional \"Yes, sir,\" before turning to prepare per procedure.\n\nShe still hasn't quite gotten used to this part of the job, but she signed the contract—so she tells herself it's just another part of the shoot.",
+                "com_interaction_initiateSex_erAV_Dutiful_4": "$self$ pinches the hem of her clothes and forces her voice steady as she looks at Director $target$.\n\n\"I—I'll cooperate properly...\" she says quietly, though her movements are far stiffer than her tone, clearly not fully at ease yet."
+            }
+        }
+    }
+}

@@ -70,11 +70,11 @@
                 "initializers":[
                     {
                         "initClass":"campaign_init_factionInventory",
-                        "initArguments":["Utnapishtim", "consumable_emergency_ration", "", "5"]
+                        "initArguments":["", "consumable_emergency_ration", "", "5"]
                     },
                     {
                         "initClass":"campaign_init_factionInventory",
-                        "initArguments":["Utnapishtim", "currency_JPY", "", "10000"]
+                        "initArguments":["", "currency_JPY", "", "50000"]
                     }
                 ],
                 "activeHoursStart": 7,

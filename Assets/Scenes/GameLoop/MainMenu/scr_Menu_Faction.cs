@@ -56,47 +56,43 @@ public class scr_Menu_Faction : MonoBehaviour
     {
         //if (scr_UpdateHandler.current.Updating && !scr_UpdateHandler.current.isLastUpdate()) return;
         //Debug.Log("CAMPAIGNMANAGER NOTIFY UPDATE -> refreshFaction");
-        var targetFactionList = scr_System_CampaignManager.current.Player.FactionManager.ManagerFactions;
+        var currentroom = scr_System_CampaignManager.current.CurrentRoom;
+        var targetFaction = currentroom?.FactionOwner?.FactionOwnerRoot;
 
-        if (targetFactionList.Count < 1)
+        if (targetFaction == null)
         {
             //Debug.Log("Null faction skipping update");
             return;
         }
+
+        factionName.text = targetFaction.FactionDisplayName;
+
+        bool isPlayerManaged = targetFaction.isPlayerFaction;
+
+        if (isPlayerManaged)
+        {
+            Dictionary<string, int> costChara = targetFaction.GetMaintenanceCost_Chara();
+
+            List<string> s_chara = new List<string>();
+            foreach (KeyValuePair<string, int> kvp in costChara)
+            {
+                s_chara.Add($"{GetTagString(kvp.Key)} {kvp.Value.ToString("+0;-#")}");
+            }
+            string extraTooltip = factionPopTooltip.Replace("$costs$", String.Join(" | ", s_chara));
+            factionPopulation.SetExternalTooltip(extraTooltip);
+
+            List<string> values = new List<string>();
+            FactionUtility.ParseMaintenanceCost(values, targetFaction.GetMaintenanceCost_Total);
+            factionResources.gameObject.SetActive(true);
+            factionResources.text = factionRes.Replace("$resources$", String.Join(" | ", values));
+        }
         else
         {
-            string s = "";
-            foreach (var i in targetFactionList) s += i.FactionDisplayName + " | ";
-            //Debug.Log("FactionMenu Refresh: "+s);
+            factionPopulation.SetExternalTooltip("");
+            factionResources.gameObject.SetActive(false);
         }
-
-        var targetFaction = targetFactionList[0];
-        factionName.text = targetFaction.FactionDisplayName;
-        
-        Dictionary<string, int> costChara = targetFaction.GetMaintenanceCost_Chara();
-
-        List<string> s_chara = new List<string>();
-        foreach(KeyValuePair<string,int> kvp in costChara)
-        {
-            s_chara.Add($"{GetTagString(kvp.Key)} {kvp.Value.ToString("+0;-#")}");
-        }
-        List<string> s_order = new List<string>();
-
-        foreach(KeyValuePair<Item_Base, int> kvp in targetFaction.GetMaintenanceCost_Orders)
-        {
-            if (kvp.Value >= 0) continue;
-            s_order.Add(kvp.Key.displayName + " " + kvp.Value.ToString("+0;-#"));
-        }
-        string extraTooltip = factionPopTooltip.Replace("$costs$", String.Join(" | ", s_chara));
 
         factionPopulation.SetText(factionPop.Replace("$population$", targetFaction.ManagedChara.Count.ToString()));
-        factionPopulation.SetExternalTooltip(extraTooltip);
-
-        List<string> values = new List<string>();
-
-        Dictionary<Item_Base, int> costOrder = targetFaction.GetMaintenanceCost_Orders_Current;
-
-        FactionUtility.ParseMaintenanceCost(values, targetFaction.GetMaintenanceCost_Total);
 
         currentHour = scr_System_Time.current.getCurrentTime().Hour;
         player = scr_System_CampaignManager.current.Player;
@@ -124,13 +120,9 @@ public class scr_Menu_Faction : MonoBehaviour
             }
         }
 
-        //foreach (KeyValuePair<string, int> kvp in targetFaction.GetMaintenanceCost_Total) values.Add(kvp.Key + kvp.Value.ToString("+0;-#"));
-        factionResources.text = factionRes.Replace("$resources$", String.Join(" | ", values));  // targetFaction.GetMaintenanceCost_Total
-
         previousHour = currentHour;
         previousFaction = targetFaction;
 
-        var currentroom = scr_System_CampaignManager.current.CurrentRoom;
         if (currentroom == null || !currentroom.HasRecording) isRecording.gameObject.SetActive(false);
         else isRecording.gameObject.SetActive(true);
     }

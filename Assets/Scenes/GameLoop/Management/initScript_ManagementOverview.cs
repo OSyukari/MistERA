@@ -13,6 +13,20 @@ public class initScript_ManagementOverview : MonoBehaviour
     public scr_HoverableText prefab_factionEntry;
     public TMP_Text mealHours;
 
+    public scr_Canvas_Management parent;
+
+    public TMP_InputField nameInputField;
+    bool nameInputFieldStopUpdate = false;
+    public void OnFactionNameChange(string value)
+    {
+        if (nameInputFieldStopUpdate) return;
+        if (this.m != null && this.nameInputField.interactable && m.FactionDisplayName != value)
+        {
+            m.FactionDisplayName = value;
+            parent.UpdateFactionName();
+        }
+    }
+
 
     string factionPop, factionRes, factionPopTooltip, currentlyOutside;
     private void Awake()
@@ -35,6 +49,12 @@ public class initScript_ManagementOverview : MonoBehaviour
         List<string> managers = new List<string>();
         foreach (var i in m.Managers) managers.Add(i.FullName);
         managerNames.text = String.Join(", ", managers);
+
+        nameInputFieldStopUpdate = true;
+        nameInputField.text = m.FactionDisplayName;
+        nameInputField.interactable = m.isManager(scr_System_CampaignManager.current.Player.RefID);
+        nameInputFieldStopUpdate = false;
+
 
         // -----------------print daily report
         var report = m.DailyReport;

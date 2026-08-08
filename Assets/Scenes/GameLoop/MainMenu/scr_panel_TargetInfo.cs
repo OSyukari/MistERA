@@ -12,7 +12,7 @@ public class scr_panel_TargetInfo : scr_Menu
     public RectTransform parentBox1, parentBox2, parentBox3;
 
     public scr_HoverableText hp, mp, st, en;
-    public TextMeshProUGUI fullname;
+    public scr_HoverableText fullname;
 
     public scr_HoverableText prideBox, corruptBox, despairBox;
     public scr_HoverableText attitudeBox, obedienceBox;
@@ -86,7 +86,8 @@ public class scr_panel_TargetInfo : scr_Menu
             //self_canvasGroup.alpha = 1;
             self_canvasGroup.gameObject.SetActive(true);
 
-            fullname.text = chara.FullName+(chara.FactionManager.CurrentlyActiveFaction == null ? "" : ", "+chara.FactionManager.CurrentlyActiveFactionStatus);
+            fullname.SetText(chara.FullName+(chara.FactionManager.CurrentlyActiveFaction == null ? "" : ", "+chara.FactionManager.CurrentlyActiveFaction.GetCharaSocialStandingName(chara)));
+            fullname.SetExternalTooltip(chara.FactionManager.CurrentlyActiveFaction == null ? "" : chara.FactionManager.CurrentlyActiveFaction.GetCharaSocialStandingTooltip(chara));
 
             if(chara.Stats.HP != null) chara.Stats.HP.Draw(hp);
             else this.hp.SetText(" - ");

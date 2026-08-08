@@ -107,7 +107,9 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         if (!isActive) return;
         if (eventData.rawPointerPress == null) return;
         if (eventData.rawPointerPress.GetComponent<scr_ScheduleBox>() == null) return;
+
         if (eventData.button != PointerEventData.InputButton.Left) return;
+
         // replay the mode decided at press time - never recompute, or a drag revisiting this box
         // would flip it back instead of leaving it in the state the gesture intended.
         ApplyClickMode(parent.CurrentScheduleClickMode);
@@ -118,6 +120,8 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
         if (!isActive) return;
         if (c == null) return;
         if (!canOverride) return;
+
+        if (eventData.button != PointerEventData.InputButton.Left) return;
 
         // decide the mode exactly once per gesture, from this box's state at press time
         var mode = parent.CurrentScheduleOption == null ? ScheduleClickMode.Erase
@@ -130,6 +134,7 @@ public class scr_ScheduleBox : MonoBehaviour, IPointerEnterHandler, IPointerDown
     {
         // if this gesture never got past OnPointerDown's guards above, mode is still None - nothing to resync
         if (parent.CurrentScheduleClickMode == ScheduleClickMode.None) return;
+
         parent.CurrentScheduleClickMode = ScheduleClickMode.None;
         parent.NotifyScheduleChanged();
     }

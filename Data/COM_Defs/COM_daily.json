@@ -388,7 +388,7 @@
                 "com_interaction_talk_begin_3_topic": "$doer.firstname$随意地和$receiver.firstname$聊着$topic$",
                 "com_interaction_talk_displayName_1": "闲聊",
                 "com_interaction_talk_displayName_1_topic": "聊$topic$",
-                "com_interaction_talk_displayName_2": "大家一起闲聊$topic$",
+                "com_interaction_talk_displayName_2": "大家一起闲聊",
                 "com_interaction_talk_displayName_2_topic": "大家一起聊$topic$",
                 "com_interaction_talk_description_ongoing_1": "$doer.firstname$正在与$receiver.firstname$交谈",
 

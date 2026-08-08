@@ -17,7 +17,7 @@
             "initID": "init_erav_player",
             "Homefaction": {
                 "factionID": "ErAV_miyama_Household",
-                "guestStatus": "membertype_manager",
+                "guestStatus": "membertype_family_leader",
                 "spawnFloorID": "house_floor_4ldk",
                 "spawnRoomID": "4ldk_floor_2L_roomsingle2",
                 "setRoomOwnership": true
@@ -31,7 +31,8 @@
             "ErAV_Kiryu_Household":"ErAV_Kiryu_Household",
             "ErAV_KiryuGumi_Office":"ErAV_KiryuGumi_Office",
             "jp_shopping_street":"jp_shopping_street",
-            "jp_high_school":"jp_high_school"
+            "jp_high_school":"jp_high_school",
+            "CoffinAnL_Household":"CoffinAnL_Household"
         },
         "doors":
         [
@@ -202,13 +203,52 @@
                 "actorBaseID":"ErAV_Kanade",
                 "Homefaction": {
                     "factionID": "ErAV_miyama_Household",
-                    "guestStatus": "membertype_member",
+                    "guestStatus": "membertype_family_member",
                     "spawnFloorID": "house_floor_4ldk",
                     "spawnRoomID": "4ldk_floor_2L_roomsingle1",
                     "setRoomOwnership": true
                 },
                 "TempHomefaction":null,
                 "Workfactions":[{ "factionID":"jp_high_school", "guestStatus":"membertype_jp_high_school_student" }]
+            },
+            {
+                "initID":"init_jitaku_shouko",
+                "actorBaseID":"Jitaku_Shouko",
+                "Homefaction": {
+                    "factionID": "Katsuragi_Household",
+                    "guestStatus": "membertype_family_leader",
+                    "spawnFloorID": "house_floor_4ldk",
+                    "spawnRoomID": "4ldk_floor_2L_roomdouble",
+                    "setRoomOwnership": true
+                },
+                "TempHomefaction":null,
+                "Workfactions":[]
+            },
+            {
+                "initID":"init_jitaku_sayaka",
+                "actorBaseID":"Jitaku_Sayaka",
+                "Homefaction": {
+                    "factionID": "Katsuragi_Household",
+                    "guestStatus": "membertype_family_member",
+                    "spawnFloorID": "house_floor_4ldk",
+                    "spawnRoomID": "4ldk_floor_2L_roomsingle2",
+                    "setRoomOwnership": true
+                },
+                "TempHomefaction":null,
+                "Workfactions":[]
+            },
+            {
+                "initID":"init_jitaku_yuki",
+                "actorBaseID":"Jitaku_Yuki",
+                "Homefaction": {
+                    "factionID": "Katsuragi_Household",
+                    "guestStatus": "membertype_family_member",
+                    "spawnFloorID": "house_floor_4ldk",
+                    "spawnRoomID": "4ldk_floor_2L_roomsingle1",
+                    "setRoomOwnership": true
+                },
+                "TempHomefaction":null,
+                "Workfactions":[]
             }
         ]
     }

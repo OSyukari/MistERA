@@ -14,18 +14,6 @@
                         "nameOverwrite":"Katsuragi_Household_Home",
                         "Additional":[
                             {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"4ldk_floor_2L_roomsingle1", "charaBaseID": [ "Jitaku_Yuki" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"4ldk_floor_2L_roomsingle2", "charaBaseID": [ "Jitaku_Sayaka" ] }
-                            },
-                            {
-                                "addClass":"map_init_placeChara",
-                                "map_init_placeChara":{ "roomID":"4ldk_floor_2L_roomdouble", "charaBaseID": [ "Jitaku_Shouko" ] }
-                            },
-                            {
                                 "addClass":"map_init_playerLocation",
                                 "map_init_playerLocation":{ "roomID":"4ldk_floor_1L_room" }
                             }

@@ -160,6 +160,125 @@
     ]
     },
     "MapPlans":{
+        "memberTypes":[
+            {
+                "ID":"membertype_ba_teacher",
+                "socialStandingKey":"management_faction_socialStatus_ba_teacher",
+                "isMember":true,
+                "isPrisoner":false,
+                "isManager":true,
+                "isHidden":false,
+                "canBeTransferred":true,
+                "canBeLiberated":false,
+                "canBeRescued":false,
+                "skipsJobDispatch":false,
+                "isPurgedOnPartyCleanup":false,
+                "isDisplayableInFactionUI":true,
+                "participatesInCombat":true
+            },
+            {
+                "_comment":"Regular (non-manager) GSC member - see membertype_ba_student_gsc_leader for the manager-privileged variant. Both fall under the shared membertype_ba_student relationshipFallbackID group for relationship purposes.",
+                "ID":"membertype_ba_student_gsc",
+                "socialStandingKey":"management_faction_socialStatus_ba_student",
+                "relationshipFallbackID":"membertype_ba_student",
+                "isMember":true,
+                "isPrisoner":false,
+                "isManager":false,
+                "isHidden":false,
+                "canBeTransferred":true,
+                "canBeLiberated":false,
+                "canBeRescued":false,
+                "skipsJobDispatch":false,
+                "isPurgedOnPartyCleanup":false,
+                "isDisplayableInFactionUI":true,
+                "participatesInCombat":true
+            },
+            {
+                "_comment":"Manager-privileged GSC variant (e.g. council president) - only assigned to specific GSC characters (Rin), not GSC members in general.",
+                "ID":"membertype_ba_student_gsc_leader",
+                "socialStandingKey":"management_faction_socialStatus_ba_student",
+                "relationshipFallbackID":"membertype_ba_student",
+                "isMember":true,
+                "isPrisoner":false,
+                "isManager":true,
+                "isHidden":false,
+                "canBeTransferred":true,
+                "canBeLiberated":false,
+                "canBeRescued":false,
+                "skipsJobDispatch":false,
+                "isPurgedOnPartyCleanup":false,
+                "isDisplayableInFactionUI":true,
+                "participatesInCombat":true
+            },
+            {
+                "ID":"membertype_ba_student_abydos",
+                "socialStandingKey":"management_faction_socialStatus_ba_student",
+                "relationshipFallbackID":"membertype_ba_student",
+                "isMember":true,
+                "isPrisoner":false,
+                "isManager":false,
+                "isHidden":false,
+                "canBeTransferred":true,
+                "canBeLiberated":false,
+                "canBeRescued":false,
+                "skipsJobDispatch":false,
+                "isPurgedOnPartyCleanup":false,
+                "isDisplayableInFactionUI":true,
+                "participatesInCombat":true
+            },
+            {
+                "ID":"membertype_ba_student_gehenna",
+                "socialStandingKey":"management_faction_socialStatus_ba_student",
+                "relationshipFallbackID":"membertype_ba_student",
+                "isMember":true,
+                "isPrisoner":false,
+                "isManager":false,
+                "isHidden":false,
+                "canBeTransferred":true,
+                "canBeLiberated":false,
+                "canBeRescued":false,
+                "skipsJobDispatch":false,
+                "isPurgedOnPartyCleanup":false,
+                "isDisplayableInFactionUI":true,
+                "participatesInCombat":true
+            },
+            {
+                "ID":"membertype_ba_student_trinity",
+                "socialStandingKey":"management_faction_socialStatus_ba_student",
+                "relationshipFallbackID":"membertype_ba_student",
+                "isMember":true,
+                "isPrisoner":false,
+                "isManager":false,
+                "isHidden":false,
+                "canBeTransferred":true,
+                "canBeLiberated":false,
+                "canBeRescued":false,
+                "skipsJobDispatch":false,
+                "isPurgedOnPartyCleanup":false,
+                "isDisplayableInFactionUI":true,
+                "participatesInCombat":true
+            },
+            {
+                "ID":"membertype_ba_student_millenium",
+                "socialStandingKey":"management_faction_socialStatus_ba_student",
+                "relationshipFallbackID":"membertype_ba_student",
+                "isMember":true,
+                "isPrisoner":false,
+                "isManager":false,
+                "isHidden":false,
+                "canBeTransferred":true,
+                "canBeLiberated":false,
+                "canBeRescued":false,
+                "skipsJobDispatch":false,
+                "isPurgedOnPartyCleanup":false,
+                "isDisplayableInFactionUI":true,
+                "participatesInCombat":true
+            }
+        ],
+        "memberRelations":[
+            { "memberTypeA":"membertype_ba_teacher", "memberTypeB":"membertype_ba_student", "relationshipID":"relationship_ba_teacher_student" },
+            { "memberTypeA":"membertype_ba_student", "memberTypeB":"membertype_ba_student", "relationshipID":"relationship_ba_studentmates" }
+        ],
         "worldInit":
         [
 {
@@ -174,6 +293,16 @@
     "travelDistancePerMinute":6.67,
 
     "playerInitLocationFaction":"Utnapishtim",
+    "playerInit": {
+        "initID": "init_utnapishtim_sensei",
+        "Homefaction": {
+            "factionID": "Utnapishtim",
+            "guestStatus": "membertype_ba_teacher",
+            "spawnFloorID": "floor_stockasset_lounge2",
+            "spawnRoomID": "lounge2_exec_suite_1",
+            "setRoomOwnership": true
+        }
+    },
     "initializeFactions":
     {
         "Utnapishtim":"Utnapishtim"
@@ -185,63 +314,63 @@
         {
             "initID":"init_utnapishtim_ako",
             "actorBaseID":"Campaign1_Char_Ako",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite1", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_gehenna", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite1", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_ayane",
             "actorBaseID":"Campaign1_Char_Ayane",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite2", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_abydos", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite2", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_hanako",
             "actorBaseID":"Campaign1_Char_Hanako",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite3", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_trinity", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite3", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_kayoko",
             "actorBaseID":"Campaign1_Char_Kayoko",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite4", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_gehenna", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite4", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_ayumu",
             "actorBaseID":"Campaign1_Char_Ayumu",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite5", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_gsc", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite5", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_momoka",
             "actorBaseID":"Campaign1_Char_Momoka",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite6", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_gsc", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite6", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_himari",
             "actorBaseID":"Campaign1_Char_Himari",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite7", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_millenium", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite7", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_yuuka",
             "actorBaseID":"Campaign1_Char_Yuuka",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite8", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_millenium", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_singlesuite8", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         },
         {
             "initID":"init_utnapishtim_rin",
             "actorBaseID":"Campaign1_Char_Rin",
-            "Homefaction": { "factionID":"Utnapishtim", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_exec_suite_2", "setRoomOwnership":true },
+            "Homefaction": { "factionID":"Utnapishtim", "guestStatus":"membertype_ba_student_gsc_leader", "spawnFloorID":"floor_stockasset_lounge2", "spawnRoomID":"lounge2_exec_suite_2", "setRoomOwnership":true },
             "TempHomefaction":null,
             "Workfactions":[]
         }
@@ -292,12 +421,7 @@
                     {
                         "ID":"floor_stockasset_lounge2",
                         "nameOverwrite":"campaign1_map_utnapishtim_living",
-                        "Additional":[
-                            {
-                                "addClass":"map_init_playerLocation",
-                                "map_init_playerLocation":{ "roomID":"lounge2_exec_suite_1" }
-                            }
-                        ]
+                        "Additional":[]
                     },
                     {
                         "ID":"floor_stockasset_hydroponics",
@@ -351,7 +475,6 @@
                 "salesInventory":[
                     { "matchByID":"consumable_10pulls_ticket", "itemCount":1 }
                  ],
-                "managerBaseIDs":["Campaign1_Sensei_Template"],
                 "workHours":[
                     { "charaBaseID":"Campaign1_Char_Ako", "startHour":8,"endHour":11,"comID":"com_job_cleaning" },
                     { "charaBaseID":"Campaign1_Char_Ako", "startHour":13,"endHour":18,"comID":"com_job_cleaning" },

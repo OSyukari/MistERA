@@ -23,11 +23,20 @@ public class PersonalityAcceptanceMod
     public class RequireActionPackage_Quick
     {
         public string targetComID = "";
+
+        // COM.comTags match: requireComTags_Any passes if any listed tag is present, requireComTags_All
+        // passes only if every listed tag is present. Both are optional (empty list = no restriction).
+        public List<string> requireComTags_Any = new List<string>();
+        public List<string> requireComTags_All = new List<string>();
+
         public bool isDoer = false;
 
         public bool Validate(Character_Trainable self, EvaluationPackage ep)
         {
             if (targetComID != "" && (ep.targetCOM == null || ep.targetCOM.ID != targetComID)) return false;
+            var comTags = ep.targetCOM == null ? null : ep.targetCOM.comTags;
+            if (!Utility.ListContainsLoose(comTags, requireComTags_Any)) return false;
+            if (!Utility.ListContainsStrict(comTags, requireComTags_All)) return false;
             if (ep.isDoer(self) != isDoer) return false;
             return true;
         }

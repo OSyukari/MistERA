@@ -57,7 +57,11 @@ public class initScript_basicInfo : MonoBehaviour
         }
         race.SetText(chara.Race.DisplayName, false, chara.Race.ID + "_tooltip");
         raceTemplate.SetText(chara.RaceTemplate.DisplayName, false, chara.RaceTemplate.ID+"_tooltip");
+
+
         factionStatus.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);
+        factionStatus.SetExternalTooltip(chara.FactionManager.CurrentlyActiveFactionTooltip);
+
 
         UI_Utility.Draw(chara.Stats.Strength, this.stat_str);
         UI_Utility.Draw(chara.Stats.Constitution, this.stat_con);

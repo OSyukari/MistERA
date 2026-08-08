@@ -10,7 +10,7 @@
                 "setPrivateRoomOwner": false,
                 "mainExit": { "roomID": "erav_kiryu_filmstudio_lounge", "exitCost": 5 },
                 "floors": [
-                    { "ID": "erav_kiryu_filmstudio", "nameOverwrite": "ErAV_KiryuGumi_Filmstudio" }
+                    { "ID": "erav_kiryu_filmstudio", "nameOverwrite": "erav_kiryu_film_studio" }
                 ],
                 "floorDoors": [
                     {
@@ -49,6 +49,12 @@
                         "offsetX": 165,
                         "offsetY": 340,
                         "connects": [],
+                        "furnitureIDs": [
+                            "furniture_sofa_3",
+                            "furniture_sofa_1",
+                            "furniture_round_table_4",
+                            "furniture_TV_flatscreen"
+                        ],
                         "roomImagePath": "BGAssets/Generated/office_lounge_07.webp"
                     },
                     {
@@ -69,7 +75,13 @@
                         "connects": [
                             { "ID": "erav_kiryu_filmstudio_hallway", "cost": 1.0 }
                         ],
-                        "furnitureIDs": [],
+                        "furnitureIDs": [
+                            "furniture_table_1_chair_1",
+                            "furniture_table_1_chair_1",
+                            "furniture_table_1_chair_1",
+                            "furniture_sofa_1",
+                            "furniture_toilet_shower_set"
+                        ],
                         "roomImagePath": "BGAssets/Generated/office_interior_06.webp"
                     },
                     {
@@ -80,7 +92,9 @@
                         "connects": [
                             { "ID": "erav_kiryu_filmstudio_hallway", "cost": 1.0 }
                         ],
-                        "furnitureIDs": [],
+                        "furnitureIDs": [
+                            "furniture_computer_terminal"
+                        ],
                         "roomImagePath": "BGAssets/Generated/office_cafeteria_01.webp"
                     },
                     {
@@ -104,6 +118,13 @@
                         "offsetY": 152,
                         "connects": [
                             { "ID": "erav_kiryu_filmstudio_lounge", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": [
+                            "furniture_bed_queen",
+                            "furniture_sofa_1",
+                            "furniture_TV_flatscreen",
+                            "furniture_shower",
+                            "furniture_bathroom_set"
                         ],
                         "roomImagePath": "BGAssets/Generated/office_lounge_07.webp"
                     }
@@ -145,19 +166,58 @@
                     "activeHours":[10,11,12,13,14,15,16,17,18,19],
                     "activeDays":[1,1,1,1,1,1,1]
                 },
-                "portraitTags":[  ]
+                "portraitTags":[  ],
+                "AcceptanceMods": [
+                    {
+                        "SelfReq": { "requireConscious": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "unsafe", "sex"], "isDoer": false },
+                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 10 }
+                    },
+                    {
+                        "SelfReq": { "requireConscious": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "service"], "isDoer": false },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason" }
+                    },
+                    {
+                        "SelfReq": { "requireConscious": true },
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_initiateSex", "isDoer": false },
+                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_initiateSex_erAV" }
+                    },
+                    {
+                        "SelfReq": { "requireConscious": true },
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_endOngoingSex", "isDoer": false },
+                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_endOngoingSex_erAV" }
+                    },
+                    {
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_partyInvite", "isDoer": false },
+                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_partyinvite_accept_reason" }
+                    }
+                ]
             }
+        ],
+        "memberRelations": [
+            { "memberTypeA": "membertype_erav_kiryu_filmstudio_director", "memberTypeB": "membertype_erav_kiryu_filmstudio_actor", "relationshipID": "relationship_erav_filmstudio_director_actor" },
+            { "memberTypeA": "membertype_erav_kiryu_filmstudio_actor", "memberTypeB": "membertype_erav_kiryu_filmstudio_actor", "relationshipID": "relationship_erav_filmstudio_actor_actor" }
         ]
     },
 
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "ErAV_KiryuGumi_Filmstudio": "摄影工作室",
+                "ErAV_KiryuGumi_Filmstudio": "宫间映画",
+                "erav_kiryu_film_studio":"摄影工作室",
                 "membertype_erav_kiryu_filmstudio_director":"监督",
-                "membertype_erav_kiryu_filmstudio_actor":"演员"
+                "membertype_erav_kiryu_filmstudio_actor":"演员",
+                "erav_filmstudio_actor_accept_reason": "作为演员的职责",
+                "erav_filmstudio_actor_partyinvite_accept_reason": "与监督同行",
+                "membertype_erav_kiryu_filmstudio_actor_tooltip": "对触摸/情色/性爱类指令的接受度 +10\n作为对象时，不会拒绝触摸与侍奉类指令\n不会拒绝监督的同行请求"
             },
             "en-us": {
+                "erav_filmstudio_actor_accept_reason": "Part of the job as an actor",
+                "membertype_erav_kiryu_filmstudio_actor_tooltip": "+10 acceptance toward touch/unsafe/sex commands\nAs receiver, always accepts touch and service commands\nAlways accepts party invites from the director"
             }
         }
     }

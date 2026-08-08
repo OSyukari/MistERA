@@ -119,6 +119,6 @@
   "nameDisplayFormat": "chara_fullname_lastToFirst",
   "origin": "charOrigin_KivotosStudent",
   "race": "humanRace_human",
-  "raceTemplate": "humanRaceAddon_Kivotos_Millenium",
+  "raceTemplate": "humanRaceAddon_Kivotos_Trinity",
   "startingGift": "charOriginGift_none"
 }

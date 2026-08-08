@@ -194,6 +194,19 @@ public static class CharaReqUtility
                                 .Replace("$tags$", String.Join(" ", q.requireAbsentJobwithCOMTag)));
             return false;
         }
+        if (q.requireMemberType != "")
+        {
+            bool has = q.requireMemberTypeCurrentActive
+                ? (c.FactionManager.CurrentActiveMemberType != null && c.FactionManager.CurrentActiveMemberType.ID == q.requireMemberType)
+                : c.FactionManager.HasMemberTypeInAnyFaction(q.requireMemberType);
+            if (!has)
+            {
+                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMemberType")
+                                    .Replace("$name$", c.FirstName)
+                                    .Replace("$memberType$", q.requireMemberType));
+                return false;
+            }
+        }
         if (q.requireCombat && !c.canFight)
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireCombat")

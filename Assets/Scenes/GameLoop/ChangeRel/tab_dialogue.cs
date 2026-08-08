@@ -107,6 +107,17 @@ public class tab_dialogue : MonoBehaviour
             {
                 valid = true;
                 tooltip = package_cache.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip"));
+
+                if (package_cache.RequestRate * package_cache.ResponseRate == 0)
+                {
+                    valid = false;
+                    tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_tooltip")}";
+                }
+                else if (scr_System_CampaignManager.current.DeterministicRolls && package_cache.RequestRate * package_cache.ResponseRate / 100 < 65)
+                {
+                    valid = false;
+                    tooltip += $"\n{LocalizeDictionary.QueryThenParse("ui_com_disabled_autofailure_deterministicRolls_tooltip")}";
+                }
             }
 
             text.SetText(package_cache.DisplayName);

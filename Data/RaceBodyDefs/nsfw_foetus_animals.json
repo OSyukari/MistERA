@@ -118,7 +118,7 @@
     "parentRaceID": "creature_beastRace_warg",
     "racialTemplate":{
         "offspring_templates":[
-
+            "creature_animal_warg"
         ],
         "duration_fertilized": 432,
         "duration_implanted": 480,

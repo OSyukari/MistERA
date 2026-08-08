@@ -75,6 +75,9 @@
                             { "ID": "erav_kiryu_office_kitchen", "cost": 1.0 }
                         ],
                         "furnitureIDs": [
+                            "furniture_computer_terminal",
+                            "furniture_computer_terminal",
+                            "furniture_computer_terminal",
                             "furniture_computer_terminal"
                         ],
                         "roomImagePath": "BGAssets/Generated/office_interior_06.webp"
@@ -100,7 +103,10 @@
                         "offsetY": 371,
                         "connects": [ ],
                         "furnitureIDs": [
-                            "furniture_bookshelves"
+                            "furniture_bookshelves",
+                            "furniture_cafe_table_2",
+                            "furniture_sofa_1",
+                            "furniture_computer_terminal"
                         ],
                         "roomImagePath": "BGAssets/Generated/office_interior_03.webp"
                     },
@@ -123,6 +129,12 @@
                         "offsetX": 687,
                         "offsetY": 536,
                         "connects": [ ],
+                        "furnitureIDs": [
+                            "furniture_sofa_3",
+                            "furniture_sofa_1",
+                            "furniture_round_table_4",
+                            "furniture_TV_flatscreen"
+                        ],
                         "roomImagePath": "BGAssets/Generated/office_lounge_07.webp"
                     }
                 ]

@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +11,11 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     public List<Floor_Base> floorPlans = new List<Floor_Base>();
     public List<WorldPlan> worldInit = new List<WorldPlan>();
     public List<MemberType> memberTypes = new List<MemberType>();
+
+    // MemberType.GetRelationshipWithType will consult this list and lazily build its cache
+    // though, we do need to make sure the game does not store membertype inside save file, and always have the game use pointer to this object's stored membertypes
+    // also, if there is no memberrelationship applicable, then we store null value so that we dont do the same query next time
+    public List<MemberRelations> memberRelations = new List<MemberRelations>();
 
     public void RegisterAllID(List<string> message)
     {
@@ -45,6 +49,23 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         {
             if (string.IsNullOrEmpty(o.ID)) continue;
             if (!ID_Dictionary_MemberType.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MemberType id [{o.ID}] due to duplicate");
+        }
+
+        message.Add("Index_MemberRelations : registering ID with list length [" + memberRelations.Count + "]");
+
+        foreach (MemberRelations o in this.memberRelations)
+        {
+            if (string.IsNullOrEmpty(o.memberTypeA) || string.IsNullOrEmpty(o.memberTypeB)) continue;
+            string key = $"{o.memberTypeA}||{o.memberTypeB}";
+            if (!ID_Dictionary_MemberRelations.TryAdd(key, o)) Debug.Log($"failed to add Index_MemberRelations pair [{key}] due to duplicate");
+
+            // register the reverse pairing too (unless it's a self-relation) so lookups from either
+            // side are a single dictionary hit - see MemberType.GetRelationshipWithType
+            if (o.memberTypeB != o.memberTypeA)
+            {
+                string reverseKey = $"{o.memberTypeB}||{o.memberTypeA}";
+                if (!ID_Dictionary_MemberRelations.TryAdd(reverseKey, o)) Debug.Log($"failed to add Index_MemberRelations pair [{reverseKey}] due to duplicate");
+            }
         }
     }
     Dictionary<string, MapPlan> ID_Dictionary_Map = new Dictionary<string, MapPlan>();
@@ -113,6 +134,16 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     Dictionary<string, MemberType> ID_Dictionary_MemberType = new Dictionary<string, MemberType>();
     public MemberType GetByID_MemberType(string id) { return ID_Dictionary_MemberType.ContainsKey(id) ? ID_Dictionary_MemberType[id] : null; }
 
+    Dictionary<string, MemberRelations> ID_Dictionary_MemberRelations = new Dictionary<string, MemberRelations>();
+    /// <summary>
+    /// Looks up an authored MemberRelations entry between typeA and typeB, in either direction
+    /// (RegisterAllID registers both orderings) - or null if no relationship is defined for this pair.
+    /// </summary>
+    public MemberRelations GetMemberRelations(string typeA, string typeB)
+    {
+        return ID_Dictionary_MemberRelations.TryGetValue($"{typeA}||{typeB}", out var result) ? result : null;
+    }
+
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Index_MapPlan;
@@ -121,6 +152,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.floorPlans != null) this.floorPlans.AddRange(l.floorPlans);
         if (l.worldInit != null) this.worldInit.AddRange(l.worldInit);
         if (l.memberTypes != null) this.memberTypes.AddRange(l.memberTypes);
+        if (l.memberRelations != null) this.memberRelations.AddRange(l.memberRelations);
     }
     public void OnAfterDeserialize()
     {
@@ -173,6 +205,26 @@ public class MapPlan
     public int activeHoursEnd = 0;
 
     public List<string> managerBaseIDs = new List<string>();
+
+    /// <summary>
+    /// baseID -> MemberType ID. Like managerBaseIDs (promotes an already-managed character found by
+    /// BaseID), but targets an arbitrary MemberType instead of the hardcoded built-in manager - see
+    /// WorldManager.Instantiate, applied right after the managerBaseIDs loop.
+    /// </summary>
+    public Dictionary<string, string> memberTypeOverrideBaseIDs = new Dictionary<string, string>();
+
+    /// <summary>
+    /// baseID -> MemberType ID, like memberTypeOverrideBaseIDs but only applied to whichever listed
+    /// baseID matches the currently active Player (if any) - lets a faction with multiple
+    /// selectable-as-PC characters (e.g. either sibling can be played) promote specifically the one
+    /// actually being played, on top of the uniform baseline memberTypeOverrideBaseIDs already set for
+    /// all of them. Exists because NPCInit.FactionInit.guestStatus on WorldPlan.playerInit does NOT
+    /// work for this case: WorldManager.InitializePlayer skips entirely once the player already has a
+    /// home faction, which is already true here since the player's character is also pre-placed/swept
+    /// into this same faction (e.g. via map_init_placeChara) before playerInit ever runs. Applied after
+    /// memberTypeOverrideBaseIDs, so it overrides that baseline for whichever one is actually PC.
+    /// </summary>
+    public Dictionary<string, string> memberTypeOverrideBaseIDs_PlayerOnly = new Dictionary<string, string>();
     public List<WorkHoursInit> workHours = null;
     public List<WorkModuleInit> workModules = new List<WorkModuleInit>();
 

@@ -109,22 +109,32 @@ public abstract class BodyInternal_Womb
         fertility *= fatherFertilityMult;
         formula += $" * father fertility mult {fatherFertilityMult.ToString("N2")}";
 
+
         if (cum.raceID != source.Owner.Race.ID)
         {
-            fertility *= 0.25f;
-            calcResult = notsamerace;
-            formula += $" * not same race {0.25}";
-
-            var tags_mother = source.Owner.Race.RaceType;
-            if (cum.race != null && cum.race.RaceType.Count > 0 && tags_mother.Count > 0 && Utility.ListContainsLoose(cum.race.RaceType, tags_mother))
+            if (scr_System_CampaignManager.current.DebugMode)
             {
                 // allow minimum
+                formula += $" * DEBUG ignore penalty";
             }
             else
             {
-                formula += $" * not sharing keyword force set to {0}";
+                fertility *= 0.25f;
                 calcResult = notsamerace;
-                fertility = 0;
+                formula += $" * not same race {0.25}";
+
+                var tags_mother = source.Owner.Race.RaceType;
+
+                if (cum.race != null && cum.race.RaceType.Count > 0 && tags_mother.Count > 0 && Utility.ListContainsLoose(cum.race.RaceType, tags_mother))
+                {
+                    // allow minimum
+                }
+                else
+                {
+                    formula += $" * not sharing keyword force set to {0}";
+                    calcResult = notsamerace;
+                    fertility = 0;
+                }
             }
         }
         return (float)fertility;
@@ -235,7 +245,7 @@ public abstract class BodyInternal_Womb
                 //
                 Ovum oldest = ReproductionUtility.GetOldestOvum(this);
                 if (oldest != null && oldest.State <= OvumState.Implanted) oldest = null;
-                bool multiplet = oldest == null ? false : eggs.FindAll(x => x.foetus.images_hash == oldest.foetus.images_hash).Count > 1;
+                bool multiplet = oldest == null ? false : eggs.FindAll(x => x.foetus != null && x.foetus.images_hash == oldest.foetus.images_hash).Count > 1;
                 var image = oldest == null ? "" : oldest.GetImage(multiplet);
                 if (image == "")
                 {
@@ -429,7 +439,7 @@ public abstract class BodyInternal_Womb
                 var selectedcum = Utility.WeightedRandInDict(cumweightdict);
                 if (selectedcum == null || !cumfertdict.ContainsKey(selectedcum)) continue; 
                 float fert = cumfertdict[selectedcum];
-                if (!scr_System_CampaignManager.current.DebugMode) fert *= 0.01f;  // fert chance is in percentage, need to convert
+                //if (!scr_System_CampaignManager.current.DebugMode) fert *= 0.1f;  // fert chance is in percentage, need to convert
                 if (fert <= 0) continue;
                 var randflaot = Utility.NextFloat();
                 Debug.Log($"fert chance roll {randflaot.ToString("N2")} > {fert.ToString("N2")} ? continue : fertilize");

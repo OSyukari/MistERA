@@ -198,7 +198,46 @@
                 "isPurgedOnPartyCleanup": false,
                 "isDisplayableInFactionUI": false,
                 "participatesInCombat": false
+            },
+            {
+                "_comment": "Family household variant of membertype_manager - see memberRelations below for the relationship_family_guardian/relationship_family pairing this enables instead of the generic colleague/subordinate fallback.",
+                "ID": "membertype_family_leader",
+                "displayNameKey": "membertype_family_leader_displayName",
+                "socialStandingKey": "management_faction_socialStatus_family_leader",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": true,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true
+            },
+            {
+                "_comment": "Family household variant of membertype_member - see memberRelations below for the relationship_family_guardian/relationship_family pairing this enables instead of the generic colleague/subordinate fallback.",
+                "ID": "membertype_family_member",
+                "displayNameKey": "membertype_family_member_displayName",
+                "socialStandingKey": "management_faction_socialStatus_family_member",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true
             }
+        ],
+        "memberRelations": [
+            { "memberTypeA": "membertype_family_member", "memberTypeB": "membertype_family_member", "relationshipID": "relationship_family" },
+            { "memberTypeA": "membertype_family_leader", "memberTypeB": "membertype_family_member", "relationshipID": "relationship_family_guardian" },
+            { "memberTypeA": "membertype_family_leader", "memberTypeB": "membertype_family_leader", "relationshipID": "relationship_family" }
         ]
     }
 }

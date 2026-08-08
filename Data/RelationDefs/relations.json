@@ -71,6 +71,50 @@
                 "RelationshipMod":[20,0,0,0,0]
             },
             {
+                "$type":"RelationshipType, Assembly-CSharp",
+                "_comment":"Family household MemberType relationship (membertype_family_member x membertype_family_member, and membertype_family_leader x membertype_family_leader) - see Data/MemberDefs/memberTypes.json memberRelations.",
+
+                "ID":"relationship_family",
+                "displayName":"relationship_family_displayName"
+            },
+            {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+                "_comment":"Family household MemberType relationship (membertype_family_leader x membertype_family_member) - see Data/MemberDefs/memberTypes.json memberRelations.",
+
+                "ID":"relationship_family_guardian",
+                "displayName":"relationship_family_guardian_displayName",
+
+                "relationship_A_to_B":{
+                    "permission":{ "lead_follow":true },
+                    "displayName":"relationship_family_guardian_displayName_A_is_to_B"
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_family_guardian_displayName_B_is_to_A"
+                }
+            },
+            {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+                "_comment":"BA_Utnapishtim teacher/student MemberType relationship (membertype_ba_teacher x the shared membertype_ba_student relationshipFallbackID group) - see Data/FactionDefs/BA_Utnapishtim/Faction.json memberRelations.",
+
+                "ID":"relationship_ba_teacher_student",
+                "displayName":"relationship_ba_teacher_student_displayName",
+
+                "relationship_A_to_B":{
+                    "permission":{ "lead_follow":true },
+                    "displayName":"relationship_ba_teacher_student_displayName_A_is_to_B"
+                },
+                "relationship_B_to_A":{
+                    "displayName":"relationship_ba_teacher_student_displayName_B_is_to_A"
+                }
+            },
+            {
+                "$type":"RelationshipType, Assembly-CSharp",
+                "_comment":"BA_Utnapishtim student/student MemberType relationship (shared membertype_ba_student relationshipFallbackID group x itself) - see Data/FactionDefs/BA_Utnapishtim/Faction.json memberRelations.",
+
+                "ID":"relationship_ba_studentmates",
+                "displayName":"relationship_ba_studentmates_displayName"
+            },
+            {
                 "$type":"RelationshipType_Inequal, Assembly-CSharp",
 
                 "ID":"relationship_subordinate",
@@ -507,6 +551,14 @@
                 "relationship_friend_displayName": "好友",
                 "relationship_bff_displayName": "挚友",
                 "relationship_colleague_displayName": "同僚",
+                "relationship_family_displayName": "家人",
+                "relationship_family_guardian_displayName": "监护",
+                "relationship_family_guardian_displayName_A_is_to_B": "监护人",
+                "relationship_family_guardian_displayName_B_is_to_A": "家人",
+                "relationship_ba_teacher_student_displayName": "师生",
+                "relationship_ba_teacher_student_displayName_A_is_to_B": "老师",
+                "relationship_ba_teacher_student_displayName_B_is_to_A": "学生",
+                "relationship_ba_studentmates_displayName": "同学",
                 "relationship_marriage_displayName": "婚姻",
                 "relationship_marriage_displayName_male": "丈夫",
                 "relationship_marriage_displayName_female": "妻子",
@@ -522,10 +574,10 @@
                 "relationship_parent_displayName": "家人",
                 "relationship_parent_displayName_A_is_to_B": "父母",
                 "relationship_parent_displayName_A_is_to_B_male": "父亲",
-                "relationship_parent_displayName_A_is_to_B_Female": "母亲",
+                "relationship_parent_displayName_A_is_to_B_female": "母亲",
                 "relationship_parent_displayName_B_is_to_A": "子女",
                 "relationship_parent_displayName_B_is_to_A_male": "儿子",
-                "relationship_parent_displayName_B_is_to_A_Female": "女儿",
+                "relationship_parent_displayName_B_is_to_A_female": "女儿",
                 "relationship_sibling_displayName": "家人",
                 "relationship_sibling_displayName_A_is_to_B": "哥哥姐姐",
                 "relationship_sibling_displayName_A_is_to_B_male": "哥哥",
@@ -595,6 +647,14 @@
                 "relationship_friend_displayName": "Friend",
                 "relationship_bff_displayName": "Best Friend",
                 "relationship_colleague_displayName": "Colleague",
+                "relationship_family_displayName": "Family",
+                "relationship_family_guardian_displayName": "Guardianship",
+                "relationship_family_guardian_displayName_A_is_to_B": "Guardian",
+                "relationship_family_guardian_displayName_B_is_to_A": "Family Member",
+                "relationship_ba_teacher_student_displayName": "Teacher-Student",
+                "relationship_ba_teacher_student_displayName_A_is_to_B": "Teacher",
+                "relationship_ba_teacher_student_displayName_B_is_to_A": "Student",
+                "relationship_ba_studentmates_displayName": "Classmate",
                 "relationship_marriage_displayName": "Marriage",
                 "relationship_marriage_displayName_male": "Husband",
                 "relationship_marriage_displayName_female": "Wife",
@@ -610,10 +670,10 @@
                 "relationship_parent_displayName": "Family",
                 "relationship_parent_displayName_A_is_to_B": "Parent",
                 "relationship_parent_displayName_A_is_to_B_male": "Father",
-                "relationship_parent_displayName_A_is_to_B_Female": "Mother",
+                "relationship_parent_displayName_A_is_to_B_female": "Mother",
                 "relationship_parent_displayName_B_is_to_A": "Child",
                 "relationship_parent_displayName_B_is_to_A_male": "Son",
-                "relationship_parent_displayName_B_is_to_A_Female": "Daughter",
+                "relationship_parent_displayName_B_is_to_A_female": "Daughter",
                 "relationship_sibling_displayName": "Family",
                 "relationship_sibling_displayName_A_is_to_B": "Older Sibling",
                 "relationship_sibling_displayName_A_is_to_B_male": "Older Brother",

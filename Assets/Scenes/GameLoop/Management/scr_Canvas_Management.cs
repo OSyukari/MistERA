@@ -17,7 +17,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public TMP_Text production_results;
     public RectTransform inventoryList;
     public TMP_Text chara_warnings;
-    public RectTransform list_factionWork, list_assignCOM, list_CharaNeeds;
 
     public initScript_ManagementOverview overviewScript;
 
@@ -68,14 +67,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         homef = LocalizeDictionary.QueryThenParse("management_faction_home_nameplate");
         workf = LocalizeDictionary.QueryThenParse("management_faction_work_nameplate");
         otherf = LocalizeDictionary.QueryThenParse("management_faction_others_nameplate");
-        charaLocAP = LocalizeDictionary.QueryThenParse("ui_management_jobs_currentInfo");
         this.m_Canvas.overrideSorting = true;
         factions = new List<Manageable>();
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
     }
 
     string homef, workf, otherf;
-    string charaLocAP;
 
     Coroutine co = null;
 
@@ -96,17 +93,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             co = StartCoroutine(loadbg(m.backgroundIMG));
         }
 
-        var player = scr_System_CampaignManager.current.Player;
-        if (player.FactionManager.HomeFactions.Contains(m)) factionName.SetText(homef.Replace("$name$", m.FactionDisplayName), false, "management_faction_home_tooltip");
-        else if (player.FactionManager.WorkFactions.Contains(m)) factionName.SetText(workf.Replace("$name$", m.FactionDisplayName), false, "management_faction_work_tooltip");
-        else factionName.SetText(otherf.Replace("$name$", m.FactionDisplayName));
-
-        factionName.SetExternalTooltip(m.ID);
+        UpdateFactionName();
 
         currentTab = Tab_Overview;
         initialized_faction_overview = false;
         initialized_faction_productions = false;
         initialized_faction_charaList = false;
+
+        ClearProductionAndTradeLists();
 
         foreach (var temp in m.printDebugInfo_RoomOwners())
         {
@@ -115,6 +109,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         Tab_Overview.gameObject.SetActive(true);
         Initialize_FactionOverview();
+        Initialize_FactionProduction();
 
         ValidateAll();
     }
@@ -194,6 +189,20 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         foreach (var trade in currentFaction.TradeOrders) if (!loadTrades_Removal.ContainsKey(trade)) MakeTOButton(trade);
     }
 
+    // RefreshPOList/RefreshTAList only add rows for orders not yet tracked, so switching to a
+    // different faction leaves the previous faction's rows (and their button registrations) behind.
+    // Clear both lists out before rebuilding for the newly selected faction.
+    private void ClearProductionAndTradeLists()
+    {
+        foreach (var order in new List<Manageable.ProductionOrder>(loadOrders_Removal.Keys))
+            DestroyPOMButton(order, loadOrders_Removal[order].ButtonID);
+        Utility.DestroyAllChildrenFrom(list_orders);
+
+        foreach (var trade in new List<Manageable.TradeOrder>(loadTrades_Removal.Keys))
+            DestroyTOMButton(trade, loadTrades_Removal[trade].ButtonID);
+        Utility.DestroyAllChildrenFrom(list_trades);
+    }
+
     private void MakeTOButton(Manageable.TradeOrder order)
     {
         //TODO
@@ -203,7 +212,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         entry.ItemName.SetExternalTooltip(order.Tooltip);
         entry.ItemCount.text = currentFaction.Inventory.GetItemCount(order.Entry.itemID).ToString();
         entry.FactionName.text = order.TargetFaction == currentFaction ? " - " : order.TargetFaction.FactionDisplayName;
-        entry.pricing.text = " - ";
+        entry.pricing.text = order.Cost.Print;
 
 
         RectTransform rect = entry.GetComponent<RectTransform>();
@@ -316,23 +325,25 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     /////// CHARA TAB
 
     public RectTransform Tab_Jobs;
-    public TMP_Text chara_fullname, charaGender, charaGenderSeparator;
-    public scr_HoverableText chara_Race, chara_RaceTemplate;
-    public scr_SelectableText chara_HomeFaction, chara_TempHomeFaction;
-    public TMP_Text chara_location_ap;
-    public RectTransform chara_schedulebox; 
-    public Image chara_scheduleBoxBG;
 
-    public List<RectTransform> chara_scheduleCOMboxes;
-    public RectTransform list_chara, list_prisoner;
-    public scr_SelectableText prefab_charaNameButton;
 
-    private List<Character_Trainable> charaInFaction;
+
+
+    public void RegisterButton(scr_SelectableText comp, int hash, ButtonValidator validator)
+    {
+        comp.optionID = AssertUniqueHash(hash);
+        buttonsByID.Add(comp.optionID, comp);
+        validatorsByID.Add(comp.optionID, comp.Validator);
+    }
+
+
     public Character_Trainable currentChara;
 
     public moveOrderScriptBTN moveBoxScript = null;
 
     public delegate void Initializer();
+
+    public initScript_ManageChara Script_ManageChara;
 
     private bool initialized_faction_charaList = false;
     private void Initialize_FactionCharaList()
@@ -340,30 +351,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         if (initialized_faction_charaList) return;
         else initialized_faction_charaList = true;
 
-        UnloadButton(tempCharaRefIDStorage);
-        Utility.DestroyAllChildrenFrom(list_chara);
-        Utility.DestroyAllChildrenFrom(list_prisoner);
-        tempCharaRefIDStorage.Clear();
-
-        if (currentFaction == null) return;
-
-        charaInFaction = currentFaction.ManagedChara;
-        if (charaInFaction == null || charaInFaction.Count < 1) return;
-
-        SetCurrentChara(scr_System_CampaignManager.current.Player);
-
-        
-        foreach (Character_Trainable chara in currentFaction.ManagedChara_Members)
-        {
-            MakeCharaButton(list_chara, prefab_charaNameButton, chara);
-        }
-        foreach (Character_Trainable chara in currentFaction.ManagedChara_Prisoners)
-        {
-            MakeCharaButton(list_prisoner, prefab_charaNameButton, chara);
-        }
+        Script_ManageChara.Initialize();
 
     }
-    List<int> tempCharaRefIDStorage = new List<int>();
 
     protected override void OnEnable()
     {
@@ -375,31 +365,17 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         base.OnEnable();
     }
 
-    private void MakeCharaButton(RectTransform parent, scr_SelectableText prefab, Character_Trainable chara)
-    {
 
-        scr_SelectableText comp = Instantiate(prefab);
-        RectTransform r = comp.GetComponent<RectTransform>();
-        r.SetParent(parent, false);
-
-
-        comp.Initialize(this, new ButtonValidator_charaSelect(this, comp, chara));
-        comp.SetText(chara.FirstName);
-
-        comp.optionID = AssertUniqueHash( chara.GetHashCode());
-
-        buttonsByID.Add(comp.optionID, comp);
-        validatorsByID.Add(comp.optionID, comp.Validator);
-
-        tempCharaRefIDStorage.Add(comp.optionID);
-
-        comp.Validate();
-    }
 
     public void SetCurrentChara(int charaRef)
     {
-        Character_Trainable c = charaInFaction.Find(x => x.RefID == charaRef);
+        Character_Trainable c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
         if (c != null) SetCurrentChara(c);
+    }
+    public void SetCurrentChara(Character_Trainable c)
+    {
+        currentChara = c;
+        this.Script_ManageChara.SetCurrentChara(c);
     }
 
     I_ScheduleOption currentScheduleOption = null;
@@ -429,112 +405,20 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
 
 
-    public void SetCurrentChara(Character_Trainable c)
-    {
-        // destroy previous
-        Utility.DestroyAllChildrenFrom( list_factionWork);
-        Utility.DestroyAllChildrenFrom( list_CharaNeeds);
 
-        bool safe = scr_System_CentralControl.current.isSafeMode;
-
-        // set current
-        currentChara = c;
-
-        chara_fullname.text = c.FullName;
-        if (safe)
-        {
-            charaGenderSeparator.gameObject.SetActive(false);
-            charaGender.gameObject.SetActive(false);
-        }
-        else
-        {
-            charaGenderSeparator.gameObject.SetActive(true);
-            charaGender.gameObject.SetActive(true);
-            charaGender.SetText(LocalizeDictionary.QueryThenParse(currentChara.Appearance.ToString()));
-
-        }
-        chara_Race.SetText(currentChara.Race.DisplayName, false, currentChara.Race.ID + "_tooltip");
-        chara_RaceTemplate.SetText(currentChara.RaceTemplate.DisplayName, false, currentChara.RaceTemplate.ID + "_tooltip");
-
-        chara_location_ap.SetText(charaLocAP.Replace("$location$", scr_System_CampaignManager.current.Map.FindRoomByChara(currentChara.RefID).DisplayName).Replace("$jobdescription$", currentChara.GetJobDescription()));
-
-        chara_HomeFaction.SetText(currentChara.FactionManager.Faction_Home == null ? " - " : currentChara.FactionManager.Faction_Home.FactionDisplayName);
-        chara_TempHomeFaction.SetText(currentChara.FactionManager.Faction_Home_Temporary == null ? " - " : currentChara.FactionManager.Faction_Home_Temporary.FactionDisplayName);
-
-        scr_System_CampaignManager.current.CurrentTargetEX = c;
-
-        // int currentHour = scr_System_Time.current.getCurrentTime().Hour;
-
-        foreach (Manageable faction in c.FactionManager.WorkFactions)
-        {
-            var newLine = Instantiate(prefab_text_linkbutton);
-            var text = newLine.GetComponent<scr_SelectableText>();
-            text.SetText(faction.FactionDisplayName);
-            var member = faction.GetMemberType(c);
-            var hover = newLine.GetComponent<scr_HoverableText>();
-            bool setDays = false;
-            if (member != null && member.workModule != null && member.workModule.activeDays.Count > 0)
-            {
-                var module = member.workModule;
-                int dayInWeek = scr_System_Time.current.getCurrentDayInWeek();
-                if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) text.Text.color = text.disableColor;// (true,true);
-
-                if (hover != null) {
-                    var count = 0;
-                    List<int> days = new List<int>();
-                    for(int i = 0; i < module.activeDays.Count; i++)
-                    {
-                        if (module.activeDays[i] == 1)
-                        {
-                            count++;
-                            days.Add(i + 1);
-                        }
-                    }
-                    setDays = true;
-                    hover.SetExternalTooltip(LocalizeDictionary.QueryThenParse("ui_management_workfaction_activedays").Replace("$count$", $"{count}").Replace("$list$", String.Join(" ", days)));
-                }
-            }
-            else
-            {
-                text.Text.color = text.baseColor;
-            }
-            if (!setDays && hover != null) hover.SetExternalTooltip(LocalizeDictionary.QueryThenParse("ui_management_workfaction_alwaysActive"));
-            newLine.SetParent(list_factionWork, false);
-        }
-
-        if (c.hasSleepNeed)
-        {
-            var newLine = Instantiate(prefab_text_linkbutton);
-            var text = newLine.GetComponent<scr_SelectableText>();
-            text.showBrackets = false;
-            text.forbidNotify = true;
-            text.SetText("sleep");
-            newLine.SetParent(list_CharaNeeds, false);
-        }
-
-        foreach(var need in c.Stats.Needs)
-        {
-            var newLine = Instantiate(prefab_text_linkbutton);
-            var text = newLine.GetComponent<scr_SelectableText>();
-            text.showBrackets = false;
-            text.forbidNotify = true;
-            text.SetText(need.DisplayName);
-            newLine.SetParent(list_CharaNeeds, false);
-        }
-    }
     protected void RefreshCurrentChara()
     {
-        if (!chara_schedulebox.gameObject.activeInHierarchy) return;
+        if (!Script_ManageChara.chara_schedulebox.gameObject.activeInHierarchy) return;
         List<string> warnings = new List<string>();
         currentChara.FactionManager.ValidateSchedule(ref warnings);
 
         Manageable.Job_Schedule jbsch = currentFaction.GetSchedule(currentChara);
-        if (chara_schedulebox.transform.childCount >= 24 && jbsch != null)
+        if (Script_ManageChara.chara_schedulebox.transform.childCount >= 24 && jbsch != null)
         {
 
             for (int i = 0; i < 24; i++)
             {
-                scr_ScheduleBox box = chara_schedulebox.transform.GetChild(i).GetComponent<scr_ScheduleBox>();
+                scr_ScheduleBox box = Script_ManageChara.chara_schedulebox.transform.GetChild(i).GetComponent<scr_ScheduleBox>();
                 if (box != null)
                 {
                     box.Refresh();
@@ -557,6 +441,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     public scr_menu_AddProductionOrder canvas_AddPO;
     public scr_Menu_AddTrade canvas_AddTR;
+    public scr_AddTransfer canvas_AddTransfer;
 
 
 
@@ -587,10 +472,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     button.Initialize(this, new Button_LoadCanvas_AddPO(this)); break;
                 case 21:    // add trade order
                     button.Initialize(this, new Button_LoadCanvas_AddTR(this)); break;
+                case 22:    // add transfer order
+                    button.Initialize(this, new Button_LoadCanvas_AddTransfer(this)); break;
                 case 31: // chara detail tab
                     button.Initialize(this, new button_CharaDetail(this)); break;
                 case 32: // chara edit schedule
-                    button.Initialize(this, new button_EditSchedule(this, button, chara_schedulebox, chara_scheduleBoxBG, chara_scheduleCOMboxes)); break;
+                    button.Initialize(this, new button_EditSchedule(this, button, Script_ManageChara.chara_schedulebox, Script_ManageChara.chara_scheduleBoxBG, Script_ManageChara.chara_scheduleCOMboxes)); break;
                 case 40:  // add party 
                     button.Initialize(this, new ButtonValidator_partyCreate(this, button)); break;
                 case 41:  // edit party members 
@@ -688,7 +575,16 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         Script_Expeditions.Draw(p, iskidnap, forceRefresh);
     }
 
+    public void UpdateFactionName()
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        var m = this.CurrentFaction;
+        if (player.FactionManager.HomeFactions.Contains(m)) factionName.SetText(homef.Replace("$name$", m.FactionDisplayName), false, "management_faction_home_tooltip");
+        else if (player.FactionManager.WorkFactions.Contains(m)) factionName.SetText(workf.Replace("$name$", m.FactionDisplayName), false, "management_faction_work_tooltip");
+        else factionName.SetText(otherf.Replace("$name$", m.FactionDisplayName));
 
+        factionName.SetExternalTooltip(m.ID);
+    }
     public void UpdatePartyNames()
     {
         foreach(var i in this.validatorsByID)
@@ -743,9 +639,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         // if click outside box
         if ((eventData.rawPointerPress.GetComponent<scr_Canvas_Management>() != null) || (eventData.button == PointerEventData.InputButton.Right && UtilityEX.isClickBelowDragThreshold(eventData)))
         {
-            if (chara_scheduleCOMboxes[0].gameObject.activeInHierarchy)
+            if (Script_ManageChara.chara_scheduleCOMboxes[0].gameObject.activeInHierarchy)
             {
-                (validatorsByID[32] as I_ButtonClickable).OnClickButton();
+                if (this.CurrentScheduleOption != null)
+                {
+                    this.currentScheduleOption = null;
+                    ValidateAll();
+                }
+                else (validatorsByID[32] as I_ButtonClickable).OnClickButton();
             }
             else scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         }
@@ -912,7 +813,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            if (UtilityEX.SHIFT) order.AddCount(100);
+            if (UtilityEX.SHIFT && UtilityEX.CTRL) order.AddCount(1000);
+            else if (UtilityEX.SHIFT) order.AddCount(100);
             else if (UtilityEX.CTRL) order.AddCount(10);
             else order.AddCount(1);
             //text.text = order.Count.ToString();
@@ -970,7 +872,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             //parent.currentFaction.AddProductionOrder(order.Recipe, -1);
-            if (UtilityEX.SHIFT) order.AddCount(-100);
+            if (UtilityEX.SHIFT && UtilityEX.CTRL) order.AddCount(-1000);
+            else if (UtilityEX.SHIFT) order.AddCount(-100);
             else if (UtilityEX.CTRL) order.AddCount(-10);
             else order.AddCount(-1);
 
@@ -989,6 +892,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         Color32 conflictColor;
         string alert_hours, alert_items;
         int buttonID;
+        public int ButtonID { get { return buttonID; } }
         public button_ManageProductionOrder_RemoveCount(scr_Canvas_Management parent, int buttonID, Manageable.ProductionOrder order, TMP_Text warning, scr_prOrderManage parentRect) : base(parent)
         {
             this.parent = parent;
@@ -1096,9 +1000,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             button.Toggle(true, isActive);
             button.Validate();
             foreach (var i in comRects) i.gameObject.SetActive(isActive);
-            for (var i = 0; i < parent.chara_schedulebox.childCount; i++)
+            for (var i = 0; i < parent.Script_ManageChara.chara_schedulebox.childCount; i++)
             {
-                parent.chara_schedulebox.GetChild(i).GetComponent<scr_ScheduleBox>().SetActive(isActive);
+                parent.Script_ManageChara.chara_schedulebox.GetChild(i).GetComponent<scr_ScheduleBox>().SetActive(isActive);
             }
             background.gameObject.SetActive(isActive);
         }
@@ -1123,9 +1027,13 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             this.parent = parent;
             this.button = button;
             this.box = box;
-            box.description.text = "(add default's workhours per day and workday per week info here)";
+            //"(add default's workhours per day and workday per week info here)";
             button.isButtonToggle = true;
+            tooltip_none = LocalizeDictionary.QueryThenParse("management_schedule_box_usedefault_none");
+            tooltip_desc = LocalizeDictionary.QueryThenParse("management_schedule_box_usedefault_tooltip");
         }
+
+        string tooltip_desc, tooltip_none;// = LocalizeDictionary.QueryThenParse("management_schedule_box_usedefault_none");
 
         public override bool IsButtonValid()
         {
@@ -1135,14 +1043,20 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             bool canUseDefault = parent.CurrentFaction.GetMemberType(parent.currentChara).workModule != null
                 && parent.CurrentFaction.GetMemberType(parent.currentChara).workModule.activeHours.Count > 0;
 
+            box.description.text = parent.CurrentFaction == null || parent.currentChara == null ? ""
+                : tooltip_desc
+                .Replace("$workdays$", parent.CurrentFaction.GetWorkDaysPerWeekString(parent.currentChara))
+                .Replace("$workhours$", parent.CurrentFaction.GetWorkHoursPerDayString(parent.currentChara));
+
             if (!canUseDefault)
             {
                 button.Toggle(true, false);
-                tooltip = "no default assignment available";
+                tooltip = tooltip_none;
                 return false;
             }
             else
             {
+                tooltip = "";
                 button.Toggle(true, usingDefault);
                 return true;
             }
@@ -1261,7 +1175,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public button_ScheduleSandbox(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText)
             : base(parent, box, new ScheduleOption_Sandbox())
         {
-            description.text = "character will stay and sandbox";
+            description.text = LocalizeDictionary.QueryThenParse("management_schedule_box_sandbox_tooltip");
 
             buttonText.linkText = "";
             buttonText.SetTextPreInit(LocalizeDictionary.QueryThenParse("management_schedule_box_sandbox"));
@@ -1814,6 +1728,37 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
     }
 
+    public class Button_LoadCanvas_AddTransfer : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Management parent;
+        public Button_LoadCanvas_AddTransfer(scr_Canvas_Management parent) : base(parent)
+        {
+            this.parent = parent;
+            notarget = LocalizeDictionary.QueryThenParse("ui_management_production_addTransfer_nofaction");
+        }
+        string notarget;
+        public override bool IsButtonValid()
+        {
+            if (scr_System_CampaignManager.current.Player.FactionManager.ManagerFactions.Count < 2)
+            {
+                tooltip = notarget;
+                return false;
+            }
+            return parent.canvas_AddTransfer != null;
+        }
+
+        protected void OnChildExit()
+        {
+            this.parent.RefreshTAList();
+        }
+
+        public void OnClickButton()
+        {
+            scr_AddTransfer cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_AddTransfer).GetComponent<scr_AddTransfer>();
+            cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
+        }
+    }
+
 
 
     public class button_ManageTradeOrder_AddCount : ButtonValidator, I_ButtonClickable
@@ -1842,7 +1787,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         public void OnClickButton()
         {
-            if (UtilityEX.SHIFT) order.AddCount(100);
+            if (UtilityEX.SHIFT && UtilityEX.CTRL) order.AddCount(1000);
+            else if (UtilityEX.SHIFT) order.AddCount(100);
             else if (UtilityEX.CTRL) order.AddCount(10);
             else order.AddCount(1);
             //text.text = order.Count.ToString();
@@ -1900,7 +1846,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             //parent.currentFaction.AddProductionOrder(order.Recipe, -1);
-            if (UtilityEX.SHIFT) order.AddCount(-100);
+            if (UtilityEX.SHIFT && UtilityEX.CTRL) order.AddCount(-1000);
+            else if (UtilityEX.SHIFT) order.AddCount(-100);
             else if (UtilityEX.CTRL) order.AddCount(-10);
             else order.AddCount(-1);
 
@@ -1959,6 +1906,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         Color32 conflictColor;
         string alert_hours, alert_items;
         int buttonID;
+        public int ButtonID { get { return buttonID; } }
         public button_ManageTradeOrder_RemoveCount(scr_Canvas_Management parent, int buttonID, Manageable.TradeOrder order, TMP_Text warning, scr_prefabTransactionManage parentRect) : base(parent)
         {
             this.parent = parent;

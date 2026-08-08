@@ -1,0 +1,76 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_endOngoingSex_erAV",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "love",
+                                "happy",
+                                "relaxed",
+                                "affectionate"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1 监督 好感/恋人关系 意犹未尽",
+                            "responses": [
+                                "com_interaction_endOngoingSex_erAV_Warm_1",
+                                "com_interaction_endOngoingSex_erAV_Warm_2",
+                                "com_interaction_endOngoingSex_erAV_Warm_3",
+                                "com_interaction_endOngoingSex_erAV_Warm_4"
+                            ]
+                        },
+                        {
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "relieved",
+                                "professional",
+                                "blush"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2 监督 普通同事关系 收工归位",
+                            "responses": [
+                                "com_interaction_endOngoingSex_erAV_Dutiful_1",
+                                "com_interaction_endOngoingSex_erAV_Dutiful_2",
+                                "com_interaction_endOngoingSex_erAV_Dutiful_3",
+                                "com_interaction_endOngoingSex_erAV_Dutiful_4"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_interaction_endOngoingSex_erAV_Warm_1": "$self$还靠在$target$监督怀里不肯起身，指尖有一下没一下地划着他的胸口。\n\n\"这就结束了？\"她佯装不满地嘟囔，随即又笑了，\"下次监督要是想加练……我随时都在。\"",
+                "com_interaction_endOngoingSex_erAV_Warm_2": "$self$整理衣领的动作停了停，抬头冲$target$眨了眨眼。\n\n\"监督今天的指导，我很满意哦。\"她凑过去在他脸颊边留下一个轻吻，\"下次拍摄，还找我啊？\"",
+                "com_interaction_endOngoingSex_erAV_Warm_3": "$self$靠在监督肩头，呼吸还没完全平复，却已经笑着蹭了蹭他的下巴。\n\n\"要不是还得补妆，我真想再赖一会儿。\"她慢吞吞地系上扣子，眼神里全是舍不得，\"$target$监督，晚点来找我吧。\"",
+                "com_interaction_endOngoingSex_erAV_Warm_4": "$self$任由$target$帮她把散乱的头发别到耳后，满足地眯起眼。\n\n\"跟监督拍戏，每次都感觉特别好。\"她轻声说着，声音里带着毫不掩饰的眷恋，\"是不是……有点太喜欢监督了？\"",
+                "com_interaction_endOngoingSex_erAV_Dutiful_1": "$self$喘匀了气，立刻直起身整理凌乱的衣物，神情重新变得职业化。\n\n\"辛苦了，监督。\"她低声说了句，便转身去补妆，尽量不让自己的窘迫表现出来。",
+                "com_interaction_endOngoingSex_erAV_Dutiful_2": "$self$飞快地扣好扣子，对上$target$的视线时只是礼貌地点点头。\n\n\"这场应该达到要求了吧？\"她的语气刻意维持平稳，转身便去找工作人员确认下一场的安排。",
+                "com_interaction_endOngoingSex_erAV_Dutiful_3": "$self$长舒一口气，从刚才的状态里抽离出来，恢复了平日干练的样子。\n\n\"监督对这条还满意吗？\"她一边理顺呼吸一边问，语气里听不出太多情绪，纯粹只是职业性的确认。",
+                "com_interaction_endOngoingSex_erAV_Dutiful_4": "$self$对$target$微微颔首，随即拉过浴袍裹住自己，动作利落。\n\n\"那我先去休息室了，监督。\"她客气地说了句，脚步却比语气快了几分，明显还没完全从刚才的紧张里缓过来。"
+            },
+            "en-us": {
+                "com_interaction_endOngoingSex_erAV_Warm_1": "$self$ still lingers in Director $target$'s arms, refusing to get up, her fingers idly tracing his chest.\n\n\"Done already?\" she mock-pouts, then breaks into a smile. \"If the director ever wants an extra take... I'm always available.\"",
+                "com_interaction_endOngoingSex_erAV_Warm_2": "$self$ pauses mid-way through fixing her collar and glances up at $target$ with a wink.\n\n\"I was very satisfied with the director's guidance today.\" She leans in to leave a light kiss on his cheek. \"Will you pick me for the next shoot too?\"",
+                "com_interaction_endOngoingSex_erAV_Warm_3": "$self$ leans against the director's shoulder, still catching her breath, but already nuzzling his jaw with a smile.\n\n\"If I didn't still need to fix my makeup, I'd want to stay like this a while longer.\" She does up her buttons slowly, reluctance plain in her eyes. \"Come find me later, Director $target$.\"",
+                "com_interaction_endOngoingSex_erAV_Warm_4": "$self$ lets $target$ tuck a stray strand of hair behind her ear, eyes narrowing in contentment.\n\n\"Filming with you always feels especially good, Director.\" Her voice carries an undisguised fondness. \"...Am I getting a little too attached to you?\"",
+                "com_interaction_endOngoingSex_erAV_Dutiful_1": "$self$ catches her breath and immediately straightens up, tidying her rumpled clothes, her expression turning professional again.\n\n\"Thank you for your work, Director.\" She says it low, then turns to fix her makeup, trying not to let the awkwardness show.",
+                "com_interaction_endOngoingSex_erAV_Dutiful_2": "$self$ does up her buttons quickly, giving only a polite nod when she meets $target$'s eyes.\n\n\"That take should've met the requirements, right?\" She keeps her tone deliberately even, then turns to check with the crew about the next scene.",
+                "com_interaction_endOngoingSex_erAV_Dutiful_3": "$self$ lets out a long breath, stepping out of the moment and back into her usual brisk composure.\n\n\"Were you satisfied with that take, Director?\" she asks while evening out her breathing, her tone giving away little more than routine professionalism.",
+                "com_interaction_endOngoingSex_erAV_Dutiful_4": "$self$ gives $target$ a small nod, then briskly wraps herself in a robe.\n\n\"I'll head to the green room, then, Director.\" She says it courteously, but her steps are a touch faster than her tone, clearly not quite over the nerves yet."
+            }
+        }
+    }
+}

@@ -69,7 +69,6 @@ public class Ovum
         this.father = fertilizer;
 
         var masterlist = scr_System_Serializer.current.MasterList.humanoid_Races;
-        List<string> validtemplates = new List<string>();
 
         var fatherf = masterlist.CollectValidFoetus(father.raceID, father.baseID);
         var fatherops = new List<string>();
@@ -96,26 +95,25 @@ public class Ovum
             }
         }
 
-        var total = fatherops.Count + motherops.Count;
-        if (total < 1)
+        bool fatherEligible = fatherops.Count > 0;
+        bool motherEligible = motherops.Count > 0;
+        if (!fatherEligible && !motherEligible)
         {
             Debug.LogError($"error fertilization failed, father {fatherf != null} {fatherops.Count} mother {motherf != null} {motherops.Count}");
             return;
         }
         foetus = new FoetusTemplates();
-        var diceroll = Utility.Dice(1, fatherops.Count + motherops.Count);
 
-        // random select one
-        if (total <= fatherops.Count)
-        {
-            foetus.MergeWith(fatherf);
-            foetus.offspring_templates = fatherops;
-        }
-        else
-        {
-            foetus.MergeWith(motherf);
-            foetus.offspring_templates = motherops;
-        }
+        // first roll: which parent's race the foetus takes after. 50/50 if both sides have at
+        // least one valid offspring template, otherwise whichever side has options.
+        bool useFather = fatherEligible && motherEligible ? Utility.Dice(1, 2) == 1 : fatherEligible;
+        var chosenSource = useFather ? fatherf : motherf;
+        var chosenOps = useFather ? fatherops : motherops;
+
+        foetus.MergeWith(chosenSource);
+
+        // second roll: which specific template (e.g. male/female variant) within that side.
+        foetus.offspring_templates = new List<string>() { Utility.GetRandomElement(chosenOps) };
 
         State = OvumState.Fertilized;
         this.lifespan = 0;

@@ -21,6 +21,9 @@ public class Result_EvaluationPackage
     public string modifierExplanation = "";
     public int modifierValue = 0;
 
+    // redirect this side's KOJO dialogue lookup to a different event ID (see EvaluationPackage.SetForcedKojoEventID)
+    public string overrideKojoEventID = "";
+
     public void Apply(EvaluationPackage ep, Character_Trainable self, Character_Trainable target)
     {
         bool isDoer = ep.isDoer(self);
@@ -30,5 +33,6 @@ public class Result_EvaluationPackage
         if (overrideResponse != Memory_Response.None) ep.SetForcedResponse(isDoer, overrideResponse, overrideResponseExplanation);
         if (overrideAttitude != Memory_Attitude.None) ep.SetForcedAttitude(isDoer, overrideAttitude);
         if (modifierExplanation != "" && modifierValue != 0) ep.AddAttitudeModifier(isDoer, modifierExplanation, modifierValue);
+        if (overrideKojoEventID != "") ep.SetForcedKojoEventID(isDoer, overrideKojoEventID);
     }
 }

@@ -264,16 +264,20 @@ public class StatusEx_Instance : I_CacheValues
         if (this.BaseRef.variationMode.variationType == StatusEx_Base.Status_Variation_Type.summation)
         {
             storage.Reset();
-            float i = severity;
-            storage.SetBase(i, 1);
+            storage.SetBase(severity, 1);
 
+            // Only the OTHER matching statuses go through the final-override add - severity (this
+            // StatusEx's own base) is already counted via SetBase above, and CalcMods_Final ADDS its
+            // setval on top of the base+entries result rather than replacing it. Folding severity into
+            // this sum too (as before) double-counted it: base(severity) + final(severity + others).
+            float othersSum = 0f;
             _statusScratch.Clear();
             owner.FindStatusByID(BaseRef.variationMode.stringData, _statusScratch);
             foreach (var inst in _statusScratch)
             {
-                i += inst.Severity;
+                othersSum += inst.Severity;
             }
-            storage.SetFinalOverride(i, 1);
+            storage.SetFinalOverride(othersSum, 1);
             // tooltip strings are built lazily in ModString when UI reads them
             _extraTooltipsDirty = true;
             storage.SetExternalTooltip(_extraTooltips);
@@ -328,8 +332,12 @@ public class StatusEx_Instance : I_CacheValues
             owner.GetModifiers(_modScratch, this, BaseRef.statusID);
             if (BaseRef.constant && BaseRef.noDisplay && BaseRef.capModded && owner.Owner.Relationships != null) owner.Owner.Relationships.GetMoodlet(BaseRef.statusID, _modScratch);
 
-            float finalResult = UtilityEX.ParseStatMods(this, storage, _modScratch);
-            storage.SetFinalOverride(finalResult, 1);
+            // ParseStatMods merges each modifier into storage (as normal entries) and returns
+            // storage.Value, which already equals base+entries. Feeding that same total into
+            // SetFinalOverride used to double-count it, since CalcMods_Final ADDS the override on top
+            // of the base+entries result instead of replacing it - the natural Compute() entries sum
+            // (from the Merge() calls below) is already the correct, final total on its own.
+            UtilityEX.ParseStatMods(this, storage, _modScratch);
 
             _cached = true;
         }

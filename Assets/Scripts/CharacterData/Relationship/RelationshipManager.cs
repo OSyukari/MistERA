@@ -634,7 +634,8 @@ public class RelationshipManager
             else injectRel = ep.Doer;
         }
 
-        KojoCollector kol = new KojoCollector(Owner, ep.targetCOM.tooltipID);
+        var overrideEventID = ep.GetForcedKojoEventID(isDoer);
+        KojoCollector kol = new KojoCollector(Owner, string.IsNullOrEmpty(overrideEventID) ? ep.targetCOM.tooltipID : overrideEventID);
         kol.LoadEP(ep, injectRel);
 
         MessageCollect_KojoEntry message = Personality.GetKOJOMessage(kol);
@@ -778,26 +779,18 @@ public class RelationshipManager
         if (chara == null) return null;
         if (chara.RefID < 0) return null;
 
-        var targetBaseID = "";
-        if (chara.RefID == scr_System_CampaignManager.current.Player.RefID)
-        {
-            targetBaseID = "PLAYER";
-            Owner.CallName = "";
-        }
-        else
-        {
-            targetBaseID = chara.BaseID;
-        }
+        bool targetIsPlayer = chara.RefID == scr_System_CampaignManager.current.Player.RefID;
+        var targetBaseID = chara.BaseID;
+        if (targetIsPlayer) Owner.CallName = "";
 
+        presetRelationship template = null;
         if (Owner.Template != null)
         {
-            var template = Owner.Template.initialRelationship.Find(x => x.baseID == targetBaseID);
-            relationships.Add(chara.RefID, new Character_Relationship(this, chara, template));
+            // "PLAYER" is a legacy sentinel some data still uses for the player entry; prefer matching
+            // the real campaign-assigned baseID (set via campaign_init_playerNameIDs) when present.
+            template = Owner.Template.initialRelationship.Find(x => x.baseID == targetBaseID || (targetIsPlayer && x.baseID == "PLAYER"));
         }
-        else
-        {
-            relationships.Add(chara.RefID, new Character_Relationship(this, chara, null));
-        }
+        relationships.Add(chara.RefID, new Character_Relationship(this, chara, template));
 
         var returnValue = relationships[chara.RefID];
 
@@ -817,7 +810,66 @@ public class RelationshipManager
             }
         }
 
+        // Communicate a genuine preset to the other party's own RelationshipManager too, so both sides
+        // agree without needing the pairing separately authored on each character's own
+        // Template.initialRelationship (previously: if only one side defined it, that side alone
+        // "knew" about the relationship). Only fires when Owner actually had a real preset for chara
+        // (not the bare/default case) - see ReceivePropagatedPreset for how the other side only
+        // accepts this if it doesn't already define its own explicit preset for Owner.
+        if (template != null && chara != Owner) chara.Relationships.ReceivePropagatedPreset(Owner, template);
+
         return returnValue;
+    }
+
+    /// <summary>
+    /// True if Owner's own Template explicitly defines a preset relationship with other - used by
+    /// ReceivePropagatedPreset to decide whether an incoming propagated preset should be allowed to
+    /// fill in a relationship, or whether Owner's own explicit authoring takes priority instead.
+    /// </summary>
+    bool HasOwnPreset(Character_Trainable other)
+    {
+        if (Owner.Template == null || other == null) return false;
+        bool otherIsPlayer = other.RefID == scr_System_CampaignManager.current.Player.RefID;
+        return Owner.Template.initialRelationship.Exists(x => x.baseID == other.BaseID || (otherIsPlayer && x.baseID == "PLAYER"));
+    }
+
+    /// <summary>
+    /// Called by the other party's RelationshipManager right after IT applies a genuine preset (from
+    /// its own Template.initialRelationship) for its relationship with Owner - lets both sides agree on
+    /// a directional relationship (e.g. sibling) without requiring it to be authored twice, once on
+    /// each character's Template. presetFromOther describes the relationship from the OTHER party's
+    /// perspective, so isA is flipped for Owner's side of an inequal relationship.
+    /// Skipped if Owner's own Template already defines an explicit preset for other (that always takes
+    /// priority over an incoming propagation) - this only fills a genuine authoring gap. If Owner
+    /// already has a relationship object for other (e.g. created earlier as an empty/default
+    /// placeholder because other's real preset hadn't been discovered yet), only its still-unset
+    /// Bio/Personal slots are filled in - never overwrites an already-set relationship type, and never
+    /// touches accumulated relationship stats (Trust/Fear/etc.) on that existing object.
+    /// </summary>
+    public void ReceivePropagatedPreset(Character_Trainable other, presetRelationship presetFromOther)
+    {
+        if (other == null || other.RefID < 0 || presetFromOther == null) return;
+        if (HasOwnPreset(other)) return;
+
+        var flipped = new presetRelationship
+        {
+            baseID = other.BaseID,
+            initialBiologicalRelationship = presetFromOther.initialBiologicalRelationship,
+            initialBiologicalRelationship_isA = !presetFromOther.initialBiologicalRelationship_isA,
+            initialPersonalRelationship = presetFromOther.initialPersonalRelationship,
+            initialPersonalRelationship_isA = !presetFromOther.initialPersonalRelationship_isA
+        };
+
+        if (relationships.TryGetValue(other.RefID, out var existing))
+        {
+            existing.ApplyPresetIfUnset(flipped);
+        }
+        else
+        {
+            relationships.Add(other.RefID, new Character_Relationship(this, other, flipped));
+            var created = relationships[other.RefID];
+            if (relationships_generic.TryGetValue(created.TargetBaseID, out var generic)) created.MergeWith(generic);
+        }
     }
 
 

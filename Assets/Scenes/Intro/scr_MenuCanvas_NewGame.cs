@@ -47,7 +47,7 @@ public class scr_MenuCanvas_NewGame : scr_Menu
     {
         if (c == null)
         {
-            c = null;
+            this.c = null;
             playerName.SetText(LocalizeDictionary.QueryThenParse(playerNameButton.replaceText));
         }
         else
@@ -175,6 +175,7 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
     protected void SetCurrentCampaign(CampaignSettings c)
     {
+        var prev = currentCampaign;
         currentCampaign = c;
         campaign_name.text = c.DisplayName;
 
@@ -189,7 +190,7 @@ public class scr_MenuCanvas_NewGame : scr_Menu
             campaign_options.text = "-";
             campaign_descriptions.text = c.Tooltip;
 
-            SetPlayerChar(currentCampaign.forbidPCSelect);
+            if (prev != null && prev.forbidPCSelect != currentCampaign.forbidPCSelect) SetPlayerChar(currentCampaign.forbidPCSelect);
         }
         // reset campaign options
         // set campaign text
@@ -197,18 +198,15 @@ public class scr_MenuCanvas_NewGame : scr_Menu
 
     protected void SetCurrentCampaignOption(CampaignSettings_ExtraOptions ex)
     {
+        var prev = currentCampaign_option;
         this.currentCampaign_option = ex;
         campaign_options.text = ex.DisplayName;
 
         campaign_descriptions.text = currentCampaign.Tooltip + "\n\n" + ex.Tooltip;
 
-        if (currentCampaign_option.forbidPCSelect != "")
+        if (prev != null && prev.forbidPCSelect != currentCampaign_option.forbidPCSelect)
         {
             SetPlayerChar(currentCampaign_option.forbidPCSelect);
-        }
-        else if (currentCampaign.forbidPCSelect != "")
-        {
-            SetPlayerChar(currentCampaign.forbidPCSelect);
         }
     }
 

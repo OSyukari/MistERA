@@ -210,6 +210,25 @@ public partial class EvaluationPackage : I_ResultStorage
     [JsonIgnore] public int ResponseRate { get { return responseRate; } }
     [JsonIgnore] public int RequestRate { get { return requestRate; } }
 
+    [JsonIgnore] public int EffectiveRequestRate
+    {
+        get
+        {
+            if (forcedResponse_doer >= Memory_Response.Accept) return 100;
+            if (forcedResponse_doer != Memory_Response.None) return 0;
+            return requestRate;
+        }
+    }
+    [JsonIgnore] public int EffectiveResponseRate
+    {
+        get
+        {
+            if (forcedResponse_receiver >= Memory_Response.Accept) return 100;
+            if (forcedResponse_receiver != Memory_Response.None) return 0;
+            return responseRate;
+        }
+    }
+
     public List<string> GetActorEPTags(int refID)
     {
         if (this.DoerRef == refID) return this.DoerTargetTag;
@@ -1057,6 +1076,19 @@ public partial class EvaluationPackage : I_ResultStorage
         else forcedAttitude_receiver = a;
     }
 
+    string forcedKojoEventID_doer = "", forcedKojoEventID_receiver = "";
+
+    public void SetForcedKojoEventID(bool isDoer, string eventID)
+    {
+        if (isDoer) forcedKojoEventID_doer = eventID;
+        else forcedKojoEventID_receiver = eventID;
+    }
+
+    public string GetForcedKojoEventID(bool isDoer)
+    {
+        return isDoer ? forcedKojoEventID_doer : forcedKojoEventID_receiver;
+    }
+
     public void AddAttitudeModifier(bool isDoer, string explanation, int value)
     {
         if (isDoer)
@@ -1080,7 +1112,7 @@ public partial class EvaluationPackage : I_ResultStorage
         if (_doerAcceptanceMods == null)
         {
             _doerAcceptanceMods = new List<PersonalityAcceptanceMod>();
-            if (Doer != null) Doer.Relationships.Personality.CollectApplicableAcceptanceMods(Doer, true, Receiver, this, ref tooltip, _doerAcceptanceMods);
+            if (Doer != null) Doer.Relationships.Personality.CollectApplicableAcceptanceMods(Doer, true, Receiver, this, ref tooltip, _doerAcceptanceMods, Doer.FactionManager.CurrentActiveMemberType?.AcceptanceMods);
         }
         foreach (var mod in _doerAcceptanceMods) mod.Apply(this, Doer, Receiver);
 
@@ -1089,7 +1121,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (_receiverAcceptanceMods == null)
             {
                 _receiverAcceptanceMods = new List<PersonalityAcceptanceMod>();
-                Receiver.Relationships.Personality.CollectApplicableAcceptanceMods(Receiver, false, Doer, this, ref tooltip, _receiverAcceptanceMods);
+                Receiver.Relationships.Personality.CollectApplicableAcceptanceMods(Receiver, false, Doer, this, ref tooltip, _receiverAcceptanceMods, Receiver.FactionManager.CurrentActiveMemberType?.AcceptanceMods);
             }
             foreach (var mod in _receiverAcceptanceMods) mod.Apply(this, Receiver, Doer);
         }

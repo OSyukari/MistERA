@@ -799,6 +799,13 @@ public class Manageable_Party : I_IsJobGiver
             }
         }
 
+        if (charaGuestStatus.TryGetValue(self, out var selfStatus) && charaGuestStatus.TryGetValue(target, out var targetStatus)
+            && FactionUtility.GetMemberType(selfStatus).GetRelationshipWithType(FactionUtility.GetMemberType(targetStatus), out var dataDrivenRel, out isA))
+        {
+            return dataDrivenRel;
+        }
+        isA = false;
+
         if (isPrisoner(self) && !isPrisoner(target))
         {
             return FactionOwnerRoot.Relationship_Prisoner;

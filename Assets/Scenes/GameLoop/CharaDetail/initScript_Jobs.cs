@@ -6,29 +6,48 @@ using UnityEngine;
 
 public class initScript_Relations : MonoBehaviour
 {
-    public scr_SelectableText homeFaction, homeFactionTemp;
+    public scr_HoverableText homeFaction, homeFactionTemp;
     public TMP_Text charaComment;
     public scr_HoverableText viewHidden;
     public scr_memoryBox prefab_MemoryEntry;
     public scr_memoryDaySplit prefab_DaySplit;
     //public RectTransform workFactionBox, workFactionsPrefab;
-    public TMP_Text workFactionsNameList;
+    public scr_HoverableText workFactionsNone;
+    public RectTransform workFactionsGrid;
     List<RectTransform> listRelationship = new List<RectTransform>();
+
+    void FillFactionRect(scr_HoverableText text, Manageable faction, Character_Trainable c, string extraTooltip)
+    {
+        if (faction == null || c == null) {
+            text.SetText(" - ");
+        }
+        else
+        {
+            text.SetText(faction.GetCharaSocialStandingName(c),false,extraTooltip);
+            text.SetExternalTooltip(faction.GetCharaSocialStandingTooltip(c));
+        }
+        
+    }
+
+    public scr_HoverableText prefab_work;
+    string worktooltip = "management_faction_work_tooltip";
     public void InitializeData(Character_Trainable c, scr_Menu_CharaDetail parent)
     {
         if (c == null) return;
         listRelationship.Clear();
 
-        homeFaction.SetText(c.FactionManager.Faction_Home == null ? " - " : c.FactionManager.Faction_Home.FactionDisplayName);
-        homeFactionTemp.SetText(c.FactionManager.Faction_Home_Temporary == null ? " - " : c.FactionManager.Faction_Home_Temporary.FactionDisplayName);
+        FillFactionRect(homeFaction, c.FactionManager.Faction_Home, c, "management_faction_home_tooltip");
+        FillFactionRect(homeFactionTemp, c.FactionManager.Faction_Home_Temporary, c, "management_faction_home_temporary_tooltip");
 
-
-        string s = "";
+        bool haswork = false;
         foreach (var i in c.FactionManager.WorkFactions)
         {
-            s += i.FactionDisplayName + "  ";
+            haswork = true;
+            var hov = Instantiate(prefab_work);
+            hov.SelfRect.SetParent(workFactionsGrid, false);
+            FillFactionRect(hov, i, c, worktooltip);
         }
-        workFactionsNameList.text = s.Length > 0 ? s : "no work factions";
+        workFactionsNone.gameObject.SetActive(!haswork);
 
         bool safe = scr_System_CentralControl.current.isSafeMode;
 
@@ -98,5 +117,4 @@ public class initScript_Relations : MonoBehaviour
     {
         listRelationship.Clear();
     }
-
 }

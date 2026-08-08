@@ -1377,11 +1377,11 @@ public static class UtilityEX
                         var item = Masterlist_Items.GetByID(parsed[2]);
                         if (item != null && chara != null)
                         {
-                            for (int i = 0; i < addItemCount; i++)
-                            {
+                            //for (int i = 0; i < addItemCount; i++)
+                            //{
                                 var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
                                 chara.Inventory.AddItem(itemInstance);
-                            }
+                            //}
                         }
                     }
                 }
@@ -1395,11 +1395,11 @@ public static class UtilityEX
                         var item = Masterlist_Items.GetByID(parsed[2]);
                         if (item != null && chara != null)
                         {
-                            for (int i = 0; i < addItemCount; i++)
-                            {
+                            //for (int i = 0; i < addItemCount; i++)
+                            //{
                                 var itemInstance = WorldManager.Instantiate(parsed[2], "", addItemCount);
                                 chara.Inventory.AddItem(itemInstance);
-                            }
+                            //}
                         }
                     }
                 }

@@ -36,6 +36,30 @@
                         ]
                     }
                 }
+            },
+            {
+                "$type":"RelationshipType_Inequal, Assembly-CSharp",
+                "_comment": "ErAV Kiryu-gumi film studio director/actor MemberType relationship - see Data/FactionDefs/ErAV/KiryuOffice/ErAV_KiryuGumi_Filmstudio.json memberRelations. Director is dominant (lead_follow), both sides allow intimacy/sex.",
+
+                "ID":"relationship_erav_filmstudio_director_actor",
+                "displayName":"relationship_erav_filmstudio_director_actor_displayName",
+
+                "relationship_A_to_B":{
+                    "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true, "lead_follow":true },
+                    "displayName":"relationship_erav_filmstudio_director_actor_displayName_A_is_to_B"
+                },
+                "relationship_B_to_A":{
+                    "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true },
+                    "displayName":"relationship_erav_filmstudio_director_actor_displayName_B_is_to_A"
+                }
+            },
+            {
+                "$type":"RelationshipType, Assembly-CSharp",
+                "_comment": "ErAV Kiryu-gumi film studio actor/actor MemberType relationship - see Data/FactionDefs/ErAV/KiryuOffice/ErAV_KiryuGumi_Filmstudio.json memberRelations. Equal relationship, both sides allow intimacy/sex.",
+
+                "ID":"relationship_erav_filmstudio_actor_actor",
+                "displayName":"relationship_erav_filmstudio_actor_actor_displayName",
+                "permission":{ "intimacy_low":true, "intimacy_medium":true, "intimacy_high":true }
             }
         ],
         "list_personal":[
@@ -85,7 +109,12 @@
 
                 "relationship_slave_displayName": "奴役",
                 "relationship_slave_displayName_A_is_to_B": "主人",
-                "relationship_slave_displayName_B_is_to_A": "奴隶"
+                "relationship_slave_displayName_B_is_to_A": "奴隶",
+
+                "relationship_erav_filmstudio_director_actor_displayName": "片场关系",
+                "relationship_erav_filmstudio_director_actor_displayName_A_is_to_B": "监督",
+                "relationship_erav_filmstudio_director_actor_displayName_B_is_to_A": "演员",
+                "relationship_erav_filmstudio_actor_actor_displayName": "同僚演员"
             },
             "en-us":
             {
@@ -94,7 +123,12 @@
 
                 "relationship_slave_displayName": "Enslavement",
                 "relationship_slave_displayName_A_is_to_B": "Master",
-                "relationship_slave_displayName_B_is_to_A": "Slave"
+                "relationship_slave_displayName_B_is_to_A": "Slave",
+
+                "relationship_erav_filmstudio_director_actor_displayName": "On-Set Relationship",
+                "relationship_erav_filmstudio_director_actor_displayName_A_is_to_B": "Director",
+                "relationship_erav_filmstudio_director_actor_displayName_B_is_to_A": "Actor",
+                "relationship_erav_filmstudio_actor_actor_displayName": "Fellow Actor"
 
             }
         }

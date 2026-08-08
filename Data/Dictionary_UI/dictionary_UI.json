@@ -25,6 +25,10 @@
 "management_faction_socialStatus_member": "成员",
 "management_faction_socialStatus_visitor": "访客",
 "management_faction_socialStatus_prisoner": "囚犯",
+"management_faction_socialStatus_family_leader": "监护人",
+"management_faction_socialStatus_family_member": "家庭成员",
+"management_faction_socialStatus_ba_teacher": "老师",
+"management_faction_socialStatus_ba_student": "学生",
 "ui_entry_memory_description": "$refused$$ordered_by$$with_targets$$com$$multiple_counts$",
 "ui_entry_memory_description_with_targets": "与$targets$",
 "ui_entry_memory_description_by_targets": "被$targets$",
@@ -272,6 +276,7 @@
 
 "ui_management_workfaction_alwaysActive":"工作制：一周七天",
 "ui_management_workfaction_activedays":"工作制：一周$count$天，$list$",
+"ui_management_workfaction_activehours":"每日工时$count$，$list$",
 
 
 "ui_header_player": "玩家：",
@@ -365,6 +370,7 @@
 "wip_disabled": "(该项目还在施工中)",
 "management_faction_managers_tooltip": "阵营内角色对阵营的好恶会连带影响对管理者的态度",
 "management_faction_managers": "<link=management_faction_managers_tooltip>阵营管理者：</link>",
+"management_faction_name": "阵营名称",
 "management_faction_floors_tooltip": "（施工中）",
 "management_faction_floors": "<link=management_faction_floors_tooltip>阵营领地：</link>",
 "management_faction_others_nameplate": "未分类阵营 - $name$",
@@ -375,7 +381,7 @@
 "management_faction_home_temporary": "<link=management_faction_home_temporary_tooltip>临时家庭阵营</link>",
 "management_faction_home_temporary_tooltip": "同家庭阵营，但优先级高于家庭阵营。负责处理角色暂时脱离家庭阵营的情况（例如外出探险）",
 "management_faction_work": "<link=management_faction_work_tooltip>工作阵营</link>",
-"management_faction_work_tooltip": "（未实装）",
+"management_faction_work_tooltip": "工作阵营不需要满足角色的每日需求，代价是不会因为管理良好而增加成员们的信任\n阵营间的道具收支不互通，要想转移请用【贸易订单】中的【转移道具至...】",
 
 
 "management_faction_activeHours": "<link=management_faction_activeHours_tooltip>活跃时间段：</link>",
@@ -417,6 +423,11 @@
 "ui_management_production_retailTrade":"<link=ui_management_production_retailTrade_tooltip>增加贸易订单（零售）</link>",
 "ui_management_production_retailTrade_tooltip":"贸易订单会根据交易阵营的不同而收取不同的货币\n零售订单会在确认购买时立刻结算，但有购买上限（每日重置）",
 
+"ui_management_production_addTransfer":"<link=ui_management_production_addTransfer_tooltip>转移道具至...</link>",
+"ui_management_production_addTransfer_tooltip":"将该阵营的钱或道具转移至另一个玩家管理的阵营",
+"ui_management_production_addTransfer_nofaction":"没有可转移的对象",
+"ui_management_addTransfer_title":"将道具转移至$name$",
+
 "ui_management_production_retailTrade_confirm":"确认交易",
 "ui_management_production_retailTrade_none":"没有需要结算的订单",
 "ui_management_production_retailTrade_cannotparse":"由于缺乏特定道具，无法成交",
@@ -433,7 +444,7 @@
 "ui_management_production_missingResource": "当前持有的$itemname$小于该订单的需求！",
 
 
-"ui_management_trade_order_typeChange": "可切换该订单的执行次数。\n%%craftCount%%：购买指定数量的道具\n%%craftUntilCount%%：只要当前据点的道具数量低于指定数就会持续购入",
+"ui_management_trade_order_typeChange": "可切换该订单的执行次数。\n%%craftCount%%：购买指定数量的道具\n%%craftUntilCount%%：只要当前据点的道具数量低于指定数就会持续购入\n\n当该订单为 送出 而非 购入时，【%%craftUntilCount%%】的判定目标会改为目标据点而非当前据点",
 "ui_management_production_order_typeChange": "可切换该订单的执行次数。\n%%craftCount%%：执行指定回数的订单生产\n%%craftUntilCount%%：只要当前据点的道具数量低于指定数就会持续生产",
 "craftCount": "单回",
 "craftUntilCount": "持续",
@@ -444,6 +455,10 @@
 "ui_management_production_Trade_pricing": "订单价格",
 "ui_management_production_Trade_stock": "库存量",
 "ui_management_production_Trade_buyCount": "购入量",
+
+"ui_management_production_Trade_Display_straight": "<color=#008000>购入</color> $name$",
+"ui_management_production_Trade_Display_reverse": "<color=#FF2C2C>送出</color> $name$",
+
 "ui_management_production_orderName": "订单内容",
 "ui_management_production_currentlyOwn": "目前持有",
 "ui_management_production_jobkeyword": "工作类别",
@@ -636,8 +651,11 @@
 "management_jobpost_payout_currency":"$count$ $item$",
 "management_jobpost_payout_item":"$item$ x$count$",
 "management_schedule_box_none":"无预定",
-"management_schedule_box_sandbox":"驻守",
+"management_schedule_box_sandbox":"驻留",
+"management_schedule_box_sandbox_tooltip":"角色会留在阵营内自由活动",
 "management_schedule_box_usedefault":"使用默认职位安排",
+"management_schedule_box_usedefault_tooltip":"使用该职位的默认工作安排\n$workdays$\n$workhours$",
+"management_schedule_box_usedefault_none":"该职位没有默认工作安排",
 
 "event_transferItem_gain":"获得了$entry$",
 "event_transferItem_loss":"失去了$entry$",
@@ -654,8 +672,8 @@
 "management_setschedule_jobpost":"",
 "management_setschedule_jobpost_ext":"",
 
-"management_modCount_add":"点击按钮+1\n按住CTRL时+10\n按住SHIFT时+100",
-"management_modCount_sub":"点击按钮-1\n按住CTRL时-10\n按住SHIFT时-100",
+"management_modCount_add":"点击按钮+1\n按住CTRL时+10\n按住SHIFT时+100\n同时按住CTRL和SHIFT时+1000",
+"management_modCount_sub":"点击按钮-1\n按住CTRL时-10\n按住SHIFT时-100\n同时按住CTRL和SHIFT时-1000",
 "management_modCount_remove":"移除",
 
 "msg_manageSuccess":"资源消耗无异常",
@@ -722,6 +740,7 @@
 "ui_ap_CharaReqUtility_requireNotFollowing":"需要$name$当前没有跟随玩家",
 "ui_ap_CharaReqUtility_requireFollowing":"需要$name$当前正跟随玩家",
 "ui_ap_CharaReqUtility_requireTimestopped":"需要$name$当前被时停",
+"ui_ap_CharaReqUtility_requireMemberType":"需要$name$持有职位[$memberType$]",
 
 "ui_ap_PreEvaluate_requireDoer":"指令没有执行者",
 "ui_ap_PreEvaluate_requireCOM":"指令内容缺失",
@@ -780,6 +799,10 @@
 "management_faction_socialStatus_member": "Member",
 "management_faction_socialStatus_visitor": "Visitor",
 "management_faction_socialStatus_prisoner": "Prisoner",
+"management_faction_socialStatus_family_leader": "Guardian",
+"management_faction_socialStatus_family_member": "Family Member",
+"management_faction_socialStatus_ba_teacher": "Teacher",
+"management_faction_socialStatus_ba_student": "Student",
 "ui_entry_memory_description": "$refused$ $ordered_by$ to $com$ $with_targets$ $multiple_counts$",
 "ui_entry_memory_description_with_targets": "with $targets$",
 "ui_entry_memory_description_by_targets": "by $targets$",
@@ -1339,6 +1362,7 @@
 "ui_ap_CharaReqUtility_requireFollowing": "Requires $name$ to be currently following the player",
 "ui_ap_CharaReqUtility_requireNotFollowing": "Requires $name$ to not be following the player",
 "ui_ap_CharaReqUtility_requireTimestopped": "Requires $name$ to be currently time-stopped",
+"ui_ap_CharaReqUtility_requireMemberType": "Requires $name$ to hold the [$memberType$] status",
 "ui_ap_CharaReqUtility_requireUnconscious": "Cannot be executed while $name$ is conscious",
 
 "ui_ap_PreEvaluate_requireDoer":"Command has no performer",

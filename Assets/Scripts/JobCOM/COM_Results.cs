@@ -38,4 +38,6 @@ public class COM_Results
     public List<Result_FactionWide> results_factionWide = null;
 
     public List<Result_Room> results_room = null;
+
+    public Result_Event result_event = null;
 }

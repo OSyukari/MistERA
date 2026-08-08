@@ -32,7 +32,73 @@ using Newtonsoft.Json;
 
 public class MemberType
 {
+
+
+    Dictionary<MemberType, (RelationshipType rel, bool isA)> memberRelationsDict = new Dictionary<MemberType, (RelationshipType rel, bool isA)>();
+
+    /// <summary>
+    /// Looks up the authored RelationshipType between this MemberType and other via
+    /// Index_MapPlan.memberRelations, caching the result (including a "no relationship" miss) so the
+    /// same pair is never queried twice - see Index_MapPlan.GetMemberRelations. Tries the direct
+    /// (this.ID, other.ID) pairing first; if nothing is authored for that exact pair, retries using
+    /// each side's relationshipFallbackID (falling back to its own ID if unset) - see
+    /// relationshipFallbackID for why (e.g. grouping several student MemberTypes under one shared
+    /// relation instead of authoring every combination). isA mirrors Manageable.GetRelationshipBetween's
+    /// contract: true when this (self) resolved to the memberTypeA side of whichever entry matched
+    /// (direct or fallback) - matching the existing convention where self=manager/warden (the dominant
+    /// side) always resolves isA=true, so RelationshipType_Inequal's isB-dependent permissions
+    /// (isB = !isA) correctly hand self the relationship_A_to_B permission set.
+    /// Returns false if no MemberRelations entry exists for this pair (direct or fallback) - callers
+    /// should fall back to their own default logic in that case.
+    /// </summary>
+    public bool GetRelationshipWithType(MemberType other, out RelationshipType rel, out bool isA)
+    {
+        rel = null;
+        isA = false;
+        if (other == null) return false;
+        if (memberRelationsDict.TryGetValue(other, out var cached))
+        {
+            rel = cached.rel;
+            isA = cached.isA;
+            return rel != null;
+        }
+
+        var index = scr_System_Serializer.current.MasterList.MapPlans;
+        string selfKey = this.ID;
+        string otherKey = other.ID;
+        var entry = index.GetMemberRelations(selfKey, otherKey);
+        if (entry == null)
+        {
+            string fallbackSelfKey = string.IsNullOrEmpty(this.relationshipFallbackID) ? this.ID : this.relationshipFallbackID;
+            string fallbackOtherKey = string.IsNullOrEmpty(other.relationshipFallbackID) ? other.ID : other.relationshipFallbackID;
+            if (fallbackSelfKey != selfKey || fallbackOtherKey != otherKey)
+            {
+                selfKey = fallbackSelfKey;
+                otherKey = fallbackOtherKey;
+                entry = index.GetMemberRelations(selfKey, otherKey);
+            }
+        }
+
+        RelationshipType resolved = entry == null ? null : scr_System_Serializer.current.MasterList.RelationshipTypes.GetByID(entry.relationshipID);
+        bool resolvedIsA = resolved != null && entry.memberTypeA == selfKey;
+
+        memberRelationsDict[other] = (resolved, resolvedIsA);
+        rel = resolved;
+        isA = resolvedIsA;
+        return resolved != null;
+    }
+
     public string ID = "";
+
+    /// <summary>
+    /// Optional shared grouping key for MemberRelations lookups - see GetRelationshipWithType. Lets a
+    /// set of otherwise-distinct MemberTypes (e.g. several school-specific student statuses) share a
+    /// single pair of authored relations instead of needing one MemberRelations entry per combination.
+    /// This ID is never itself expected to be a real, assignable MemberType - it only ever appears as
+    /// a memberTypeA/memberTypeB value in MemberRelations entries. Leave empty for MemberTypes that
+    /// should only ever match on their own real ID.
+    /// </summary>
+    public string relationshipFallbackID = "";
 
     [JsonProperty] protected string displayNameKey = "";
     string _cachedDisplayName = null;
@@ -66,6 +132,23 @@ public class MemberType
         {
             if (_cachedSocialStandingLabel == null) _cachedSocialStandingLabel = string.IsNullOrEmpty(socialStandingKey) ? "" : LocalizeDictionary.QueryThenParse(socialStandingKey);
             return _cachedSocialStandingLabel;
+        }
+    }
+
+    /// <summary>
+    /// Player-facing description of this status, e.g. summarizing what its AcceptanceMods do.
+    /// Looked up as "{ID}_tooltip" in the localization dictionary, falling back to the JSON-authored
+    /// tooltip field if no dictionary key is authored (mirrors Humanoid_Race.Tooltip).
+    /// </summary>
+    [JsonProperty] protected string tooltip = "";
+    string _cachedTooltip = null;
+    [JsonIgnore]
+    public string Tooltip
+    {
+        get
+        {
+            if (_cachedTooltip == null) _cachedTooltip = LocalizeDictionary.QueryThenParse(ID + "_tooltip", tooltip);
+            return _cachedTooltip;
         }
     }
 
@@ -172,6 +255,15 @@ public class MemberType
     /// active faction or active party. Empty by default.
     /// </summary>
     public List<string> portraitTags = new List<string>();
+
+    /// <summary>
+    /// Additional PersonalityAcceptanceMods contributed by this member status, checked and applied
+    /// alongside the character's own Character_Personality.AcceptanceMods (see
+    /// EvaluationPackage.ApplyPersonalityMods) whenever this is the character's current MemberType in
+    /// their active faction or active party. Lets a faction/job post grant reactions shared by every
+    /// member holding this status, instead of duplicating them per-Character_Personality. Empty by default.
+    /// </summary>
+    public List<PersonalityAcceptanceMod> AcceptanceMods = new List<PersonalityAcceptanceMod>();
 
     /// <summary>
     /// Looks up a behavior override for the given FindJobNode.behaviorOverrideID, or null if this

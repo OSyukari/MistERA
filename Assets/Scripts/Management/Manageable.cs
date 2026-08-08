@@ -46,6 +46,54 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (temp != null) Currency = temp;
     }
 
+    public string GetWorkDaysPerWeekString(Character_Trainable c)
+    {
+        var member = GetMemberType(c);
+        string extratooltip2 = null;
+        bool setDays = false;
+
+        if (member != null && member.workModule != null && member.workModule.activeDays.Count > 0)
+        {
+            var module = member.workModule;
+            int dayInWeek = scr_System_Time.current.getCurrentDayInWeek();
+            //if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) text.Text.color = text.disableColor;// (true,true);
+
+            
+            var count = 0;
+            List<int> days = new List<int>();
+            for (int i = 0; i < module.activeDays.Count; i++)
+            {
+                if (module.activeDays[i] == 1)
+                {
+                    count++;
+                    days.Add(i + 1);
+                }
+            }
+            setDays = true;
+            extratooltip2 = LocalizeDictionary.QueryThenParse("ui_management_workfaction_activedays").Replace("$count$", $"{count}").Replace("$list$", String.Join(" ", days));
+
+        }
+        if (!setDays)
+        {
+            extratooltip2 = LocalizeDictionary.QueryThenParse("ui_management_workfaction_alwaysActive");
+        }
+        return extratooltip2;
+    }
+
+    public string GetWorkHoursPerDayString(Character_Trainable c)
+    {
+        var member = GetMemberType(c);
+        string extratooltip2 = null;
+
+        if (member != null && member.workModule != null && member.workModule.activeHours.Count > 0)
+        {
+            var module = member.workModule;
+            extratooltip2 = LocalizeDictionary.QueryThenParse("ui_management_workfaction_activehours").Replace("$count$", $"{module.activeHours.Count}").Replace("$list$", String.Join(" ", module.activeHours));
+
+        }
+        return extratooltip2;
+    }
+
 
     [JsonProperty] protected int activeHoursStart = 0;
     [JsonProperty] protected int activeHoursEnd   = 0;
@@ -196,7 +244,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 return null;
             }
         }
-        else if (isPrisoner(self) && !isPrisoner(target))
+
+        if (GetMemberType(self).GetRelationshipWithType(GetMemberType(target), out var dataDrivenRel, out isA)) return dataDrivenRel;
+        isA = false;
+
+        if (isPrisoner(self) && !isPrisoner(target))
         {
             if (self == 0 || target == 0) Debug.Log($"GetRelationshipBetween {self} and {target}, self is prisoner");
             return Relationship_Prisoner;
@@ -352,10 +404,26 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public string GetCharaSocialStandingName(int charaRef)
     {
         var c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
+        return GetCharaSocialStandingName(c);
+    }
+    public string GetCharaSocialStandingName(Character_Trainable c)
+    {
         if (c == null) return "";
         var memberType = GetMemberType(c);
         if (memberType == null || string.IsNullOrEmpty(memberType.SocialStandingLabel)) return "";
         return socialStatus_baseString.Replace("$factionname$", FactionDisplayName).Replace("$status$", memberType.SocialStandingLabel);
+    }
+    public string GetCharaSocialStandingTooltip(Character_Trainable c)
+    {
+        if (c == null) return "";
+        var memberType = GetMemberType(c);
+        if (memberType == null || memberType.ID == "") return "";
+        return LocalizeDictionary.QueryThenParse($"{memberType.ID}_tooltip");
+    }
+    public string GetCharaSocialStandingTooltip(int charaRef)
+    {
+        var c = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
+        return GetCharaSocialStandingTooltip(c);
     }
 
     [JsonProperty] string RelatioshipTypeID_stranger = "relationship_stranger";
@@ -411,9 +479,19 @@ public class Manageable : I_Disposable, I_IsJobGiver
     string _cachedDisplayName = string.Empty;
     [JsonIgnore] public string FactionDisplayName { get
         {
-            if (_cachedDisplayName == string.Empty) _cachedDisplayName = LocalizeDictionary.QueryThenParse(ID);
+            if (displayNameOverride != "") return displayNameOverride;
+            else if (_cachedDisplayName == string.Empty)
+            {
+                _cachedDisplayName = LocalizeDictionary.QueryThenParse(ID);
+            }
             return _cachedDisplayName;
-        } }
+        }
+        set {
+            displayNameOverride = value;
+        }
+    }
+    [JsonProperty] string displayNameOverride = "";
+
 
     [NonSerialized] protected List<Character_Trainable> managedChara = null;
     [JsonIgnore] public List<Character_Trainable> ManagedChara { get {
@@ -855,9 +933,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
-    public void AddTradeOrder(ItemEntry entry, ItemEntry costs, Manageable target, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
+    public void AddTradeOrder(ItemEntry entry, ItemEntry costs, Manageable target, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true, bool reversed = false)
     {
-        this.TradeOrders.Add(new TradeOrder(this, target, entry, costs, count, orderType));
+        this.TradeOrders.Add(new TradeOrder(this, target, entry, costs, count, orderType, reversed));
     }
 
     public void AddProductionOrder(ItemComponentTemplate_Craftable_Recipe recipe, int count, ProductionOrderType orderType = ProductionOrderType.craftCount, bool allowDuplicate = true)
@@ -2041,6 +2119,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
         public ItemEntry Entry = null;
         public ItemEntry Cost = null;
         
+        // a reversed order flips who pays Cost and who pays Entry: FactionOwner sends Entry to
+        // TargetFaction (and receives Cost from it) instead of the normal receive-Entry/pay-Cost direction.
+        public bool reversed = false;
+
         [JsonIgnore]
         public int Count
         {
@@ -2049,7 +2131,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 if (Entry == null) return count;
                 if (orderType == ProductionOrderType.craftUntilCount)
                 {
-                    var currentOwnCount = FactionOwner.Inventory.GetItemCount( Entry.itemID );
+                    var stockHolder = reversed ? TargetFaction.Inventory : FactionOwner.Inventory;
+                    var currentOwnCount = stockHolder.GetItemCount( Entry.itemID );
 
                     return Math.Max(0, (int)Math.Ceiling((decimal)(this.count - currentOwnCount) / Entry.itemCount));
                 }
@@ -2068,22 +2151,26 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 //AddDictionaryRecords(ref s);
                 //var s2 = new List<string>();
                 //foreach(var i in s) s2.Add(i.Key + i.Value.ToString("+0;-#"));
-                return Cost.Print + " -> " + Entry.Print;
+                return (reversed ? LocalizeDictionary.QueryThenParse("ui_management_production_Trade_Display_reverse") :
+                    LocalizeDictionary.QueryThenParse("ui_management_production_Trade_Display_straight"))
+                        .Replace("$name$", Entry.Print);
+                //    Entry.Print + " -> " + Cost.Print : Cost.Print + " -> " + Entry.Print;
             }
         }
 
         public void AddDictionaryRecords(ref Dictionary<string, int> s)
         {
+            int sign = reversed ? -1 : 1;
             if (Entry.itemID != "")
             {
                 if (!s.ContainsKey(Entry.itemID)) s.Add(Entry.itemID, 0);
-                s[Entry.itemID] += Entry.itemCount * count;
+                s[Entry.itemID] += sign * Entry.itemCount * count;
             }
 
             if (Cost.itemID != "")
             {
                 if (!s.ContainsKey(Cost.itemID)) s.Add(Cost.itemID, 0);
-                s[Cost.itemID] -= Cost.itemCount * count;
+                s[Cost.itemID] -= sign * Cost.itemCount * count;
             }
         }
         
@@ -2139,7 +2226,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
         public ProductionOrderType orderType = ProductionOrderType.craftCount;
-        public TradeOrder(Manageable factionOwner, Manageable targetFaction, ItemEntry entries, ItemEntry costs, int count, ProductionOrderType orderType)
+        public TradeOrder(Manageable factionOwner, Manageable targetFaction, ItemEntry entries, ItemEntry costs, int count, ProductionOrderType orderType, bool reversed = false)
         {
             this.Entry = entries == null ? new ItemEntry() : entries;
             this.Cost = costs == null ? new ItemEntry() : costs;
@@ -2147,6 +2234,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             this.FactionOwner = factionOwner;
             this.TargetFaction = targetFaction;
             this.orderType = orderType;
+            this.reversed = reversed;
         }
 
         public void ReEstablishParent(Manageable m)
@@ -2160,8 +2248,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (TargetFaction == null) return false;
 
             FactionInventory recycler = scr_System_CampaignManager.current.Recycler;
-            FactionInventory self = FactionOwner.isPlayerFaction ? FactionOwner.Inventory : recycler;
-            FactionInventory target = TargetFaction.isPlayerFaction && TargetFaction != FactionOwner ? TargetFaction.Inventory : recycler;
+            FactionInventory ownerInv = FactionOwner.isPlayerFaction ? FactionOwner.Inventory : recycler;
+            FactionInventory targetInv = TargetFaction.isPlayerFaction && TargetFaction != FactionOwner ? TargetFaction.Inventory : recycler;
+
+            // "self" pays Cost and receives Entry; "target" receives Cost and pays Entry.
+            // reversed swaps which faction plays which role.
+            FactionInventory self = reversed ? targetInv : ownerInv;
+            FactionInventory target = reversed ? ownerInv : targetInv;
+            Manageable selfFaction = reversed ? TargetFaction : FactionOwner;
+            Manageable otherFaction = reversed ? FactionOwner : TargetFaction;
 
             //if (self == target) return true;
             var cc = Count;
@@ -2172,8 +2267,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
                     var cost_count = Cost.itemCount * cc;
                     if (self == recycler) target.AddItem(WorldManager.Instantiate(Cost.itemID, Cost.itemCountOverride ? "" : Cost.itemNameOverwrite, cost_count));
                     else target.AddItem(self.RemoveItem(Cost.itemID, cost_count));
-                    if (self != recycler) FactionOwner.DailyReport.AddTradeRecord(Cost.itemID, -cost_count);
-                    if (target != recycler && target != self) TargetFaction.DailyReport.AddTradeRecord(Cost.itemID, cost_count);
+                    if (self != recycler) selfFaction.DailyReport.AddTradeRecord(Cost.itemID, -cost_count);
+                    if (target != recycler && target != self) otherFaction.DailyReport.AddTradeRecord(Cost.itemID, cost_count);
                 }
 
 
@@ -2182,8 +2277,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
                     var entry_count = Entry.itemCount * cc;
                     if (target == recycler) self.AddItem(WorldManager.Instantiate(Entry.itemID, Entry.itemCountOverride ? "" : Entry.itemNameOverwrite, entry_count));
                     else self.AddItem(target.RemoveItem(Entry.itemID, entry_count));
-                    if (self != recycler) FactionOwner.DailyReport.AddTradeRecord(Entry.itemID, entry_count);
-                    if (target != recycler && target != self) TargetFaction.DailyReport.AddTradeRecord(Entry.itemID, -entry_count);
+                    if (self != recycler) selfFaction.DailyReport.AddTradeRecord(Entry.itemID, entry_count);
+                    if (target != recycler && target != self) otherFaction.DailyReport.AddTradeRecord(Entry.itemID, -entry_count);
                 }
 
                 if (this.orderType == ProductionOrderType.craftCount) this.AddCount(-cc);

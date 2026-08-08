@@ -165,17 +165,22 @@ public class Character_Personality
     public List<PersonalityAcceptanceMod> AcceptanceMods = new List<PersonalityAcceptanceMod>();
 
     /// <summary>
-    /// Filters AcceptanceMods (and their nested Children, recursively) down to the ones fully valid
+    /// Filters AcceptanceMods, plus the caller-supplied memberTypeMods (e.g. the character's current
+    /// MemberType.AcceptanceMods), and their nested Children recursively, down to the ones fully valid
     /// (self/target/faction/Kojo) for this self/target/EP context, writing into the caller-owned results
     /// list instead of allocating a new one. A node only has its children checked if it validates itself
     /// (pruning), and only nodes with their own Result get added — pure branch nodes are invisible in the output.
     /// </summary>
-    public void CollectApplicableAcceptanceMods(Character_Trainable self, bool isDoer, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results)
+    public void CollectApplicableAcceptanceMods(Character_Trainable self, bool isDoer, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results, List<PersonalityAcceptanceMod> memberTypeMods = null)
     {
         results.Clear();
-        if (AcceptanceMods == null) return;
-        foreach (var mod in AcceptanceMods)
-            CollectAcceptanceModRecursive(mod, self, target, ep, ref tooltip, results);
+        if (AcceptanceMods != null)
+            foreach (var mod in AcceptanceMods)
+                CollectAcceptanceModRecursive(mod, self, target, ep, ref tooltip, results);
+
+        if (memberTypeMods != null)
+            foreach (var mod in memberTypeMods)
+                CollectAcceptanceModRecursive(mod, self, target, ep, ref tooltip, results);
     }
 
     private void CollectAcceptanceModRecursive(PersonalityAcceptanceMod node, Character_Trainable self, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results)

@@ -1,12 +1,10 @@
 {
     "_doc": {
-        "purpose": "Localization companion for dictionary_UI_sex.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes.",
-        "ui_debug_tooltip2_note": "zh-cn source added a 7th line (pregnancy rate x100%). The stale (6-line) en-us entry was removed from dictionary_UI_sex.json and replaced here. Note: this key also has an intentional, unrelated '' (empty) definition in dictionary_UI_safeOnly.json, used for the safe-mode/SFW build variant - that is not a collision, since scr_System_Serializer.LoadDefs skips nsfw-named files in safe mode and skips '*safeOnly*' files otherwise, so only one of the two is ever loaded."
+        "purpose": "Localization companion for dictionary_UI_sex.json. Holds en-us entries added/updated after the source file's zh-cn text was authored, so the source file itself doesn't need to be touched again for translation-only changes."
     },
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "ui_debug_tooltip2": "6. Global Ejaculation Volume X5\n7. Pregnancy Chance x100%",
 
                 "charaDetail_panel_bodyexp_content": "Internal Data",
                 "charaDetail_panel_bodyexp_cycle": "Cycle: $cycle$",

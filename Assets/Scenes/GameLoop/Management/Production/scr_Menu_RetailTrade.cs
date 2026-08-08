@@ -156,7 +156,7 @@ public class scr_Menu_RetailTrade : scr_Menu, IPointerClickHandler
             tradeCount[item] = order;
         }
 
-        tradeCount[item].AddCount((isAdd ? 1 : -1) * (UtilityEX.SHIFT ? 100 : UtilityEX.CTRL ? 10 : 1), item.innerStock);
+        tradeCount[item].AddCount((isAdd ? 1 : -1) * (UtilityEX.SHIFT &&  UtilityEX.CTRL ? 1000 : UtilityEX.SHIFT ? 100 : UtilityEX.CTRL ? 10 : 1), item.innerStock);
 
         trade.UpdateCount();
     }

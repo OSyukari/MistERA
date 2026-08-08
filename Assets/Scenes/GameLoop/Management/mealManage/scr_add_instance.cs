@@ -81,7 +81,7 @@ public class scr_add_instance : MonoBehaviour
 
         public void OnClickButton()
         {
-            int modcount = UtilityEX.SHIFT ? 100 : UtilityEX.CTRL ? 10 : 1;
+            int modcount = UtilityEX.SHIFT &&  UtilityEX.CTRL ? 1000 : UtilityEX.SHIFT ? 100 : UtilityEX.CTRL ? 10 : 1;
             if (isAdd) entry.usageCount += modcount;
             else entry.usageCount = Math.Max(0, entry.usageCount - modcount);
             selfbox.RefreshData();

@@ -1179,6 +1179,30 @@ public class Character_Relationship
         }
     }
 
+    /// <summary>
+    /// Fills in this relationship's Bio/Personal relationship type + isA from template, but only for
+    /// slots not already set (relationshipTypeID_Bio/_Personal == "") - used by
+    /// RelationshipManager.ReceivePropagatedPreset to apply an incoming propagated preset onto an
+    /// already-existing (e.g. empty placeholder) relationship object without clobbering an
+    /// already-set relationship type or touching accumulated relationshipScores/attitude state.
+    /// </summary>
+    public void ApplyPresetIfUnset(RelationshipManager.presetRelationship template)
+    {
+        if (template == null) return;
+        if (relationshipTypeID_Bio == "" && template.initialBiologicalRelationship != "")
+        {
+            relationshipTypeID_Bio = template.initialBiologicalRelationship;
+            isA_Bio = template.initialBiologicalRelationship_isA;
+            _Relationship_Bio = null;
+        }
+        if (relationshipTypeID_Personal == "" && template.initialPersonalRelationship != "")
+        {
+            relationshipTypeID_Personal = template.initialPersonalRelationship;
+            isA_Personal = template.initialPersonalRelationship_isA;
+            _Relationship_Personal = null;
+        }
+    }
+
     public RelationshipScoreType CurrentEmotionKey = RelationshipScoreType.Trust;
 
     public void ModRelationValue(RelationshipScoreType type, float value, bool silent = true)

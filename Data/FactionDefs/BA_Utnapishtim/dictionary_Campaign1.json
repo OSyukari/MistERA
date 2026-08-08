@@ -62,6 +62,13 @@
         "humanRaceAddon_Kivotos_Abydos":"阿拜多斯学生",
         "humanRaceAddon_Kivotos_Abydos_tooltip":"%%tooltip_kivotos_halo_effect%%",
 
+        "membertype_ba_student_trinity_tooltip":"圣三一学生",
+        "membertype_ba_student_gehenna_tooltip":"格黑那学生",
+        "membertype_ba_student_millenium_tooltip":"千年学生",
+        "membertype_ba_student_gsc_tooltip":"联邦学生会学生",
+        "membertype_ba_student_gsc_leader_tooltip":"联邦学生会学生会长",
+        "membertype_ba_student_abydos_tooltip":"阿拜多斯学生",
+
         "tooltip_kivotos_halo_effect":"光环：MP不会自然回复，获得等同于MP上限/2的全类型伤害减免。\n上述效果未实装",
 
         "campaign1_map_utnapishtim_bridge":"%%Utnapishtim%%舰桥",
@@ -136,6 +143,13 @@
         "humanRaceAddon_Kivotos_GSC_tooltip":"%%tooltip_kivotos_halo_effect%%",
         "humanRaceAddon_Kivotos_Abydos":"Abydos Student",
         "humanRaceAddon_Kivotos_Abydos_tooltip":"%%tooltip_kivotos_halo_effect%%",
+
+        "membertype_ba_student_trinity_tooltip":"Trinity Student",
+        "membertype_ba_student_gehenna_tooltip":"Gehenna Student",
+        "membertype_ba_student_millenium_tooltip":"Millenium Student",
+        "membertype_ba_student_gsc_tooltip":"GSC Student",
+        "membertype_ba_student_gsc_leader_tooltip":"GSC Student Council President",
+        "membertype_ba_student_abydos_tooltip":"Abydos Student",
 
         "tooltip_kivotos_halo_effect":"Halo: MP will not regenerate naturally, gain all-type damage reduction equal to MP cap / 2. \nThe aforementioned effects are not implemented.",
 

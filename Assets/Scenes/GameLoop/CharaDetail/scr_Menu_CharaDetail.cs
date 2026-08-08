@@ -627,7 +627,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         public void OnClickButton()
         {
             parent.currentTab = target;
-           if (init != null) init();
+            target.gameObject.SetActive(true);
+            if (init != null) init();
         }
     }
 

@@ -10,7 +10,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
     public RectTransform parentBox;
 
     public scr_HoverableText hp, mp, st, en;
-    public TextMeshProUGUI fullname;
+    public scr_HoverableText fullname;
 
     private void Start()
     {
@@ -64,7 +64,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
         var chara = Chara;
         if (chara != null)
         {
-            fullname.text = chara.FullName;
+            fullname.SetText(chara.FullName);
 
             chara.Stats.HP.Draw(hp);
             chara.Stats.MP.Draw(mp);
@@ -75,7 +75,7 @@ public class scr_panel_PlayerInfo : MonoBehaviour
         }
         else
         {
-            fullname.text = "";
+            fullname.SetText("");
 
             hp.SetText("");
             mp.SetText("");

@@ -60,6 +60,20 @@
                         "extraScopeArguments": [ "Jitaku_Yuki" ],
                         "minTargetCount": 1,
                         "allowEventOnMinTargetCountMiss": true
+                    },
+                    {
+                        "refkeys": [ "ashley" ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [ "TCoAaL_Char_Ashley" ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    },
+                    {
+                        "refkeys": [ "andrew" ],
+                        "baseScope": "BaseID_Unrestricted",
+                        "extraScopeArguments": [ "TCoAaL_Char_Andrew" ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
                     }
                 ],
                 "events": [
@@ -113,6 +127,39 @@
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [ "", "ia_jitaku_sayaka_intro" ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "Kanon_IntroduceActress_Graves",
+                                "target_chara_conditions": {
+                                    "ashley": [
+                                        { "parameters": [ "exists" ] },
+                                        {
+                                            "relationshipTargetKey":"self",
+                                            "requireKojoVariable": {
+                                                "variableID": "erav_actress_status",
+                                                "operand": "neq",
+                                                "value": 2
+                                            }
+                                        }
+                                    ],
+                                    "andrew": [
+                                        { "parameters": [ "exists" ] },
+                                        {
+                                            "relationshipTargetKey":"self",
+                                            "requireKojoVariable": {
+                                                "variableID": "erav_actress_status",
+                                                "operand": "neq",
+                                                "value": 2
+                                            }
+                                        }
+                                    ]
+                                },
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_graves_intro" ]
                                     }
                                 ]
                             },
@@ -272,6 +319,123 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_graves_intro",
+                        "UISpec": {
+                            "portraitRefKey": ""
+                        },
+                        "line": "Kanon_IntroduceActress_Graves_Intro"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "ashley"
+                        },
+                        "line": "Kanon_IntroduceActress_Graves_Ashley_SelfIntro"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "andrew"
+                        },
+                        "line": "Kanon_IntroduceActress_Graves_Andrew_SelfIntro"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_IntroduceActress_Graves_Comment"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "question": "Kanon_IntroduceActress_Graves_Choice",
+                        "options": [
+                            {
+                                "option": "Kanon_IntroduceActress_Select",
+                                "tooltip":"",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [ "hasFactionItemCount", "ErAV_miyama_Household", "currency_JPY", "20000" ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "TransferItemByFactionID",
+                                        "arguments":
+                                        [
+                                            "ErAV_miyama_Household",
+                                            "ErAV_KiryuGumi_Office",
+                                            "currency_JPY",
+                                            "20000",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_graves_accept" ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "Kanon_IntroduceActress_CancelSelect",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [ "", "ia_refuse" ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ia_graves_accept",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "Kanon_IntroduceActress_Graves_Select",
+                        "Results": [
+                            
+                            {
+                                "Type": "SetRelKojoVariable",
+                                "arguments": [ "ashley", "self", "false", "erav_actress_status", "2" ]
+                            },
+                            {
+                                "Type": "SetRelKojoVariable",
+                                "arguments": [ "andrew", "self", "false", "erav_actress_status", "2" ]
+                            },
+                            {
+                                "Type": "SetWorkFaction",
+                                "arguments": [ "ashley", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_actor", "false", "true" ]
+                            },
+                            {
+                                "Type": "SetWorkFaction",
+                                "arguments": [ "andrew", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_actor", "false", "true" ]
+                            },
+                            {
+                                "Type": "RevealFaction",
+                                "arguments": [ "CoffinAnL_Household", "true" ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_IntroduceActress_Graves_Advice",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "ia_refuse",
                         "UISpec": {
                             "portraitRefKey": "kanon",
@@ -297,10 +461,11 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "Kanon_IntroduceActress":"请求介绍女优",
+                "Kanon_IntroduceActress":"请求介绍AV演员",
                 "kia_L01": "「人选倒有几个。要看吗？」\n歌音从抽屉里取出名单，摊在桌上。",
                 "kia_Q01_op2": "算了",
-                "Kanon_IntroduceActress_Select": "招募女优",
+                "Kanon_IntroduceActress_Select": "招募演员",
+                "Kanon_IntroduceActress_Select_tooltip":"介绍费会从%%ErAV_miyama_Household%%扣除",
                 "Kanon_IntroduceActress_CancelSelect": "暂时不必",
                 "Kanon_IntroduceActress_Cancel":"「不合心意？那看别的。」",
                 
@@ -317,6 +482,15 @@
                 "Kanon_IntroduceActress_JitakuSayaka_Comment":"(3rd, a short comment from Kanon, in-character, on Jitaku_Sayaka)",
                 "Kanon_IntroduceActress_JitakuSayaka_Choice":"(4th, choice screen summarize actress info and required payment)",
                 "Kanon_IntroduceActress_JitakuSayaka_Select":"(Kanon respond that she'll make the preparations)",
+
+                "Kanon_IntroduceActress_Graves": "%%TCoAaL_Graves_lastname%%家的兄妹",
+                "Kanon_IntroduceActress_Graves_Intro":"名单最后一页夹着两张钉在一起的照片。眉眼有几分相似——$andrew.name$与$ashley.name$，格雷夫斯家的兄妹。\n备注很短：外国人。母亲蕾妮欠了组里还不清的债，前几天把兄妹俩送来抵债。\n档案末尾盖着红章——「组内资产」。",
+                "Kanon_IntroduceActress_Graves_Ashley_SelfIntro":"「……切。」\n$ashley.name$抱起手臂回瞪过来。\n「别拿那种眼神看我。那个女人欠下的债跟我有什么关系。跑不掉我也懒得废话。」\n她把视线移向旁边，语气沉了下来。\n「把话说在前头。不管让我们干什么，他得跟我待在一起。敢把他单独支走——谁来都不行。」\n她耸了耸肩：「至于别的，随你们便。」",
+                "Kanon_IntroduceActress_Graves_Andrew_SelfIntro":"$andrew.name$没有看任何人，视线落在桌面上。\n「情况我明白了。逃不掉也没必要逃。」\n他的语气很平，像在说跟自己无关的事。\n「不过先说清楚。不管什么活尽量往我身上堆。她——」他瞥向旁边，「能少碰就少碰。我担得起。」\n他顿了顿，语气里带着几分疲惫的讥讽：「你们要是不听我也拦不住。到时候出了什么事别怪我没提醒过。」",
+                "Kanon_IntroduceActress_Graves_Comment":"$kanon.name$将两张照片收回名单。\n「这两个人严格说已经是组里的资产了。他们母亲拿人抵债，不是花钱买的服务，本不该再收引荐费。」\n「不过照例还是要收些。总共两万，不多。」\n她合上名单：「亲兄妹搭档出镜，这种题材从来不缺买家。这笔钱你很快就能赚回来。」",
+                "Kanon_IntroduceActress_Graves_Choice":"对象：$ashley.name$ & $andrew.name$（兄妹）\n介绍费：20000日元",
+                "Kanon_IntroduceActress_Graves_Select":"$kanon.name$在名单上勾去两人的名字。\n「好。手续我这边办。人从现在起归你调遣，往后怎么用你自己判断。」",
+                "Kanon_IntroduceActress_Graves_Advice":"临走前，$kanon.name$又叫住了$self.name$。\n「最后一句。这两个人只要别逼到极限就会听话。逼急了会怎样，谁也说不准。」",
 
                 "Kanon_IntroduceActress_End": "「想好了再过来。名单不变。」"
             },

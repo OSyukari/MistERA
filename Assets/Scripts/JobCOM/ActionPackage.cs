@@ -1046,7 +1046,7 @@ public abstract class ActionPackage
                     //this.attitudeRate_neg = t.attitudeRate_neg;
                     //this.attitudeRate_pos = t.attitudeRate_pos;
                    // this.responseRate = Math.Min(t.ResponseRate, this.responseRate);
-                    this.requestRate = Math.Min(t.RequestRate, this.requestRate);
+                    this.requestRate = Math.Min(t.EffectiveRequestRate, this.requestRate);
                 }
                 else
                 {
@@ -1068,7 +1068,7 @@ public abstract class ActionPackage
                     {
                         //this.attitudeRate_neg = t.attitudeRate_neg;
                         //this.attitudeRate_pos = t.attitudeRate_pos;
-                        this.responseRate = Math.Min(t.RequestRate, this.responseRate);
+                        this.responseRate = Math.Min(t.EffectiveRequestRate, this.responseRate);
                         //this.requestRate = Math.Min(t.RequestRate, this.requestRate);
                     }
                     else
@@ -1104,8 +1104,8 @@ public abstract class ActionPackage
                         {
                             // this.attitudeRate_neg = Math.Max(this.attitudeRate_neg, t.attitudeRate_neg);
                             //this.attitudeRate_pos = Math.Min(this.attitudeRate_pos, t.attitudeRate_pos);
-                            this.responseRate = Math.Min(this.responseRate, t.ResponseRate);
-                            this.requestRate = Math.Min(this.requestRate, t.RequestRate);
+                            this.responseRate = Math.Min(this.responseRate, t.EffectiveResponseRate);
+                            this.requestRate = Math.Min(this.requestRate, t.EffectiveRequestRate);
                         }
                         else
                         {
@@ -2287,7 +2287,7 @@ public abstract class ActionPackage
 
             if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted);
             if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted);
-            if (badwill > 0 || (badwill < 0 && B.Stats.Mood.Severity >= 2)) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
+            if (badwill > 0 || (badwill < 0 && (B.Stats.Mood == null || B.Stats.Mood.Severity >= 2))) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
             if (lust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, lust, m.exp);
             if (fear != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Fear, fear, m.exp);
         }

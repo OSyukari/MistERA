@@ -254,7 +254,7 @@ public class PortraitManager
         _cache_CombatPortrait = null;
         _cache_ActivityPortrait = null;
         //tags_active.Clear();
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits && Owner.CurrentRoom == scr_System_CampaignManager.current.CurrentRoom) Debug.Log($"ClearHandlerCache on {Owner.FirstName}");
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits && Owner != null && Owner.CurrentRoom == scr_System_CampaignManager.current.CurrentRoom) Debug.Log($"ClearHandlerCache on {Owner.FirstName}");
     }
 
 
@@ -295,7 +295,7 @@ public class PortraitManager
             handler = _cache_NeutralPortrait;
             path = _cache_NeutralPortrait_path;
 
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawNeutralPortrait Tags [{String.Join(" ", tags_neutral)}] with path {_cache_NeutralPortrait_path}, is same? {box.currentHandler == _cache_NeutralPortrait}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} DrawNeutralPortrait Tags [{String.Join(" ", tags_neutral)}] with path {_cache_NeutralPortrait_path}, is same? {box.currentHandler == _cache_NeutralPortrait}");
         }
 
         if (box.currentHandler != handler || box.currentPortrait != path)
@@ -396,7 +396,7 @@ public class PortraitManager
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentPortrait != _cache_ActivityPortrait_path)
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_path}, is same? {box.currentHandler == _cache_ActivityPortrait}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} DrawActivityPortrait Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_path}, is same? {box.currentHandler == _cache_ActivityPortrait}");
             box.currentHandler = _cache_ActivityPortrait;
             //box.currentPortrait = _cache_ActivityPortrait_path;
             box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
@@ -412,13 +412,13 @@ public class PortraitManager
             }
             else
             {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait ABORT 2 due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} DrawActivityPortrait ABORT 2 due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
 
             }
         }
         else
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} DrawActivityPortrait ABORT 1 due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} DrawActivityPortrait ABORT 1 due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
         }
 
     }
@@ -486,7 +486,7 @@ public class PortraitManager
         }
         if (box.currentHandler != _cache_ActivityPortrait || box.currentIcon != _cache_ActivityPortrait_icon)
         {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner.CallName} drawActivityIcon Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_icon}");
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} drawActivityIcon Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_icon}");
             box.currentHandler = _cache_ActivityPortrait;
             box.currentIcon = _cache_ActivityPortrait_icon;
             box.Draw(_cache_ActivityPortrait.DrawIcon(box, _cache_ActivityPortrait_icon));
@@ -636,14 +636,14 @@ public class PortraitManager
 
         public virtual void Click()
         {
-            Debug.Log("Portrait Clicked on "+Owner.Owner.FirstName);
+            Debug.Log("Portrait Clicked on "+Owner?.Owner?.FirstName);
         }
 
         // More internal condition validation with shared portrait position data
 
         public virtual CharaPortrait Copy()
         {
-            Debug.Log("Portrait Copy on " + Owner.Owner.FirstName);
+            Debug.Log("Portrait Copy on " + Owner?.Owner?.FirstName);
             return null;
         }
     }
@@ -730,7 +730,7 @@ public class PortraitManager
         {
             if (this.Variants != null)
             {
-                foreach (var i in this.Variants) if (i.IconVariantData != "" && i.IconVariantData.Length > 0 && i.Validate(tags) && i.Validate(Owner.Owner) ) return i.IconVariantData;
+                foreach (var i in this.Variants) if (i.IconVariantData != "" && i.IconVariantData.Length > 0 && i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) ) return i.IconVariantData;
             }
             return icon_path;
         }
@@ -740,7 +740,7 @@ public class PortraitManager
             if (this.Variants != null)
             {
                 if (tags.Count > 0 && scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"Validating variants with tags {String.Join("|", tags)}");
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement( i.PortraitVariantData);
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement( i.PortraitVariantData);
             }
             if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
             else return portrait_path;
@@ -948,7 +948,7 @@ public class PortraitManager
         {
             if (this.Variants != null)
             {
-                foreach (var i in this.Variants) if (i.IconVariantData != "" && i.IconVariantData.Length > 0 && i.Validate(tags) && i.Validate(Owner.Owner)) return i.IconVariantData;
+                foreach (var i in this.Variants) if (i.IconVariantData != "" && i.IconVariantData.Length > 0 && i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner)) return i.IconVariantData;
             }
             return icon_path;
         }
@@ -1053,7 +1053,7 @@ public class PortraitManager
         {
             if (this.Variants != null)
             {
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement(i.PortraitVariantData);
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement(i.PortraitVariantData);
             }
             if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
             else return portrait_path;

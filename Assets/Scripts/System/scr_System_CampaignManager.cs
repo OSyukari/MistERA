@@ -2889,6 +2889,29 @@ public static class WorldManager
                 }
             }
 
+            if (map.memberTypeOverrideBaseIDs != null && map.memberTypeOverrideBaseIDs.Count > 0)
+            {
+                // Like the managerBaseIDs loop above, but targets an arbitrary MemberType instead of the
+                // hardcoded built-in manager.
+                foreach (var kvp in map.memberTypeOverrideBaseIDs)
+                {
+                    if (!FactionUtility.TryGetMemberType(kvp.Value, out var targetType)) continue;
+                    foreach (var i in org.ManagedChara) if (i.BaseID == kvp.Key) org.AddToFaction(i, targetType);
+                }
+            }
+
+            if (map.memberTypeOverrideBaseIDs_PlayerOnly != null && map.memberTypeOverrideBaseIDs_PlayerOnly.Count > 0)
+            {
+                // Overrides memberTypeOverrideBaseIDs' baseline for whichever listed baseID is actually
+                // the current Player - see MapPlan.memberTypeOverrideBaseIDs_PlayerOnly for why this
+                // can't just be done via playerInit's own guestStatus.
+                var playerBaseID = scr_System_CampaignManager.current.Player != null ? scr_System_CampaignManager.current.Player.BaseID : "";
+                if (!string.IsNullOrEmpty(playerBaseID) && map.memberTypeOverrideBaseIDs_PlayerOnly.TryGetValue(playerBaseID, out var playerTypeID) && FactionUtility.TryGetMemberType(playerTypeID, out var playerType))
+                {
+                    foreach (var i in org.ManagedChara) if (i.BaseID == playerBaseID) org.AddToFaction(i, playerType);
+                }
+            }
+
             // SET SLEEP HOURS
             org.SetActiveHours(map.activeHoursStart, map.activeHoursEnd);
 

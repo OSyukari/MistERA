@@ -399,6 +399,11 @@ public static class EventUtility
                 if (r.parameters.Count < 2) return false;
                 I_IsJobGiver active = c.FactionManager.CurrentActiveParty != null ? (I_IsJobGiver)c.FactionManager.CurrentActiveParty : c.FactionManager.CurrentlyActiveFaction;
                 return active != null && active.FactionOwnerRoot != null && active.FactionOwnerRoot.ID == r.parameters[1];
+            case "hasFactionItemCount":
+                // hasFactionItemCount [factionID] [itemID] [minCount] -- c is unused (only required to exist), the check is against the named faction's inventory
+                if (r.parameters.Count < 4 || !int.TryParse(r.parameters[3], out var minItemCount)) return false;
+                var checkedFaction = scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
+                return checkedFaction != null && checkedFaction.Inventory.GetItemCount(r.parameters[2]) >= minItemCount;
             default:
                 return true;
         }
@@ -1098,7 +1103,10 @@ public static class EventUtility
                         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
                         if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
                         var snap = owner.CurrentUISpec.Clone();
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
+                        // animate:false -- if this Result sits alongside a Line's own text, an immediate (animate:true) draw
+                        // can fire in the same synchronous batch right after that line auto-completes and empties the display
+                        // queue, clearing the AVG box before the line ever gets rendered. Queuing normally avoids that race.
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
                     }
 
                     return true;
@@ -1214,7 +1222,9 @@ public static class EventUtility
                         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
                         owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
                         var snap = owner.CurrentUISpec.Clone();
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
+                        // animate:false -- see RevealFaction's identical comment: an immediate draw here can race a sibling
+                        // Result's own Line text in the same synchronous batch and clear it before it's ever rendered.
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
                     }
 
                     return true;
@@ -1273,7 +1283,9 @@ public static class EventUtility
                         var desc = new DescriptionCollector(message, owner.Self == null || owner.Self.CurrentRoom == null ? VisibilityLevel.Global : VisibilityLevel.Roomwide);
                         owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.after);
                         var snap = owner.CurrentUISpec.Clone();
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
+                        // animate:false -- see RevealFaction's identical comment: an immediate draw here can race a sibling
+                        // Result's own Line text in the same synchronous batch and clear it before it's ever rendered.
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
                     }
 
                     return true;
