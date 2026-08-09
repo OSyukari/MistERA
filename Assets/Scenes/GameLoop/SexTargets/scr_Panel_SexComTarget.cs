@@ -227,6 +227,26 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
                 }
             }
 
+            List<int> actorsMarkForDelete = new List<int>();
+            foreach (int actorRef in indexActorRef.Keys)
+            {
+                if (!jSexDebug.actorRefID.Contains(actorRef)) actorsMarkForDelete.Add(actorRef);
+            }
+            foreach (int actorRef in actorsMarkForDelete)
+            {
+                RectTransform box = indexActorRef[actorRef];
+                indexActorRef.Remove(actorRef);
+                DestroyActor(actorRef);
+                if (box != null) Destroy(box.gameObject);
+
+                // Also drop them from the pending doer/receiver selection - otherwise a departed actor's
+                // ref lingers here even after their row is gone, and the next COM built from this panel
+                // (com.MakePackage(job, COMmanager.SexComDoers, COMmanager.SexComReceivers, 0)) would still
+                // target someone no longer in the job.
+                COMmanager.SexComDoers.Remove(actorRef);
+                COMmanager.SexComReceivers.Remove(actorRef);
+            }
+
             foreach (int actorRef in jSexDebug.actorRefID)
             {
                 if (!indexActorRef.ContainsKey(actorRef))

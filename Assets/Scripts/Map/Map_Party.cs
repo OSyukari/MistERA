@@ -85,6 +85,19 @@ public class Party {
         if (memberRefIDs.Contains(refID)) RemoveFromParty(scr_System_CampaignManager.current.FindInstanceByID(refID));
     }
 
+    /// <summary>
+    /// Releases every current member from the party (each one gets ChangeCurrentJob(null),
+    /// same as an individual RemoveFromParty), so they fall back to their own faction schedule
+    /// instead of lingering as "following player" after the player is no longer active.
+    /// </summary>
+    public void DisbandParty()
+    {
+        for (int i = memberRefIDs.Count - 1; i >= 0; i--)
+        {
+            RemoveFromParty(memberRefIDs[i]);
+        }
+    }
+
     public string DebugInfo()
     {
         string s = "";

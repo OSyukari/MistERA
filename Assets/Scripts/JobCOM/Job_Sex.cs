@@ -406,7 +406,7 @@ public class Job_Sex_Group : Job
         if (!endjob && this.actorRefID.Count < 2)
         {
             endjob = true;
-            //this.EndJob(Utility.WrapTextColor("job ended due to actor count < 2 and no player involved", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
+            //this.EndJob("", null, Utility.WrapTextColor("job ended due to actor count < 2 and no player involved", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
         }
 
         UpdateActors();

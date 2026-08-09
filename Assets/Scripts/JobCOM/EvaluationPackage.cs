@@ -806,16 +806,21 @@ public partial class EvaluationPackage : I_ResultStorage
 
     string diceroll_autosuccess = LocalizeDictionary.QueryThenParse("ui_diceroll_autosuccess");
     string diceroll_autofailure = LocalizeDictionary.QueryThenParse("ui_diceroll_autofailure");
+    string diceroll_forcedsuccess = LocalizeDictionary.QueryThenParse("ui_diceroll_forcedsuccess");
+    string diceroll_forcedfailure = LocalizeDictionary.QueryThenParse("ui_diceroll_forcedfailure");
     string diceroll_success = LocalizeDictionary.QueryThenParse("ui_diceroll_success");
     string diceroll_failure = LocalizeDictionary.QueryThenParse("ui_diceroll_failure");
 
     /// <summary>
-    /// Returns the auto-success/auto-failure display text when the outcome is guaranteed
-    /// (either the rate is at an extreme, or a PersonalityAcceptanceMod forced the response),
+    /// Returns the auto-success/auto-failure/forced-success/forced-failure display text when the outcome
+    /// is guaranteed (either the rate is at an extreme, a PersonalityAcceptanceMod forced the response,
+    /// or the caller passed an explicit forceSuccess override e.g. via ForceRespond()/强行要求),
     /// or null when the normal dice-roll text should be shown instead.
     /// </summary>
-    private string DiceRollAutoText(int rate, Memory_Response forcedResponse)
+    private string DiceRollAutoText(int rate, Memory_Response forcedResponse, Memory_Response forceSuccess = Memory_Response.None)
     {
+        if (forceSuccess >= Memory_Response.Accept) return diceroll_forcedsuccess;
+        if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) return diceroll_forcedfailure;
         if (forcedResponse >= Memory_Response.Accept || rate >= 100) return diceroll_autosuccess;
         if ((forcedResponse > Memory_Response.None && forcedResponse < Memory_Response.Accept) || rate <= 0) return diceroll_autofailure;
         return null;
@@ -857,7 +862,8 @@ public partial class EvaluationPackage : I_ResultStorage
         else response = Memory_Response.Refuse;
 
         List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
-        var autoDoer = DiceRollAutoText(requestRate, forcedResponse_doer);
+        var autoDoer = DiceRollAutoText(requestRate, forcedResponse_doer, forceSuccess);
+        //if (forceSuccess != Memory_Response.None) Debug.LogError("forceSuccess");
         checkResults_doer = $"{Doer.FirstName}: D20{(mods.Count > 0 ? " + "+ String.Join(" + ", mods) : "")} = {(autoDoer ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}" )}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_doer})";
         checkResults_doer_short = $"({Doer.FirstName}) {targetCOM.DisplayName(VariantID)}: {(autoDoer ?? $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
@@ -911,7 +917,7 @@ public partial class EvaluationPackage : I_ResultStorage
 
 
 
-            var autoReceiver = DiceRollAutoText(responseRate, forcedResponse_receiver);
+            var autoReceiver = DiceRollAutoText(responseRate, forcedResponse_receiver, forceSuccess);
             checkResults_receiver = $"{Receiver.FirstName}: D20{(mods.Count > 0 ? " + "+String.Join(" + ", mods) : "")} = {(autoReceiver ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}")}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_receiver})";
             checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(autoReceiver ?? $"({responseRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
@@ -994,6 +1000,13 @@ public partial class EvaluationPackage : I_ResultStorage
 
     [JsonIgnore] public Memory_Response Response { get { return response; } }
 
+    /// <summary>
+    /// True when the doer's own request roll (not the receiver's response roll) is what caused a refusal.
+    /// Set fresh on every TryRespond() call.
+    /// </summary>
+    [JsonIgnore] private bool refusalCausedByDoer = false;
+    [JsonIgnore] public bool RefusalCausedByDoer { get { return refusalCausedByDoer; } }
+
     public List<string> tooltip = new List<string>();
 
     public void NotifyInterrupt()
@@ -1006,7 +1019,7 @@ public partial class EvaluationPackage : I_ResultStorage
     /// </summary>
     public void ForceRespond()
     {
-        TryRespond(true, Memory_Response.Accept);
+        TryRespond(true, scr_System_CampaignManager.current.DebugMode ? Memory_Response.Accept : Memory_Response.None);
     }
 
     protected bool TryRespond(bool recalculateRate = false, Memory_Response forceSuccess = Memory_Response.None)
@@ -1017,9 +1030,12 @@ public partial class EvaluationPackage : I_ResultStorage
 
         if (recalculateRate) Evaluate();
 
+        refusalCausedByDoer = false;
+
         // unwilling todo
         if (!RollRequest(forceSuccess))
         {
+            refusalCausedByDoer = true;
            // response = Memory_Response.None;
             // result = "[" + doer.FirstName + "] is unwilling to do [" + targetCOM.displayName + "] on/with [" + receiver.FirstName + "]";
         }
@@ -1112,7 +1128,11 @@ public partial class EvaluationPackage : I_ResultStorage
         if (_doerAcceptanceMods == null)
         {
             _doerAcceptanceMods = new List<PersonalityAcceptanceMod>();
-            if (Doer != null) Doer.Relationships.Personality.CollectApplicableAcceptanceMods(Doer, true, Receiver, this, ref tooltip, _doerAcceptanceMods, Doer.FactionManager.CurrentActiveMemberType?.AcceptanceMods);
+            if (Doer != null)
+            {
+                var doerLocaleMemberType = Doer.FactionManager.CurrentLocaleMemberType != Doer.FactionManager.CurrentActiveMemberType ? Doer.FactionManager.CurrentLocaleMemberType : null;
+                Doer.Relationships.Personality.CollectApplicableAcceptanceMods(Doer, true, Receiver, this, ref tooltip, _doerAcceptanceMods, Doer.FactionManager.CurrentActiveMemberType?.AcceptanceMods, doerLocaleMemberType?.AcceptanceMods);
+            }
         }
         foreach (var mod in _doerAcceptanceMods) mod.Apply(this, Doer, Receiver);
 
@@ -1121,7 +1141,8 @@ public partial class EvaluationPackage : I_ResultStorage
             if (_receiverAcceptanceMods == null)
             {
                 _receiverAcceptanceMods = new List<PersonalityAcceptanceMod>();
-                Receiver.Relationships.Personality.CollectApplicableAcceptanceMods(Receiver, false, Doer, this, ref tooltip, _receiverAcceptanceMods, Receiver.FactionManager.CurrentActiveMemberType?.AcceptanceMods);
+                var receiverLocaleMemberType = Receiver.FactionManager.CurrentLocaleMemberType != Receiver.FactionManager.CurrentActiveMemberType ? Receiver.FactionManager.CurrentLocaleMemberType : null;
+                Receiver.Relationships.Personality.CollectApplicableAcceptanceMods(Receiver, false, Doer, this, ref tooltip, _receiverAcceptanceMods, Receiver.FactionManager.CurrentActiveMemberType?.AcceptanceMods, receiverLocaleMemberType?.AcceptanceMods);
             }
             foreach (var mod in _receiverAcceptanceMods) mod.Apply(this, Receiver, Doer);
         }
@@ -1154,9 +1175,24 @@ public partial class EvaluationPackage : I_ResultStorage
 
         if (Doer != null && Doer.RefID != 0)
         {
-            var message = Doer.Relationships.GetKOJOMessage(true, this, m, injectRel == null ? null : injectRel.Target);
-            if (message != null) responses.Add(message);
-            
+            if (response == Memory_Response.Refuse && refusalCausedByDoer)
+            {
+                // Doer declined; if someone else (master) issued the order, get the doer's
+                // "refusing my master" reaction targeted at the master specifically.
+                // If the doer is its own master (or there's no master), it's a self-initiated
+                // decline with no one to target, so nothing is shown.
+                if (Master != null && Master != Doer)
+                {
+                    var refuseMasterMessage = Doer.Relationships.GetKOJOMessage(true, this, m, Master);
+                    if (refuseMasterMessage != null) responses.Add(refuseMasterMessage);
+                }
+            }
+            else
+            {
+                var message = Doer.Relationships.GetKOJOMessage(true, this, m, injectRel == null ? null : injectRel.Target);
+                if (message != null) responses.Add(message);
+            }
+
             if (Doer.isSleeping && injectRel != null && injectRel.Owner == Doer)
             {
                 s3 = Doer.Relationships.GetKOJOMessage("DisruptSleep", injectRel);
@@ -1449,7 +1485,7 @@ public partial class EvaluationPackage : I_ResultStorage
         if (Doer != null)
         {
             var s = this.job.ep_refuse;
-            if (Receiver != null) s = s.Replace("$self$", Receiver.FirstName);
+            if (Receiver != null && !refusalCausedByDoer) s = s.Replace("$self$", Receiver.FirstName);
             else s = s.Replace("$self$", Doer.FirstName);
 
             if (this.Package.targetCOM != null && this.Package.COMVariantID >= 0) s = s.Replace("$comdesc$", this.Package.targetCOM.DisplayName(this.Package.COMVariantID));
@@ -1742,7 +1778,11 @@ public partial class EvaluationPackage : I_ResultStorage
             if (fucked.Base.tag_directionOut != "" && fucked.Base.tag_directionOut != "ext")
             {
                 BodyInternal_Instance directionOut = fucked.Owner.Body.GetRandomInternalWithTag(fucked.Base.tag_directionOut);
-                if (!history.Contains(directionOut))
+                if (directionOut == null)
+                {
+                    Debug.LogError($"error directionOut {fucked.Base.tag_directionOut} null on {fucked.Owner.FirstName}");
+                }
+                else if (!history.Contains(directionOut))
                 {
                     history.Add(directionOut);
 
@@ -1769,7 +1809,11 @@ public partial class EvaluationPackage : I_ResultStorage
             if (fucked.Base.tag_directionIn != "" && fucked.Base.tag_directionIn != "ext")
             {
                 BodyInternal_Instance directionIn = fucked.Owner.Body.GetRandomInternalWithTag(fucked.Base.tag_directionIn);
-                if (!history.Contains(directionIn))
+                if (directionIn == null)
+                {
+                    Debug.LogError($"error directionIn {fucked.Base.tag_directionIn} null on {fucked.Owner.FirstName}");
+                }
+                else if (!history.Contains(directionIn))
                 {
                     history.Insert(0, directionIn);
 

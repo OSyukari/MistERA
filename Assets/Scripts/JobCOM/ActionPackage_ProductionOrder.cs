@@ -122,14 +122,14 @@ public class ActionPackage_ProductionOrder : ActionPackage
     }
 
     // move one step along the path
-    protected override void Execution(MessageCollect m = null)
+    protected override void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
         //order.AddProgress(targetCOM.TimeScale);
         bool log = scr_System_CentralControl.current.LogPrefs.DLog_Production;
 
         if (log) Debug.Log("ActionPackage_ProductionOrder: JobInRoom[" + job.ParentRoom.DisplayName + "] COM[" + targetCOM.displayName + "] has null order ?" + (order == null));
 
-        base.Execution(m);
+        base.Execution(m, eventCollector);
         if (log) Debug.Log("Production order ticked, requestAccepted " + requestAccepted);
         if (requestAccepted)
         {

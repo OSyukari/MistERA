@@ -41,9 +41,9 @@ public class ActionPackage_ItemUse : ActionPackage
         }
     }
 
-    protected override void Execution(MessageCollect m = null)
+    protected override void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
-        base.Execution(m);
+        base.Execution(m, eventCollector);
         if (ItemInstance != null)
         {
             foreach (var actor in this.Actors)

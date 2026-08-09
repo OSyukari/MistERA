@@ -127,9 +127,9 @@ public class ActionPackage_Talk : ActionPackage
     }
 
 
-    protected override void Execution(MessageCollect m = null)
+    protected override void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
-        base.Execution(m);
+        base.Execution(m, eventCollector);
 
         if (executeSuccessful && selectedTopic != "" && selectedTopicInstance != null)
         {

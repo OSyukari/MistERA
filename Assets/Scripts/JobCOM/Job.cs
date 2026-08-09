@@ -383,27 +383,32 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void RemoveActor(int charaRef)
     {
-        foreach (var p in packages_previous)
-        {
-            if (p.Duration == 0) continue;  // package is ticked and should be naturally removed, let it
-            if (p.actorRefs.Contains(charaRef)) p.isPaused = true;// p.NotifyInterrupted();
-        }
         //if (this.actorRefID.Contains(charaRef) && this.actorRefIDStorage != null && this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
         if (this.actorRefIDStorage.ContainsKey(charaRef)) this.actorRefIDStorage.Remove(charaRef);
-        for (int i = packages_current.Count - 1; i >= 0; i--) if (packages_current[i].actorRefs.Contains(charaRef)) packages_current.RemoveAt(i);
+        for (int i = packages_current.Count - 1; i >= 0; i--)
+        {
+            if (!packages_current[i].actorRefs.Contains(charaRef)) continue;
+            // Disable (Duration < 0 excludes it from GetExistingPackages2) and unregister it from the
+            // campaign manager's room registry - that registry is independent of packages_current, so a
+            // bare RemoveAt here leaves it dangling there forever with a frozen Duration, which
+            // ExistPlayerPackage keeps finding and treating as "player still has a pending package".
+            packages_current[i].DisablePackage();
+            scr_System_CampaignManager.current.Unregister(packages_current[i]);
+            packages_current.RemoveAt(i);
+        }
         for (int i = packages_previous.Count - 1; i >= 0; i--)
         {
             var p = packages_previous[i];
-            if (p.Duration == 0) continue;  // package is ticked and should be naturally removed, let it
-            /*
+            //if (p.Duration == 0 && !p.PackageRepeat) continue;  // package is ticked and should be naturally removed, let it
             if (p.actorRefs.Contains(charaRef))
             {
                 // previous[i] might be the actor lock package, so be careful since removing that one might cause index out of bound
 
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("Job ["+DisplayName+"] RemoveActor ["+scr_System_CampaignManager.current.FindInstanceByID(charaRef).FirstName+"], unregistering package [" + p.DisplayName + "]");
+                p.DisablePackage();
                 scr_System_CampaignManager.current.Unregister(p);
-                packages_previous.Remove(p);
-            }*/
+                packages_previous.RemoveAt(i);
+            }
         }
         actorJobComplete.Remove(charaRef);
         actorRemove.Add(charaRef);
@@ -637,6 +642,11 @@ public class Job : IDisposable, I_Disposable
             if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
             packages.Add(ap);
         }
+        foreach (var ap in this.packages_completed)
+        {
+            if (!ap.DoerRefs.Contains(refID) && !ap.ReceiverRefs.Contains(refID)) continue;
+            packages.Add(ap);
+        }
         return;
     }
 
@@ -726,12 +736,21 @@ public class Job : IDisposable, I_Disposable
 
     public virtual void RemovePackage(ActionPackage ap, bool logRemove = false)
     {
-        
-        if (this.packages_previous.Remove(ap) && ap.Duration > 0)
+        bool removedFromPrevious = this.packages_previous.Remove(ap);
+        if (removedFromPrevious && ap.Duration > 0)
         {
             ap.NotifyInterrupted();
         }
-        this.packages_current.Remove(ap);
+        bool removedFromCurrent = this.packages_current.Remove(ap);
+
+        // Same leak as elsewhere: a package pulled out of job tracking here (rather than completing
+        // naturally) must be disabled and unregistered, or it lingers in the campaign manager's room
+        // registry with a frozen positive Duration.
+        if (removedFromPrevious || removedFromCurrent)
+        {
+            ap.DisablePackage();
+            scr_System_CampaignManager.current.Unregister(ap);
+        }
     }
 
     public virtual void Clear()
@@ -986,7 +1005,12 @@ public class Job : IDisposable, I_Disposable
                 p2 = packages_current[ii];
                 if (UtilityEX.DetectConflict(p2, p1))
                 {
-
+                    // p2 can still have Duration > 0 here (it's an active package being pre-empted) -
+                    // disable and unregister it, same as everywhere else a package leaves job tracking
+                    // outside of natural completion, or it lingers in the campaign manager's room
+                    // registry with a frozen positive Duration.
+                    p2.DisablePackage();
+                    scr_System_CampaignManager.current.Unregister(p2);
                     packages_current.RemoveAt(ii);
                 }
             }
@@ -1098,6 +1122,8 @@ public class Job : IDisposable, I_Disposable
             {
                 Debug.Log("Job ReRegister: paused AP [" + package.DisplayName + "] is getting removed due to failing 6 times reregistration");
                 package.NotifyInterrupted();
+                package.DisablePackage();
+                scr_System_CampaignManager.current.Unregister(package);
                 packages_previous.RemoveAt(i);
                 this.actorJobComplete.AddRange(package.actorRefs);
             }

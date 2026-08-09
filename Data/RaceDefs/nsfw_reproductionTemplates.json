@@ -280,7 +280,7 @@
     "fertility": 6.0,
     "fertilizationChance": 0.85,
     "ovumLifespanMinutes": 720,
-    "climaxOvulationThreshold": 60
+    "climaxOvulationThreshold": 40
 }
         ]
     },

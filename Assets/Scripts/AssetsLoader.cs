@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 using System.IO;
 using WebP;
+using System.Linq;
 public class AssetsLoader
 {
     private static Texture2D _placeholderTexture = null;
@@ -75,10 +76,56 @@ public class AssetsLoader
             yield break;
         }else MonoBehaviour.Destroy(resourceRequest.asset);
 
-        var fullPath = $"file://{scr_System_Serializer.current.GetFullPath(path)}";
+        // here we will perform some fixes
+        var getfullpath = scr_System_Serializer.current.GetFullPath(path);
+        string fullPath = "";
+
+        // if getfullpath == path, then that asset probably does not exist
+        // in case the asset got fixed or changed due to path renaming, we will attempt to fix it here
+        if (getfullpath == path)
+        {
+            var pathsplit = path.Split('/');    // we should have maximum 3 segment
+            bool found = false;
+            // make recombination of pathsplit[1]/pathsplit[0]
+            if (!found && pathsplit.Length >= 3)
+            {
+                var segm2 = $"{pathsplit[^2]}/{pathsplit[^1]}";
+                var segm2full = scr_System_Serializer.current.GetFullPath(segm2);
+                if  (segm2full != segm2)
+                {
+                    fullPath = $"file://{segm2full}";
+                    Debug.Log($"cannot find image asset {getfullpath}, using fallback {segm2}");
+                    found = true;
+                }
+            }
+            if (!found && pathsplit.Length >= 2)
+            {
+                var segm1 = $"{pathsplit[^1]}";
+                var segm1full = scr_System_Serializer.current.GetFullPath(segm1);
+                if (segm1full != segm1)
+                {
+                    fullPath = $"file://{segm1full}";
+                    Debug.Log($"cannot find image asset {getfullpath}, using fallback {segm1}");
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                Debug.Log($"cannot find image asset {getfullpath}, using transparent fallback");
+                onComplete?.Invoke(null);
+                yield break;
+            }
+
+        }
+        else
+        {
+            fullPath = $"file://{getfullpath}";
+        }
+
+
         string extension = Path.GetExtension(path).ToLower();
 
-        //Debug.Log($"loadtex path {path} FULLPATH {fullPath}");
+       // Debug.Log($"loadtex path {path} FULLPATH {fullPath}");
 
         using (UnityWebRequest uwr = UnityWebRequest.Get(fullPath))
         {

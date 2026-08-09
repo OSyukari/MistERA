@@ -216,6 +216,15 @@ public class EventInstance
         }
     }
 
+    public bool CooldownRestrictAND
+    {
+        get
+        {
+            return currentEvent == null ? nextEvent == null ? false : nextEvent.cooldownRestrictAND : currentEvent.cooldownRestrictAND;
+
+        }
+    }
+
     [JsonIgnore]
     public string DumpCurrentLine
     {

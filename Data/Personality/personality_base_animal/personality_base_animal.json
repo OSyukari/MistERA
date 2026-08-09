@@ -162,6 +162,22 @@
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
                             }
                         ]
+                    },
+                    {
+                        "ID": "OnNightAssaultSuccess",
+                        "tags": ["nsfw"],
+                        "debugLogging": true,
+                        "variants": [
+                            { "responses": ["OnNightAssaultSuccess_1"], "keepLooking": true }
+                        ]
+                    },
+                    {
+                        "ID": "OnNightAssaultFailure",
+                        "tags": ["nsfw"],
+                        "debugLogging": true,
+                        "variants": [
+                            { "responses": ["OnNightAssaultFailure_1"], "keepLooking": true }
+                        ]
                     }
                 ]
             }

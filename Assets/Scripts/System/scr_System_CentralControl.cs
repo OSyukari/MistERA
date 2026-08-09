@@ -332,6 +332,7 @@ public class scr_System_CentralControl : MonoBehaviour
 
     public Sprite MakeSprite(string path, Texture2D tex)
     {
+        if (tex == null) return SpriteAsset.transparent;
 
         if (this.textureUseCounter.Count > 40)
         {

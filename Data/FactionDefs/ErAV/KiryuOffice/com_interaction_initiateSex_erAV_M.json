@@ -1,0 +1,77 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_initiateSex_erAV_M",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "happy",
+                                "relaxed",
+                                "smile",
+                                "confident"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "1.1 男演员 监督 好感关系 配合且放松",
+                            "responses": [
+                                "com_interaction_initiateSex_erAV_M_Warm_1",
+                                "com_interaction_initiateSex_erAV_M_Warm_2",
+                                "com_interaction_initiateSex_erAV_M_Warm_3",
+                                "com_interaction_initiateSex_erAV_M_Warm_4"
+                            ]
+                        },
+                        {
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "calm",
+                                "professional",
+                                "serious",
+                                "neutral"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "1.2 男演员 监督 普通同事关系 公事公办",
+                            "responses": [
+                                "com_interaction_initiateSex_erAV_M_Dutiful_1",
+                                "com_interaction_initiateSex_erAV_M_Dutiful_2",
+                                "com_interaction_initiateSex_erAV_M_Dutiful_3",
+                                "com_interaction_initiateSex_erAV_M_Dutiful_4"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_interaction_initiateSex_erAV_M_Warm_1": "$self$听到指示，随手把剧本丢到一边，活动了下肩膀朝$target$监督走过去。\n\n「又是我啊，监督。」他语气轻松，嘴角带着点笑，「行吧，跟你搭戏我倒是不介意。」",
+                "com_interaction_initiateSex_erAV_M_Warm_2": "$self$瞥了眼架好的机位，又转头看向$target$监督，神色比平时松快不少。\n\n「放心，这种场面我熟。」他一边解着扣子一边说，「监督只管坐着看就行。」",
+                "com_interaction_initiateSex_erAV_M_Warm_3": "$self$没有多问，利落地把外套脱下来搭到椅背上，回身对上监督的视线。\n\n「难得你亲自来盯这场。」他压低了声音，带点旁人听不到的熟络，「那我可就不客气了。」",
+                "com_interaction_initiateSex_erAV_M_Warm_4": "$self$笑了笑，主动迎上半步，把主动权让到对方手里。\n\n「监督点名的话，我当然没问题。」他语气随意，眼神却比平时专注了些，「毕竟这活儿，我最拿手。」",
+                "com_interaction_initiateSex_erAV_M_Dutiful_1": "$self$点了下头，没什么多余表情，径直走到指定位置站定。\n\n「收到，监督。」他开始按流程整理衣着，动作熟练，像在处理一件再平常不过的工作。",
+                "com_interaction_initiateSex_erAV_M_Dutiful_2": "$self$应了一声，把手里没喝完的水搁下，转过身面对$target$监督。\n\n「机位都好了吧？」他问得简短，语气平得听不出情绪，「那我开始准备了。」",
+                "com_interaction_initiateSex_erAV_M_Dutiful_3": "$self$没有废话，三两下把碍事的衣物处理好，神色始终很平。\n\n「流程我都清楚。」他平静地说，「监督尽管按你的需要来。」",
+                "com_interaction_initiateSex_erAV_M_Dutiful_4": "$self$抬手揉了揉后颈，呼出一口气，随即恢复了惯常的镇定。\n\n「那就开始吧，监督。」他语气平稳，挑不出什么毛病。"
+            },
+            "en-us": {
+                "com_interaction_initiateSex_erAV_M_Warm_1": "$self$ tosses the script aside at the cue and rolls his shoulders as he walks over to Director $target$.\n\n\"It's me again, Director.\" His tone is light, a faint smile on his lips. \"Fine by me—I don't mind sharing a scene with you.\"",
+                "com_interaction_initiateSex_erAV_M_Warm_2": "$self$ glances at the camera setup, then back at Director $target$, his expression easier than usual.\n\n\"Don't worry, I know this kind of scene.\" He undoes his buttons as he talks. \"You just sit back and watch, Director.\"",
+                "com_interaction_initiateSex_erAV_M_Warm_3": "$self$ asks no questions. He shrugs off his jacket onto a chair and turns to meet the director's eyes.\n\n\"Rare for you to oversee this one in person.\" He keeps his voice low, an ease there meant for no one else. \"Then I won't hold back.\"",
+                "com_interaction_initiateSex_erAV_M_Warm_4": "$self$ smiles and steps halfway forward, leaving the lead in the director's hands.\n\n\"If you're the one asking, of course I'm in.\" His tone is casual, his focus sharper than usual. \"This kind of work is what I'm best at, after all.\"",
+                "com_interaction_initiateSex_erAV_M_Dutiful_1": "$self$ gives a short nod, expression flat, and walks straight to his mark.\n\n\"Understood, Director.\" He starts straightening his clothes by the book, the motions practiced—like handling the most ordinary job in the world.",
+                "com_interaction_initiateSex_erAV_M_Dutiful_2": "$self$ acknowledges with a grunt, sets down his unfinished drink, and turns to face Director $target$.\n\n\"Cameras set?\" he asks, clipped and flat. \"Then I'm getting ready.\"",
+                "com_interaction_initiateSex_erAV_M_Dutiful_3": "$self$ wastes no words. A few efficient moves clear the clothes in his way, his expression steady throughout.\n\n\"I know the routine.\" He says it evenly. \"Just do what you need, Director.\"",
+                "com_interaction_initiateSex_erAV_M_Dutiful_4": "$self$ rubs the back of his neck, exhales, and slips back into his usual composure.\n\n\"Let's start, then, Director.\" His tone is level, professional—you couldn't find fault with it."
+            }
+        }
+    }
+}

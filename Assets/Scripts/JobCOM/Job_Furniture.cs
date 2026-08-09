@@ -837,7 +837,14 @@ public class Job_Furniture : Job
             {
                 if (UtilityEX.DetectConflict(packages_current[ii], packages[i]))
                 {
-                    if (isPlayerPackage) packages_current.RemoveAt(ii);
+                    if (isPlayerPackage)
+                    {
+                        // pre-empted package can still have Duration > 0 - disable and unregister it so it
+                        // doesn't linger in the campaign manager's room registry with a frozen duration.
+                        packages_current[ii].DisablePackage();
+                        scr_System_CampaignManager.current.Unregister(packages_current[ii]);
+                        packages_current.RemoveAt(ii);
+                    }
                     else conflict = true;
                 }
             }

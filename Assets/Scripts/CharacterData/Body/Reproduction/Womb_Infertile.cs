@@ -77,7 +77,7 @@ public class Womb_Infertile : BodyInternal_Womb
     }
 
     // Call this when a climax event occurs (hook to your arousal/climax system)
-    public override void NotifyClimax(float climaxIntensity, ReproductionCycle cycle)
+    public override void NotifyClimax(float climaxIntensity, ReproductionCycle cycle, List<string> messages)
     {
         // do nothing
     }

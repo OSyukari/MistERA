@@ -31,11 +31,20 @@
                         "options":[
                             {
                                 "option": "silent branch event, this shouldnt be displayed...unless",
-                                "Results": [ { "Type": "ExecuteCallback", "arguments":["onWakeUp"]  },
-                                             { "Type": "ExecuteCallback", "arguments":["jobCallback"] },
-                                             { "Type": "FlushLogs" } ]
+                                "Results": [ { "Type": "ExecuteCallbackPermissive", "arguments":["onWakeUp"]  },
+                                             { "Type": "ExecuteCallbackPermissive", "arguments":["jobCallback"] },
+                                             { "Type": "JumpToLabel", "arguments":["","end"] } ]
+                            },
+                            {
+                                "option": "silent branch event, this shouldnt be displayed...unless 2",
+                                "Results": [ { "Type": "JumpToLabel", "arguments":["","end"] } ]
                             }
-                        ],
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
                         "isLast" :true
                     }
                 ]

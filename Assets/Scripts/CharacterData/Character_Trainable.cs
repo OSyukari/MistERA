@@ -2026,14 +2026,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 var wakeupEV = new EventInstance(this, "OnCharaWakeUp", "");
                 var callbacks = new List<Action>();
                 var appends = new List<Action>();
-                wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
-
-                if (this.InteractionJob.isVisibleToPlayer) wakeupEV.FunctionCalls.Add("onWakeUp", appends);
-                //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
-                scr_UpdateHandler.current.EventHandler.StartEvent(wakeupEV, false);
 
                 List<Job> jobLists_refuse = new List<Job>();
                 List<Job> jobLists_accept = new List<Job>();
+
+                List<Action> apEventCollector = new List<Action>();
 
                 foreach (var ap in aps)
                 {
@@ -2043,8 +2040,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     {
                         if (!jobLists_refuse.Contains(ap.job)) jobLists_refuse.Add(ap.job);
                         //Debug.LogError($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
-                        
-                        ap.ExecutePackageOutsideUpdate();   // execution
+                        //ap.ExecutePackageOutsideUpdate();
+                        ap.ExecutePackageOutsideUpdate(eventCollector: apEventCollector);
                         if (ap.job.isVisibleToPlayer) ap.job.CollectLogs(ap);
 
                         ap.DisablePackage();
@@ -2060,6 +2057,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
                                 refused.Add(rel);
                             }
+                            if (ap.ListEP.Count < 1) Debug.LogError("Erorr ap ep null");
                         }
                         ap.job.CurrentPackages.Remove(ap);
                     }
@@ -2069,6 +2067,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                         // Debug.Log($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
                         if (ap.job is Job_Sex_Group)
                         {
+                            //var rel = ap.GetRelationship(this);
                             foreach (var ep in ap.ListEP)
                             {
                                 var rel = ep.Relationship(this);
@@ -2078,6 +2077,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                                 accepted.Add(rel);
                                 refused.Remove(rel);
                             }
+                            if (ap.ListEP.Count < 1) Debug.LogError("Erorr ap ep null");
                         }
                         if (ap.job.isVisibleToPlayer) ap.job.CollectLogs(ap);
                     }
@@ -2100,6 +2100,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     }
                     callbacks.Add(job.NotifyDescriptionsOutOfUpdate);
                 }
+
+                callbacks.AddRange(apEventCollector);
 
                 var selfTags = new List<string>();
                 if (Memory == null || Memory.sleepMemory == null)
@@ -2129,15 +2131,21 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 {
                     var randRel = Utility.GetRandomElement(accepted);
                     var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultSuccess", randRel, selfTags, new List<string>());
-                    Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
-                    appends.Add(()=>scr_System_CampaignManager.current.AddLog( message));
+                    if (message != null && message.message == "") message.message = $"(OnNightAssaultSuccess: {FirstName})";
+                    Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message.message}");
+                    // Deferred twice on purpose: this closure only runs once ExecuteCallback("onWakeUp")
+                    // invokes it (after OnCharaWakeUp's Line entry has already queued its own message via
+                    // AddEventCallback), and queuing AddLog here rather than calling it directly keeps our
+                    // message behind that already-queued one in eventCallbacks instead of jumping ahead of it.
+                    appends.Add(() => scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(message)));
                 }
                 else if (refused.Count >= 1)
                 {
                     var randRel = Utility.GetRandomElement(refused);
                     var message = this.Relationships.Personality.GetKOJOMessage("OnNightAssaultFailure", randRel, selfTags, new List<string>());
-                    Debug.Log($"({FirstName}) detected night assault accept count {accepted.Count}, random select {randRel.TargetName}, message {message}");
-                    appends.Add(() => scr_System_CampaignManager.current.AddLog(message));
+                    if (message != null && message.message == "") message.message = $"(OnNightAssaultFailure: {FirstName})";
+                    Debug.Log($"({FirstName}) detected night assault refuse count {refused.Count}, random select {randRel.TargetName}, message {message}, apEventCollector {apEventCollector.Count}");
+                    appends.Add(() => scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(message)));
                     // add moodlet, reduce relationship -> mod relationship record are from ep. or can we directly inject into updatehandler ?
                     // directly add explog to updatehandler's log
                     var relationship = randRel.Owner.Relationships;
@@ -2159,6 +2167,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     var memEntry_2 = randRel.Target.Memory.AddEntry(memInst_2, new List<string>() { "forbidMerge" });
                     memEntry_2.entryDescription = memInst_2.description;
                 }
+                else if (jobLists_accept.Count >= 1)
+                {
+                    // Still legitimately part of a validated AP (e.g. an alternating multi-receiver
+                    // position that only builds one EvaluationPackage per round, so this actor simply
+                    // wasn't the one it landed on this tick) - stay attached, nothing happened to them
+                    // this round that warrants a reaction message either way.
+                }
                 else
                 {
                     // first check last memories if any conscious sex then let it go
@@ -2166,6 +2181,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
                     var rel = this.Relationships.FindRelationshipWith(this);
                     var message = this.Relationships.Personality.GetKOJOMessage("OnWakeUp", rel, selfTags, new List<string>());
+                    if (message != null && message.message == "") message.message = $"(OnWakeUp: {FirstName})";
                     //Debug.Log($"({FirstName}) no night assault, message {message}");
                     // add moodlet
                     if (selfTags.Count > 0)
@@ -2188,6 +2204,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 #endif
                     this.ChangeCurrentJob(null);
                 }
+
+                // Only now, after callbacks/appends are fully populated above, actually launch the event -
+                // StartEvent forces itself to run synchronously whenever scr_UpdateHandler.current.Updating
+                // is true (which it always is here), cascading through OnCharaWakeUp's Line and Branch (and
+                // therefore ExecuteCallback("onWakeUp"/"jobCallback")) in this same call. Starting it any
+                // earlier means those ExecuteCallback steps run against still-empty lists.
+                //scr_UpdateHandler.current.EventHandler.StartEvent(this, "OnCharaWakeUp", "", false);
+                wakeupEV.FunctionCalls.Add("jobCallback", callbacks);
+                if (this.InteractionJob.isVisibleToPlayer) wakeupEV.FunctionCalls.Add("onWakeUp", appends);
+                scr_UpdateHandler.current.EventHandler.StartEvent(wakeupEV, false);
 
                 // if exit job, then removeactor already called endongoingmemory
                 // so, if last memory is ended and uncons, then, problem!
@@ -2268,6 +2294,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" });
 
         Memory.SleepStart();
+
+        if (scr_System_CampaignManager.current.Player == this)
+        {
+            scr_System_CampaignManager.current.party.DisbandParty();
+        }
         //Debug.Log($"{FirstName} sleep!");
         return sleepHour;
     }

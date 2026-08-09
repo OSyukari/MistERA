@@ -102,7 +102,7 @@ public class TryChangeLocaleNode : FindJobNode
         // if not working, currentjob is home
         // if currentjobfaction != currentlocalefaction && currentlocale is not home, go to currentjob -> specific job for rallying?
         if (currentJobFaction != null && currentJobFaction.MainExit != null && currentJobFaction.FactionRallyJob != null
-            && currentJobFaction != currentLocaleFaction && !c.FactionManager.HomeFactions.Contains(currentLocaleFaction))
+            && currentJobFaction != currentLocaleFaction)// && !c.FactionManager.HomeFactions.Contains(currentLocaleFaction))
         {
             var charaRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
             if (charaRoom.FactionOwner != null

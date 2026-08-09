@@ -127,42 +127,35 @@ public class Character_Factions
         UpdateFactionPriorityList();
     }
 
-    public void FlagForDailyNeed()
+    /// <summary>
+    /// Faction responsible for this character's daily need check/consumption today: the active party's
+    /// root faction when on a non-locked active party, otherwise HomeFactions[0]. Null while party-locked
+    /// (kidnapped characters are exempt) or with no home faction. Single source of truth shared by
+    /// FlagForDailyNeed (registration), DailyNeedConsumption (query/report), and
+    /// Manageable.GetMaintenanceCost_Chara (the per-character ownership filter) - keeping all three in sync.
+    /// </summary>
+    [JsonIgnore]
+    public Manageable DailyNeedResponsibleFaction
     {
-        if (!this.isPartyLocked)
+        get
         {
-            if (this.CurrentActiveParty != null)
-            {
-                var party = this.CurrentActiveParty.FactionOwnerRoot;
-                if (party != null)
-                {
-                    //Debug.LogError($"Registering daily consumption for {Owner.CallName} on faction {party.FactionDisplayName}");
-                    party.RegisterForResourceConsumption(Owner.RefID);
-                }
-            }
-            else if (this.HomeFactions.Count > 0)
-            {
-                var home = this.HomeFactions[0];
-                if (home != null)
-                {
-                    //Debug.LogError($"Registering daily consumption for {Owner.CallName} on faction {home.FactionDisplayName}");
-                    home.RegisterForResourceConsumption(Owner.RefID);
-                }
-            }
+            if (this.isPartyLocked) return null;
+            if (this.CurrentActiveParty != null) return this.CurrentActiveParty.FactionOwnerRoot;
+            return this.HomeFactions.Count > 0 ? this.HomeFactions[0] : null;
         }
     }
 
-    
+    public void FlagForDailyNeed()
+    {
+        this.DailyNeedResponsibleFaction?.RegisterForResourceConsumption(Owner.RefID);
+    }
+
+
 
     public void DailyNeedConsumption()
     {
         bool returnValue = true;
-        Manageable home = null;
-        if (!this.isPartyLocked)
-        {
-            if (this.CurrentActiveParty != null) home = this.CurrentActiveParty.FactionOwnerRoot;
-            else if (this.HomeFactions.Count > 0) home = this.HomeFactions[0];
-        }
+        Manageable home = this.DailyNeedResponsibleFaction;
 
         if (home != null && home.isPlayerFaction)
         {
@@ -172,13 +165,13 @@ public class Character_Factions
                 if (!v2 && v.statusDebuffID != "")
                 {   // add status debuff
                     Owner.Stats.AddOrModStatus(v.statusDebuffID, 1441, 1441);
-                    HomeFactions[0].DailyReport.AddManageReport("Due to missing resource "+v.consumeItemByTag+", "+Owner.FirstName+" is now "+v.statusDebuffID, true);
+                    home.DailyReport.AddManageReport("Due to missing resource "+v.consumeItemByTag+", "+Owner.FirstName+" is now "+v.statusDebuffID, true);
                 }
                 returnValue = v2 && returnValue;
             }
 
             // increase relationship
-            foreach (var manager in HomeFactions[0].Managers)
+            foreach (var manager in home.Managers)
             {
                 if (Owner.RefID == manager.RefID) continue;
 
@@ -191,7 +184,7 @@ public class Character_Factions
                     .Replace("$score$", LocalizeDictionary.QueryThenParse("relationship_trust"))
                     .Replace("$count$", scoreinc.ToString("+0;-#"));
 
-                HomeFactions[0].DailyReport.AddManageReport(s, !returnValue);
+                home.DailyReport.AddManageReport(s, !returnValue);
 
             }
         }
@@ -317,7 +310,15 @@ public class Character_Factions
             return faction != null ? faction.GetMemberType(Owner) : null;
         }
     }
-
+    [JsonIgnore]
+    public MemberType CurrentLocaleMemberType
+    {
+        get
+        {
+            var faction = CurrentLocaleFaction;
+            return faction != null ? faction.GetMemberType(Owner) : null;
+        }
+    }
     /// <summary>
     /// True if this character currently holds MemberType memberTypeID in any faction they belong to
     /// (HomeFactions + WorkFactions), regardless of which faction/party is currently active. Does not
@@ -792,7 +793,7 @@ public class Character_Factions
     /// only discovering the correct placement several hourly recomputes later once the rolling window
     /// has slid far enough to see it directly.
     /// </summary>
-    private const int ScheduleLookaheadHours = 36;
+    private const int ScheduleLookaheadHours = 28;
 
     /// <summary>
     /// Recomputes and writes privateSchedule (the rolling 24h window) for the given currentHour.

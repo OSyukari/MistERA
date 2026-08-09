@@ -1,0 +1,77 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "com_interaction_endOngoingSex_erAV_M",
+                    "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAttitudeGTE": "Like"
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "happy",
+                                "relaxed",
+                                "smile",
+                                "confident"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.1 男演员 监督 好感关系 收工松弛",
+                            "responses": [
+                                "com_interaction_endOngoingSex_erAV_M_Warm_1",
+                                "com_interaction_endOngoingSex_erAV_M_Warm_2",
+                                "com_interaction_endOngoingSex_erAV_M_Warm_3",
+                                "com_interaction_endOngoingSex_erAV_M_Warm_4"
+                            ]
+                        },
+                        {
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "receiver",
+                                "calm",
+                                "professional",
+                                "serious",
+                                "neutral"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.2 男演员 监督 普通同事关系 收工归位",
+                            "responses": [
+                                "com_interaction_endOngoingSex_erAV_M_Dutiful_1",
+                                "com_interaction_endOngoingSex_erAV_M_Dutiful_2",
+                                "com_interaction_endOngoingSex_erAV_M_Dutiful_3",
+                                "com_interaction_endOngoingSex_erAV_M_Dutiful_4"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_interaction_endOngoingSex_erAV_M_Warm_1": "$self$没急着起身，靠在原处缓了口气，抬手抹掉额角一层薄汗。\n\n「监督，这场收得挺干脆的。」他侧头看向$target$，语气里还带着点没过瘾，「要不再补一条？我状态还在。」",
+                "com_interaction_endOngoingSex_erAV_M_Warm_2": "$self$抓过旁边搭着的毛巾随意擦了擦，回身朝$target$监督扬了下下巴。\n\n「怎么样，满意吧？」他笑得松弛，不像收工倒像刚结束一场尽兴的运动，「下次想拍这种，记得还点我。」",
+                "com_interaction_endOngoingSex_erAV_M_Warm_3": "$self$套回衣服，动作不紧不慢，神色比方才柔和了不少。\n\n「和你搭戏确实省心。」他扣上最后一颗扣子，瞥了眼监督，「难得，收工我请你喝一杯？」",
+                "com_interaction_endOngoingSex_erAV_M_Warm_4": "$self$舒展开有些发僵的肩背，呼了口气，顺势在$target$监督旁边坐下。\n\n「这种强度的活儿，也就跟你配合时不觉得累。」他语气随意，难得露出几分真实的放松，「监督，下回还安排我啊。」",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_1": "$self$从位置上起身，利落地拾起衣物穿好，神情很快回到工作时的样子。\n\n「辛苦了，监督。」他顺手把用过的东西归拢到一边，「这场没问题的话，我先撤了。」",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_2": "$self$接过工作人员递来的毛巾擦了把脸，对上$target$监督时只是点头示意。\n\n「这条应该过了吧？」他语气平平，已经开始确认下一场的安排，没什么多余情绪。",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_3": "$self$整理好自己，呼出一口长气，重新站稳。\n\n「监督对这条满意就行。」他拍了拍衣服上的褶皱，语气平稳，「还有别的场次要我盯的话，你说一声。」",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_4": "$self$套上外套，动作麻利，转身前朝$target$监督点了下头。\n\n「那我先去歇一会儿，监督。」他说得简洁，脚步已经朝休息室迈了过去。"
+            },
+            "en-us": {
+                "com_interaction_endOngoingSex_erAV_M_Warm_1": "$self$ doesn't rush to get up. He leans where he is to catch his breath and wipes a thin sheen of sweat from his brow.\n\n\"That was a clean cut, Director.\" He glances at $target$, his tone still carrying some unfinished heat. \"Want one more take? I'm still warmed up.\"",
+                "com_interaction_endOngoingSex_erAV_M_Warm_2": "$self$ grabs the towel draped nearby and wipes off casually, then tips his chin toward Director $target$.\n\n\"Well? Satisfied?\" He smiles loose and easy—less like a wrap and more like the end of a satisfying run. \"Next time you shoot something like this, remember to request me.\"",
+                "com_interaction_endOngoingSex_erAV_M_Warm_3": "$self$ pulls his clothes back on at an unhurried pace, his look softer than before.\n\n\"Working with you really is less of a hassle.\" He does up the last button and glances at the director. \"Rare offer—drinks on me after wrap?\"",
+                "com_interaction_endOngoingSex_erAV_M_Warm_4": "$self$ stretches out a stiff shoulder, exhales, and drops down beside Director $target$.\n\n\"Work this intense only feels easy when it's with you.\" His tone is casual, showing a rare trace of genuine ease. \"Keep booking me, Director.\"",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_1": "$self$ rises from his mark, gathers his clothes and dresses efficiently, his face already back to its working set.\n\n\"Thanks for the work, Director.\" He sweeps the used items aside. \"If this take's good, I'll head out.\"",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_2": "$self$ takes the towel a crew member hands him, wipes his face, and only nods when he meets Director $target$'s eyes.\n\n\"This one passed, right?\" His tone is flat, already checking on the next scene, no extra emotion to it.",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_3": "$self$ puts himself back together, lets out a long breath, and stands firm again.\n\n\"As long as you're happy with the take, Director.\" He brushes a crease from his clothes, his tone level. \"If you need me on any other scenes, just say.\"",
+                "com_interaction_endOngoingSex_erAV_M_Dutiful_4": "$self$ throws on his jacket, moves briskly, and dips his head to Director $target$ before turning.\n\n\"I'll go rest a bit, then, Director.\" He keeps it short, already striding toward the green room."
+            }
+        }
+    }
+}

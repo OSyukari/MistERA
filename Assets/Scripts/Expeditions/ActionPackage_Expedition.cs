@@ -157,7 +157,7 @@ public class ActionPackage_Expedition : ActionPackage
     /// <summary>
     /// move one step along the path. Does not have EvaluationPackage attached to it !!!!
     /// </summary>
-    protected override void Execution(MessageCollect m = null)
+    protected override void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
         // pick EVResult, and if can resolve, resolve it.
         // else, store the AP in a message for player later manual resolve

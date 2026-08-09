@@ -35,16 +35,19 @@ public class EventManager
             foreach(var cd in cooldowns)
             {
                 if (!ev.allowDuplicate) return true;
-                if (ev.CooldownRestrictSelf && ev.Self != null && cd.selfRef == ev.Self.RefID) return true;
-                if (ev.CooldownRestrictTarget)
+
+                bool selfMatch = ev.CooldownRestrictSelf && ev.Self != null && cd.selfRef == ev.Self.RefID;
+                bool targetMatch = ev.CooldownRestrictTarget && ev.Targets.Any(trefs => trefs.Value.Any(target => cd.targetRef.Contains(target.RefID)));
+
+                if (ev.CooldownRestrictAND && ev.CooldownRestrictSelf && ev.CooldownRestrictTarget)
                 {
-                    foreach(var trefs in ev.Targets)
-                    {
-                        foreach(var target in trefs.Value)
-                        {
-                            if (cd.targetRef.Contains(target.RefID)) return true;
-                        }
-                    }
+                    // both restrictions enabled: only block when this cooldown matches on both self and target
+                    if (selfMatch && targetMatch) return true;
+                }
+                else
+                {
+                    if (selfMatch) return true;
+                    if (targetMatch) return true;
                 }
             }
             return false;

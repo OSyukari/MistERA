@@ -169,28 +169,65 @@
                 "portraitTags":[  ],
                 "AcceptanceMods": [
                     {
-                        "SelfReq": { "requireConscious": true },
-                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "unsafe", "sex"], "isDoer": false },
-                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 10 }
-                    },
-                    {
-                        "SelfReq": { "requireConscious": true },
+                        "_comment": "女演员 · 承受方：被触摸/被侍奉时不会拒绝（被触碰的入口，逐步累积好感）",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
                         "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "service"], "isDoer": false },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason" }
                     },
                     {
-                        "SelfReq": { "requireConscious": true },
+                        "_comment": "女演员 · 承受方：承受情色/性爱类指令（如被插入）接受度 +10，随好感渐进，不强制",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "unsafe", "sex"], "isDoer": false },
+                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 10 }
+                    },
+                    {
+                        "_comment": "女演员 · 施为方：主动施行触摸/侍奉/情色/性爱（如口交、主动爱抚）时更为勉强，接受度 +5，需随好感逐步适应",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "service", "unsafe", "sex"], "isDoer": true },
+                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 5 }
+                    },
+                    {
+                        "_comment": "女演员 · 承受方：监督发起性行为时，允许开启会话（仅开启会话，不意味着可任意行事）并触发女演员反应口上",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_initiateSex", "isDoer": false },
                         "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
-                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_initiateSex_erAV" }
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_initiateSex_erAV_F" }
                     },
                     {
-                        "SelfReq": { "requireConscious": true },
+                        "_comment": "女演员 · 承受方：监督结束性行为时，允许结束并触发女演员反应口上",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_endOngoingSex", "isDoer": false },
                         "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
-                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_endOngoingSex_erAV" }
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_endOngoingSex_erAV_F" }
                     },
                     {
+                        "_comment": "男演员 · 承受方：被触摸/被侍奉/承受情色/性爱（如被口交）时接受度 +5，经接受检定不强制（调参阶段不跳过检定）",
+                        "SelfReq": { "requireConscious": true, "requireMale": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "service", "unsafe", "sex"], "isDoer": false },
+                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 5 }
+                    },
+                    {
+                        "_comment": "男演员 · 施为方：主动施行触摸/侍奉/情色/性爱（如插入）时接受度 +5，经接受检定不强制",
+                        "SelfReq": { "requireConscious": true, "requireMale": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "service", "unsafe", "sex"], "isDoer": true },
+                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 5 }
+                    },
+                    {
+                        "_comment": "男演员 · 承受方：监督发起性行为时，接受度由上方 +5（经 unsafe 标签命中）承担，此处仅把反应口上重定向到男演员版本",
+                        "SelfReq": { "requireConscious": true, "requireMale": true },
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_initiateSex", "isDoer": false },
+                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "Result_EvaluationPackage": { "overrideKojoEventID": "com_interaction_initiateSex_erAV_M" }
+                    },
+                    {
+                        "_comment": "男演员 · 承受方：监督结束性行为时，仅把反应口上重定向到男演员版本（接受度同样由 +5 承担，不强制）",
+                        "SelfReq": { "requireConscious": true, "requireMale": true },
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_endOngoingSex", "isDoer": false },
+                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "Result_EvaluationPackage": { "overrideKojoEventID": "com_interaction_endOngoingSex_erAV_M" }
+                    },
+                    {
+                        "_comment": "演员（男女通用）：接受监督的同行邀请",
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_partyInvite", "isDoer": false },
                         "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_partyinvite_accept_reason" }
@@ -213,11 +250,11 @@
                 "membertype_erav_kiryu_filmstudio_actor":"演员",
                 "erav_filmstudio_actor_accept_reason": "作为演员的职责",
                 "erav_filmstudio_actor_partyinvite_accept_reason": "与监督同行",
-                "membertype_erav_kiryu_filmstudio_actor_tooltip": "对触摸/情色/性爱类指令的接受度 +10\n作为对象时，不会拒绝触摸与侍奉类指令\n不会拒绝监督的同行请求"
+                "membertype_erav_kiryu_filmstudio_actor_tooltip": "女演员：被动接受触摸/侍奉时不会拒绝；被动接受情色/性爱类指令（如被插入）接受度 +10；主动施行触摸/侍奉/情色/性爱（如口交、主动爱抚）时接受度 +5，需逐步适应；强制接受监督发起的性行为（仅开启会话）\n男演员：对触摸/侍奉/情色/性爱类指令接受度 +5（含监督发起的性行为，无论被动接受或主动施行，均经接受检定不强制）\n演员（男女）：不会拒绝监督的同行邀请"
             },
             "en-us": {
                 "erav_filmstudio_actor_accept_reason": "Part of the job as an actor",
-                "membertype_erav_kiryu_filmstudio_actor_tooltip": "+10 acceptance toward touch/unsafe/sex commands\nAs receiver, always accepts touch and service commands\nAlways accepts party invites from the director"
+                "membertype_erav_kiryu_filmstudio_actor_tooltip": "Actress: as receiver never refuses touch/service; +10 to receiving unsafe/sex (e.g. being penetrated); +5 when she is the doer of touch/service/unsafe/sex (e.g. performing oral, initiating fondling) — warms up gradually; force-accepts a sex scene the director starts (only opens the session)\nActor: +5 acceptance toward touch/service/unsafe/sex (including a sex scene the director starts), whether receiver or doer — always goes through the acceptance check, never forced\nBoth: always accepts party invites from the director"
             }
         }
     }

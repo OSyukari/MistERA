@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using System;
 using UnityEngine.UIElements;
+using Cysharp.Threading.Tasks;
 
 
 public class Ovum
@@ -61,16 +62,61 @@ public class Ovum
     [JsonProperty]
     protected int ownerRef = -1;
 
+    // Legacy reference from before fatherName/fatherRaceID existed. Kept only so old saves can
+    // still recover their father data on load; MigrateLegacyFatherData() copies it out into the
+    // strings below and clears this. Nothing should rely on this being set for new pregnancies —
+    // the cum item it points to is disposable and may get cleaned up from the world over time.
     public Item_Instance_Cum father = null;
+
+    // Copied out of the fertilizing Item_Instance_Cum at Fertilize() time (or migrated from the
+    // legacy `father` reference above). The cum item itself is not kept referenced here: it is a
+    // disposable world item that eventually gets cleaned up, while the ovum/foetus may need this
+    // data for the rest of the pregnancy.
+    [JsonProperty("fatherName")] string _fatherName = "";
+    [JsonIgnore]
+    public string fatherName
+    {
+        get { MigrateLegacyFatherData(); return _fatherName; }
+        set { _fatherName = value; }
+    }
+
+    [JsonProperty("fatherRaceID")] string _fatherRaceID = "";
+    [JsonIgnore]
+    public string fatherRaceID
+    {
+        get { MigrateLegacyFatherData(); return _fatherRaceID; }
+        set { _fatherRaceID = value; }
+    }
+
+    // which side's race the foetus was rolled to take after (true = father, false = mother).
+    public bool useFatherRace = false;
+
+    /// <summary>
+    /// Old saves (from before fatherName/fatherRaceID existed) only have the legacy `father`
+    /// cum reference. Pull the needed data out of it once, then drop the reference so it doesn't
+    /// linger for the rest of the pregnancy.
+    /// </summary>
+    void MigrateLegacyFatherData()
+    {
+        if (_fatherRaceID == "" && father != null)
+        {
+            _fatherName = father.FatherName;
+            _fatherRaceID = father.raceID;
+            father = null;
+        }
+    }
+
+    [JsonIgnore]
+    public string FoetusRaceID
+    {
+        get { return useFatherRace ? fatherRaceID : (Owner == null ? "" : Owner.Race.ID); }
+    }
 
     public void Fertilize(Item_Instance_Cum fertilizer)
     {
-        // if fertilized, store father ref
-        this.father = fertilizer;
-
         var masterlist = scr_System_Serializer.current.MasterList.humanoid_Races;
 
-        var fatherf = masterlist.CollectValidFoetus(father.raceID, father.baseID);
+        var fatherf = masterlist.CollectValidFoetus(fertilizer.raceID, fertilizer.baseID);
         var fatherops = new List<string>();
         var motherf = masterlist.CollectValidFoetus(Owner.Race.ID, Owner.BaseID);
         var motherops = new List<string>();
@@ -78,10 +124,10 @@ public class Ovum
         if (fatherf != null)
         {
             fatherops.AddRange(fatherf.offspring_templates);
-            if (father.templateID != "" && !fatherops.Contains(father.templateID))
+            if (fertilizer.templateID != "" && !fatherops.Contains(fertilizer.templateID))
             {
-                var template = scr_System_Serializer.current.MasterList.Character_Bases.GetGeneratorByID(father.templateID);
-                if (template != null && template.allowDuplicateID) fatherops.Add(father.templateID);
+                var template = scr_System_Serializer.current.MasterList.Character_Bases.GetGeneratorByID(fertilizer.templateID);
+                if (template != null && template.allowDuplicateID) fatherops.Add(fertilizer.templateID);
             }
         }
 
@@ -104,11 +150,16 @@ public class Ovum
         }
         foetus = new FoetusTemplates();
 
+        // store father data now: the cum item is disposable and may be cleaned up from the
+        // world later in the pregnancy, so nothing here should keep a live reference to it.
+        fatherName = fertilizer.FatherName;
+        fatherRaceID = fertilizer.raceID;
+
         // first roll: which parent's race the foetus takes after. 50/50 if both sides have at
         // least one valid offspring template, otherwise whichever side has options.
-        bool useFather = fatherEligible && motherEligible ? Utility.Dice(1, 2) == 1 : fatherEligible;
-        var chosenSource = useFather ? fatherf : motherf;
-        var chosenOps = useFather ? fatherops : motherops;
+        useFatherRace = fatherEligible && motherEligible ? Utility.Dice(1, 2) == 1 : fatherEligible;
+        var chosenSource = useFatherRace ? fatherf : motherf;
+        var chosenOps = useFatherRace ? fatherops : motherops;
 
         foetus.MergeWith(chosenSource);
 
@@ -124,7 +175,13 @@ public class Ovum
     {
         get
         {
-            return $"state {this.State}\nlifespan {lifespan}\nsize {(foetusItem == null ? "0" : $"{foetusItem.GetComp_Ingestible().amount}")}\nmaxsize {(foetus == null ? "0" : $"{foetus.size_end}")}";
+            var header = LocalizeDictionary.QueryThenParse("ovum_itemTooltip")
+                .Replace("$race$", LocalizeDictionary.QueryThenParse(FoetusRaceID))
+                .Replace("$mother$", Owner == null ? "" : Owner.FirstName)
+                .Replace("$motherRace$", Owner == null ? "" : LocalizeDictionary.QueryThenParse(Owner.Race.ID))
+                .Replace("$father$", fatherName)
+                .Replace("$fatherRace$", LocalizeDictionary.QueryThenParse(fatherRaceID));
+            return $"{header}\nstate {this.State}\nlifespan {lifespan}\nsize {(foetusItem == null ? "0" : $"{foetusItem.GetComp_Ingestible().amount}")}\nmaxsize {(foetus == null ? "0" : $"{foetus.size_end}")}";
         }
     }
 
@@ -149,7 +206,7 @@ public class Ovum
                 var index = (int)Math.Clamp(ratio * foetus.images_multiplet.Count, 0, foetus.images_multiplet.Count - 1);
                 return foetus.images_multiplet[index];
             }
-            else
+            else if (foetus.images.Count > 0)
             {
                 var index = (int)Math.Clamp(ratio * foetus.images.Count, 0, foetus.images.Count - 1);
                 return foetus.images[index];
@@ -211,7 +268,7 @@ public class Ovum
             {
                 _ovumname = LocalizeDictionary.QueryThenParse("ovum_finalName")
                     .Replace("$mother$", Owner.FirstName)
-                    .Replace("$father$", father.FatherName);
+                    .Replace("$father$", fatherName);
             }
             return _ovumname;
         } }

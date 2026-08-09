@@ -3,6 +3,10 @@
         "list": [
             {
                 "ID": "RequestLeave_PrivateAction",
+                "cooldownTime": 30,
+                "cooldownRestrictSelf": true,
+                "cooldownRestrictTarget": true,
+                "cooldownRestrictAND": true,
                 "SelfValidator": {
                     "chara_conditions": [
                         {

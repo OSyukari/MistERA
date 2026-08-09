@@ -704,7 +704,9 @@ public static class EventUtility
         bool executed = false;
         foreach (var p in block.options)
         {
-            if (isValid(p, owner) && Execute(owner, p))
+            var isvalid = isValid(p, owner);
+            var executedd = isvalid && Execute(owner, p);
+            if (executedd)
             {
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Execute Branch {p.option} isvalid and executed");
                 executed = true;
@@ -713,7 +715,7 @@ public static class EventUtility
             }
             else
             {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Execute Branch {p.option} failed, isvalid? {isValid(p, owner)} or execution error");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Execute Branch {p.option} failed, isvalid? {isvalid} executed? {executedd} or execution error");
             }
         }
 

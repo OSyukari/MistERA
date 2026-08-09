@@ -203,7 +203,7 @@
                         "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [
-                            { "responses": [], "keepLooking": true }
+                            { "responses": ["OnNightAssaultSuccess_1"], "keepLooking": true }
                         ]
                     },
                     {
@@ -211,7 +211,7 @@
                         "tags": ["nsfw"],
                         "debugLogging": true,
                         "variants": [
-                            { "responses": [], "keepLooking": true }
+                            { "responses": ["OnNightAssaultFailure_1"], "keepLooking": true }
                         ]
                     }
                 ]

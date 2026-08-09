@@ -273,6 +273,7 @@
 "ui_management_overview_daily_trust": "$name$对$leader$的$score$$count$",
 "ui_management_overview_daily_skill": "$name$的$skill$升级 $prev$ -> $now$",
 "ui_management_overview_daily_failure": "缺乏资源：$name$",
+"ui_management_overview_daily_absent": "$name$不在阵营内，未消耗资源",
 
 "ui_management_workfaction_alwaysActive":"工作制：一周七天",
 "ui_management_workfaction_activedays":"工作制：一周$count$天，$list$",
@@ -381,7 +382,7 @@
 "management_faction_home_temporary": "<link=management_faction_home_temporary_tooltip>临时家庭阵营</link>",
 "management_faction_home_temporary_tooltip": "同家庭阵营，但优先级高于家庭阵营。负责处理角色暂时脱离家庭阵营的情况（例如外出探险）",
 "management_faction_work": "<link=management_faction_work_tooltip>工作阵营</link>",
-"management_faction_work_tooltip": "工作阵营不需要满足角色的每日需求，代价是不会因为管理良好而增加成员们的信任\n阵营间的道具收支不互通，要想转移请用【贸易订单】中的【转移道具至...】",
+"management_faction_work_tooltip": "工作阵营不需要满足成员的每日需求，代价是不会因为管理良好而增加成员们的信任\n阵营间的道具收支不互通，要想转移请用【贸易订单】中的【转移道具至...】\n\n如果从工作阵营派出远征，那么该工作阵营需要满足远征成员们的每日需求",
 
 
 "management_faction_activeHours": "<link=management_faction_activeHours_tooltip>活跃时间段：</link>",
@@ -706,6 +707,8 @@
 
 "ui_diceroll_autosuccess":"必定接受",
 "ui_diceroll_autofailure":"必定拒绝",
+"ui_diceroll_forcedsuccess":"强制成功",
+"ui_diceroll_forcedfailure":"强制失败",
 "ui_diceroll_success":"接受",
 "ui_diceroll_failure":"拒绝",
 
@@ -1191,6 +1194,8 @@
 
 "ui_diceroll_autosuccess":"Automatic Success",
 "ui_diceroll_autofailure":"Automatic Failure",
+"ui_diceroll_forcedsuccess":"Forced Success",
+"ui_diceroll_forcedfailure":"Forced Failure",
 "ui_diceroll_success":"Success",
 "ui_diceroll_failure":"Failure",
 

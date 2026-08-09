@@ -1,8 +1,8 @@
 {
 "Experiences":{
 "list":[
-    {  "ExperienceID":"experience_sex_male", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","male"] , "ExcludeOwnerTags":["unconscious"] },
-    {  "ExperienceID":"experience_sex_female", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","female"], "ExcludeOwnerTags":["unconscious"] },
+    {  "ExperienceID":"experience_sex_male", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","male"] , "ExcludeOwnerTags":["unconscious"], "ExcludeCOMTags":["masturbate"] },
+    {  "ExperienceID":"experience_sex_female", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["human","unsafe","female"], "ExcludeOwnerTags":["unconscious"], "ExcludeCOMTags":["masturbate"] },
     {  "ExperienceID":"experience_sex_masturbate", "tags":["nsfw"], "applyToReceiver":false, "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","masturbate"] },
     {  "ExperienceID":"experience_sex_exposure", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["unsafe","naked"] },
     {  "ExperienceID":"experience_sex_animal", "tags":["nsfw"], "RequiredOwnerTags":["human"], "RequiredCOMTags":["animal","unsafe"] },

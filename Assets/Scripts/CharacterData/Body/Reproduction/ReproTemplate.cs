@@ -25,7 +25,7 @@ public class ReproductionTemplate
     public float ageMultiplier = 1.0f;
 
     public float fertility = 1.0f;
-    public int climaxOvulationThreshold = 100;
+    public int climaxOvulationThreshold = 60;
     public float fertilizationChance = 0.25f;
     public int ovumLifespanMinutes = 1440;   // 24 hours (human default)
 

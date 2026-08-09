@@ -1075,11 +1075,13 @@ public static class UtilityEX
         if (b == null)
         {
             if (com != null && com.comTags.Contains("interaction")) extraComTags.Add("NonInteraction");
+            GetActorTag(ref extraTargetTags, a);
         }
         else if (a.RefID == b.RefID)
         {
             if (com != null && com.comTags.Contains("interaction")) extraComTags.Add("NonInteraction");
             if (com != null && (com.comTags.Contains("sex") || com.comTags.Contains("service"))) extraComTags.Add("masturbate");
+            GetActorTag(ref extraTargetTags, b);
         }
         else
         {

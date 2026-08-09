@@ -152,7 +152,7 @@ public class ActionPackage_Sex : ActionPackage
 
     protected override bool Request(bool rebuildPackage = true, Memory_Response forceAccept = Memory_Response.None)
     {
-        if (this.isForced && forceAccept < Memory_Response.Accept) forceAccept = Memory_Response.Accept; 
+        if (this.isForced && forceAccept < Memory_Response.Accept && scr_System_CampaignManager.current.DebugMode) forceAccept = Memory_Response.Accept; 
         return base.Request(rebuildPackage, forceAccept);
     }
 }

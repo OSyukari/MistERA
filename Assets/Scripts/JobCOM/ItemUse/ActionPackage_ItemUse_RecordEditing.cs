@@ -134,7 +134,7 @@ public class ActionPackage_ItemUse_RecordEditing : ActionPackage_ItemUse
         base.PackageBegin(m);
     }
 
-    protected override void Execution(MessageCollect m = null)
+    protected override void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
         var canvas = scr_System_CampaignManager.current.Canvas_VideoEditor;
 

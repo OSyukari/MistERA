@@ -179,7 +179,7 @@ public class FoetusTemplates
         {
             ovum.State = OvumState.Aborted;
         }
-        else if (ovum.father == null)
+        else if (ovum.fatherRaceID == "")
         {
             ovum.State = OvumState.Aborted;
             Debug.Log("father null abort");
@@ -187,7 +187,8 @@ public class FoetusTemplates
         else
         {
 
-            var foetusObject = WorldManager.Instantiate("item_foetus", $"{LocalizeDictionary.QueryThenParse(ovum.father.raceID)}'s foetus");
+            var foetusName = LocalizeDictionary.QueryThenParse("ovum_itemName").Replace("$race$", LocalizeDictionary.QueryThenParse(ovum.FoetusRaceID));
+            var foetusObject = WorldManager.Instantiate("item_foetus", foetusName);
             if (foetusObject == null || foetusObject.GetComp_Ingestible() == null)
             {
                 ovum.State = OvumState.Aborted;

@@ -163,7 +163,10 @@ public class scr_System_Serializer : MonoBehaviour
                 Debug.LogError($"alert null guid for {guidPath}");
                 continue;
             }*/
-
+            if (!ShortFileAddress.TryAdd($"{file.Name}", file.FullName))
+            {
+                // silent fail is okay
+            }
             if (!ShortFileAddress.TryAdd($"{file.Directory.Name}/{file.Name}", file.FullName))
             {
                 errors.Add($"conflict key {file.Directory.Name}/{file.Name}");

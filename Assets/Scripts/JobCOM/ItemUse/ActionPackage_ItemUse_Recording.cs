@@ -219,7 +219,7 @@ public class ActionPackage_ItemUse_Recording : ActionPackage_ItemUse
             return Comp.Records.cameraman;
         } }
 
-    protected override void Execution(MessageCollect m = null)
+    protected override void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
         if (m == null) m = job.m;
         //base.Execution(m);

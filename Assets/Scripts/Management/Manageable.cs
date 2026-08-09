@@ -2455,8 +2455,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
             {
                 if (registeredOnly && !charaRegisteredForResourceConsumption.Contains( chara.RefID))
                 {
-                    DailyReport.AddManageReport($"{chara.FirstName} is not inside faction, no resouce consumed");
-                    //Debug.LogError($"{chara.FirstName} is not inside faction, no resouce consumed");
+                    // only the home faction needs to explain an absence - a work faction with no active
+                    // party for this chara never expected to register them, so silence is expected there
+                    bool isHomeFaction = chara.FactionManager != null && chara.FactionManager.HomeFactions.Count > 0 && chara.FactionManager.HomeFactions[0].ID == this.ID;
+                    if (isHomeFaction)
+                    {
+                        DailyReport.AddManageReport(LocalizeDictionary.QueryThenParse("ui_management_overview_daily_absent").Replace("$name$", chara.FirstName));
+                    }
                     continue;
                 }
                 // verify that said chara is indeed using this faction as maintenance target
@@ -2465,14 +2470,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
                     Debug.Log(chara.FirstName + " HAS EMPTY FactionManager ON GetMaintenanceCost_Chara");
                     continue;
                 }
-                else if (chara.FactionManager.HomeFactions.Count < 1)
+                else if (chara.FactionManager.DailyNeedResponsibleFaction?.ID != this.ID)
                 {
-                    Debug.Log(chara.FirstName + " HAS EMPTY HomePriorityList ON GetMaintenanceCost_Chara");
-                    continue;
-                }
-                else if (chara.FactionManager.HomeFactions[0].ID != this.ID)
-                {
-                    // chara is using another faction
+                    // chara's daily need is not this faction's responsibility (wrong home / on another faction's party / party-locked)
                     continue;
                 }
 

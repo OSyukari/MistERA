@@ -161,6 +161,11 @@ public class Event : I_SerializationCallbackReceiver
     public int cooldownTime = 0;
     public bool cooldownRestrictSelf = false;
     public bool cooldownRestrictTarget = true;
+    /// <summary>
+    /// When true, an active cooldown only blocks a new attempt if it matches on all enabled
+    /// restrictions (self AND target) rather than any one of them (self OR target).
+    /// </summary>
+    public bool cooldownRestrictAND = false;
 
     /// <summary>
     /// Since there is jump involved, Event itself should not be managing the flow

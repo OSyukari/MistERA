@@ -26,6 +26,7 @@
                 "ui_management_production_Trade_stock": "Stock Amount",
 
                 "ui_management_overview_daily_failure": "Lacking Resource: $name$",
+                "ui_management_overview_daily_absent": "$name$ is not inside the faction, no resource consumed",
                 "ui_management_overview_daily_skill": "$name$'s $skill$ leveled up $prev$ -> $now$",
                 "ui_management_overview_daily_trust": "$name$'s $score$ toward $leader$: $count$",
                 "ui_management_overview_dailyconsume": "Daily resource consumption:\n$daily$\n",

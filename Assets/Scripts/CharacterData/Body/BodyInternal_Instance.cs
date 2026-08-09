@@ -110,7 +110,13 @@ public class BodyInternal_Instance
 
     public bool NotifySexExperience(bool hasPermission, string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
     {
-        this.lastExperience = Owner.Memory.Last.EndTime.Ticks;
+        if (Owner.Memory.Last == null)
+        {
+            Debug.LogError($"error NotifySexExperience {Owner.FirstName} Last memory null");
+            return false;
+        }
+        
+        this.lastExperience = Owner.Memory.Last.FinalEndTime.Ticks;
         this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName);
 
         if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1)

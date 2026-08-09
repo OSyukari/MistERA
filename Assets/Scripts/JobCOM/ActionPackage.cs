@@ -1307,14 +1307,14 @@ public abstract class ActionPackage
     ///     
     ///     
     /// </summary>
-    protected void ExecutePackage(MessageCollect m = null)
+    protected void ExecutePackage(MessageCollect m = null, List<Action> eventCollector = null)
     {
         this.timestopTick = scr_System_Time.current.TimeStopStrict;
 
         PreExecution();
         // evaluate acceptance
 
-        Execution(m);
+        Execution(m, eventCollector);
 
         shuffledList = new List<EvaluationPackage>(ListEP);
 
@@ -1675,8 +1675,7 @@ public abstract class ActionPackage
         bool returnValue = false;
         if (duration < 1)
         {
-            // character already woke up and at this point package already executed
-            Debug.LogError("RetryRequest called but duration < 1");  // this shouldnt happen anymore as eventhandler run happens after 
+            Debug.LogError($"RetryRequest called but duration < 1. packages count {packages.Count}");  // this shouldnt happen anymore as eventhandler run happens after
             return true;
         }
         else
@@ -1701,10 +1700,11 @@ public abstract class ActionPackage
         }
 
     }
-    public void ExecutePackageOutsideUpdate(MessageCollect m = null)
+
+    public void ExecutePackageOutsideUpdate(MessageCollect m = null, List<Action> eventCollector = null)
     {
         this.duration = 0;
-        ExecutePackage(m);
+        ExecutePackage(m, eventCollector);
     }
 
     public bool LowPriority = false;
@@ -1713,6 +1713,13 @@ public abstract class ActionPackage
 
     [JsonProperty] protected List<EvaluationPackage> packages = new List<EvaluationPackage>();
 
+    public Character_Relationship Relationship(Character_Trainable self)
+    {
+        if (self == null) return null;
+        
+        return null;
+
+    }
     [JsonIgnore] public virtual bool LeftAlign
     {
         get
@@ -1796,7 +1803,7 @@ public abstract class ActionPackage
     /// <summary>
     /// 
     /// </summary>
-    protected virtual void Execution(MessageCollect m = null)
+    protected virtual void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
         if (m == null) m = this.job.m;
         if (packages == null || packages.Count < 1)
@@ -1916,7 +1923,7 @@ public abstract class ActionPackage
 
             if (!isForced)
             {
-                SendRefuseEvent();
+                SendRefuseEvent(eventCollector);
             }
             else
             {   // force AP failed
@@ -2773,12 +2780,34 @@ public abstract class ActionPackage
         return null;
     }
 
-    protected void SendRefuseEvent()
+    protected void SendRefuseEvent(List<Action> eventCollector = null)
     {
 
-        var targetDoer = this.doer.Count == 1 ? this.doer[0] : this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : null;
-        var targetReceivers = new List<Character_Trainable>(this.Actors);
-        if (targetDoer != null) targetReceivers.Remove(targetDoer);
+        var targetDoer = this.doerRefs.Contains(0) ? scr_System_CampaignManager.current.Player : this.doer.Count == 1 ? this.doer[0] : null;
+
+        var targetEP = this.ListEP.Find(ep => ep.Doer == targetDoer);
+        bool doerCausedRefusal = targetEP != null && targetEP.RefusalCausedByDoer;
+
+        // "OnAPRefuse" (Data/Events/OnActionRefuse.json) frames "self" as the requester whose request
+        // was refused, and "evTarget" as the one who refused (who gets pressured if pushed).
+        List<Character_Trainable> targetReceivers;
+        if (doerCausedRefusal && this.Master != null && this.Master != targetDoer)
+        {
+            // The doer refused the master's order: evTarget becomes the doer who refused,
+            // and self (the requester) becomes the master.
+            targetReceivers = new List<Character_Trainable>() { targetDoer };
+            targetDoer = this.Master;
+        }
+        else if (doerCausedRefusal)
+        {
+            // Doer is its own master (or there's no master) — self-initiated decline, nothing to push against.
+            targetReceivers = new List<Character_Trainable>();
+        }
+        else
+        {
+            targetReceivers = new List<Character_Trainable>(this.Actors);
+            if (targetDoer != null) targetReceivers.Remove(targetDoer);
+        }
 
         if (!this.actorRefs.Contains(0))
         {
@@ -2855,7 +2884,15 @@ public abstract class ActionPackage
             refuseEV.AppendStrings.Add("com_variant_name", new List<string>(){ this.DisplayName });
             appends.AddRange(forceAP.tooltip);
 
-            scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
+            if (eventCollector != null) eventCollector.Add(() => {
+                Debug.LogError($"event run still exist? {refuseEV != null} ap still exist? {this != null}");
+                scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
+                });
+            else scr_UpdateHandler.current.EventHandler.StartEvent(refuseEV, false);
+
+            Debug.LogError($"SendRefuseEvent called injection haslist? {eventCollector != null} result {(eventCollector == null? "null": eventCollector.Count)}");
+
+
         }
         else
         {

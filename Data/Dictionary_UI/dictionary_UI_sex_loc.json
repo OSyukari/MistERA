@@ -36,6 +36,7 @@
                 "OvumState_Final": "Labor",
 
                 "ovum_itemName": "$race$ Foetus",
+                "ovum_itemTooltip": "$mother$ ($motherRace$) and $father$ ($fatherRace$)'s $race$ baby",
                 "ovum_finalName": "$mother$ and $father$'s Baby",
 
                 "chara_currentjob_labor": "In Labor",

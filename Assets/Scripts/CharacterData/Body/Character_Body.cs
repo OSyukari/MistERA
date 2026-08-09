@@ -541,6 +541,7 @@ public class Character_Body
             if (Owner.isTimeStopped) return false;
             if (Owner.Stats.Climaxing.Severity > 0) return true; // block repeat climax if still lingering
 
+            var intensity = Owner.Stats.SexStimulation.Severity;
             List<string> climaxTags = new List<string>();
             UtilityEX.GetActorTag(ref climaxTags, Owner);
 
@@ -760,6 +761,20 @@ public class Character_Body
                     }
                 }
 
+
+                List<string> wbmessages = new List<string>();
+                foreach (var wb in this.Owner.wombs)
+                {
+                    wb.NotifyClimax(intensity, Owner.ReproCycle, wbmessages);
+                }
+                if (wbmessages.Count > 0)
+                {
+                    foreach (var m in wbmessages)
+                    {
+                        Owner.InteractionJob.m.AddMessage_After(new DescriptionCollector(m.Replace("$name$", Owner.FirstName)));//.AddMessage(Owner.RefID, );
+                    }
+                }
+
                 //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
                 //exp.AddClimaxMSG(Owner.RefID, s);
                 exp.Finalize(out var desc);
@@ -792,6 +807,7 @@ public class Character_Body
 
                     //message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_single", this.Owner, tags, listEP));
                 }
+
                 return true;
 
             }

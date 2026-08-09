@@ -485,7 +485,7 @@ public abstract class BodyInternal_Womb
     // ── External notifications — hook to your arousal / climax systems ─────
     // Spontaneous ovulators (human, elf, dog…) leave these as no-ops.
     // Induced ovulators (feline) override them.
-    public virtual void NotifyClimax(float climaxIntensity, ReproductionCycle cycle)
+    public virtual void NotifyClimax(float climaxIntensity, ReproductionCycle cycle, List<string> messages)
     { 
     
     }
@@ -630,12 +630,19 @@ public class Womb_Induced : BodyInternal_Womb
     }
 
     // Call this when a climax event occurs (hook to your arousal/climax system)
-    public override void NotifyClimax(float climaxIntensity, ReproductionCycle cycle)
+    public override void NotifyClimax(float climaxIntensity, ReproductionCycle cycle, List<string> messages)
     {
         if (BaseTemplate == null) return;
         if (!cycle.CanOvulate) return;
 
         int count = Mathf.FloorToInt(climaxIntensity / BaseTemplate.climaxOvulationThreshold);
-        for (int i = 0; i < count; i++) ovulation();
+        for (int i = 0; i < count; i++)
+        {
+            ovulation();
+        }
+       // Debug.Log($"NotifyClimax induce ovu: {climaxIntensity} / {BaseTemplate.climaxOvulationThreshold} = {climaxIntensity / BaseTemplate.climaxOvulationThreshold} -> {count}");
+        var msg = LocalizeDictionary.QueryThenParse("womb_climax_ovulation");
+        if (count > 0 && !messages.Contains(msg)) messages.Add(msg);
+
     }
 }

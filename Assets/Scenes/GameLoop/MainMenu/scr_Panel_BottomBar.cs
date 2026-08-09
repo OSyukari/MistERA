@@ -193,10 +193,10 @@ public class scr_Panel_BottomBar : scr_Menu
             }
             charaRefID = scr_System_CampaignManager.current.CurrentTargetRef;
             //Debug.Log("isbuttonvalid " + charaRefID + " " + scr_System_CentralControl.current.CanHaveSex(0, charaRefID));
-            if (charaRefID > 0 && !scr_System_CampaignManager.current.displaySex) text.SetText("%%comManager_bottom_inspect%%");
+            if (charaRefID > 0 && (true || !scr_System_CampaignManager.current.displaySex)) text.SetText("%%comManager_bottom_inspect%%");
             else
             {
-                charaRefID = 0;
+                //charaRefID = 0;
                 text.SetText("%%comManager_bottom_inspectSelf%%");
             }
             return (charaRefID >= 0);

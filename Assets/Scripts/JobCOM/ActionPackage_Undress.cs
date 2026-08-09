@@ -125,7 +125,7 @@ public class ActionPackage_Undress : ActionPackage
         }
     }
 
-    protected override void Execution(MessageCollect m = null)
+    protected override void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
         //Debug.Log("ActionPackage_Undress Execute for [" + Doer.FirstName + "]");
         var c = scr_System_CampaignManager.current.FindInstanceByID(doerRef);
