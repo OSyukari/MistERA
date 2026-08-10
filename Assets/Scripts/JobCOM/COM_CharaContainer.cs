@@ -53,7 +53,7 @@ public class COM_Character_Remove : COM
         this.requirements.requirement.req_Receivers.requireUnrestrained = false;
         this.requirements.requirement.req_Doers.requireNoTeammate = true;
 
-        foreach(var i in results.results_jobContainer)
+        foreach(var i in results_EP.results_jobContainer)
         {
             if (i.entry_results == null) continue;
             if (i.entry_results.lockChara == null) continue;

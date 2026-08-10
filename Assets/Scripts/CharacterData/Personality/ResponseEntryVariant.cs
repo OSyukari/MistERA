@@ -346,7 +346,6 @@ public partial class ResponseEntry
             public CharaReq targetReq = null;
             public string requireSelfAttitudeKey = "";
             public RequireKojoVariable requireKojoVariable = new RequireKojoVariable();
-            public RequireStatusValue requireSelfStatusValue = new RequireStatusValue();
             public List<RequireStatValue> requireSelfStatValue = new List<RequireStatValue>();
             public RequireMemory requireSelfMemory = new RequireMemory();
 
@@ -498,7 +497,6 @@ public partial class ResponseEntry
                         if (!i.Validate(self)) return false;
                     }
                 }
-                if (this.requireSelfStatusValue != null && this.requireSelfStatusValue.isValid && rel != null && !this.requireSelfStatusValue.Validate(rel.Owner)) return false;
                 if (this.requireSelfMemory != null && this.requireSelfMemory.isValid && rel != null && !this.requireSelfMemory.Validate(rel.Owner)) return false;
                 return true;
 

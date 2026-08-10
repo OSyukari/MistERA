@@ -1,0 +1,97 @@
+{
+    "Character_Bases":
+    {
+        "names":
+        {
+            "horse":
+            {
+                "firstname_male": [
+                "horse_firstname_01", "horse_firstname_02", "horse_firstname_03", "horse_firstname_04", "horse_firstname_05",
+                "horse_firstname_06", "horse_firstname_07", "horse_firstname_08", "horse_firstname_09", "horse_firstname_10",
+                "horse_firstname_11", "horse_firstname_12", "horse_firstname_13", "horse_firstname_14", "horse_firstname_15",
+                "horse_firstname_16", "horse_firstname_17", "horse_firstname_18", "horse_firstname_19", "horse_firstname_20",
+                "horse_firstname_21", "horse_firstname_22", "horse_firstname_23", "horse_firstname_24", "horse_firstname_25",
+                "horse_firstname_26", "horse_firstname_27", "horse_firstname_28", "horse_firstname_29", "horse_firstname_30"
+                ],
+                "firstname_female": [
+                "horse_firstname_01", "horse_firstname_02", "horse_firstname_03", "horse_firstname_04", "horse_firstname_05",
+                "horse_firstname_06", "horse_firstname_07", "horse_firstname_08", "horse_firstname_09", "horse_firstname_10",
+                "horse_firstname_11", "horse_firstname_12", "horse_firstname_13", "horse_firstname_14", "horse_firstname_15",
+                "horse_firstname_16", "horse_firstname_17", "horse_firstname_18", "horse_firstname_19", "horse_firstname_20",
+                "horse_firstname_21", "horse_firstname_22", "horse_firstname_23", "horse_firstname_24", "horse_firstname_25",
+                "horse_firstname_26", "horse_firstname_27", "horse_firstname_28", "horse_firstname_29", "horse_firstname_30"
+                ]
+            }
+        }
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn": {
+"horse_firstname_01": "雷霆",
+"horse_firstname_02": "风暴",
+"horse_firstname_03": "闪电",
+"horse_firstname_04": "影子",
+"horse_firstname_05": "精灵",
+"horse_firstname_06": "彗星",
+"horse_firstname_07": "午夜",
+"horse_firstname_08": "星辰",
+"horse_firstname_09": "公爵",
+"horse_firstname_10": "阿波罗",
+"horse_firstname_11": "游侠",
+"horse_firstname_12": "疾风",
+"horse_firstname_13": "灰烬",
+"horse_firstname_14": "铜色",
+"horse_firstname_15": "碧玉",
+"horse_firstname_16": "旋风",
+"horse_firstname_17": "骑士",
+"horse_firstname_18": "野火",
+"horse_firstname_19": "银鬃",
+"horse_firstname_20": "黑焰",
+"horse_firstname_21": "疾电",
+"horse_firstname_22": "赤鬃",
+"horse_firstname_23": "追风",
+"horse_firstname_24": "战马",
+"horse_firstname_25": "烈焰",
+"horse_firstname_26": "北风",
+"horse_firstname_27": "骄阳",
+"horse_firstname_28": "月影",
+"horse_firstname_29": "飞蹄",
+"horse_firstname_30": "长鬃"
+            },
+            "en-us": {
+"horse_firstname_01": "Thunder",
+"horse_firstname_02": "Storm",
+"horse_firstname_03": "Blaze",
+"horse_firstname_04": "Shadow",
+"horse_firstname_05": "Spirit",
+"horse_firstname_06": "Comet",
+"horse_firstname_07": "Midnight",
+"horse_firstname_08": "Star",
+"horse_firstname_09": "Duke",
+"horse_firstname_10": "Apollo",
+"horse_firstname_11": "Ranger",
+"horse_firstname_12": "Gale",
+"horse_firstname_13": "Ash",
+"horse_firstname_14": "Copper",
+"horse_firstname_15": "Jasper",
+"horse_firstname_16": "Cyclone",
+"horse_firstname_17": "Knight",
+"horse_firstname_18": "Wildfire",
+"horse_firstname_19": "Silver",
+"horse_firstname_20": "Onyx",
+"horse_firstname_21": "Bolt",
+"horse_firstname_22": "Chestnut",
+"horse_firstname_23": "Dash",
+"horse_firstname_24": "Charger",
+"horse_firstname_25": "Ember",
+"horse_firstname_26": "Boreas",
+"horse_firstname_27": "Sunny",
+"horse_firstname_28": "Luna",
+"horse_firstname_29": "Sprint",
+"horse_firstname_30": "Mane"
+            }
+        }
+    }
+}

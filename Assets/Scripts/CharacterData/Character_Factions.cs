@@ -32,6 +32,13 @@ public class Character_Factions
         } }
 
     //-----------------
+    /// <summary>
+    /// workFactionID -> ID of the faction whose Management Canvas was used to dispatch this character
+    /// into that work faction's job (see button_ScheduleMemberType.OnClickButton). Only populated when
+    /// AddWorkFaction is called with an explicit sourceFaction; entries missing here (older saves, or
+    /// call sites that don't track dispatch) fall back to HomeFactions[0] - see GetWorkFactionSource.
+    /// </summary>
+    [JsonProperty] Dictionary<string, string> FactionIDs_WorkSource = new Dictionary<string, string>();
     [JsonProperty] List<string> FactionIDs_Work = new List<string>();
     List<Manageable> Factions_Work_Cache = null;
     [JsonIgnore] public List<Manageable> Factions_Work{get
@@ -333,7 +340,7 @@ public class Character_Factions
         return false;
     }
 
-    public void AddWorkFaction(string factionID, MemberType status, bool sendEvent = true)
+    public void AddWorkFaction(string factionID, MemberType status, bool sendEvent = true, Manageable sourceFaction = null)
     {
         Manageable targetFaction = Factions_Work.Find(x => x.ID == factionID);
         if (targetFaction == null) targetFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
@@ -344,6 +351,7 @@ public class Character_Factions
             targetFaction.AddToFaction(Owner, status, sendEvent);
             if (!Factions_Work.Contains(targetFaction)) this.Factions_Work.Add(targetFaction);
             if (!FactionIDs_Work.Contains(targetFaction.ID)) this.FactionIDs_Work.Add(targetFaction.ID);
+            if (sourceFaction != null) FactionIDs_WorkSource[targetFaction.ID] = sourceFaction.ID;
         }
 
         UpdateFactionPriorityList();
@@ -352,6 +360,19 @@ public class Character_Factions
 
     public void AddWorkFaction(string factionID, bool isManager = false)
         => AddWorkFaction(factionID, isManager ? FactionUtility.MemberType_Manager : FactionUtility.MemberType_Member);
+
+    /// <summary>
+    /// The faction whose Management Canvas dispatched this character into workFactionID's job (see
+    /// AddWorkFaction's sourceFaction param), if tracked - otherwise null so callers fall back to
+    /// HomeFactions[0]. Lets a job's employer pay wages to whichever faction actually assigned the
+    /// job instead of always the character's literal home faction.
+    /// </summary>
+    public Manageable GetWorkFactionSource(string workFactionID)
+    {
+        if (FactionIDs_WorkSource != null && FactionIDs_WorkSource.TryGetValue(workFactionID, out var sourceID))
+            return scr_System_CampaignManager.current.FindFactionByID(sourceID);
+        return null;
+    }
 
     public void PrioritizeWorkFaction(string factionID)
     {
@@ -602,6 +623,7 @@ public class Character_Factions
         if (targetFaction == null) return;
         targetFaction.RemoveFromFaction(Owner);
         this.FactionIDs_Work.Remove(targetFaction.ID);
+        this.FactionIDs_WorkSource.Remove(targetFaction.ID);
         this.Factions_Work.Remove(targetFaction);
 
         UpdateFactionPriorityList();

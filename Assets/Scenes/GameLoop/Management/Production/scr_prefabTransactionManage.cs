@@ -46,6 +46,11 @@ public class scr_prefabTransactionManage : MonoBehaviour, IPointerEnterHandler
         }
     }
 
+    public void UpdatePricingDisplay()
+    {
+        if (order != null) pricing.text = order.PrintTotalCost;
+    }
+
     public void NotifyChanged()
     {
         this.SiblingIndex = this.transform.GetSiblingIndex();

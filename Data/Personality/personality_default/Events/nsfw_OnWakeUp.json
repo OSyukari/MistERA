@@ -15,10 +15,16 @@
                                 "nsfw"
                             ],
                             "requirement": {
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sex_stimulation",
-                                    "operand": "gte",
-                                    "value": 39
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sex_stimulation",
+                                            "operand": "gte",
+                                            "value": 39
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [
@@ -78,10 +84,16 @@
                                 "nsfw"
                             ],
                             "requirement": {
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sex_stimulation",
-                                    "operand": "gte",
-                                    "value": 39
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sex_stimulation",
+                                            "operand": "gte",
+                                            "value": 39
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [
@@ -138,10 +150,16 @@
                                 "nsfw"
                             ],
                             "requirement": {
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sex_stimulation",
-                                    "operand": "gte",
-                                    "value": 39
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sex_stimulation",
+                                            "operand": "gte",
+                                            "value": 39
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [
@@ -208,10 +226,16 @@
                                     "sleeping",
                                     "pain"
                                 ],
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sleeping",
-                                    "operand": "gte",
-                                    "value": 1.9
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sleeping",
+                                            "operand": "gte",
+                                            "value": 1.9
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [
@@ -235,10 +259,16 @@
                                 "selfTags": [
                                     "sleeping"
                                 ],
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sleeping",
-                                    "operand": "gte",
-                                    "value": 1.9
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sleeping",
+                                            "operand": "gte",
+                                            "value": 1.9
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [
@@ -255,10 +285,16 @@
                                     "sleeping",
                                     "pain"
                                 ],
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sleeping",
-                                    "operand": "gte",
-                                    "value": 0.9
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sleeping",
+                                            "operand": "gte",
+                                            "value": 0.9
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [
@@ -286,10 +322,16 @@
                                     "sex",
                                     "penetration"
                                 ],
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sleeping",
-                                    "operand": "gte",
-                                    "value": 0.9
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sleeping",
+                                            "operand": "gte",
+                                            "value": 0.9
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [
@@ -313,10 +355,16 @@
                                 "selfTags": [
                                     "sleeping"
                                 ],
-                                "requireSelfStatusValue": {
-                                    "statusID": "chara_status_sleeping",
-                                    "operand": "gte",
-                                    "value": 0.9
+                                "selfReq": {
+                                    "requireConscious": false,
+                                    "requireAction": false,
+                                    "requireStatusValue": [
+                                        {
+                                            "statusID": "chara_status_sleeping",
+                                            "operand": "gte",
+                                            "value": 0.9
+                                        }
+                                    ]
                                 }
                             },
                             "responses": [

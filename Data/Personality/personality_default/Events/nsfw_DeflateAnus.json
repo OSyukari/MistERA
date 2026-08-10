@@ -1,0 +1,44 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "deflate_anus",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_anus", "operand": "gte", "value": 60 } },
+                            "responses": ["deflate_anus_heavy"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_anus", "operand": "gte", "value": 25 } },
+                            "responses": ["deflate_anus_medium"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_anus", "operand": "gt", "value": 0 } },
+                            "responses": ["deflate_anus_light"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": ["deflate_anus_none"]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "deflate_anus_heavy": "大量粘稠的精液从$self$的后穴中汩汩流出，肠道深处传来一阵酸胀的排空感，浓稠的白浊顺着股缝滴落，$self$不禁夹紧了双腿。",
+                "deflate_anus_medium": "$self$感到后穴一阵收缩，残留在肠道内的精液被排挤出来，带来一丝说不清的酥麻快感。",
+                "deflate_anus_light": "$self$感觉到后穴还残留着一点精液，随着排便的动作一并排出了体外。",
+                "deflate_anus_none": "$self$清理了一下身体。"
+            }
+        }
+    }
+}

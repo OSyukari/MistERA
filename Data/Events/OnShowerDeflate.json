@@ -1,0 +1,560 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "com_furniture_takeShower_deflate",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {
+                            "parameters": [
+                                "canDeflate"
+                            ]
+                        }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "opening beat before the branch/kojo cascade below",
+                        "isLast": true,
+                        "line": "com_furniture_takeShower_deflate_start",
+                        "nextEntryLabel": "attempt1"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 1: mouth, full deflate. failure skips straight to block 2's attempt rather than aborting.",
+                        "label": "attempt1",
+                        "options": [
+                            {
+                                "option": "deflate mouth",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "mouth",
+                                            "true",
+                                            "true",
+                                            "deflateMsg1",
+                                            "deflateKojo1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "print1"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "deflation failed, skip to next block",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "attempt2"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 1 print: prefer kojo text, else fall back to plain message; AlwaysFalse forces both attempts before continuing",
+                        "label": "print1",
+                        "options": [
+                            {
+                                "option": "kojo print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo1",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "plain message print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg1"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg1",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "continue to block 2",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "attempt2"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 2: womb, partial deflate. failure skips straight to block 3's attempt.",
+                        "label": "attempt2",
+                        "options": [
+                            {
+                                "option": "deflate womb",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "womb",
+                                            "true",
+                                            "false",
+                                            "deflateMsg2",
+                                            "deflateKojo2"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "print2"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "deflation failed, skip to next block",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "attempt3"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 2 print",
+                        "label": "print2",
+                        "options": [
+                            {
+                                "option": "kojo print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo2"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo2",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "plain message print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg2"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg2",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "continue to block 3",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "attempt3"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 3: vagina, full deflate. failure skips straight to block 4's attempt.",
+                        "label": "attempt3",
+                        "options": [
+                            {
+                                "option": "deflate vagina",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "vagina",
+                                            "true",
+                                            "true",
+                                            "deflateMsg3",
+                                            "deflateKojo3"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "print3"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "deflation failed, skip to next block",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "attempt4"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 3 print",
+                        "label": "print3",
+                        "options": [
+                            {
+                                "option": "kojo print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo3"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo3",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "plain message print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg3"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg3",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "continue to block 4",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "attempt4"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 4: anus, full deflate. failure skips straight to the cleanup pass.",
+                        "label": "attempt4",
+                        "options": [
+                            {
+                                "option": "deflate anus",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "anus",
+                                            "true",
+                                            "true",
+                                            "deflateMsg4",
+                                            "deflateKojo4"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "print4"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "deflation failed, skip to cleanup",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "cleanup"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 4 print",
+                        "label": "print4",
+                        "options": [
+                            {
+                                "option": "kojo print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo4"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo4",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "plain message print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg4"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg4",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "continue to cleanup",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "cleanup"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 5 (cleanup): no tag filter, PARTIAL deflate, catches any other organ missed by the 4 named blocks above and reduces it back under the visibly-expanded threshold so canDeflate no longer holds anywhere. Still prints like every other block if it actually removed anything.",
+                        "label": "cleanup",
+                        "options": [
+                            {
+                                "option": "deflate everything else",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "",
+                                            "true",
+                                            "false",
+                                            "deflateMsg5",
+                                            "deflateKojo5"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "print5"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "nothing left, silent exit",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "end"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "block 5 print",
+                        "label": "print5",
+                        "options": [
+                            {
+                                "option": "kojo print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo5"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo5",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "plain message print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg5"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg5",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "end",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "end"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "isLast": true,
+                        "line": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_takeShower_deflate_start": "$self.name$洗得比平时更加仔细。"
+            }
+        }
+    }
+}

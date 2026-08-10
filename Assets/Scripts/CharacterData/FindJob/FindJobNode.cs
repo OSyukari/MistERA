@@ -78,6 +78,26 @@ public class TryFindSleepNode : TryFindJobByIDNode
         return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
     }
 }
+public class TryFindShowerNode : TryFindJobByIDNode
+{
+    public TryFindShowerNode() : base("com_furniture_takeShower")
+    {
+        behaviorOverrideID = "behavior_shower";
+        Tags.Add("nsfw");
+    }
+
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        var internals = c.Body.Internals;
+        bool canDeflate = false;
+        for (int i = 0; i < internals.Count; i++)
+        {
+            if (internals[i].canDeflate) { canDeflate = true; break; }
+        }
+        if (!canDeflate) return false;
+        return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
+    }
+}
 public class TryFindMealNode : TryFindNonJobByTagNode
 {
     public TryFindMealNode() : base("food_meal")

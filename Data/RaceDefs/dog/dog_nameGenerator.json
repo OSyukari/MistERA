@@ -1,0 +1,97 @@
+{
+    "Character_Bases":
+    {
+        "names":
+        {
+            "dog":
+            {
+                "firstname_male": [
+                "dog_firstname_01", "dog_firstname_02", "dog_firstname_03", "dog_firstname_04", "dog_firstname_05",
+                "dog_firstname_06", "dog_firstname_07", "dog_firstname_08", "dog_firstname_09", "dog_firstname_10",
+                "dog_firstname_11", "dog_firstname_12", "dog_firstname_13", "dog_firstname_14", "dog_firstname_15",
+                "dog_firstname_16", "dog_firstname_17", "dog_firstname_18", "dog_firstname_19", "dog_firstname_20",
+                "dog_firstname_21", "dog_firstname_22", "dog_firstname_23", "dog_firstname_24", "dog_firstname_25",
+                "dog_firstname_26", "dog_firstname_27", "dog_firstname_28", "dog_firstname_29", "dog_firstname_30"
+                ],
+                "firstname_female": [
+                "dog_firstname_01", "dog_firstname_02", "dog_firstname_03", "dog_firstname_04", "dog_firstname_05",
+                "dog_firstname_06", "dog_firstname_07", "dog_firstname_08", "dog_firstname_09", "dog_firstname_10",
+                "dog_firstname_11", "dog_firstname_12", "dog_firstname_13", "dog_firstname_14", "dog_firstname_15",
+                "dog_firstname_16", "dog_firstname_17", "dog_firstname_18", "dog_firstname_19", "dog_firstname_20",
+                "dog_firstname_21", "dog_firstname_22", "dog_firstname_23", "dog_firstname_24", "dog_firstname_25",
+                "dog_firstname_26", "dog_firstname_27", "dog_firstname_28", "dog_firstname_29", "dog_firstname_30"
+                ]
+            }
+        }
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn": {
+"dog_firstname_01": "雷克斯",
+"dog_firstname_02": "麦克斯",
+"dog_firstname_03": "巴迪",
+"dog_firstname_04": "查理",
+"dog_firstname_05": "洛奇",
+"dog_firstname_06": "公爵",
+"dog_firstname_07": "小熊",
+"dog_firstname_08": "宙斯",
+"dog_firstname_09": "布鲁诺",
+"dog_firstname_10": "杰克",
+"dog_firstname_11": "库珀",
+"dog_firstname_12": "巴斯特",
+"dog_firstname_13": "酋长",
+"dog_firstname_14": "游侠",
+"dog_firstname_15": "侦探",
+"dog_firstname_16": "布雷兹",
+"dog_firstname_17": "影子",
+"dog_firstname_18": "索尔",
+"dog_firstname_19": "闪电",
+"dog_firstname_20": "艾斯",
+"dog_firstname_21": "拉斯提",
+"dog_firstname_22": "迪塞尔",
+"dog_firstname_23": "温斯顿",
+"dog_firstname_24": "奥斯卡",
+"dog_firstname_25": "里奥",
+"dog_firstname_26": "麦洛",
+"dog_firstname_27": "饼干",
+"dog_firstname_28": "泰迪",
+"dog_firstname_29": "洛基",
+"dog_firstname_30": "奥丁"
+            },
+            "en-us": {
+"dog_firstname_01": "Rex",
+"dog_firstname_02": "Max",
+"dog_firstname_03": "Buddy",
+"dog_firstname_04": "Charlie",
+"dog_firstname_05": "Rocky",
+"dog_firstname_06": "Duke",
+"dog_firstname_07": "Bear",
+"dog_firstname_08": "Zeus",
+"dog_firstname_09": "Bruno",
+"dog_firstname_10": "Jack",
+"dog_firstname_11": "Cooper",
+"dog_firstname_12": "Buster",
+"dog_firstname_13": "Chief",
+"dog_firstname_14": "Ranger",
+"dog_firstname_15": "Scout",
+"dog_firstname_16": "Blaze",
+"dog_firstname_17": "Shadow",
+"dog_firstname_18": "Thor",
+"dog_firstname_19": "Bolt",
+"dog_firstname_20": "Ace",
+"dog_firstname_21": "Rusty",
+"dog_firstname_22": "Diesel",
+"dog_firstname_23": "Winston",
+"dog_firstname_24": "Oscar",
+"dog_firstname_25": "Leo",
+"dog_firstname_26": "Milo",
+"dog_firstname_27": "Biscuit",
+"dog_firstname_28": "Teddy",
+"dog_firstname_29": "Loki",
+"dog_firstname_30": "Odin"
+            }
+        }
+    }
+}

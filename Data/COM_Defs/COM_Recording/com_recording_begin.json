@@ -51,7 +51,7 @@
                                 "requireNotRecording":true
                             }
                         },
-                        "results": {
+                        "results_EP": {
                             "results_character": [
                                 {
                                     "entry_conditions": {
@@ -101,7 +101,7 @@
                         "description_ongoing":{ "Entries":[{"texts":["com_recording_begin_displayName_variant_ongoing_1"]}], "keepLooking":false }
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -172,7 +172,7 @@
                         "requireHasRecording":true
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {

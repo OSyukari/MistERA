@@ -256,11 +256,17 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfStatusValue": {
-                                            "statusID": "chara_status_pain",
-                                            "checkSeverityIndex": true,
-                                            "operand": "gte",
-                                            "value": 3
+                                        "selfReq": {
+                                            "requireConscious": false,
+                                            "requireAction": false,
+                                            "requireStatusValue": [
+                                                {
+                                                    "statusID": "chara_status_pain",
+                                                    "checkSeverityIndex": true,
+                                                    "operand": "gte",
+                                                    "value": 3
+                                                }
+                                            ]
                                         }
                                     },
                                     "extraSelfPortraitTags": [
@@ -343,11 +349,17 @@
                                 },
                                 {
                                     "requirement": {
-                                        "requireSelfStatusValue": {
-                                            "statusID": "chara_status_pain",
-                                            "checkSeverityIndex": true,
-                                            "operand": "gte",
-                                            "value": 3
+                                        "selfReq": {
+                                            "requireConscious": false,
+                                            "requireAction": false,
+                                            "requireStatusValue": [
+                                                {
+                                                    "statusID": "chara_status_pain",
+                                                    "checkSeverityIndex": true,
+                                                    "operand": "gte",
+                                                    "value": 3
+                                                }
+                                            ]
                                         }
                                     },
                                     "extraSelfPortraitTags": [

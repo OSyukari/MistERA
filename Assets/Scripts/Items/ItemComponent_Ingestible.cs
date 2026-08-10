@@ -10,6 +10,7 @@ public class ItemComponentTemplate_Ingestible
     public List<Ingestible_IngestMethod> ingestMethod = new List<Ingestible_IngestMethod>();
     public float amount = 0;
     public bool isLiquid = false;
+    public bool canExpel = false;
     // public string giveStatus;
 
     [System.Serializable]
@@ -122,6 +123,7 @@ public class ItemComponent_Ingestible : ItemComponent_Base
         this.parent = itemBase;
         this.parentID = itemBase.ID;
         this.amount = CompTemplate.comp_Ingestible.amount;
+        this.canExpel = CompTemplate.comp_Ingestible.canExpel;
     }
 
     [JsonProperty] protected List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod> ingestMethod_addons = new List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod>();
@@ -157,5 +159,18 @@ public class ItemComponent_Ingestible : ItemComponent_Base
     //public string giveStatus { get { return CompTemplate.comp_Ingestible.giveStatus; } }
     [JsonIgnore] public List<ItemComponentTemplate_Ingestible.OnUseEffect> OnUseEffects { get { return CompTemplate.comp_Ingestible.OnUseEffects; } }
 
+    [JsonProperty] bool canExpel = false;
+    [JsonIgnore]
+    public virtual bool CanBeExpelled
+    {
+        get { 
+            
+            return canExpel;
 
+        }
+        set
+        {
+            canExpel = value;
+        }
+    }
 }

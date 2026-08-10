@@ -3,15 +3,6 @@
     {
         "generators":[
             {
-                "ID":"creature_animal_horse",
-                "title":"creature_animal_horse",
-                "targetBaseIDs":["creature_animal_horse_template"],
-                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
-                "heightVariation": 9,
-                "weightVariation": 60,
-                "Appearance":"Male"
-            },
-            {
                 "ID":"creature_animal_pig",
                 "title":"creature_animal_pig",
                 "targetBaseIDs":["creature_animal_pig_template"],
@@ -27,15 +18,6 @@
                 "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
                 "heightVariation": 10,
                 "weightVariation": 30,
-                "Appearance":"Male"
-            },
-            {
-                "ID":"creature_animal_dog",
-                "title":"creature_animal_dog",
-                "targetBaseIDs":["creature_animal_dog_template"],
-                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
-                "heightVariation": 6,
-                "weightVariation": 8,
                 "Appearance":"Male"
             },
             {
@@ -73,9 +55,7 @@
                 "bear_encounter_1": "熊",
                 "bear_encounter_2": "穴熊",
                 "creature_animal_pig": "猪",
-                "creature_animal_horse": "马",
-                "creature_animal_warg": "座狼",
-                "creature_animal_dog": "狗"
+                "creature_animal_warg": "座狼"
             },
             "en-us": {
                 "creature_animal_bear": "Bear",
@@ -83,9 +63,7 @@
                 "bear_encounter_1": "Bear Encounter 1",
                 "bear_encounter_2": "Bear Encounter 2",
                 "creature_animal_pig": "Pig",
-                "creature_animal_horse": "Horse",
-                "creature_animal_warg": "Warg",
-                "creature_animal_dog": "Dog"
+                "creature_animal_warg": "Warg"
             }
         }
     }

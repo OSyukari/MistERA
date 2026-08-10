@@ -1,0 +1,44 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "deflate_vagina",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_vagina", "operand": "gte", "value": 60 } },
+                            "responses": ["deflate_vagina_heavy"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_vagina", "operand": "gte", "value": 25 } },
+                            "responses": ["deflate_vagina_medium"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_vagina", "operand": "gt", "value": 0 } },
+                            "responses": ["deflate_vagina_light"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": ["deflate_vagina_none"]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "deflate_vagina_heavy": "大量浓稠的精液从$self$的阴道口汩汩流出，顺着大腿内侧滑落，白浊的液体在双腿间拉出细丝，湿润的痕迹让$self$的脸颊泛起红晕。",
+                "deflate_vagina_medium": "$self$感到一股温热的液体从下体缓缓流出，混合着体液的精液顺着大腿流下，留下一道湿润的痕迹。",
+                "deflate_vagina_light": "$self$感觉到阴道内还残留着些许精液，缓缓地渗出了一点。",
+                "deflate_vagina_none": "$self$清理了一下下体。"
+            }
+        }
+    }
+}

@@ -22,7 +22,7 @@
                     "req_Receivers":{ "requireUnrestrained":true, "requireAction":false, "requireConscious":false } 
                 }
             },
-            "results": 
+            "results_EP": 
             { "results_character":
                 [
                     { "entry_conditions":{ "applyToReceiver":true }, "entry_results": { "toggleTeamStatus":true } }
@@ -79,7 +79,7 @@
                     "req_Receivers":{ "requireUnrestrained":true, "requireAction":false, "requireConscious":false } 
                 }
             },
-            "results": 
+            "results_EP": 
             { "results_character":
                 [
                     { "entry_conditions":{ "applyToReceiver":true }, "entry_results": { "toggleTeamStatus":true } }
@@ -126,7 +126,7 @@
                     "req_Doers":{ "allowNPC":false }
                 }
             },
-            "results": 
+            "results_EP": 
             { "results_character":
                 [
                     { "entry_conditions":{ "applyToDoer":true }, "entry_results": { "type":"statMod_EN", "value":"1" } }
@@ -180,7 +180,7 @@
                     "displayName":"com_interaction_talk_displayName_2"
                 }
             ],
-            "results": 
+            "results_EP": 
             { "results_character":
                 [
                     { 
@@ -232,7 +232,7 @@
                     "displayName":"com_interaction_talk_displayName_2"
                 }
             ],
-            "results": 
+            "results_EP": 
             { "results_character":
                 [
                     { 

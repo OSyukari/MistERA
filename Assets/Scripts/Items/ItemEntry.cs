@@ -44,6 +44,17 @@ public class ItemEntry
     }
 
     [JsonIgnore]
+    public string PrintName
+    {
+        get
+        {
+
+            return this.itemNameOverwrite != "" ? LocalizeDictionary.QueryThenParse(this.itemNameOverwrite) : LocalizeDictionary.QueryThenParse(this.itemID);
+            //else return $"{LocalizeDictionary.Instance.QueryThenParse(itemNameOverwrite != "" ? itemNameOverwrite : itemID)} x{itemCount}";
+        }
+    }
+
+    [JsonIgnore]
     public string Print
     {
         get

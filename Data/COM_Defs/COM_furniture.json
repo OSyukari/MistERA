@@ -22,7 +22,7 @@
                         }
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -94,7 +94,7 @@
                         }
                     }
                 },
-                "results_immediate":{
+                "results_immediate_EP":{
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -107,7 +107,7 @@
                         }
                     ]
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -118,7 +118,8 @@
                                 "behaviorCooldownID":"com_furniture_restroom","behaviorCooldown":240, "behaviorCooldownVariation":1.4
                             }
                         }
-                    ]
+                    ],
+                    "result_event": { "id_overwrite": "com_furniture_restroom_deflate" }
                 },
                 "variants": [
                     {
@@ -155,7 +156,7 @@
                         "req_Doers":{ "requireFullHP":true }
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -221,7 +222,7 @@
                         "req_Receivers":{ "requireMissingHP":true }
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -322,7 +323,7 @@
                                 }
                             }
                         },
-                        "results": {
+                        "results_EP": {
                             "results_character": [
                                 {
                                     "entry_conditions": {
@@ -380,7 +381,7 @@
                         "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_playVideoGames_description_variant_onComplete_1"]}] }
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -481,7 +482,7 @@
                                 }
                             }
                         },
-                        "results": {
+                        "results_EP": {
                             "results_character": [
                                 {
                                     "entry_conditions": {
@@ -539,7 +540,7 @@
                         "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_watchVideo_description_variant_onComplete_1"]}] }
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -638,7 +639,7 @@
                                 }
                             }
                         },
-                        "results": {
+                        "results_EP": {
                             "results_character": [
                                 {
                                     "entry_conditions": {
@@ -696,7 +697,7 @@
                         "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_readBooks_description_variant_onComplete_1"]}] }
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -781,7 +782,7 @@
                     "baseAcceptanceValue": 25
                 },
                 "DifficultyCheck": { "baseD20Check": 0 },
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -801,7 +802,8 @@
                                 "value": "10"
                             }
                         }
-                    ]
+                    ],
+                    "result_event": { "id_overwrite": "com_furniture_takeShower_deflate" }
                 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takeShower_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_takeShower_description_ongoing_1"]}], "keepLooking":false },
@@ -834,7 +836,7 @@
                         "displayName": "com_furniture_restroom_fix_displayName_1"
                     }
                 ],
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -894,7 +896,7 @@
                         ]
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_jobContainer": [
                         {
                             "entry_conditions": {
@@ -992,7 +994,7 @@
                                 "displayName": "com_furniture_getmeal_displayName_2"
                             }
                         ],
-                        "results": {
+                        "results_EP": {
                             "results_character": [
                                 {
                                     "entry_conditions": {
@@ -1047,7 +1049,7 @@
                         "displayName": "com_furniture_getmeal_displayName_base_2"
                     }
                 ],
-                "results": {
+                "results_EP": {
                     "results_character": [
                         {
                             "entry_conditions": {
@@ -1107,7 +1109,7 @@
                         ]
                     }
                 },
-                "results": {
+                "results_EP": {
                     "results_jobContainer": [
                         {
                             "entry_conditions": {

@@ -320,7 +320,7 @@ public class scr_charaEntry : MonoBehaviour
                 {
                     // hostile faction allow transfer and is prisoner -> rescue
                     this.target = Treatment.liberate;
-                    innerText = $"trade_chara_Treatment_{target}";
+                    innerText = $"trade_chara_Treatment_{this.target}";
                 }
             }
             else if (target == Treatment.capture)

@@ -1,0 +1,32 @@
+{
+    "Character_Bases":
+    {
+        "generators":[
+            {
+                "ID":"creature_animal_horse",
+                "title":"creature_animal_horse",
+                "targetBaseIDs":["creature_animal_horse_template_1","creature_animal_horse_template_2","creature_animal_horse_template_3"],
+                "str_var":2,"con_var":2, "psy_var":2,"wil_var":2,
+                "heightVariation": 9,
+                "weightVariation": 60,
+                "Appearance":"Male",
+                "useNameGen": true,
+                "nameGen_firstName": "horse"
+            }
+
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries": {
+            "zh-cn": {
+
+                "creature_animal_horse": "马"
+            },
+            "en-us": {
+
+                "creature_animal_horse": "Horse"
+            }
+        }
+    }
+}

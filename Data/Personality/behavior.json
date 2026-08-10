@@ -76,6 +76,21 @@
                         "_comment":"hardcoded job search parameter"
                     },
                     {
+                        "$type": "TryFindShowerNode, Assembly-CSharp",
+                        "_comment":"behaviorOverrideID/Tags are hardcoded in the C# ctor (behavior_shower / nsfw)",
+                        "cooldownHours": 3,
+                        "cooldownID": "com_furniture_takeShower",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "matchCOMID":"com_furniture_takeShower",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true
+                        }
+                    },
+                    {
                         "$type": "TryFindRestNode, Assembly-CSharp",
                         "behaviorOverrideID":"behavior_rest",
                         "evaluationHeuristic":"closest",

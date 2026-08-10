@@ -22,7 +22,6 @@ public class COM_Results
         if (results_jobOwner != null) foreach (var result in results_jobOwner) ResultFactionUtility.Apply(result, job, c);
 
         if (results_factionWide != null) foreach (var result in results_factionWide) ResultFactionUtility.Apply(result, job, p, evp, c);
-
     }
 
     // modify character internally (stat, experience, etc)

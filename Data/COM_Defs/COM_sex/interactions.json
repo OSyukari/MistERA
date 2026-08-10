@@ -24,7 +24,11 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_0",
                     "description_doer_1_n":"comDescription_1_n_doer_passive",
-                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_0"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_0"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_0"]}] }
                 },
                 {
                     "requirements":{
@@ -36,7 +40,11 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_1",
                     "description_doer_1_n":"comDescription_1_n_doer_passive",
-                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_1"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_1"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_1"]}] }
                 },
                 {
                     "requirements":{
@@ -44,7 +52,11 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_2",
                     "description_doer_1_n":"comDescription_1_n_doer_passive",
-                    "description_receiver_n_1":"comDescription_n_1_receiver_passive"
+                    "description_receiver_n_1":"comDescription_n_1_receiver_passive",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_2"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_2"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_2"]}] }
                 },
                 {
                     "requirements":{
@@ -54,7 +66,11 @@
                             "req_Receivers":{ "requireAction": false }
                         }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_3"
+                    "displayName":"com_interaction_initiateSex_displayName_3",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_3"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_3"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_3"]}] }
                 },
                 {
                     "requirements":{
@@ -64,7 +80,11 @@
                             "req_Receivers":{ "requireConscious":false, "requireAction": false }
                         }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_4"
+                    "displayName":"com_interaction_initiateSex_displayName_4",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_4"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_4"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_4"]}] }
                 },
                 {
                     "requirements":{
@@ -76,7 +96,11 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_5",
                     "description_doer_1_n":"comDescription_n_n_doer_passive",
-                    "description_receiver_n_1":"comDescription_n_n_receiver_passive"
+                    "description_receiver_n_1":"comDescription_n_n_receiver_passive",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_5"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_5"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_5"]}] }
                 },
                 {
                     "requirements":{
@@ -84,7 +108,11 @@
                     },
                     "displayName":"com_interaction_initiateSex_displayName_6",
                     "description_doer_1_n":"comDescription_n_n_doer_passive",
-                    "description_receiver_n_1":"comDescription_n_n_receiver_passive"
+                    "description_receiver_n_1":"comDescription_n_n_receiver_passive",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_6"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_6"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_6"]}] }
                 },
                 {
                     "requirements":{
@@ -94,7 +122,11 @@
                             "req_Receivers":{ "requireAction": false }
                         }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_7"
+                    "displayName":"com_interaction_initiateSex_displayName_7",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_7"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_7"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_7"]}] }
                 },
                 {
                     "requirements":{
@@ -104,7 +136,11 @@
                             "req_Receivers":{ "requireConscious":false, "requireAction": false }
                         }
                     },
-                    "displayName":"com_interaction_initiateSex_displayName_8"
+                    "displayName":"com_interaction_initiateSex_displayName_8",
+                    "useBaseDescription":false,
+                    "description_begin":{ "Entries":[{"texts":["com_interaction_initiateSex_description_begin_8"]}] },
+                    "description_ongoing":{ "Entries":[{"texts":["com_interaction_initiateSex_description_ongoing_8"]}] },
+                    "description_onComplete":{ "Entries":[{"texts":["com_interaction_initiateSex_description_onComplete_8"]}] }
                 }
             ],
             "AcceptanceCheck":{ "baseAcceptanceValue":25 },
@@ -261,7 +297,39 @@
 
                 "com_interaction_initiateSex_description_onComplete_1":"$doer.firstname$推倒了$receiver.firstname$",
                 "com_interaction_initiateSex_description_begin_1": "$doer.firstname$尝试推倒$receiver.firstname$",
-                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$正在尝试推倒$receiver.firstname$"
+                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$正在尝试推倒$receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_0": "$doer.firstname$开始自慰了起来",
+                "com_interaction_initiateSex_description_ongoing_0": "$doer.firstname$正在自慰",
+                "com_interaction_initiateSex_description_onComplete_0": "$doer.firstname$自慰了一番",
+
+                "com_interaction_initiateSex_description_begin_2": "$doer.firstname$不顾$receiver.firstname$的挣扎，强行将其压倒在地",
+                "com_interaction_initiateSex_description_ongoing_2": "$doer.firstname$正在强奸$receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_2": "$doer.firstname$强奸了$receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_3": "$doer.firstname$停下了时间，对着定住不动的$receiver.firstname$伸出了手",
+                "com_interaction_initiateSex_description_ongoing_3": "$doer.firstname$正在时间停止中侵犯着$receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_3": "$doer.firstname$趁着时间停止侵犯了$receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_4": "$doer.firstname$悄悄靠近了熟睡中的$receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_4": "$doer.firstname$正在侵犯熟睡中的$receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_4": "$doer.firstname$侵犯了熟睡中的$receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_5": "$doer.firstname$和$receiver.firstname$开始了一场群交",
+                "com_interaction_initiateSex_description_ongoing_5": "$doer.firstname$正与$receiver.firstname$尽情交欢",
+                "com_interaction_initiateSex_description_onComplete_5": "$doer.firstname$和$receiver.firstname$结束了这场群交",
+
+                "com_interaction_initiateSex_description_begin_6": "$doer.firstname$不顾$receiver.firstname$的反抗，一拥而上按住了对方",
+                "com_interaction_initiateSex_description_ongoing_6": "$doer.firstname$正在轮奸$receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_6": "$doer.firstname$轮奸了$receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_7": "$doer.firstname$趁着时间停止，围住了动弹不得的$receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_7": "$doer.firstname$正在时间停止中轮奸$receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_7": "$doer.firstname$趁着时间停止轮奸了$receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_8": "$doer.firstname$悄悄围上了熟睡中的$receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_8": "$doer.firstname$正在轮奸熟睡中的$receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_8": "$doer.firstname$轮奸了熟睡中的$receiver.firstname$"
 
 
             },
@@ -297,7 +365,39 @@
                 "com_special_initSex_timestop_end": "End Time Stop Rape",
                 
                 "com_interaction_initiateSex_description_begin_1": "$doer.firstname$ pushed $receiver.firstname$ down",
-                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$ is pinning $receiver.firstname$ down"
+                "com_interaction_initiateSex_description_ongoing_1": "$doer.firstname$ is pinning $receiver.firstname$ down",
+
+                "com_interaction_initiateSex_description_begin_0": "$doer.firstname$ starts masturbating",
+                "com_interaction_initiateSex_description_ongoing_0": "$doer.firstname$ is masturbating",
+                "com_interaction_initiateSex_description_onComplete_0": "$doer.firstname$ finished masturbating",
+
+                "com_interaction_initiateSex_description_begin_2": "$doer.firstname$ forces $receiver.firstname$ down, ignoring their struggles",
+                "com_interaction_initiateSex_description_ongoing_2": "$doer.firstname$ is raping $receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_2": "$doer.firstname$ raped $receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_3": "$doer.firstname$ stops time and reaches for the frozen $receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_3": "$doer.firstname$ is violating the time-stopped $receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_3": "$doer.firstname$ violated $receiver.firstname$ while time stood still",
+
+                "com_interaction_initiateSex_description_begin_4": "$doer.firstname$ quietly approaches the sleeping $receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_4": "$doer.firstname$ is violating the sleeping $receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_4": "$doer.firstname$ violated $receiver.firstname$ in their sleep",
+
+                "com_interaction_initiateSex_description_begin_5": "$doer.firstname$ and $receiver.firstname$ start an orgy",
+                "com_interaction_initiateSex_description_ongoing_5": "$doer.firstname$ and $receiver.firstname$ are indulging in an orgy",
+                "com_interaction_initiateSex_description_onComplete_5": "$doer.firstname$ and $receiver.firstname$ finished their orgy",
+
+                "com_interaction_initiateSex_description_begin_6": "$doer.firstname$ pile onto $receiver.firstname$, ignoring their resistance",
+                "com_interaction_initiateSex_description_ongoing_6": "$doer.firstname$ are gangbanging $receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_6": "$doer.firstname$ gangbanged $receiver.firstname$",
+
+                "com_interaction_initiateSex_description_begin_7": "$doer.firstname$ surround the frozen $receiver.firstname$ while time stands still",
+                "com_interaction_initiateSex_description_ongoing_7": "$doer.firstname$ are gangbanging the time-stopped $receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_7": "$doer.firstname$ gangbanged $receiver.firstname$ while time was stopped",
+
+                "com_interaction_initiateSex_description_begin_8": "$doer.firstname$ quietly surround the sleeping $receiver.firstname$",
+                "com_interaction_initiateSex_description_ongoing_8": "$doer.firstname$ are gangbanging the sleeping $receiver.firstname$",
+                "com_interaction_initiateSex_description_onComplete_8": "$doer.firstname$ gangbanged $receiver.firstname$ in their sleep"
 
             }
         }

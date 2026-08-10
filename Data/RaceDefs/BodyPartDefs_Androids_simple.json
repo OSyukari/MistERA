@@ -70,6 +70,7 @@
         [
             {
                 "id": "mouth_android_base",
+                "deflateEventID": "deflate_mouth",
                 "displayName":"%%bodyPart_internal_mouth%%",
                 "tooltip":"An {0}'s mouth.",
                 "AvailableSlots":["Mouth"],

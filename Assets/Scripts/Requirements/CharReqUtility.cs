@@ -245,6 +245,20 @@ public static class CharaReqUtility
                                 .Replace("$name$", c.FirstName));
             return false;
         }
+        if (q.requireStatusValue != null && q.requireStatusValue.Count > 0)
+        {
+            foreach (var rsv in q.requireStatusValue)
+            {
+                if (rsv == null || !rsv.isValid) continue;
+                if (!rsv.Validate(c))
+                {
+                    if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireStatusValue")
+                                        .Replace("$name$", c.FirstName)
+                                        .Replace("$status$", rsv.statusID));
+                    return false;
+                }
+            }
+        }
         return true;
     }
 

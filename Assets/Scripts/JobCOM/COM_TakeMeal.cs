@@ -32,9 +32,9 @@ public class COM_TakeMeal : COM
         res.entry_results = new Result_Character.Entry_Result();
         res.entry_results.useItemFromTargetInventory = this.baseItem.ID;
 
-        if (this.results == null) this.results = new COM_Results();
-        if (this.results.results_character == null) this.results.results_character = new List<Result_Character>();
-        this.results.results_character.Add(res);
+        if (this.results_EP == null) this.results_EP = new COM_Results();
+        if (this.results_EP.results_character == null) this.results_EP.results_character = new List<Result_Character>();
+        this.results_EP.results_character.Add(res);
     }
 
     public override string GetDescription_Begin(EvaluationPackage evp, int variantID)

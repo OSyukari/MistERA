@@ -628,7 +628,20 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>
             /// [optional string imagePath] - sets/clears the currently active event background image; empty or omitted argument clears it
             /// </summary>
-            SetBGImage
+            SetBGImage,
+
+            /// <summary>
+            /// [string tagFilter, bool deleteObject, bool fullDeflate, string deflateStringkey, string kojoStringKey] <br/>
+            /// calls owner.Self.DeflateInternal(...) with the given arguments; returns whatever it returns (true if any deflation happened)
+            /// </summary>
+            DeflateInternal,
+
+            /// <summary>
+            /// Always returns false. Used inside a branch option to force it to "fail" after running its earlier
+            /// (side-effecting) Results, so the branch always falls through to its next option regardless of
+            /// whether those earlier Results actually succeeded.
+            /// </summary>
+            AlwaysFalse
 
         }
     }

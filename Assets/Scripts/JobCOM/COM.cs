@@ -291,10 +291,13 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     }
 
     //public Validator_Costs costs;
-    public COM_Results results_immediate = new COM_Results();
+    public COM_Results results_immediate_EP = new COM_Results();
 
     //public Validator_Costs costs;
-    public COM_Results results = new COM_Results();
+    public COM_Results results_EP = new COM_Results();
+
+    // fires once for the whole ActionPackage on successful completion, targets built from the AP's own doer/receiver
+    public COM_Results results_AP = new COM_Results();
 
     /// <summary>
     /// Only provide msg if this is visible
@@ -318,13 +321,28 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public void ApplyResultsImmediate(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
     {
         //Debug.Log("ApplyResults doer[" + (evp.Doer != null ? evp.Doer.FirstName : "-") + "] receiver[" + (evp.Receiver != null ? evp.Receiver.FirstName : "-") + "]");
-        results_immediate.ApplyResults(job, p, evp, target, log);
+        results_immediate_EP.ApplyResults(job, p, evp, target, log);
     }
 
     public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
     {
         //Debug.Log("ApplyResults doer[" + (evp.Doer != null ? evp.Doer.FirstName : "-") + "] receiver[" + (evp.Receiver != null ? evp.Receiver.FirstName : "-") + "]");
-        results.ApplyResults(job, p, evp, target,log);
+        results_EP.ApplyResults(job, p, evp, target,log);
+
+        if (target == evp.Doer)
+        {
+            // prefer the AP's own COMVariantID over evp.VariantID — the EP's copy has been observed stale/incorrect
+            var variant = (p.COMVariantID >= 0 && p.COMVariantID < variants.Count) ? variants[p.COMVariantID] : null;
+            if ((variant == null || variant.useDefaultEventResult_EP) && results_EP.result_event != null) results_EP.result_event.Apply(p, evp);
+            if (variant != null && variant.result_event_EP != null) variant.result_event_EP.Apply(p, evp);
+        }
+    }
+
+    public void ApplyResults_AP(ActionPackage p)
+    {
+        var variant = (p.COMVariantID >= 0 && p.COMVariantID < variants.Count) ? variants[p.COMVariantID] : null;
+        if ((variant == null || variant.useDefaultEventResult_AP) && results_AP.result_event != null) results_AP.result_event.Apply(p, null);
+        if (variant != null && variant.result_event_AP != null) variant.result_event_AP.Apply(p, null);
     }
 
     public bool ValidateJob(Job j, out string msg)
@@ -766,6 +784,14 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         public COM_Requirements requirements = new COM_Requirements();
         public bool setForce = false;
 
+        // per-variant override/addition to the COM-level result_event (see COM.results_AP/results_EP).
+        // The variant's own override, if set, always fires in addition to the COM-level default — the
+        // useDefaultEventResult flags only control whether the COM-level default also fires.
+        public Result_Event result_event_AP = null;
+        public Result_Event result_event_EP = null;
+        public bool useDefaultEventResult_AP = true;
+        public bool useDefaultEventResult_EP = true;
+
         public string GetDescription_Begin(COM ownerCOM, EvaluationPackage evp)
         {
             //Debug.LogError("GetDescription_Begin Variant isOwnerNull?["+ (ownerCOM == null )+ "] useAnotherDesc?["+ useAnothersDescription + "]");
@@ -886,7 +912,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_OnComplete(ap, useAnothersDescription));
             if (useBaseDescription) s.Add(ownerCOM.GetDescription_OnComplete(ap, -1));
 
-            if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
+            s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);
             if (s.Count < 1)
             {
@@ -904,7 +930,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (useAnothersDescription > -1 && useAnothersDescription != ownerCOM.variants.IndexOf(this)) s.Add(ownerCOM.GetDescription_OnComplete(evp, useAnothersDescription));
             if (useBaseDescription) s.Add(ownerCOM.GetDescription_OnComplete(evp, -1));
 
-            if (s.Count > 1 && s.Find(x => x == "$DEFAULT$") != null) s.RemoveAll(x => x == "$DEFAULT$");
+            s.RemoveAll(x => x == "$DEFAULT$");
             s.RemoveAll(x => x.Length < 1);
             if (s.Count < 1) s.Add($"({evp.targetCOM.DisplayName(evp.Package.COMVariantID)}: {evp.Response})");
             string s2 = String.Join("\n", s);

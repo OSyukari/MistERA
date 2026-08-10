@@ -117,7 +117,7 @@
                             {
                                 "requirement": {
                                     "requireSelfAction": false,
-                                    "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "lte", "value": 0.9 }
+                                    "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "lte", "value": 0.9 } ] }
                                 },
                                 "forbidPortaitDisplay": true,
                                 "selfEventCall": "DisruptSleep",
@@ -159,30 +159,30 @@
                             },
                             {
                                 "tags": ["nsfw"],
-                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } },
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } ] } },
                                 "responses": [],
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
                             },
                             {
                                 "tags": ["nsfw"],
-                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } },
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "gte", "value": 1.9 } ] } },
                                 "responses": []
                             },
                             {
                                 "tags": ["nsfw"],
-                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping","pain"], "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } ] } },
                                 "responses": [],
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.2 } }]
                             },
                             {
                                 "tags": ["nsfw"],
-                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "targetTags": ["sex","penetration"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "targetTags": ["sex","penetration"], "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } ] } },
                                 "responses": [],
                                 "results": [{ "modifyStatusValue": { "statusID": "chara_status_sleeping", "value": -0.1 } }]
                             },
                             {
                                 "tags": ["nsfw"],
-                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "requireSelfStatusValue": { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } },
+                                "requirement": { "requireSelfAction": false, "selfTags": ["sleeping"], "selfReq": { "requireConscious": false, "requireAction": false, "requireStatusValue": [ { "statusID": "chara_status_sleeping", "operand": "gte", "value": 0.9 } ] } },
                                 "responses": []
                             },
                             {

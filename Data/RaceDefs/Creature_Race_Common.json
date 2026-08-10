@@ -41,6 +41,7 @@
         [
             {
                 "id": "mouth_beast_base",
+                "deflateEventID": "deflate_mouth",
                 "displayName":"%%bodyPart_internal_mouth%%",
                 "tooltip":"An {0}'s mouth.",
                 "AvailableSlots":["Mouth"],
@@ -96,6 +97,7 @@
             },
             {
                 "id": "anus_beast_base",
+                "deflateEventID": "deflate_anus",
                 "displayName":"%%bodyPart_internal_anus%%",
                 "tooltip":"An {0}'s anus.",
                 "AvailableSlots":["Anus"],

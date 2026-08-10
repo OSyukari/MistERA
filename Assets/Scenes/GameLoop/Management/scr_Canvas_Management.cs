@@ -212,19 +212,18 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         entry.ItemName.SetExternalTooltip(order.Tooltip);
         entry.ItemCount.text = currentFaction.Inventory.GetItemCount(order.Entry.itemID).ToString();
         entry.FactionName.text = order.TargetFaction == currentFaction ? " - " : order.TargetFaction.FactionDisplayName;
-        entry.pricing.text = order.Cost.Print;
-
 
         RectTransform rect = entry.GetComponent<RectTransform>();
 
-        RegisterButton(recipeHash + 1, entry.ButtonPlus, new button_ManageTradeOrder_AddCount(this, entry.OrderAmount, order));
+        RegisterButton(recipeHash + 1, entry.ButtonPlus, new button_ManageTradeOrder_AddCount(this, entry.OrderAmount, order, entry));
         RegisterButton(recipeHash + 2, entry.Button_orderType, new button_ManageTradeOrder_ChangeType(this, entry.Button_orderType, order));
-        RegisterButton(recipeHash + 3, entry.ButtonMinus, new button_ManageTradeOrder_ReduceCount(this, entry.OrderAmount, order));
+        RegisterButton(recipeHash + 3, entry.ButtonMinus, new button_ManageTradeOrder_ReduceCount(this, entry.OrderAmount, order, entry));
         var remover = new button_ManageTradeOrder_RemoveCount(this, recipeHash, order, entry.warningMsg, entry);
         RegisterButton(recipeHash, entry.Btn_action, remover);
 
         rect.SetParent(list_trades, false);
         entry.RegisterTR(this, CurrentFaction, order);
+        entry.UpdatePricingDisplay();
         loadTrades_Removal.Add(order, remover);
     }
 
@@ -1325,7 +1324,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             // pattern - assigning a role registers memberTypeOwnerFaction as a work faction;
             // unassigning removes chara from it entirely rather than just reverting status.
             if (unset) chara.FactionManager.RemoveWorkFaction(memberTypeOwnerFaction.ID);
-            else chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType);
+            else chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType, true, parent.CurrentFaction);
             parent.NotifyScheduleChanged();
         }
 
@@ -1767,11 +1766,13 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         new scr_Canvas_Management parent;
         Manageable.TradeOrder order;
         TMP_Text text;
-        public button_ManageTradeOrder_AddCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order) : base(parent)
+        scr_prefabTransactionManage entry;
+        public button_ManageTradeOrder_AddCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order, scr_prefabTransactionManage entry) : base(parent)
         {
             this.parent = parent;
             this.order = order;
             this.text = text;
+            this.entry = entry;
         }
 
         public override bool IsButtonValid()
@@ -1791,6 +1792,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             else if (UtilityEX.SHIFT) order.AddCount(100);
             else if (UtilityEX.CTRL) order.AddCount(10);
             else order.AddCount(1);
+            entry.UpdatePricingDisplay();
             //text.text = order.Count.ToString();
             //expectedWork.text = ((int)Math.Ceiling(order.Count * order.Recipe.workAmount / 60f)).ToString();
         }
@@ -1824,11 +1826,13 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         new scr_Canvas_Management parent;
         Manageable.TradeOrder order;
         TMP_Text text;
-        public button_ManageTradeOrder_ReduceCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order) : base(parent)
+        scr_prefabTransactionManage entry;
+        public button_ManageTradeOrder_ReduceCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order, scr_prefabTransactionManage entry) : base(parent)
         {
             this.parent = parent;
             this.order = order;
             this.text = text;
+            this.entry = entry;
         }
 
         public override bool IsButtonValid()
@@ -1850,6 +1854,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             else if (UtilityEX.SHIFT) order.AddCount(-100);
             else if (UtilityEX.CTRL) order.AddCount(-10);
             else order.AddCount(-1);
+            entry.UpdatePricingDisplay();
 
             //expectedWork.text = ((int) Math.Ceiling( order.Count * order.Recipe.workAmount / 60f)).ToString();
         }
@@ -1927,7 +1932,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             var texts = new List<string>();
             if (this.order.Count > 0)
             {
-                if (order.Cost.itemID != "") if(!parent.CurrentFaction.resourceWarnings.ContainsKey(order.Cost.itemID) || parent.CurrentFaction.resourceWarnings[order.Cost.itemID] < 0) texts.Add(alert_items.Replace("$itemname$", order.Cost.Print));
+                // reversed orders pay out Entry instead of Cost (see TradeOrder.ProcessOrder) - check
+                // whichever one this faction is actually on the hook for.
+                var paidItem = order.reversed ? order.Entry : order.Cost;
+                if (paidItem.itemID != "") if(!parent.CurrentFaction.resourceWarnings.ContainsKey(paidItem.itemID) || parent.CurrentFaction.resourceWarnings[paidItem.itemID] < 0) texts.Add(alert_items.Replace("$itemname$", paidItem.PrintName));
                 //if (!parent.CurrentFaction.productionWarnings.ContainsKey(order.Recipe.jobKeyword) || parent.CurrentFaction.productionWarnings[order.Recipe.jobKeyword] < 0) texts.Add(alert_hours.Replace("$comname$", order.Recipe.jobKeyword));
                 this.warning.text = texts.Count > 0 ? Utility.WrapTextColor(String.Join(" ", texts), conflictColor) : "";
             }

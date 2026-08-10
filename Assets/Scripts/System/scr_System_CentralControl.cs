@@ -1161,5 +1161,13 @@ public static class DataPath
 
 public static class SpriteAsset
 {
-    public static Sprite transparent = Sprite.Create(null, new Rect(0, 0, 0, 0), new Vector2(0, 0));
+    static Texture2D _transparentTexture = MakeTransparentTexture();
+    static Texture2D MakeTransparentTexture()
+    {
+        var tex = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+        tex.SetPixel(0, 0, new Color(0, 0, 0, 0));
+        tex.Apply();
+        return tex;
+    }
+    public static Sprite transparent = Sprite.Create(_transparentTexture, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
 }

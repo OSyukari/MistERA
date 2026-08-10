@@ -323,10 +323,16 @@
                                 "_comment": "this variant triggers when a chara is doing something in same room as sleeping character but the action does not include sleeping chara. For direct disruption, its hardcoded.",
                                 "requirement": {
                                     "requireSelfAction": false,
-                                    "requireSelfStatusValue": {
-                                        "statusID": "chara_status_sleeping",
-                                        "operand": "lte",
-                                        "value": 0.9
+                                    "selfReq": {
+                                        "requireConscious": false,
+                                        "requireAction": false,
+                                        "requireStatusValue": [
+                                            {
+                                                "statusID": "chara_status_sleeping",
+                                                "operand": "lte",
+                                                "value": 0.9
+                                            }
+                                        ]
                                     }
                                 },
                                 "forbidPortaitDisplay":true,

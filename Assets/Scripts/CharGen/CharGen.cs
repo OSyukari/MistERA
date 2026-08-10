@@ -12,7 +12,9 @@ public enum NameCulture
     none,
     japanese,
     english,
-    goblin
+    goblin,
+    dog,
+    horse
 }
 
 [System.Serializable]

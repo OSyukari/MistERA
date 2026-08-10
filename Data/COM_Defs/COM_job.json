@@ -57,7 +57,7 @@
                         "displayName": "com_job_cleaning_displayName_2"
                     }
                 ],
-                "results": 
+                "results_EP": 
                 { 
                     "results_room":
                     [
@@ -653,7 +653,7 @@
                         "displayName": "com_job_farm_maintain_displayName_2"
                     }
                 ],
-                "results": {
+                "results_EP": {
                     "results_jobContainer": [
                         {
                             "entry_conditions": {
@@ -703,7 +703,7 @@
                         "requireContentExist": true
                     }
                 },
-                "results":{
+                "results_EP":{
                     "results_jobContainer":[
                         {
                             "entry_results":{

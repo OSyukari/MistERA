@@ -1,0 +1,145 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "com_furniture_restroom_deflate",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {
+                            "parameters": [
+                                "canFullyDeflate",
+                                "anus"
+                            ]
+                        }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "opening beat before the branch/kojo cascade below",
+                        "isLast": true,
+                        "line": "com_furniture_restroom_deflate_start",
+                        "nextEntryLabel": "attempt"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "attempt deflation, silently exit on failure",
+                        "label": "attempt",
+                        "options": [
+                            {
+                                "option": "deflate anus",
+                                "Results": [
+                                    {
+                                        "Type": "DeflateInternal",
+                                        "arguments": [
+                                            "anus",
+                                            "true",
+                                            "true",
+                                            "deflateMsg",
+                                            "deflateKojo"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "print"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "silent exit",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "end"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "prefer kojo text if it was collected, else fall back to the plain deflate message; each option force-fails via AlwaysFalse after attempting its print so both get a chance and we always reach end",
+                        "label": "print",
+                        "options": [
+                            {
+                                "option": "kojo print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateKojo",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "plain message print attempt",
+                                "Results": [
+                                    {
+                                        "Type": "ExistAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "FlushAppendStrings",
+                                        "arguments": [
+                                            "deflateMsg",
+                                            "true"
+                                        ]
+                                    },
+                                    {
+                                        "Type": "AlwaysFalse",
+                                        "arguments": []
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "end",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "end"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "isLast": true,
+                        "line": ""
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_restroom_deflate_start": "$self.name$在卫生间里待得比平时更久了一些。"
+            }
+        }
+    }
+}

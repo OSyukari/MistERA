@@ -1885,6 +1885,8 @@ public abstract class ActionPackage
 
         if (executeSuccessful)// && targetCOM.requirements.requirement.TreatReceiverAsDoer)         // this behavior does not need to be limited to treatreceiverasdoer, right ?
         {   // if job is recreation and result at least neutral, increase relationship between all participating actors
+            if (targetCOM != null) targetCOM.ApplyResults_AP(this);
+
             foreach (var ep in packages)
             {
                 foreach (var participant in actors)  // comparing with all actor in the parent AP before subdividing into EPs
@@ -2447,6 +2449,7 @@ public abstract class ActionPackage
         if (this.Actors.Contains(playerRef) && injectChara == null) injectChara = playerRef;
 
         string s = targetCOM.variants[COMVariantID].GetDescription_Begin(targetCOM, this);
+        if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", this.job.ep_begin);
         UtilityEX.StringReplace(this, ref s);
         s = targetCOM.Replace(s);
         s = keyReplace(s);
@@ -2535,6 +2538,7 @@ public abstract class ActionPackage
         }
         var ss = new List<string>();
         string s = targetCOM.variants[COMVariantID].GetDescription_Ongoing(targetCOM, this);
+        if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", this.job.ep_ongoing);
         //Debug.Log("AP LogMessage_Ongoing");
         UtilityEX.StringReplace(this, ref s);
         s = targetCOM.Replace(s);
@@ -2675,6 +2679,7 @@ public abstract class ActionPackage
         if (targetCOM != null && COMVariantID >= 0)
         {
             s = targetCOM.variants[COMVariantID].GetDescription_After(targetCOM, this);
+            if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", "");
             UtilityEX.StringReplace(this, ref s);
             s = targetCOM.Replace(s);
             s = keyReplace(s);

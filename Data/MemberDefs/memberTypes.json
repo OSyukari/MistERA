@@ -111,6 +111,21 @@
                             "excludePrisonRooms":false
                         }
                     },
+                    "behavior_shower":{
+                        "$type": "TryFindShowerNode, Assembly-CSharp",
+                        "_comment":"behaviorOverrideID/Tags are hardcoded in the C# ctor (behavior_shower / nsfw)",
+                        "cooldownHours": 3,
+                        "cooldownID": "com_furniture_takeShower",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "matchCOMID":"com_furniture_takeShower",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":false
+                        }
+                    },
                     "behavior_meal": {
                         "$type": "TryFindMealNode_Prisoner, Assembly-CSharp",
                         "evaluationHeuristic": "random",

@@ -300,6 +300,23 @@ public class Manageable : I_Disposable, I_IsJobGiver
         int newRef = MainExit == null ? -1 : MainExit.RefID;
     }
 
+    public MapPlan.WorkModuleInit GetActiveWorkModule(Character_Trainable c, int hour)
+    {
+        var type = GetMemberType(c);
+        if (type == null) return null;
+        if (type.workModule == null) return null;
+        if (HasCustomOverride(c)) return null;
+        // check customoverride if true then false
+
+        if (!type.workModule.activeHours.Contains(hour)) return null;
+        if (type.workModule.activeDays.Count > 0)
+        {
+            int dayInWeek = (scr_System_Time.current.getCurrentDayInWeek() + 0) % 7;
+            if (dayInWeek >= type.workModule.activeDays.Count || type.workModule.activeDays[dayInWeek] == 0) return null;
+        }
+        return type.workModule;
+    }
+
     public MemberType GetMemberType(Character_Trainable c)
     {
         if (charaGuestStatus.TryGetValue(c.RefID, out var guestStatus)) return FactionUtility.GetMemberType(guestStatus);
@@ -561,32 +578,41 @@ public class Manageable : I_Disposable, I_IsJobGiver
     protected void OnHourUpdate(TimeSpan t)
     {
         int currentHour = (scr_System_Time.current.getCurrentTime().Hour + 24 - 1) % 24;
-        foreach(var cSchedule in charaSchedules)
+        foreach(var c in ManagedChara)
         {
-            // first check if chara is in faction
-            if (!isCharaInManagedSpace(cSchedule.Key)) continue;
-
-            // pay wage whenever the previous hour was active - a specific command, or just Sandboxed
-            if (cSchedule.Value == null || !cSchedule.Value.Get(currentHour).isActive) continue;
-
-            var c = scr_System_CampaignManager.current.FindInstanceByID(cSchedule.Key);
             if (c == null) continue;
+            // first check if chara is in faction
+            if (!isCharaInManagedSpace(c.RefID)) continue;
 
-            // prefer the explicit JobPostPreset payout if the hour was assigned through that path,
-            // otherwise fall back to the character's current status's own workModule payout - this is
-            // what actually carries wage data for plain-COM and Sandbox-only hours, which never write
-            // a jobID into charaSchedules.
-            var jobID = cSchedule.Value.Get(currentHour).jobID;
-            List<ItemEntry> payout = jobID != "" ? this.JobPostsPresets.Find(x => x.jobPostID == jobID)?.hourlyPayout : null;
-            if (payout == null) payout = GetMemberType(c).workModule?.hourlyPayout;
+            List<ItemEntry> payout = null;
+
+            var workModule = GetActiveWorkModule(c, currentHour);
+            if (workModule != null && workModule.hourlyPayout != null)
+            {
+                payout = workModule.hourlyPayout;
+            }
+            else if (charaSchedules.TryGetValue(c.RefID, out var schedule ) && schedule.Get(currentHour).isActive)
+            {
+                // pay wage whenever the previous hour was active - a specific command, or just Sandboxed
+                var jobID = schedule.Get(currentHour).jobID;
+
+                payout = jobID != "" ? this.JobPostsPresets.Find(x => x.jobPostID == jobID)?.hourlyPayout : null;
+            }
+
             if (payout == null) continue;
 
-            var targetFaction = c.FactionManager.HomeFactions.Count > 0 ? c.FactionManager.HomeFactions[0] : null;
+            // prefer the faction that actually dispatched c into this job (see
+            // Character_Factions.GetWorkFactionSource / AddWorkFaction's sourceFaction param),
+            // falling back to home faction for untracked/legacy assignments.
+            var targetFaction = c.FactionManager.GetWorkFactionSource(this.ID)
+                ?? (c.FactionManager.HomeFactions.Count > 0 ? c.FactionManager.HomeFactions[0] : null);
             if(targetFaction == null) continue;
 
             // self will pay wage to targetfaction
+
             foreach(var pay in payout)
             {
+                Debug.Log($"adding payment {this.FactionDisplayName} to {targetFaction.FactionDisplayName} ");
                 AddPayment(targetFaction, null, pay, 1);
             }
 
@@ -811,6 +837,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else return false;
     }
 
+    public HourlySchedule GetHourlySchedule(Character_Trainable c, int hour, int daysLookahead = 0)
+    {
+        if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out var schedule)) return schedule;
+        var types = GetMemberTypeSchedule(c, hour, daysLookahead);
+        if (!HasCustomOverride(c) && types != null) return types;
+        if (charaSchedules.TryGetValue(c.RefID, out var schedulec) && schedulec.Get(hour).isActive) return schedulec.Get(hour);
+        return null;
+    }
     public Job_Schedule GetSchedule(Character_Trainable c)
     {
         if (ManagedRefs.Contains(c.RefID)) return charaSchedules[c.RefID];
@@ -1208,7 +1242,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (c == null) return false;
         var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
         if (room != null && managedRoomRefs.Keys.Contains(room.RefID)) return true;
-        else return false;
+        if (c.CurrentRoom.FactionOwner == this) return true;
+        return false;
     }
 
     public bool isCharaManager(Character_Trainable c)
@@ -1732,7 +1767,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         foreach(var order in TradeOrders)
         {
-            order.AddDictionaryRecords(ref productionWarnings);
+            order.AddDictionaryRecords(ref resourceWarnings);
         }
     }
 
@@ -2155,6 +2190,33 @@ public class Manageable : I_Disposable, I_IsJobGiver
                     LocalizeDictionary.QueryThenParse("ui_management_production_Trade_Display_straight"))
                         .Replace("$name$", Entry.Print);
                 //    Entry.Print + " -> " + Cost.Print : Cost.Print + " -> " + Entry.Print;
+            }
+        }
+
+        ItemEntry _totalCostCache = null;
+        int _totalCostCacheCount = -1;
+
+        /// <summary>
+        /// Same formatting as Cost.Print/Entry.Print, but scaled by CountABS - those cache a per-unit
+        /// string that never reflects quantity (see ItemEntry.Print), so the order-total display needs
+        /// its own getter that picks up count changes as the player adjusts the order via +/-. reversed
+        /// flips which side pays which (see ProcessOrder), so the "cost" the player pays out of pocket
+        /// is Entry when reversed, Cost otherwise. The backing ItemEntry is only rebuilt when CountABS
+        /// actually changes (not on every read, since this is polled every button-validation pass) to
+        /// avoid churning allocations.
+        /// </summary>
+        [JsonIgnore] public string PrintTotalCost
+        {
+            get
+            {
+                var source = reversed ? Entry : Cost;
+                if (source == null || source.itemID == "" || CountABS == 0) return " - ";
+                if (_totalCostCache == null || _totalCostCacheCount != CountABS)
+                {
+                    _totalCostCache = new ItemEntry(source.itemID, source.itemNameOverwrite, source.itemCount * CountABS, source.itemCountOverride);
+                    _totalCostCacheCount = CountABS;
+                }
+                return _totalCostCache.Print;
             }
         }
 

@@ -1,0 +1,44 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "deflate_mouth",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_mouth", "operand": "gte", "value": 60 } },
+                            "responses": ["deflate_mouth_heavy"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_mouth", "operand": "gte", "value": 25 } },
+                            "responses": ["deflate_mouth_medium"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_mouth", "operand": "gt", "value": 0 } },
+                            "responses": ["deflate_mouth_light"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": ["deflate_mouth_none"]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "deflate_mouth_heavy": "浓稠的精液顺着$self$的嘴角滑落，还未来得及咽下的部分大股地涌出口腔，混杂着大量粘稠的白浊，让$self$忍不住轻咳了几声。",
+                "deflate_mouth_medium": "$self$低下头，将口中残留的精液吐了出来，粘稠的液体挂在唇齿之间，带着一股挥之不去的腥味。",
+                "deflate_mouth_light": "$self$感受到口中还残留着一丝精液的味道，吐出了一小口浑浊的液体。",
+                "deflate_mouth_none": "$self$清理了一下口腔。"
+            }
+        }
+    }
+}

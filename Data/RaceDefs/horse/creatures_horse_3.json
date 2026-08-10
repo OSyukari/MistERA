@@ -1,0 +1,66 @@
+
+{
+    "baseID": "creature_animal_horse_template_3",
+    "Template":{
+        "Appearance": "Male",
+        "BodyType": "Default",
+        "stat_STR": 19,
+        "stat_CON": 26,
+        "stat_PSY": 3,
+        "stat_WIL": 7,
+        "Height":173,
+        "Weight":500,
+        "personalityID": "personality_base_animal",
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_AAA",
+        "size_P": "trait_Size_P_huge",
+        "size_V": "trait_Size_V_none",
+        "size_A": "trait_Size_A_1",
+        "initialRelationship":[
+        ]
+    },
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+                "Variants":[
+                    {
+                        "charaReq":{
+                            "requireConscious":false,
+                            "requireAction":false,
+                            "requireStatusValue":[
+                                {
+                                    "statusID":"chara_status_lust",
+                                    "checkSeverityIndex":true,
+                                    "operand":"gte",
+                                    "value":4
+                                }
+                            ]
+                        },
+                        "PortraitVariantData":["horse/assets_nsfw/3_erect.webp"],
+                        "IconVariantData":"horse/assets_nsfw/3_erect.webp"
+                    }
+                ],
+
+                "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 1,
+                "icon_offset_x": 0,            "icon_offset_y": 0,            "icon_offset_size": 1,
+
+                "portrait_path":"horse/assets/3.webp",
+                "icon_path":"horse/assets/3.webp"
+            }
+        ]
+    },
+    "firstName": "creature_animal_horse",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "creature_beastRace_horse",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

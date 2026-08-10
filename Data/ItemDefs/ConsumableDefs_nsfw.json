@@ -11,6 +11,7 @@
                     "compType":"ItemComponent_Ingestible",
                     "comp_Ingestible":{
                         "isLiquid":true,
+                        "canExpel":true,
                         "ingestMethod":[
                             {
                                 "bodyTags":"internal",

@@ -50,7 +50,7 @@ public class COM_FarmRecipe : COM
 
         //foreach(var vari in variants) vari.displayName = this.displayName;
 
-        if (this.results.results_jobContainer == null) this.results.results_jobContainer = new List<Result_JobContainer>();
+        if (this.results_EP.results_jobContainer == null) this.results_EP.results_jobContainer = new List<Result_JobContainer>();
 
         Result_JobContainer result = new Result_JobContainer();
 
@@ -59,7 +59,7 @@ public class COM_FarmRecipe : COM
         result.entry_results.isItemContainer = true;
         requirements.requirement.req_Doers.allowNPC = false;
 
-        results.results_jobContainer.Add(result);
+        results_EP.results_jobContainer.Add(result);
         // entry results class still WIP
 
     }

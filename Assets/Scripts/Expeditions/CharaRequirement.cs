@@ -50,6 +50,8 @@ public class CharaReq
     public List<string> requireAbsentJobwithCOMTag = new List<string>();
     public List<string> requireExistingJobwithCOMTag = new List<string>();
 
+    public List<RequireStatusValue> requireStatusValue = new List<RequireStatusValue>();
+
 
     public void Read(CharaReq req)
     {

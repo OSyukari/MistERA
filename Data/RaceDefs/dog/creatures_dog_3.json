@@ -1,0 +1,66 @@
+
+{
+    "baseID": "creature_animal_dog_template_3",
+    "Template":{
+        "Appearance": "Male",
+        "BodyType": "Default",
+        "stat_STR": 14,
+        "stat_CON": 15,
+        "stat_PSY": 4,
+        "stat_WIL": 9,
+        "Height":65,
+        "Weight":35,
+        "personalityID": "personality_base_animal",
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_AAA",
+        "size_P": "trait_Size_P_big",
+        "size_V": "trait_Size_V_none",
+        "size_A": "trait_Size_A_1",
+        "initialRelationship":[
+        ]
+    },
+    "Portrait":{
+        "portraitPriorityList":[
+            {
+                "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+
+                "Variants":[
+                    {
+                        "charaReq":{
+                            "requireConscious":false,
+                            "requireAction":false,
+                            "requireStatusValue":[
+                                {
+                                    "statusID":"chara_status_lust",
+                                    "checkSeverityIndex":true,
+                                    "operand":"gte",
+                                    "value":3
+                                }
+                            ]
+                        },
+                        "PortraitVariantData":["dog/assets_nsfw/3_erect.webp"],
+                        "IconVariantData":"dog/assets_nsfw/3_erect.webp"
+                    }
+                ],
+
+                "portrait_offset_x": 0,    "portrait_offset_y": 0,    "portrait_offset_size": 0.8,
+                "icon_offset_x": -32,            "icon_offset_y": -155,            "icon_offset_size": 0.5,
+
+                "portrait_path":"dog/assets/3.webp",
+                "icon_path":"dog/assets/3.webp"
+            }
+        ]
+    },
+    "firstName": "creature_animal_dog",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_firstToLast",
+    "origin": "charOrigin_none",
+    "race": "creature_beastRace_dog",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

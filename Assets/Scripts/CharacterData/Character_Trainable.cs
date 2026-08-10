@@ -837,7 +837,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     if (_templateS == null)
                     {
                         _templateS = new CharaSafeTemplate();
-                        if (BaseID != "") Debug.LogError($"Error failed to find template id {BaseID}, initializing new");
+                        if (BaseID != "") Debug.LogError($"Error failed to find template id {BaseID} nor baseTemplateID {baseTemplateID}, initializing new");
                     }
                 }
                 return _templateS;
@@ -854,7 +854,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                     if (_template == null)
                     {
                         _template = new CharaTrainableTemplate();
-                        if (BaseID != "") Debug.LogError($"Error failed to find template id {BaseID}, initializing new");
+                        if (BaseID != "") Debug.LogError($"Error failed to find template id {BaseID} nor baseTemplateID {baseTemplateID}, initializing new");
                     }
                 }
                 return _template;
@@ -2548,6 +2548,98 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     public string baseTemplateID = "";
 
     [JsonIgnore] public bool Debug_ForceDeepSleep = false;
+
+
+    public bool DeflateInternal(EventInstance collector, string deflateStringkey, string kojoStringKey, bool fullDeflate = false, bool deleteObject = true, string tagFilter = "")
+    {
+        // 1. fetch every applicable bodypart (matching tagFilter, and actually deflate-able for the requested mode)
+        var internals = this.Body.Internals;
+        List<BodyInternal_Instance> candidates = null;
+        for (int i = 0; i < internals.Count; i++)
+        {
+            var candidate = internals[i];
+            if (tagFilter != "" && !candidate.hasTag(tagFilter)) continue;
+            if (fullDeflate ? !candidate.canFullyDeflate : !candidate.canDeflate) continue;
+            if (candidates == null) candidates = new List<BodyInternal_Instance>();
+            candidates.Add(candidate);
+        }
+        if (candidates == null) return false;
+
+        bool anyDeflated = false;
+        List<string> deflateMessages = null;
+        // merge deflated amount across bodyparts that share the same deflateEventID, per-ID, for a single combined kojo query
+        Dictionary<string, float> kojoAmountByEventID = null;
+
+        for (int ci = 0; ci < candidates.Count; ci++)
+        {
+            var part = candidates[ci];
+
+            // 1.1 deflate this part; each returned item's own amount is exactly what left the body
+            // (fully-removed items keep their original amount, partially-reduced items are split-off
+            // instances holding just the removed delta — see BodyInternal_Instance.Deflate). What
+            // happens to those items next (delete vs. drop in the room) is this caller's call, not the
+            // body part's.
+            var expelledItems = part.Deflate(fullDeflate);
+            if (expelledItems == null || expelledItems.Count < 1) continue;
+
+            float partDeflatedAmount = 0f;
+            var itemTexts = new List<string>();
+            for (int i = 0; i < expelledItems.Count; i++)
+            {
+                var expelled = expelledItems[i];
+                var ing = expelled.GetComp_Ingestible();
+                if (ing != null) partDeflatedAmount += ing.amount;
+                itemTexts.Add(expelled.Print());
+
+                if (deleteObject) scr_System_CampaignManager.current.Unregister(expelled);
+                else scr_System_CampaignManager.current.Map.FindRoomByChara(this.RefID).AddItem(expelled);
+            }
+            if (partDeflatedAmount <= 0f) continue;
+            anyDeflated = true;
+
+            // 1.2 collect this part's deflation message: "$name$从$bodypart$排出了$items$" (zh-cn) / "$name$ expelled $items$ from $bodypart$" (en-us)
+            // name is included so this reads unambiguously when multiple actors are in the same scene
+            if (deflateMessages == null) deflateMessages = new List<string>();
+            deflateMessages.Add(LocalizeDictionary.QueryThenParse("deflate_message")
+                .Replace("$name$", this.FirstName)
+                .Replace("$bodypart$", part.DisplayName)
+                .Replace("$items$", String.Join(" ", itemTexts)));
+
+            // 2. group this part's deflated amount under its deflateEventID (if any) for the kojo step below.
+            // parts with no deflateEventID contribute their message above but are skipped for kojo collection.
+            if (part.Base.deflateEventID != "")
+            {
+                if (kojoAmountByEventID == null) kojoAmountByEventID = new Dictionary<string, float>();
+                kojoAmountByEventID.TryGetValue(part.Base.deflateEventID, out var existing);
+                kojoAmountByEventID[part.Base.deflateEventID] = existing + partDeflatedAmount;
+            }
+        }
+
+        if (!anyDeflated) return false;
+
+        if (collector != null && deflateStringkey != "" && deflateMessages != null)
+            collector.AppendStrings[deflateStringkey] = deflateMessages;
+
+        // 2.1-2.3 kojo collect: one query per distinct deflateEventID (same-ID parts already merged above),
+        // combining every group's output into a single kojoStringKey entry
+        if (collector != null && kojoStringKey != "" && kojoAmountByEventID != null)
+        {
+            var rel = this.Relationships.FindRelationshipWith(this);
+            List<string> kojoTexts = null;
+            foreach (var kvp in kojoAmountByEventID)
+            {
+                this.Relationships.SetKojoVariable(true, rel, kvp.Key, (int)kvp.Value);
+                var kojoResult = this.Relationships.Personality.GetKOJOMessage(kvp.Key, rel, null, null);
+                if (kojoResult == null) continue;
+                if (kojoTexts == null) kojoTexts = new List<string>();
+                kojoResult.DumpMessage(kojoTexts);
+            }
+            if (kojoTexts != null) collector.AppendStrings[kojoStringKey] = kojoTexts;
+        }
+
+        // return true if any deflation happened
+        return true;
+    }
 }
 
 public class Character_BaseID_Index

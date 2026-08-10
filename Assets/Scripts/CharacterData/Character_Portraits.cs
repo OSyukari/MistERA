@@ -524,9 +524,16 @@ public class PortraitManager
         public string IconVariantData = "";
         public bool Enable = true;
         public List<string> tagsMatch = new List<string>();
+        public CharaReq charaReq = null;
         public bool Validate(Character_Trainable c)
         {
             if (!Enable) return false;
+            if (charaReq != null)
+            {
+                if (c == null) return false;
+                List<string> tooltip = null;
+                if (!CharaReqUtility.Validate(charaReq, ref tooltip, c, out bool hardlock)) return false;
+            }
             if (Conditions == null || Conditions.Count < 1) return true;
             foreach(var i in Conditions) if (c == null || !i.Validate(c)) return false;
 

@@ -1,0 +1,39 @@
+{
+    "humanoid_Races":{
+        "foetusTemplates":
+        [
+{
+    "parentRaceID": "creature_beastRace_horse",
+    "racialTemplate":{
+        "offspring_templates":[
+            "creature_animal_horse"
+        ],
+        "duration_fertilized": 144,
+        "duration_implanted": 384,
+        "size_implanted": 0.001,
+        "duration_first": 2568,
+        "size_first": 0.5,
+        "duration_second": 2712,
+        "size_second": 600.0,
+        "duration_third": 2736,
+        "size_third": 20000.0,
+        "size_end": 50000.0,
+        "duration_randVariation": 0.05,
+        "duration_labor": 40,
+        "average_mother_HWMult": 69750,
+        "_note_avg": "69750 = ~155 cm × 450 kg typical mare. Verify against actual creature character template H×W.",
+        "images":[
+            "RJW - Womb/preg_human/Fetus_Early00.png",
+            "RJW - Womb/preg_cattle/Fetus_S_Bovine00.png",
+            "RJW - Womb/preg_cattle/Fetus_S_Bovine01.png",
+            "RJW - Womb/preg_cattle/Fetus_S_Bovine02.png",
+            "RJW - Womb/preg_cattle/Fetus_S_Bovine03.png",
+            "RJW - Womb/preg_cattle/Fetus_S_Bovine04.png",
+            "RJW - Womb/preg_cattle/Fetus_S_Bovine05.png"
+        ]
+    },
+    "foetusByBaseID": {}
+}
+        ]
+    }
+}

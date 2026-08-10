@@ -743,6 +743,7 @@
 "ui_ap_CharaReqUtility_requireNotFollowing":"需要$name$当前没有跟随玩家",
 "ui_ap_CharaReqUtility_requireFollowing":"需要$name$当前正跟随玩家",
 "ui_ap_CharaReqUtility_requireTimestopped":"需要$name$当前被时停",
+"ui_ap_CharaReqUtility_requireStatusValue":"需要$name$满足状态[$status$]的条件",
 "ui_ap_CharaReqUtility_requireMemberType":"需要$name$持有职位[$memberType$]",
 
 "ui_ap_PreEvaluate_requireDoer":"指令没有执行者",
@@ -785,7 +786,9 @@
 "Memory_Response_Failure":"失败",
 "Memory_Response_Success":"成功",
 "Memory_Response_CriticalSuccess":"大成功",
-"Memory_Response_Complete":"结束"
+"Memory_Response_Complete":"结束",
+
+"deflate_message":"$name$从$bodypart$排出了$items$"
 
             },
             "en-us": {
@@ -1367,6 +1370,7 @@
 "ui_ap_CharaReqUtility_requireFollowing": "Requires $name$ to be currently following the player",
 "ui_ap_CharaReqUtility_requireNotFollowing": "Requires $name$ to not be following the player",
 "ui_ap_CharaReqUtility_requireTimestopped": "Requires $name$ to be currently time-stopped",
+"ui_ap_CharaReqUtility_requireStatusValue": "Requires $name$ to meet the [$status$] status condition",
 "ui_ap_CharaReqUtility_requireMemberType": "Requires $name$ to hold the [$memberType$] status",
 "ui_ap_CharaReqUtility_requireUnconscious": "Cannot be executed while $name$ is conscious",
 
@@ -1457,7 +1461,9 @@
 "ui_management_mealprep_targeting_end": "Finish Editing",
 "ui_management_mealprep_targeting_end_tooltip": "%%ui_button_tooltip_exit%%",
 
-"Memory_Response_Complete": "Complete"
+"Memory_Response_Complete": "Complete",
+
+"deflate_message": "$name$ expelled $items$ from $bodypart$"
 
 
 

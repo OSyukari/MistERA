@@ -70,6 +70,7 @@
         [
             {
                 "id": "mouth_humanoid_base",
+                "deflateEventID": "deflate_mouth",
                 "displayName":"%%bodyPart_internal_mouth%%",
                 "tooltip":"An {0}'s mouth.",
                 "AvailableSlots":["Mouth"],
@@ -181,6 +182,7 @@
             },
             {
                 "id": "vagina_humanoid_base",
+                "deflateEventID": "deflate_vagina",
                 "displayName":"%%bodyPart_internal_vagina%%",
                 "tooltip":"An {0}'s vagina.",
                 "AvailableSlots":["Vagina"],
@@ -218,6 +220,7 @@
             },
             {
                 "id": "womb_humanoid_base",
+                "deflateEventID": "deflate_womb",
                 "displayName":"%%bodyPart_internal_womb%%",
                 "tooltip":"An {0}'s womb.",
                 "AvailableSlots":["Womb"],
@@ -271,6 +274,7 @@
             },
             {
                 "id": "anus_humanoid_base",
+                "deflateEventID": "deflate_anus",
                 "displayName":"%%bodyPart_internal_anus%%",
                 "tooltip":"An {0}'s anus.",
                 "AvailableSlots":["Anus"],

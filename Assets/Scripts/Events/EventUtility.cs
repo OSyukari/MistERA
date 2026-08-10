@@ -404,6 +404,32 @@ public static class EventUtility
                 if (r.parameters.Count < 4 || !int.TryParse(r.parameters[3], out var minItemCount)) return false;
                 var checkedFaction = scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
                 return checkedFaction != null && checkedFaction.Inventory.GetItemCount(r.parameters[2]) >= minItemCount;
+            case "canDeflate":
+            {
+                // canDeflate [optional bodypartTag] -- true if any matching body_internal part canDeflate
+                string tag = r.parameters.Count >= 2 ? r.parameters[1] : "";
+                var internals = c.Body.Internals;
+                for (int i = 0; i < internals.Count; i++)
+                {
+                    var part = internals[i];
+                    if (tag != "" && !part.hasTag(tag)) continue;
+                    if (part.canDeflate) return true;
+                }
+                return false;
+            }
+            case "canFullyDeflate":
+            {
+                // canFullyDeflate [optional bodypartTag] -- true if any matching body_internal part canFullyDeflate
+                string tag = r.parameters.Count >= 2 ? r.parameters[1] : "";
+                var internals = c.Body.Internals;
+                for (int i = 0; i < internals.Count; i++)
+                {
+                    var part = internals[i];
+                    if (tag != "" && !part.hasTag(tag)) continue;
+                    if (part.canFullyDeflate) return true;
+                }
+                return false;
+            }
             default:
                 return true;
         }
@@ -1117,6 +1143,18 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.SetBGImage:
                 owner.CurrentUISpec.BGImagePath = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
                 return true;
+            case Event.EventEntry.ExecutionType.DeflateInternal:
+                // [tagFilter, deleteObject(bool), fullDeflate(bool), deflateStringkey, kojoStringKey]
+                if (exec.arguments.Count >= 5 && owner.Self != null)
+                {
+                    if (bool.TryParse(exec.arguments[1], out var deleteObject) && bool.TryParse(exec.arguments[2], out var fullDeflate))
+                    {
+                        return owner.Self.DeflateInternal(owner, exec.arguments[3], exec.arguments[4], fullDeflate, deleteObject, exec.arguments[0]);
+                    }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.AlwaysFalse:
+                return false;
             case Event.EventEntry.ExecutionType.CheckRelationship:
                 if (exec.arguments.Count >= 2 && exec.arguments[0] != exec.arguments[1])
                 {
@@ -1507,7 +1545,7 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.FlushAppendStrings:
                 if (exec.arguments.Count >= 2)
                 {
-                    if (owner.AppendStrings.TryGetValue(exec.arguments[0], out var list) && bool.TryParse(exec.arguments[0], out var visibletoall))
+                    if (owner.AppendStrings.TryGetValue(exec.arguments[0], out var list) && bool.TryParse(exec.arguments[1], out var visibletoall))
                     {
                         var desc = new DescriptionCollector(String.Join("\n", list));
                         desc.autoAnimate = true;
@@ -1529,8 +1567,12 @@ public static class EventUtility
                             Utility.DistinctInPlace(desc.relevantActors);
                         }
                         if (owner.Self != null) owner.Self.CurrentRoom.NotifyDescCollect(desc);
-                        scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, owner.CurrentUISpec.Clone());
-                        
+
+                        var snap = owner.CurrentUISpec.Clone();
+                        // animate:false -- see RevealFaction's identical comment: an immediate draw here can race a sibling
+                        // Result's own Line text in the same synchronous batch and clear it before it's ever rendered.
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
+
                         return true;
                     }
                 }

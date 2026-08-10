@@ -143,42 +143,6 @@
                                         ]
                                     }
                                 ],
-                                "option": "exp_event_combat_Victory_event_ev02_op01",
-                                "Results": [
-                                    {
-                                        "Type": "FactionExchangeInventory",
-                                        "arguments": [
-                                            "party",
-                                            "enemy",
-                                            "false",
-                                            "true",
-                                            "true",
-                                            "false",
-                                            ""
-                                        ]
-                                    },
-                                    {
-                                        "Type": "JumpToLabel",
-                                        "arguments": [
-                                            "",
-                                            "br_lootEnd"
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                "self_chara_conditions": [
-                                    {
-                                        "parameters": [
-                                            "exists"
-                                        ]
-                                    },
-                                    {
-                                        "parameters": [
-                                            "isPlayer"
-                                        ]
-                                    }
-                                ],
                                 "option": "exp_event_combat_Victory_event_ev02_op02",
                                 "Results": [
                                     {
@@ -448,7 +412,6 @@
                 "exp_event_combat_Victory": "战斗胜利",
                 "exp_event_combat_Victory_event_ev01": "$party.name$击败了敌人",
                 "exp_event_combat_Victory_event_ev02": "搜刮战利品？",
-                "exp_event_combat_Victory_event_ev02_op01": "只拿道具",
                 "exp_event_combat_Victory_event_ev02_op02": "道具人员都要",
                 "exp_event_combat_Victory_event_ev02_op03": "什么都不拿",
                 "exp_event_combat_Victory_event_ev03": "$party.name$搜刮了战利品",
@@ -467,7 +430,6 @@
                 "exp_event_combat_Victory": "Combat Victory",
                 "exp_event_combat_Victory_event_ev01": "$party.name$ defeated the enemy",
                 "exp_event_combat_Victory_event_ev02": "Loot the spoils?",
-                "exp_event_combat_Victory_event_ev02_op01": "Take items only",
                 "exp_event_combat_Victory_event_ev02_op02": "Take items and personnel",
                 "exp_event_combat_Victory_event_ev02_op03": "Take nothing",
                 "exp_event_combat_Victory_event_ev03": "$party.name$ looted the spoils",

@@ -61,6 +61,7 @@ public class BodyInternal_Base
     public string maxSensitivityStatString = "";
 
     public string exposedKojoID = "";
+    public string deflateEventID = "";
 
     public bool needLubrication = false;
 

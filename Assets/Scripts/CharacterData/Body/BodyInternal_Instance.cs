@@ -785,6 +785,109 @@ public class BodyInternal_Instance
         } }
 
     [JsonIgnore]
+    public bool canDeflate
+    {
+        get
+        {
+            if (!this.canContain || !isVisiblyExpanded) return false;
+            foreach (var item in Contains)
+            {
+                var ing = item.GetComp_Ingestible();
+                if (ing != null && ing.CanBeExpelled) return true;
+            }
+            return false;
+        }
+    }
+    [JsonIgnore]
+    public bool canFullyDeflate
+    {
+        get
+        {
+            if (!this.canContain) return false;
+            foreach (var item in Contains)
+            {
+                var ing = item.GetComp_Ingestible();
+                if (ing != null && ing.CanBeExpelled) return true;
+            }
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Proportionally removes expellable content from this part, preserving the pre-expulsion ratio between
+    /// expellable items and leaving non-expellable content untouched (fullDeflate forces the expellable target
+    /// to 0, otherwise the target is whatever room the visibly-expanded threshold leaves after non-expellable
+    /// content). Returns every Item_Instance that left the body: fully-removed items are returned as-is (their
+    /// own amount already equals what left); partially-reduced items are split off into a fresh instance holding
+    /// exactly the removed amount, so its Print()/amount always reflects what was expelled, never the item's
+    /// remaining or original total. Does NOT decide what happens to the returned items (delete vs. drop in
+    /// room, etc.) — that's the caller's call.
+    /// </summary>
+    public List<Item_Instance> Deflate(bool fullDeflate)
+    {
+        var contents = this.Contains;
+
+        float expellableTotal = 0f, nonExpellableTotal = 0f;
+        for (int i = 0; i < contents.Count; i++)
+        {
+            var ing = contents[i].GetComp_Ingestible();
+            if (ing == null) continue;
+            if (ing.CanBeExpelled) expellableTotal += ing.amount;
+            else nonExpellableTotal += ing.amount;
+        }
+        if (expellableTotal <= 0f) return null;
+
+        float targetExpellableTotal = fullDeflate ? 0f : Math.Max(0f, this.VolumeCapacity - nonExpellableTotal);
+        float ratio = targetExpellableTotal / expellableTotal;
+
+        List<Item_Instance> expelled = null;
+        for (int i = 0; i < contents.Count; i++)
+        {
+            var item = contents[i];
+            var ing = item.GetComp_Ingestible();
+            if (ing == null || !ing.CanBeExpelled) continue;
+
+            float newAmount = ing.amount * ratio;
+            float removed = ing.amount - newAmount;
+            if (removed <= 0f) continue;
+
+            if (expelled == null) expelled = new List<Item_Instance>();
+
+            if (newAmount <= 0.001f)
+            {
+                // fully removed: the item itself leaves the body, its amount already equals what was removed
+                this.ExtractContent(item.RefID);
+                expelled.Add(item);
+            }
+            else
+            {
+                // partially reduced: the item stays put, a fresh instance is split off holding just the removed amount
+                ing.amount = newAmount;
+                var splitOff = SplitIngestible(item, removed);
+                if (splitOff != null) expelled.Add(splitOff);
+            }
+        }
+
+        return expelled;
+    }
+
+    static Item_Instance SplitIngestible(Item_Instance source, float amount)
+    {
+        if (source is Item_Instance_Cum cum)
+        {
+            var newCum = new Item_Instance_Cum(cum.raceID, cum.baseID, cum.templateID, cum.nameOverwrite);
+            newCum.CumAmount = amount;
+            return newCum;
+        }
+
+        var instance = WorldManager.Instantiate(source.BaseID, source.nameOverwrite, 1);
+        var ing = instance?.GetComp_Ingestible();
+        if (ing == null) return null;
+        ing.amount = amount;
+        return instance;
+    }
+
+    [JsonIgnore]
     public float VisiblyExpandedCapacity
     {
         get

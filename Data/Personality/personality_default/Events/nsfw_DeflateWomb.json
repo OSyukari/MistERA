@@ -1,0 +1,44 @@
+{
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "deflate_womb",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_womb", "operand": "gte", "value": 60 } },
+                            "responses": ["deflate_womb_heavy"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_womb", "operand": "gte", "value": 25 } },
+                            "responses": ["deflate_womb_medium"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": { "requireKojoVariable": { "isDailyVariable": true, "variableID": "deflate_womb", "operand": "gt", "value": 0 } },
+                            "responses": ["deflate_womb_light"]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "responses": ["deflate_womb_none"]
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "deflate_womb_heavy": "子宫深处传来一阵收缩的酸胀感，大量灌注其中的精液被挤压着排出，$self$能感觉到那股温热的浊流从体内深处涌出，仿佛整个子宫都在因排空而颤抖。",
+                "deflate_womb_medium": "$self$的小腹传来一阵轻微的收缩，子宫中蓄积的部分精液被排挤了出来，带来一阵异样的酥麻感。",
+                "deflate_womb_light": "$self$感觉到子宫深处传来一丝轻微的悸动，些许液体被排出体外。",
+                "deflate_womb_none": "$self$的身体恢复了平静。"
+            }
+        }
+    }
+}
