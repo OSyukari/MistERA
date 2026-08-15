@@ -39,7 +39,8 @@ public class SkillInstance : hasCategory
         this.ownerRefID = owner.RefID;
     }
 
-
+    [JsonIgnore]
+    public string ID { get { return baseSkillID; } }
     protected string baseSkillID = "";
     protected CharaSkill _base = null;
     [JsonIgnore]
@@ -131,16 +132,18 @@ public class SkillInstance : hasCategory
         {
             if (_cachedUses == null)
             {
-                _cachedUses = new List<SkillUse>();
+                // Keyed by skillUseTags so a higher level re-declaring the same tag overwrites (upgrades)
+                // the lower level's entry instead of both being active side by side.
+                var byTag = new Dictionary<string, SkillUse>();
                 if (GetSkillLevel > 0)
                 {
                     for (int i = 0; i <= currentLevel && i < BaseRef.Levels.Count; i++)
                     {
                         if (BaseRef.Levels[i].validUse == null) continue;
-                        _cachedUses.AddRange(BaseRef.Levels[i].validUse);
+                        foreach (var u in BaseRef.Levels[i].validUse) byTag[u.skillUseTags] = u;
                     }
-                    //foreach (var i in resultsString) results.Add(scr_System_Serializer.current.MasterList.Experiences.GetByID(i));
                 }
+                _cachedUses = new List<SkillUse>(byTag.Values);
             }
             return _cachedUses;
         }
@@ -155,18 +158,24 @@ public class SkillInstance : hasCategory
         }
     }
 
-    public bool Check(List<string> selftags, List<string> actionTags, ref int prevCheck, ref string prevKey, ref List<string> prevExtraTags, List<SkillInstance> pastskills)
+    public bool Check(List<string> selftags, List<string> actionTags, ref int prevCheck, ref string prevKey, ref List<string> prevExtraTags, List<SkillInstance> pastskills, out bool canRescue, bool forAcceptance = false)
     {
+        canRescue = false;
         if (PossibleUses.Count < 1) return false;
         if (pastskills.Contains(this)) return false;
         pastskills.Add(this);
         int extramods = 0;
         string extratag = "";
+        bool matchedRescue = false;
+        bool matched = false;
 
         foreach(var u in PossibleUses)
         {
-            if (u.ApplyTo(selftags, actionTags)) 
+            if (forAcceptance ? !u.allowAC : !u.allowDC) continue;
+            if (u.ApplyTo(selftags, actionTags))
             {
+                matched = true;
+                if (u.allowFailedRescue) matchedRescue = true;
                 var newresult = u.GetExtraMods();
                 if (newresult > extramods)
                 {
@@ -175,11 +184,18 @@ public class SkillInstance : hasCategory
                 }
             }
         }
+        // GetExtraMods() is currently always 0 (unimplemented), so without requiring a real ApplyTo match here,
+        // extramods+currentLevel > prevCheck reduces to just currentLevel > prevCheck - true for ANY skill at
+        // any level, regardless of whether its requireSelfTags/requireCOMTags/allowAC/allowDC ever matched. This
+        // was letting every skill in a matching skillUseTags group count unconditionally.
+        if (!matched) return false;
+
         if (extramods + currentLevel > prevCheck)
         {
             prevCheck = extramods + currentLevel;
-            prevKey = this.DisplayName;
+            prevKey = $"[{Owner.FirstName} {this.DisplayName}]";
             prevExtraTags = new List<string>() { extratag };
+            canRescue = matchedRescue;
             return true;
         }
         else return false;

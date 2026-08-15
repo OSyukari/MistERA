@@ -73,7 +73,9 @@
             {
                 "baseID": "ErAV_Player",
                 "initialBiologicalRelationship": "relationship_sibling",
-                "initialBiologicalRelationship_isA": false
+                "initialBiologicalRelationship_isA": false,
+                "initialPersonalRelationship": "relationship_housemate",
+                "initialPersonalRelationship_isA": false
             },
             {
                 "baseID": "ErAV_Kanon",

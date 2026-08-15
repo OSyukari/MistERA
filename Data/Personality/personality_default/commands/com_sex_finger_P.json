@@ -51,6 +51,40 @@
                                 "com_sex_finger_P_Climax_6",
                                 "com_sex_finger_P_Climax_7"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.1 独自撸管 高潮 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Climax_Self_1",
+                                "com_sex_finger_P_Climax_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "climax",
+                                "shy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.2 独自撸管 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Climax_Self_3",
+                                "com_sex_finger_P_Climax_Self_4"
+                            ]
                         }
                     ]
                 }
@@ -117,6 +151,40 @@
                                 "com_sex_finger_P_Begin_7",
                                 "com_sex_finger_P_Begin_8",
                                 "com_sex_finger_P_Begin_9"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "composed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.3 开始独自撸管 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Begin_Self_1",
+                                "com_sex_finger_P_Begin_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "blush",
+                                "shy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 开始独自撸管 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Begin_Self_3",
+                                "com_sex_finger_P_Begin_Self_4"
                             ]
                         }
                     ]
@@ -441,6 +509,164 @@
                                 "com_sex_finger_P_36",
                                 "com_sex_finger_P_37"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "sleeping",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.5 睡眠中 独自撸管 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_1",
+                                "com_sex_finger_P_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "doll",
+                                "idle"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.6 时停中 独自撸管 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_3",
+                                "com_sex_finger_P_Self_4"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPFailure": true,
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "troubled",
+                                "tired"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 拒绝独自撸管的指令 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_5",
+                                "com_sex_finger_P_Self_6"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "angry",
+                                "resentful"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.8 拒绝独自撸管的指令 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_7",
+                                "com_sex_finger_P_Self_8"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success",
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "aroused",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.9 独自撸管 结果正面 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_9",
+                                "com_sex_finger_P_Self_10"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "aroused",
+                                "shy",
+                                "tearful"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.10 独自撸管 结果正面 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_11",
+                                "com_sex_finger_P_Self_12"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "tired",
+                                "disappointed"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.11 独自撸管 尝试但结果负面 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_13",
+                                "com_sex_finger_P_Self_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "sad",
+                                "troubled"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.12 独自撸管 尝试但结果负面 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_P_Self_15",
+                                "com_sex_finger_P_Self_16"
+                            ]
                         }
                     ]
                 }
@@ -502,7 +728,31 @@
                 "com_sex_finger_P_34": "$self$叹了口气，停下动作揉了揉自己的虎口：\"今天状态不太好，要不先这样？\"",
                 "com_sex_finger_P_35": "$self$忍着强烈的不适感，眉头紧锁，眼神中满是煎熬：\"还没结束吗……\"",
                 "com_sex_finger_P_36": "$self$偏过头去，屏住呼吸，手指仅仅是用最小的接触面积在敷衍了事。",
-                "com_sex_finger_P_37": "$self$眼中的厌恶越来越浓，甚至产生了一些生理性的干呕冲动。"
+                "com_sex_finger_P_37": "$self$眼中的厌恶越来越浓，甚至产生了一些生理性的干呕冲动。",
+                "com_sex_finger_P_Begin_Self_1": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_P_Begin_Self_2": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_P_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_P_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_P_Self_1": "(placeholder - solo, sleeping)",
+                "com_sex_finger_P_Self_2": "(placeholder - solo, sleeping)",
+                "com_sex_finger_P_Self_3": "(placeholder - solo, timestop)",
+                "com_sex_finger_P_Self_4": "(placeholder - solo, timestop)",
+                "com_sex_finger_P_Self_5": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_P_Self_6": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_P_Self_7": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_P_Self_8": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_P_Self_9": "(placeholder - solo, success, permission)",
+                "com_sex_finger_P_Self_10": "(placeholder - solo, success, permission)",
+                "com_sex_finger_P_Self_11": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_P_Self_12": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_P_Self_13": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_P_Self_14": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_P_Self_15": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_P_Self_16": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_P_Climax_Self_1": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_P_Climax_Self_2": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_P_Climax_Self_3": "(placeholder - solo, climax, no permission)",
+                "com_sex_finger_P_Climax_Self_4": "(placeholder - solo, climax, no permission)"
             },
             "en-us": {
                 "com_sex_finger_P_Climax_1": "($self$) Handjob Climax Dialogue",
@@ -557,7 +807,31 @@
                 "com_sex_finger_P_34": "$self$ sighs, stopping to rub the web of her thumb: \"Not in the mood today, how about we stop here?\"",
                 "com_sex_finger_P_35": "$self$ endures the intense discomfort with a frown, her eyes full of torment: \"Is it not over yet...\"",
                 "com_sex_finger_P_36": "$self$ turns her head away, holding her breath, her fingers barely touching, doing the bare minimum to get it over with.",
-                "com_sex_finger_P_37": "$self$ eyes are filled with increasing disgust, even feeling a physiological urge to retch."
+                "com_sex_finger_P_37": "$self$ eyes are filled with increasing disgust, even feeling a physiological urge to retch.",
+                "com_sex_finger_P_Begin_Self_1": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_P_Begin_Self_2": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_P_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_P_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_P_Self_1": "(placeholder - solo, sleeping)",
+                "com_sex_finger_P_Self_2": "(placeholder - solo, sleeping)",
+                "com_sex_finger_P_Self_3": "(placeholder - solo, timestop)",
+                "com_sex_finger_P_Self_4": "(placeholder - solo, timestop)",
+                "com_sex_finger_P_Self_5": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_P_Self_6": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_P_Self_7": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_P_Self_8": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_P_Self_9": "(placeholder - solo, success, permission)",
+                "com_sex_finger_P_Self_10": "(placeholder - solo, success, permission)",
+                "com_sex_finger_P_Self_11": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_P_Self_12": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_P_Self_13": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_P_Self_14": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_P_Self_15": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_P_Self_16": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_P_Climax_Self_1": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_P_Climax_Self_2": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_P_Climax_Self_3": "(placeholder - solo, climax, no permission)",
+                "com_sex_finger_P_Climax_Self_4": "(placeholder - solo, climax, no permission)"
             }
         }
     }

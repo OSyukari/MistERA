@@ -104,11 +104,7 @@ public class scr_panel_TargetInfo : scr_Menu
             //if (chara.FactionManager.CurrentlyActiveFaction != null) socialStatusBox.SetText(chara.FactionManager.CurrentlyActiveFactionStatus);
 
             Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
-            if (rel != null)
-            {
-                RelationshipManager.Draw_Attitude(rel, attitudeBox);// rel.DrawAttitude(attitudeBox);
-               // RelationshipManager.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
-            }
+            RelationshipManager.Draw_Attitude(chara, rel, attitudeBox);
 
             if (chara.Stats.Mood != null) chara.Stats.Mood.Draw(moodBox);
             else this.moodBox.SetText(" - ");

@@ -381,6 +381,12 @@ public class Memory_Entry
         cache_score = 0; cache_acceptCount = 0; cache_refuseCount = 0;
         int maxLust = 0, minLust = 0, maxMood = 0, minMood = 0, maxStress = 0, minStress = 0;
 
+        // "raped" is a role tag on the victim's own selfTags (set from ReceiverSelfTag), not on the
+        // MemInstance's own tags (which carry DoerTargetTag's "rape" perpetrator-role tag instead) -
+        // so this has to be checked at the entry level rather than per-instance like MemInstance.Stress
+        // used to before this was moved out of it.
+        bool isRaped = this.selfTags.Contains("raped");
+
         foreach (var i in interactions)
         {
             memInstanceDescriptionCache.Add(i.Print());
@@ -412,6 +418,8 @@ public class Memory_Entry
         }
 
         Mod_Stress.Clear();
+
+        if (isRaped && !selfTags.Contains("ignored")) scoreMod_Stress += selfTags.Contains("penetration") ? -2 : -1;
         var stresslist = SplitScore((int)scoreMod_Stress, minStress, maxStress);
         for(int i = 0; i < stresslist.Count; i++)
         {
@@ -882,6 +890,7 @@ public class MemInstance
             {   // if recreation related, as long as its not bad, decrease stress
                 if (Attitude > Memory_Attitude.Neutral) value += 1;
             }
+
             return (int)value;
         } }
     [JsonIgnore] public int Lust {

@@ -536,7 +536,7 @@ public abstract class ActionPackage
     [JsonIgnore] public bool isForced { get { return this.extraCOMTags.Contains("forced"); } }
     [JsonIgnore] public virtual bool isPlayerRelatedPackage
     {
-        get { return (actorRefs != null && actorRefs.Contains(0)) || (DoerRefs != null && DoerRefs.Contains(0)) || (ReceiverRefs != null && ReceiverRefs.Contains(0)); }
+        get { return (actorRefs != null && actorRefs.Contains(0)) || (DoerRefs != null && DoerRefs.Contains(0)) || (ReceiverRefs != null && ReceiverRefs.Contains(0)) || this.masterRef == 0; }
     }
 
     [JsonIgnore] protected bool isSelfTargeting { 
@@ -1660,7 +1660,7 @@ public abstract class ActionPackage
         if (desc.message.Length < 1) return;
 
 
-        desc.LoadActors(this.actorRefs);
+        desc.LoadActors(this.job.GetLogRelevantActors(this));
         m.AddMessage_Checks(desc, logging? Room : null);//
         if (!logging) packageStateChanged = true;
     }
@@ -1751,15 +1751,23 @@ public abstract class ActionPackage
                 success = false;
             }
 
+            bool doerCanRescue = false;
+            int doerAmount;
             if (ep.Receiver == null || ep.Receiver == ep.Doer)
             {
-                bonus += ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods);
+                doerAmount = ep.Doer.Skills.GetRelevantSkills(null, tags, dcMods, out doerCanRescue);
+                bonus += doerAmount;
 
             }
             else
             {
-                bonus += ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods);
+                doerAmount = ep.Doer.Skills.GetRelevantSkills(ep.DoerSelfTag, ep.ReceiverTargetTag, dcMods, out doerCanRescue);
+                bonus += doerAmount;
                 if (ep.ReceiverAttitude > Memory_Attitude.Dislike) bonus += ep.Receiver.Skills.GetRelevantSkills(ep.ReceiverSelfTag, ep.DoerTargetTag, dcMods);
+            }
+            if (ep.Doer != null && doerCanRescue && doerAmount > 0)
+            {
+                if (!_rescueCandidates.TryGetValue(ep.Doer.RefID, out var existingAmount) || doerAmount > existingAmount) _rescueCandidates[ep.Doer.RefID] = doerAmount;
             }
 
             foreach (var i in targetCOM.AcceptanceCheck.SkillBonus_Doer)
@@ -1803,8 +1811,18 @@ public abstract class ActionPackage
     /// <summary>
     /// 
     /// </summary>
+    /// <summary>
+    /// Populated by CollectMods (the DC-check skill scan) with every AP Doer/Master whose matched skill
+    /// allows a failed-attitude rescue this execution, keyed by RefID -> their skill amount. Consumed
+    /// later by TryRescueAttitude once attitudes are actually known post-RollResult(). Cleared at the top
+    /// of every Execution() (not just inside CollectMods) so a repeated AP never carries stale candidates
+    /// from a prior round on a COM that happens to have baseD20Check == 0 this time.
+    /// </summary>
+    protected Dictionary<int, int> _rescueCandidates = new Dictionary<int, int>();
+
     protected virtual void Execution(MessageCollect m = null, List<Action> eventCollector = null)
     {
+        _rescueCandidates.Clear();
         if (m == null) m = this.job.m;
         if (packages == null || packages.Count < 1)
         {
@@ -1871,6 +1889,21 @@ public abstract class ActionPackage
             ep.Execute(m, injectResult);
             bool executed = ep.Response >= Memory_Response.Accept;
             executeSuccessful = executed && executeSuccessful;
+            if (ep.Actors.Count > 1)
+            {
+                // get EP relationship
+                foreach(var i in ep.Actors)
+                {
+                    i.Relationships.RegisterInteraction(ep.Relationship(i));
+                }
+            }
+            else if (this.Actors.Count > 1 && ep.Actors.Count > 0)
+            {
+                // get AP relationship
+                var actor = ep.Actors[0];
+                var rel = Relationship(ep.Actors[0]);
+                if (actor != null && rel != null) actor.Relationships.RegisterInteraction(rel);
+            }
         }
 
 
@@ -1883,9 +1916,15 @@ public abstract class ActionPackage
         // so we need to collect group and parse as group
        // Debug.Log($"AP executed, checking successful {executeSuccessful}");
 
+        // called unconditionally regardless of executeSuccessful — ApplyResults_AP only ever fires
+        // result_event, and Result_Event.Apply's own requireSuccess/requireFailure fields (checking
+        // p.executeSuccessful directly, since this is the AP-scoped/evp==null path) decide per-event
+        // whether a given result_event actually fires on this particular outcome.
+        if (targetCOM != null) targetCOM.ApplyResults_AP(this);
+
         if (executeSuccessful)// && targetCOM.requirements.requirement.TreatReceiverAsDoer)         // this behavior does not need to be limited to treatreceiverasdoer, right ?
         {   // if job is recreation and result at least neutral, increase relationship between all participating actors
-            if (targetCOM != null) targetCOM.ApplyResults_AP(this);
+            TryRescueAttitude();
 
             foreach (var ep in packages)
             {
@@ -1940,7 +1979,7 @@ public abstract class ActionPackage
             }
         }
 
-
+        NotifyAttitudeRoundPending(actors);
 
         // init or end train
         if (targetCOM != null && executeSuccessful)
@@ -2252,11 +2291,74 @@ public abstract class ActionPackage
 
     }
 
+    /// <summary>
+    /// Goal 1(B): deterministic attitude rescue. Rescuer eligibility (_rescueCandidates - who has a
+    /// rescue-flagged skill matching this AP, and their skill amount) was already determined in
+    /// CollectMods, during the same DC-check skill scan - no second skill query here. This only decides,
+    /// now that attitudes are actually known, whether a rescue is needed and who ends up paying for it.
+    /// Doer-only (Master does not participate). Must run before CheckRelationshipChange, which is what
+    /// actually reads DoerAttitude/ReceiverAttitude to compute Goodwill/Badwill/Desire deltas.
+    /// </summary>
+    void TryRescueAttitude()
+    {
+        if (_rescueCandidates.Count < 1 || targetCOM == null || packages == null || packages.Count < 1) return;
+
+        var worst = new Dictionary<int, Memory_Attitude>();
+        foreach (var ep in packages)
+        {
+            if (ep.Doer != null && ep.DoerAttitude != Memory_Attitude.None)
+                worst[ep.Doer.RefID] = worst.TryGetValue(ep.Doer.RefID, out var d) ? (Memory_Attitude)Math.Min((int)d, (int)ep.DoerAttitude) : ep.DoerAttitude;
+            if (ep.Receiver != null && ep.ReceiverAttitude != Memory_Attitude.None)
+                worst[ep.Receiver.RefID] = worst.TryGetValue(ep.Receiver.RefID, out var r) ? (Memory_Attitude)Math.Min((int)r, (int)ep.ReceiverAttitude) : ep.ReceiverAttitude;
+        }
+        if (!worst.Values.Any(a => a < Memory_Attitude.Neutral)) return;
+
+        var req = targetCOM.requirements.requirement.req_Doers;
+        var paidAmounts = new List<int>();
+        foreach (var kv in _rescueCandidates)
+        {
+            if (!worst.Any(w => w.Key != kv.Key && w.Value < Memory_Attitude.Neutral)) continue; // no one ELSE is below Neutral
+
+            var user = scr_System_CampaignManager.current.FindInstanceByID(kv.Key);
+            if (user == null) continue;
+            if ((req.cost_EN != 0 && user.Stats.Energy.Value < req.cost_EN) || (req.cost_ST != 0 && user.Stats.Stamina.Value < req.cost_ST)) continue;
+            CharaReqUtility.ApplyCost(req, user, null);
+            paidAmounts.Add(kv.Value);
+        }
+
+        if (paidAmounts.Count < 1) return;
+        int maxLevel = paidAmounts.Max();
+        foreach (var ep in packages)
+        {
+            if (ep.DoerAttitude != Memory_Attitude.None && ep.DoerAttitude < Memory_Attitude.Neutral)
+                ep.DoerAttitude = (Memory_Attitude)Math.Min((int)Memory_Attitude.Neutral, (int)ep.DoerAttitude + maxLevel);
+            if (ep.ReceiverAttitude != Memory_Attitude.None && ep.ReceiverAttitude < Memory_Attitude.Neutral)
+                ep.ReceiverAttitude = (Memory_Attitude)Math.Min((int)Memory_Attitude.Neutral, (int)ep.ReceiverAttitude + maxLevel);
+        }
+    }
+
     MessageCollect temporaryM = null;
     string checkResults_result = "";
     string checkResults_tooltips = "";
     string checkResults_result_short = "";
 
+    /// <summary>
+    /// Marks every doer/receiver of this completed ActionPackage (across every pairing processed above,
+    /// including group scenes) as having a pending attitude round, WITHOUT evaluating it here - evaluation
+    /// is owned entirely by the actor itself (RelationshipManager.FinalizeAttitudeRound, called from that
+    /// actor's own PreUpdateTime). This just flags "something happened to you since last time" so that if
+    /// multiple APs resolve for the same actor within one tick, their RegisterAttitudeDelta contributions
+    /// (already accumulating into one shared buffer) get evaluated together in a single pass at that
+    /// actor's next PreUpdateTime, instead of each AP triggering its own immediate, fragmented evaluation.
+    /// </summary>
+    void NotifyAttitudeRoundPending(List<Character_Trainable> actors)
+    {
+        foreach (var a in actors)
+        {
+            if (a == null) continue;
+            a.Relationships.NotifyAttitudeRoundPending();
+        }
+    }
 
     protected void CheckRelationshipChange(EvaluationPackage ep, Character_Trainable A, Character_Trainable B, Memory_Attitude b_attitude, Memory_Response response, List<string> tags, MessageCollect m, bool hasPermission)
     {
@@ -2265,8 +2367,10 @@ public abstract class ActionPackage
             var goodwill = 0;
             var badwill = 0;
             var trust = 0;
-            var lust = 0;
+            float desire = 0;
             var fear = 0;
+            var relBA = B.Relationships.FindRelationshipWith(A);
+            bool canBeAttracted = relBA != null && relBA.CanBeAttractedTo;
 
             if (!tags.Contains("NonInteraction"))
             {
@@ -2281,23 +2385,41 @@ public abstract class ActionPackage
             {
                 trust = response >= Memory_Response.Success ? 1 : response < Memory_Response.Failure ? -1 : 0;
             }
-            if (tags.Contains("unsafe"))
+            if (tags.Contains("touch"))
             {
-                lust = b_attitude > Memory_Attitude.Neutral ? (int)(b_attitude - Memory_Attitude.Neutral) : b_attitude < Memory_Attitude.Neutral && b_attitude > Memory_Attitude.None ? (int)(Memory_Attitude.Neutral - b_attitude) : 0;
+                // conscious enjoyment - only registers as desire if the actor can be attracted to the target at all
+                if (b_attitude >= Memory_Attitude.Like && canBeAttracted) desire += (int)(b_attitude - Memory_Attitude.Neutral);
+
+                // the body can still respond to successful technique despite disliking it/no attraction
+                if (response >= Memory_Response.CriticalSuccess) desire += 1f;
+                else if (response >= Memory_Response.Success) desire += 0.5f;
+                // touching without permission AND if failed is resented regardless
+                else if (!hasPermission && b_attitude < Memory_Attitude.Neutral) desire -= 1f;
+            }
+            if (!tags.Contains("NonInteraction") && b_attitude == Memory_Attitude.Love && canBeAttracted)
+            {
+                desire += 0.5f;
             }
             if (!hasPermission && b_attitude < Memory_Attitude.Neutral)
             {
                 trust -= 1;
             }
-            if (ep.GetActorEPTags(B.RefID).Contains("raped"))
+            var bTags = ep.GetActorEPTags(B.RefID);
+            if (bTags.Contains("raped"))
             {
                 fear += 1;
+            }
+            if (bTags.Contains("raped") || bTags.Contains("forced"))
+            {
+                // baseline -0.1 pride per non-consensual interaction (amount=1 nets -0.1 at the
+                // tier-distance=-1/mult=1 baseline CheckPrideChange already assumes elsewhere)
+                B.Relationships.CheckPrideChange(bTags, bTags, 1, m.exp);
             }
 
             if (trust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Trust, trust, m.exp, !job.CanBeInterrupted);
             if (goodwill != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Goodwill, goodwill, m.exp, !job.CanBeInterrupted);
             if (badwill > 0 || (badwill < 0 && (B.Stats.Mood == null || B.Stats.Mood.Severity >= 2))) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Badwill, badwill, m.exp, false);
-            if (lust != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, lust, m.exp);
+            if (desire != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Desire, desire, m.exp);
             if (fear != 0) B.Relationships.IncreaseRelationshipWith(A.RefID, RelationshipScoreType.Fear, fear, m.exp);
         }
     }
@@ -2574,6 +2696,9 @@ public abstract class ActionPackage
             desc.message_excludeRelated = desc.message;
             desc.autoAnimate = true;
             if (!logging) packageStateChanged = true;
+            // target is the player here (see Job.CollectLogs) - if the player's current job can't be
+            // interrupted, don't let this ambient ongoing line switch the currently-displayed portrait
+            if (target != null && target.CurrentJob != null && !target.CurrentJob.CanBeInterrupted) desc.SuppressPortraits();
             m.AddMessage_After(desc, logging ? Room : null);
         }
     }

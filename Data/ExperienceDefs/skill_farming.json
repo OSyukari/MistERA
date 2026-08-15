@@ -26,9 +26,10 @@
                         ],
                         "DisplayName":"1",
                         "validUse": [
-                            { 
+                            {
                             "skillUseTags":"farming",
-                            "requireCOMTags":[]
+                            "requireCOMTags":[],
+                            "allowDC":true
                         } ]
                     },{
                         "requirements":{ 

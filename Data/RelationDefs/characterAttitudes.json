@@ -1,0 +1,285 @@
+{
+    "Character_Attitudes":
+    {
+        "list":
+        [
+            {
+                "_comment": "Positive Stress = calm/relaxed, negative Stress = tense/stressed (see chara_status_stress localization) - Terrified/Afraid/Angry/Focused/Stressed require LOW (negative) Stress.",
+                "ID": "character_attitude_terrified",
+                "priority": 5,
+                "tags": ["Fear"],
+                "EmotionKeys": ["Fear"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 4,
+                "obedienceMod": 3,
+                "obedienceMod_Max": 15,
+                "obedienceMod_fear": 0.02,
+                "amplify_fear": 1.5,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "lte", "value": -2 },
+                    "requireMood": { "operand": "lte", "value": -1 }
+                }
+            },
+            {
+                "ID": "character_attitude_afraid",
+                "priority": 4,
+                "tags": ["Fear"],
+                "EmotionKeys": ["Fear"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 3,
+                "obedienceMod": 2,
+                "obedienceMod_Max": 8,
+                "obedienceMod_fear": 0.015,
+                "amplify_fear": 1.4,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "lte", "value": -1 }
+                }
+            },
+            {
+                "ID": "character_attitude_angry",
+                "priority": 4,
+                "tags": ["Badwill"],
+                "EmotionKeys": ["Badwill"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 3,
+                "obedienceMod": -3,
+                "obedienceMod_Max": 0,
+                "obedienceMod_badwill": -0.02,
+                "amplify_badwill": 1.5,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "lte", "value": -1 }
+                }
+            },
+            {
+                "ID": "character_attitude_focused",
+                "priority": 4,
+                "tags": ["Trust"],
+                "EmotionKeys": ["Trust"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 3,
+                "obedienceMod": 2,
+                "obedienceMod_Max": 8,
+                "obedienceMod_trust": 0.015,
+                "amplify_trust": 1.5,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "lte", "value": -1 }
+                }
+            },
+            {
+                "ID": "character_attitude_happy",
+                "priority": 4,
+                "tags": ["Goodwill"],
+                "EmotionKeys": ["Goodwill"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 3,
+                "obedienceMod": 2,
+                "obedienceMod_Max": 7,
+                "obedienceMod_goodwill": 0.02,
+                "amplify_goodwill": 1.5,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "gt", "value": -1 },
+                    "requireMood": { "operand": "gte", "value": 1 }
+                }
+            },
+            {
+                "ID": "character_attitude_aroused",
+                "priority": 4,
+                "tags": ["Desire"],
+                "EmotionKeys": ["Desire"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 3,
+                "obedienceMod": 3,
+                "obedienceMod_Max": 10,
+                "obedienceMod_desire": 0.02,
+                "amplify_desire": 1.5,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "gt", "value": -1 },
+                    "requireMood": { "operand": "gte", "value": 0 },
+                    "requireLust": { "operand": "gte", "value": 2 }
+                }
+            },
+            {
+                "ID": "character_attitude_secure",
+                "priority": 3,
+                "tags": ["Trust"],
+                "EmotionKeys": ["Trust"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 3,
+                "obedienceMod": 2,
+                "obedienceMod_Max": 6,
+                "obedienceMod_trust": 0.015,
+                "amplify_trust": 1.3,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "gt", "value": -1 },
+                    "requireMood": { "operand": "gte", "value": 0 }
+                }
+            },
+            {
+                "ID": "character_attitude_resentful",
+                "priority": 3,
+                "tags": ["Badwill"],
+                "EmotionKeys": ["Badwill"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 3,
+                "obedienceMod": -2,
+                "obedienceMod_Max": 0,
+                "obedienceMod_badwill": -0.015,
+                "amplify_badwill": 1.3,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "gt", "value": -1 },
+                    "requireMood": { "operand": "lt", "value": 0 }
+                }
+            },
+            {
+                "ID": "character_attitude_content",
+                "priority": 2,
+                "tags": ["Goodwill"],
+                "EmotionKeys": ["Goodwill"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 2,
+                "obedienceMod": 1,
+                "obedienceMod_Max": 4,
+                "obedienceMod_goodwill": 0.015,
+                "amplify_goodwill": 1.3,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "gt", "value": -1 },
+                    "requireMood": { "operand": "gte", "value": 0 }
+                }
+            },
+            {
+                "ID": "character_attitude_longing",
+                "priority": 2,
+                "tags": ["Desire"],
+                "EmotionKeys": ["Desire"],
+                "preferredDeltaSign": 1,
+                "startingIntensity": 2,
+                "obedienceMod": 1,
+                "obedienceMod_Max": 5,
+                "obedienceMod_desire": 0.015,
+                "amplify_desire": 1.3,
+                "amplifyCap": 2.0,
+                "Requirements": {
+                    "requireStress": { "operand": "gt", "value": -1 },
+                    "requireLust": { "operand": "gte", "value": 1 }
+                }
+            },
+            {
+                "ID": "character_attitude_stressed",
+                "priority": 1,
+                "tags": [],
+                "EmotionKeys": [],
+                "startingIntensity": 2,
+                "obedienceMod": -1,
+                "obedienceMod_Max": 0,
+                "Requirements": {
+                    "requireStress": { "operand": "lte", "value": -1 }
+                }
+            },
+            {
+                "ID": "character_attitude_relaxed",
+                "priority": 1,
+                "tags": [],
+                "EmotionKeys": [],
+                "startingIntensity": 2,
+                "obedienceMod": 1,
+                "obedienceMod_Max": 2,
+                "Requirements": {
+                    "requireStress": { "operand": "gt", "value": -1 },
+                    "requireMood": { "operand": "gte", "value": 0 }
+                }
+            },
+            {
+                "ID": "character_attitude_neutral",
+                "priority": 0,
+                "tags": [],
+                "EmotionKeys": [],
+                "startingIntensity": 1,
+                "obedienceMod": 0,
+                "obedienceMod_Max": 1
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "relationship_attitude_uiEntry": "态度：$content$",
+                "relationship_attitude": "态度",
+                "relationship_attitude_tooltip": "态度反映角色当前的情绪状态——受心情、压力、欲望及最近一次显著互动的影响。\n单次相反的事件不会立即改变态度，但持续累积后会促使其转变。\n不同态度会提升或降低对指令的服从度，也可能放大相关关系值的增减幅度。\n",
+                "event_AttitudeChange_character_string": "$self.name$的情绪从$originalAttitude$变为$newAttitude$",
+                "character_attitude_terrified": "恐惧",
+                "character_attitude_afraid": "害怕",
+                "character_attitude_angry": "愤怒",
+                "character_attitude_focused": "专注",
+                "character_attitude_happy": "开心",
+                "character_attitude_aroused": "情动",
+                "character_attitude_secure": "安心",
+                "character_attitude_resentful": "不满",
+                "character_attitude_content": "满足",
+                "character_attitude_longing": "渴望",
+                "character_attitude_stressed": "紧张",
+                "character_attitude_relaxed": "放松",
+                "character_attitude_neutral": "平常",
+
+                "character_attitude_terrified_tooltip": "极度恐惧。大幅提高对指令的服从度，恐惧感也更容易进一步累积。",
+                "character_attitude_afraid_tooltip": "有些害怕。提高对指令的服从度，恐惧感更容易累积。",
+                "character_attitude_angry_tooltip": "愤怒。降低对指令的服从度，反感更容易累积。",
+                "character_attitude_focused_tooltip": "在压力下变得专注坚定。提高对指令的服从度，信任更容易累积。",
+                "character_attitude_happy_tooltip": "心情愉快。提高对指令的服从度，好感更容易累积。",
+                "character_attitude_aroused_tooltip": "情欲高涨。明显提高对指令的服从度，欲望更容易累积。",
+                "character_attitude_secure_tooltip": "感到安心。小幅提高对指令的服从度，信任积累略有增强。",
+                "character_attitude_resentful_tooltip": "有些不满。降低对指令的服从度，反感积累略有增强。",
+                "character_attitude_content_tooltip": "感到满足。小幅提高对指令的服从度，好感积累略有增强。",
+                "character_attitude_longing_tooltip": "有些渴望。小幅提高对指令的服从度，欲望积累略有增强。",
+                "character_attitude_stressed_tooltip": "紧张不安。略微降低对指令的服从度。",
+                "character_attitude_relaxed_tooltip": "放松自在。略微提高对指令的服从度。",
+                "character_attitude_neutral_tooltip": "情绪平常，没有明显偏向，对服从度几乎没有影响。"
+            },
+            "en-us":
+            {
+                "relationship_attitude_uiEntry": "Attitude: $content$",
+                "relationship_attitude": "Attitude",
+                "relationship_attitude_tooltip": "Attitude reflects the character's current emotional state - driven by mood, stress, lust, and the most recent notable interaction.\nA single contradicting event won't flip it immediately, but enough of them will.\nDifferent attitudes raise or lower obedience to commands, and can amplify how strongly related relationship gains or losses land.\n",
+                "event_AttitudeChange_character_string": "$self.name$'s mood shifts from $originalAttitude$ to $newAttitude$",
+                "character_attitude_terrified": "Terrified",
+                "character_attitude_afraid": "Afraid",
+                "character_attitude_angry": "Angry",
+                "character_attitude_focused": "Focused",
+                "character_attitude_happy": "Happy",
+                "character_attitude_aroused": "Aroused",
+                "character_attitude_secure": "Secure",
+                "character_attitude_resentful": "Resentful",
+                "character_attitude_content": "Content",
+                "character_attitude_longing": "Longing",
+                "character_attitude_stressed": "Stressed",
+                "character_attitude_relaxed": "Relaxed",
+                "character_attitude_neutral": "Neutral",
+
+                "character_attitude_terrified_tooltip": "Deeply frightened. Sharply raises obedience to commands, and fear builds up even more easily.",
+                "character_attitude_afraid_tooltip": "A bit frightened. Raises obedience to commands, and fear builds up more easily.",
+                "character_attitude_angry_tooltip": "Angry. Lowers obedience to commands, and resentment builds up more easily.",
+                "character_attitude_focused_tooltip": "Focused and determined under pressure. Raises obedience to commands, and trust builds up more easily.",
+                "character_attitude_happy_tooltip": "In good spirits. Raises obedience to commands, and goodwill builds up more easily.",
+                "character_attitude_aroused_tooltip": "Aroused. Notably raises obedience to commands, and desire builds up more easily.",
+                "character_attitude_secure_tooltip": "Feeling secure. Modestly raises obedience to commands, and trust builds up a bit more easily.",
+                "character_attitude_resentful_tooltip": "A bit resentful. Lowers obedience to commands, and resentment builds up a bit more easily.",
+                "character_attitude_content_tooltip": "Feeling content. Modestly raises obedience to commands, and goodwill builds up a bit more easily.",
+                "character_attitude_longing_tooltip": "A bit longing. Modestly raises obedience to commands, and desire builds up a bit more easily.",
+                "character_attitude_stressed_tooltip": "Tense and on edge. Slightly lowers obedience to commands.",
+                "character_attitude_relaxed_tooltip": "Relaxed and at ease. Slightly raises obedience to commands.",
+                "character_attitude_neutral_tooltip": "Emotionally neutral, no strong lean either way. Barely affects obedience."
+            }
+        }
+    }
+}

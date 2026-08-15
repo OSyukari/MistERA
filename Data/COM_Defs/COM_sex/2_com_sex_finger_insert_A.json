@@ -41,7 +41,33 @@
                                 "receiverCount":0
                             }
                         },
-                        "displayName":"com_sex_finger_insert_A_displayName_1"
+                        "displayName":"com_sex_finger_insert_A_displayName_1",
+                        "useBaseDescription": false,
+                        "description_begin":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_insert_A_solo_description_begin_1"]
+                                }
+                            ]
+                        },
+                        "description_ongoing":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_insert_A_solo_description_ongoing_1"]
+                                }
+                            ]
+                        },
+                        "description_after":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                                    "texts":[ "com_sex_finger_insert_A_solo_description_after_1" ]
+                                }
+                            ]
+                        }
                     },{
                         "requirements":{
                             "requirement":{
@@ -49,7 +75,33 @@
                                 "receiverCount":0
                             }
                         },
-                        "displayName":"com_sex_finger_insert_A_displayName_2"
+                        "displayName":"com_sex_finger_insert_A_displayName_2",
+                        "useBaseDescription": false,
+                        "description_begin":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_insert_A_solo_group_description_begin_1"]
+                                }
+                            ]
+                        },
+                        "description_ongoing":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_insert_A_solo_group_description_ongoing_1"]
+                                }
+                            ]
+                        },
+                        "description_after":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                                    "texts":[ "com_sex_finger_insert_A_solo_group_description_after_1" ]
+                                }
+                            ]
+                        }
                     },{
                         "requirements":{
                             "requirement":{
@@ -146,7 +198,14 @@
                 "com_sex_finger_insert_A_description_begin_1":"$doer.firstname$的手指插入了$receiver.firstname$的肛门开始抽送",
                 "com_sex_finger_insert_A_description_after_1":"$receiver.firstname$的肛门由于高潮而紧缩",
                 "com_sex_finger_insert_A_description_remove_1":"$doer.firstname$将插在$receiver.firstname$肛门内的手指抽出来",
-                "com_sex_finger_insert_A_description_ongoing_1":"$doer.firstname$正在指入$receiver.firstname$的肛门"
+                "com_sex_finger_insert_A_description_ongoing_1":"$doer.firstname$正在指入$receiver.firstname$的肛门",
+
+                "com_sex_finger_insert_A_solo_description_begin_1": "$doer.firstname$将手指插入了自己的肛门，开始抽送着",
+                "com_sex_finger_insert_A_solo_description_ongoing_1": "$doer.firstname$正在抽插着自己的肛门",
+                "com_sex_finger_insert_A_solo_description_after_1": "$doer.firstname$的肛门由于高潮而紧缩",
+                "com_sex_finger_insert_A_solo_group_description_begin_1": "$doer.firstname$各自将手指插入了自己的肛门，开始抽送着",
+                "com_sex_finger_insert_A_solo_group_description_ongoing_1": "$doer.firstname$正各自抽插着自己的肛门",
+                "com_sex_finger_insert_A_solo_group_description_after_1": "$doer.firstname$的肛门由于高潮而紧缩"
 
             },
             "en-us":
@@ -163,7 +222,14 @@
                 "com_sex_finger_insert_A_description_begin_1":"$doer.firstname$'s finger inserts into $receiver.firstname$'s anus and begins to pump",
                 "com_sex_finger_insert_A_description_after_1":"$receiver.firstname$'s anus tightens due to orgasm",
                 "com_sex_finger_insert_A_description_remove_1":"$doer.firstname$ pulls the finger out from inside $receiver.firstname$'s anus",
-                "com_sex_finger_insert_A_description_ongoing_1":"$doer.firstname$ is fingering $receiver.firstname$'s anus"
+                "com_sex_finger_insert_A_description_ongoing_1":"$doer.firstname$ is fingering $receiver.firstname$'s anus",
+
+                "com_sex_finger_insert_A_solo_description_begin_1": "$doer.firstname$ inserts their own finger into their anus and begins to pump",
+                "com_sex_finger_insert_A_solo_description_ongoing_1": "$doer.firstname$ is fingering their own anus",
+                "com_sex_finger_insert_A_solo_description_after_1": "$doer.firstname$'s anus tightens due to orgasm",
+                "com_sex_finger_insert_A_solo_group_description_begin_1": "$doer.firstname$ each insert a finger into their own anus and begin to pump",
+                "com_sex_finger_insert_A_solo_group_description_ongoing_1": "$doer.firstname$ are each fingering their own anus",
+                "com_sex_finger_insert_A_solo_group_description_after_1": "$doer.firstname$'s anus tightens due to orgasm"
 
             }
         }

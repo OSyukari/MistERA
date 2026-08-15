@@ -1016,6 +1016,23 @@ public static class UtilityEX
                 extraTargetTags.Add(receiver_isr ? "rape" : "raped");
             }
 
+            // Absolute per-actor victim signals, not pairwise comparisons like the checks above - two non-rapist
+            // participants both forced by a third-party rapist would never differ from each other on isRapist,
+            // and a lone imprisoned/prisoner target interacting with a non-imprisoned actor is already caught by
+            // the pairwise isImprisoned check above, but e.g. two imprisoned characters (or any case with no
+            // state difference at all) would not be. Checked unconditionally here (not gated by the permission
+            // branch above), since being imprisoned or an active rape-scene victim overrides any standing
+            // permission between the two specific characters.
+            //  1. cannotRefuse - scene has an active Rapist and this actor isn't them (Character_Trainable.cs:98-105)
+            //  2. isImprisoned - prisoner of current active party OR current locale faction (Character_Trainable.cs:86-96)
+            //  3. isPrisoner of CurrentLocaleFaction specifically, debug-only - a dev testing aid so a locale-faction
+            //     prisoner reliably triggers "raped" without needing a full Job_Sex_Group/Rapist setup; gated by
+            //     DebugMode per instruction, same pattern as the existing "Debug_被拘束" override in EVP_Modifiers.cs
+            bool aLocalePrisonerDebug = scr_System_CampaignManager.current.DebugMode && a.FactionManager.CurrentLocaleFaction != null && a.FactionManager.CurrentLocaleFaction.GetMemberType(a).isPrisoner;
+            bool bLocalePrisonerDebug = scr_System_CampaignManager.current.DebugMode && b.FactionManager.CurrentLocaleFaction != null && b.FactionManager.CurrentLocaleFaction.GetMemberType(b).isPrisoner;
+            if (a.cannotRefuse || a.isImprisoned || aLocalePrisonerDebug) ownerTags.Add("raped");
+            if (b.cannotRefuse || b.isImprisoned || bLocalePrisonerDebug) extraTargetTags.Add("raped");
+
         }
         Utility.DistinctInPlace(ownerTags);
         Utility.DistinctInPlace(extraTargetTags);

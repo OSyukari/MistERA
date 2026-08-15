@@ -166,9 +166,9 @@ public class MessageCollect
             if (sendRecording && recording != null && recording.HasRecording) recording.NotifyDescCollect(desc, MessageCollect_Type.exp);
         }
     }
-    public void FinalizeEXP(List<int> relevantActorInject, out DescriptionCollector desc)
+    public void FinalizeEXP(List<int> relevantActorInject, out DescriptionCollector desc, bool printMessage = true, bool printClimax = true, bool printStats = true)
     {
-        this.exp.Finalize(out desc);
+        this.exp.Finalize(out desc, printMessage, printClimax, printStats);
         if (desc != null) desc.LoadActors(relevantActorInject);
     }
 

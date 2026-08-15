@@ -150,10 +150,9 @@ public class RelationshipType
     public virtual bool CanMaintain(Character_Relationship rel, bool validateB = false)
     {
         if (rel.Owner.RefID == 0) return true;
-        var att = rel.GetCurrentAttitude();
-
-       // if (MainEmotionKey == "") return true;
-        //else if (att == null || MainEmotionKey != att.MainEmotionKey) return true;
+        // Attitude is no longer relationship-quality-scoped (see Character_Attitude), so it no longer
+        // makes sense to gate relationship-type maintenance on it - the old attitude-based check here
+        // was already dead code (only use was the commented-out lines below).
         if (MaintenanceRequirements != null && !MaintenanceRequirements.Validate(rel)) return false;
         return true;
     }

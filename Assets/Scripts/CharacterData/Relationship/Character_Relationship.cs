@@ -127,15 +127,19 @@ public class Character_Relationship
     public string displayName = "";
     [JsonIgnore] public bool displayable { get { return targetRefID != -1 && this.Owner.RefID != targetRefID; } }
 
-    [JsonProperty] protected string currentAttitude = "";
-    RelationshipAttitude _currentAttitude = null;
-    List<string> _currentAttitudeTooltip = new List<string>();
+    /// <summary>
+    /// Debug relationship-score breakdown (Goodwill/Badwill/Fear/Trust/Desire raw|mult|final, Pride).
+    /// Genuinely relationship-scoped (unlike the old per-relationship attitude this used to be named
+    /// after), kept for the UI's obedience/score debug tooltip - see StatsManager/Character_Attitude
+    /// for the per-character attitude system this class no longer owns.
+    /// </summary>
+    List<string> _debugScoreTooltip = new List<string>();
     [JsonIgnore] public List<string> CurrentAttitudeTooltip
     { get
         {
-            if (scr_System_CampaignManager.current.DebugMode && _currentAttitudeTooltip.Count < 1)
+            if (scr_System_CampaignManager.current.DebugMode && _debugScoreTooltip.Count < 1)
             {
-                var tooltip = _currentAttitudeTooltip;
+                var tooltip = _debugScoreTooltip;
                 tooltip.Clear();
                 int pos = (int)(Goodwill / 50);
                 int neg = (int)(Badwill / 50);
@@ -165,9 +169,9 @@ public class Character_Relationship
                 }
             }else if (!scr_System_CampaignManager.current.DebugMode)
             {
-                _currentAttitudeTooltip.Clear();
+                _debugScoreTooltip.Clear();
             }
-            return _currentAttitudeTooltip;
+            return _debugScoreTooltip;
         } }
 
 
@@ -229,64 +233,6 @@ public class Character_Relationship
         return cachedPackages[com].GetModifier(com, isdoer, isthreat);        
     }
 
-    public RelationshipAttitude GetCurrentAttitude(bool forceRefresh = false)
-    {
-        if (forceRefresh || _currentAttitude == null)
-        {
-            if (currentAttitude == "") UpdateAttitude(forceRefresh, true);
-            else if (forceRefresh) UpdateAttitude(forceRefresh, false);
-            else SetCurrentAttitude(scr_System_Serializer.current.MasterList.Character_RelationshipAttitudes.GetByID(currentAttitude), true);
-        }
-        return _currentAttitude;
-    }
-
-    /// <summary>
-    /// Contains attitude change event trigger
-    /// </summary>
-    /// <param name="value"></param>
-    public void SetCurrentAttitude(RelationshipAttitude value, bool silent)
-    {
-        if (_currentAttitude == value) return;
-        else if (value == null) return;
-        else
-        {
-            if (scr_System_CentralControl.current.LogPrefs.DLog_Attitude) Debug.Log($"{Owner.CallName} Changing attitude toward {Target.CallName} to {value.DisplayName}. isSilent? {silent}");
-            if (!silent && Owner.RefID != 0)
-            {
-                bool visible = scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID);
-                bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
-                
-                if (!visible && !recording)
-                {
-
-                }
-                else if (_currentAttitude != null)
-                {
-
-                    var s = LocalizeDictionary.QueryThenParse("event_AttitudeChange_string")
-                        .Replace("$self.name$", Owner.CallName)
-                        .Replace("$target.name$", Target.CallName)
-                        .Replace("$originalAttitude$", _currentAttitude.DisplayName)
-                        .Replace("$newAttitude$", value.DisplayName);
-
-                    var desc = new DescriptionCollector(s, this);
-                    scr_UpdateHandler.current.AppendMessageAfter(desc, Owner.CurrentRoom);
-                    /*
-                    if (visible) scr_UpdateHandler.current.AppendMessageAfter(s, false);
-                    if (recording) 
-                    {
-                        Owner.CurrentRoom.NotifyKojoCollect(new DescriptionCollector(s,  this));
-                    }*/
-                }
-            }
-            _currentAttitude = value;
-            //currentAttitude = "";
-
-            currentAttitude = value.ID;
-        }
-        _currentAttitudeTooltip.Clear();
-    }
-
     public void ClearEPCache()
     {
         foreach(var package in cachedPackages)
@@ -318,7 +264,6 @@ public class Character_Relationship
 
     protected void CheckMaintainRelationship()
     {
-        if (_currentAttitude == null) return;
         if (RelationshipCooldown > 0) return;
         if (this.Relationship_Personal != null && this.Relationship_Personal.CanMaintain(this, !isA_Personal))
         {
@@ -340,18 +285,28 @@ public class Character_Relationship
             foreach (var rel in scr_System_Serializer.current.MasterList.RelationshipTypes.ProposableRelationships)
             {
                 if (rel == this.Relationship_Personal) continue;
-                if (rel.canPropose(false) && rel.isValid(this, false) && rel.CanMaintain(reverse, true))
+                // Inequal types (e.g. bully) are checked isA=false first: that side carries the real
+                // Requirements gate (e.g. Fear-based), while the isA=true side may have no Requirements
+                // of its own and would otherwise trivially match first regardless of which party
+                // actually qualifies, reversing which side becomes which role.
+                if (!rel.isEqualRelationship && rel.isValid(this, true) && rel.CanMaintain(reverse, false))
                 {
-                    // event propose relationship change
-                    relation = rel;
-                    isA = true;
-                    break;
-                }
-                else if (!rel.isEqualRelationship && rel.canPropose(true) && rel.isValid(this, true) && rel.CanMaintain(reverse, false))
-                {
-                    // event propose relationship change
                     relation = rel;
                     isA = false;
+                    break;
+                }
+                // For an Inequal type, isA=true (the A_to_B side) only gets to independently trigger
+                // formation if A_to_B actually defines its own Requirements. Otherwise its only real
+                // check left is CanMaintain(reverse,...) - a MaintenanceRequirements bar meant to keep an
+                // already-formed relationship alive, not gate entry - which is loose enough that it can
+                // wrongly win over the isA=false branch above whenever that branch's stricter Requirements
+                // (e.g. mood/stress) momentarily aren't all satisfied. isA=true should only ever be reached
+                // via propagation from the other party's isA=false formation in that case.
+                else if ((rel.isEqualRelationship || rel.requireTargetValidation(false)) && rel.isValid(this, false) && rel.CanMaintain(reverse, true))
+                {
+                    // whether this goes through the ask-permission event or sets directly is decided in TryChangeRelationship
+                    relation = rel;
+                    isA = true;
                     break;
                 }
             }
@@ -365,7 +320,7 @@ public class Character_Relationship
         if (relation != null)
         {
             RelationshipCooldown = 6;
-            if (relation.requireTargetValidation(!isA))
+            if (relation.canPropose(!isA) && relation.requireTargetValidation(!isA))
             {
                 Debug.Log($"{Owner.CallName} new Relationship {relation.DisplayName} require validation, setting up event");
                 // first log kojo for asking relation
@@ -537,6 +492,44 @@ public class Character_Relationship
         return false;
     }
 
+    bool? _canBeAttractedTo = null;
+    /// <summary>
+    /// Whether Owner can feel sexual attraction toward Target, per Owner's trait_GenderPreference trait
+    /// and both characters' resolved InteractionGenderType. Always false in safe mode. Cached for the
+    /// lifetime of this relationship instance - traits/gender aren't expected to change after chargen.
+    /// </summary>
+    [JsonIgnore]
+    public bool CanBeAttractedTo
+    {
+        get
+        {
+            if (_canBeAttractedTo.HasValue) return _canBeAttractedTo.Value;
+            bool result = false;
+            if (!scr_System_CentralControl.current.isSafeMode && Owner != null && Target != null)
+            {
+                if (Owner.Stats.HasTrait("trait_GenderPreference_none"))
+                {
+                    result = false;
+                }
+                else if (Owner.Stats.HasTrait("trait_GenderPreference_hetero") || Owner.Stats.HasTrait("trait_GenderPreference_homo"))
+                {
+                    var ownerGender = scr_System_CentralControl.current.GetGenderSimple(Owner);
+                    var targetGender = scr_System_CentralControl.current.GetGenderSimple(Target);
+                    bool sameGender = ownerGender != InteractionGenderType.ambi && ownerGender != InteractionGenderType.none && ownerGender == targetGender;
+                    bool diffGender = ownerGender != InteractionGenderType.ambi && ownerGender != InteractionGenderType.none && targetGender != InteractionGenderType.ambi && targetGender != InteractionGenderType.none && ownerGender != targetGender;
+                    result = Owner.Stats.HasTrait("trait_GenderPreference_hetero") ? diffGender : sameGender;
+                }
+                else
+                {
+                    // trait_GenderPreference_dontcare (bisexual) or no trait assigned yet - no gender restriction
+                    result = true;
+                }
+            }
+            _canBeAttractedTo = result;
+            return result;
+        }
+    }
+
     public void SetPersonalRelationship(RelationshipType a, bool isA, bool sendKojo, bool propagate = true)
     {
         var memString = a != null ? LocalizeDictionary.QueryThenParse("ui_memory_relationship_change") : LocalizeDictionary.QueryThenParse("ui_memory_relationship_end");
@@ -572,48 +565,6 @@ public class Character_Relationship
         if (propagate) this.Target.Relationships.FindRelationshipWith(this.Owner).SetPersonalRelationship(a, !isA, sendKojo, false);
     }
 
-    public RelationshipScoreType MaxScoreType()
-    {
-        float trust = Trust;
-        float fear = Fear;
-        float good = Goodwill;
-        float bad = Badwill;
-        float desire = Desire;
-
-        int maxIndex = 0;
-        float maxValue = trust;
-
-        if (fear > maxValue) { maxValue = fear; maxIndex = 1; }
-        if (good > maxValue) { maxValue = good; maxIndex = 2; }
-        if (bad > maxValue) { maxValue = bad; maxIndex = 3; }
-        if (desire > maxValue) { maxValue = desire; maxIndex = 4; }
-
-        return (RelationshipScoreType)maxIndex;
-    }
-
-    protected RelationshipAttitude UpdateAttitude(bool forceRefresh = false, bool silent = false)
-    {
-        if (forceRefresh || _currentAttitude == null || !_currentAttitude.isValidAttitude(this))
-        {
-            foreach(var i in scr_System_Serializer.current.MasterList.Character_RelationshipAttitudes.list)
-            {
-                if (_currentAttitude == i)
-                {
-                    //
-                }
-                else if (i.MainEmotionKey != RelationshipScoreType.None && this.CurrentEmotionKey != i.MainEmotionKey) continue;
-
-                if (!i.isValidAttitude(this)) continue;
-
-                SetCurrentAttitude(i, silent);// CurrentAttitude = i;
-                break;
-            }
-
-        }
-        ClearEPCache();
-        return _currentAttitude;
-    }
-
     public void NotifyFactionChange()
     {
         UpdateSocialFactions();
@@ -624,7 +575,6 @@ public class Character_Relationship
     protected void OnRelationshioChange()
     {
         _trustCap_cached = false;
-        UpdateAttitude(false, true);
     }
 
 
@@ -993,12 +943,68 @@ public class Character_Relationship
         }
     }
 
+    /// <summary>
+    /// Goodwill/Badwill_Mult's Mood contribution, stepped to match Mood's own displayed tiers
+    /// (Owner.Stats.Mood.SeverityIndex) instead of a continuous ramp whose zero-point used to fall
+    /// mid-tier, invisible to the player. Nothing here is hardcoded to Mood's current tier count/labels:
+    /// the neutral tier and tier count are both read from the live chara_status_mood definition and
+    /// cached on first use, and the per-step increment is *derived* from however many tiers exist on
+    /// each side of neutral - so the worst tier always reads 10% and the best tier always reads 90%,
+    /// regardless of how many tiers Mood has, and even if the tier layout isn't symmetric around
+    /// neutral (steps are sized independently per side). Badwill is the mirror image of Goodwill
+    /// (1 - GoodwillTierValue) around the same 50% neutral baseline.
+    /// </summary>
+    const float MoodTierMult_Extreme = 0.90f; // best tier's Goodwill value; worst tier is its mirror (1 - this)
+    const float MoodTierMult_Neutral = 0.50f;
+    static int _moodMidTierIndex = -1;
+    static int _moodTierCountCached = -1;
+
+    static void EnsureMoodTierCacheInit(StatusEx_Base moodBase)
+    {
+        if (_moodTierCountCached == moodBase.variants.Count) return; // already cached; also re-caches if the definition's tier count changed
+        _moodTierCountCached = moodBase.variants.Count;
+        _moodMidTierIndex = moodBase.variants.Count - 1; // fallback mirrors StatusEx_Instance.UpdateIndex()'s own fallback
+        for (int i = 0; i < moodBase.variants.Count; i++)
+        {
+            if (0f <= moodBase.variants[i].threshold) { _moodMidTierIndex = i; break; }
+        }
+    }
+
+    /// <summary>Goodwill's own tier value in [0,1], neutral=0.5, worst tier=0.1, best tier=0.9.</summary>
+    static float GoodwillMoodTierValue(StatusEx_Instance mood)
+    {
+        EnsureMoodTierCacheInit(mood.BaseRef);
+        int diff = mood.SeverityIndex - _moodMidTierIndex; // >0 better than neutral, <0 worse
+
+        if (diff == 0) return MoodTierMult_Neutral;
+
+        if (diff > 0)
+        {
+            int distToBestTier = (_moodTierCountCached - 1) - _moodMidTierIndex;
+            float step = distToBestTier > 0 ? (MoodTierMult_Extreme - MoodTierMult_Neutral) / distToBestTier : 0f;
+            return MoodTierMult_Neutral + diff * step;
+        }
+        else
+        {
+            int distToWorstTier = _moodMidTierIndex;
+            float step = distToWorstTier > 0 ? (MoodTierMult_Neutral - (1f - MoodTierMult_Extreme)) / distToWorstTier : 0f;
+            return MoodTierMult_Neutral + diff * step; // diff negative, so this subtracts
+        }
+    }
+
+    static float MoodTierMult(StatusEx_Instance mood, bool positive)
+    {
+        float goodwillValue = Math.Clamp(GoodwillMoodTierValue(mood), 0f, 1f);
+        return positive ? goodwillValue : 1f - goodwillValue;
+    }
+
     protected float Badwill_Mult
     {
         get
         {
-            float negDiv = (2 - (Owner.Stats.Mood == null ? 0 : Owner.Stats.Mood.Severity) + (Owner.Stats.Stress != null && Owner.Stats.Stress.Severity <= -1 ? -Owner.Stats.Stress.Severity : 0)) / 4;
-            return negDiv > 0 ? negDiv : 0;
+            float moodTerm = Owner.Stats.Mood == null ? 0.5f : MoodTierMult(Owner.Stats.Mood, positive: false);
+            float stressTerm = (Owner.Stats.Stress != null && Owner.Stats.Stress.Severity <= -1 ? -Owner.Stats.Stress.Severity : 0) / 4;
+            return moodTerm + stressTerm;
         }
     }
     [JsonIgnore]
@@ -1050,8 +1056,9 @@ public class Character_Relationship
     {
         get
         {
-            float posDiv = (2 + (Owner.Stats.Mood == null ? 0 : Owner.Stats.Mood.Severity) + (Owner.Stats.Stress != null && Owner.Stats.Stress.Severity <= -1 ? -Owner.Stats.Stress.Severity : 0)) / 4;
-            return posDiv > 0 ? posDiv : 0;
+            float moodTerm = Owner.Stats.Mood == null ? 0.5f : MoodTierMult(Owner.Stats.Mood, positive: true);
+            float stressTerm = (Owner.Stats.Stress != null && Owner.Stats.Stress.Severity <= -1 ? -Owner.Stats.Stress.Severity : 0) / 4;
+            return moodTerm + stressTerm;
         }
     }
     [JsonIgnore]
@@ -1123,6 +1130,41 @@ public class Character_Relationship
 
     [JsonIgnore] public string TargetName { get { return this.displayName != "" ? LocalizeDictionary.QueryThenParse(this.displayName) : Target != null ? Target.FirstName : "missing"; } }
 
+    /// <summary>
+    /// Which RelationshipScoreType currently has the largest magnitude on this relationship, reading the
+    /// final (Mood/Stress/Lust-adjusted) score properties rather than raw or round-delta values. Used by
+    /// RelationshipManager.SelectAttitude to flavor-gate EmotionKeys-tagged attitudes off this relationship's
+    /// actual current standing instead of off whichever score merely changed most in the triggering round.
+    /// None if every score is exactly 0 (e.g. a never-interacted-with target).
+    /// </summary>
+    [JsonIgnore]
+    public RelationshipScoreType DominantScoreType
+    {
+        get
+        {
+            RelationshipScoreType best = RelationshipScoreType.None;
+            float bestMag = 0f;
+
+            void Consider(RelationshipScoreType type, float value)
+            {
+                float mag = Math.Abs(value);
+                if (mag > bestMag)
+                {
+                    bestMag = mag;
+                    best = type;
+                }
+            }
+
+            Consider(RelationshipScoreType.Trust, Trust);
+            Consider(RelationshipScoreType.Goodwill, Goodwill);
+            Consider(RelationshipScoreType.Desire, Desire);
+            Consider(RelationshipScoreType.Badwill, Badwill);
+            Consider(RelationshipScoreType.Fear, Fear);
+
+            return best;
+        }
+    }
+
 
     public Character_Relationship()
     {
@@ -1136,12 +1178,6 @@ public class Character_Relationship
         relationText = LocalizeDictionary.QueryThenParse("UI_chara_relationship_text");
     }
 
-    public void ResetAttitude()
-    {
-        _currentAttitude = null;
-        currentAttitude = "";
-    }
-
     public bool HasRelationship(I_IsJobGiver sourceFaction, RelationshipType rel, bool isA)
     {
         if (this.Relationship_Bio == rel && this.isA_Bio == isA) return true;
@@ -1149,9 +1185,13 @@ public class Character_Relationship
         else if (sourceFaction != null && tryGetSocialFaction(sourceFaction, out var oldrel, out var oldA) && oldrel == rel && oldA == isA) return true;
         else return false;
     }
+    /// <summary>
+    /// No-op now that Character_Attitude lives on StatsManager (resolved lazily, no per-relationship
+    /// resync needed on reload). Kept as a hook since RelationshipManager.PostReloadUpdate calls it per
+    /// relationship and other reload-time relationship fixups may still land here in the future.
+    /// </summary>
     public void PostReloadUpdate()
     {
-        UpdateAttitude(false, true);
     }
 
     public Character_Relationship(RelationshipManager manager, Character_Trainable target, RelationshipManager.presetRelationship template, string overrideCallName = "", string forceBaseID = "")
@@ -1203,8 +1243,6 @@ public class Character_Relationship
         }
     }
 
-    public RelationshipScoreType CurrentEmotionKey = RelationshipScoreType.Trust;
-
     public void ModRelationValue(RelationshipScoreType type, float value, bool silent = true)
     {
         if (type == RelationshipScoreType.Goodwill || type == RelationshipScoreType.Badwill)
@@ -1213,21 +1251,16 @@ public class Character_Relationship
         }
         else if (type == RelationshipScoreType.Trust)
         {
-            relationshipScores[(int)type] = Math.Max(relationshipScores[(int)type] + value, TrustCap);
+            relationshipScores[(int)type] = Math.Min(relationshipScores[(int)type] + value, TrustCap);
         }
         else
         {
             relationshipScores[(int)type] += value;
         }
 
-        if (value > 0) CurrentEmotionKey = type;
-
-        _currentAttitudeTooltip.Clear();
-        UpdateAttitude(true, false);
+        _debugScoreTooltip.Clear();
         if (Target != null)
         {
-            //_currentAttitude = null;
-
             if (!silent && RelationshipCooldown == 0 && !Owner.Stats.isConsciousnessUnconscious)
             {
                // var eventInstance = new EventInstance(this.Owner, "AttitudeChange", "");

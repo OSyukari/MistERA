@@ -38,7 +38,24 @@
                                 "receiverCount":0
                             }
                         },
-                        "displayName":"com_sex_finger_P_displayName_1"
+                        "displayName":"com_sex_finger_P_displayName_1",
+                        "useBaseDescription": false,
+                        "description_begin":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_P_solo_description_begin_1"]
+                                }
+                            ]
+                        },
+                        "description_ongoing":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_P_solo_description_ongoing_1"]
+                                }
+                            ]
+                        }
                     },{
                         "requirements":{
                             "requirement":{
@@ -46,7 +63,24 @@
                                 "receiverCount":0
                             }
                         },
-                        "displayName":"com_sex_finger_P_displayName_2"
+                        "displayName":"com_sex_finger_P_displayName_2",
+                        "useBaseDescription": false,
+                        "description_begin":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_P_solo_group_description_begin_1"]
+                                }
+                            ]
+                        },
+                        "description_ongoing":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_P_solo_group_description_ongoing_1"]
+                                }
+                            ]
+                        }
                     },{
                         "requirements":{
                             "requirement":{
@@ -132,7 +166,12 @@
 
                 "com_sex_finger_P_description_begin_1":"$doer.firstname$的手握住了$receiver.firstname$的肉棒开始套弄着",
                 "com_sex_finger_P_description_remove_1":"$doer.firstname$的手放开了$receiver.firstname$的肉棒",
-                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$正在搓弄着$receiver.firstname$的肉棒"
+                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$正在搓弄着$receiver.firstname$的肉棒",
+
+                "com_sex_finger_P_solo_description_begin_1": "$doer.firstname$的手握住了自己的肉棒，开始套弄着",
+                "com_sex_finger_P_solo_description_ongoing_1": "$doer.firstname$正在搓弄着自己的肉棒",
+                "com_sex_finger_P_solo_group_description_begin_1": "$doer.firstname$各自握住了自己的肉棒，开始套弄着",
+                "com_sex_finger_P_solo_group_description_ongoing_1": "$doer.firstname$正各自搓弄着自己的肉棒"
 
             },
             "en-us":
@@ -148,7 +187,12 @@
 
                 "com_sex_finger_P_description_begin_1":"$doer.firstname$'s hand grasps $receiver.firstname$'s cock and begins to stroke it.",
                 "com_sex_finger_P_description_remove_1":"$doer.firstname$ releases $receiver.firstname$'s cock.",
-                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$ is stroking $receiver.firstname$'s cock."
+                "com_sex_finger_P_description_ongoing_1":"$doer.firstname$ is stroking $receiver.firstname$'s cock.",
+
+                "com_sex_finger_P_solo_description_begin_1": "$doer.firstname$'s hand grasps their own cock and begins to stroke it.",
+                "com_sex_finger_P_solo_description_ongoing_1": "$doer.firstname$ is stroking their own cock.",
+                "com_sex_finger_P_solo_group_description_begin_1": "$doer.firstname$ each grasp their own cock and begin to stroke it.",
+                "com_sex_finger_P_solo_group_description_ongoing_1": "$doer.firstname$ are each stroking their own cock."
 
             }
         }

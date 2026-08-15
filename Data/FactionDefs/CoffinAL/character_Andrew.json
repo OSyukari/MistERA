@@ -70,12 +70,16 @@
             {
                 "baseID": "TCoAaL_Char_Renee",
                 "initialBiologicalRelationship": "relationship_parent",
-                "initialBiologicalRelationship_isA": false
+                "initialBiologicalRelationship_isA": false,
+                "initialPersonalRelationship": "relationship_housemate",
+                "initialPersonalRelationship_isA": false
             },
             {
                 "baseID": "TCoAaL_Char_Ashley",
                 "initialBiologicalRelationship": "relationship_sibling",
-                "initialBiologicalRelationship_isA": true
+                "initialBiologicalRelationship_isA": true,
+                "initialPersonalRelationship": "relationship_housemate",
+                "initialPersonalRelationship_isA": false
             }
         ],
         "initialInventory": [],

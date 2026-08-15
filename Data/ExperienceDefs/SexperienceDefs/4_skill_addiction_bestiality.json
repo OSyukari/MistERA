@@ -5,121 +5,170 @@
         [
             {
                 "ID":"skill_addiction_bestiality",
-                "noDisplay":true,
+                "categoryTag":["skill_addiction"],
                 "tags":["nsfw"],
                 "levels":
                 [   {
                         "DisplayName":"-"
                     },
                     {
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
                                 {
                                     "requireExperiences": [{ "experienceID":"experience_sex_animal", "operand":"gte", "value":30 }]
+                                },
+                                {
+                                    "requireExperiences": [{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":3 }]
                                 }
                             ]
                          },
                         "stat_modifiers":
                         [
-           
+
                         ],
-                        "DisplayName":"1"
+                        "DisplayName":"1",
+                        "validUse": [
+                            {
+                                "skillUseTags":"animal",
+                                "allowAC":true
+                            }
+                        ]
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":100 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":100 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":10 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-               
+
                          ],
                         "DisplayName":"2"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":220 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":220 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":20 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-             
+
                          ],
                         "DisplayName":"3"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":400 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":400 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":40 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                   
+
                          ],
                         "DisplayName":"4"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":800 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":800 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":80 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                
+
                          ],
                         "DisplayName":"5"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":1600 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":1600 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":150 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                            
+
                          ],
                         "DisplayName":"6"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":2000 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":2000 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":200 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                           
+
                          ],
                         "DisplayName":"7"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":2800 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":2800 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":280 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                           
+
                          ],
                         "DisplayName":"8"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":4000 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":4000 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":400 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                           
+
                          ],
                         "DisplayName":"9"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":6000 }]}]
+                            "entries":[
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal", "operand":"gte", "value":6000 }]},
+                                {"requireExperiences":[{ "experienceID":"experience_sex_animal_climax", "operand":"gte", "value":600 }]}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                            
+
                          ],
                         "DisplayName":"10"
                     }
                 ]
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_addiction_bestiality": "兽奸成瘾",
+                "skill_addiction_bestiality_tooltip": "%%skill_addiction_tooltip%%\n适用范围：与动物的互动"
+            },
+            "en-us":
+            {
+                "skill_addiction_bestiality": "Bestiality Addiction"
+            }
+        }
     }
-        
-    
 }

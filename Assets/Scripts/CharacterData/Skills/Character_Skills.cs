@@ -286,6 +286,27 @@ public class CharaSkill
         public List<string> requireSelfTags = new List<string>();
         public List<string> requireCOMTags = new List<string>();
         public List<string> requirePermanentTags = new List<string>();
+        /// <summary>
+        /// Whether this application of the skill can rescue another participant's below-Neutral attitude
+        /// (ActionPackage.TryRescueAttitude). Per-validUse, not per-skill, so a skill can gate rescue
+        /// behind a higher level than the tag first becomes usable at (see skill_social.json level 2:
+        /// PossibleUses now overwrites same-skillUseTags entries by level, so re-declaring "social" at a
+        /// higher level with this set to true upgrades the level-1 entry rather than stacking beside it).
+        /// </summary>
+        public bool allowFailedRescue = false;
+        /// <summary>
+        /// Whether this validUse entry counts toward the Difficulty-Check bonus (ActionPackage.CollectMods,
+        /// via SkillManager.GetRelevantSkills(..., forAcceptance:false)). Defaults false — every entry must
+        /// opt in explicitly; existing skill content was updated to set this true everywhere it was previously
+        /// implicitly DC-only.
+        /// </summary>
+        public bool allowDC = false;
+        /// <summary>
+        /// Whether this validUse entry counts toward the Acceptance-Check bonus (EvaluationPackage.CalculateWillingness,
+        /// via SkillManager.GetRelevantSkills(..., forAcceptance:true)). Defaults false — only skills specifically
+        /// meant to sway willingness (not just skill-check success) should set this.
+        /// </summary>
+        public bool allowAC = false;
         public bool ApplyTo(List<string> self, List<string> action)
         {
             if (skillUseTags == "") return false;

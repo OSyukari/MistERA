@@ -58,15 +58,19 @@
             "noDisplay":false,
             "stringFormat":"N0",
             "constant":true,
-            "_comment":"summation_capmod: severity is the winning contributor's own (clamped) SeverityIndex, not a raw copy - so thresholds here are plain index slots 0..4, one per level this StatusEx can display, independent of any contributor's own raw severity scale.",
+            "_comment":"summation_capmod: severity is the winning contributor's own (clamped) SeverityIndex, not a raw copy - so thresholds here are plain index slots 0..9, one per level this StatusEx can display, independent of any contributor's own raw severity scale. This ladder is authored with headroom on purpose: individual pain sources (see chara_status_pain_physical/_sex/_birth) are free to implement fewer levels than exist here (their own variants list is simply shorter, capping how high their SeverityIndex can ever go) - they don't all need to reach index 9. What must stay in sync is the MEANING of a given index across every source that does implement it (e.g. index 6 is always 'Severe'/consciousness_reduced, wherever it's used), not the count or the per-level stat_modifiers.",
             "variationMode": { "variationType":"summation_capmod", "stringData":"chara_status_pain_" },
             "variants":[
                 { "displayable":false, "threshold":0 },
                 { "displayable":false, "threshold":1 },
                 { "displayName":"chara_status_pain_1", "threshold":2 },
                 { "displayName":"chara_status_pain_2", "threshold":3 },
-                { "displayName":"chara_status_pain_3", "tags":["consciousness_reduced"], "threshold":4 },
-                { "displayName":"chara_status_pain_4", "tags":["consciousness_unconscious"], "threshold":5 }
+                { "displayName":"chara_status_pain_3", "threshold":4 },
+                { "displayName":"chara_status_pain_4", "threshold":5 },
+                { "displayName":"chara_status_pain_5", "tags":["consciousness_reduced"], "threshold":6 },
+                { "displayName":"chara_status_pain_6", "threshold":7 },
+                { "displayName":"chara_status_pain_7", "threshold":8 },
+                { "displayName":"chara_status_pain_8", "tags":["consciousness_unconscious"], "threshold":9 }
             ]
         }
     ]
@@ -205,6 +209,7 @@
             "statusID":"chara_status_pain_physical",
             "noDisplay":true,
             "stringFormat":"N0",
+            "_comment":"Caps at index 7 (Intense) - 8 variants (0-7), one short of chara_status_pain's full 10-slot ladder. Deliberately never reaches Extreme/Shock (index 8-9): HP-loss already drives unconsciousness through the combat system, so letting raw physical pain also knock a character out independently would double-model the same outcome.",
             "variationMode": {
                 "baselineVariation":{
                     "$type":"Status_Base+BaselineVariation_Linear, Assembly-CSharp",
@@ -220,10 +225,10 @@
                 },
                 {
                     "displayable":false,
-                    "threshold":5
+                    "threshold":8
                 },
                 {
-                    "threshold":25,
+                    "threshold":20,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -232,11 +237,24 @@
                     ]
                 },
                 {
-                    "threshold":50,
+                    "threshold":40,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
                             "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-1"
+                        }
+                    ]
+                },
+                {
+                    "threshold":65,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-2"
                         },
                         {
                             "statID":"chara_status_stress",
@@ -257,7 +275,7 @@
                     ]
                 },
                 {
-                    "threshold":1000,
+                    "threshold":95,
                     "stat_modifiers":[
                         {
                             "statID":"chara_status_mood",
@@ -273,11 +291,62 @@
                         },
                         {
                             "statID":"stats_derived_sleepNeed",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"1"
+                        },
+                        {
+                            "statID":"stats_derived_sleepDepth",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"1"
+                        }
+                    ]
+                },
+                {
+                    "threshold":140,
+                    "tags":["consciousness_reduced"],
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-2"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-0.15"
+                        },
+                        {
+                            "statID":"stats_derived_sleepNeed",
                             "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"2"
                         },
                         {
                             "statID":"stats_derived_sleepDepth",
                             "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"2"
+                        }
+                    ]
+                },
+                {
+                    "threshold":200,
+                    "stat_modifiers":[
+                        {
+                            "statID":"chara_status_mood",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_stress",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-3"
+                        },
+                        {
+                            "statID":"chara_status_consciousness",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"-0.20"
+                        },
+                        {
+                            "statID":"stats_derived_sleepNeed",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"3"
+                        },
+                        {
+                            "statID":"stats_derived_sleepDepth",
+                            "modKey":"chara_status_pain_physical", "type":"setBase", "valueType":"number", "valueString":"3"
                         }
                     ]
                 }
@@ -557,11 +626,15 @@
 "chara_status_analgesic_3":"%%chara_status_analgesic%%：强",
 
 "chara_status_pain":"疼痛",
-"chara_status_pain_tooltip":"强或更高的疼痛会让角色无法行动",
+"chara_status_pain_tooltip":"严重或更高的疼痛会降低意识，休克会使角色无法行动",
 "chara_status_pain_1":"%%chara_status_pain%%：弱",
-"chara_status_pain_2":"%%chara_status_pain%%：中",
-"chara_status_pain_3":"%%chara_status_pain%%：强",
-"chara_status_pain_4":"%%chara_status_pain%%：休克",
+"chara_status_pain_2":"%%chara_status_pain%%：轻微",
+"chara_status_pain_3":"%%chara_status_pain%%：中等",
+"chara_status_pain_4":"%%chara_status_pain%%：强",
+"chara_status_pain_5":"%%chara_status_pain%%：严重",
+"chara_status_pain_6":"%%chara_status_pain%%：剧烈",
+"chara_status_pain_7":"%%chara_status_pain%%：极度",
+"chara_status_pain_8":"%%chara_status_pain%%：休克",
 "chara_status_pain_physical":"%%chara_status_pain%%（外伤）"
 
             },
@@ -618,9 +691,15 @@
 "chara_status_analgesic_3":"%%chara_status_analgesic%%: Strong",
 
 "chara_status_pain":"Pain",
+"chara_status_pain_tooltip":"Severe pain or higher reduces consciousness; Shock leaves the character unable to act",
 "chara_status_pain_1":"%%chara_status_pain%%: Weak",
-"chara_status_pain_2":"%%chara_status_pain%%: Medium",
-"chara_status_pain_3":"%%chara_status_pain%%: Strong",
+"chara_status_pain_2":"%%chara_status_pain%%: Mild",
+"chara_status_pain_3":"%%chara_status_pain%%: Moderate",
+"chara_status_pain_4":"%%chara_status_pain%%: Strong",
+"chara_status_pain_5":"%%chara_status_pain%%: Severe",
+"chara_status_pain_6":"%%chara_status_pain%%: Intense",
+"chara_status_pain_7":"%%chara_status_pain%%: Extreme",
+"chara_status_pain_8":"%%chara_status_pain%%: Shock",
 "chara_status_pain_physical":"%%chara_status_pain%% (Physical)"
             }
         }

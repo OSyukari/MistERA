@@ -25,9 +25,10 @@
                         ],
                         "DisplayName":"1",
                         "validUse": [
-                            { 
+                            {
                                 "skillUseTags":"service",
-                                "requireCOMTags":["interaction"]
+                                "requireCOMTags":["interaction"],
+                                "allowDC":true
                             }
                         ]
                     },{

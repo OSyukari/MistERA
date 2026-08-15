@@ -26,10 +26,11 @@
                         ],
                         "DisplayName":"1",
                         "validUse": [
-                            { 
+                            {
                                 "skillUseTags":"cooking",
-                                "requireCOMTags":[]
-                            } 
+                                "requireCOMTags":[],
+                                "allowDC":true
+                            }
                         ]
                     },{
                         "requirements":{ 

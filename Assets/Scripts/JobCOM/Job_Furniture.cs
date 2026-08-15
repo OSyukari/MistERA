@@ -36,10 +36,17 @@ public class Job_Furniture : Job
     /// <summary>
     /// One Job_Furniture instance is shared by every actor using the furniture, who may be doing entirely
     /// unrelated things (e.g. two actors resting in the same bed independently). Scope log messages to just
-    /// this AP's own actors instead of the furniture's whole cumulative actor roster.
+    /// this AP's own actors instead of the furniture's whole cumulative actor roster. Still includes the AP's
+    /// master (e.g. the player ordering an NPC to act alone) even when they aren't a doer/receiver.
     /// </summary>
     public override List<int> GetLogRelevantActors(ActionPackage ap)
     {
+        if (ap.masterRef >= 0 && !ap.actorRefs.Contains(ap.masterRef))
+        {
+            var list = new List<int>(ap.actorRefs);
+            list.Add(ap.masterRef);
+            return list;
+        }
         return ap.actorRefs;
     }
 

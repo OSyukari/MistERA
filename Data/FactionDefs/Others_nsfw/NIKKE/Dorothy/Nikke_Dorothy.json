@@ -34,6 +34,7 @@
     "RequireSelfContextKeys":["sex","receiver"],
     "Variants":
     [    
+        {  "tagsMatch":["irrumatio"], "PortraitVariantData":[ "dorothy/436.webp","dorothy/438.webp","dorothy/469.webp" ] },   
         {  "tagsMatch":["doggy"], "PortraitVariantData":[ "dorothy/433.webp","dorothy/434.webp","dorothy/435.webp" ] },   
         {  "tagsMatch":["missionary"], "PortraitVariantData":[ "dorothy/486.webp","dorothy/487.webp","dorothy/488.webp" ] }
     ],

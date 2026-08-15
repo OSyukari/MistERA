@@ -3,123 +3,12 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 
-[System.Serializable]
-public class Index_CharaRelationshipAttitudes : I_IndexHasID, I_IndexMergeable, I_RemoveNSFW, I_NeedLateInitialize
-{
-    [SerializeField] public List<RelationshipAttitude> list = new List<RelationshipAttitude>(); 
-    Dictionary<string, RelationshipAttitude> ID_Dictionary = new Dictionary<string, RelationshipAttitude>();
+// The old per-relationship RelationshipAttitude/Index_CharaRelationshipAttitudes classes that used to
+// live in this file have been replaced by the per-character Character_Attitude/Index_CharacterAttitudes
+// (Assets/Scripts/CharacterData/Attitude/Character_Attitude.cs). RelationshipRequirement below is still
+// used by RelationshipType (Bio/Personal relationship-type eligibility) and by Character_Attitude
+// (via its owner-based overloads), so it stays here.
 
-    public void RegisterAllID(List<string> messages)
-    {
-        messages.Add("Index_CharaRelationshipAttitudes : registering ID with list length [" + list.Count + "]");
-
-        foreach (var o in this.list)
-        {
-            if (string.IsNullOrEmpty(o.ID)) continue;
-            if (!ID_Dictionary.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_CharaRelationshipAttitudes id [{o.ID}] due to duplicate");
-        }
-    }
-
-    public void MergeWith(I_IndexMergeable list)
-    {
-        var l = list as Index_CharaRelationshipAttitudes;
-        if (l == null) return;
-        else if (l.list == null) return;
-        else
-        {
-            this.list.AddRange(l.list);
-        }
-    }
-
-    Dictionary<RelationshipScoreType, List<RelationshipAttitude>> sortedList = new Dictionary<RelationshipScoreType, List<RelationshipAttitude>>();
-
-    /// <summary>
-    /// This function should sort list into priority ordered list.
-    /// </summary>
-    public void LateInitialize()
-    {
-        /*
-        foreach(var i in this.list)
-        {
-            if (!sortedList.ContainsKey(i.MainEmotionKey)) sortedList.Add(i.MainEmotionKey, new List<RelationshipAttitude>());
-            sortedList[i.MainEmotionKey].Add(i);
-        }
-        foreach(var l in sortedList.Values)
-        {
-            l.Sort((x, y) => y.priority.CompareTo(x.priority));
-        }*/
-        
-        list.Sort(delegate(RelationshipAttitude x, RelationshipAttitude y)
-        {
-            if (x.priority != y.priority) return y.priority >= x.priority ? 1 : -1;
-            if (x.MainEmotionKey != y.MainEmotionKey) return y.MainEmotionKey > x.MainEmotionKey ? 1 : -1;
-            return 0;
-        });
-    }
-
-
-    public RelationshipAttitude GetByID(string id) { return ID_Dictionary.ContainsKey(id) ? ID_Dictionary[id] : null; }
-
-    public void RemoveNSFW()
-    {
-        for(int i = list.Count - 1; i >= 0; i--)
-        {
-            var curr = list[i];
-            if (curr.tags.Count > 0 && Utility.ListContainsLoose(scr_System_Serializer.current.nsfwKeywords, curr.tags))
-            {
-                ID_Dictionary.Remove(curr.ID);
-                list.RemoveAt(i);
-            }
-        }
-    }
-}
-
-
-[System.Serializable]
-public class RelationshipAttitude
-{
-
-    [JsonIgnore]
-    public string DisplayName { get
-        {
-            return LocalizeDictionary.QueryThenParse(ID);
-        } }
-    public string ID = "";
-    public RelationshipRequirement Requirements = null;
-    //public int[] RelationshipMod = new int[7];
-    public int obedienceMod = 0;
-    public RelationshipScoreType MainEmotionKey = RelationshipScoreType.None;
-    public List<string> tags = new List<string>();
-
-    public int priority = 0;
-
-    public double obedienceMod_goodwill = 0;
-    public double obedienceMod_desire = 0;
-    public double obedienceMod_fear = 0;
-    public double obedienceMod_badwill = 0;
-    public double obedienceMod_trust = 0;
-    public int obedienceMod_Max = 0;
-
-    public int GetObedienceMod(Character_Relationship rel)
-    {
-        int value = 0;
-        if (obedienceMod_goodwill != 0) value += (int)(rel.Goodwill * obedienceMod_goodwill);
-        if (obedienceMod_desire != 0) value += (int)(rel.Desire * obedienceMod_desire);
-        if (obedienceMod_fear != 0) value += (int)(rel.Fear * obedienceMod_fear);
-        if (obedienceMod_badwill != 0) value += (int)(rel.Badwill * obedienceMod_badwill);
-        if (obedienceMod_trust != 0) value += (int)(rel.Trust * obedienceMod_trust);
-        value += obedienceMod;
-        return Math.Min(value, obedienceMod_Max);
-    }
-
-    public bool isValidAttitude(Character_Relationship rel)
-    {
-        //if (this.MainEmotionKey != RelationshipScoreType.None && rel.MaxScoreType() != this.MainEmotionKey) return false;
-        if (Requirements != null && !Requirements.Validate(rel)) return false;
-        return true;
-    }
-
-}
 public class RelationshipRequirement
 {
     public List<RelationshipScoreRequirement> requireScore = new List<RelationshipScoreRequirement>();
@@ -144,9 +33,17 @@ public class RelationshipRequirement
             }
         }
 
-        public bool Validate(Character_Relationship rel, StatusEx_Instance statEx)
+        /// <summary>
+        /// Rel-free overload - the rel-taking overload below never actually reads rel, so this split
+        /// is a mechanical refactor, not a behavior change. Used by owner-based (no target) validation.
+        /// </summary>
+        public bool Validate(StatusEx_Instance statEx)
         {
             return Utility.CompareValue(statEx == null ? 0 : statEx.Severity, operand, value);
+        }
+        public bool Validate(Character_Relationship rel, StatusEx_Instance statEx)
+        {
+            return Validate(statEx);
         }
         public bool Validate(Character_Relationship rel, Status_Instance status)
         {
@@ -273,6 +170,36 @@ public class RelationshipRequirement
         if (requireLust != null && !requireLust.Validate(rel, rel.Owner.Stats.Lust)) return false;
         if (requireStress != null && !requireStress.Validate(rel, rel.Owner.Stats.Stress)) return false;
 
+        return true;
+    }
+
+    /// <summary>
+    /// Owner-based (no fixed target) validation, used by the per-character Character_Attitude system.
+    /// Score-threshold requirements fail closed if targetRelForScores is null and any are actually
+    /// authored - none of the shipped Character_Attitude content uses them, so this path is a documented
+    /// safety default rather than something the initial content exercises.
+    /// </summary>
+    public bool Validate(Character_Trainable owner, Character_Relationship targetRelForScores)
+    {
+        foreach (var i in requireScore) { if (targetRelForScores == null) { if (i.isActive) return false; } else if (!i.Validate(targetRelForScores, false)) return false; }
+        foreach (var i in requireRawScore) { if (targetRelForScores == null) { if (i.isActive) return false; } else if (!i.Validate(targetRelForScores, true)) return false; }
+        foreach (var i in requireScoreCompare) { if (targetRelForScores == null) { if (i.isActive) return false; } else if (!i.Validate(targetRelForScores, false)) return false; }
+        foreach (var i in requireRawScoreCompare) { if (targetRelForScores == null) { if (i.isActive) return false; } else if (!i.Validate(targetRelForScores, true)) return false; }
+        if (requireMood != null && !requireMood.Validate(owner.Stats.Mood)) return false;
+        if (requireLust != null && !requireLust.Validate(owner.Stats.Lust)) return false;
+        if (requireStress != null && !requireStress.Validate(owner.Stats.Stress)) return false;
+        return true;
+    }
+
+    /// <summary>
+    /// Cheap subset of Validate(owner, ...) - Mood/Stress/Lust only, no score requirements. Used by
+    /// Character_Attitude.isStillValid's round-end safety check for EmotionKeys-less attitudes.
+    /// </summary>
+    public bool ValidateStatExOnly(StatsManager stats)
+    {
+        if (requireMood != null && !requireMood.Validate(stats.Mood)) return false;
+        if (requireLust != null && !requireLust.Validate(stats.Lust)) return false;
+        if (requireStress != null && !requireStress.Validate(stats.Stress)) return false;
         return true;
     }
 }

@@ -369,12 +369,7 @@ public partial class ResponseEntry
                 }
                 if (requireSelfAttitudeKey != "")
                 {
-                    if (rel == null)
-                    {
-                        if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireSelfAttitudeKey {requireSelfAttitudeKey}, rel null");
-                        return false;
-                    }
-                    var att = rel.GetCurrentAttitude();
+                    var att = self.GetCurrentAttitude();
                     if (att == null || !att.tags.Contains(requireSelfAttitudeKey))
                     {
                         if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents_validations) Debug.Log($"validation failed, requireSelfAttitudeKey {requireSelfAttitudeKey}, att {(att == null ? "null" : $"tags [{String.Join(" ", att.tags)}] not contain key")}");

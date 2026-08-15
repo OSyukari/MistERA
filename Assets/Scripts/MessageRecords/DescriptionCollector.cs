@@ -218,5 +218,16 @@ public class DescriptionCollector : I_Records
     {
         if (!this.portraitRefs.Contains(i)) this.portraitRefs.Add(i);
     }
+
+    /// <summary>
+    /// Clears any collected portrait refs so this description prints as text only, without
+    /// switching the currently-displayed portrait. Used to keep ambient/ongoing messages from
+    /// interrupting an uninterruptible player job while still logging their text.
+    /// </summary>
+    public void SuppressPortraits()
+    {
+        portraitRefs.Clear();
+        portraitRefsOverride = null;
+    }
 }
 

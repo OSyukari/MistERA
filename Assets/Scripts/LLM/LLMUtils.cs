@@ -819,7 +819,7 @@ public class LLM_WorldState
                         }
                     }
 
-                    CurrentAttitude = $"{rel.GetCurrentAttitude().DisplayName}";
+                    CurrentAttitude = $"{rel.Owner.GetCurrentAttitude()?.DisplayName ?? ""}";
 
                     CurrentRelationships = rel.relationText.Replace("$name$", $"{rel.TargetName}" + (rel.Target.isTemporaryActor && rel.Target.Title.Length > 0 ? $"({rel.Target.Title})" : "")).Replace("$relation$", relName.Count > 0 ? String.Join(",", relName) : "no relation");
                 }

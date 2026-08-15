@@ -35,12 +35,64 @@
                         "requirements":{
                             "requirement":{ "doerCount":1, "receiverCount":0 }
                         },
-                        "displayName":"com_sex_finger_caress_C_displayName_1"
+                        "displayName":"com_sex_finger_caress_C_displayName_1",
+                        "useBaseDescription": false,
+                        "description_begin":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_caress_C_solo_description_begin_1"]
+                                }
+                            ]
+                        },
+                        "description_ongoing":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_caress_C_solo_description_ongoing_1"]
+                                }
+                            ]
+                        },
+                        "description_after":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                                    "texts":[ "com_sex_finger_caress_C_solo_description_after_1" ]
+                                }
+                            ]
+                        }
                     },{
                         "requirements":{
                             "requirement":{ "doerCount":99, "receiverCount":0 }
                         },
-                        "displayName":"com_sex_finger_caress_C_displayName_2"
+                        "displayName":"com_sex_finger_caress_C_displayName_2",
+                        "useBaseDescription": false,
+                        "description_begin":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_caress_C_solo_group_description_begin_1"]
+                                }
+                            ]
+                        },
+                        "description_ongoing":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "texts": ["com_sex_finger_caress_C_solo_group_description_ongoing_1"]
+                                }
+                            ]
+                        },
+                        "description_after":{
+                            "Entries":[
+                                {
+                                    "keepLooking":true,
+                                    "conditions":[ { "validateChara":{"target":"doer", "statID":"climaxed", "operand":"eq", "value":"true" } } ],
+                                    "texts":[ "com_sex_finger_caress_C_solo_group_description_after_1" ]
+                                }
+                            ]
+                        }
                     },
                     {
                         "requirements":{
@@ -127,7 +179,14 @@
                 "com_sex_finger_caress_C_description_begin_1":"$doer.firstname$的手指捏拿住了$receiver.firstname$的阴蒂，开始有规律地揉搓着",
                 "com_sex_finger_caress_C_description_after_1":"$receiver.firstname$的阴蒂由于高潮凸起来",
                 "com_sex_finger_caress_C_description_remove_1":"$doer.firstname$的手从$receiver.firstname$的阴蒂上抽离开来",
-                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$正在愛撫$receiver.firstname$的阴蒂"
+                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$正在愛撫$receiver.firstname$的阴蒂",
+
+                "com_sex_finger_caress_C_solo_description_begin_1": "$doer.firstname$的手指伸向了自己的阴蒂，开始有规律地揉搓着",
+                "com_sex_finger_caress_C_solo_description_ongoing_1": "$doer.firstname$正在愛撫自己的阴蒂",
+                "com_sex_finger_caress_C_solo_description_after_1": "$doer.firstname$的阴蒂由于高潮凸起来",
+                "com_sex_finger_caress_C_solo_group_description_begin_1": "$doer.firstname$的手指各自伸向了自己的阴蒂，开始有规律地揉搓着",
+                "com_sex_finger_caress_C_solo_group_description_ongoing_1": "$doer.firstname$正各自愛撫着自己的阴蒂",
+                "com_sex_finger_caress_C_solo_group_description_after_1": "$doer.firstname$的阴蒂由于高潮凸起来"
 
             },
             "en-us":
@@ -144,7 +203,14 @@
                 "com_sex_finger_caress_C_description_begin_1":"$doer.firstname$'s fingers pinch $receiver.firstname$'s clitoris and begin to rub it rhythmically",
                 "com_sex_finger_caress_C_description_after_1":"$receiver.firstname$'s clitoris swells due to orgasm",
                 "com_sex_finger_caress_C_description_remove_1":"$doer.firstname$'s hand withdraws from $receiver.firstname$'s clitoris",
-                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$ is caressing $receiver.firstname$'s clitoris"
+                "com_sex_finger_caress_C_description_ongoing_1":"$doer.firstname$ is caressing $receiver.firstname$'s clitoris",
+
+                "com_sex_finger_caress_C_solo_description_begin_1": "$doer.firstname$'s fingers reach for their own clitoris and begin to rub it rhythmically",
+                "com_sex_finger_caress_C_solo_description_ongoing_1": "$doer.firstname$ is caressing their own clitoris",
+                "com_sex_finger_caress_C_solo_description_after_1": "$doer.firstname$'s clitoris swells due to orgasm",
+                "com_sex_finger_caress_C_solo_group_description_begin_1": "$doer.firstname$ each reach for their own clitoris and begin to rub rhythmically",
+                "com_sex_finger_caress_C_solo_group_description_ongoing_1": "$doer.firstname$ are each caressing their own clitoris",
+                "com_sex_finger_caress_C_solo_group_description_after_1": "$doer.firstname$'s clitoris swells due to orgasm"
 
             }
         }

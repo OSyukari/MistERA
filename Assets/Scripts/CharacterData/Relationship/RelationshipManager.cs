@@ -114,10 +114,12 @@ public class RelationshipManager
 
 
 
+    /// <summary>
+    /// No-op now that Character_Attitude lives on StatsManager, not per-relationship - kept since
+    /// MemoryManager.ClearCache still calls it and other memory-cache-driven refresh hooks may land here.
+    /// </summary>
     public void RefreshAttitudes()
     {
-        //foreach (var rel in this.Relationships) rel.ResetAttitude();
-        //foreach(var rel in this.Relationships) rel.
     }
     public void RefreshMinute5()
     {
@@ -295,6 +297,203 @@ public class RelationshipManager
     }
 
     //public List<Character_Relationship> Relationships { get { return relationships; } }
+
+    // ------------------------
+    // Recent-interaction tracking. Cleared every PreUpdate tick (Character_Trainable.PreUpdateTime, same
+    // cadence as Character_Body.ClearLastInteractedRefs) rather than per ActionPackage round - this is a
+    // slightly longer-lived "who has this character actually been dealing with lately" pool, meant as a
+    // fallback source for attitude selection when a given round itself carried no relationship signal.
+    // RegisterInteraction is intentionally not called from anywhere yet - the call site(s) get wired in
+    // once this scaffolding is verified.
+    // ------------------------
+
+    [JsonIgnore] List<Character_Relationship> lastInteractedRelationships = new List<Character_Relationship>();
+    [JsonIgnore] public List<Character_Relationship> LastInteractedRelationships { get { return lastInteractedRelationships; } }
+
+    public void RegisterInteraction(Character_Relationship rel)
+    {
+        if (rel == null) return;
+        if (!lastInteractedRelationships.Contains(rel)) lastInteractedRelationships.Add(rel);
+    }
+
+    public void ClearLastInteractedRelationships()
+    {
+        lastInteractedRelationships.Clear();
+    }
+
+    // ------------------------
+    // Per-character Attitude (Character_Attitude) - replaces the old per-relationship RelationshipAttitude.
+    // Lives here (moved from StatsManager) since it's fundamentally about this character's relationships,
+    // not their body/stat state - RelationshipManager already owns every Character_Relationship this
+    // needs to read.
+    // ------------------------
+
+    [JsonProperty] protected string currentAttitudeID = "";
+    [JsonProperty] protected int intensityScore = 0;
+
+    [JsonIgnore] Character_Attitude _currentAttitude = null;
+
+    // Round-scoped signal buffer. Not serialized - losing one round's signal across a save/load is an
+    // acceptable, rare edge case (the buffer is only ever read at the start of the next PreUpdateTime tick
+    // after it's built, then unconditionally discarded - see FinalizeAttitudeRound/_attitudeRoundPending).
+    [JsonIgnore] RelationshipScoreType? _roundDominantKey = null;
+    [JsonIgnore] Character_Relationship _roundDominantTargetRel = null;
+    [JsonIgnore] float _roundDominantMagnitude = 0f;
+    [JsonIgnore] int _roundDominantSign = 0;
+
+    // Set by NotifyAttitudeRoundPending (called from ActionPackage completion, once per involved actor) and
+    // consumed by FinalizeAttitudeRound (called from this actor's own PreUpdateTime). Lets several APs that
+    // resolve for this actor within the same tick all accumulate into one shared round buffer via
+    // RegisterAttitudeDelta and get evaluated together in a single pass at the next tick boundary, instead
+    // of each AP synchronously triggering its own immediate, fragmented evaluation.
+    [JsonIgnore] bool _attitudeRoundPending = false;
+
+    public Character_Attitude GetCurrentAttitude()
+    {
+        if (_currentAttitude == null)
+        {
+            if (currentAttitudeID != "") _currentAttitude = scr_System_Serializer.current.MasterList.Character_Attitudes.GetByID(currentAttitudeID);
+            if (_currentAttitude == null) SelectAttitude(true); // never set, or a stale/removed ID - resolve fresh
+        }
+        return _currentAttitude;
+    }
+
+    /// <summary>
+    /// Called from IncreaseRelationshipWith right after its mood/stress/lust amount-adjustment
+    /// finalizes, with the post-adjustment (and post-amplification) amount. Keeps only the single
+    /// largest-magnitude delta seen so far this round.
+    /// </summary>
+    public void RegisterAttitudeDelta(RelationshipScoreType relID, Character_Relationship targetRel, float amount)
+    {
+        float mag = Math.Abs(amount);
+        if (mag <= _roundDominantMagnitude) return;
+        _roundDominantMagnitude = mag;
+        _roundDominantKey = relID;
+        _roundDominantTargetRel = targetRel;
+        _roundDominantSign = amount > 0 ? 1 : amount < 0 ? -1 : 0;
+    }
+
+    /// <summary>
+    /// Flags that an ActionPackage involving this actor has completed since the last finalize, without
+    /// evaluating anything here. Called from ActionPackage.NotifyAttitudeRoundPending. Idempotent - safe to
+    /// call multiple times per tick if several APs resolve for this actor before the next finalize.
+    /// </summary>
+    public void NotifyAttitudeRoundPending()
+    {
+        _attitudeRoundPending = true;
+    }
+
+    /// <summary>
+    /// Called once per actor from that actor's own Character_Trainable.PreUpdateTime (NOT by whichever
+    /// ActionPackage happens to touch them - ownership of when to evaluate belongs to the actor). Skips
+    /// entirely unless an AP notified this actor since the last call (see _attitudeRoundPending) - but
+    /// either way, the round buffer is unconditionally discarded before returning, so nothing carries over
+    /// past one tick. When it does run: applies mismatch-gated decay, rechecks at 0 intensity.
+    /// </summary>
+    public void FinalizeAttitudeRound()
+    {
+        bool pending = _attitudeRoundPending;
+        _attitudeRoundPending = false;
+        if (!pending) { ClearAttitudeRoundBuffer(); return; }
+
+        var current = GetCurrentAttitude();
+        if (current == null) { SelectAttitude(true); ClearAttitudeRoundBuffer(); return; }
+
+        bool matches = current.MatchesRound(_roundDominantKey, _roundDominantSign);
+
+        if (!matches)
+        {
+            intensityScore = Math.Max(0, intensityScore - 1);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_Attitude) Debug.Log($"{Owner.CallName} attitude {current.ID} intensity {intensityScore + 1}->{intensityScore} (roundKey={_roundDominantKey}, matched=false)");
+            if (intensityScore <= 0) SelectAttitude(false);
+        }
+        else
+        {
+            if (!current.isStillValid(Owner.Stats)) SelectAttitude(false); // safety valve: EmotionKeys-less attitudes never decay above, so re-validate their own Requirements directly
+        }
+
+        ClearAttitudeRoundBuffer();
+    }
+
+    void ClearAttitudeRoundBuffer()
+    {
+        _roundDominantKey = null;
+        _roundDominantTargetRel = null;
+        _roundDominantMagnitude = 0f;
+        _roundDominantSign = 0;
+    }
+
+    /// <summary>
+    /// Full priority-sorted re-evaluation, unrestricted by any stale-key filter. First entry whose
+    /// EmotionKeys (if any) match the dominant relationship's current DominantScoreType and whose
+    /// Requirements validate wins.
+    ///
+    /// Deliberately NOT gated by _roundDominantKey (this round's biggest single delta) - a round's
+    /// dominant delta can be a minor/incidental blip (e.g. a trusted friend's -1 Badwill tease) that
+    /// doesn't reflect how the character actually feels about that relationship overall. Reading the
+    /// target's live scores instead means selection reflects the relationship's real standing (which
+    /// already factors in Mood/Stress/Lust via the score properties themselves), not just whichever
+    /// score happened to move most this round. _roundDominantKey/_roundDominantSign remain in play
+    /// separately for FinalizeAttitudeRound's decay check - that's still round-activity-based, since
+    /// intensity is meant to fade when nothing keeps reinforcing the current attitude.
+    ///
+    /// _roundDominantTargetRel requires an actual nonzero score delta this round (RegisterAttitudeDelta),
+    /// which a relationship-neutral interaction never produces. When it's null, fall back to a random
+    /// member of lastInteractedRelationships (populated on every real interaction regardless of whether
+    /// any score moved - see ActionPackage's EP loop) so a quiet/neutral interaction with someone doesn't
+    /// blank out an otherwise clearly-dominant standing relationship just because nothing changed this round.
+    /// </summary>
+    protected void SelectAttitude(bool silent)
+    {
+        Character_Relationship dominantRel = _roundDominantTargetRel;
+        if (dominantRel == null && lastInteractedRelationships.Count > 0) dominantRel = lastInteractedRelationships[UnityEngine.Random.Range(0, lastInteractedRelationships.Count)];
+
+        RelationshipScoreType dominantScoreType = dominantRel != null ? dominantRel.DominantScoreType : RelationshipScoreType.None;
+
+        foreach (var candidate in scr_System_Serializer.current.MasterList.Character_Attitudes.list) // pre-sorted by priority desc
+        {
+            if (candidate.EmotionKeys.Count > 0)
+            {
+                if (dominantScoreType == RelationshipScoreType.None || !candidate.EmotionKeys.Contains(dominantScoreType)) continue;
+            }
+            if (!candidate.Requirements_Validate(this.Owner, dominantRel)) continue;
+
+            SetCurrentAttitude(candidate, silent);
+            return;
+        }
+        // character_attitude_neutral (empty EmotionKeys, no Requirements) is the guaranteed catch-all -
+        // reaching here means the content list itself is missing a true universal fallback.
+        Debug.LogError($"RelationshipManager.SelectAttitude: no attitude matched for {(Owner == null ? "?" : Owner.CallName)} - Character_Attitudes list is missing a Requirements-less, EmotionKeys-less catch-all entry.");
+    }
+
+    public void SetCurrentAttitude(Character_Attitude value, bool silent)
+    {
+        if (_currentAttitude == value) return;
+        if (value == null) return;
+
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Attitude) Debug.Log($"{Owner.CallName} attitude {(_currentAttitude == null ? "none" : _currentAttitude.ID)} -> {value.ID} (roundKey={_roundDominantKey}, intensity reset to {value.startingIntensity})");
+
+        if (!silent && Owner.RefID != 0 && _currentAttitude != null)
+        {
+            bool visible = scr_System_CampaignManager.current.isCharaVisibleToPlayer(Owner.RefID);
+            bool recording = Owner.CurrentRoom != null && Owner.CurrentRoom.HasRecording;
+            if (visible || recording)
+            {
+                var s = LocalizeDictionary.QueryThenParse("event_AttitudeChange_character_string")
+                    .Replace("$self.name$", Owner.CallName)
+                    .Replace("$originalAttitude$", _currentAttitude.DisplayName)
+                    .Replace("$newAttitude$", value.DisplayName);
+
+                var desc = new DescriptionCollector(s, new List<int>() { Owner.RefID });
+                scr_UpdateHandler.current.AppendMessageAfter(desc, Owner.CurrentRoom);
+            }
+        }
+
+        _currentAttitude = value;
+        currentAttitudeID = value.ID;
+        intensityScore = value.startingIntensity;
+    }
+
     protected int ownerRef = -1;
     protected Character_Trainable owner = null;
     [JsonIgnore]
@@ -577,17 +776,31 @@ public class RelationshipManager
 
         if (amount == 0) return;
 
+        // Character_Attitude score-gain amplification (symmetric, capped both directions) - e.g. an
+        // Angry character's Badwill gains hit harder, a Happy character's Goodwill gains hit harder.
+        var currentAttitude = GetCurrentAttitude();
+        if (currentAttitude != null) amount = currentAttitude.ApplyAmplification(relID, amount);
+        if (amount == 0) return;
+
         targetRel.ModRelationValue(relID, amount, silent);
 
         if (exp != null) exp.AddRelations(ownerRef, targetRef, relID, (int)amount);
+
+        RegisterAttitudeDelta(relID, targetRel, amount);
     }
     public List<Stat_Modifier> moodlets = new List<Stat_Modifier>();
     public void RefreshMoodlets(List<Character_Trainable> cs)
     {
-        moodlets.Clear();   
+        moodlets.Clear();
+        // Room-wide Trust/Fear/Goodwill/Badwill moodlets from every character sharing the room turned out to
+        // be too noisy - a character locked into an uninterruptible job (e.g. mid-scene) should only pick up
+        // moodlets from the other participants of that same job, not everyone else who happens to be in the
+        // room. Interruptible jobs (or no job at all) keep the original room-wide behavior.
+        bool sameJobOnly = Owner.CurrentJob != null && !Owner.CurrentJob.CanBeInterrupted;
         foreach(var c in cs)
         {
             if (c == Owner) continue;
+            if (sameJobOnly && (c.CurrentJob == null || c.CurrentJobRefID != Owner.CurrentJobRefID)) continue;
             var rel = FindRelationshipWith(c);
             if (rel.Target == null) continue;
             rel.GetMoodletModifiers(moodlets);
@@ -885,12 +1098,17 @@ public class RelationshipManager
         public bool initialPersonalRelationship_isA;
     }
 
-    public static void Draw_Attitude(Character_Relationship rel, scr_HoverableText box)
+    public static void Draw_Attitude(Character_Trainable chara, Character_Relationship rel, scr_HoverableText box)
     {
-        //box.SetText(LocalizeDictionary.QueryThenParse("relationship_attitude") + ":" + rel.AttitudeString(tooltip1), false, "relationship_attitude_tooltip");
-        var attitude = rel.GetCurrentAttitude();
+        var attitude = chara.GetCurrentAttitude();
         box.SetText(LocalizeDictionary.QueryThenParse("relationship_attitude_uiEntry").Replace("$content$", attitude == null ? " - " : attitude.DisplayName)  , false, "relationship_attitude_tooltip");
-        box.SetExternalTooltip($"{($"currentObedience {(attitude == null ? 0 : attitude.GetObedienceMod(rel))}, maxObedience {(attitude == null ? 0 : attitude.obedienceMod_Max)}")}\n{String.Join("\n", rel.CurrentAttitudeTooltip)}");
+
+        // Per-attitude explanation ("<ID>_tooltip", see characterAttitudes.json) - dynamic per current
+        // attitude, shown via SetExternalTooltip alongside the generic relationship_attitude_tooltip
+        // link (kept as-is) and the obedience/score-breakdown lines below.
+        string attitudeTooltip = attitude == null ? "" : LocalizeDictionary.QueryThenParse($"{attitude.ID}_tooltip");
+        string obedienceLine = rel == null ? "currentObedience —, maxObedience —" : $"currentObedience {(attitude == null ? 0 : attitude.GetObedienceMod(rel))}, maxObedience {(attitude == null ? 0 : attitude.obedienceMod_Max)}";
+        box.SetExternalTooltip($"{(attitudeTooltip.Length > 0 ? attitudeTooltip + "\n" : "")}{obedienceLine}{(rel == null ? "" : $"\n{String.Join("\n", rel.CurrentAttitudeTooltip)}")}");
     }
 
     public static void Draw(Character_Relationship rel, scr_box_relationship box)
@@ -941,10 +1159,10 @@ public class RelationshipManager
         box.badwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_badwill")}: {rel.Badwill_Base.ToString("N0")}{rel.Badwill_Bonus.ToString("+0;-#")}", false, "relationship_badwill_tooltip");
 
         if (scr_System_CentralControl.current.isSafeMode) box.desireBox.gameObject.SetActive(false);
-        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("N0")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
+        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("N1")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
 
         //RelationshipManager.Draw_Obedience(rel, box.obedienceBox);
-        if (box.attitudeBox != null) RelationshipManager.Draw_Attitude(rel, box.attitudeBox);
+        if (box.attitudeBox != null) RelationshipManager.Draw_Attitude(rel.Owner, rel, box.attitudeBox);
     }
     public static void DrawFinal(Character_Relationship rel, scr_box_relationship box)
     {
@@ -953,7 +1171,7 @@ public class RelationshipManager
         box.goodwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_goodwill_final")}: {rel.Goodwill.ToString("N0")}", false, "relationship_goodwill_tooltip");
         box.badwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_badwill_final")}: {rel.Badwill.ToString("N0")}", false, "relationship_badwill_tooltip");
         if (scr_System_CentralControl.current.isSafeMode) box.desireBox.gameObject.SetActive(false);
-        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire_final")}: {rel.Desire.ToString("N0")}", false, "relationship_desire_tooltip");
+        else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire_final")}: {rel.Desire.ToString("N1")}", false, "relationship_desire_tooltip");
 
     }
 }

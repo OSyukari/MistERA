@@ -35,7 +35,8 @@
                                             "true",
                                             "true",
                                             "deflateMsg1",
-                                            "deflateKojo1"
+                                            "deflateKojo1",
+                                            "deflateMemory"
                                         ]
                                     },
                                     {
@@ -139,7 +140,8 @@
                                             "true",
                                             "false",
                                             "deflateMsg2",
-                                            "deflateKojo2"
+                                            "deflateKojo2",
+                                            "deflateMemory"
                                         ]
                                     },
                                     {
@@ -243,7 +245,8 @@
                                             "true",
                                             "true",
                                             "deflateMsg3",
-                                            "deflateKojo3"
+                                            "deflateKojo3",
+                                            "deflateMemory"
                                         ]
                                     },
                                     {
@@ -347,7 +350,8 @@
                                             "true",
                                             "true",
                                             "deflateMsg4",
-                                            "deflateKojo4"
+                                            "deflateKojo4",
+                                            "deflateMemory"
                                         ]
                                     },
                                     {
@@ -451,7 +455,8 @@
                                             "true",
                                             "false",
                                             "deflateMsg5",
-                                            "deflateKojo5"
+                                            "deflateKojo5",
+                                            "deflateMemory"
                                         ]
                                     },
                                     {
@@ -542,9 +547,21 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "log any accumulated deflateMemory into self's own memory; no-op if none of the blocks above ever ran DeflateInternal",
                         "label": "end",
                         "isLast": true,
-                        "line": ""
+                        "line": "",
+                        "Results": [
+                            {
+                                "Type": "LogMemoryEntryWithAppend",
+                                "arguments": [
+                                    "self",
+                                    "",
+                                    "deflateMemory",
+                                    "true"
+                                ]
+                            }
+                        ]
                     }
                 ]
             }

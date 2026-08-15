@@ -51,6 +51,27 @@
                                 "com_sex_finger_caress_A_Climax_4",
                                 "com_sex_finger_caress_A_Climax_5"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.1 独自A自慰 高潮 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Climax_Self_1",
+                                "com_sex_finger_caress_A_Climax_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.2 独自A自慰 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Climax_Self_3",
+                                "com_sex_finger_caress_A_Climax_Self_4"
+                            ]
                         }
                     ]
                 }
@@ -117,6 +138,27 @@
                             "responses": [
                                 "com_sex_finger_caress_A_Begin_5",
                                 "com_sex_finger_caress_A_Begin_6"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.3 开始独自A自慰 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Begin_Self_1",
+                                "com_sex_finger_caress_A_Begin_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 开始独自A自慰 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Begin_Self_3",
+                                "com_sex_finger_caress_A_Begin_Self_4"
                             ]
                         }
                     ]
@@ -433,6 +475,107 @@
                             "responses": [
                                 "com_sex_finger_caress_A_20"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.5 睡眠中 独自A自慰 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_1",
+                                "com_sex_finger_caress_A_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.6 时停中 独自A自慰 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_3",
+                                "com_sex_finger_caress_A_Self_4"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPFailure": true,
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 拒绝独自A自慰的指令 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_5",
+                                "com_sex_finger_caress_A_Self_6"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.8 拒绝独自A自慰的指令 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_7",
+                                "com_sex_finger_caress_A_Self_8"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success",
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.9 独自A自慰 结果正面 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_9",
+                                "com_sex_finger_caress_A_Self_10"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.10 独自A自慰 结果正面 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_11",
+                                "com_sex_finger_caress_A_Self_12"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.11 独自A自慰 尝试但结果负面 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_13",
+                                "com_sex_finger_caress_A_Self_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.12 独自A自慰 尝试但结果负面 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_caress_A_Self_15",
+                                "com_sex_finger_caress_A_Self_16"
+                            ]
                         }
                     ]
                 }
@@ -472,7 +615,31 @@
                 "com_sex_finger_caress_A_17": "$self$有些不知所措地低着头，似乎在回味刚才的感觉。\"明明应该生气的……但是……身体却……我是怎么了……\"",
                 "com_sex_finger_caress_A_18": "$self$整理好衣服，表情有些僵硬地坐在一旁。\"总觉得……只有一种想上厕所的奇怪感觉，完全不舒服。\"",
                 "com_sex_finger_caress_A_19": "$self$有些埋怨地看了$target$一眼，揉了揉红肿的皮肤。\"手法太粗暴了……以后还是不要碰那里比较好。\"",
-                "com_sex_finger_caress_A_20": "$self$一言不发地整理好衣服，与$target$拉开了明显的距离。\"虽然不知道你出于什么目的……但我希望这是最后一次。\""
+                "com_sex_finger_caress_A_20": "$self$一言不发地整理好衣服，与$target$拉开了明显的距离。\"虽然不知道你出于什么目的……但我希望这是最后一次。\"",
+                "com_sex_finger_caress_A_Begin_Self_1": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_caress_A_Begin_Self_2": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_caress_A_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_caress_A_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_caress_A_Self_1": "(placeholder - solo, sleeping)",
+                "com_sex_finger_caress_A_Self_2": "(placeholder - solo, sleeping)",
+                "com_sex_finger_caress_A_Self_3": "(placeholder - solo, timestop)",
+                "com_sex_finger_caress_A_Self_4": "(placeholder - solo, timestop)",
+                "com_sex_finger_caress_A_Self_5": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_caress_A_Self_6": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_caress_A_Self_7": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_caress_A_Self_8": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_caress_A_Self_9": "(placeholder - solo, success, permission)",
+                "com_sex_finger_caress_A_Self_10": "(placeholder - solo, success, permission)",
+                "com_sex_finger_caress_A_Self_11": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_caress_A_Self_12": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_caress_A_Self_13": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_caress_A_Self_14": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_caress_A_Self_15": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_caress_A_Self_16": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_caress_A_Climax_Self_1": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_caress_A_Climax_Self_2": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_caress_A_Climax_Self_3": "(placeholder - solo, climax, no permission)",
+                "com_sex_finger_caress_A_Climax_Self_4": "(placeholder - solo, climax, no permission)"
             },
             "en-us": {
                 "com_sex_finger_caress_A_Climax_1": "($self$) Anal caress climax dialogue",
@@ -505,7 +672,31 @@
                 "com_sex_finger_caress_A_17": "$self$ looks down, flustered, seeming to savor the lingering sensation. \"I should be angry... but... my body... what's wrong with me...\"",
                 "com_sex_finger_caress_A_18": "$self$ adjusts her clothes, sitting aside with a stiff expression. \"It just... felt like I needed to use the bathroom, totally uncomfortable.\"",
                 "com_sex_finger_caress_A_19": "$self$ gives $target$ a complaining look, rubbing her reddened skin. \"That was too rough... better not touch there in the future.\"",
-                "com_sex_finger_caress_A_20": "$self$ silently fixes her clothes, putting obvious distance between herself and $target$. \"I don't know what your goal was... but I hope that's the last time.\""
+                "com_sex_finger_caress_A_20": "$self$ silently fixes her clothes, putting obvious distance between herself and $target$. \"I don't know what your goal was... but I hope that's the last time.\"",
+                "com_sex_finger_caress_A_Begin_Self_1": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_caress_A_Begin_Self_2": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_caress_A_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_caress_A_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_caress_A_Self_1": "(placeholder - solo, sleeping)",
+                "com_sex_finger_caress_A_Self_2": "(placeholder - solo, sleeping)",
+                "com_sex_finger_caress_A_Self_3": "(placeholder - solo, timestop)",
+                "com_sex_finger_caress_A_Self_4": "(placeholder - solo, timestop)",
+                "com_sex_finger_caress_A_Self_5": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_caress_A_Self_6": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_caress_A_Self_7": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_caress_A_Self_8": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_caress_A_Self_9": "(placeholder - solo, success, permission)",
+                "com_sex_finger_caress_A_Self_10": "(placeholder - solo, success, permission)",
+                "com_sex_finger_caress_A_Self_11": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_caress_A_Self_12": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_caress_A_Self_13": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_caress_A_Self_14": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_caress_A_Self_15": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_caress_A_Self_16": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_caress_A_Climax_Self_1": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_caress_A_Climax_Self_2": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_caress_A_Climax_Self_3": "(placeholder - solo, climax, no permission)",
+                "com_sex_finger_caress_A_Climax_Self_4": "(placeholder - solo, climax, no permission)"
             }
         }
     }

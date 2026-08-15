@@ -1112,7 +1112,7 @@ public class BodyInternal_Instance
     //   2. Try directionIn (same expanding-capacity rule, recursive).
     //   3. directionIn exhausted → fits in max capacity → ingest here.
     //   4. Over max capacity → ingest here, push existing cum out via directionOut.
-    public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null)
+    public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null, bool ignoreClimaxAppend = false)
     {
         if (!this.canContain) return false;
         var comp = item.GetComp_Ingestible();
@@ -1136,7 +1136,7 @@ public class BodyInternal_Instance
         // Non-cum and forced fills bypass all capacity checks.
         if (!isCum)
         {
-            IngestInternal(item, m);
+            IngestInternal(item, ignoreClimaxAppend ? null : m);
             return true;
         }
 
@@ -1147,7 +1147,7 @@ public class BodyInternal_Instance
         // Phase 1: fits within expanding capacity.
         if (RemainingExpandingCapacity >= comp.amount || comp.amount < 1)
         {
-            IngestInternal(item, m);
+            IngestInternal(item, ignoreClimaxAppend ? null : m);
             return true;
         }
 
@@ -1157,13 +1157,13 @@ public class BodyInternal_Instance
 
         if (dirIn != null && dirIn != this && dirIn.canContain && !fillHistory.Contains(dirIn))
         {
-            if (dirIn.Ingest(item, m, false, fillHistory)) return true;
+            if (dirIn.Ingest(item, m, false, fillHistory, ignoreClimaxAppend: ignoreClimaxAppend)) return true;
         }
 
         // Phase 3: directionIn chain exhausted — try max capacity.
         if (RemainingMaxCapacity >= comp.amount)
         {
-            IngestInternal(item, m);
+            IngestInternal(item, ignoreClimaxAppend ? null : m);
             return true;
         }
 
@@ -1171,7 +1171,7 @@ public class BodyInternal_Instance
         float overflow4 = comp.amount - RemainingMaxCapacity;
         Debug.Log($"[Ingest] {Owner.CallName} {DisplayName}: over max capacity ({CurrentlyContained:F1}/{MaxCapacity:F1}), pushing {overflow4:F1}ml of existing cum out.");
         PushCumOverflowOut(overflow4, m, fillHistory);
-        IngestInternal(item, m);
+        IngestInternal(item, ignoreClimaxAppend ? null : m);
         return true;
     }
 
@@ -1392,9 +1392,30 @@ public class BodyInternal_Instance
     [JsonIgnore] public List<BodyPartEquipSlot> availableSlots { get { return Base.AvailableSlots; } }
     [JsonIgnore] public List<BodyEquipLayer> equipLayers { get { return Base.equipLayers; } }
 
-    public void TransferContentTo(BodyInternal_Instance instance)
+    public bool TransferContentTo(BodyInternal_Instance instance, bool fullDeflate, ExperienceLog m = null)
     {
+        if (instance == null || !instance.canContain) return false;
+        var items = this.Deflate(fullDeflate);
+        if (items == null || items.Count < 1) return false;
 
+        bool any = false;
+        foreach (var item in items)
+        {
+            Item_Instance_Cum cum = item is Item_Instance_Cum ? item as Item_Instance_Cum : null;
+
+            if (cum != null) cum.experienceTicked = false;
+
+            if (instance.Ingest(item, m, ignoreClimaxAppend : true))
+            {
+                any = true;
+            }
+            else
+            {
+                if (cum != null) cum.experienceTicked = true;
+                this.IngestInternal(item);
+            }
+        }
+        return any;
     }
 
     [JsonIgnore] public List<int> EquippedRefIDs { get { if (contentsIndex == null) return new List<int>();

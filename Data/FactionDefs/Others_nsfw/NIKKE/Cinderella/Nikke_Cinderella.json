@@ -34,6 +34,7 @@
     "RequireSelfContextKeys":["sex","receiver"],
     "Variants":
     [    
+        {  "tagsMatch":["irrumatio"], "PortraitVariantData":["cinderella_after/172.webp","cinderella_after/173.webp","cinderella_after/174.webp"] }, 
         {  "tagsMatch":["doggy"], "PortraitVariantData":["cinderella_after/169.webp","cinderella_after/170.webp",  "cinderella_after/171.webp"] },   
         {  "tagsMatch":["missionary"], "PortraitVariantData":["cinderella_after/231.webp","cinderella_after/232.webp","cinderella_after/233.webp"] }
     ],

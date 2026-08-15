@@ -156,9 +156,17 @@ public class Job : IDisposable, I_Disposable
     /// <summary>
     /// Who a log message about the given AP should be scoped to (relevantActors). Defaults to the whole job's actor roster;
     /// override for Job types where a single job can host multiple actors doing unrelated things (e.g. Job_Furniture).
+    /// Always includes the AP's master (e.g. the player ordering an NPC to act alone) even when they aren't a doer/receiver,
+    /// so messages about the ordered action aren't treated as unrelated to the one who gave the order.
     /// </summary>
     public virtual List<int> GetLogRelevantActors(ActionPackage ap)
     {
+        if (ap != null && ap.masterRef >= 0 && !this.actorRefID.Contains(ap.masterRef))
+        {
+            var list = new List<int>(this.actorRefID);
+            list.Add(ap.masterRef);
+            return list;
+        }
         return this.actorRefID;
     }
 

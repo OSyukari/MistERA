@@ -24,16 +24,30 @@
                         ],
                         "DisplayName":"1",
                         "validUse": [
-                            { 
+                            {
                                 "skillUseTags":"unsafe",
                                 "requireSelfTags":["human","male"],
-                                "requireCOMTags":["human","female"]
+                                "requireCOMTags":["human","female"],
+                                "allowDC":true
                             } ,
-                            { 
+                            {
                                 "skillUseTags":"unsafe",
                                 "requireSelfTags":["human","female"],
-                                "requireCOMTags":["human","male"]
-                            } 
+                                "requireCOMTags":["human","male"],
+                                "allowDC":true
+                            } ,
+                            {
+                                "skillUseTags":"sex",
+                                "requireSelfTags":["human","male"],
+                                "requireCOMTags":["human","female"],
+                                "allowDC":true
+                            } ,
+                            {
+                                "skillUseTags":"sex",
+                                "requireSelfTags":["human","female"],
+                                "requireCOMTags":["human","male"],
+                                "allowDC":true
+                            }
                         ]
                     },{
                         "requirements":{ 

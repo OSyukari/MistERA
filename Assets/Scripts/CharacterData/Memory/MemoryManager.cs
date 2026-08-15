@@ -446,6 +446,37 @@ public class MemoryManager
         return AddEntry(memInst, tags, duration);
     }
 
+    /// <summary>
+    /// Builds a Memory_Entry with entryDescription set directly (so it reads standalone if it can't merge
+    /// into anything) and a single MemInstance joining every appendMessages entry. mergeWithAll bypasses the
+    /// usual merge checks (job ref, entryDescription equality, softMerge rules) the same way COM-driven
+    /// initSex/endSex entries already do.
+    /// </summary>
+    public Memory_Entry AddEntryWithAppend(string entryDescription, List<string> appendMessages, List<string> selfTags, int duration = -1, bool mergeWithAll = false)
+    {
+        if (appendMessages == null || appendMessages.Count < 1) return null;
+
+        var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
+        var roomRef = room.RefID;
+        var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, String.Join("\n", appendMessages));
+        Memory_Entry entry = new Memory_Entry(Owner, null, roomRef, selfTags, memInst, entryDescription, duration);
+        entry.MergeWithAll = mergeWithAll;
+
+        if (this.Last == null || !this.Last.TryMergeWith(entry))
+        {
+            this.entries.Add(entry.EndTime.Ticks, entry);
+            if (lastRef < entry.EndTime.Ticks) lastRef = entry.EndTime.Ticks;
+            if (room.isNameDynamic) entry.roomNameOverride = room.DisplayName;
+            ClearCache();
+            return entry;
+        }
+        else
+        {
+            ClearCache();
+            return this.Last;
+        }
+    }
+
     public void NotifyCharaUnregister(Character_Trainable c)
     {
         foreach (var m in this.Entries)

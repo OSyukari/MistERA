@@ -290,7 +290,7 @@ public partial class EvaluationPackage
             // float diceMax = 20;
             //float diceMin = 0;
 
-            var attitude = rel.GetCurrentAttitude();
+            var attitude = self.GetCurrentAttitude();
             var modvalue = attitude == null ? 0 : attitude.GetObedienceMod(rel);
             if (isThreat)
             {

@@ -97,7 +97,7 @@ public class tab_changerel : MonoBehaviour
         if (menu.CurrentTarget != null && menu.CurrentTarget.Stats.Lust != null) menu.CurrentTarget.Stats.Lust.Draw(lust);
         else lust.gameObject.SetActive(false);
 
-        if (menu.CurrentRel != null) RelationshipManager.Draw_Attitude(menu.CurrentRel, attitude);
+        if (menu.CurrentRel != null) RelationshipManager.Draw_Attitude(menu.CurrentRel.Owner, menu.CurrentRel, attitude);
         else attitude.gameObject.SetActive(false);
 
     }

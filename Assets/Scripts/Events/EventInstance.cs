@@ -187,7 +187,7 @@ public class EventInstance
         {
             return currentEvent == null ? "null" : currentEvent.ID;
         }
-    }
+    }    
 
     public int EventCooldown
     {
@@ -242,6 +242,10 @@ public class EventInstance
             else if (currentEntry is Event.EventEntry.EventEntry_InputField)
             {
                 return UtilityEX.ParseEventEntry(this, (currentEntry as Event.EventEntry.EventEntry_InputField).question);
+            }
+            else if (currentEntry is Event.EventEntry.EventEntry_Branch)
+            {
+                return UtilityEX.ParseEventEntry(this, (currentEntry as Event.EventEntry.EventEntry_Branch).label);
             }
             else return "";
         }

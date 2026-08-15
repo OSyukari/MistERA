@@ -1117,6 +1117,29 @@ public static class EventUtility
                     }
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.LogMemoryEntryWithAppend:
+                if (exec.arguments.Count >= 4 && bool.TryParse(exec.arguments[3], out var logMemMergeWithAll))
+                {
+                    var memDesc = LocalizeDictionary.QueryThenParse(exec.arguments[1]);
+                    memDesc = UtilityEX.ParseEventEntry(owner, memDesc);
+
+                    if (!owner.AppendStrings.TryGetValue(exec.arguments[2], out var appendMessages) || appendMessages.Count < 1) return false;
+
+                    if (exec.arguments[0] == "self" && owner.Self != null)
+                    {
+                        owner.Self.Memory.AddEntryWithAppend(memDesc, appendMessages, new List<string>(), -1, logMemMergeWithAll);
+                        return true;
+                    }
+                    else if (owner.Targets.TryGetValue(exec.arguments[0], out var targs) && targs.Count > 0)
+                    {
+                        foreach (var i in targs)
+                        {
+                            i.Memory.AddEntryWithAppend(memDesc, appendMessages, new List<string>(), -1, logMemMergeWithAll);
+                        }
+                        return true;
+                    }
+                }
+                return false;
             case Event.EventEntry.ExecutionType.RevealFaction:
                 if (exec.arguments.Count >= 1)
                 {
@@ -1144,13 +1167,39 @@ public static class EventUtility
                 owner.CurrentUISpec.BGImagePath = exec.arguments.Count >= 1 ? exec.arguments[0] : "";
                 return true;
             case Event.EventEntry.ExecutionType.DeflateInternal:
-                // [tagFilter, deleteObject(bool), fullDeflate(bool), deflateStringkey, kojoStringKey]
+                // [tagFilter, deleteObject(bool), fullDeflate(bool), deflateStringkey, kojoStringKey, memoryStringKey]
                 if (exec.arguments.Count >= 5 && owner.Self != null)
                 {
                     if (bool.TryParse(exec.arguments[1], out var deleteObject) && bool.TryParse(exec.arguments[2], out var fullDeflate))
                     {
-                        return owner.Self.DeflateInternal(owner, exec.arguments[3], exec.arguments[4], fullDeflate, deleteObject, exec.arguments[0]);
+                        var memoryStringKey = exec.arguments.Count >= 6 ? exec.arguments[5] : "";
+                        return owner.Self.DeflateInternal(owner, exec.arguments[3], exec.arguments[4], memoryStringKey, fullDeflate, deleteObject, exec.arguments[0]);
                     }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.SwallowInternal:
+                // [string refkey, string bodyTag, bool fullDeflate]
+                if (exec.arguments.Count >= 3 && bool.TryParse(exec.arguments[2], out var swallowFullDeflate))
+                {
+                    List<Character_Trainable> targets1 = null;
+                    if (exec.arguments[0] == "self")
+                    {
+                        if (owner.Self != null) targets1 = new List<Character_Trainable>() { owner.Self };
+                    }
+                    else if (owner.Targets.TryGetValue(exec.arguments[0], out targets1))
+                    {
+                        Debug.Log($"SwallowInternal get targets {exec.arguments[0]} {(targets1 == null ? "null": targets1.Count)} currentlabel [{owner.DumpCurrentLine}]");
+                    }
+                    else
+                    {
+                        Debug.Log($"SwallowInternal get targets {exec.arguments[0]} {(targets1 == null ? "null" : targets1.Count)} currentlabel [{owner.DumpCurrentLine}]");
+                    }
+
+                    if (targets1 == null || targets1.Count < 1) return false;
+
+                    bool anySwallowed = false;
+                    foreach (var t in targets1) if (t.SwallowInternal(swallowFullDeflate, exec.arguments[1], owner.message.exp)) anySwallowed = true;
+                    return anySwallowed;
                 }
                 return false;
             case Event.EventEntry.ExecutionType.AlwaysFalse:
@@ -1626,8 +1675,14 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.FlushMessageExpAll:
                 if (true)
                 {
+                    bool wipeClimax = false;
+                    if (exec.arguments.Count >= 1 && bool.TryParse(exec.arguments[0], out wipeClimax))
+                    {
+
+                    }
+
                     var relActors = owner.RelevantActors;
-                    owner.message.FinalizeEXP(relActors, out var desc);
+                    owner.message.FinalizeEXP(relActors, out var desc, !wipeClimax, !wipeClimax, true);
                     //owner.message.exp.Finalize(out var desc, out var rec);
                     
                     if (desc != null)

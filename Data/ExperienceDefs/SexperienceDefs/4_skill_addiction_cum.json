@@ -5,121 +5,171 @@
         [
             {
                 "ID":"skill_addiction_cum",
-                "noDisplay":true,
+                "categoryTag":["skill_addiction"],
                 "tags":["nsfw"],
                 "levels":
                 [   {
                         "DisplayName":"-"
                     },
                     {
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
                                 {
                                     "requireSumExperiences": { "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":30 }
+                                },
+                                {
+                                    "requireSumExperiences": { "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":90 }
                                 }
                             ]
                          },
                         "stat_modifiers":
                         [
-                
+
                         ],
-                        "DisplayName":"1"
+                        "DisplayName":"1",
+                        "validUse": [
+                            {
+                                "skillUseTags":"penis",
+                                "allowAC":true
+                            }
+                        ]
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":100 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":100 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":300 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                   
+
                          ],
                         "DisplayName":"2"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":220 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":220 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":700 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                           
+
                          ],
                         "DisplayName":"3"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":400 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":400 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":1200 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                         
+
                          ],
                         "DisplayName":"4"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":800 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":800 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":2400 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                       
+
                          ],
                         "DisplayName":"5"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":1600 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":1600 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":4800 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                       
+
                          ],
                         "DisplayName":"6"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":2000 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":2000 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":6000 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                          
+
                          ],
                         "DisplayName":"7"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":2800 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":2800 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":8400 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                          
+
                          ],
                         "DisplayName":"8"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":4000 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":4000 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":12000 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                         
+
                          ],
                         "DisplayName":"9"
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
-                            "entries":[{"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":6000 }}]
+                            "entries":[
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum","experience_sex_A_cum","experience_sex_W_cum","experience_sex_M_cum","experience_sex_swallow_cum"], "operand":"gte", "value":6000 }},
+                                {"requireSumExperiences":{ "experienceIDs":["experience_sex_V_cum_total","experience_sex_A_cum_total","experience_sex_W_cum_total","experience_sex_M_cum_total","experience_sex_swallow_cum_total"], "operand":"gte", "value":18000 }}
+                            ]
                          },
                          "stat_modifiers":
                          [
-                           
+
                          ],
                         "DisplayName":"10"
                     }
                 ]
             }
         ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "skill_addiction_cum": "精液成瘾",
+                "skill_addiction_cum_tooltip": "%%skill_addiction_tooltip%%\n适用范围：一切涉及阴茎的互动（插入、口交奉仕等）"
+            },
+            "en-us":
+            {
+                "skill_addiction_cum": "Cum Addiction",
+                "skill_addiction_cum_tooltip": "Increases the skill owner's Acceptance-Check result - only while receiving (when ordered by a Master, also applies while acting). Applies to: all interaction with a penis (penetration, service, etc.)"
+            }
+        }
     }
-        
-    
 }

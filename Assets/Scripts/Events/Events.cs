@@ -507,7 +507,8 @@ public class Event : I_SerializationCallbackReceiver
             FlushAppendStrings,
             /// <summary>
             /// Flush collected content in event.message.exp into screen
-            /// <br/>Will save climax and message into event.self's room, if available
+            /// <br/>Will save climax and message into event.self's room, if available<br/>
+            /// [optional bool wipeCLIMAXMSG]
             /// </summary>
             FlushMessageExpAll,
 
@@ -599,6 +600,17 @@ public class Event : I_SerializationCallbackReceiver
             LogMemoryEntry,
 
             /// <summary>
+            /// [string refkey, string description, string appendkey, bool mergeWithAll] <br/>
+            /// Builds one Memory_Entry per resolved target directly from description (unlike LogMemoryEntry,
+            /// which fabricates an empty description and relies on the fallback single-MemInstance print) and
+            /// a MemInstance joining every string under owner.AppendStrings[appendkey]. If mergeWithAll, the
+            /// entry bypasses the normal merge checks so it can fold into an existing mergeable entry (e.g. the
+            /// one already logged for the command in progress); otherwise it merges only by the usual rules,
+            /// or stands alone with the given description as fallback.
+            /// </summary>
+            LogMemoryEntryWithAppend,
+
+            /// <summary>
             /// [string scopeKey, string factionID, string memberTypeID, bool setAsTemp, bool overwriteExisting] <br/>
             /// Resolves scopeKey to a list of characters (via owner.Targets, or "self" for owner.Self) and sets
             /// their home faction (or temporary home faction if setAsTemp) to factionID with the given member type.
@@ -631,10 +643,25 @@ public class Event : I_SerializationCallbackReceiver
             SetBGImage,
 
             /// <summary>
-            /// [string tagFilter, bool deleteObject, bool fullDeflate, string deflateStringkey, string kojoStringKey] <br/>
-            /// calls owner.Self.DeflateInternal(...) with the given arguments; returns whatever it returns (true if any deflation happened)
+            /// [string tagFilter, bool deleteObject, bool fullDeflate, string deflateStringkey, string kojoStringKey, optional string memoryStringKey] <br/>
+            /// calls owner.Self.DeflateInternal(...) with the given arguments; returns whatever it returns (true if any deflation happened).
+            /// memoryStringKey is the same as deflateStringkey's messages but without $name$, meant to be fed into
+            /// LogMemoryEntryWithAppend's appendkey to log the deflation into the owner's own memory.
             /// </summary>
             DeflateInternal,
+
+            /// <summary>
+            /// [string refkey, string bodyTag, bool fullDeflate] <br/>
+            /// resolves refkey against owner.Self ("self") or owner.Targets[refkey] (e.g. "doer"/"receiver"), then calls
+            /// each resolved character's SwallowInternal(fullDeflate, bodyTag, owner.message.exp) — moving swallowable
+            /// contents from that body part into wherever its tag_directionOut chain leads (e.g. mouth -> stomach),
+            /// logging any experience gained from a successful swallow into owner.message.exp. fullDeflate mirrors
+            /// DeflateInternal's own argument: true drains everything swallowable (gated by canFullyDeflate), false
+            /// only swallows down to the visibly-expanded threshold (gated by canDeflate). Returns true if anyone
+            /// swallowed anything. A FlushMessageExpAll (or FlushMessageAll) step is needed afterward in the same
+            /// event to actually finalize and display whatever this logged into owner.message.exp.
+            /// </summary>
+            SwallowInternal,
 
             /// <summary>
             /// Always returns false. Used inside a branch option to force it to "fail" after running its earlier

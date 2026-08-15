@@ -311,7 +311,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             queuedWakeup = false;
         }
         this._cachedJobDescription = string.Empty;
+        Relationships.FinalizeAttitudeRound();
         Body.ClearLastInteractedRefs();
+        Relationships.ClearLastInteractedRelationships();
         this.Stats.PreUpdateTimeTick();
         this.PortraitManager.ClearHandlerCache();
     }
@@ -889,6 +891,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     [JsonIgnore] public StatsManager Stats { get { if (stats == null) stats = new StatsManager();
         return stats; } }
+
+    /// <summary>
+    /// Current per-character emotional-reaction state (Angry/Happy/Focused/etc). See RelationshipManager /
+    /// Character_Attitude. Replaces the old per-relationship RelationshipAttitude.
+    /// </summary>
+    public Character_Attitude GetCurrentAttitude() { return this.Relationships.GetCurrentAttitude(); }
 
     [JsonProperty] protected PortraitManager Portrait = null;
     [JsonIgnore] public PortraitManager PortraitManager { get
@@ -1727,6 +1735,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         foreach (SkillInstance s in this.Skills.Skills)
         {
+            if (s.BaseRef == null) continue;
             if (s.BaseRef.ID == skillID) return s;
         }
         return null;
@@ -2550,7 +2559,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     [JsonIgnore] public bool Debug_ForceDeepSleep = false;
 
 
-    public bool DeflateInternal(EventInstance collector, string deflateStringkey, string kojoStringKey, bool fullDeflate = false, bool deleteObject = true, string tagFilter = "")
+    public bool DeflateInternal(EventInstance collector, string deflateStringkey, string kojoStringKey, string memoryStringKey = "", bool fullDeflate = false, bool deleteObject = true, string tagFilter = "")
     {
         // 1. fetch every applicable bodypart (matching tagFilter, and actually deflate-able for the requested mode)
         var internals = this.Body.Internals;
@@ -2567,6 +2576,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         bool anyDeflated = false;
         List<string> deflateMessages = null;
+        List<string> memoryMessages = null;
         // merge deflated amount across bodyparts that share the same deflateEventID, per-ID, for a single combined kojo query
         Dictionary<string, float> kojoAmountByEventID = null;
 
@@ -2605,6 +2615,16 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 .Replace("$bodypart$", part.DisplayName)
                 .Replace("$items$", String.Join(" ", itemTexts)));
 
+            // 1.3 same message minus $name$, meant to be logged into this character's own memory
+            // (a memory entry is already scoped to its owner, so restating the name would be redundant)
+            if (memoryStringKey != "")
+            {
+                if (memoryMessages == null) memoryMessages = new List<string>();
+                memoryMessages.Add(LocalizeDictionary.QueryThenParse("deflate_message_memory")
+                    .Replace("$bodypart$", part.DisplayName)
+                    .Replace("$items$", String.Join(" ", itemTexts)));
+            }
+
             // 2. group this part's deflated amount under its deflateEventID (if any) for the kojo step below.
             // parts with no deflateEventID contribute their message above but are skipped for kojo collection.
             if (part.Base.deflateEventID != "")
@@ -2619,6 +2639,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         if (collector != null && deflateStringkey != "" && deflateMessages != null)
             collector.AppendStrings[deflateStringkey] = deflateMessages;
+
+        if (collector != null && memoryStringKey != "" && memoryMessages != null)
+        {
+            // accumulate rather than overwrite: callers (e.g. a multi-part deflate event) commonly reuse the
+            // same memoryStringKey across several DeflateInternal calls and only read it once, at the end
+            if (collector.AppendStrings.TryGetValue(memoryStringKey, out var existingMemoryMessages)) existingMemoryMessages.AddRange(memoryMessages);
+            else collector.AppendStrings[memoryStringKey] = memoryMessages;
+        }
 
         // 2.1-2.3 kojo collect: one query per distinct deflateEventID (same-ID parts already merged above),
         // combining every group's output into a single kojoStringKey entry
@@ -2639,6 +2667,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         // return true if any deflation happened
         return true;
+    }
+
+    public bool SwallowInternal(bool fullDeflate, string bodyTag = "", ExperienceLog m = null)
+    {
+        var internals = this.Body.Internals;
+        bool any = false;
+        for (int i = 0; i < internals.Count; i++)
+        {
+            var part = internals[i];
+            if (bodyTag != "" && !part.hasTag(bodyTag)) continue;
+            if (!(fullDeflate ? part.canFullyDeflate : part.canDeflate)) continue; // nothing swallowable here right now
+
+            var target = (part.overflowOutTag == "" || part.overflowOutTag == "ext")
+                ? null : this.Body.GetRandomInternalWithTag(part.overflowOutTag);
+            if (target == null) continue;
+
+            if (part.TransferContentTo(target, fullDeflate, m)) any = true;
+        }
+        return any;
     }
 }
 

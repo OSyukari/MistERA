@@ -324,10 +324,17 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         results_immediate_EP.ApplyResults(job, p, evp, target, log);
     }
 
-    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log)
+    /// <summary>
+    /// success reflects the EP's own difficulty-check outcome (response == Accept || response >= Success) —
+    /// callers now invoke this unconditionally regardless of that outcome. results_EP's character-effect
+    /// results stay gated to success only (unchanged from prior behavior); the result_event calls below are
+    /// always attempted — Result_Event.Apply's own requireSuccess/requireFailure fields decide per-event
+    /// whether a given result_event actually fires on this particular outcome.
+    /// </summary>
+    public void ApplyResults(Job job, ActionPackage p, EvaluationPackage evp, Memory_Attitude att, Character_Trainable target, ExperienceLog log, bool success)
     {
         //Debug.Log("ApplyResults doer[" + (evp.Doer != null ? evp.Doer.FirstName : "-") + "] receiver[" + (evp.Receiver != null ? evp.Receiver.FirstName : "-") + "]");
-        results_EP.ApplyResults(job, p, evp, target,log);
+        if (success) results_EP.ApplyResults(job, p, evp, target,log);
 
         if (target == evp.Doer)
         {
@@ -695,8 +702,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             case "breast": if ((comTags.Contains("sex") || comTags.Contains("touch")) && !comTags.Contains("breast")) comTags.Add("breast"); break;
             case "nipple": if ((comTags.Contains("sex") || comTags.Contains("touch")) && !comTags.Contains("breast")) comTags.Add("breast"); break;
             case "mouth": if ((comTags.Contains("sex") || comTags.Contains("touch")) && !comTags.Contains("oral")) comTags.Add("oral"); break;
-            case "penis":
-                break;
+            case "penis": if ((comTags.Contains("sex") || comTags.Contains("touch")) && !comTags.Contains("penis")) comTags.Add("penis"); break;
             default:
                 break;
 

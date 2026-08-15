@@ -61,6 +61,27 @@
                                 "com_sex_finger_insert_A_Climax_12",
                                 "com_sex_finger_insert_A_Climax_13"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.1 独自A指入自慰 高潮 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Climax_Self_1",
+                                "com_sex_finger_insert_A_Climax_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.2 独自A指入自慰 高潮 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Climax_Self_3",
+                                "com_sex_finger_insert_A_Climax_Self_4"
+                            ]
                         }
                     ]
                 }
@@ -142,6 +163,27 @@
                                 "com_sex_finger_insert_A_Begin_16",
                                 "com_sex_finger_insert_A_Begin_17",
                                 "com_sex_finger_insert_A_Begin_18"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.3 开始独自A指入自慰 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Begin_Self_1",
+                                "com_sex_finger_insert_A_Begin_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 开始独自A指入自慰 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Begin_Self_3",
+                                "com_sex_finger_insert_A_Begin_Self_4"
                             ]
                         }
                     ]
@@ -531,6 +573,107 @@
                                 "com_sex_finger_insert_A_83",
                                 "com_sex_finger_insert_A_84"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "sleeping"
+                                ]
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.5 睡眠中 独自A指入自慰 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_1",
+                                "com_sex_finger_insert_A_Self_2"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.6 时停中 独自A指入自慰 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_3",
+                                "com_sex_finger_insert_A_Self_4"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPFailure": true,
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.7 拒绝独自A指入自慰的指令 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_5",
+                                "com_sex_finger_insert_A_Self_6"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPFailure": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.8 拒绝独自A指入自慰的指令 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_7",
+                                "com_sex_finger_insert_A_Self_8"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success",
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.9 独自A指入自慰 结果正面 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_9",
+                                "com_sex_finger_insert_A_Self_10"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.10 独自A指入自慰 结果正面 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_11",
+                                "com_sex_finger_insert_A_Self_12"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.11 独自A指入自慰 尝试但结果负面 有允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_13",
+                                "com_sex_finger_insert_A_Self_14"
+                            ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.12 独自A指入自慰 尝试但结果负面 无允许 口上文",
+                            "responses": [
+                                "com_sex_finger_insert_A_Self_15",
+                                "com_sex_finger_insert_A_Self_16"
+                            ]
                         }
                     ]
                 }
@@ -654,7 +797,31 @@
                 "com_sex_finger_insert_A_81": "$self$眼神空洞，只有眼泪在流淌：\"为什么要这样对我……好脏……我好脏……\"",
                 "com_sex_finger_insert_A_82": "$self$身体因为疼痛而剧烈痉挛：\"啊！痛！出血了……肯定出血了……救命……\"",
                 "com_sex_finger_insert_A_83": "$self$用尽全力想要推开$target$：\"这就是强奸……你是罪犯……我绝对不会原谅你！\"",
-                "com_sex_finger_insert_A_84": "$self$绝望地闭上眼，放弃了挣扎但满心怨恨：\"快点结束吧……你这个魔鬼……\""
+                "com_sex_finger_insert_A_84": "$self$绝望地闭上眼，放弃了挣扎但满心怨恨：\"快点结束吧……你这个魔鬼……\"",
+                "com_sex_finger_insert_A_Begin_Self_1": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_insert_A_Begin_Self_2": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_insert_A_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_insert_A_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_insert_A_Self_1": "(placeholder - solo, sleeping)",
+                "com_sex_finger_insert_A_Self_2": "(placeholder - solo, sleeping)",
+                "com_sex_finger_insert_A_Self_3": "(placeholder - solo, timestop)",
+                "com_sex_finger_insert_A_Self_4": "(placeholder - solo, timestop)",
+                "com_sex_finger_insert_A_Self_5": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_insert_A_Self_6": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_insert_A_Self_7": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_insert_A_Self_8": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_insert_A_Self_9": "(placeholder - solo, success, permission)",
+                "com_sex_finger_insert_A_Self_10": "(placeholder - solo, success, permission)",
+                "com_sex_finger_insert_A_Self_11": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_insert_A_Self_12": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_insert_A_Self_13": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_insert_A_Self_14": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_insert_A_Self_15": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_insert_A_Self_16": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_insert_A_Climax_Self_1": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_insert_A_Climax_Self_2": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_insert_A_Climax_Self_3": "(placeholder - solo, climax, no permission)",
+                "com_sex_finger_insert_A_Climax_Self_4": "(placeholder - solo, climax, no permission)"
             },
             "en-us": {
                 "com_sex_finger_insert_A_Climax_1": "($self$) Anal Fingering Climax Flavor Text",
@@ -771,7 +938,31 @@
                 "com_sex_finger_insert_A_81": "$self$'s eyes are empty, tears flowing freely: \"Why do this to me... so dirty... I'm so dirty...\"",
                 "com_sex_finger_insert_A_82": "$self$ spasms violently from pain: \"Ah! Pain! Bleeding... definitely bleeding... help...\"",
                 "com_sex_finger_insert_A_83": "$self$ tries to push $target$ away with all her might: \"This is rape... you're a criminal... I'll never forgive you!\"",
-                "com_sex_finger_insert_A_84": "$self$ closes her eyes in despair, giving up the struggle but full of resentment: \"Just finish it... you devil...\""
+                "com_sex_finger_insert_A_84": "$self$ closes her eyes in despair, giving up the struggle but full of resentment: \"Just finish it... you devil...\"",
+                "com_sex_finger_insert_A_Begin_Self_1": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_insert_A_Begin_Self_2": "(placeholder - solo, Begin, permission)",
+                "com_sex_finger_insert_A_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_insert_A_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
+                "com_sex_finger_insert_A_Self_1": "(placeholder - solo, sleeping)",
+                "com_sex_finger_insert_A_Self_2": "(placeholder - solo, sleeping)",
+                "com_sex_finger_insert_A_Self_3": "(placeholder - solo, timestop)",
+                "com_sex_finger_insert_A_Self_4": "(placeholder - solo, timestop)",
+                "com_sex_finger_insert_A_Self_5": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_insert_A_Self_6": "(placeholder - solo, refuses order, permission)",
+                "com_sex_finger_insert_A_Self_7": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_insert_A_Self_8": "(placeholder - solo, refuses order, no permission)",
+                "com_sex_finger_insert_A_Self_9": "(placeholder - solo, success, permission)",
+                "com_sex_finger_insert_A_Self_10": "(placeholder - solo, success, permission)",
+                "com_sex_finger_insert_A_Self_11": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_insert_A_Self_12": "(placeholder - solo, success, no permission)",
+                "com_sex_finger_insert_A_Self_13": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_insert_A_Self_14": "(placeholder - solo, attempted but failed, permission)",
+                "com_sex_finger_insert_A_Self_15": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_insert_A_Self_16": "(placeholder - solo, attempted but failed, no permission)",
+                "com_sex_finger_insert_A_Climax_Self_1": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_insert_A_Climax_Self_2": "(placeholder - solo, climax, permission)",
+                "com_sex_finger_insert_A_Climax_Self_3": "(placeholder - solo, climax, no permission)",
+                "com_sex_finger_insert_A_Climax_Self_4": "(placeholder - solo, climax, no permission)"
             }
         }
     }

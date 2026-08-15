@@ -23,22 +23,31 @@ public class ExperienceLog
 
     public List<int> relevantActorRefs = new List<int>();
 
-    public void Finalize(out DescriptionCollector desc)
+    public void Finalize(out DescriptionCollector desc, bool printMessage = true, bool printClimax = true, bool printStats = true)
     {
         desc = new DescriptionCollector();
 
-        var msg = PrintContent_Messages();
-        if (msg.Length > 0)
+        if (printMessage)
         {
-            desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{msg}";
+            var msg = PrintContent_Messages();
+            if (msg.Length > 0)
+            {
+                desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{msg}";
+            }
         }
-        var climax = PrintContent_Climax();
-        if (climax.Length > 0)
+        if (printClimax)
         {
-            desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{climax}";
+            var climax = PrintContent_Climax();
+            if (climax.Length > 0)
+            {
+                desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{climax}";
+            }
         }
-        var stats = PrintContent_Stats();
-        if (stats.Length > 0) desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{stats}";
+        if (printStats)
+        {
+            var stats = PrintContent_Stats();
+            if (stats.Length > 0) desc.message += $"{(desc.message.Length > 0 ? "\n" : "")}{stats}";
+        }
 
         desc.message_excludeRelated = desc.message;
 
@@ -70,6 +79,12 @@ public class ExperienceLog
     public ExperienceLog()
     {
 
+    }
+
+    public void ClearClimaxMessage()
+    {
+        climaxMessage.Clear();
+        MessageLog.Clear();
     }
 
     public void AppendClimaxMSG(int chararef, string msg)

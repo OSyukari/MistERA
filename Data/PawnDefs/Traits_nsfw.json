@@ -62,10 +62,9 @@
             "entries": [
                 {
                     "trait_ID": "trait_GenderPreference_dontcare",
-                    "trait_displayname": "Default",
-                    "isDisplayable":false,
+                    "trait_displayname": "Bisexual",
                     "trait_score":0,
-                    "trait_tooltip": "no gender restriction."
+                    "trait_tooltip": "sexually attracted to people regardless of gender."
                 },
                 {
                     "trait_ID": "trait_GenderPreference_hetero",

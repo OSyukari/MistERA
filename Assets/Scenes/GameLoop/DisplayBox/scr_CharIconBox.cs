@@ -266,11 +266,7 @@ public class scr_CharIconBox : MonoBehaviour, IPointerEnterHandler, IPointerExit
         }
 
         Character_Relationship rel = chara.Relationships.FindRelationshipWith(0);
-        if (rel != null)
-        {
-            RelationshipManager.Draw_Attitude(rel, attitudeBox);// rel.DrawAttitude(attitudeBox);
-                                                                // RelationshipManager.Draw_Obedience(rel, obedienceBox);// rel.DrawObedience(obedienceBox);
-        }
+        RelationshipManager.Draw_Attitude(chara, rel, attitudeBox);
 
     }
 

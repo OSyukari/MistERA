@@ -788,7 +788,8 @@
 "Memory_Response_CriticalSuccess":"大成功",
 "Memory_Response_Complete":"结束",
 
-"deflate_message":"$name$从$bodypart$排出了$items$"
+"deflate_message":"$name$从$bodypart$排出了$items$",
+"deflate_message_memory":"从$bodypart$排出了$items$"
 
             },
             "en-us": {
@@ -1463,7 +1464,8 @@
 
 "Memory_Response_Complete": "Complete",
 
-"deflate_message": "$name$ expelled $items$ from $bodypart$"
+"deflate_message": "$name$ expelled $items$ from $bodypart$",
+"deflate_message_memory": "expelled $items$ from $bodypart$"
 
 
 

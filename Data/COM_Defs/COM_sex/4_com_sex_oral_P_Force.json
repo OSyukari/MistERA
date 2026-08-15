@@ -153,14 +153,15 @@
                 },
                 "description_begin":
                 {
-                    "Entries":[ 
+                    "Entries":[
                         {
                             "keepLooking":true,
                             "texts": ["com_sex_oral_P_Force_description_begin_1"]
                         }
                     ]
-                    
-                }
+
+                },
+                "results_EP": { "result_event": { "id_overwrite": "com_sex_oral_swallow", "eventLabel": "receiver" } }
             }
         ]
     },

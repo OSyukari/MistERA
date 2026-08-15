@@ -12,9 +12,7 @@
                 "chara_status_fatigue_3": "%%chara_status_fatigue%%: Exhausted",
                 "chara_status_fatigue_tooltip": "This value is the character's current %%stats_derived_extended_stamina%% as a percentage. When it drops too low, the character becomes fatigued, lowering Mood.",
 
-                "chara_status_analgesic_tooltip": "Lowers sensitivity to pain.",
-                "chara_status_pain_4": "%%chara_status_pain%%: Shock",
-                "chara_status_pain_tooltip": "Strong pain or higher renders the character unable to act."
+                "chara_status_analgesic_tooltip": "Lowers sensitivity to pain."
             }
         }
     }

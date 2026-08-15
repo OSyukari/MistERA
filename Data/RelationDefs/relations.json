@@ -314,19 +314,19 @@
                 "canUpgradeInto":["relationship_couple"],
                 "displayName":"relationship_bff_displayName",
                 "RelationshipMod":[35,20,0,0,0],
-                "trustCapIncrease":50,
+                "trustCapIncrease":75,
                 "Requirements":
                 {
                     "requireRawScore":[
-                        {"requireScoreID":"Trust","operand":"gte","value":50},
-                        {"requireScoreID":"Goodwill","operand":"gte","value":50}
+                        {"requireScoreID":"Trust","operand":"gte","value":75},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":75}
                     ],
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":1.1}
                     ],
-                    "requireScore":[ 
-                        {"requireScoreID":"Trust","operand":"gte","value":50},
-                        {"requireScoreID":"Goodwill","operand":"gte","value":50}
+                    "requireScore":[
+                        {"requireScoreID":"Trust","operand":"gte","value":75},
+                        {"requireScoreID":"Goodwill","operand":"gte","value":75}
                     ],
                     "requireMood":{"operand":"gte","value":0}
                 },
@@ -334,7 +334,7 @@
                 "MaintenanceRequirements":
                 {
                     "requireRawScore":[
-                        {"requireScoreID":"Trust","operand":"gte","value":30}
+                        {"requireScoreID":"Trust","operand":"gte","value":50}
                     ],
                     "requireRawScoreCompare":[
                         {"requireScoreID":"Goodwill","operand":"gt","compareScoreID":"Badwill","compareScoreMult":0.9}
@@ -364,7 +364,7 @@
                     "requireScore":[
                         {"requireScoreID":"Trust","operand":"gte","value":75},
                         {"requireScoreID":"Desire","operand":"gte","value":100},
-                        {"requireScoreID":"Goodwill","operand":"gte","value":50}],
+                        {"requireScoreID":"Goodwill","operand":"gte","value":40}],
                     "requireMood":{"operand":"gte","value":0}
                 },
                 "MainEmotionKey":"Badwill", "tags":["Badwill"],
@@ -460,14 +460,15 @@
 
                 "relationship_A_to_B":{
                     "displayName":"relationship_bully_displayName_A_is_to_B",
-                    "RelationshipMod":[0,0,10,10,0],   
+                    "RelationshipMod":[0,0,10,10,0],
                     "allowPlayerProposition":false,
-                    "allowNaturalProposition":"false"
+                    "allowNaturalProposition":false
                 },
                 "relationship_B_to_A":{
                     "displayName":"relationship_bully_displayName_B_is_to_A",
                     "RelationshipMod":[0,0,0,10,20],
                     "allowPlayerProposition":false,
+                    "allowNaturalProposition":false,
                     "Requirements":
                     {
                         "requireRawScore":[
@@ -488,6 +489,17 @@
                         ]
                     }
                 }
+            },
+            {
+                "$type":"RelationshipType, Assembly-CSharp",
+                "_comment":"Default Personal-slot placeholder for biologically-related characters who share/shared a household. Assigned via initialPersonalRelationship alongside initialBiologicalRelationship so the Personal slot is never left empty for family - not romantic, no canUpgradeInto, never auto-proposed or player-proposed, so it can never evolve into Friend/BFF/Couple.",
+
+                "ID":"relationship_housemate",
+                "displayName":"relationship_housemate_displayName",
+                "allowNaturalProposition":false,
+                "allowPlayerProposition":false,
+                "RelationshipMod":[10,0,15,0,0],
+                "_comment2":"trust|fear|good|bad|lust"
             }
         ]
     },
@@ -545,6 +557,7 @@
 
                 "relationship_stranger_displayName":"陌生人",
                 "relationship_acquaintance_displayName":"熟人",
+                "relationship_housemate_displayName":"同居人",
                 "relationship_couple_displayName": "恋人",
                 "relationship_couple_displayName_male": "男朋友",
                 "relationship_couple_displayName_female": "女朋友",
@@ -641,6 +654,7 @@
 
                 "relationship_stranger_displayName":"Stranger",
                 "relationship_acquaintance_displayName":"Acquaintance",
+                "relationship_housemate_displayName":"Housemate",
                 "relationship_couple_displayName": "Lovers",
                 "relationship_couple_displayName_male": "Boyfriend",
                 "relationship_couple_displayName_female": "Girlfriend",

@@ -1,4 +1,5 @@
 
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using QuikGraph;
 using System;
@@ -150,12 +151,13 @@ public class SkillManager
 
     public void CheckExperienceGain(List<string> ownerTags, float amount, ExperienceLog m = null)
     {   // for anything that ignores 
+        Debug.Log($"CheckExperienceGain {Owner.FirstName}, {String.Join(" ", ownerTags)}");
         foreach (var i in scr_System_Serializer.current.index_Experiences.List)
         {
             if ((ownerTags == null || ownerTags.Count < 1) && i.RequiredOwnerTags != null && i.RequiredOwnerTags.Count > 0) continue;
             if (i.RequiredCOMTags != null && i.RequiredCOMTags.Count > 0) continue;
 
-            if (!Utility.ListContainsStrict(i.RequiredOwnerTags, ownerTags)) continue;
+            if (!Utility.ListContainsStrict(ownerTags, i.RequiredOwnerTags)) continue;
 
             AddExperience(i, amount, m);
         }
@@ -250,7 +252,18 @@ public class SkillManager
             else if (!this.skills.ContainsKey(sk.ID)) this.skills.Add(sk.ID, sk.Instantiate());
         }
 
+
         foreach (var sk in this.skills) sk.Value.ReEstablishParent(Owner, sk.Key);
+
+        var keys = this.skills.Keys.ToList();
+        foreach (var i in keys)
+        {
+            if (skills.TryGetValue(i, out var sk) && sk.BaseRef == null)
+            {
+                skills.Remove(i);
+                Debug.Log($"removing skill {sk.ID}");
+            }
+        }
 
         _availableSkillChecks = null;
     }
@@ -283,25 +296,40 @@ public class SkillManager
             return _availableSkillChecks;
         } }
 
-    public int GetRelevantSkills(List<string> selftags, List<string> actiontags, EvaluationPackage.Modifiers mods)
+    public int GetRelevantSkills(List<string> selftags, List<string> actiontags, EvaluationPackage.Modifiers mods, bool forAcceptance = false)
+    {
+        return GetRelevantSkills(selftags, actiontags, mods, out _, forAcceptance);
+    }
+
+    /// <summary>
+    /// Same scan as the 3-arg overload (DC-check bonus, ActionPackage.CollectMods, when forAcceptance is false;
+    /// Acceptance-Check bonus, EvaluationPackage.CalculateWillingness, when forAcceptance is true - each validUse
+    /// entry opts into one, both, or neither via its allowDC/allowAC flags) but also reports whether any winning
+    /// skill's matched validUse entry for this tag context allows a failed-attitude rescue (ActionPackage.TryRescueAttitude,
+    /// DC-check only in practice). No separate re-scan of skills - this is the one query both paths share.
+    /// </summary>
+    public int GetRelevantSkills(List<string> selftags, List<string> actiontags, EvaluationPackage.Modifiers mods, out bool canRescue, bool forAcceptance = false)
     {
         int finalmod = 0, mod = 0;
         string skillName = "";
         List<string> extratags = null;
         List<SkillInstance> pastskills = new List<SkillInstance>();
+        canRescue = false;
         if (actiontags.Count < 1) return finalmod;
         //Debug.Log($"checking skills tags {Owner.CallName} selftags {(selftags == null ? "NULL" : String.Join("|", selftags))} targettags {(actiontags == null ? "NULL" : String.Join("|", actiontags))}");
         foreach(var check in availableSkillChecks)
         {
             skillName = "";
             mod = 0;
+            bool skCanRescue = false;
             if (!actiontags.Contains(check.Key)) continue;
             if (check.Value.Count < 1) continue;
            // Debug.Log($"checking skills tags {Owner.CallName} has {String.Join("|", actiontags)}, found valid {check.Key} with use {check.Value.Count}");
             foreach (var sk in check.Value)
             {
-                if (sk.Check(selftags, actiontags, ref mod, ref skillName, ref extratags, pastskills))
+                if (sk.Check(selftags, actiontags, ref mod, ref skillName, ref extratags, pastskills, out bool thisCanRescue, forAcceptance))
                 {
+                    skCanRescue = thisCanRescue;
                  //   Debug.Log($"{Owner.CallName} skillcheck {skillName} success, {finalmod} {String.Join("|", extratags)} ");
 
                     // extra tags not used... and probably not containing desired extratags.
@@ -316,6 +344,7 @@ public class SkillManager
             {
                 mods.AddModifier(Owner.RefID, skillName, mod);
                 finalmod += mod;
+                if (skCanRescue) canRescue = true;
             }
         }
         return finalmod;

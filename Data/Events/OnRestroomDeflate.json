@@ -36,7 +36,8 @@
                                             "true",
                                             "true",
                                             "deflateMsg",
-                                            "deflateKojo"
+                                            "deflateKojo",
+                                            "deflateMemory"
                                         ]
                                     },
                                     {
@@ -127,9 +128,21 @@
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "log any accumulated deflateMemory into self's own memory; no-op if the attempt branch above never ran DeflateInternal",
                         "label": "end",
                         "isLast": true,
-                        "line": ""
+                        "line": "",
+                        "Results": [
+                            {
+                                "Type": "LogMemoryEntryWithAppend",
+                                "arguments": [
+                                    "self",
+                                    "",
+                                    "deflateMemory",
+                                    "true"
+                                ]
+                            }
+                        ]
                     }
                 ]
             }

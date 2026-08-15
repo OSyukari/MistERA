@@ -546,6 +546,13 @@ public class Character_Body
             UtilityEX.GetActorTag(ref climaxTags, Owner);
 
             int climaxDebuff = 0;
+            // Accumulated across every climaxing part below, and the pride/partner tags further down, so all
+            // of Owner's climax-experience grants (C/B/M/V/W/A_climax, raped_climax, masturbate_climax,
+            // animal_climax) come from a single CheckExperienceGainNoStimulate call at the end of this method
+            // instead of one call per part/per experience - each experience's own RequiredOwnerTags/
+            // RequiredCOMTags decides which (if any) actually grant from the merged pool.
+            List<string> allClimaxOwnerTags = new List<string>();
+            List<string> allClimaxComTags = new List<string>();
             foreach (var part in this.Internals)
             {
 
@@ -631,8 +638,13 @@ public class Character_Body
 
                             if (!rel.HasPermission_Family())
                             {
-                                rel.ModRelationValue(RelationshipScoreType.Trust, -cumAmount, false);
-                                exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Trust, (int)-cumAmount);
+                                // trust penalty only applies to a creampie proper (the container is connected
+                                // to a womb) - mouth/anus/etc without family permission still cost Badwill/Fear
+                                if (container.womb != null)
+                                {
+                                    rel.ModRelationValue(RelationshipScoreType.Trust, -cumAmount, false);
+                                    exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Trust, (int)-cumAmount);
+                                }
 
                                 rel.ModRelationValue(RelationshipScoreType.Badwill, cumAmount, false);
                                 exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Badwill, (int)cumAmount);
@@ -669,7 +681,7 @@ public class Character_Body
                         var memInst5 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst5, selfTag, -1, true);
 
-                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>(), exp);
+                        allClimaxOwnerTags.AddRange(selfTag);
 
                     }
                     else
@@ -682,7 +694,7 @@ public class Character_Body
                         var memInst6 = new MemInstance(new List<int>() { part.Owner.RefID }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Like, desc1);
                         part.Owner.Memory.AddEntry(memInst6, selfTag, -1, true);
 
-                        UtilityEX.CheckExperienceGainNoStimulate(part.Owner, 1, false, selfTag, new List<string>(), exp);
+                        allClimaxOwnerTags.AddRange(selfTag);
                     }
                 }
             }
@@ -727,10 +739,53 @@ public class Character_Body
 
                 bool logged = false;
 
-                if (Owner.CurrentJob != null && Owner.CurrentJob is Job_Sex_Group)
+                if (Owner.CurrentJob != null && Owner.CurrentJob is Job_Sex_Group sexJob)
                 {
                     List<int> relevantActorRefs = Owner.CurrentJob.GetLastInteractedActorRefs(Owner.RefID);
                     Utility.ShuffleList(relevantActorRefs);
+
+                    // consent check for the trust bonus below: scene has no designated non-consenting party,
+                    // and most of Owner's currently active interactions actually carried permission
+                    bool sceneHasConsent = sexJob.Rapist.Count == 0;
+                    int consideredEP = 0, permittedEP = 0;
+                    foreach (var epc in listEP)
+                    {
+                        if (epc.Doer != Owner && epc.Receiver != Owner) continue;
+                        consideredEP++;
+                        if (epc.HasPermission) permittedEP++;
+                    }
+                    bool mostHadPermission = consideredEP == 0 || permittedEP * 2 >= consideredEP;
+                    float trustGain = sceneHasConsent && mostHadPermission ? intensity * 0.01f : 0f;
+
+                    // pride penalty for a non-consensual climax, routed through the standard personality-driven
+                    // CheckPrideChange pathway (same "raped"/"forced" tags CheckRelationshipChange's Fear bump
+                    // already reads) rather than a direct mod, so tier/mult curves apply same as every other
+                    // pride event. amount = intensity * 0.1 lands on the documented "100 intensity -> -1 pride"
+                    // at the same tier-distance=-1/mult=1 baseline the existing imprisoned/restrained entries assume.
+                    var prideTags = new List<string>();
+                    foreach (var epc in listEP)
+                    {
+                        if (epc.Doer == Owner || epc.Receiver == Owner) prideTags.AddRange(epc.GetActorEPTags(Owner.RefID));
+                    }
+                    Utility.DistinctInPlace(prideTags);
+                    if (prideTags.Contains("raped") || prideTags.Contains("forced"))
+                    {
+                        Owner.Relationships.CheckPrideChange(prideTags, prideTags, intensity * 0.001f, exp);
+                    }
+
+                    // partner-side tags (counterpart's own ActorKeywords + the COM's own comTags, e.g. "animal"/
+                    // "unsafe") - mirrors prideTags above but via GetActorEPTargetTags instead of GetActorEPTags,
+                    // since this needs to describe who Owner was WITH, not Owner's own state. Feeds
+                    // experience_sex_animal_climax's RequiredCOMTags via the merged call below.
+                    var partnerTags = new List<string>();
+                    foreach (var epc in listEP)
+                    {
+                        if (epc.Doer == Owner || epc.Receiver == Owner) partnerTags.AddRange(epc.GetActorEPTargetTags(Owner.RefID));
+                    }
+                    Utility.DistinctInPlace(partnerTags);
+
+                    allClimaxOwnerTags.AddRange(prideTags);
+                    allClimaxComTags.AddRange(partnerTags);
 
                     foreach (var c in relevantActorRefs)
                     {
@@ -750,17 +805,28 @@ public class Character_Body
                                     logged = true;
                                 }
                             }
-                            float value = Mathf.Abs(climaxDebuff * 0.1f) + satisfiedBonus;
+                            float value = Mathf.Abs(climaxDebuff * 0.1f) + Mathf.Abs(satisfiedBonus);
                             rel.ModRelationValue(RelationshipScoreType.Goodwill, value, false);
                             rel.ModRelationValue(RelationshipScoreType.Desire, value, false);
                             exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Goodwill, (int)value);
                             exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Desire, (int)value);
                             if (satisfiedBonus > 0) exp.AddMessage(rel.Owner.RefID, $"{Owner.FirstName}'s desire is getting satisfied ({(satisfiedBonus).ToString("+0;-#")})");
+
+                            if (trustGain != 0)
+                            {
+                                rel.ModRelationValue(RelationshipScoreType.Trust, trustGain, false);
+                                exp.AddRelations(rel.Owner.RefID, rel.TargetID, RelationshipScoreType.Trust, (int)trustGain);
+                            }
                         }
 
                     }
                 }
 
+                // single grant covering every climax-experience for Owner (C/B/M/V/W/A_climax from the per-part
+                // loop above, raped_climax/masturbate_climax/animal_climax from prideTags/partnerTags above, if
+                // Owner was in a Job_Sex_Group) - RequiredOwnerTags/RequiredCOMTags on each experience decides
+                // which of them actually grant from this one merged pool.
+                UtilityEX.CheckExperienceGainNoStimulate(Owner, 1, false, Utility.Distinct(allClimaxOwnerTags), Utility.Distinct(allClimaxComTags), exp);
 
                 List<string> wbmessages = new List<string>();
                 foreach (var wb in this.Owner.wombs)

@@ -1,0 +1,98 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "com_sex_oral_swallow",
+                "SelfValidator":{
+                    "chara_conditions":[
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refKeys": ["swallower_receiver"],
+                        "baseScope": "ScopeWithinRef",
+                        "extraScopeArguments": ["receiver"],
+                        "chara_conditions": [ { "parameters": ["canFullyDeflate", "mouth"] } ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    },
+                    {
+                        "refKeys": ["swallower_doer"],
+                        "baseScope": "ScopeWithinRef",
+                        "extraScopeArguments": ["doer"],
+                        "chara_conditions": [ { "parameters": ["canFullyDeflate", "mouth"] } ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "default entry point (array index 0). com_sex_oral_P_Force's result_event enters here directly via eventLabel:\"receiver\".",
+                        "label": "receiver",
+                        "options": [
+                            {
+                                "option": "receiver swallows",
+                                "line": "com_sex_oral_swallow_receiver_line_1",
+                                "target_chara_conditions": { "swallower_receiver": [] },
+                                "Results": [
+                                    { "Type": "SwallowInternal", "arguments": ["swallower_receiver", "mouth", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                ]
+                            },
+                            {
+                                "option": "receiver has nothing to swallow, silent exit",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "com_sex_oral_P's result_event enters here directly via eventLabel:\"doer\".",
+                        "label": "doer",
+                        "options": [
+                            {
+                                "option": "doer swallows",
+                                "line": "com_sex_oral_swallow_doer_line_1",
+                                "target_chara_conditions": { "swallower_doer": [] },
+                                "Results": [
+                                    { "Type": "SwallowInternal", "arguments": ["swallower_doer", "mouth", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                ]
+                            },
+                            {
+                                "option": "doer has nothing to swallow, silent exit",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "end"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "isLast": true,
+                        "line": "",
+                        "Results": [
+                            { "Type": "FlushMessageExpAll", "arguments": [ "false" ] }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_sex_oral_swallow_receiver_line_1": "口中的肉棒逼迫$receiver.firstname$咽下了精液。",
+                "com_sex_oral_swallow_doer_line_1": "口中的肉棒迫使$doer.firstname$咽下了嘴里的精液。"
+            },
+            "en-us": {
+                
+            }
+        }
+    }
+}

@@ -12,14 +12,17 @@
                 },
                 "pride_decrease": {
                     "High":   { "mods": [{ "selfTags":["imprisoned"], "comTags":[] }] },
-                    "Medium": { "mods": [{ "selfTags":["raped"], "comTags":["unsafe"], "tags":["nsfw"] }] },
+                    "Medium": { "mods": [
+                        { "selfTags":["raped"], "mult":0.01, "comTags":["unsafe"], "tags":["nsfw"] },
+                        { "selfTags":["forced"], "mult":0.01, "comTags":["unsafe"], "tags":["nsfw"] }
+                    ] },
                     "Low": {
                         "mods": [
                             { "selfTags":["restrained"], "comTags":[] },
-                            { "selfTags":["raped","penetration"], "comTags":["unsafe"], "tags":["nsfw"] }
+                            { "selfTags":["raped","penetration"], "mult":0.01, "comTags":["unsafe"], "tags":["nsfw"] }
                         ]
                     },
-                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.2, "threshold":1, "tags":["nsfw"] }] }
+                    "None": { "mods": [{ "selfTags":["pain"], "comTags":["unsafe"], "mult":0.1, "threshold":1, "tags":["nsfw"] }] }
                 },
                 "entries_list": [
                     {

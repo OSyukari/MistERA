@@ -532,6 +532,19 @@ public partial class EvaluationPackage : I_ResultStorage
             copy.bonus += k;
         }
 
+        // tag-matched skills (validUse entries with allowAC:true) - same selftags/actiontags pairing CollectMods
+        // uses for the DC-check, so e.g. "raped"/"masturbate" (carried in Doer/ReceiverSelfTag via
+        // GetJobInteractionTagsFrom/GetInteractionTagsFrom) are visible here too, unlike the narrower extraCOMTags
+        // this method's own baseValue/Lust checks above are limited to.
+        //
+        // Only applies to whichever role is functionally "receiving" this specific willingness check: the
+        // Receiver always, or the Doer only when this check is Doer's willingness toward the Master (i.e. Doer
+        // is being ordered, not acting on their own initiative toward the Receiver) - addiction skills represent
+        // the skill owner's own craving to receive/experience something, not a reason to act on someone else.
+        if (!isDoer || (p.Master != null && target == p.Master))
+        {
+            copy.bonus += self.Skills.GetRelevantSkills(isDoer ? DoerSelfTag : ReceiverSelfTag, isDoer ? ReceiverTargetTag : DoerTargetTag, copy, true);
+        }
 
         if (scr_System_CampaignManager.current.DebugMode && self.isImprisoned)
         {
@@ -595,10 +608,30 @@ public partial class EvaluationPackage : I_ResultStorage
     {
 
         Modifiers m1 = CalculateWillingness(true, Doer, p.Master, isThreat);
-        Modifiers m2 = CalculateWillingness(true, Doer, Receiver, isThreat);
+        // CalculateWillingness(target: null) short-circuits to an automatic RateValue=100 (no relationship to
+        // check against) - correct when there's truly nobody to ask (no Receiver, no Master), but when a real
+        // Master is ordering the Doer, that automatic 100 must not be allowed to compete against m1: it always
+        // wins the max() below regardless of m1's value (RateValue is normally clamped to [5,95]), which was
+        // silently bypassing the Master-ordered obedience/addiction-skill check for any Receiver-less command
+        // (e.g. masturbation) every time, whether or not a Master was involved.
+        Modifiers m2 = Receiver != null ? CalculateWillingness(true, Doer, Receiver, isThreat) : null;
 
-
-        if (m1.RateValue > m2.RateValue)
+        if (m2 == null)
+        {
+            bool masterOrdered = p.Master != null && p.Master != Doer;
+            if (masterOrdered)
+            {
+                this.modifiers.MergeModifiers(m1);
+                requestRate = m1.RateValue;
+                RecentRefusalPenalty = m1.RecentRefusalPenalty;
+            }
+            else
+            {
+                requestRate = 100;
+                RecentRefusalPenalty = 0;
+            }
+        }
+        else if (m1.RateValue > m2.RateValue)
         {
             this.modifiers.MergeModifiers(m1);
             requestRate = m1.RateValue;
@@ -611,11 +644,11 @@ public partial class EvaluationPackage : I_ResultStorage
             RecentRefusalPenalty = m2.RecentRefusalPenalty;
         }
 
-        if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Request rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + $"] Doer->Master[{m1.RateValue}] Doer->Receiver[{m2.RateValue}] final[{requestRate}]");
+        if (scr_System_CampaignManager.current.DebugMode) tooltip.Add("EVP Request rate: master[" + (p.Master == null ? "null" : p.Master.RefID) + "] doer[" + (Doer == null ? "null" : Doer.RefID) + "] receiver[" + (Receiver == null ? "null" : Receiver.RefID) + $"] Doer->Master[{m1.RateValue}] Doer->Receiver[{(m2 == null ? "N/A" : m2.RateValue.ToString())}] final[{requestRate}]");
         //if (requestRate == 95 && (p.Master == null || p.Master == doer)) requestRate = 100;  // if no master involved, skip)
 
-        attitudeRate_neg_doer = Math.Min(m1.attitudeRate_neg, m2.attitudeRate_neg);
-        attitudeRate_pos_doer = Math.Min(m1.attitudeRate_pos, m2.attitudeRate_pos);
+        attitudeRate_neg_doer = m2 == null ? m1.attitudeRate_neg : Math.Min(m1.attitudeRate_neg, m2.attitudeRate_neg);
+        attitudeRate_pos_doer = m2 == null ? m1.attitudeRate_pos : Math.Min(m1.attitudeRate_pos, m2.attitudeRate_pos);
     }
     /////////////////////
     // Execution Codes
@@ -713,11 +746,12 @@ public partial class EvaluationPackage : I_ResultStorage
             }
 
             //apply results later cuz results require COM attitude end
-            if (response == Memory_Response.Accept || response >= Memory_Response.Success)
-            {
-                if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer, m.exp);
-                if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver, m.exp);
-            }
+            // called unconditionally regardless of outcome — ApplyResults itself gates the character-effect
+            // results on `success`, while its result_event calls always attempt (Result_Event.Apply's own
+            // requireSuccess/requireFailure fields decide whether any given one fires on this outcome)
+            bool comSuccess = response == Memory_Response.Accept || response >= Memory_Response.Success;
+            if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer, m.exp, comSuccess);
+            if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver, m.exp, comSuccess);
         }
 
         foreach(var entry in logExps)
@@ -1937,8 +1971,8 @@ public partial class EvaluationPackage : I_ResultStorage
             if (source != null && body.Owner.canAct)
             {
                 var relation = body.Owner.Relationships.FindRelationshipWith(source);
-                var attitude = relation == null ? null : relation.GetCurrentAttitude();
-                if (attitude != null && attitude.GetObedienceMod(relation) > 0)
+                var attitude = body.Owner.GetCurrentAttitude();
+                if (attitude != null && relation != null && attitude.GetObedienceMod(relation) > 0)
                 {
                     ModRelationshipResult(m, relation, RelationshipScoreType.Fear, (int)pain);
                 }

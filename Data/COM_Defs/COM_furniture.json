@@ -119,7 +119,7 @@
                             }
                         }
                     ],
-                    "result_event": { "id_overwrite": "com_furniture_restroom_deflate" }
+                    "result_event": { "id_overwrite": "com_furniture_restroom_deflate", "requireSuccess": true }
                 },
                 "variants": [
                     {
@@ -803,7 +803,7 @@
                             }
                         }
                     ],
-                    "result_event": { "id_overwrite": "com_furniture_takeShower_deflate" }
+                    "result_event": { "id_overwrite": "com_furniture_takeShower_deflate", "requireSuccess": true }
                 },
                 "description_begin":{ "Entries":[{"texts":["com_furniture_takeShower_description_begin_1"]}], "keepLooking":false },
                 "description_ongoing":{ "Entries":[{"texts":["com_furniture_takeShower_description_ongoing_1"]}], "keepLooking":false },

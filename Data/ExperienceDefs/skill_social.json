@@ -26,17 +26,24 @@
                         ],
                         "DisplayName":"1",
                         "validUse": [
-                            { 
+                            {
                                 "skillUseTags":"social",
-                                "requireCOMTags":["interaction"]
+                                "requireCOMTags":["interaction"],
+                                "allowDC":true
                             } ,
-                            { 
+                            {
                                 "skillUseTags":"touch",
-                                "requireCOMTags":["safe"]
-                            } 
+                                "requireCOMTags":["safe"],
+                                "allowDC":true
+                            } ,
+                            {
+                                "skillUseTags":"unsafe",
+                                "requireCOMTags":["touch"],
+                                "allowDC":true
+                            }
                         ]
                     },{
-                        "requirements":{ 
+                        "requirements":{
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",
                             "entries":[
                                 {
@@ -46,9 +53,17 @@
                          },
                          "stat_modifiers":
                          [
-   
+
                          ],
-                        "DisplayName":"2"
+                        "DisplayName":"2",
+                        "validUse": [
+                            {
+                                "skillUseTags":"social",
+                                "requireCOMTags":["interaction"],
+                                "allowFailedRescue":true,
+                                "allowDC":true
+                            }
+                        ]
                     },{
                         "requirements":{ 
                             "$type":"CharaSkill+RequireAll, Assembly-CSharp",

@@ -156,6 +156,7 @@ public class StatsManager : I_StatsManager
     }
 
     public bool HasTrait(Traits t) { return traits.Contains(t.ID); }
+    public bool HasTrait(string id) { return traits.Contains(id); }
     /// <summary>
     /// Return all status with id match
     /// </summary>
@@ -1336,7 +1337,6 @@ public class StatsManager : I_StatsManager
         }
     }
     [JsonIgnore] private StatusEx_Instance mood = null;
-
 
 
 }

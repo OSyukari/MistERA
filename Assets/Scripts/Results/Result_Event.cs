@@ -8,6 +8,9 @@ public class Result_Event
 
     public string eventLabel = "";
 
+    public bool requireSuccess = false;
+    public bool requireFailure = false;
+
     /// <summary>
     /// Agnostic to call path: pass the current EvaluationPackage for EP-scoped targets (this pairing only), or
     /// null for AP-scoped targets (the whole ActionPackage's own doer/receiver). Either way, the doer/receiver/actor
@@ -16,6 +19,17 @@ public class Result_Event
     public void Apply(ActionPackage p, EvaluationPackage evp)
     {
         if (p == null || p.targetCOM == null) return;
+
+        if (requireSuccess || requireFailure)
+        {
+            // matches EvaluationPackage.Execute's own success predicate (response == Accept || response >= Success)
+            bool isSuccess = evp != null
+                ? (evp.Response == Memory_Response.Accept || evp.Response >= Memory_Response.Success)
+                : p.executeSuccessful;
+
+            if (requireSuccess && !isSuccess) return;
+            if (requireFailure && isSuccess) return;
+        }
 
         string finalID = ComposeID(p.targetCOM.ID);
         if (finalID == "") return;
@@ -39,7 +53,14 @@ public class Result_Event
 
         var self = doerTargets[0];
 
-        var ev = new EventInstance(self, finalID, eventLabel);
+        // immediateInit: false — construct without loading/validating yet, so doer/receiver/actor/standby/
+        // participant are all populated into ev.Targets below BEFORE LoadNext runs Validate() (which is what
+        // evaluates the Event's own TargetValidators, e.g. ScopeWithinRef reading ev.Targets["doer"/"receiver"]).
+        // Validate() only ever runs once per EventInstance (guarded by instance.scoped), so if it ran during
+        // construction here it would always see an empty Targets dict and any ScopeWithinRef scope keyed off
+        // "doer"/"receiver"/etc. would never resolve. Mirrors the same construct-then-populate-then-LoadNext
+        // sequencing already used by EventUtility.StartEvent(Job_Expedition, SerializableEventPackage).
+        var ev = new EventInstance(self, "", "", 100, false);
         ev.Targets.Add("doer", doerTargets);
         ev.Targets.Add("receiver", receiverTargets);
         ev.Targets.Add("actor", actorTargets);
@@ -66,8 +87,11 @@ public class Result_Event
             ev.Targets.Add("participant", participant);
         }
 
-        // let event scoping sort it out — further filtering (e.g. group scenes) happens
-        // via the Event's own TargetValidators (EventUtility.FindTargets, e.g. ScopeWithinRef)
+        // now that every target list above is populated, actually load/validate the event — this is what
+        // runs TargetValidators (EventUtility.FindTargets, e.g. ScopeWithinRef), so further filtering
+        // (e.g. group scenes) can correctly read ev.Targets["doer"/"receiver"/etc.]
+        ev.LoadNext(finalID, eventLabel);
+
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
 
