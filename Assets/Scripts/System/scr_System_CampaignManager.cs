@@ -498,6 +498,10 @@ public class scr_System_CampaignManager : MonoBehaviour
             }
             var log = LogManager.AddLog(desc, visible, replaceStrings, displaySnapshot);
             if (log != null) Observer_MessageLogs?.Invoke(log, animate);
+            else
+            {
+                Debug.Log($"Log skipped {desc.message}");
+            }
 
         }
         else if (record is KojoCollector)
@@ -507,6 +511,12 @@ public class scr_System_CampaignManager : MonoBehaviour
             // RefID -2 
             if (desc == null) return;
             if (desc.VisibleTo(visible, null)) AddLog(desc, animate, desc.RightAlign(visible), "", replaceStrings);
+            else
+            {
+                List<string> dump = new List<string>();
+                desc.DumpMessage(dump);
+                Debug.Log($"Log skipped {dump.Count}\n{String.Join("\n", dump)}");
+            }
         }
         else if (record is QuestionBoxCollector)
         {

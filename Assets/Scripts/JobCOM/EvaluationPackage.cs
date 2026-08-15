@@ -267,9 +267,9 @@ public partial class EvaluationPackage : I_ResultStorage
         set { attitude_doer = value; }
     }
 
-    [JsonProperty] List<string> extraDoerTags = new List<string>();
-    [JsonProperty] List<string> extraCOMTags = new List<string>();
-    [JsonProperty] List<string> extraReceiverTags = new List<string>();
+    List<string> extraDoerTags = new List<string>();
+    List<string> extraCOMTags = new List<string>();
+    List<string> extraReceiverTags = new List<string>();
     [JsonProperty] List<string> injectedDoerTags = new List<string>();
     [JsonProperty] List<string> injectedCOMTags = new List<string>();
     [JsonProperty] List<string> injectedReceiverTags = new List<string>();

@@ -21,27 +21,46 @@ public class ActionPackage_PathTo : ActionPackage
 
     [JsonIgnore] public override int RoomKey { get { return scr_System_CampaignManager.current.Map.FindRoomByChara(this.Doer.RefID).RefID; } }
 
+    // Persisted mirror of _path, kept in sync whenever _path is (re)computed or popped. Needed because a
+    // doer mid-trip through a world-map crossing is parked in Map_Instance.GetOrCreateWorldTransitRoom's
+    // synthetic holding room, which is deliberately outside the normal floor/faction pathing graph (no
+    // MainExit, no faction connections) - a live Map.Findpath recompute from in there can never succeed.
+    // Restoring _path verbatim from this snapshot on load avoids ever needing that recompute mid-trip.
+    [JsonProperty] private List<PathEdgeSnapshot> _pathSnapshot = null;
+
     List<TaggedEdge<int, Door_Instance>> _path = null;
     [JsonIgnore]
     List<TaggedEdge<int, Door_Instance>> path
     {
         get
         {
+            if (_path == null && _pathSnapshot != null)
+            {
+                _path = _pathSnapshot.Select(s => new TaggedEdge<int, Door_Instance>(s.Source, s.Target, new Door_Instance(s.Cost) { worldInstance = s.WorldInstance })).ToList();
+            }
             if (_path == null && doerRef != -1 && TargetRoom != null)
             {
                 var pp = scr_System_CampaignManager.current.Map.Findpath(doerRef, TargetRoom.RefID);
                 if (pp == null) return null;
                 _path = pp.ToList();
+                SyncPathSnapshot();
             }
             return _path;
         }
     }
+
+    void SyncPathSnapshot()
+    {
+        _pathSnapshot = _path?.Select(e => new PathEdgeSnapshot { Source = e.Source, Target = e.Target, Cost = e.Tag.Cost, WorldInstance = e.Tag.worldInstance }).ToList();
+    }
+
     protected void PathPop()
     {
         if (_path != null)
         {
-            
+
             _path.RemoveAt(0);
+            if (_pathSnapshot != null && _pathSnapshot.Count > 0) _pathSnapshot.RemoveAt(0);
             duration = _path.Count > 0 ? (int)_path[0].Tag.Cost : 0;
             if (duration > 0) toggleRepeat = true;
 
@@ -283,4 +302,17 @@ public class ActionPackage_PathTo : ActionPackage
     {
 
     }
+}
+
+/// <summary>
+/// Serializable stand-in for a single TaggedEdge&lt;int, Door_Instance&gt; step of ActionPackage_PathTo's
+/// in-progress path - QuikGraph's TaggedEdge and Door_Instance aren't themselves round-trippable through
+/// Json.NET, so the AP mirrors its live path into a list of these instead.
+/// </summary>
+public class PathEdgeSnapshot
+{
+    public int Source;
+    public int Target;
+    public float Cost;
+    public string WorldInstance = "";
 }

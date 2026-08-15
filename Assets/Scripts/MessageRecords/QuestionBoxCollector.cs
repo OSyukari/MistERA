@@ -12,7 +12,14 @@ public class QuestionBoxCollector : I_Records
     public List<string> displayTagsOverride = new List<string>();
     public bool autoAnimate = false;
 
-
+    [JsonIgnore]
+    public string Dump
+    {
+        get
+        {
+            return $"QuestionBoxCollector: {message}";
+        }
+    }
     public bool IsRelevantActor(int i)
     {
         return relevantActors.Contains(i);

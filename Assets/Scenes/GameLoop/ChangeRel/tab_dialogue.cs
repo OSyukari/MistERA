@@ -13,7 +13,7 @@ public class tab_dialogue : MonoBehaviour
 
     public void ChangeTab(scr_menu_changeRel menu)
     {
-        Debug.Log("tab_dialogue ChangeTab execute");
+        //Debug.Log("tab_dialogue ChangeTab execute");
 
         menu.title.SetText(LocalizeDictionary.QueryThenParse("menu_dialogue_title")
             .Replace("$source$", menu.CurrentRel.Target.FirstName)

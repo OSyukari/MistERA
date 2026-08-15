@@ -413,9 +413,13 @@ public class Job : IDisposable, I_Disposable
                 // previous[i] might be the actor lock package, so be careful since removing that one might cause index out of bound
 
                 if (scr_System_CentralControl.current.LogPrefs.DLog_Jobs) Debug.Log("Job ["+DisplayName+"] RemoveActor ["+scr_System_CampaignManager.current.FindInstanceByID(charaRef).FirstName+"], unregistering package [" + p.DisplayName + "]");
-                p.DisablePackage();
+                if (p.Duration != 0) p.DisablePackage();
+                else p.PackageRepeat = false;
                 scr_System_CampaignManager.current.Unregister(p);
+
                 packages_previous.RemoveAt(i);
+                packages_completed.Add(p);
+                // -> if a package has run to completion, we need to keep it for a last update cycle.
             }
         }
         actorJobComplete.Remove(charaRef);
@@ -822,7 +826,8 @@ public class Job : IDisposable, I_Disposable
 
     [JsonIgnore] public virtual bool isPlayerRelatedJob { get { return this.actorRefID.Contains(0) 
                 || this.packages_current.Find(x=>x.actorRefs.Contains(0)) != null 
-                || this.packages_previous.Find(x => x.actorRefs.Contains(0)) != null;
+                || this.packages_previous.Find(x => x.actorRefs.Contains(0)) != null
+                || this.packages_completed.Find(x => x.actorRefs.Contains(0)) != null;
         } }
 
     [JsonIgnore] public virtual bool isVisibleToPlayer { get { return this.ParentRoom != null && ParentRoom.RefID == scr_System_CampaignManager.current.Map.FindRoomByChara(0).RefID; } }
@@ -871,7 +876,7 @@ public class Job : IDisposable, I_Disposable
         var player = scr_System_CampaignManager.current.Player;
 
 
-
+        //Debug.Log("job visible to player, collecting");
 
         if (ap.Duration == -1 && packages_previous.FindAll(x => UtilityEX.ArePackagesEqual(x, ap)).Count < 1)
         {
@@ -881,7 +886,12 @@ public class Job : IDisposable, I_Disposable
         if (ap.packageStateChanged)
         {
             m.Merge(ap.mcol, false);
+            //Debug.Log("AP packageStateChanged, merged");
             ap.CaptureRecording();
+        }
+        else
+        {
+            //Debug.Log("AP state not changed, dropped");
         }
 
         if (!ap.isPaused && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(m, scr_System_CampaignManager.current.Player);
@@ -932,10 +942,20 @@ public class Job : IDisposable, I_Disposable
     /// </summary>
     public virtual void PostUpdateTime()
     {
-        packages_completed.Clear();
-        //Debug.Log("PostUpdateTime for job " + this.jobRefID);
-        actorJobComplete.RemoveAll(x => !this.actorRefID.Contains(x));
+
         bool visible = isJobVisibleToPlayer;
+        for (int i = packages_completed.Count - 1; i >= 0; i--)
+        {
+            var p = packages_completed[i];
+            if (p.Duration != 0) continue;
+            if (visible) CollectLogs(p);
+        }
+
+        packages_completed.Clear();
+
+
+        actorJobComplete.RemoveAll(x => !this.actorRefID.Contains(x));
+       // if (visible && packages_previous.Count > 0) Debug.Log($"PostUpdateTime for job {this.jobRefID}, AP count {packages_previous.Count}");
         for ( int i = packages_previous.Count -1; i >= 0; i--)
         {
             var p = packages_previous[i];
@@ -963,6 +983,7 @@ public class Job : IDisposable, I_Disposable
                 // success remove
             }
         }
+
 
         for(int i = packages_placeholder.Count - 1; i >= 0; i--)
         {

@@ -11,6 +11,7 @@ public class Result_EvaluationPackage
     // add/inject doer/target tag
     public string injectSelfTag = "";
     public string injectTargetTag = "";
+    public string injectCOMTag = "";
 
     // modify/override acceptance check
     public Memory_Response overrideResponse = Memory_Response.None;
@@ -29,6 +30,8 @@ public class Result_EvaluationPackage
         bool isDoer = ep.isDoer(self);
         if (injectSelfTag != "" || injectTargetTag != "")
             ep.AddExtraActorTags(isDoer ? injectSelfTag : injectTargetTag, isDoer ? injectTargetTag : injectSelfTag);
+
+        if (injectCOMTag != "") ep.AddExtraCOMTags(injectCOMTag);
 
         if (overrideResponse != Memory_Response.None) ep.SetForcedResponse(isDoer, overrideResponse, overrideResponseExplanation);
         if (overrideAttitude != Memory_Attitude.None) ep.SetForcedAttitude(isDoer, overrideAttitude);

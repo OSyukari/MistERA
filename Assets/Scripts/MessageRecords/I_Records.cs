@@ -16,5 +16,6 @@ public interface I_Records
 
     public bool IsRelevantActor(int i);
     [JsonIgnore] public bool IsSingleActor{ get; }
+    [JsonIgnore] public string Dump { get; }
 }
 

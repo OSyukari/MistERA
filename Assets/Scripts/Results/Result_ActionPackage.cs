@@ -17,4 +17,9 @@ public class Result_ActionPackage
         if (!ep.Package.ExtraCOMTags.Contains(injectCOMTag)) ep.Package.AddExtraCOMTag(injectCOMTag);
         ep.AddExtraCOMTags(injectCOMTag);
     }
+    public void Apply(ActionPackage Package)
+    {
+        if (injectCOMTag == "") return;
+        if (!Package.ExtraCOMTags.Contains(injectCOMTag)) Package.AddExtraCOMTag(injectCOMTag);
+    }
 }

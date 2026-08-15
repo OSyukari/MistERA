@@ -105,7 +105,10 @@ public class PersonalityAcceptanceMod
         if (Result_ActionPackage != null) Result_ActionPackage.Apply(ep);
         if (Result_EvaluationPackage != null) Result_EvaluationPackage.Apply(ep, self, target);
     }
-
+    public void Apply(ActionPackage ap, Character_Trainable self, Character_Trainable target)
+    {
+        if (Result_ActionPackage != null) Result_ActionPackage.Apply(ap);
+    }
     // ------------------------
 
     // nested mods, checked only if this node validates — lets shared conditions live once on the parent

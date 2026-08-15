@@ -354,6 +354,7 @@ public class MessageCollect
     public bool MergeVisible(MessageCollect m, Character_Trainable c)
     {
         bool added = false;
+        bool debug = true;
         foreach (var mm in m.messages_checks)
         {
             if (mm.VisibleTo(c))
@@ -361,6 +362,8 @@ public class MessageCollect
                 this.messages_checks.Add(mm);
                 added = true;
             }
+            else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
+            
         }
         foreach (var mm in m.messages_before)
         {
@@ -369,6 +372,7 @@ public class MessageCollect
                 this.messages_before.Add(mm);
                 added = true;
             }
+            else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
         }
         foreach (var mm in m.messages_after)
         {
@@ -377,6 +381,7 @@ public class MessageCollect
                 this.messages_after.Add(mm);
                 added = true;
             }
+            else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
         }
         foreach (var mm in m.messages_kojo) 
         {
@@ -384,6 +389,7 @@ public class MessageCollect
                 this.messages_kojo.Add(mm);
                 added = true;
             }
+            else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
         }
         foreach (var mm in m.messages_kojo_after) 
         {
@@ -391,6 +397,7 @@ public class MessageCollect
                 this.messages_kojo_after.Add(mm);
                 added = true;
             }
+            else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
         }
         foreach (var mm in m.messages_exp)
         {
@@ -399,6 +406,7 @@ public class MessageCollect
                 this.messages_exp.Add(mm);
                 added = true;
             }
+            else if (debug) Debug.LogError($"dropping nonvisible check {mm.Dump}");
         }
         foreach(var apCollect in m.apRecords)
         {

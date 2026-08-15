@@ -12,6 +12,14 @@ public enum VisibilityLevel
 public class DescriptionCollector : I_Records
 {
     [JsonIgnore]
+    public string Dump
+    {
+        get
+        {
+            return $"DescriptionCollector: {message}\n{message_excludeRelated}";
+        }
+    }
+    [JsonIgnore]
     public bool isValid
     {
         get

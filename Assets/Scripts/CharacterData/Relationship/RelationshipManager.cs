@@ -878,9 +878,9 @@ public class RelationshipManager
         if (kol.isValid)
         {
             if (ep.targetCOM != null) message.message = ep.targetCOM.Replace(message.message);
+            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.selfPortraitTag)} | {String.Join(" ", message.targetPortraitTag)}");
             return kol;
             //m.AddKojo(kol);
-            if (scr_System_CentralControl.current.LogPrefs.DLog_KojoEvents) Debug.Log($"Kojo Message logged: [{message.message} | {String.Join(" ", message.selfPortraitTag)} | {String.Join(" ", message.targetPortraitTag)}");
         }
         else return null;
     }

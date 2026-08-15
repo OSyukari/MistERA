@@ -14,8 +14,7 @@
                         "Requirement_KojoVariables": [
                             { "scope": "Target_Target", "require": { "isDailyVariable": false, "variableID": "erav_kanade_promise", "checkExistOnly": false, "operand": "eq", "value": 1 } }
                         ],
-                        "Result_ActionPackage": { "injectCOMTag": "erav_kanade_promise_accept" },
-                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_kanade_promise_accept_reason" }
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_kanade_promise_accept_reason", "injectCOMTag":"erav_kanade_promise_accept" }
                     }
                 ],
                 "entries_list": [

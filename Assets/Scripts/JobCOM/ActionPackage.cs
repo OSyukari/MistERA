@@ -1622,6 +1622,7 @@ public abstract class ActionPackage
             }
             if (exist && single) break;
         }
+        desc.LoadActors(this.actorRefs);
         desc.LoadActors(this.job.GetLogRelevantActors(this));
 
         //desc.message_excludeRelated = desc.message;
@@ -1660,9 +1661,16 @@ public abstract class ActionPackage
         if (desc.message.Length < 1) return;
 
 
+        // Acceptance-check messages are scoped to this AP's own Doer/Receiver (e.g. the player directly
+        // commanding an NPC), not just the hosting Job's actor roster - GetLogRelevantActors alone can drop
+        // the player whenever they aren't a job participant and aren't set as masterRef, which silently
+        // kills the whole message (AddLog falls back to the never-populated message_excludeRelated).
+        desc.LoadActors(this.actorRefs);
         desc.LoadActors(this.job.GetLogRelevantActors(this));
         m.AddMessage_Checks(desc, logging? Room : null);//
         if (!logging) packageStateChanged = true;
+
+       // Debug.Log($"logAcceptance {desc.message} related {String.Join(" ", desc.relevantActors)} m null? {m == null} statechange {this.packageStateChanged}");
     }
 
     /// <summary>

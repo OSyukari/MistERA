@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,16 @@ using static ActionPackageRecords;
 public class KojoCollector : I_ResultStorage, I_Records
 {
 
+    [JsonIgnore]
+    public string Dump
+    {
+        get
+        {
+            List<string> dump = new List<string>();
+            if (collect != null) collect.DumpMessage(dump);
+            return $"KojoCollector: {String.Join("\n", dump)}";
+        }
+    }
     public bool IsRelevantActor(int i)
     {
         return relevantActorRefs.Contains(i);

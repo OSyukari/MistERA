@@ -211,7 +211,7 @@ public class Character_Personality
     public PrideMod pride_none_dec = null;
     */
     // Responses
-    [JsonProperty] private List<ResponseEntry> entries_list;
+    [JsonProperty] List<ResponseEntry> entries_list = new List<ResponseEntry>();
     Dictionary<string, ResponseEntry> entries = new Dictionary<string, ResponseEntry>();
 
     public void RemoveEntriesIDContaining(string str)
