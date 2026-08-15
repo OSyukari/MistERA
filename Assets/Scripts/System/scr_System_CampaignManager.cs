@@ -2464,7 +2464,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
-    public Manageable FindOrAddFaction(string key, string value) 
+    public Manageable FindOrAddFaction(string key, string value)
     {
         if (organizations.TryGetValue(key, out var target))
         {
@@ -2478,6 +2478,33 @@ public class scr_System_CampaignManager : MonoBehaviour
             return newstuff;
         }
 
+    }
+
+    /// <summary>
+    /// Find-or-add for the Manageable_World faction representing a WorldPlan itself - the only place one is
+    /// ever constructed, so getting the faction always goes through its worldInit (WorldPlan) data. Every
+    /// request for "the transit room of world X" should go through FindOrAddWorldFaction(X).MainExit
+    /// (Map_Instance.CreateWorldTransitRoom builds it lazily) rather than reaching into Map_Instance directly.
+    /// A save made before Manageable_World existed still has organizations[worldID] as a plain Manageable -
+    /// Manageable_World's migration constructor logs an error and adopts its existing transit room in place.
+    /// </summary>
+    public Manageable FindOrAddWorldFaction(string worldID)
+    {
+        if (organizations.TryGetValue(worldID, out var target))
+        {
+            if (target is Manageable_World worldFaction) return worldFaction;
+
+            var migrated = new Manageable_World(target);
+            organizations[worldID] = migrated;
+            return migrated;
+        }
+
+        var worldInit = scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
+        if (worldInit == null) return null;
+
+        var newFaction = new Manageable_World(worldInit);
+        organizations.Add(worldID, newFaction);
+        return newFaction;
     }
 
     public Manageable FindorAddSubfactionByID(string id, Manageable prevOwner)
@@ -2797,6 +2824,13 @@ public static class WorldManager
             }
             if (existing != null) factionsInWorld.Add(existing);
         }
+
+        // the world's own synthetic hub faction (Manageable_World) - see FindOrAddWorldFaction, the only
+        // place one is ever constructed - is added to the same full-mesh below so it's reachable via Findpath
+        // like any other member, letting a stuck traveler path out of its transit room like a world door. The
+        // room itself is built lazily off MainExit (Map_Instance.CreateWorldTransitRoom) the first time
+        // anything actually needs it, not forced here.
+        factionsInWorld.Add(scr_System_CampaignManager.current.FindOrAddWorldFaction(world.worldID));
 
         // same-world factions are connected to each other automatically (full mesh)
         for (int i = 0; i < factionsInWorld.Count; i++)

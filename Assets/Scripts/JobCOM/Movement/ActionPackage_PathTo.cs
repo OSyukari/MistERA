@@ -21,11 +21,12 @@ public class ActionPackage_PathTo : ActionPackage
 
     [JsonIgnore] public override int RoomKey { get { return scr_System_CampaignManager.current.Map.FindRoomByChara(this.Doer.RefID).RefID; } }
 
-    // Persisted mirror of _path, kept in sync whenever _path is (re)computed or popped. Needed because a
-    // doer mid-trip through a world-map crossing is parked in Map_Instance.GetOrCreateWorldTransitRoom's
-    // synthetic holding room, which is deliberately outside the normal floor/faction pathing graph (no
-    // MainExit, no faction connections) - a live Map.Findpath recompute from in there can never succeed.
-    // Restoring _path verbatim from this snapshot on load avoids ever needing that recompute mid-trip.
+    // Persisted mirror of _path, kept in sync whenever _path is (re)computed or popped. Needed because a doer
+    // mid-trip through a world-map crossing is parked in Manageable_World's synthetic holding room
+    // (Map_Instance.CreateWorldTransitRoom) - a live Map.Findpath recompute from in there would find a path
+    // out (see Manageable_World/GetFactionCrossingDoor), but not necessarily the same one the trip is already
+    // partway through. Restoring _path verbatim from this snapshot on load avoids ever needing that recompute
+    // mid-trip.
     [JsonProperty] private List<PathEdgeSnapshot> _pathSnapshot = null;
 
     List<TaggedEdge<int, Door_Instance>> _path = null;
@@ -191,7 +192,8 @@ public class ActionPackage_PathTo : ActionPackage
         if (pc.Tag != null && pc.Tag.worldInstance != "")
         {
             var map = scr_System_CampaignManager.current.Map;
-            var transitRoom = map.GetOrCreateWorldTransitRoom(pc.Tag.worldInstance);
+            var worldFaction = scr_System_CampaignManager.current.FindOrAddWorldFaction(pc.Tag.worldInstance) as Manageable_World;
+            var transitRoom = worldFaction?.MainExit;
             if (transitRoom == null)
             {
                 Debug.LogError($"ActionPackage_PathTo.CheckWorldDoors: could not find/lazy-init WorldPlan [{pc.Tag.worldInstance}] to create a transit room - leaving {Doer.FirstName} in place");

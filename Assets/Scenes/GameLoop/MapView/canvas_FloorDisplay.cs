@@ -542,9 +542,26 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             InitFloorList();
         }
 
-        if (floornew == null) Debug.LogError("canvas_RoomDisplay ATTEMPTING TO DISPLAY NONEXISTENT ROOM");
+        if (floornew == null)
+        {
+            // no owning floor to show - e.g. the player is in a floorless room (a world-map transit room,
+            // Manageable_World.MainExit, or any other orphaned room). Fall back to opening the world map of
+            // whichever world the room's faction belongs to, instead of running the floor-only code below
+            // (which assumes floornew is non-null throughout).
+            var room = scr_System_CampaignManager.current.CurrentRoom;
+            var owner = room?.FactionOwner?.FactionOwnerRoot;
+            // a world-transit hub's own ID literally is the worldID it belongs to (Manageable_World) - the
+            // general ResolveWorldID lookup below is for real factions and would never find it, since it's
+            // deliberately not listed as a member of any world's initializeFactions.
+            string worldID = owner is Manageable_World ? owner.ID : ResolveWorldID(owner, new HashSet<Manageable>());
+            var world = string.IsNullOrEmpty(worldID) ? null : scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
 
-        if (floornew != null && floornew.rooms.Count == 1)
+            if (world != null && !string.IsNullOrEmpty(world.mapImagePath)) OpenWorldMap(world);
+            else Debug.LogError("canvas_RoomDisplay LoadFloor: no floor and no resolvable world to fall back to for room [" + (room == null ? "null" : room.DisplayName) + "]");
+            return;
+        }
+
+        if (floornew.rooms.Count == 1)
         {
             Room_Instance onlyRoom = floornew.rooms[0];
             bool alreadyThere = scr_System_CampaignManager.current.CurrentRoom == onlyRoom;

@@ -293,10 +293,25 @@ public class Map_Instance
     [JsonProperty] protected Dictionary<string, int> worldTransitRoomRefs = new Dictionary<string, int>();
 
     /// <summary>
-    /// Returns null only if the WorldPlan itself can't be resolved by ID.
+    /// Returns worldID's transit room only if it already exists - never builds one. Used by
+    /// Manageable_World's legacy-migration constructor to adopt an already-existing room instead of building
+    /// a second one under the same worldID.
     /// </summary>
-    public Room_Instance GetOrCreateWorldTransitRoom(string worldID)
+    public Room_Instance GetExistingWorldTransitRoom(string worldID)
     {
+        return worldTransitRoomRefs.TryGetValue(worldID, out int refID) ? GetRoomByRef(refID) : null;
+    }
+
+    /// <summary>
+    /// Builds (once) or returns worldFaction's map-transit holding room + hidden center door. Called only
+    /// from Manageable_World.MainExit - every other place that needs "the transit room of world X" should
+    /// resolve the world faction first (scr_System_CampaignManager.FindOrAddWorldFaction) and read .MainExit
+    /// off it, rather than reaching in here directly.
+    /// </summary>
+    public Room_Instance CreateWorldTransitRoom(Manageable_World worldFaction)
+    {
+        string worldID = worldFaction.ID;
+
         if (worldTransitRoomRefs.TryGetValue(worldID, out int refID))
         {
             var existing = GetRoomByRef(refID);
@@ -306,13 +321,38 @@ public class Map_Instance
         var world = scr_System_Serializer.current.GetByNameOrID_WorldPlan(worldID);
         if (world == null) return null;
 
+        EnsureTransitDoor(world);
+
         var room = new Room_Instance(null, null);
         room.roomImageOverride = world.mapImagePath;
         room.displayNameOverwrite = worldID;
-        room.FactionOwner = scr_System_CampaignManager.current.FindOrAddFaction(worldID, "");
+        room.FactionOwner = worldFaction;
         worldTransitRoomRefs[worldID] = scr_System_CampaignManager.current.Register(room);
         //Debug.LogError($"creating world transit room {room.DisplayName} {room.DisplayNameShort}");
         return room;
+    }
+
+    /// <summary>
+    /// Adds world's hidden transit-hub door (factionID = worldID) at the map's center, so a stuck traveler's
+    /// path-out cost can be measured from it (TryGetWorldMapTravelMinutes below). Left with no
+    /// floorExitID/childWorldID - the exact, sole condition canvas_RoomDisplay.LoadWorldTex's door-drawing
+    /// loop already checks (`if (string.IsNullOrEmpty(door.floorExitID) &&
+    /// string.IsNullOrEmpty(door.childWorldID)) continue;`) - so this door is structurally invisible in the
+    /// world-map UI, not hidden by convention. Idempotent: GetByNameOrID_WorldPlan returns a cached singleton
+    /// per worldID for the process lifetime (Index_MapPlan.GetByID_WorldPlan/ResolvedWorldCache), so this
+    /// only ever actually adds once per world.
+    /// </summary>
+    private void EnsureTransitDoor(WorldPlan world)
+    {
+        if (world.doors.Exists(d => d.factionID == world.worldID)) return;
+
+        bool topLeft = world.AnchorType == FloorCoordinateAnchor.TopLeft;
+        world.doors.Add(new WorldPlan.DoorConnection
+        {
+            factionID = world.worldID,
+            offset_x = topLeft ? world.worldWidth / 2f : 0f,
+            offset_y = topLeft ? world.worldHeight / 2f : 0f,
+        });
     }
     /// <summary>
     /// Key - floorRefID
@@ -760,7 +800,7 @@ public class Map_Instance
 
         // Faction arrival/departure report - skipped for rooms with no faction owner, for party/expedition
         // camp rooms, and for the synthetic per-world faction a world-map transit room is owned by
-        // (GetOrCreateWorldTransitRoom) - none of those are "a place" worth reporting a visit to.
+        // (Manageable_World) - none of those are "a place" worth reporting a visit to.
         var oldFaction = ResolveNotifiableFaction(oldRoom);
         var newFaction = ResolveNotifiableFaction(newRoom);
         if (oldFaction != newFaction)
@@ -799,8 +839,8 @@ public class Map_Instance
     /// <summary>
     /// The faction a room's visit should be reported against for arrival/departure purposes, or null if the
     /// room isn't "a place": no owner, a party/expedition camp room, or the synthetic per-world faction a
-    /// world-map transit room is owned by (GetOrCreateWorldTransitRoom, keyed by WorldPlan.worldID - the
-    /// same IDs tracked in scr_System_CampaignManager.currentWorldPlanIDs).
+    /// world-map transit room is owned by (Manageable_World, keyed by WorldPlan.worldID - the same IDs
+    /// tracked in scr_System_CampaignManager.currentWorldPlanIDs).
     /// </summary>
     Manageable ResolveNotifiableFaction(Room_Instance room)
     {
@@ -882,9 +922,17 @@ public class Map_Instance
         string fromDoorFactionID = fromDoorFaction.ID;
         string toDoorFactionID = toDoorFaction.ID;
 
-        foreach (var world in scr_System_CampaignManager.current.FindWorldsContainingFaction(fromDoorFactionID))
+        // Manageable_World is deliberately not a declared initializeFactions member of any world (it would
+        // make WorldManager.InstantiateWorld try to instantiate a MapPlan for it, and would surface it in
+        // every UI that iterates initializeFactions.Keys expecting real factions) - it never turns up via
+        // FindWorldsContainingFaction, so resolve its one world directly by ID instead.
+        var candidateWorlds = fromDoorFaction is Manageable_World
+            ? new List<WorldPlan> { scr_System_Serializer.current.GetByNameOrID_WorldPlan(fromDoorFactionID) }
+            : scr_System_CampaignManager.current.FindWorldsContainingFaction(fromDoorFactionID);
+
+        foreach (var world in candidateWorlds)
         {
-            if (!world.initializeFactions.ContainsKey(toDoorFactionID)) continue;
+            if (world == null || !world.initializeFactions.ContainsKey(toDoorFactionID)) continue;
 
             var doorA = world.doors.Find(d => d.factionID == fromDoorFactionID);
             var doorB = world.doors.Find(d => d.factionID == toDoorFactionID);

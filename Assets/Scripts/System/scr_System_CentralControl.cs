@@ -797,7 +797,7 @@ public class SaveFile
                 .Replace("$hours$", Time.currentDate.TimeOfDay.Hours.ToString("D2"))
                 .Replace("$minutes$", Time.currentDate.TimeOfDay.Minutes.ToString("D2"))
                 .Replace("$playerName$", scr_System_CampaignManager.current.Player.FullName)
-                .Replace("$floor$", playerFloor.displayName)
+                .Replace("$floor$", playerFloor == null? "unknown" : playerFloor.displayName)
                 .Replace("$room$", playerRoom.DisplayName);
         this.SafeMode = scr_System_CentralControl.current.isSafeMode;
     }
