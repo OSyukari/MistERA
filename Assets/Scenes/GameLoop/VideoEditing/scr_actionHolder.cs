@@ -7,13 +7,15 @@ public class scr_actionHolder : MonoBehaviour
     public RectTransform innerObject;
     public RectTransform messageList;
     public scr_SelectableText toggleVisibility;
-    public RectTransform titles;
+
+    public MessageCollect mcol;
+    public CanvasGroup textCanvasGroup;
+
+    public scr_HoverableText score, time;
 
     // filled post creation
-    public DateTime source_timestamp;
-    public MessageCollect source;
-    public ActionPackageRecords ap = null;
-    public I_Records rec = null;
+    // paired evaluator-side holder for this AP, so this box's toggle can drive scoring
+    public RecordingEvaluatorInstance.ActionHolder holder;
 
     // this data only lives in the editor ui
     bool active = true;
@@ -27,7 +29,9 @@ public class scr_actionHolder : MonoBehaviour
         set
         {
             active = value;
-            innerObject.gameObject.SetActive(active);
+            this.textCanvasGroup.alpha = active ? 1f : 0.5f;
+            //this.titles.gameObject.SetActive(active);
+            //innerObject.gameObject.SetActive(active);
         }
     }
 }

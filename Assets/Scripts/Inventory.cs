@@ -151,9 +151,46 @@ public class FactionInventory : Inventory
             else if (item.Count <= count)
             {
                 count -= item.Count;
-                foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= item.Count;
                 results.Add(item);
-                Contents.Remove(item);
+                this.Remove(item); // must go through Remove() to update contentRefs (the persisted store), not just the Contents cache; Remove() also decrements the tag tracker
+            }
+            else
+            {
+                var vv = WorldManager.Instantiate(item.BaseID, item.nameOverwrite, count);
+                foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= count;
+                item.ModCount(-count);
+                results.Add(vv);
+            }
+        }
+
+        return results;
+    }
+
+    /// <summary>
+    /// Same removal logic as RemoveItem(baseID, count), but scoped by an arbitrary predicate instead of
+    /// BaseID equality - needed when a caller's grouping is finer than BaseID (e.g. SalesManager.ItemMatch,
+    /// where two listings can share a BaseID but have different RetailIDs).
+    /// </summary>
+    public List<Item_Instance> RemoveItem(Func<Item_Instance, bool> matches, int count)
+    {
+        var lists = Contents.FindAll(x => matches(x));
+        var results = new List<Item_Instance>();
+
+        for (int i = lists.Count - 1; i >= 0; i--)
+        {
+            var item = lists[i];
+            if (count < 1 || item == null) break;
+            if (item.isToken || !this.FactionOwner.isPlayerFaction)
+            {
+                var vvvv = WorldManager.Instantiate(item.BaseID, item.DisplayName, count);
+                results.Add(vvvv);
+                break;
+            }
+            else if (item.Count <= count)
+            {
+                count -= item.Count;
+                results.Add(item);
+                this.Remove(item); // must go through Remove() to update contentRefs (the persisted store), not just the Contents cache; Remove() also decrements the tag tracker
             }
             else
             {
@@ -595,7 +632,7 @@ public class Inventory
                 count -= item.Count;
                 //foreach (string tag in item.Tags) if (tag != "" && tracker.ContainsKey(tag)) tracker[tag] -= item.Count;
                 results.Add(item);
-                Contents.Remove(item);
+                this.Remove(item); // must go through Remove() to update contentRefs (the persisted store), not just the Contents cache
             }
             else
             {

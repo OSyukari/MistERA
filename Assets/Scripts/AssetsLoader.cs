@@ -4,6 +4,8 @@ using UnityEngine.Networking;
 using System.IO;
 using WebP;
 using System.Linq;
+using System;
+using System.Threading.Tasks;
 public class AssetsLoader
 {
     private static Texture2D _placeholderTexture = null;
@@ -237,5 +239,130 @@ public class AssetsLoader
                 onComplete?.Invoke(bytes);
             }
         }
+    }
+
+    private const int SpineTexCacheMagic = 0x31584554; // "TEX1"
+
+    /// <summary>
+    /// Loads a spine atlas page texture, transparently caching the decoded (and where possible,
+    /// GPU-compressed) pixel data as a "&lt;path&gt;.texcache" sidecar file next to the source image.
+    /// On a cache hit this skips PNG decoding entirely (a ~80-600ms cost per atlas page depending on
+    /// resolution) in favor of a raw memcpy + GPU upload. The cache is invalidated automatically
+    /// whenever the source file's size or last-write-time changes.
+    /// </summary>
+    public static IEnumerator LoadCachedAtlasTextureCoroutine(string path, System.Action<Texture2D> onComplete)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            onComplete?.Invoke(PlaceholderTexture);
+            yield break;
+        }
+
+        string fullPath = scr_System_Serializer.current.GetFullPath(path);
+        string cachePath = fullPath + ".texcache";
+
+        if (TryReadTextureCache(fullPath, cachePath, out Texture2D cached))
+        {
+            onComplete?.Invoke(cached);
+            yield break;
+        }
+
+        byte[] bytes = null;
+        yield return LoadSkelCoroutine(path, b => bytes = b);
+
+        Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        tex.name = Path.GetFileNameWithoutExtension(path);
+        if (bytes == null || !tex.LoadImage(bytes))
+        {
+            onComplete?.Invoke(PlaceholderTexture);
+            yield break;
+        }
+
+        try { tex.Compress(true); } // best-effort: falls back to leaving it as RGBA32 if the source dimensions don't support block compression
+        catch (Exception e) { Debug.LogWarning($"AssetsLoader texture compress failed for [{fullPath}]: {e.Message}"); }
+
+        onComplete?.Invoke(tex);
+
+        WriteTextureCacheAsync(fullPath, cachePath, tex);
+    }
+
+    private static bool TryReadTextureCache(string fullPath, string cachePath, out Texture2D tex)
+    {
+        tex = null;
+        try
+        {
+            if (!File.Exists(cachePath) || !File.Exists(fullPath)) return false;
+
+            var srcInfo = new FileInfo(fullPath);
+            using var fs = new FileStream(cachePath, FileMode.Open, FileAccess.Read);
+            using var br = new BinaryReader(fs);
+
+            if (br.ReadInt32() != SpineTexCacheMagic) return false;
+            long srcSize = br.ReadInt64();
+            long srcWriteTicks = br.ReadInt64();
+            if (srcSize != srcInfo.Length || srcWriteTicks != srcInfo.LastWriteTimeUtc.Ticks) return false;
+
+            int width = br.ReadInt32();
+            int height = br.ReadInt32();
+            var format = (TextureFormat)br.ReadInt32();
+            int dataLen = br.ReadInt32();
+            byte[] data = br.ReadBytes(dataLen);
+            if (data.Length != dataLen) return false;
+
+            tex = new Texture2D(width, height, format, false);
+            tex.name = Path.GetFileNameWithoutExtension(fullPath);
+            tex.LoadRawTextureData(data);
+            tex.Apply(false, false);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"AssetsLoader texture cache read failed for [{cachePath}]: {e.Message}");
+            tex = null;
+            return false;
+        }
+    }
+
+    private static void WriteTextureCacheAsync(string fullPath, string cachePath, Texture2D tex)
+    {
+        FileInfo srcInfo;
+        byte[] data;
+        try
+        {
+            srcInfo = new FileInfo(fullPath);
+            data = tex.GetRawTextureData();
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"AssetsLoader texture cache prepare failed for [{cachePath}]: {e.Message}");
+            return;
+        }
+
+        long srcSize = srcInfo.Length;
+        long srcWriteTicks = srcInfo.LastWriteTimeUtc.Ticks;
+        int width = tex.width;
+        int height = tex.height;
+        int format = (int)tex.format;
+
+        Task.Run(() =>
+        {
+            try
+            {
+                using var fs = new FileStream(cachePath, FileMode.Create, FileAccess.Write);
+                using var bw = new BinaryWriter(fs);
+                bw.Write(SpineTexCacheMagic);
+                bw.Write(srcSize);
+                bw.Write(srcWriteTicks);
+                bw.Write(width);
+                bw.Write(height);
+                bw.Write(format);
+                bw.Write(data.Length);
+                bw.Write(data);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"AssetsLoader texture cache write failed for [{cachePath}]: {e.Message}");
+            }
+        });
     }
 }

@@ -26,7 +26,8 @@
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
-                                        "irrumatio","blowjob",
+                                        "irrumatio",
+                                        "blowjob",
                                         "forced",
                                         "climax"
                                     ],
@@ -42,7 +43,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "climax"
                             ],
@@ -67,12 +69,26 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_oral_P_Force_Begin_Timestop_1",
+                                "com_sex_oral_P_Force_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "closed_eyes",
                                 "blush",
@@ -93,7 +109,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "blush"
                             ],
@@ -109,7 +126,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "fear",
                                 "trembling",
@@ -145,7 +163,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "sleeping",
                                 "relaxed"
@@ -168,7 +187,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "doll",
                                 "empty",
@@ -306,7 +326,8 @@
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
-                                        "irrumatio","blowjob",
+                                        "irrumatio",
+                                        "blowjob",
                                         "forced",
                                         "sleep",
                                         "smile",
@@ -328,7 +349,8 @@
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
-                                        "irrumatio","blowjob",
+                                        "irrumatio",
+                                        "blowjob",
                                         "forced",
                                         "sleep",
                                         "smile",
@@ -348,7 +370,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "scared",
                                 "submissive"
@@ -381,7 +404,8 @@
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
-                                        "irrumatio","blowjob",
+                                        "irrumatio",
+                                        "blowjob",
                                         "forced",
                                         "love",
                                         "happy",
@@ -400,7 +424,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "blush",
                                 "shy",
@@ -423,7 +448,8 @@
                                     "extraSelfPortraitTags": [
                                         "sex",
                                         "receiver",
-                                        "irrumatio","blowjob",
+                                        "irrumatio",
+                                        "blowjob",
                                         "forced",
                                         "pain",
                                         "bored",
@@ -443,7 +469,8 @@
                             "extraSelfPortraitTags": [
                                 "sex",
                                 "receiver",
-                                "irrumatio","blowjob",
+                                "irrumatio",
+                                "blowjob",
                                 "forced",
                                 "angry",
                                 "cry",
@@ -526,7 +553,9 @@
                 "com_sex_oral_P_Force_42": "$self$的身子因为持续的干呕而痉挛，眼神空洞地盯着前方。\n\"……恶心。\"",
                 "com_sex_oral_P_Force_37": "$self$捂着喉咙干呕了几声，眼角渗出泪花。\n\"太粗暴了……下次如果你再这样按着我的头，我就真的生气了。\"",
                 "com_sex_oral_P_Force_38": "$self$痛苦地拍打着$target$的大腿，喉咙里发出难受的干呕声，泪花沾湿了睫毛。\n\"呜呜……太深了……\"",
-                "com_sex_oral_P_Force_39": "$self$的眼神变得冷淡委屈，利用换气的间隙偏过头，大口喘息着，抗拒着再次顶入。\n\"够了……我不想做了。\""
+                "com_sex_oral_P_Force_39": "$self$的眼神变得冷淡委屈，利用换气的间隙偏过头，大口喘息着，抗拒着再次顶入。\n\"够了……我不想做了。\"",
+                "com_sex_oral_P_Force_Begin_Timestop_1": "肉棒从$self$张着的嘴里顶进来，直抵喉咙碾转，定格的软腭被龟头蹭得发红，喉咙深处的痉挛缩到中途就停在了那里。",
+                "com_sex_oral_P_Force_Begin_Timestop_2": "$self$的眼皮定在半阖的位置，睫毛上挂着将落未落的泪，口水顺着撑开的嘴角淌成线，悬在静止的空气里不落。"
             }
         }
     }

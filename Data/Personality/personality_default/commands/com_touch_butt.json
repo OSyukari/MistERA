@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_butt_Begin_Timestop_1",
+                                "com_touch_butt_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -312,7 +325,9 @@
                 "com_touch_butt_33": "$self$忍无可忍地爆发了，抓起手边的东西就砸向$target$。\"滚！给我滚出去！\"",
                 "com_touch_butt_34": "$self$蹲在地上崩溃大哭，充满恨意地瞪着$target$。\"你会遭报应的……你这个人渣！\"",
                 "com_touch_butt_35": "$self$此时已经完全冷静下来，面无表情地整理好衣服。\"闹够了吗？这三分钟我会记一辈子的。\"",
-                "com_touch_butt_36": "$self$趁$target$放松警惕，狠狠地踩了一脚他的脚背，趁机逃跑。"
+                "com_touch_butt_36": "$self$趁$target$放松警惕，狠狠地踩了一脚他的脚背，趁机逃跑。",
+                "com_touch_butt_Begin_Timestop_1": "$target$的双手捧住她定格的臀肉揉捏，指印陷下去又慢慢弹回来，$self$的重心没有晃动。",
+                "com_touch_butt_Begin_Timestop_2": "臀肉被拍了两下又揉开，荡出的波纹停在半途，$self$的裙摆被掀起的弧度也定在空气里。"
             },
             "en-us": {
                 "com_touch_butt_Begin_1": "$self$ didn't look back, simply arching her back naturally to let $target$'s hand rest more comfortably. \"Hmm? Why so clingy all of a sudden?\"",

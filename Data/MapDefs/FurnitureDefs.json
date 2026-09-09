@@ -6,6 +6,8 @@
             "displayName":"单人床",
             "recipe":[],
             "furnitureSize":2.0,
+            "value":20000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -14,6 +16,8 @@
             "displayName":"单人上下床",
             "recipe":[],
             "furnitureSize":2.5,
+            "value":40000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -22,6 +26,8 @@
             "displayName":"双人床",
             "recipe":[],
             "furnitureSize":3,
+            "value":35000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -30,6 +36,8 @@
             "displayName":"大型床",
             "recipe":[],
             "furnitureSize":4,
+            "value":50000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","bed"] } ]
         },
@@ -38,6 +46,8 @@
             "displayName":"特大床",
             "recipe":[],
             "furnitureSize":5,
+            "value":70000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","bed"] }]
         },
@@ -46,6 +56,8 @@
             "displayName":"长沙发",
             "recipe":[],
             "furnitureSize":4,
+            "value":50000,
+            "Tags":["rarity_common"],
             "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
@@ -53,6 +65,8 @@
             "displayName":"沙发",
             "recipe":[],
             "furnitureSize":1,
+            "value":25000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
@@ -61,6 +75,8 @@
             "displayName":"平面电视",
             "recipe":[],
             "furnitureSize":4,
+            "value":50000,
+            "Tags":["industrial","rarity_common"],
             "givesJob": [ { "comTags":["furniture","TV"] } ]
         },
         {
@@ -69,6 +85,7 @@
             "noDisplay":true,
             "recipe":[],
             "furnitureSize":2,
+            "value":0,
             "givesJob":
             [ { "comID":["com_job_cleaning"] } ]
         },
@@ -78,9 +95,10 @@
             "noDisplay":true,
             "recipe":[],
             "furnitureSize":0,
-            "givesJob": [ 
+            "value":0,
+            "givesJob": [
                 { "comTags":["furniture","food_getmeal"] } ,
-                { "comTags":["furniture","food_meal"] } 
+                { "comTags":["furniture","food_meal"] }
             ]
         },
         {
@@ -88,6 +106,8 @@
             "displayName":"厨房",
             "recipe":[],
             "furnitureSize":3,
+            "value":400000,
+            "Tags":["industrial","rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","production_cooking"] },
                 { "comTags":["furniture","cooking"] } ]
@@ -97,6 +117,8 @@
             "displayName":"炉灶",
             "recipe":[],
             "furnitureSize":2,
+            "value":50000,
+            "Tags":["industrial","rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","cooking"] } ]
         },
@@ -105,6 +127,8 @@
             "displayName":"淋浴",
             "recipe":[],
             "furnitureSize":1,
+            "value":80000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","shower"] } ]
         },
@@ -113,6 +137,8 @@
             "displayName":"浴缸",
             "recipe":[],
             "furnitureSize":1,
+            "value":120000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","shower"] } ]
         },
@@ -121,7 +147,9 @@
             "displayName":"卫生间",
             "recipe":[],
             "furnitureSize":1,
-            "givesJob": [ 
+            "value":150000,
+            "Tags":["rarity_common"],
+            "givesJob": [
                 { "comTags":["furniture","bathroom"] },
             { "comID":["com_furniture_restroom_fix"] } ]
         },
@@ -130,6 +158,8 @@
             "displayName":"卫生单间",
             "recipe":[],
             "furnitureSize":1,
+            "value":200000,
+            "Tags":["rarity_common"],
             "givesJob":
             [ { "comTags":["furniture","bathroom"] },
             { "comTags":["furniture","shower"] },
@@ -140,6 +170,8 @@
             "displayName":"单人桌椅",
             "recipe":[],
             "furnitureSize":1,
+            "value":15000,
+            "Tags":["rarity_common"],
             "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
@@ -147,6 +179,8 @@
             "displayName":"长餐桌",
             "recipe":[],
             "furnitureSize":10,
+            "value":150000,
+            "Tags":["rarity_common"],
             "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
@@ -154,6 +188,8 @@
             "displayName":"咖啡桌",
             "recipe":[],
             "furnitureSize":2,
+            "value":20000,
+            "Tags":["rarity_common"],
             "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
@@ -161,19 +197,25 @@
             "displayName":"圆桌",
             "recipe":[],
             "furnitureSize":4,
+            "value":35000,
+            "Tags":["rarity_common"],
             "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
         },
         {
             "ID":"furniture_piano",
             "displayName":"钢琴",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":1,
+            "value":250000,
+            "Tags":["rarity_rare"]
         },
         {
             "ID":"furniture_computer_terminal",
             "displayName":"终端",
             "recipe":[],
             "furnitureSize":1,
+            "value":150000,
+            "Tags":["industrial","rarity_common"],
             "givesJob": [  { "comTags":["furniture", "computer"] }]
         },
         {
@@ -181,6 +223,8 @@
             "displayName":"书架",
             "recipe":[],
             "furnitureSize":1,
+            "value":20000,
+            "Tags":["rarity_common"],
             "givesJob": [  { "comTags":["furniture", "books"] }]
         },
         {
@@ -188,6 +232,7 @@
             "displayName":"水培舱",
             "recipe":[],
             "furnitureSize":1,
+            "value":300000,
             "givesJob": [  { "comTags":["furniture", "farm_cultivate_crop"] },
                             { "comTags":["furniture", "farm_maintain"] },
                             { "comTags":["furniture","farm_remove"] }]
@@ -197,6 +242,8 @@
             "displayName":"工程制造台",
             "recipe":[],
             "furnitureSize":1,
+            "value":200000,
+            "Tags":["industrial","rarity_rare"],
             "givesJob": [  { "comTags":["furniture","production_engineering"] },
                             { "comTags":["furniture","research_engineering"] } ]
         },
@@ -205,6 +252,7 @@
             "displayName":"肉类培育槽",
             "recipe":[],
             "furnitureSize":1,
+            "value":500000,
             "givesJob": [  { "comTags":["furniture","farm_cultivate_meat"] },
                             { "comTags":["furniture","farm_maintain"] },
                             { "comTags":["furniture","farm_remove"] }]
@@ -214,6 +262,8 @@
             "displayName":"生物化学研究室",
             "recipe":[],
             "furnitureSize":1,
+            "value":800000,
+            "Tags":["rarity_rare"],
             "givesJob": [ { "comTags":["furniture","research_biochemistry"] } ]
         },
         {
@@ -221,6 +271,8 @@
             "displayName":"物理研究室",
             "recipe":[],
             "furnitureSize":1,
+            "value":800000,
+            "Tags":["rarity_rare"],
             "givesJob": [ { "comTags":["furniture","research_physics"] } ]
         },
         {
@@ -228,6 +280,8 @@
             "displayName":"化学制造台",
             "recipe":[],
             "furnitureSize":1,
+            "value":300000,
+            "Tags":["industrial","rarity_rare"],
             "givesJob": [ { "comTags":["furniture","production_chemistry"] } ]
         },
         {
@@ -235,6 +289,7 @@
             "displayName":"冷冻休眠舱",
             "recipe":[],
             "furnitureSize":1,
+            "value":1000000,
             "givesJob":
             [ { "comTags":["furniture","cryo"] } ]
         },
@@ -242,13 +297,17 @@
             "ID":"furniture_hospital_bed",
             "displayName":"医疗床",
             "recipe":[],
-            "furnitureSize":1
+            "furnitureSize":1,
+            "value":250000,
+            "Tags":["industrial","rarity_rare"]
         },
         {
             "ID":"furniture_shooting_range_spot",
             "displayName":"靶场射击点",
             "recipe":[],
             "furnitureSize":1,
+            "value":400000,
+            "Tags":["rarity_rare"],
             "givesJob": [ { "comTags":["furniture","training_shooting"] } ]
         },
         {
@@ -256,6 +315,8 @@
             "displayName":"擂台",
             "recipe":[],
             "furnitureSize":0,
+            "value":500000,
+            "Tags":["rarity_rare"],
             "givesJob": [ { "comID":["com_furniture_combat_sim"] },
                 { "comTags":["furniture","training_melee"] } ]
         },
@@ -263,6 +324,8 @@
             "ID":"furniture_camping_site",
             "recipe":[],
             "furnitureSize":0,
+            "value":50000,
+            "Tags":["rarity_common"],
             "givesJob":
             [   { "comTags":["furniture","bed"] },
                 { "comTags":["furniture","food_getmeal"] } ,
@@ -289,8 +352,8 @@
 "furniture_TV_flatscreen":"平面电视",
 "furniture_marker_cleaning":"扫除marker",
 "furniture_marker_getmeal":"用餐marker",
-"furniture_galley":"厨房",
-"furniture_stove":"炉灶",
+"furniture_galley":"现代厨房",
+"furniture_stove":"电炉灶",
 "furniture_shower":"淋浴",
 
 "furniture_bathtub":"浴缸",
@@ -330,8 +393,8 @@
 "furniture_TV_flatscreen": "Flat Screen TV",
 "furniture_marker_cleaning": "Cleaning Marker",
 "furniture_marker_getmeal": "Dining Marker",
-"furniture_galley": "Galley",
-"furniture_stove": "Stove",
+"furniture_galley": "Modern Galley",
+"furniture_stove": "Electric Stove",
 "furniture_shower": "Shower",
 
   "furniture_bathtub": "Bathtub",
@@ -360,5 +423,5 @@
             }
         }
     }
-    
+
 }

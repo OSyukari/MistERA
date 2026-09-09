@@ -3,7 +3,6 @@
         "list": [
             {
                 "id": "item_recording_camera",
-                "displayName": "Camera",
                 "Tags": [
                     "item_recorder",
                     "industrial",
@@ -24,7 +23,6 @@
             },
             {
                 "id": "item_recording_camera_Tape",
-                "displayName": "Camera Tape",
                 "Tags": [
                     "industrial",
                     "rarity_common"
@@ -33,10 +31,10 @@
             },
             {
                 "id": "item_recorded_camera_Tape",
-                "displayName": "Used Camera Tape",
                 "Tags": [
                     "industrial",
-                    "item_records"
+                    "item_records",
+                    "retail_digital"
                 ],
                 "itemComps_Template": [
                     {

@@ -1,13 +1,19 @@
-using UnityEngine;
-using System;
-using UnityEngine.EventSystems;
 using Cysharp.Threading.Tasks.Triggers;
+using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
 {
     public Manageable sourceFaction;
     public RectTransform recipeList;
     public scr_addTrade prefab_trade;
+
+    // TODO
+    public RectTransform factionList;
+    public prefab_factionRect prefab_factionRect;
+    public Manageable currentTargetFaction;
+    // 
 
     public void InitializeWithArgument(Manageable sourceFaction, Action onExit)
     {
@@ -17,21 +23,42 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
         this.sourceFaction = sourceFaction;
         Utility.DestroyAllChildrenFrom( recipeList);
 
-        foreach (var entry in sourceFaction.salesInventory.Inventory)
-        {
-            // TODO INSTANTIATE BUTTON
-            MakeRecipeButton(entry.Value, sourceFaction, sourceFaction);
-        }
+        BuildFaction(sourceFaction, sourceFaction);
+
 
         foreach(var connect in sourceFaction.TradePartnerFactions)
         {
-            foreach(var entry in connect.salesInventory.Inventory)
-            {
-                MakeRecipeButton(entry.Value, sourceFaction, connect);
-            }
+            BuildFaction(connect, sourceFaction);
         }
         ValidateAll();
     }
+
+    void BuildFaction(Manageable faction, Manageable source)
+    {
+        if (faction.salesInventory.Inventory.Count < 1) return;
+
+        if (currentTargetFaction == null) currentTargetFaction = faction;
+
+        var factionRect = Instantiate(prefab_factionRect);
+        factionRect.selfRect.SetParent(recipeList, false);
+
+        // make button
+        var txt = Instantiate(prefab_text_linkbutton);
+        var btn = txt.GetComponent<scr_SelectableText>();
+        btn.SetTextPreInit(faction.FactionDisplayName);
+        btn.SelfRect.SetParent(factionList, false);
+        var hash = AssertUniqueHash(faction.GetHashCode());
+        RegisterButton(hash, btn, new ButtonValidator_ToggleFaction(this, btn, faction, factionRect.selfRect));
+
+        foreach (var entry in faction.salesInventory.Inventory)
+        {
+            // TODO INSTANTIATE BUTTON
+            MakeRecipeButton(entry.Value, faction, source, factionRect.selfRect);
+        }
+
+    }
+
+
 
     public void NotifyAddTrade(ItemEntry entry, Manageable targetFaction)
     {
@@ -40,13 +67,13 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
         scr_System_SceneManager.current.UnloadLastCanvasFromScene();
     }
 
-    private void MakeRecipeButton(ItemEntry entry, Manageable source, Manageable target)
+    private void MakeRecipeButton(ItemEntry entry, Manageable source, Manageable target, RectTransform parent)
     {
         int recipeHash = AssertUniqueHash((entry.itemID+"|"+entry.itemCount.ToString()).GetHashCode());
         scr_addTrade box = Instantiate(prefab_trade);
         box.LoadItemEntry(entry, source, target);
         RegisterButton(recipeHash, box.Button, new Button_SelectTrade(this, entry, target, box.Button));
-        box.GetComponent<RectTransform>().SetParent(recipeList, false);
+        box.GetComponent<RectTransform>().SetParent(parent, false);
     }
 
     private void RegisterButton(int optionID, scr_SelectableText button, ButtonValidator validator)
@@ -144,6 +171,39 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
             
         }
+    }
+
+    public class ButtonValidator_ToggleFaction : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Menu_AddTrade parent;
+        scr_SelectableText button;
+        Manageable faction;
+        RectTransform rect;
+
+        public ButtonValidator_ToggleFaction(scr_Menu_AddTrade parent, scr_SelectableText button, Manageable faction, RectTransform rect) : base(parent)
+        {
+            this.parent = parent;
+            this.button = button;
+            this.faction = faction;
+            this.rect = rect;
+
+            button.isButtonToggle = true;
+        }
+
+        public override bool IsButtonValid()
+        {
+            if (!button.gameObject.activeInHierarchy) return false;
+            button.Toggle(true, parent.currentTargetFaction == faction);
+            rect.gameObject.SetActive(parent.currentTargetFaction == faction);
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.currentTargetFaction = faction;
+
+        }
+
     }
 
     public class Button_SelectTrade : ButtonValidator, I_ButtonClickable

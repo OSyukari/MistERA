@@ -21,8 +21,13 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
 
     public List<int> mealHours = new List<int>();
-    [JsonProperty] protected string salesCurrency = "";
-    protected Item_Base _currency = null;
+
+    /// <summary>
+    /// Not persisted - re-read from this faction's MapPlan template (see Currency getter) rather than
+    /// baked into the save, so template changes always take effect without a save migration.
+    /// </summary>
+    [JsonIgnore] protected string salesCurrency = "";
+    [JsonIgnore] protected Item_Base _currency = null;
 
     public List<Ovum> managedChilds = new List<Ovum>();
 
@@ -30,7 +35,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         get
         {
-            if (_currency == null && salesCurrency != "") _currency = scr_System_Serializer.current.GetByNameOrID_Item_Base(salesCurrency);
+            if (_currency == null)
+            {
+                if (salesCurrency == "")
+                {
+                    var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+                    if (plan != null) salesCurrency = plan.salesCurrency;
+                }
+                if (salesCurrency != "") _currency = scr_System_Serializer.current.GetByNameOrID_Item_Base(salesCurrency);
+            }
             return _currency;
         }
         set
@@ -657,6 +670,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (updateOrder != 1) return;
         this.ProcessAllTransactions();
+        this.SalesManager.DailyUpdate();
         CheckDailyResourceConsumption();
         // character log their daily consumption at updateOrder 2
     }
@@ -720,6 +734,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public List<ProductionOrder> ProductionOrders = new List<ProductionOrder>();
     public List<TradeOrder> TradeOrders = new List<TradeOrder>();
 
+    public SalesManager SalesManager = null;
+
     public Manageable()
     {
 
@@ -735,6 +751,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         charaSchedules = new Dictionary<int, Job_Schedule>();
         charaGuestStatus.Clear();
         this._inventory = new FactionInventory(this);
+        this.SalesManager = new SalesManager(this);
     }
 
     string socialStatus_manager, socialStatus_member, socialStatus_visitor, socialStatus_prisoner, socialStatus_baseString;
@@ -997,6 +1014,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public bool HasTradeOrder(TradeOrder entry)
     {
         return TradeOrders.Contains(entry);
+    }
+
+    public void RemoveSalesOrder(SalesManager.ItemMatch order)
+    {
+        if (this.SalesManager.salesOrder.Contains(order)) this.SalesManager.salesOrder.Remove(order);
+    }
+
+    public bool HasSalesOrder(SalesManager.ItemMatch order)
+    {
+        return this.SalesManager.salesOrder.Contains(order);
     }
 
     protected void Manage(int currentHour, int currentMinute)
@@ -1328,9 +1355,22 @@ public class Manageable : I_Disposable, I_IsJobGiver
         RefreshRoomJobs(room);
     }
 
+    /// <summary>
+    /// A character may only own one room per faction - granting ownership of a new room first
+    /// revokes ownership of any other room they currently hold in this faction.
+    /// </summary>
     public void AddRoomOwnership(int charaRefID, int roomRefID)
     {
         if (!managedRoomRefs.ContainsKey(roomRefID)) return;
+
+        if (OwnedRoomByChara.TryGetValue(charaRefID, out var owned))
+        {
+            foreach (var otherRoomRefID in owned.ToList())
+            {
+                if (otherRoomRefID != roomRefID) RemoveRoomOwnership(charaRefID, otherRoomRefID);
+            }
+        }
+
         managedRoomRefs[roomRefID].Add(charaRefID);
         managedRoomOwnersRefs = null;
         scr_System_CampaignManager.current.Map.GetRoomByRef(roomRefID).NotifyOwnershipChange(managedRoomRefs[roomRefID]);
@@ -1342,6 +1382,19 @@ public class Manageable : I_Disposable, I_IsJobGiver
         managedRoomRefs[roomRefID].Remove(charaRefID);
         managedRoomOwnersRefs = null;
         scr_System_CampaignManager.current.Map.GetRoomByRef(roomRefID).NotifyOwnershipChange(managedRoomRefs[roomRefID]);
+    }
+
+    /// <summary>
+    /// Wipes all owner assignments for a room without unregistering it from the faction -
+    /// called when a room stops qualifying as a private room (e.g. its bed was removed),
+    /// since a non-private room cannot carry ownership data.
+    /// </summary>
+    public void ClearRoomOwnership(int roomRefID)
+    {
+        if (!managedRoomRefs.TryGetValue(roomRefID, out var owners) || owners.Count == 0) return;
+        owners.Clear();
+        managedRoomOwnersRefs = null;
+        scr_System_CampaignManager.current.Map.GetRoomByRef(roomRefID)?.NotifyOwnershipChange(owners);
     }
 
     public void InitWorkHours(MapPlan.WorkHoursInit init)
@@ -1411,6 +1464,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         // once the player has a foothold in a faction, its world-map door should no longer stay hidden
         if (c.RefID == 0) hiddenOnWorldMap = false;
 
+        bool isNewMember = !charaGuestStatus.ContainsKey(c.RefID);
+
         //c.AddToFaction(this);
         if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus.ID);
         else charaGuestStatus[c.RefID] = guestStatus.ID;
@@ -1419,9 +1474,30 @@ public class Manageable : I_Disposable, I_IsJobGiver
         managedChara = null;
         _managerRefs = null;
 
+        if (isNewMember) InitializeRelationshipsWithFaction(c);
+
         if (sendEvent && guestStatus.isPrisoner) FactionUtility.SendImprisonEvent(this, c);
         // set manager roles
         NotifyFactionMemberChange();
+    }
+
+    /// <summary>
+    /// Seeds relationships between a newly-joined faction member and every other current member, so
+    /// factionmates already know of each other instead of waiting for the lazy meet-in-room path
+    /// (RelationshipManager.FindRelationshipWith) to create the relationship the first time they happen
+    /// to share a room. Called from both sides of each pair because MakeRelationshipWith only
+    /// auto-propagates to the other party when an authored Template.initialRelationship preset matches;
+    /// without one, only the caller's own side gets an entry.
+    /// </summary>
+    void InitializeRelationshipsWithFaction(Character_Trainable c)
+    {
+        if (c == null || c.RefID < 0 || c.Relationships == null) return;
+        foreach (var other in ManagedChara)
+        {
+            if (other == null || other.RefID == c.RefID || other.Relationships == null) continue;
+            c.Relationships.FindRelationshipWith(other);
+            other.Relationships.FindRelationshipWith(c);
+        }
     }
 
     public void RemoveFromFaction(Character_Trainable c)
@@ -1639,6 +1715,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     }
 
+    public void RemoveJobPost(Job_Furniture job)
+    {
+        foreach (var com in job.allusableCOMs)
+        {
+            if (nonjobPosts.TryGetValue(com, out var nlist)) nlist.RemoveAll(x => x.RefID == job.RefID);
+            if (jobPosts.TryGetValue(com, out var jlist)) jlist.RemoveAll(x => x.RefID == job.RefID);
+        }
+    }
+
     //List<Job_Furniture> NonProductionJobs;
     Dictionary<COM, List<Job_Furniture>> nonjobPosts = new Dictionary<COM, List<Job_Furniture>>();
     Dictionary<COM, List<Job_Furniture>> jobPosts = new Dictionary<COM, List<Job_Furniture>>();
@@ -1710,7 +1795,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         //}
 
         List<string> s = new List<string>();
-        foreach (KeyValuePair<string, int> kvp in resourceSheet) s.Add(scr_System_Serializer.current.GetByNameOrID_Item_Base(kvp.Key).displayName + kvp.Value.ToString("+0;-#"));
+        foreach (KeyValuePair<string, int> kvp in resourceSheet) s.Add(scr_System_Serializer.current.GetByNameOrID_Item_Base(kvp.Key).DisplayName + kvp.Value.ToString("+0;-#"));
 
         return String.Join("\n", s);
     }
@@ -2654,7 +2739,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         foreach (var p in this.SubFactions) p.ReEstablishParent(this);
 
-
+        if (this.SalesManager == null)
+        {
+            this.SalesManager = new SalesManager(this);
+        }
+        else
+        {
+            this.SalesManager.ReEstablishParent(this);
+        }
     }
 
     [JsonIgnore]
@@ -2755,7 +2847,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public void RefreshSalesInventory(MapPlan plan = null)
     {
         if (plan == null) plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
-        
+        this.SalesManager.RefreshClienteleTemplate(plan);
+
         if (plan != null)
         {
             salesInventory.Clear();
@@ -2785,6 +2878,30 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (pricelabel == "") pricelabel = LocalizeDictionary.QueryThenParse("management_jobpost_payout_currency");
         var value = GetPrice(entry, isExport);
         if (value == 0) return "-";
+        else return pricelabel.Replace("$count$", value.ToString()).Replace("$item$", Currency.DisplayName);
+    }
+
+    public int GetPrice(Item_Instance item, bool isSell, bool perItem)
+    {
+        if (item == null || Currency == null) return 0;
+        float total = item.ValuePerItem * (perItem ? 1 : item.Count);
+        return (int)Math.Round((decimal)((total / Currency.value) * priceMult));
+    }
+
+    public string GetPricingLabel(Item_Instance item, bool isSell, bool perItem)
+    {
+        if (pricelabel == "") pricelabel = LocalizeDictionary.QueryThenParse("management_jobpost_payout_currency");
+        var value = GetPrice(item, isSell, perItem);
+        if (Currency == null) return "null currency";
+        else if (value == 0) return "-";
+        else return pricelabel.Replace("$count$", value.ToString()).Replace("$item$", Currency.DisplayName);
+    }
+
+    public string GetPricingLabel(float value, bool isSell)
+    {
+        if (pricelabel == "") pricelabel = LocalizeDictionary.QueryThenParse("management_jobpost_payout_currency");
+        if (Currency == null) return "null currency";
+        else if (value == 0) return "-";
         else return pricelabel.Replace("$count$", value.ToString()).Replace("$item$", Currency.DisplayName);
     }
 

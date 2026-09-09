@@ -136,7 +136,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "modpersonalityscore",
         "ingestItem",
         "ascii",
-        "showQuestStages"
+        "showQuestStages",
+        "furnitureUnpack"
     };
 
     string[] devConsoleCommands = new string[]

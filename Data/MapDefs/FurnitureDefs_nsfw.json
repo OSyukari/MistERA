@@ -4,18 +4,24 @@
         {
             "ID":"furniture_prison_containment_spot",
             "furnitureSize":1,
+            "value":150000,
+            "Tags":["rarity_rare"],
             "givesJob":
             [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_2",
             "furnitureSize":2,
+            "value":250000,
+            "Tags":["rarity_rare"],
             "givesJob":
             [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_4",
             "furnitureSize":4,
+            "value":400000,
+            "Tags":["rarity_rare"],
             "givesJob":
             [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
         }
@@ -43,5 +49,5 @@
             }
         }
     }
-    
+
 }

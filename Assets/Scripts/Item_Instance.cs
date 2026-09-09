@@ -36,6 +36,15 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
     //List<CombatAction> _cachedCombatActions = null;
 
     [JsonIgnore]
+    public bool isVirtualGood
+    {
+        get
+        {
+            return this.Tags.Contains("retail_digital");
+        }
+    }
+
+    [JsonIgnore]
     public List<string> ItemTags { get { return this.Tags; } }
 
     [JsonIgnore]
@@ -113,6 +122,42 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
 
     [JsonIgnore] public bool Displayable { get { return !this.isToken || this.Count > 0; } }
 
+    [JsonIgnore] public bool canBeSold
+    {
+        get
+        {
+            if (this.isToken) return false;
+            foreach (var c in Comps) if (!c.CanBeSold) return false;
+            return true;
+        }
+    }
+
+    [JsonIgnore] public float ValuePerItem
+    {
+        get
+        {
+            float value = Parent.value;
+            foreach (var c in Comps) c.ValueMod(ref value);
+            return value;
+        }
+    }
+
+    /// <summary>
+    /// Sales-volume multiplier derived from quality vs. the item's fixed ValuePerItem. Starts at
+    /// neutral 1f; each component adds its own deviation (see ItemComponent_Base.AddQualityMod).
+    /// Items with no quality dimension (e.g. non-recordings) stay at 1f.
+    /// </summary>
+    [JsonIgnore] public float QualityModifier
+    {
+        get
+        {
+            float value = 1f;
+            float parentvalue = this.ValuePerItem;
+            foreach (var c in Comps) c.AddQualityMod(ref value, parentvalue);
+            return value;
+        }
+    }
+
     /// <summary>
     /// print name and count according to item type
     /// </summary>
@@ -136,6 +181,25 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
 
     protected string _cache_printfull = "";
 
+    /// <summary>
+    /// Identity used to group sale listings for otherwise-identical items (see SalesManager.ItemMatch).
+    /// Equal to BaseID, plus each component's GetRetailID() contribution (most contribute nothing).
+    /// </summary>
+    protected string _cache_retailID = "";
+    [JsonIgnore] public string RetailID
+    {
+        get
+        {
+            if (this._cache_retailID == "")
+            {
+                var s = BaseID;
+                foreach (var c in Comps) s += c.GetRetailID();
+                this._cache_retailID = s;
+            }
+            return this._cache_retailID;
+        }
+    }
+
     public string nameOverwrite = "";
     [JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();
     protected List<ItemComponent_Base> compInstances_nonSerialized = new List<ItemComponent_Base>();
@@ -157,7 +221,36 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         }
     }
 
-    [JsonIgnore] public List<string> Tags { get { return Parent.Tags; } }
+    private List<string> _tagsCache = null;
+    [JsonIgnore] public List<string> Tags
+    {
+        get
+        {
+            if (_tagsCache == null)
+            {
+                var v = new List<string>();
+                var seen = new HashSet<string>();
+                foreach (var tag in Parent.Tags) if (seen.Add(tag)) v.Add(tag);
+                foreach (var c in Comps)
+                {
+                    var t = c.GetTags();
+                    if (t == null) continue;
+                    foreach (var tag in t) if (seen.Add(tag)) v.Add(tag);
+                }
+                _tagsCache = v;
+            }
+            return _tagsCache;
+        }
+    }
+
+    /// <summary>
+    /// Call after anything that changes what Tags would compute - swapping/adding an ItemComponent,
+    /// or mutating a component's internal state that its GetTags() depends on (e.g. SetFurnitureBase).
+    /// </summary>
+    public void InvalidateTagsCache()
+    {
+        _tagsCache = null;
+    }
 
     public ItemComponent_Ingestible GetComp_Ingestible() { return GetComp("ItemComponent_Ingestible") as ItemComponent_Ingestible; }
 
@@ -293,8 +386,9 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
             //Debug.Log("ReAdding comp " + comp.compType + " for item ref " + this.RefID + " " + Base.DisplayName+", Stackable? "+c.Stackable);
             if (c.Stackable) compInstances_nonSerialized.Add(c);
             else compInstances.Add(c);
-            
+
         }
+        InvalidateTagsCache();
     }
 
     public void Dispose()

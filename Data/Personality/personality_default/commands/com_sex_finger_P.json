@@ -64,11 +64,49 @@
                                 "climax"
                             ],
                             "useActiveTags": false,
+                            "_comment": "2.5.1 独自撸管 高潮 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Climax_Self_M_1",
+                                "com_sex_finger_P_Climax_Self_M_2"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "climax"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.5.1 独自撸管 高潮 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_P_Climax_Self_1",
                                 "com_sex_finger_P_Climax_Self_2"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "climax",
+                                "shy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.2 独自撸管 高潮 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Climax_Self_M_3",
+                                "com_sex_finger_P_Climax_Self_M_4"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -97,6 +135,19 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_finger_P_Begin_Timestop_1",
+                                "com_sex_finger_P_Begin_Timestop_2"
+                            ]
+                        },
                         {
                             "requirement": {
                                 "requirePermission": true
@@ -165,11 +216,49 @@
                                 "composed"
                             ],
                             "useActiveTags": false,
+                            "_comment": "2.5.3 开始独自撸管 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Begin_Self_M_1",
+                                "com_sex_finger_P_Begin_Self_M_2"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "composed"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.5.3 开始独自撸管 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_P_Begin_Self_1",
                                 "com_sex_finger_P_Begin_Self_2"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "blush",
+                                "shy"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 开始独自撸管 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Begin_Self_M_3",
+                                "com_sex_finger_P_Begin_Self_M_4"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -607,11 +696,55 @@
                                 "relaxed"
                             ],
                             "useActiveTags": false,
+                            "_comment": "2.5.9 独自撸管 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Self_M_9",
+                                "com_sex_finger_P_Self_M_10"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success",
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "aroused",
+                                "relaxed"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.5.9 独自撸管 结果正面 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_P_Self_9",
                                 "com_sex_finger_P_Self_10"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "aroused",
+                                "shy",
+                                "tearful"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.10 独自撸管 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Self_M_11",
+                                "com_sex_finger_P_Self_M_12"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -646,11 +779,50 @@
                                 "disappointed"
                             ],
                             "useActiveTags": false,
+                            "_comment": "2.5.11 独自撸管 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Self_M_13",
+                                "com_sex_finger_P_Self_M_14"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "tired",
+                                "disappointed"
+                            ],
+                            "useActiveTags": false,
                             "_comment": "2.5.11 独自撸管 尝试但结果负面 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_P_Self_13",
                                 "com_sex_finger_P_Self_14"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "extraSelfPortraitTags": [
+                                "sex",
+                                "doer",
+                                "handjob",
+                                "sad",
+                                "troubled"
+                            ],
+                            "useActiveTags": false,
+                            "_comment": "2.5.12 独自撸管 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_P_Self_M_15",
+                                "com_sex_finger_P_Self_M_16"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -676,162 +848,101 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_finger_P_Climax_1": "($self$) 被手淫 高潮 口上文",
-                "com_sex_finger_P_Climax_2": "$self$猛地向后仰起脖颈，十指深深掐入$target$的背部皮肉，喉咙深处被挤出一声绵长变调的尖叫，内壁开始不受控地疯狂痉挛。",
-                "com_sex_finger_P_Climax_3": "$self$的双眼瞬间失神上翻，身体像触电般剧烈颤抖，大腿内侧的肌肉紧绷得如石头一般，一股温热的液体不受控制地喷涌而出。",
-                "com_sex_finger_P_Climax_4": "$self$张大嘴巴大口喘息却发不出声音，整个人瘫软如泥，只有下身还在随着高潮的余韵，通过一阵阵的收缩死死绞紧$target$。",
-                "com_sex_finger_P_Climax_5": "$self$眼中含着屈辱的泪水，身体却可悲地背叛了意志，脊背猛地弓起，脚趾死死蜷缩，在那一瞬间彻底沦为了欲望的奴隶。",
-                "com_sex_finger_P_Climax_6": "$self$紧咬着下唇直到渗出血丝，试图压抑那羞耻的声音，但最终还是在一阵剧烈的抽搐中崩溃，双眼翻白，失去了理智。",
-                "com_sex_finger_P_Climax_7": "$self$一边哭喊着不要，一边却迎来了最强烈的痉挛，耻丘被爱液弄得一片狼藉，整个人都在因为这违背意愿的快感而崩溃抽泣。",
-                "com_sex_finger_P_Begin_1": "$self$温柔地握住了$target$那根挺立的欲望，指尖轻轻在敏感的冠状沟处打转，嘴角含着一丝笑意：\"看来它已经忍耐很久了呢。\"",
-                "com_sex_finger_P_Begin_2": "$self$没有说话，只是默默地将手探入被子，随后$target$感觉到一阵温热紧致的包裹感传来，那是她掌心特有的温度。",
-                "com_sex_finger_P_Begin_3": "$self$将身体紧贴近$target$，手掌熟练地套弄起来，湿热的呼吸喷洒在对方耳边：\"只要这样……就会舒服吗？\"",
-                "com_sex_finger_P_Begin_4": "$self$被突如其来的触碰吓了一跳，身体瞬间僵硬，但并没有抽回手，只是脸颊迅速染上了绯红：\"等等……这是……\"",
-                "com_sex_finger_P_Begin_5": "$self$瞪大了眼睛看着$target$，手中的动作虽然因生涩显得有些笨拙却并未停下，呼吸也随之变得急促起来。",
-                "com_sex_finger_P_Begin_6": "$self$咬着嘴唇，视线游移不定，似乎在进行激烈的思想斗争，最终还是顺从了这荒唐的行为。",
-                "com_sex_finger_P_Begin_7": "$self$颤抖着伸出手，指尖冰凉，眼眶里蓄满了泪水，根本不敢抬头看$target$一眼。",
-                "com_sex_finger_P_Begin_8": "$self$紧闭着双眼，像是在触碰什么可怕的东西一样，僵硬而机械地握住了那一处。",
-                "com_sex_finger_P_Begin_9": "$self$喉咙里发出细微的呜咽声，身体害怕地缩成一团，完全是在胁迫下勉强地配合着动作。",
-                "com_sex_finger_P_1": "$self$发出无意识的梦呓，身体随着冲撞的节奏微微晃动，但并没有醒来的迹象，只是眉头偶尔轻轻皱起。",
-                "com_sex_finger_P_2": "$self$沉睡中的呼吸变得有些急促粗重，身体本能地产生了一些收缩反应，却依旧沉浸在梦乡之中。",
-                "com_sex_finger_P_3": "$self$依然保持着原本的姿势一动不动，唯有那处私密部位随着$target$的抽插而被迫变形，飞溅的汁液凝固在半空中。",
-                "com_sex_finger_P_4": "$self$毫无知觉地承受着猛烈的撞击，眼中的神采凝固在上一秒，这副肉体此刻彻底沦为了$target$随意使用的玩物。",
-                "com_sex_finger_P_5": "$self$烦躁地拍开了$target$的手，翻个身把头埋进枕头里，声音闷闷的：\"别闹……困死了……\"",
-                "com_sex_finger_P_6": "$self$发出一声不满的呻吟，将被子死死裹紧，用背影表达着无声的抗议。",
-                "com_sex_finger_P_7": "$self$迷茫地睁眼看了看，随即推拒着$target$的胸膛，声音软糯却坚定：\"不管是几次……现在绝对不行……\"",
-                "com_sex_finger_P_8": "$self$尖叫着惊醒，手脚并用地将$target$踹下床，抓起枕头就砸了过去：\"变态！滚出去！\"",
-                "com_sex_finger_P_9": "$self$惊恐地缩到床角，双手死死抓紧衣领，语无伦次地大喊救命。",
-                "com_sex_finger_P_10": "$self$按住了$target$不规矩的手，轻声哄道：\"亲爱的，今晚太累了，抱抱着睡好吗？\"",
-                "com_sex_finger_P_11": "$self$皱了皱鼻子，把身子转过去背对着$target$：\"不行哦，明天还要早起呢，快睡觉。\"",
-                "com_sex_finger_P_12": "$self$笑着躲开了$target$的触碰，拉过被子把自己裹成一个蚕茧：\"休战牌已挂起！今晚禁止通行！\"",
-                "com_sex_finger_P_13": "$self$尴尬地笑着后退了一步，举起双手示意：\"那个……这种玩笑有点过了哦。\"",
-                "com_sex_finger_P_14": "$self$轻轻拨开了$target$的手，语气尽量保持轻松：\"虽然我不讨厌你，但这种事还是留给你的女朋友吧。\"",
-                "com_sex_finger_P_15": "$self$有些慌乱地挠了挠脸颊，顾左右而言他：\"啊，对了，工作的事情还没说完呢……\"",
-                "com_sex_finger_P_16": "$self$猛地甩开了$target$的手，眼神瞬间变得冰冷刺骨：\"请自重！我在你眼里就是这种人吗？\"",
-                "com_sex_finger_P_17": "$self$厌恶地后退几步，像是看到了脏东西一样拍打着衣服：\"别碰我！真恶心！\"",
-                "com_sex_finger_P_18": "$self$毫不客气地一巴掌拍落了那只伸过来的手，冷笑道：\"想死的话直说。\"",
-                "com_sex_finger_P_19": "$self$迷迷糊糊地睁开眼，感觉到下身的异样后反而顺从地张开了腿，呢喃道：\"唔……坏蛋……\"",
-                "com_sex_finger_P_20": "$self$在半梦半醒间抱住了$target$的脖子，本能地迎合着对方的动作，发出一声慵懒满足的鼻音。",
-                "com_sex_finger_P_21": "$self$揉着惺忪的睡眼，虽然困倦却还是露出了一个宠溺的笑：\"真拿你没办法……\"",
-                "com_sex_finger_P_22": "$self$惊醒后发现现状，本能地想要尖叫，但看清是$target$后，身体反而软了下来，发出一声复杂的叹息。",
-                "com_sex_finger_P_23": "$self$愣了几秒，随后有些自暴自弃般地闭上眼，手却鬼使神差地配合了起来。",
-                "com_sex_finger_P_24": "$self$被惊醒的瞬间充满了恐惧，但在$target$的压迫感下，只能含着泪默默承受这突如其来的侵犯。",
-                "com_sex_finger_P_25": "$self$浑身僵硬地躺着，任由$target$摆布，像是一个失去了灵魂的破败布偶。",
-                "com_sex_finger_P_26": "$self$观察着$target$迷乱的神情，手上的动作更加卖力，眼神里满是浓得化不开的爱意：\"看起来你很喜欢这样……\"",
-                "com_sex_finger_P_27": "$self$凑过去吻了吻$target$的脸颊，轻笑道：\"你的反应真可爱，让我忍不住想欺负得更狠一点。\"",
-                "com_sex_finger_P_28": "$self$的手腕有些酸，但看到$target$享受的样子，她反而不知疲倦地加快了套弄的速度。",
-                "com_sex_finger_P_29": "$self$原本抗拒的表情逐渐软化，看着手中勃发的器官，眼中闪过一丝奇异的光芒：\"没想到……居然会变成这样。\"",
-                "com_sex_finger_P_30": "$self$的手指开始主动探索那些敏感的褶皱，声音变得有些沙哑：\"如果是你的话……好像也不坏。\"",
-                "com_sex_finger_P_31": "$self$脸上带着潮红，不再回避视线，反而有些好奇地加重了手上的力道。",
-                "com_sex_finger_P_32": "$self$甩了甩酸痛的手腕，动作明显慢了下来，眉头微蹙：\"还得多久呀……手好酸。\"",
-                "com_sex_finger_P_33": "$self$有些走神地看着天花板，机械地重复着套弄的动作，显然心思已经不在床上了。",
-                "com_sex_finger_P_34": "$self$叹了口气，停下动作揉了揉自己的虎口：\"今天状态不太好，要不先这样？\"",
-                "com_sex_finger_P_35": "$self$忍着强烈的不适感，眉头紧锁，眼神中满是煎熬：\"还没结束吗……\"",
-                "com_sex_finger_P_36": "$self$偏过头去，屏住呼吸，手指仅仅是用最小的接触面积在敷衍了事。",
-                "com_sex_finger_P_37": "$self$眼中的厌恶越来越浓，甚至产生了一些生理性的干呕冲动。",
-                "com_sex_finger_P_Begin_Self_1": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_P_Begin_Self_2": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_P_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_P_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_P_Self_1": "(placeholder - solo, sleeping)",
-                "com_sex_finger_P_Self_2": "(placeholder - solo, sleeping)",
-                "com_sex_finger_P_Self_3": "(placeholder - solo, timestop)",
-                "com_sex_finger_P_Self_4": "(placeholder - solo, timestop)",
-                "com_sex_finger_P_Self_5": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_P_Self_6": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_P_Self_7": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_P_Self_8": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_P_Self_9": "(placeholder - solo, success, permission)",
-                "com_sex_finger_P_Self_10": "(placeholder - solo, success, permission)",
-                "com_sex_finger_P_Self_11": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_P_Self_12": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_P_Self_13": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_P_Self_14": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_P_Self_15": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_P_Self_16": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_P_Climax_Self_1": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_P_Climax_Self_2": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_P_Climax_Self_3": "(placeholder - solo, climax, no permission)",
-                "com_sex_finger_P_Climax_Self_4": "(placeholder - solo, climax, no permission)"
-            },
-            "en-us": {
-                "com_sex_finger_P_Climax_1": "($self$) Handjob Climax Dialogue",
-                "com_sex_finger_P_Climax_2": "$self$ violently arches her neck back, her ten fingers digging deep into $target$'s back skin. A long, distorted scream is squeezed from the depths of her throat as her inner walls begin to spasm uncontrollably.",
-                "com_sex_finger_P_Climax_3": "$self$'s eyes instantly lose focus and roll back. Her body trembles violently as if electrocuted, the muscles of her inner thighs tightening like rocks, while a stream of warm fluid gushes out uncontrollably.",
-                "com_sex_finger_P_Climax_4": "$self$ opens her mouth wide, gasping for air but unable to make a sound. Her entire body goes limp like mud, only her lower body still tightly constricting around $target$ with rhythmic contractions in the aftershocks of orgasm.",
-                "com_sex_finger_P_Climax_5": "With tears of humiliation in her eyes, $self$'s body pitifully betrays her will. Her spine arches sharply and her toes curl tight, completely becoming a slave to desire in that instant.",
-                "com_sex_finger_P_Climax_6": "$self$ bites her lower lip until it bleeds, trying to suppress the shameful sounds, but finally collapses in a violent fit of convulsions, her eyes rolling back as she loses her reason.",
-                "com_sex_finger_P_Climax_7": "While crying out 'no', $self$ is hit by the strongest spasms yet. Her mound is left in a mess of love juices, her whole body sobbing in breakdown from this pleasure that violates her will.",
-                "com_sex_finger_P_Begin_1": "$self$ gently grasps $target$'s erect desire, her fingertips lightly circling the sensitive corona. A smile plays on her lips: \"It seems it's been waiting for a long time.\"",
-                "com_sex_finger_P_Begin_2": "$self$ stays silent, simply sliding her hand under the covers. Soon, $target$ feels a warm, tight sensation enveloping him—the unique warmth of her palm.",
-                "com_sex_finger_P_Begin_3": "$self$ presses her body close to $target$, her hand working skillfully. Her hot breath sprays against his ear: \"Does it feel good... when I do this?\"",
-                "com_sex_finger_P_Begin_4": "$self$ is startled by the sudden touch, her body stiffening instantly. But she doesn't pull her hand away, her cheeks quickly flushing red: \"Wait... this is...\"",
-                "com_sex_finger_P_Begin_5": "$self$ stares wide-eyed at $target$. Although her movements are clumsy from inexperience, they don't stop, and her breathing becomes rapid.",
-                "com_sex_finger_P_Begin_6": "$self$ bites her lip, her gaze shifting uncertainly as if in an intense internal struggle, but finally, she acquiesces to this absurd act.",
-                "com_sex_finger_P_Begin_7": "$self$ reaches out with a trembling hand, her fingertips ice-cold. Her eyes are brimming with tears, daring not to look up at $target$ even once.",
-                "com_sex_finger_P_Begin_8": "$self$ keeps her eyes tightly shut, as if touching something terrible, gripping that part stiffly and mechanically.",
-                "com_sex_finger_P_Begin_9": "A quiet whimper escapes $self$'s throat. She curls into a ball in fear, barely cooperating with the movements under total duress.",
-                "com_sex_finger_P_1": "$self$ mumbles unconsciously in her sleep. Her body sways slightly with the rhythm of the thrusts, but she shows no sign of waking, only frowning slightly now and then.",
-                "com_sex_finger_P_2": "$self$'s breathing in her sleep becomes heavy and rapid. Her body instinctively produces some contraction reactions, yet she remains immersed in dreamland.",
-                "com_sex_finger_P_3": "$self$ remains motionless in her original pose, only her private parts forced to deform with $target$'s thrusts, the splashing juices freezing in mid-air.",
-                "com_sex_finger_P_4": "$self$ endures the violent impact without any sensation, the light in her eyes frozen in the previous second. This body has now completely become a plaything for $target$ to use at will.",
-                "com_sex_finger_P_5": "$self$ irritably swats $target$'s hand away, turning over to bury her face in the pillow, her voice muffled: \"Don't... I'm so sleepy...\"",
-                "com_sex_finger_P_6": "$self$ lets out a groan of dissatisfaction, wrapping the blanket tightly around herself, expressing silent protest with her back.",
-                "com_sex_finger_P_7": "$self$ opens her eyes in confusion, then pushes against $target$'s chest, her voice soft but firm: \"No matter how many times... absolutely not right now...\"",
-                "com_sex_finger_P_8": "$self$ wakes up screaming, kicking $target$ off the bed with hands and feet, grabbing a pillow and throwing it: \"Pervert! Get out!\"",
-                "com_sex_finger_P_9": "$self$ shrinks back to the corner of the bed in terror, clutching her collar tightly, shouting incoherently for help.",
-                "com_sex_finger_P_10": "$self$ holds down $target$'s unruly hand, coaxing softly: \"Darling, I'm too tired tonight. Can we just cuddle and sleep?\"",
-                "com_sex_finger_P_11": "$self$ wrinkles her nose and turns her back to $target$: \"No way, we have to get up early tomorrow. Go to sleep.\"",
-                "com_sex_finger_P_12": "$self$ laughs and dodges $target$'s touch, pulling the blanket to wrap herself like a cocoon: \"Truce flag is up! No entry tonight!\"",
-                "com_sex_finger_P_13": "$self$ steps back with an awkward smile, raising both hands: \"Um... this joke is going a bit too far.\"",
-                "com_sex_finger_P_14": "$self$ gently pushes $target$'s hand aside, trying to keep her tone light: \"Although I don't dislike you, you should save this kind of thing for your girlfriend.\"",
-                "com_sex_finger_P_15": "$self$ scratches her cheek in a flustered manner, changing the subject: \"Ah, right, we haven't finished talking about work...\"",
-                "com_sex_finger_P_16": "$self$ abruptly throws off $target$'s hand, her eyes instantly turning bone-chillingly cold: \"Have some self-respect! Is that the kind of person I am to you?\"",
-                "com_sex_finger_P_17": "$self$ backs away in disgust, patting her clothes as if she had touched something dirty: \"Don't touch me! It's disgusting!\"",
-                "com_sex_finger_P_18": "$self$ slaps away the reaching hand without hesitation, sneering: \"Just say it if you want to die.\"",
-                "com_sex_finger_P_19": "$self$ opens her eyes groggily. Feeling the sensation below, she obediently spreads her legs instead, murmuring: \"Mm... bad boy...\"",
-                "com_sex_finger_P_20": "$self$ hugs $target$'s neck while half-asleep, instinctively catering to his movements, letting out a lazy, satisfied nasal sound.",
-                "com_sex_finger_P_21": "$self$ rubs her sleepy eyes. Although drowsy, she reveals a doting smile: \"I really can't do anything with you...\"",
-                "com_sex_finger_P_22": "$self$ wakes up with a start, instinctively wanting to scream, but upon seeing it's $target$, her body goes soft, releasing a complex sigh.",
-                "com_sex_finger_P_23": "$self$ freezes for a few seconds, then closes her eyes as if giving up, her hand inexplicably starting to cooperate.",
-                "com_sex_finger_P_24": "$self$ is filled with terror the moment she wakes, but under $target$'s oppression, she can only endure this sudden violation in silence with tears in her eyes.",
-                "com_sex_finger_P_25": "$self$ lies there stiffly, letting $target$ have his way, like a broken doll that has lost its soul.",
-                "com_sex_finger_P_26": "$self$ watches $target$'s bewildered expression, working her hand even harder, her eyes full of love so thick it won't dissolve: \"Looks like you really enjoy this...\"",
-                "com_sex_finger_P_27": "$self$ leans in to kiss $target$'s cheek, chuckling lightly: \"Your reaction is so cute, it makes me want to bully you even harder.\"",
-                "com_sex_finger_P_28": "$self$'s wrist is a bit sore, but seeing $target$ enjoy it, she tirelessly speeds up the stroking.",
-                "com_sex_finger_P_29": "$self$'s originally resistant expression softens. Looking at the throbbing organ in her hand, a strange light flashes in her eyes: \"I didn't expect... it would turn out like this.\"",
-                "com_sex_finger_P_30": "$self$ begins to actively explore those sensitive folds with her fingers, her voice becoming a bit husky: \"If it's you... it doesn't seem so bad.\"",
-                "com_sex_finger_P_31": "$self$'s face is flushed. She no longer avoids eye contact, instead curiously increasing the strength of her hand.",
-                "com_sex_finger_P_32": "$self$ shakes her sore wrist, her movements slowing noticeably, brows furrowed: \"How much longer... my hand is so tired.\"",
-                "com_sex_finger_P_33": "$self$ looks at the ceiling absent-mindedly, mechanically repeating the stroking motion, clearly with her mind elsewhere.",
-                "com_sex_finger_P_34": "$self$ sighs, stopping to rub the web of her thumb: \"Not in the mood today, how about we stop here?\"",
-                "com_sex_finger_P_35": "$self$ endures the intense discomfort with a frown, her eyes full of torment: \"Is it not over yet...\"",
-                "com_sex_finger_P_36": "$self$ turns her head away, holding her breath, her fingers barely touching, doing the bare minimum to get it over with.",
-                "com_sex_finger_P_37": "$self$ eyes are filled with increasing disgust, even feeling a physiological urge to retch.",
-                "com_sex_finger_P_Begin_Self_1": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_P_Begin_Self_2": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_P_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_P_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_P_Self_1": "(placeholder - solo, sleeping)",
-                "com_sex_finger_P_Self_2": "(placeholder - solo, sleeping)",
-                "com_sex_finger_P_Self_3": "(placeholder - solo, timestop)",
-                "com_sex_finger_P_Self_4": "(placeholder - solo, timestop)",
-                "com_sex_finger_P_Self_5": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_P_Self_6": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_P_Self_7": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_P_Self_8": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_P_Self_9": "(placeholder - solo, success, permission)",
-                "com_sex_finger_P_Self_10": "(placeholder - solo, success, permission)",
-                "com_sex_finger_P_Self_11": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_P_Self_12": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_P_Self_13": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_P_Self_14": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_P_Self_15": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_P_Self_16": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_P_Climax_Self_1": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_P_Climax_Self_2": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_P_Climax_Self_3": "(placeholder - solo, climax, no permission)",
-                "com_sex_finger_P_Climax_Self_4": "(placeholder - solo, climax, no permission)"
+                "com_sex_finger_P_Climax_1": "$self$的腰猛地弹起来，肉棒被$target$的手攥着加速套弄，龟头胀得发亮，精液抖着喷了出来。\n\"要射了……啊……去了……！\"",
+                "com_sex_finger_P_Climax_5": "$self$含着屈辱的泪套弄着$target$，脊背却自己弓起来，脚趾蜷紧，在羞耻里到了。\n\"不要……明明是被逼着做的……为什么我会……啊……！\"",
+                "com_sex_finger_P_Climax_6": "$self$咬着下唇想压住声音，还是在剧烈的抽搐里崩溃了，手里的动作乱得没了章法。\n\"呜……停下来……让我停下……啊……！\"",
+                "com_sex_finger_P_Climax_7": "$self$哭着加速手里的撸动，耻丘被自己的爱液弄得狼藉，快感和羞耻同时炸开。\n\"骗子……说好只是用手……呜呜……去了……！\"",
+                "com_sex_finger_P_Climax_2": "$self$的手套弄着$target$的肉棒，自己的呼吸却先乱了，并拢的腿根抖着，就这么到了。\n\"唔……明明是在给你撸……我怎么会先……♡\"",
+                "com_sex_finger_P_Climax_3": "$self$的小穴随着手上的节奏收缩起来，爱液把腿根洇湿，掌心还在卖力磨着龟头。\n\"哈啊……手在动……里面却先……♡♡\"",
+                "com_sex_finger_P_Climax_4": "$self$夹紧腿根浑身发颤，手里攥着的肉棒差点松脱，硬是撑到痉挛过去。\n\"呜呜……不行了……腿软……手停不下来……！\"",
+                "com_sex_finger_P_Climax_Self_M_1": "$self$套弄着自己到了顶，当着$target$的面抖着射了出来。\n\"去了……被看着射……好丢脸……♡\"",
+                "com_sex_finger_P_Climax_Self_M_2": "$self$攥着龟头抖着泄了，腰软得撑不住。\n\"呜啊……还在看……好丢脸……♡\"",
+                "com_sex_finger_P_Climax_Self_1": "$self$撸到顶端猛地抖住，精液顺着指缝淌下来。\n\"要去了……自己撸也能到……♡♡\"",
+                "com_sex_finger_P_Climax_Self_2": "$self$攥着龟头抖着射了，腰软得撑不住。\n\"呜啊……停不下来……手还在动……♡\"",
+                "com_sex_finger_P_Climax_Self_M_3": "$self$被命令着加快手上的动作，忽然僵住，抖着洒了出来。\n\"到、到了……别看……求你别看……\"",
+                "com_sex_finger_P_Climax_Self_M_4": "$self$泄了满手，浑身发抖地蜷起来。\n\"被逼着撸自己……居然也到了……呜呜……好丢脸……\"",
+                "com_sex_finger_P_Climax_Self_3": "$self$的手越来越快，忽然僵住，整个人蜷着发抖。\n\"到、到了……呜……好丢脸……\"",
+                "com_sex_finger_P_Climax_Self_4": "$self$泄了满手，好半天才止住抖。\n\"自己撸到去了……呜呜……好丢脸……\"",
+                "com_sex_finger_P_Begin_1": "$self$握住$target$挺立的肉棒，指腹绕着龟头轻轻打磨。\n\"忍很久了吧？我来帮你解决。\"",
+                "com_sex_finger_P_Begin_2": "$self$把手探过去，掌心包住肉棒慢慢撸动。\n\"嘘……别出声，让我来。\"",
+                "com_sex_finger_P_Begin_3": "$self$贴到$target$身侧，手从前面握住肉棒套弄，呼吸落在耳后。\n\"这样……舒服吗？\"",
+                "com_sex_finger_P_Begin_4": "$self$被拉着把手按上那根肉棒，指尖缩了下才握好。\n\"等、等等……这样握对吗……\"",
+                "com_sex_finger_P_Begin_5": "$self$红着脸套弄起来，动作生涩得时快时慢。\n\"我、我不熟练……忍着点……\"",
+                "com_sex_finger_P_Begin_6": "$self$咬着唇犹豫半天，最后还是握了上去。\n\"就、就这次……老实点别乱动……\"",
+                "com_sex_finger_P_Begin_7": "$self$颤抖着伸手握住肉棒，不敢抬头。\n\"照你说的做了……快点结束……\"",
+                "com_sex_finger_P_Begin_8": "$self$闭着眼机械地套弄，指头都是僵的。\n\"……这样总行了吧。\"",
+                "com_sex_finger_P_Begin_9": "$self$缩着肩小声呜咽，被迫撸动着手里的肉棒。\n\"呜……别逼我……手好酸……\"",
+                "com_sex_finger_P_Begin_Self_M_1": "$self$在$target$的注视下握住自己的肉棒，慢慢套弄起来。\n\"让我做了就别笑话我……开始了。\"",
+                "com_sex_finger_P_Begin_Self_M_2": "$self$按吩咐分开腿，手握上肉棒根部给$target$看。\n\"这样……可以了吗？那我撸了。\"",
+                "com_sex_finger_P_Begin_Self_1": "$self$靠坐下来，手握上自己的肉棒。\n\"……那我开始了。\"",
+                "com_sex_finger_P_Begin_Self_2": "$self$握住肉棒根部，慢慢撸动两下找节奏。\n\"唔……先慢点……\"",
+                "com_sex_finger_P_Begin_Self_M_3": "$self$跪坐在$target$面前，抖着手握上自己的肉棒。\n\"非、非要我做这种事……撸就是了……\"",
+                "com_sex_finger_P_Begin_Self_M_4": "$self$咬着牙当着$target$的面套弄起自己。\n\"是你命令的……做完就当没发生过……\"",
+                "com_sex_finger_P_Begin_Self_3": "$self$红着脸握住自己翘起来的肉棒。\n\"……忍不下去了嘛……\"",
+                "com_sex_finger_P_Begin_Self_4": "$self$急急地撸动自己，喘息压不住。\n\"……先解决了再说……\"",
+                "com_sex_finger_P_1": "$self$睡得沉，肉棒被握住套弄也没醒，只是腰窝浅浅地陷了下。",
+                "com_sex_finger_P_2": "$self$在梦里哼了声，腿根绷了绷，被握着的肉棒慢慢硬起来，人还沉在梦乡。",
+                "com_sex_finger_P_3": "$self$定格在原地，肉棒被$target$的手攥住套弄，飞溅的液体悬在半空，她毫无知觉。",
+                "com_sex_finger_P_4": "$self$僵立不动，硬起来的肉棒被随意撸动，龟头渗出的水光她自己也看不见。",
+                "com_sex_finger_P_16": "$self$猛地甩开那只手，眼神冷下来。\n\"请自重！我在你眼里就是这种人吗？\"",
+                "com_sex_finger_P_17": "$self$厌恶地退开，拍着被碰过的地方。\n\"别碰我！真恶心！\"",
+                "com_sex_finger_P_18": "$self$抬手拍落那只手，冷笑。\n\"想挨揍的话直说。\"",
+                "com_sex_finger_P_8": "$self$尖叫着惊醒，抄起手边的东西砸过去。\n\"变态！谁准你碰那里的！滚出去！\"",
+                "com_sex_finger_P_9": "$self$惊恐地缩起来，双手捂住腿间。\n\"别过来！我喊人了啊！\"",
+                "com_sex_finger_P_5": "$self$拍开腰间的手，翻身背过去。\n\"唔……困死了……别闹……\"",
+                "com_sex_finger_P_6": "$self$皱着眉把$target$的手推回去。\n\"睡觉……这种事明天再说……\"",
+                "com_sex_finger_P_7": "$self$迷迷糊糊睁眼，护住腿间。\n\"不管是几次……现在绝对不行……\"",
+                "com_sex_finger_P_10": "$self$按住$target$不规矩的手，轻声哄。\n\"今晚太累了……抱抱着睡好吗？\"",
+                "com_sex_finger_P_11": "$self$把腰侧过去避开那只手。\n\"不行哦，明天还要早起呢，快睡觉。\"",
+                "com_sex_finger_P_12": "$self$笑着拉开$target$的手。\n\"今天免谈……挂休战牌了哦。\"",
+                "com_sex_finger_P_13": "$self$尴尬地笑着挪开半步，举起双手。\n\"那个……这种玩笑有点过了哦。\"",
+                "com_sex_finger_P_14": "$self$轻轻拨开$target$的手，语气放软。\n\"我不讨厌你……但这种事，再等等。\"",
+                "com_sex_finger_P_15": "$self$有些慌乱地转移话题。\n\"啊，对了……正事还没聊完呢……\"",
+                "com_sex_finger_P_24": "$self$被惊醒，在$target$的压迫感下不敢挣扎，含泪忍受腿间的撸动。\n\"呜……我不动了……轻点……求你……\"",
+                "com_sex_finger_P_25": "$self$浑身僵硬地躺着，任由$target$摆布。\n\"……想做就做吧，别弄疼我……呜……\"",
+                "com_sex_finger_P_19": "$self$迷迷糊糊睁眼，察觉腿间的热度后也没躲。\n\"唔……坏蛋……想撸直说嘛……嗯……~\"",
+                "com_sex_finger_P_20": "$self$半梦半醒地往$target$手边送了送腰。\n\"哈啊……大清早就这么有精神……随你……~\"",
+                "com_sex_finger_P_21": "$self$揉着惺忪的睡眼，还是把腿张开了些。\n\"真拿你没办法……轻点撸……~\"",
+                "com_sex_finger_P_22": "$self$惊醒后看清是$target$，想叫又咽了回去，脸慢慢红了。\n\"是你啊……吓死我……那就……继续也行……\"",
+                "com_sex_finger_P_23": "$self$僵着没动，等腰上的手握稳了才小声开口。\n\"什么时候开始的……唔……先别停……\"",
+                "com_sex_finger_P_29": "$self$原本抗拒地撇着脸，手里的肉棒却烫得发硬。\n\"没想到……握着握着就……哼……♡\"",
+                "com_sex_finger_P_30": "$self$的指尖主动绕上龟头打磨，动作越来越顺。\n\"如果是你的话……似乎也不坏……嗯……♡\"",
+                "com_sex_finger_P_31": "$self$脸上带着潮红，不再回避视线，手上的力道加重了。\n\"再教你点别的……老实受着……~\"",
+                "com_sex_finger_P_26": "$self$观察着$target$迷乱的神情，手上的动作越发卖力。\n\"看来你很喜欢这样……再忍耐下哦♡\"",
+                "com_sex_finger_P_27": "$self$凑过去吻住$target$，手上的套弄没停。\n\"唔……表情真可爱……想让你更舒服点♡\"",
+                "com_sex_finger_P_28": "$self$的手腕酸了也不肯慢下来，掌心专门磨着龟头。\n\"快了吧……想射就别忍着……♡\"",
+                "com_sex_finger_P_35": "$self$皱着眉忍着不适，指尖只用最小的气力捏着。\n\"还没完吗……难受……\"",
+                "com_sex_finger_P_36": "$self$偏过头屏住呼吸，敷衍地撸着。\n\"……快点结束，我等着呢。\"",
+                "com_sex_finger_P_37": "$self$胃里翻腾，干呕的冲动压了又压。\n\"呕……快些完事……求你了……\"",
+                "com_sex_finger_P_32": "$self$甩了甩酸痛的手腕，动作慢了下来。\n\"还得多久呀……手好酸。\"",
+                "com_sex_finger_P_33": "$self$走神地重复着套弄，眼神已经飘远。\n\"……快了吗？我手都麻了。\"",
+                "com_sex_finger_P_34": "$self$停下来揉了揉虎口。\n\"今天状态不行……要不算了？\"",
+                "com_sex_finger_P_Self_1": "$self$睡熟了，手无意识地搭在自己腿间，握着肉棒随梦境缓缓撸动，始终没醒。",
+                "com_sex_finger_P_Self_2": "$self$在梦里侧蜷着，手掌包着自己的肉棒时紧时松，喉咙里溢出细碎哼声，人还沉在梦乡。",
+                "com_sex_finger_P_Self_3": "$self$定格在自慰的姿势里，手还握着自己的肉棒停在半途，任由$target$看着这副样子。",
+                "com_sex_finger_P_Self_4": "$self$的手僵在自己肉棒上，保持着撸动的弧度，时间恢复之前她都不会知道自己此刻的模样。",
+                "com_sex_finger_P_Self_5": "$self$把手从腿间拿开，摇头。\n\"不行不行……当着你的面……我做不到。\"",
+                "com_sex_finger_P_Self_6": "$self$红着脸把脸埋进臂弯。\n\"让我自己来可以……但别盯着看……被看着就做不下去了。\"",
+                "com_sex_finger_P_Self_7": "$self$把手背到身后，别开脸。\n\"休想……这种事你自己怎么不去做。\"",
+                "com_sex_finger_P_Self_8": "$self$冷冷瞪着$target$。\n\"命令我？你也配……滚远点。\"",
+                "com_sex_finger_P_Self_M_9": "$self$的手套弄得越来越顺，龟头在掌心里发烫。\n\"嗯……被看着撸……别盯那么紧……♡\"",
+                "com_sex_finger_P_Self_M_10": "$self$套弄着自己，时不时偷看$target$的反应，手越来越快。\n\"哈啊……被看着居然更兴奋了……♡\"",
+                "com_sex_finger_P_Self_9": "$self$的手套弄着自己，节奏越来越顺，腰软得撑不住。\n\"嗯……自己的手……也很舒服……♡\"",
+                "com_sex_finger_P_Self_10": "$self$握到根部再撸到顶端，掌心磨过龟头时直打颤。\n\"哈啊……磨到那里……不行了……♡\"",
+                "com_sex_finger_P_Self_M_11": "$self$红着脸执行那道命令，套弄的手却越来越快。\n\"呜……被逼着做这种事……肉棒却硬得发烫……\"",
+                "com_sex_finger_P_Self_M_12": "$self$本来想随便撸两下交差，手却停不下来。\n\"明明想敷衍过去的……手却越来越快……唔……\"",
+                "com_sex_finger_P_Self_11": "$self$羞耻地撸着自己，肉棒却越来越硬。\n\"明明不该做的……却停不下来……\"",
+                "com_sex_finger_P_Self_12": "$self$本来只想撸两下，手却舍不得松开。\n\"再撸会儿……就停……嗯……\"",
+                "com_sex_finger_P_Self_M_13": "$self$当着$target$的面撸着，肉棒却半软不硬。\n\"呜……被看着就紧张……硬不起来……\"",
+                "com_sex_finger_P_Self_M_14": "$self$的手停在肉棒上，尴尬得脸红。\n\"抱歉……当着你的面，实在不行……\"",
+                "com_sex_finger_P_Self_13": "$self$撸了半天，肉棒还是半软不硬。\n\"……怎么硬不起来，白费劲……\"",
+                "com_sex_finger_P_Self_14": "$self$松开自己的肉棒，兴致缺缺。\n\"算了……今天没状态。\"",
+                "com_sex_finger_P_Self_M_15": "$self$麻木地套弄着给$target$看，脸上没什么表情。\n\"……看够了吗，我演不好这种戏。\"",
+                "com_sex_finger_P_Self_M_16": "$self$的手停在肉棒上，僵着不肯再动。\n\"够了没有……够了吧……我不想再撸了。\"",
+                "com_sex_finger_P_Self_15": "$self$麻木地撸动着，脸上没什么表情。\n\"……没感觉，白撸了。\"",
+                "com_sex_finger_P_Self_16": "$self$放开自己的肉棒，懒得再动。\n\"……不撸了，没意思。\"",
+                "com_sex_finger_P_Begin_Timestop_1": "$target$握住她腿间软垂的肉棒套弄，几下就搓得硬挺，龟头渗出的前液拉出丝，$self$的手还搭在膝上没挪。",
+                "com_sex_finger_P_Begin_Timestop_2": "肉棒在掌心里胀大发烫，$self$定格的腿间大开任人摆弄，只有棒身不受控地跳了两下。"
             }
         }
     }

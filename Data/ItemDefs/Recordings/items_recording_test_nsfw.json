@@ -3,11 +3,11 @@
     "list": [
       {
         "id": "item_Record_test_nsfw_0425",
-        "displayName": "Test AV 0425",
         "Tags": [
           "industrial",
           "item_records",
-          "AV"
+          "AV",
+          "retail_digital"
         ],
         "itemComps_Template": [
           {
@@ -19,13 +19,15 @@
                     "baseID": "male_actor_dummy",
                     "refID": -1,
                     "firstNameOriginal": "老师",
-                    "firstNameOverwrite": "男优1"
+                    "firstNameOverwrite": "男优1",
+                    "actorTags":["male","human"]
                   },
                   {
                     "baseID": "Wuwa_Aemeath",
                     "refID": 1000471,
                     "firstNameOriginal": "爱弥斯",
-                    "firstNameOverwrite": ""
+                    "firstNameOverwrite": "",
+                    "actorTags":["female","human"]
                   }
                 ],
                 "cameraman": {

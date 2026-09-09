@@ -65,6 +65,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_oral_B_Begin_Timestop_1",
+                                "com_sex_oral_B_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -482,7 +495,7 @@
                 "com_sex_oral_B_12": "$self$侧身避开那张嘴，拢了拢衣襟。\n\"先别……我还没洗澡呢，乖。\"",
                 "com_sex_oral_B_13": "$self$用掌心罩住乳头，拍开那只手。\n\"今天累坏了……换个地方摸行不行。\"",
                 "com_sex_oral_B_14": "$self$红着脸把$target$的脑袋掰开。\n\"这种事……我们还没到那步吧？算啦。\"",
-                "com_sex_oral_B_15": "$self$往后靠拉开距离，笑着打圆场。\n\"吓我跳……这种玩笑别乱开哦。\"",
+                "com_sex_oral_B_15": "$self$往后靠拉开距离，笑着打圆场。\n\"真是吓人……这种玩笑别乱开哦。\"",
                 "com_sex_oral_B_23": "$self$惊恐地睁开眼，看见$target$的瞬间僵住了，手抖着不敢推。\n\"你、你想怎样都行……别弄疼我……\"",
                 "com_sex_oral_B_24": "$self$吓得不敢动，眼泪打着转，奶子被攥着只能小声求。\n\"我不喊了……也别打我……你想吸就快点……\"",
                 "com_sex_oral_B_19": "$self$半梦半醒地哼了声，察觉胸口的湿热后没躲，反倒把$target$的头往怀里带了带。\n\"嗯……在梦里也这么馋……随你吧……\"",
@@ -500,7 +513,9 @@
                 "com_sex_oral_B_36": "$self$扭过头无声流泪，奶子被蹂躏得生疼。\n\"够了……放开我……疼……\"",
                 "com_sex_oral_B_31": "$self$皱着眉往后撤了撤胸，被吸得发疼。\n\"哎……轻点，牙刮到了……疼。\"",
                 "com_sex_oral_B_32": "$self$拍了拍$target$的肩，语气无奈。\n\"换边吧……这边都吸麻了，没感觉了。\"",
-                "com_sex_oral_B_33": "$self$百无聊赖地望着上方，胸前的反应平平。\n\"……差不多可以了吧？我今晚真的没状态。\""
+                "com_sex_oral_B_33": "$self$百无聊赖地望着上方，胸前的反应平平。\n\"……差不多可以了吧？我今晚真的没状态。\"",
+                "com_sex_oral_B_Begin_Timestop_1": "$target$含住她定格的乳头吮吸拉扯，被吮硬的乳珠在齿间自己立着，$self$抬着的胳膊还悬在半途。",
+                "com_sex_oral_B_Begin_Timestop_2": "$self$的乳晕被舔得发热泛红，口水顺着乳肉淌下悬在半空不落，静止的房间里只有吮咂的水声。"
             }
         }
     }

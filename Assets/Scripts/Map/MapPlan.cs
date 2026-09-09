@@ -11,6 +11,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     public List<Floor_Base> floorPlans = new List<Floor_Base>();
     public List<WorldPlan> worldInit = new List<WorldPlan>();
     public List<MemberType> memberTypes = new List<MemberType>();
+    public List<SalesClienteleDef> clienteleDefs = new List<SalesClienteleDef>();
 
     // MemberType.GetRelationshipWithType will consult this list and lazily build its cache
     // though, we do need to make sure the game does not store membertype inside save file, and always have the game use pointer to this object's stored membertypes
@@ -49,6 +50,14 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         {
             if (string.IsNullOrEmpty(o.ID)) continue;
             if (!ID_Dictionary_MemberType.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MemberType id [{o.ID}] due to duplicate");
+        }
+
+        message.Add("Index_SalesClienteleDef : registering ID with list length [" + clienteleDefs.Count + "]");
+
+        foreach (SalesClienteleDef o in this.clienteleDefs)
+        {
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary_Clientele.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_SalesClienteleDef id [{o.ID}] due to duplicate");
         }
 
         message.Add("Index_MemberRelations : registering ID with list length [" + memberRelations.Count + "]");
@@ -121,6 +130,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             travelDistancePerMinute = self.travelDistancePerMinute > 0f ? self.travelDistancePerMinute : parent.travelDistancePerMinute,
             playerInitLocationFaction = string.IsNullOrEmpty(self.playerInitLocationFaction) ? parent.playerInitLocationFaction : self.playerInitLocationFaction,
             playerInit = self.playerInit ?? parent.playerInit,
+            clienteleInfo = self.clienteleInfo.population > 0 ? self.clienteleInfo : parent.clienteleInfo,
             initializeFactions = new Dictionary<string, string>(parent.initializeFactions),
             doors = new List<WorldPlan.DoorConnection>(parent.doors),
             npcInit = new List<NPCInit>(parent.npcInit),
@@ -130,6 +140,9 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         merged.npcInit.AddRange(self.npcInit);
         return merged;
     }
+
+    Dictionary<string, SalesClienteleDef> ID_Dictionary_Clientele = new Dictionary<string, SalesClienteleDef>();
+    public SalesClienteleDef GetByID_SalesClienteleDef(string id) { return ID_Dictionary_Clientele.ContainsKey(id) ? ID_Dictionary_Clientele[id] : null; }
 
     Dictionary<string, MemberType> ID_Dictionary_MemberType = new Dictionary<string, MemberType>();
     public MemberType GetByID_MemberType(string id) { return ID_Dictionary_MemberType.ContainsKey(id) ? ID_Dictionary_MemberType[id] : null; }
@@ -152,6 +165,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.floorPlans != null) this.floorPlans.AddRange(l.floorPlans);
         if (l.worldInit != null) this.worldInit.AddRange(l.worldInit);
         if (l.memberTypes != null) this.memberTypes.AddRange(l.memberTypes);
+        if (l.clienteleDefs != null) this.clienteleDefs.AddRange(l.clienteleDefs);
         if (l.memberRelations != null) this.memberRelations.AddRange(l.memberRelations);
     }
     public void OnAfterDeserialize()
@@ -248,7 +262,14 @@ public class MapPlan
     /// </summary>
     public List<string> localeTags = new List<string>();
     public List<SalesInventoryInit> salesInventory = new List<SalesInventoryInit>();
-    public string salesCurrency = "";
+    public string salesCurrency = "currency_JPY";
+
+    /// <summary>
+    /// Template-authored sales clientele this faction starts with (see SalesManager.clientele /
+    /// Manageable.RefreshSalesInventory, which re-reads this into SalesManager on refresh - it is not
+    /// saved directly, so template changes always take effect).
+    /// </summary>
+    public List<SalesManager.SalesClienteleInstance> salesClientele = new List<SalesManager.SalesClienteleInstance>();
     public List<int> mealHours = new List<int>();
     public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
     public Dictionary<string, string> Lorebooks = new Dictionary<string, string>();

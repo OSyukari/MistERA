@@ -24,6 +24,13 @@ public interface I_IsJobGiver
         List<int> restrictRoomList = null);
 
     public void NotifyFurnitureChange(Room_Instance room);
+    /// <summary>
+    /// Drop a specific job from the dispatcher's jobPosts/nonjobPosts registry - called when its
+    /// furniture is removed from the room (e.g. packed into an item), before the job is disposed.
+    /// NotifyFurnitureChange only ever adds entries, so without this the disposed job stays reachable
+    /// and can still be handed out to sandboxing NPCs as a valid job.
+    /// </summary>
+    public void RemoveJobPost(Job_Furniture job);
     public List<int> RoomOwners(int roomRef);
     [JsonIgnore] public List<Floor_Instance> ManagedFloors { get; }
     [JsonIgnore] public List<Manageable> ConnectedFactions { get; }

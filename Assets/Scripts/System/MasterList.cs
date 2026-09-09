@@ -54,6 +54,7 @@ public class MasterList
                 list.Add(ExpeditionEntry);
                 list.Add(FindJobNodeRoots);
                 //list.Add(ExperienceInitializers);
+                list.Add(ErAV);
             }
             return list;
         }
@@ -115,6 +116,7 @@ public class MasterList
     public Index_Expeditions ExpeditionEntry = new Index_Expeditions();
     public Index_ExpEvents ExplorationEvents = new Index_ExpEvents();
     public Index_FeatureSet ExplorationFeatures = new Index_FeatureSet();
+    public Index_ErAV ErAV = new Index_ErAV();
     public void MergeWith(MasterList list)
     {
         for (int i = 0; i < this.List.Count; i++)

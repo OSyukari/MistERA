@@ -73,6 +73,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_P_V_outside_cowgirl_Begin_Timestop_1",
+                                "com_sex_P_V_outside_cowgirl_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -640,7 +653,9 @@
                 "com_sex_P_V_outside_cowgirl_75": "$self$眼角泛起泪花，撑着身子的双臂开始打颤。\n\"……好累……能不能轻点……\"",
                 "com_sex_P_V_outside_cowgirl_76": "$self$的动作变得僵硬，发出疲惫的闷哼。\n\"停停……腿酸得不行了，想下来……\"",
                 "com_sex_P_V_outside_cowgirl_77": "$self$无力地垂下头，身子甚至微微发抖。\n\"还是没感觉……能不能结束了？\"",
-                "com_sex_P_V_outside_cowgirl_78": "$self$始终没回头，声音听起来很压抑。\n\"……除了累什么感觉都没有。\""
+                "com_sex_P_V_outside_cowgirl_78": "$self$始终没回头，声音听起来很压抑。\n\"……除了累什么感觉都没有。\"",
+                "com_sex_P_V_outside_cowgirl_Begin_Timestop_1": "$self$被抬起跨放到$target$腿上，腿缝贴住肉棒被扶着腰前后摆磨，交合的水声越磨越响，她偏着的头颈角度纹丝未动。",
+                "com_sex_P_V_outside_cowgirl_Begin_Timestop_2": "静止的房间里只有腿缝摩擦的黏腻水声，$self$垂着的头颈保持着偏转的角度，被磨得发红的腿缝自己渗着水。"
             }
         }
     }

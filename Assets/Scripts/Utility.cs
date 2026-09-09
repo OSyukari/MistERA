@@ -1338,7 +1338,7 @@ public static class UtilityEX
                     else if(parsed[2] != "" && scr_System_CampaignManager.current.CurrentTarget.Body.HasBodyTag(new List<string>() { parsed[2] }))
                     {
                         Character_Trainable chara = scr_System_CampaignManager.current.CurrentTarget;
-                        Item_Instance i = WorldManager.Instantiate(item.id, item.displayName);
+                        Item_Instance i = WorldManager.Instantiate(item.id, item.DisplayName);
 
                         if (chara == null)
                         {
@@ -1422,6 +1422,9 @@ public static class UtilityEX
                         }
                     }
                 }
+                break;
+            case "furnitureUnpack":
+                scr_System_CampaignManager.current.QueueFurniturePacking(scr_System_CampaignManager.current.GetCharaRoomInstance(scr_System_CampaignManager.current.Player.RefID));
                 break;
             case "showQuestStages":
                 if (true)

@@ -58,8 +58,6 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
                 Item_Base newItem = JsonConvert.DeserializeObject<Item_Base>(serializedParent, Masterlist_Items.Instance.SerializerSettings);
                 newItem.canBePackaged = false;
                 newItem.id = item.ID + "_packaged";
-                newItem.tooltip = "Packaged " + newItem.displayName + ", unpack to get the original item.";
-                newItem.displayName = "(pacakged)" + newItem.displayName;
                 if (newItem.Tags.Contains("food_meal"))
                 {
                     newItem.Tags.Remove("food_meal");
@@ -99,6 +97,50 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
         }
 
       //  list = list.Where(x => !x.Tags.Contains("do_not_use")).ToList();
+
+        // generate a sellable "{furnitureID}_packed" item per placeable furniture, so packed furniture
+        // can exist (e.g. in a store's inventory) without a player having packed a real instance first
+        List<string> generatedFurnitureItems = new List<string>();
+        foreach (FurnitureBase furnitureBase in scr_System_Serializer.current.MasterList.Furnitures.list)
+        {
+            if (!furnitureBase.isValid || furnitureBase.noDisplay) continue;
+
+            string newID = furnitureBase.ID + "_packed";
+            if (ID_Dictionary.ContainsKey(newID))
+            {
+                Debug.Log($"failed to generate packed-furniture item [{newID}] due to duplicate");
+                continue;
+            }
+
+            string bakedName = LocalizeDictionary.QueryThenParse("item_furniture_packed_nameOverwrite").Replace("$name$", furnitureBase.DisplayName);
+            // ItemEntry.Print/PrintName (used by sales-inventory listings) look the item's id up in the
+            // dictionary directly rather than going through Item_Base.DisplayName's fallback - without an
+            // actual dictionary entry here, a store would print the raw id instead of the furniture's name.
+            LocalizeDictionary.Instance.Index.Entries["default"][newID] = bakedName;
+
+            var packedItem = new Item_Base
+            {
+                id = newID,
+                value = furnitureBase.value,
+                Tags = new List<string>(furnitureBase.Tags) { "furniture", "furniture_packed" },
+                tooltipOverrideID = $"ui_item_furniture_packed_tooltip",
+                itemComps_Template = new List<ItemComponentTemplate>
+                {
+                    new ItemComponentTemplate
+                    {
+                        compType = "ItemComponent_Furniture",
+                        Comp_Furniture = new ItemComponentTemplate_Furniture { furnitureBaseID = furnitureBase.ID }
+                    }
+                }
+            };
+            packedItem.OnAfterDeserialize();
+
+            list.Add(packedItem);
+            ID_Dictionary.Add(newID, packedItem);
+            generatedFurnitureItems.Add(newID);
+        }
+
+        Debug.Log($"Index_Item_Base late initialize generated packed-furniture items count {generatedFurnitureItems.Count}\n{String.Join(" | ", generatedFurnitureItems)}");
     }
 
     public void OnAfterDeserialize()
@@ -129,10 +171,10 @@ public class Item_Base
     public string id = "";
     [JsonIgnore] public string ID { get { return id; } }
 
-    public string displayName = "";
-    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(id, displayName); } }
+    public string displayNameOverrideID = "";
+    [JsonIgnore] public string DisplayName { get { return LocalizeDictionary.QueryThenParse(displayNameOverrideID != "" ? displayNameOverrideID : id, id); } }
 
-    public string tooltip = "";
+    public string tooltipOverrideID = "";
     [JsonIgnore]
     public string Tooltip
     {
@@ -142,7 +184,7 @@ public class Item_Base
             {
                 var compTooltips = new List<string>();
                 foreach (var comp in this.itemComps_Template) if (comp.Tooltip.Length > 0) compTooltips.Add(comp.Tooltip);
-                _tooltipCache = LocalizeDictionary.QueryThenParse(id + "_tooltip", "no_tooltip");
+                _tooltipCache = LocalizeDictionary.QueryThenParse(tooltipOverrideID != "" ? tooltipOverrideID : id + "_tooltip", "no_tooltip");
 
                 if (isFood)
                 {
@@ -233,7 +275,7 @@ public class Item_Base
             if (itemComps_Template.FindAll(x=>x.compType == i.compType).Count > 1)
             {
                 valid = false;
-                Debug.LogError("Error serializing Item [" + id + "][" + displayName + "], item has multiple ItemComp ["+i.compType+"] of same type.");
+                Debug.LogError("Error serializing Item [" + id + "], item has multiple ItemComp ["+i.compType+"] of same type.");
             }
 
             switch (i.compType)
@@ -243,7 +285,7 @@ public class Item_Base
                     if (i.comp_Equippable == null)
                     {
                         valid = false;
-                        Debug.LogError("Error serializing Item [" + id + "][" + displayName + "], item has ItemComponent_Equippable but missing comp parameters.");
+                        Debug.LogError("Error serializing Item [" + id + "], item has ItemComponent_Equippable but missing comp parameters.");
                     }
                     break;
                 case "ItemComponent_Armor":
@@ -257,7 +299,7 @@ public class Item_Base
                     if (i.comp_Ingestible == null)
                     {
                         valid = false;
-                        Debug.LogError("Error serializing Item [" + id + "][" + displayName + "], item has ItemComponent_Ingestible but missing comp parameters.");
+                        Debug.LogError("Error serializing Item [" + id + "], item has ItemComponent_Ingestible but missing comp parameters.");
                     }
                         break;
                 case "ItemComponent_Craftable":

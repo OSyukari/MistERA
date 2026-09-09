@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_head_Begin_Timestop_1",
+                                "com_touch_head_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -312,7 +325,9 @@
                 "com_touch_head_L_1": "$self$眼里的厌恶几乎满溢，身体紧绷如拉满的弓：\"你到底还要摸多久？变态吗？\"",
                 "com_touch_head_L_2": "$self$深吸一口气，强压怒火推开$target$的手：\"这就是你的职场骚扰方式吗？\"",
                 "com_touch_head_L_3": "$self$冷笑一声，眼神满是鄙夷：\"摸够了吗？摸够了就给我滚远点。\"",
-                "com_touch_head_L_4": "$self$没有任何言语，只是用看垃圾般的眼神死死盯着$target$，直到对方感到不适停手。"
+                "com_touch_head_L_4": "$self$没有任何言语，只是用看垃圾般的眼神死死盯着$target$，直到对方感到不适停手。",
+                "com_touch_head_Begin_Timestop_1": "$target$的手掌覆上她定格的发顶揉摸，指缝梳过发根，被揉乱的头发停在半乱不乱的状态，$self$的脖子没有歪。",
+                "com_touch_head_Begin_Timestop_2": "发旋被指腹碾着按了按，头皮蹭得发热，$self$低垂的眼睫停在原来的位置，房间里只有发丝被捋动的沙沙声。"
             },
             "en-us": {
                 "com_touch_head_Begin_A_1": "$self$ seems to sense it coming and actively leans in the moment your hand falls, letting out a satisfied sigh.",

@@ -71,6 +71,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_P_cowgirl_A_Begin_Timestop_1",
+                                "com_sex_P_cowgirl_A_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -576,7 +589,9 @@
                 "com_sex_P_cowgirl_A_47": "$self$眼角泛起泪花，撑着身子的双臂开始打颤。\n\"……好疼……能不能轻点……\"",
                 "com_sex_P_cowgirl_A_48": "$self$的动作变得僵硬，发出痛苦的闷哼。\n\"停停……顶太深了，我想吐……\"",
                 "com_sex_P_cowgirl_A_49": "$self$无力地垂下头，身子甚至微微发抖。\n\"还是很疼……后面没感觉……能不能结束了？\"",
-                "com_sex_P_cowgirl_A_50": "$self$始终没回头，声音听起来很压抑。\n\"……后面根本没感觉，只觉得肚子涨得难受。\""
+                "com_sex_P_cowgirl_A_50": "$self$始终没回头，声音听起来很压抑。\n\"……后面根本没感觉，只觉得肚子涨得难受。\"",
+                "com_sex_P_cowgirl_A_Begin_Timestop_1": "$self$被摆成骑坐的姿势对准后穴坐下，菊穴含住龟头缓缓吞到根，穴肉不受控地咬紧又松开，她的手还搭在膝上没挪。",
+                "com_sex_P_cowgirl_A_Begin_Timestop_2": "$target$扶着她定格的腰前后摇动，后穴吞吐的腻响成了房间里仅有的声音，$self$的发梢悬在半空没落。"
             }
         }
     }

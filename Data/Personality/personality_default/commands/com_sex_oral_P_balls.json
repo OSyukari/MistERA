@@ -73,6 +73,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_oral_P_balls_Begin_Timestop_1",
+                                "com_sex_oral_P_balls_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -640,7 +653,9 @@
                 "com_sex_oral_P_balls_75": "$self$机械地舔弄着，眼神开始游移，心思显然已经不在当下。\n\"……还没好吗。\"",
                 "com_sex_oral_P_balls_76": "$self$皱着眉忍着那股味道，动作敷衍。\n\"……能不能快点结束。\"",
                 "com_sex_oral_P_balls_77": "$self$有些不耐烦地停下了舌头。\n\"只是这样舔来舔去的，毫无感觉。\"",
-                "com_sex_oral_P_balls_78": "$self$始终别着脸，声音听起来很压抑。\n\"……除了累什么感觉都没有。\""
+                "com_sex_oral_P_balls_78": "$self$始终别着脸，声音听起来很压抑。\n\"……除了累什么感觉都没有。\"",
+                "com_sex_oral_P_balls_Begin_Timestop_1": "沉甸甸的阴囊抵上她微张的唇来回碾压，唇面被蹭得发热，$self$的下巴抬着的角度纹丝没变。",
+                "com_sex_oral_P_balls_Begin_Timestop_2": "卵袋滚过$self$的唇缝碾过鼻尖，蹭上来的腥气她也没皱眉，口水积满下唇溢出来，悬着不落。"
             }
         }
     }

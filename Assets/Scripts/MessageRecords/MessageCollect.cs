@@ -20,6 +20,11 @@ public enum MessageCollect_Type
 public class MessageCollect
 {
 
+    /// <summary>
+    /// Injected when recording finalize
+    /// </summary>
+    public int Duration = 0;
+
     public List<ActionPackageRecords> apRecords = new List<ActionPackageRecords>();
     [JsonIgnore]
     public int MessageCount { get
@@ -73,9 +78,51 @@ public class MessageCollect
         foreach (var m in messages_kojo) m.ReadActorRecord(recTable);
         foreach (var m in messages_exp) m.ReadActorRecord(recTable);
         foreach (var m in messages_kojo_after) m.ReadActorRecord(recTable);
-        foreach(var ap in this.apRecords)  ap.ReadActorRecord(recTable); 
-        
+        foreach(var ap in this.apRecords)  ap.ReadActorRecord(recTable);
+
     }
+
+    /// <summary>
+    /// Unions the refIDs of every actor whose portrait was referenced anywhere in this collect
+    /// and its APs' own attached messages, into refs - both DescriptionCollector entries
+    /// (PortraitRefs) and KojoCollector entries (walking collect/nexts for PortraitRefID). When
+    /// requireOverride is true, only counts entries that also carry a non-empty expression/pose
+    /// override (displayTagsOverride_Self/_Target, selfPortraitTag/targetPortraitTag) - used for
+    /// the "was this actor actually featured" tie-break, as opposed to a plain reference.
+    /// Recorded-data only - does not require any actor to currently be a live instance.
+    /// </summary>
+    public void CollectPortraitRefs(HashSet<int> refs, bool requireOverride)
+    {
+        void Scan(List<I_Records> list)
+        {
+            foreach (var m in list)
+            {
+                if (m is DescriptionCollector dc)
+                {
+                    bool hasOverride = (dc.displayTagsOverride_Self != null && dc.displayTagsOverride_Self.Count > 0)
+                        || (dc.displayTagsOverride_Target != null && dc.displayTagsOverride_Target.Count > 0);
+                    if (!requireOverride || hasOverride)
+                    {
+                        foreach (var r in dc.PortraitRefs) refs.Add(r);
+                    }
+                }
+            }
+        }
+
+        Scan(messages_checks);
+        Scan(messages_before);
+        Scan(messages_after);
+        Scan(messages_exp);
+
+        foreach (var k in messages_kojo) k.CollectPortraitRefs(refs, requireOverride);
+        foreach (var k in messages_kojo_after) k.CollectPortraitRefs(refs, requireOverride);
+
+        foreach (var ap in this.apRecords)
+        {
+            if (ap.mcol != null) ap.mcol.CollectPortraitRefs(refs, requireOverride);
+        }
+    }
+
     /// <summary>
     /// message loadactor and ap loadactor behaves differently, beware!
     /// </summary>
@@ -276,21 +323,36 @@ public class MessageCollect
         Clear();
     }
 
-    public void FlushCollectedLogsIntoUI(DateTime timestamp, canvas_videoEdit canvas, Dictionary<string, string> replaceStrings, ActionPackageRecords sourceAP = null)
+    public void FlushCollectedLogsIntoUI(DateTime timestamp, canvas_videoEdit canvas, Dictionary<string, string> replaceStrings, scr_actionHolder rect)
     {
-        foreach (var check in messages_checks) canvas.ParseEntry(check, this, timestamp, replaceStrings, sourceAP, sourceAP == null || sourceAP.RecordBox == null ? null : sourceAP.RecordBox.titles);
-        foreach (var msg in messages_before) canvas.ParseEntry(msg, this, timestamp, replaceStrings, sourceAP);
-        foreach (var kvp in messages_kojo) canvas.ParseEntry(kvp, this, timestamp, replaceStrings, sourceAP);
+        /*
+        foreach (var check in messages_checks) canvas.ParseEntry(check, this, timestamp, replaceStrings, rect);
+        foreach (var msg in messages_before) canvas.ParseEntry(msg, this, timestamp, replaceStrings, rect);
+        foreach (var kvp in messages_kojo) canvas.ParseEntry(kvp, this, timestamp, replaceStrings, rect);
 
-        foreach (var msg in messages_exp) canvas.ParseEntry(msg, this, timestamp, replaceStrings, sourceAP);
-        foreach (var kvp in messages_kojo_after) canvas.ParseEntry(kvp, this, timestamp, replaceStrings, sourceAP);
-        foreach (var msg in messages_after) canvas.ParseEntry(msg, this, timestamp, replaceStrings, sourceAP);
+        foreach (var msg in messages_exp) canvas.ParseEntry(msg, this, timestamp, replaceStrings, rect);
+        foreach (var kvp in messages_kojo_after) canvas.ParseEntry(kvp, this, timestamp, replaceStrings, rect);
+        foreach (var msg in messages_after) canvas.ParseEntry(msg, this, timestamp, replaceStrings, rect);
     
         foreach(var ap in apRecords)
         {
-            canvas.RegisterAPRecord(ap);
-            if (ap.mcol != null) ap.mcol.FlushCollectedLogsIntoUI(timestamp, canvas, replaceStrings, ap);
+            canvas.RegisterAPRecord(ap, timestamp, this, rect);
+            if (ap.mcol != null) ap.mcol.FlushCollectedLogsIntoUI(timestamp, canvas, replaceStrings, rect);
+        }*/
+
+        foreach (var ap in apRecords)
+        {
+            //canvas.RegisterAPRecord(ap, timestamp, this, rect);
+            canvas.RegisterAPRecord2(ap, timestamp, this, rect);
+            if (ap.mcol != null) ap.mcol.FlushCollectedLogsIntoUI(timestamp, canvas, replaceStrings, rect);
         }
+        foreach (var check in messages_checks) canvas.PrintEntry_1(check, replaceStrings, rect);
+        foreach (var msg in messages_before) canvas.PrintEntry_1(msg, replaceStrings, rect);
+        foreach (var kvp in messages_kojo) canvas.PrintEntry_1(kvp,   replaceStrings, rect);
+
+        foreach (var msg in messages_exp) canvas.PrintEntry_1(msg,   replaceStrings, rect);
+        foreach (var kvp in messages_kojo_after) canvas.PrintEntry_1(kvp,   replaceStrings, rect);
+        foreach (var msg in messages_after) canvas.PrintEntry_1(msg,   replaceStrings, rect);
     }
 
 
@@ -520,6 +582,22 @@ public class MessageCollect_KojoEntry
     {
         if (!string.IsNullOrEmpty(this.message)) list.Add(this.message);
         foreach (var next in this.nexts) next.DumpMessage(list);
+    }
+
+    /// <summary>
+    /// Recursively collects the refID of every node (this one and its nexts, depth-first) whose
+    /// portrait was referenced. When requireOverride is true, only counts nodes that also carry
+    /// a non-empty expression/pose override (selfPortraitTag/targetPortraitTag).
+    /// Recorded-data only - PortraitRefID already falls back to the original refID when no live
+    /// remap was recorded, so this never depends on any actor currently being a live instance.
+    /// </summary>
+    public void CollectPortraitRefs(HashSet<int> refs, bool requireOverride)
+    {
+        if (this.PortraitRefID != -1 && (!requireOverride || selfPortraitTag.Count > 0 || targetPortraitTag.Count > 0))
+        {
+            refs.Add(this.PortraitRefID);
+        }
+        foreach (var next in this.nexts) next.CollectPortraitRefs(refs, requireOverride);
     }
 
     public void AddRelevantActors(List<Character_Trainable> cs)

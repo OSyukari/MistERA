@@ -69,6 +69,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_oral_A_Begin_Timestop_1",
+                                "com_sex_oral_A_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -554,7 +567,9 @@
                 "com_sex_oral_A_42": "$self$痛苦地闭着眼，眼泪无声滑落。\n\"我恨你……我永远不会原谅你……\"",
                 "com_sex_oral_A_37": "$self$有些不适地皱起眉，臀肉绷得紧紧的。\n\"……还要多久？痒痒的……没什么感觉。\"",
                 "com_sex_oral_A_38": "$self$轻轻拍了拍$target$的手，语气里透着无奈。\n\"那个……能不能换个地方？这里真的喜欢不来。\"",
-                "com_sex_oral_A_39": "$self$干巴巴地叹了口气，把臀瓣并了并。\n\"抱歉，$target$……这种事我真的投入不了。\""
+                "com_sex_oral_A_39": "$self$干巴巴地叹了口气，把臀瓣并了并。\n\"抱歉，$target$……这种事我真的投入不了。\"",
+                "com_sex_oral_A_Begin_Timestop_1": "$target$掰开她定格的臀瓣，舌尖抵上菊穴舔弄钻搅，穴口的褶皱被舔得发红张开，$self$的腰窝没有塌。",
+                "com_sex_oral_A_Begin_Timestop_2": "$self$的菊穴被舌尖顶着收缩吮住，津液顺着会阴淌下悬成丝，她的手指保持着摊开的形状没动。"
             }
         }
     }

@@ -26,7 +26,38 @@ public abstract class ItemComponent_Base
         return true;
     }
 
+    /// <summary>
+    /// Contribution this component makes to its owning item's RetailID (see Item_Instance.RetailID).
+    /// Most components contribute nothing.
+    /// </summary>
+    public virtual string GetRetailID() { return ""; }
+
     [JsonIgnore] public virtual bool Stackable { get { return true; } }
+
+    /// <summary>
+    /// Contribution this component makes to its owning item's canBeSold check (see Item_Instance.canBeSold).
+    /// Most components allow selling.
+    /// </summary>
+    [JsonIgnore] public virtual bool CanBeSold { get { return true; } }
+
+    /// <summary>
+    /// Lets this component adjust its owning item's ValuePerItem (see Item_Instance.ValuePerItem).
+    /// Most components leave the value unchanged.
+    /// </summary>
+    public virtual void ValueMod(ref float value) { }
+
+    /// <summary>
+    /// Lets this component adjust its owning item's QualityModifier (see Item_Instance.QualityModifier).
+    /// value starts at 1f (neutral) and each component adds its own deviation; parentvalue is the
+    /// item's fixed ValuePerItem. Most components leave the value unchanged.
+    /// </summary>
+    public virtual float AddQualityMod(ref float value, float parentvalue) { return value; }
+
+    /// <summary>
+    /// Contribution this component makes to its owning item's Tags (see Item_Instance.Tags).
+    /// Most components contribute nothing.
+    /// </summary>
+    public virtual List<string> GetTags() { return null; }
 
     public virtual void ReEstablishParent(string parentID, Item_Base parent)
     {

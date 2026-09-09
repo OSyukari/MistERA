@@ -62,6 +62,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_P_missionary_Begin_Timestop_1",
+                                "com_sex_P_missionary_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -517,7 +530,9 @@
                 "com_sex_P_missionary_39": "$self$皱着眉别过脸，身子随着撞击被动地前后晃，却挤不出半点快感。\n\n\"……你别顶那么深……\"\n\n干涩的小穴被磨得生疼，她咬着下唇忍着不适，巴不得这段赶紧过去。",
                 "com_sex_P_missionary_40": "$self$死死攥着床单，脸上没什么享受的表情，只有忍耐。\n\n\"……能不能……轻点……\"\n\n这段她完全没进入状态，紧绷的小穴被反复碾磨，带来的只有疼，反而更不好受。",
                 "com_sex_P_missionary_41": "$self$偏过头去，眼神里满是嫌弃，由着身子被撞得直晃。\n\n\"……快点完事吧……\"\n\n这段对她来说纯属煎熬，干涩的小穴被反复碾磨，她全程没什么反应，只盼这阵赶紧翻篇。",
-                "com_sex_P_missionary_42": "$self$面无表情地承受着撞击，眼神冷得发寒。\n\n\"……你要干就快点。\"\n\n这段她连哼都懒得哼，小穴被磨得难受，由着身子被撞，心思早飞到别处去了。"
+                "com_sex_P_missionary_42": "$self$面无表情地承受着撞击，眼神冷得发寒。\n\n\"……你要干就快点。\"\n\n这段她连哼都懒得哼，小穴被磨得难受，由着身子被撞，心思早飞到别处去了。",
+                "com_sex_P_missionary_Begin_Timestop_1": "$target$把她定格的双腿推到胸前，龟头抵着穴口缓缓碾进去，穴肉被撑开时不受控地绞紧，$self$睁着的眼里连焦点都没挪。",
+                "com_sex_P_missionary_Begin_Timestop_2": "$self$抬到半途的手悬在半空，指尖离肩膀还差着距离，整根没入时只有她的胸口随着顶弄轻轻起伏。"
             },
             "en-us": {
                 "com_sex_P_missionary_Climax_1": "$self$ thrusts his hips deep to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",

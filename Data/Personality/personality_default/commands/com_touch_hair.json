@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_hair_Begin_Timestop_1",
+                                "com_touch_hair_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -314,7 +327,9 @@
                 "com_touch_hair_succ_neg_noallow_1": "$self$忍无可忍地一把推开$target$，胸口剧烈起伏。\"够了！你到底想羞辱我到什么时候！\"",
                 "com_touch_hair_succ_neg_noallow_2": "$self$脸色苍白，仿佛接触了什么脏东西般剧烈颤抖。\"别碰我……求你了，别再碰我了……\"",
                 "com_touch_hair_succ_neg_noallow_3": "$self$眼中的厌恶几乎溢出，冷冷地转身就走。\"令人作呕。\"",
-                "com_touch_hair_succ_neg_noallow_4": "$self$捂着头蹲了下去，声音里夹杂着哭腔与极度的愤怒。\"滚开！都说了不要碰我！\""
+                "com_touch_hair_succ_neg_noallow_4": "$self$捂着头蹲了下去，声音里夹杂着哭腔与极度的愤怒。\"滚开！都说了不要碰我！\"",
+                "com_touch_hair_Begin_Timestop_1": "$target$把她的头发拢进掌心，从发根顺滑地捋到发梢，松手时$self$的发丝贴回原位，纹丝没乱。",
+                "com_touch_hair_Begin_Timestop_2": "$self$维持着回头的姿势定住，半缕头发还悬在半空没落下，$target$捻起发梢绕上手指，打着圈慢慢把玩。"
             },
             "en-us": {
                 "com_touch_hair_Begin_1": "$self$ naturally leans her head into $target$'s palm as if accustomed to it, letting out a comfortable hum.",

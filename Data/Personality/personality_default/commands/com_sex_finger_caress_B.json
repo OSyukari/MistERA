@@ -54,11 +54,36 @@
                                 "requirePermission": true
                             },
                             "useActiveTags": false,
+                            "_comment": "2.5.1 独自B自慰 高潮 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Climax_Self_M_1",
+                                "com_sex_finger_caress_B_Climax_Self_M_2"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
                             "_comment": "2.5.1 独自B自慰 高潮 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_caress_B_Climax_Self_1",
                                 "com_sex_finger_caress_B_Climax_Self_2"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.2 独自B自慰 高潮 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Climax_Self_M_3",
+                                "com_sex_finger_caress_B_Climax_Self_M_4"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -80,6 +105,19 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Begin_Timestop_1",
+                                "com_sex_finger_caress_B_Begin_Timestop_2"
+                            ]
+                        },
                         {
                             "requirement": {
                                 "requirePermission": true
@@ -136,11 +174,36 @@
                                 "requirePermission": true
                             },
                             "useActiveTags": false,
+                            "_comment": "2.5.3 开始独自B自慰 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Begin_Self_M_1",
+                                "com_sex_finger_caress_B_Begin_Self_M_2"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
                             "_comment": "2.5.3 开始独自B自慰 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_caress_B_Begin_Self_1",
                                 "com_sex_finger_caress_B_Begin_Self_2"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.4 开始独自B自慰 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Begin_Self_M_3",
+                                "com_sex_finger_caress_B_Begin_Self_M_4"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -515,11 +578,40 @@
                                 "requirePermission": true
                             },
                             "useActiveTags": false,
+                            "_comment": "2.5.9 独自B自慰 结果正面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Self_M_9",
+                                "com_sex_finger_caress_B_Self_M_10"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success",
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
                             "_comment": "2.5.9 独自B自慰 结果正面 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_caress_B_Self_9",
                                 "com_sex_finger_caress_B_Self_10"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requireEPSuccessGTE": "Success"
+                            },
+                            "useActiveTags": false,
+                            "_comment": "2.5.10 独自B自慰 结果正面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Self_M_11",
+                                "com_sex_finger_caress_B_Self_M_12"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -539,11 +631,36 @@
                                 "requirePermission": true
                             },
                             "useActiveTags": false,
+                            "_comment": "2.5.11 独自B自慰 尝试但结果负面 有允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Self_M_13",
+                                "com_sex_finger_caress_B_Self_M_14"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "requirement": {
+                                "requirePermission": true
+                            },
+                            "useActiveTags": false,
                             "_comment": "2.5.11 独自B自慰 尝试但结果负面 有允许 口上文",
                             "responses": [
                                 "com_sex_finger_caress_B_Self_13",
                                 "com_sex_finger_caress_B_Self_14"
                             ]
+                        },
+                        {
+                            "requireSelfOnly": true,
+                            "useActiveTags": false,
+                            "_comment": "2.5.12 独自B自慰 尝试但结果负面 无允许 口上文（有主人在场：第三方命令/注视，$target$ 可用）",
+                            "responses": [
+                                "com_sex_finger_caress_B_Self_M_15",
+                                "com_sex_finger_caress_B_Self_M_16"
+                            ],
+                            "requireMaster": true,
+                            "requireSelfNotMaster": true
                         },
                         {
                             "requireSelfOnly": true,
@@ -562,100 +679,70 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "com_sex_finger_caress_B_Climax_1": "($self$) B抚摸 高潮 口上文",
-                "com_sex_finger_caress_B_Climax_2": "$self$猛地弓起腰，双手死死抓着$target$的肩膀，瞳孔涣散，口中发出不成调的尖叫。\"啊啊啊！到了！要去了！哈啊……哈啊……❤\"",
-                "com_sex_finger_caress_B_Climax_3": "$self$试图咬住嘴唇忍耐，但高潮的快感瞬间冲垮了理智，整个人瘫软下来，伴随着哭腔达到了顶峰。\"不行……哪怕是这种关系……啊啊！脑袋要坏掉了！呜呜呜……❤\"",
-                "com_sex_finger_caress_B_Begin_1": "$self$的呼吸变得有些急促，双手主动覆上$target$正在揉捏自己乳房的手背，腰肢配合着侵犯的节奏摆动。\"嗯……好舒服……再用力一点揉……\"",
-                "com_sex_finger_caress_B_Begin_2": "$self$满脸通红，虽然身体还在被侵犯，但对于胸前的触碰并没有躲闪，只是咬着嘴唇发出细碎的呻吟。\"如果是$target$的话……这种事……也……啊……\"",
-                "com_sex_finger_caress_B_Begin_3": "$self$紧闭着双眼，身体因为恐惧而微微颤抖，完全不敢反抗胸前那粗暴的抓揉。\"呜……不敢了……我会听话的……请轻一点……\"",
-                "com_sex_finger_caress_B_1": "$self$发出平稳的呼吸声，完全没有察觉到体内的异物和胸前的爱抚，只是偶尔会因为刺激而无意识地皱眉。",
-                "com_sex_finger_caress_B_2": "$self$像个婴儿般熟睡着，任由$target$亵玩着她的身体，偶尔发出几声无意义的梦呓。",
-                "com_sex_finger_caress_B_3": "$self$保持着静止的姿态，只有被揉捏变形的乳肉和随着抽插溢出的体液证明着正在发生的暴行。",
-                "com_sex_finger_caress_B_4": "在这凝固的时间里，$self$毫无知觉地承受着一切，那对乳房在$target$手中被随意塑形。",
-                "com_sex_finger_caress_B_5": "$self$烦躁地推开了$target$的手，翻身背对着$target$，把被子拉过头顶。\"好困……别闹了，明天还要早起呢……\"",
-                "com_sex_finger_caress_B_6": "$self$猛地惊醒，意识到正在发生什么后，剧烈地挣扎起来，试图推开$target$。\"你在干什么？！疯了吗？！快出去！\"",
-                "com_sex_finger_caress_B_7": "$self$按住了$target$在胸前作乱的手，身体僵硬地向后缩了缩。\"痛……别弄了，今天感觉不太对劲，先停下来好吗？\"",
-                "com_sex_finger_caress_B_8": "$self$有些尴尬地抓住了$target$的手腕，试图让动作停下来，脸上带着勉强的笑。\"等等……这样真的太奇怪了，我们不是朋友吗？快停下……\"",
-                "com_sex_finger_caress_B_9": "$self$猛地拍掉了$target$的手，眼神冰冷地瞪视着对方。\"别碰我！把你的脏手拿开！恶心死了！\"",
-                "com_sex_finger_caress_B_10": "$self$迷迷糊糊地睁开眼，感受到体内的异物和胸前的触感后，慵懒地哼了一声，顺从地抱住了$target$的脖子。\"唔……坏心眼……既然醒了那就继续吧……\"",
-                "com_sex_finger_caress_B_11": "$self$被快感惊醒，看清身上的人是$target$后，惊讶转为了一种复杂的羞涩，并没有推开。\"诶？$target$？……既然都进来了……那就这样吧……\"",
-                "com_sex_finger_caress_B_12": "$self$在惊恐中醒来，发现无法挣脱后，只能绝望地承受着胸部的蹂躏，泪水从眼角滑落。\"不要……为什么是你……救命……呜呜……\"",
-                "com_sex_finger_caress_B_13": "$self$迷离的双眼充满爱意地看着$target$，胸部随着剧烈的喘息上下起伏。\"哈啊……你今天……真的好棒……就这样不要停……♡\"",
-                "com_sex_finger_caress_B_14": "$self$的眼神逐渐失去了焦距，原本抗拒的手慢慢变成了抓紧床单的姿势。\"明明不该这样的……可是……哈啊……身体好奇怪……\"",
-                "com_sex_finger_caress_B_15": "$self$任由$target$摆弄着身体，眼神却有些游离地看向天花板，语气平淡。\"还没好吗？稍微有点累了……\"",
-                "com_sex_finger_caress_B_16": "$self$像个木偶一样毫无反应，只是死死盯着$target$，眼底只有厌恶。\"做完了吗？做完了就滚出去。\"",
-                "com_sex_finger_caress_B_Begin_Self_1": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_caress_B_Begin_Self_2": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_caress_B_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_caress_B_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_caress_B_Self_1": "(placeholder - solo, sleeping)",
-                "com_sex_finger_caress_B_Self_2": "(placeholder - solo, sleeping)",
-                "com_sex_finger_caress_B_Self_3": "(placeholder - solo, timestop)",
-                "com_sex_finger_caress_B_Self_4": "(placeholder - solo, timestop)",
-                "com_sex_finger_caress_B_Self_5": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_caress_B_Self_6": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_caress_B_Self_7": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_caress_B_Self_8": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_caress_B_Self_9": "(placeholder - solo, success, permission)",
-                "com_sex_finger_caress_B_Self_10": "(placeholder - solo, success, permission)",
-                "com_sex_finger_caress_B_Self_11": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_caress_B_Self_12": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_caress_B_Self_13": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_caress_B_Self_14": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_caress_B_Self_15": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_caress_B_Self_16": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_caress_B_Climax_Self_1": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_caress_B_Climax_Self_2": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_caress_B_Climax_Self_3": "(placeholder - solo, climax, no permission)",
-                "com_sex_finger_caress_B_Climax_Self_4": "(placeholder - solo, climax, no permission)"
-            },
-            "en-us": {
-                "com_sex_finger_caress_B_Climax_1": "($self$) B-Caress Climax Filler",
-                "com_sex_finger_caress_B_Climax_2": "$self$ arches her back sharply, her hands gripping $target$'s shoulders tightly. Her eyes lose focus as she screams incoherently. \"Ahhh! I'm cumming! I'm losing it! Haah... haah... ❤\"",
-                "com_sex_finger_caress_B_Climax_3": "$self$ tries to bite her lip to endure it, but the pleasure of the orgasm instantly overwhelms her reason. Her body goes limp as she peaks with a tearful cry. \"No... even in a relationship like this... Ahh! My mind is breaking! Uuu... ❤\"",
-                "com_sex_finger_caress_B_Begin_1": "$self$'s breathing quickens. She actively places her hands over $target$'s hands kneading her breasts, her waist swaying in time with the thrusts. \"Mmm... feels so good... rub them harder...\"",
-                "com_sex_finger_caress_B_Begin_2": "$self$'s face is flushed. Although her body is being violated, she doesn't shy away from the touch on her chest, only biting her lip and letting out soft moans. \"If it's $target$... doing this... well... ah...\"",
-                "com_sex_finger_caress_B_Begin_3": "$self$ keeps her eyes tightly shut, her body trembling with fear, daring not to resist the rough groping of her breasts. \"Uuu... I won't do it again... I'll be good... please be gentle...\"",
-                "com_sex_finger_caress_B_1": "$self$ breathes steadily, completely unaware of the intrusion inside her body and the caresses on her chest, only occasionally frowning unconsciously due to the stimulation.",
-                "com_sex_finger_caress_B_2": "$self$ sleeps soundly like a baby, letting $target$ play with her body, occasionally muttering meaningless sounds in her sleep.",
-                "com_sex_finger_caress_B_3": "$self$ remains frozen in place. Only her breasts, deformed by the kneading, and the fluids leaking with the thrusts testify to the violation taking place.",
-                "com_sex_finger_caress_B_4": "In this frozen time, $self$ endures everything without perception, her breasts being molded at will in $target$'s hands.",
-                "com_sex_finger_caress_B_5": "$self$ irritably pushes $target$'s hand away, turns her back to $target$, and pulls the covers over her head. \"So sleepy... stop it, I have to get up early tomorrow...\"",
-                "com_sex_finger_caress_B_6": "$self$ wakes up with a start. Realizing what is happening, she struggles violently, trying to push $target$ away. \"What are you doing?! Are you crazy?! Get out!\"",
-                "com_sex_finger_caress_B_7": "$self$ presses down on $target$'s hand messing with her chest, her body stiffening as she shrinks back. \"It hurts... stop it. I don't feel right today, can we just stop for now?\"",
-                "com_sex_finger_caress_B_8": "$self$ awkwardly grabs $target$'s wrist, trying to stop the movement, a forced smile on her face. \"Wait... this is really weird. Aren't we friends? Stop it...\"",
-                "com_sex_finger_caress_B_9": "$self$ slaps $target$'s hand away, glaring at them with cold eyes. \"Don't touch me! Get your dirty hands off! Disgusting!\"",
-                "com_sex_finger_caress_B_10": "$self$ opens her eyes groggily. Feeling the foreign object inside her and the touch on her chest, she hums lazily and obediently wraps her arms around $target$'s neck. \"Mmm... you tease... since I'm awake, let's continue...\"",
-                "com_sex_finger_caress_B_11": "$self$ is awakened by the pleasure. Seeing it's $target$ on top of her, her surprise turns into a complex shyness, and she doesn't push away. \"Eh? $target$? ...Since you're already inside... I guess it's okay...\"",
-                "com_sex_finger_caress_B_12": "$self$ wakes up in terror. Finding she cannot escape, she can only despairingly endure the ravaging of her breasts, tears sliding from the corners of her eyes. \"No... why is it you... help me... uuu...\"",
-                "com_sex_finger_caress_B_13": "$self$ looks at $target$ with blurry eyes full of love, her chest heaving up and down with her heavy panting. \"Haah... you're really... amazing today... don't stop, just like this... ♡\"",
-                "com_sex_finger_caress_B_14": "$self$'s eyes gradually lose focus, and her hands, initially resisting, slowly turn to gripping the sheets tightly. \"It shouldn't be like this... but... haah... my body feels so strange...\"",
-                "com_sex_finger_caress_B_15": "$self$ lets $target$ manipulate her body, her eyes wandering to the ceiling, her tone flat. \"Aren't you done yet? I'm getting a little tired...\"",
-                "com_sex_finger_caress_B_16": "$self$ reacts like a wooden puppet, just staring dead at $target$ with nothing but disgust in her eyes. \"Are you finished? If you're finished, get out.\"",
-                "com_sex_finger_caress_B_Begin_Self_1": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_caress_B_Begin_Self_2": "(placeholder - solo, Begin, permission)",
-                "com_sex_finger_caress_B_Begin_Self_3": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_caress_B_Begin_Self_4": "(placeholder - solo, Begin, no permission)",
-                "com_sex_finger_caress_B_Self_1": "(placeholder - solo, sleeping)",
-                "com_sex_finger_caress_B_Self_2": "(placeholder - solo, sleeping)",
-                "com_sex_finger_caress_B_Self_3": "(placeholder - solo, timestop)",
-                "com_sex_finger_caress_B_Self_4": "(placeholder - solo, timestop)",
-                "com_sex_finger_caress_B_Self_5": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_caress_B_Self_6": "(placeholder - solo, refuses order, permission)",
-                "com_sex_finger_caress_B_Self_7": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_caress_B_Self_8": "(placeholder - solo, refuses order, no permission)",
-                "com_sex_finger_caress_B_Self_9": "(placeholder - solo, success, permission)",
-                "com_sex_finger_caress_B_Self_10": "(placeholder - solo, success, permission)",
-                "com_sex_finger_caress_B_Self_11": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_caress_B_Self_12": "(placeholder - solo, success, no permission)",
-                "com_sex_finger_caress_B_Self_13": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_caress_B_Self_14": "(placeholder - solo, attempted but failed, permission)",
-                "com_sex_finger_caress_B_Self_15": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_caress_B_Self_16": "(placeholder - solo, attempted but failed, no permission)",
-                "com_sex_finger_caress_B_Climax_Self_1": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_caress_B_Climax_Self_2": "(placeholder - solo, climax, permission)",
-                "com_sex_finger_caress_B_Climax_Self_3": "(placeholder - solo, climax, no permission)",
-                "com_sex_finger_caress_B_Climax_Self_4": "(placeholder - solo, climax, no permission)"
+                "com_sex_finger_caress_B_Climax_1": "$self$揉着$target$的胸口，指尖在乳首上打着转，自己的呼吸却先乱了，腿根蹭来蹭去，忽然抖着泄了。\n\"唔……明明摸的是你……我怎么会先到……\"",
+                "com_sex_finger_caress_B_Climax_3": "$self$咬着唇想忍住，奶子却被揉得发烫，快感冲垮了抵抗，她抖着到了。\n\"不行……都说了不行……啊啊……这种地方……！\"",
+                "com_sex_finger_caress_B_Climax_2": "$self$猛地弓起腰，把$target$的手往奶子上按，乳肉在掌心里颤，小穴跟着收缩淌水。\n\"去了……！光揉胸口就……嗯啊♡\"",
+                "com_sex_finger_caress_B_Climax_Self_M_1": "$self$按着乳头抽搐起来，当着$target$的面到了，小穴淌出水。\n\"去了……被看着自己揉……♡\"",
+                "com_sex_finger_caress_B_Climax_Self_M_2": "$self$揉着奶子抖着泄了，乳肉在掌心里颤个不停。\n\"呜啊……还在看……好丢脸……♡\"",
+                "com_sex_finger_caress_B_Climax_Self_1": "$self$的指尖按着乳头抽搐起来，腰塌下去，小穴淌出水。\n\"要去了……自己揉胸口……也能到……♡♡\"",
+                "com_sex_finger_caress_B_Climax_Self_2": "$self$揉着奶子抖着泄了，乳肉在掌心里颤个不停。\n\"呜啊……停不下来……手还在动……♡\"",
+                "com_sex_finger_caress_B_Climax_Self_M_3": "$self$的手指捣得又急又乱，忽然僵住，蜷着发抖。\n\"到、到了……别看……求你别看……\"",
+                "com_sex_finger_caress_B_Climax_Self_M_4": "$self$泄身的瞬间奶子从手里滑出去，好半天才止住抖。\n\"被逼着揉自己……居然也到了……呜呜……好丢脸……\"",
+                "com_sex_finger_caress_B_Climax_Self_3": "$self$的手指捣得又急又乱，忽然僵住，整个人蜷起来发抖。\n\"到、到了……呜……好丢脸……\"",
+                "com_sex_finger_caress_B_Climax_Self_4": "$self$泄身的瞬间奶子从手里滑出去，好半天才止住抖。\n\"自己揉到去了……呜呜……好丢脸……\"",
+                "com_sex_finger_caress_B_Begin_1": "$self$敞开衣襟把奶子露出来，抓着$target$的手贴上去。\n\"想揉就揉吧……轻点捏。\"",
+                "com_sex_finger_caress_B_Begin_2": "$self$僵了下，没躲开揉上胸口的手，耳根红了。\n\"等、等等……突然摸这里……唔……\"",
+                "com_sex_finger_caress_B_Begin_3": "$self$闭着眼发抖，胸前被粗暴抓揉也不敢推。\n\"呜……轻、轻点……我会听话的……\"",
+                "com_sex_finger_caress_B_Begin_Self_M_1": "$self$在$target$的注视下托起自己的奶子，指尖捻上乳头。\n\"让我做了就别笑话我……开始了。\"",
+                "com_sex_finger_caress_B_Begin_Self_M_2": "$self$按吩咐把奶子托起来，双手罩上去揉。\n\"这样……可以了吗？那我继续了。\"",
+                "com_sex_finger_caress_B_Begin_Self_1": "$self$跪坐下来，托起自己的奶子，指尖捻上乳头。\n\"……那我开始了。\"",
+                "com_sex_finger_caress_B_Begin_Self_2": "$self$靠坐着把双手罩上胸口，慢慢揉起来。\n\"先从轻的开始……\"",
+                "com_sex_finger_caress_B_Begin_Self_M_3": "$self$跪坐在$target$面前，抖着手把自己的奶子托起来。\n\"非、非要我做这种事……揉就是了……\"",
+                "com_sex_finger_caress_B_Begin_Self_M_4": "$self$咬着牙当着$target$的面揉上自己的胸口。\n\"是你命令的……做完就当没发生过……\"",
+                "com_sex_finger_caress_B_Begin_Self_3": "$self$红着脸捧起自己的奶子，指尖捻住乳头。\n\"……忍不住了，就想摸摸……\"",
+                "com_sex_finger_caress_B_Begin_Self_4": "$self$抓紧自己的奶肉揉捏，指尖旋着乳头。\n\"呜……忍不下去嘛……\"",
+                "com_sex_finger_caress_B_1": "$self$呼吸平稳，奶子被揉捏也只是眉头轻皱，指头蜷了蜷，没醒。",
+                "com_sex_finger_caress_B_2": "$self$睡得沉，乳头被指尖捻得发挺也毫无知觉，喉咙里溢出梦呓般的哼声。",
+                "com_sex_finger_caress_B_3": "$self$定格在原本的姿势，乳肉在$target$手里被揉出各种形状，她毫无反应。",
+                "com_sex_finger_caress_B_4": "$self$僵立不动，奶子被随意搓圆捏扁，乳头挺在指缝间，她连眼神都没变。",
+                "com_sex_finger_caress_B_9": "$self$拍掉$target$的手，冷着脸。\n\"别碰我！把你的脏手拿开！恶心死了！\"",
+                "com_sex_finger_caress_B_6": "$self$惊醒后猛地推开$target$，护住胸口。\n\"你在干什么？！疯了吗？快出去！\"",
+                "com_sex_finger_caress_B_5": "$self$拍开胸前的手，翻身背过去。\n\"好困……别闹，明天还要早起呢……\"",
+                "com_sex_finger_caress_B_7": "$self$按住胸前作乱的手往后缩了缩。\n\"今天有点疼……先别揉了，好吗？\"",
+                "com_sex_finger_caress_B_8": "$self$抓住$target$的手腕，勉强笑着让动作停下。\n\"等等……这样太奇怪了……我们还没到那步……快停下……\"",
+                "com_sex_finger_caress_B_12": "$self$在惊恐中醒来，挣不脱，只能含泪承受胸前的揉搓。\n\"不要……为什么……呜……轻点……我不喊了……\"",
+                "com_sex_finger_caress_B_10": "$self$迷迷糊糊睁眼，胸口被揉得热起来，慵懒地哼了声。\n\"唔……坏心眼……那就继续吧……~\"",
+                "com_sex_finger_caress_B_11": "$self$被弄醒，看清是$target$后没推开，只是脸红。\n\"诶？$target$？……趁人睡着摸这里……那就……随便你啦……\"",
+                "com_sex_finger_caress_B_14": "$self$原本推拒的手慢慢抓紧了$target$的手腕，乳尖在揉搓下发挺。\n\"明明不该这样的……可是……哈啊……奶子好热……\"",
+                "com_sex_finger_caress_B_13": "$self$捧着$target$的手往奶子上按，乳头硬得发痒，腰都软了。\n\"哈啊……就是那里……再用力揉……♡\"",
+                "com_sex_finger_caress_B_16": "$self$面无表情任奶子被搓圆捏扁，毫无快感。\n\"做完了吗……揉够了没有……\"",
+                "com_sex_finger_caress_B_15": "$self$皱着眉往后撤胸，被揉得不太舒服。\n\"呃……太用力了，捏疼了……轻点。\"",
+                "com_sex_finger_caress_B_Self_1": "$self$睡熟了，手无意识地覆在自己奶子上揉捏，梦里的眉头时皱时松。",
+                "com_sex_finger_caress_B_Self_2": "$self$在梦里侧躺着，手指捻着自己的乳头，喉咙里溢出细碎哼声，始终没醒。",
+                "com_sex_finger_caress_B_Self_3": "$self$定格在自慰的姿势里，双手还捧着自己的奶子，睫毛垂着不动，任由$target$看着。",
+                "com_sex_finger_caress_B_Self_4": "$self$的手僵在自己胸口，指尖保持着捻乳头的弧度，时间恢复之前她都不会知道自己此刻的模样。",
+                "com_sex_finger_caress_B_Self_5": "$self$把手从胸口放下来，摇头。\n\"不行不行……当着你的面……我做不到。\"",
+                "com_sex_finger_caress_B_Self_6": "$self$红着脸把脸埋进臂弯。\n\"让我自己来可以……但别盯着看……被看着就做不下去了。\"",
+                "com_sex_finger_caress_B_Self_7": "$self$抱臂护住胸口，别开脸。\n\"休想……这种事你自己怎么不去做。\"",
+                "com_sex_finger_caress_B_Self_8": "$self$冷冷瞪着$target$。\n\"命令我？你也配……滚远点。\"",
+                "com_sex_finger_caress_B_Self_M_9": "$self$揉着奶子的手越动越顺，腰软了也不肯停给$target$看。\n\"嗯……别盯那么紧……会害羞的……♡\"",
+                "com_sex_finger_caress_B_Self_M_10": "$self$捻着乳头打转，偷瞄$target$的眼神越来越湿。\n\"哈啊……被看着揉……居然更舒服了……♡\"",
+                "com_sex_finger_caress_B_Self_9": "$self$揉着自己奶子的手越动越顺，乳头在指尖下发硬。\n\"嗯……乳头……变硬了……♡\"",
+                "com_sex_finger_caress_B_Self_10": "$self$的指尖捻着乳头打转，另只手揉着乳肉，呼吸乱成了团。\n\"哈啊……自己揉……居然也这么舒服……♡\"",
+                "com_sex_finger_caress_B_Self_M_11": "$self$红着脸执行那道命令，揉着胸口的指尖却越来越快。\n\"呜……被逼着做这种事……乳头居然硬了……\"",
+                "com_sex_finger_caress_B_Self_M_12": "$self$的手指不受控地加快捻动，腿根蹭着蹭着就并紧了。\n\"明明想敷衍过去的……手却停不下来……唔……\"",
+                "com_sex_finger_caress_B_Self_11": "$self$羞耻地揉着奶子，乳头却在指尖下越来越硬。\n\"不该摸的……可是好舒服……唔……\"",
+                "com_sex_finger_caress_B_Self_12": "$self$本来只想摸两把，手却舍不得从奶子上挪开。\n\"再揉会儿……就停……嗯……\"",
+                "com_sex_finger_caress_B_Self_M_13": "$self$当着$target$的面干揉着奶子，越揉越尴尬。\n\"呜……被看着就紧张……没感觉了……\"",
+                "com_sex_finger_caress_B_Self_M_14": "$self$松开自己的奶子，脸上挂不住。\n\"抱歉……当着你的面，实在没感觉……\"",
+                "com_sex_finger_caress_B_Self_13": "$self$干揉着自己的奶子，眉头越皱越紧。\n\"……太轻了吗，没怎么有感觉……\"",
+                "com_sex_finger_caress_B_Self_14": "$self$松开自己的奶子，兴致缺缺。\n\"算了……今天摸了也白摸。\"",
+                "com_sex_finger_caress_B_Self_M_15": "$self$麻木地揉着奶子给$target$看，脸上没什么表情。\n\"……看够了吗，我演不好这种戏。\"",
+                "com_sex_finger_caress_B_Self_M_16": "$self$的手停在胸口，僵着不肯再动。\n\"够了没有……够了吧……我不想再揉了。\"",
+                "com_sex_finger_caress_B_Self_15": "$self$机械地揉着奶子，胸口毫无波澜。\n\"……没感觉，白揉了。\"",
+                "com_sex_finger_caress_B_Self_16": "$self$放开自己的奶子，没了兴致。\n\"……不揉了。\"",
+                "com_sex_finger_caress_B_Begin_Timestop_1": "$target$捧起她定格的奶子揉捏，指腹捻上乳头搓弄，被捻硬的乳珠自己立在指缝间，$self$的呼吸没乱分毫。",
+                "com_sex_finger_caress_B_Begin_Timestop_2": "$self$的乳肉被搓热泛红，指印陷下去又慢慢弹回来，她垂着的手悬在半空，离胸口还差着距离。"
             }
         }
     }

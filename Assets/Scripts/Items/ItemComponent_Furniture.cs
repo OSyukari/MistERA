@@ -5,16 +5,8 @@ using Newtonsoft.Json;
 
 public class ItemComponentTemplate_Furniture : I_ItemComponentTemplate_Comp
 {
-    public float furnitureSize = 0f;
-    public List<Furniture_COMGiver> givesJob = new List<Furniture_COMGiver>();
-    public bool noDisplay = false;
-    [JsonIgnore] public bool isJobGiver { get { return this.givesJob.Count > 0; } }
+    public string furnitureBaseID = "";
 
-    public class Furniture_COMGiver
-    {
-        [JsonProperty] private List<string> comID = new List<string>();
-        [JsonProperty] private List<string> comTags = new List<string>();
-    }
     public ItemComponent_Base Instantiate(Item_Base itemBase)
     {
         return new ItemComponent_Furniture(itemBase);
@@ -63,6 +55,36 @@ public class ItemComponent_Furniture : ItemComponent_Base
     public override bool canMergeWith(ItemComponent_Base other)
     {
         return false;
+    }
+
+    [JsonIgnore] public override bool Stackable { get { return false; } }
+
+    [JsonProperty] private string furnitureBaseID = "";
+    private FurnitureBase furnitureBaseRefCache = null;
+    [JsonIgnore] public FurnitureBase FurnitureBaseRef
+    {
+        get
+        {
+            if (furnitureBaseRefCache == null)
+            {
+                string id = furnitureBaseID != "" ? furnitureBaseID : Comp?.furnitureBaseID;
+                if (!string.IsNullOrEmpty(id)) furnitureBaseRefCache = scr_System_Serializer.current.GetByNameOrID_FurnitureBase(id);
+            }
+            return furnitureBaseRefCache;
+        }
+    }
+
+    public void SetFurnitureBase(FurnitureBase b)
+    {
+        this.furnitureBaseID = b.ID;
+        this.furnitureBaseRefCache = b;
+    }
+
+    public override List<string> GetTags()
+    {
+        var tags = new List<string> { "furniture", "furniture_packed" };
+        if (FurnitureBaseRef != null) tags.AddRange(FurnitureBaseRef.Tags);
+        return tags;
     }
 
 }

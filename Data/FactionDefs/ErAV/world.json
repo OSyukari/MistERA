@@ -6,6 +6,8 @@
         "worldID":"world_erav_modern_jp",
         "mapImagePath":"ErAV/156274_BlogPostFeatureImage21_120617.jpg",
 
+        "clienteleInfo": { "population": 200000 },
+
         "AnchorType":"TopLeft",
         "worldWidth":833,
         "worldHeight":400,
@@ -253,9 +255,34 @@
         ]
     }
 ],
+    "clienteleDefs": [
+        {
+            "_comment": "wide-reach studio AV - matches the receval_proper_av evaluator tag (see ItemComponent_Records.GetTags/KojoRecording.evaluatorID). High market ceiling, strong popularity swings on release.",
+            "ID": "salesclientele_proper_av",
+            "itemReq": { "requireTags": [ "receval_proper_av" ] },
+            "tags": [ "AV", "nsfw" ],
+            "ratio": 0.02,
+            "fluctuation": 0.15,
+            "popularityInfluence": 5.0,
+            "usePopularityCurve": true,
+            "curvePeakDay": 5,
+            "curveDecayPerDay": 0.1,
+            "curveFloorRatio": 0.3
+        },
+        {
+            "_comment": "amateur/homemade tape - matches the receval_homemade_tape evaluator tag. Small niche market, no release-hype curve.",
+            "ID": "salesclientele_homemade_tape",
+            "itemReq": { "requireTags": [ "receval_homemade_tape" ] },
+            "tags": [ "AV", "nsfw" ],
+            "ratio": 0.005,
+            "fluctuation": 0.5,
+            "popularityInfluence": 0.5,
+            "usePopularityCurve": false
+        }
+    ],
     "factionTemplate":
     [
-        
+
 
     ],
 "factionInit":[ ]

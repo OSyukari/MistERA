@@ -23,10 +23,6 @@
                         {
                             "initClass":"campaign_init_world",
                             "initArguments":["world_kivotos","true"]
-                        },
-                        {
-                            "initClass":"campaign_init_map_extra",
-                            "initArguments":["jp_convenience_store_SunMart", ""]
                         }
                     ]
                 },
@@ -53,12 +49,12 @@
                             "initArguments":["world_kivotos_debug","false"]
                         },
                         {
-                            "initClass":"campaign_init_map_extra",
-                            "initArguments":["jp_convenience_store_SunMart", ""]
+                            "initClass":"campaign_init_commercialPact",
+                            "initArguments":["Utnapishtim", "jp_debug_store"]
                         },
                         {
-                            "initClass":"campaign_init_map_extra",
-                            "initArguments":["map_debug_store", "jp_debug_store"]
+                            "initClass":"campaign_init_commercialPact",
+                            "initArguments":["Utnapishtim", "jp_convenience_store_SunMart"]
                         }
                     ]
                 }
@@ -377,8 +373,13 @@
     ]
 },
 {
-    "_doc": "debug-only companion world for campaign1_start_debug: no factions/floors of its own, just npcInit for the 3 debug prisoners. Loaded via a 2nd campaign_init_world call after world_kivotos, so Utnapishtim (and its medbay) already exist by the time these spawn.",
+    "_doc": "debug-only companion world for campaign1_start_debug: npcInit for the 3 debug prisoners, plus the SunMart convenience store and debug store factions (formerly added via campaign_init_map_extra). Loaded via a 2nd campaign_init_world call after world_kivotos, so Utnapishtim (and its medbay) already exist by the time these spawn.",
     "worldID":"world_kivotos_debug",
+    "initializeFactions":
+    {
+        "jp_convenience_store_SunMart":"jp_convenience_store_SunMart",
+        "jp_debug_store":"jp_debug_store"
+    },
     "npcInit":
     [
         {

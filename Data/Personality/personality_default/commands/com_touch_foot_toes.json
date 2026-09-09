@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_foot_toes_Begin_Timestop_1",
+                                "com_touch_foot_toes_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -288,7 +301,9 @@
                 "com_touch_foot_toes_BadPerm_03": "$self$烦躁地用脚背拍打了一下$target$的肩膀。\"好无聊……我要去睡觉了，放开我。\"",
                 "com_touch_foot_toes_BadNoPerm_01": "$self$终于爆发了，歇斯底里地尖叫起来，用尽全力乱踢乱蹬。\"放开我！你这个变态！疯子！！\"",
                 "com_touch_foot_toes_BadNoPerm_02": "$self$眼里的恐惧转变成了纯粹的恨意，死死盯着$target$。\"我绝对……绝对不会原谅你……\"",
-                "com_touch_foot_toes_BadNoPerm_03": "$self$因为极度的厌恶而干呕了一声，脸色铁青。\"碰够了吗？我想吐……滚啊！\""
+                "com_touch_foot_toes_BadNoPerm_03": "$self$因为极度的厌恶而干呕了一声，脸色铁青。\"碰够了吗？我想吐……滚啊！\"",
+                "com_touch_foot_toes_Begin_Timestop_1": "$target$托起她悬在半空的脚，把脚趾逐根捏过，指腹在趾腹上碾按，$self$的脚保持着原本的弧度，软得任人摆布。",
+                "com_touch_foot_toes_Begin_Timestop_2": "脚心被指甲轻轻刮过，蹭起的红痕慢慢浮出来，$self$的脚趾没有蜷缩，只是安静地任由那只手来回玩。"
             },
             "en-us": {
                 "com_touch_foot_toes_Begin_01": "$self$ felt ticklish and couldn't help shrinking her foot back, but immediately extended it again with a doting smile. \"Seriously, do you like this place that much?\"",

@@ -15,6 +15,8 @@ public class FurnitureBase
     }
     // recipe
     public float furnitureSize = 0f;
+    public float value = 0f;
+    public List<string> Tags = new List<string>();
     public List<Furniture_COMGiver> givesJob = new List<Furniture_COMGiver>();
     public bool noDisplay = false;
     [JsonIgnore] public bool isJobGiver { get { return this.givesJob.Count > 0; } }

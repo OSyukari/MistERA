@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_ears_Begin_Timestop_1",
+                                "com_touch_ears_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -290,7 +303,9 @@
                 "com_touch_ears_Bad_Allow_3": "$self$叹了口气，把$target$的手拿下来扔在一边。\"玩够了吗？我的耳朵都要被你捏肿了。\"",
                 "com_touch_ears_Bad_NoAllow_1": "$self$忍无可忍地爆发了，用力推开$target$转身就跑。\"变态！离我远点！\"",
                 "com_touch_ears_Bad_NoAllow_2": "$self$的眼泪终于夺眶而出，用袖子拼命擦拭着耳朵上残留的触感。\"恶心……太恶心了……\"",
-                "com_touch_ears_Bad_NoAllow_3": "$self$浑身颤抖地缩在角落里，看向$target$的眼神里充满了深深的恐惧和憎恨。"
+                "com_touch_ears_Bad_NoAllow_3": "$self$浑身颤抖地缩在角落里，看向$target$的眼神里充满了深深的恐惧和憎恨。",
+                "com_touch_ears_Begin_Timestop_1": "$target$捻住她定格的耳垂揉搓，指腹碾着软骨打转，耳廓被搓得透红发热，$self$的脖颈没有缩。",
+                "com_touch_ears_Begin_Timestop_2": "耳垂被捏着轻轻拉扯，耳环被拨得晃到半途停住，$self$垂在颊侧的头发纹丝没乱。"
             },
             "en-us": {
                 "com_touch_ears_Begin_Allow_1": "$self$ naturally leans her cheek into $target$'s palm, letting out a comfortable hum. \"Mmm... that tickles.\"",

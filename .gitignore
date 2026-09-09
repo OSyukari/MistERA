@@ -30,6 +30,7 @@ Assets/*
 *.png
 *.skel
 *.atlas
+*.texcache
 *.mat
 *.shader
 *.txt

@@ -94,6 +94,45 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return locale != null && locale.GetMemberType(this).isPrisoner;
         }
     }
+
+    /// <summary>
+    /// Whether this character agrees to share their private room with the given full set of other
+    /// occupants (the resulting roommate group, excluding themselves). Requirement is lower when the
+    /// home faction has no other empty private room to fall back to - same gender needs at least
+    /// intimacy_medium (or intimacy_low when there's no empty room to instead move into); different
+    /// gender needs intimacy_high (or intimacy_medium when there's no empty room).
+    /// </summary>
+    public bool WouldAgreeToShareRoom(List<Character_Trainable> others)
+    {
+        bool hasEmptyRoom = false;
+        var homeFaction = this.FactionManager.Faction_Home;
+        if (homeFaction != null)
+        {
+            foreach (var room in homeFaction.ManagedRooms.Values)
+            {
+                if (room.isRoomPrivate && homeFaction.RoomOwners(room.RefID).Count == 0)
+                {
+                    hasEmptyRoom = true;
+                    break;
+                }
+            }
+        }
+
+        foreach (var other in others)
+        {
+            if (other == this) continue;
+
+            var rel = this.Relationships.FindRelationshipWith(other);
+            bool sameGender = this.isMale == other.isMale && this.isFemale == other.isFemale;
+            bool agrees = sameGender
+                ? rel.HasPermission_Intimacy_Medium() || (!hasEmptyRoom && rel.HasPermission_Intimacy_Low())
+                : rel.HasPermission_Intimacy_High() || (!hasEmptyRoom && rel.HasPermission_Intimacy_Medium());
+
+            if (!agrees) return false;
+        }
+        return true;
+    }
+
     [JsonIgnore]
     public bool cannotRefuse
     {
@@ -1680,6 +1719,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
             // Party override: while in an ongoing expedition, the party sleep window is authoritative.
             // Personal schedule is bypassed; NPC sleeps iff the party window says so (and canSleep).
+            return isScheduleSleep;
+        } }
+
+    [JsonIgnore] public bool isScheduleSleep
+    {
+        get
+        {
             var party = this.FactionManager.CurrentParty;
 
             if (party != null && (party.isActive || party.Room.RoomChara.Contains(this)))
@@ -1694,10 +1740,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 // if (RefID > 0) Debug.Log($"{FirstName} should sleep in schedule? {v != null && v.comIDs.Contains("com_furniture_sleep")}");
                 return v != null && v.comIDs.Contains("com_furniture_sleep");
             }
-            
-
             else return false;
-        } }
+        }
+    }
+
 
     [JsonIgnore] public bool shouldRest { get
         {
@@ -2293,7 +2339,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             ? (int)(Math.Min(Stats.SleepHours * 60, tired))
             : (int)(Stats.SleepHours * 60);
 
-        int sleepHour = windowMinutes > 0 ? Math.Min(personalNeedMinutes, windowMinutes) : personalNeedMinutes;
+        int sleepHour;
+        if (scr_System_CampaignManager.current.Player == this && windowMinutes == 0 && scr_System_CampaignManager.current.DebugMode)
+        {
+            // Player sleeping outside their assigned sleep hour (e.g. DEBUG-triggered):
+            // skip a full night instead of only covering the accrued deprivation debt,
+            // so a scheduled sleep that gets interrupted can still resume in sync with the party.
+            sleepHour = Stats.SleepHours * 60;
+        }
+        else
+        {
+            sleepHour = windowMinutes > 0 ? Math.Min(personalNeedMinutes, windowMinutes) : personalNeedMinutes;
+        }
         ScheduledSleepMissingMinutes = Math.Max(0, personalNeedMinutes - sleepHour);
 
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);

@@ -97,6 +97,11 @@ public abstract class scr_Menu : MonoBehaviour
         return hash;
     }
 
+    public int AssertUniqueHashPublic(int hash)
+    {
+        return AssertUniqueHash(hash);
+    }
+
 
     /// <summary>
     /// Catch all button in sub-menu and attach validator by ID

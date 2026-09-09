@@ -40,7 +40,34 @@ public class Job : IDisposable, I_Disposable
     /// AP also use this to determine whether they can shorten EP description
     /// </summary>
     [JsonIgnore] public virtual bool CanBeInterrupted { get { return true; } }
-    
+
+    /// <summary>
+    /// Whether this job is currently "in use" and should block structural changes to its giver
+    /// (e.g. packing away the furniture that owns it).
+    /// </summary>
+    [JsonIgnore] public virtual bool IsInUse
+    {
+        get
+        {
+            if (!CanBeInterrupted) return true;
+
+            // any ongoing non-temporary AP counts as in use; temporary ones (pathing, undress,
+            // wait, teleport) don't. packages_current holds APs added but not yet ticked/activated;
+            // packages_previous holds APs PreUpdateTime has already SetActive()'d - the actually-
+            // executing list despite its name. Both count as "ongoing."
+            foreach (var ap in packages_current)
+            {
+                if (!ap.isTemporaryAP) return true;
+            }
+            foreach (var ap in packages_previous)
+            {
+                if (!ap.isTemporaryAP) return true;
+            }
+
+            return false;
+        }
+    }
+
     [JsonIgnore]
     public virtual Room_Instance ParentRoom
     {

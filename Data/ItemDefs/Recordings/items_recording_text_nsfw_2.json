@@ -3,12 +3,11 @@
         "list": [
             {
                 "id": "item_Record_test_nsfw_0426",
-                "displayName": "Test AV 0426",
-                "tooltip": "CameraTape, store recordings.",
                 "Tags": [
                     "industrial",
                     "item_records",
-                    "AV"
+                    "AV",
+                    "retail_digital"
                 ],
                 "itemComps_Template": [
                     {
@@ -21,13 +20,15 @@
                                         "baseID": "male_actor_dummy",
                                         "refID": -1,
                                         "firstNameOriginal": "老师",
-                                        "firstNameOverwrite": "男优1"
+                                        "firstNameOverwrite": "男优1",
+                                        "actorTags":["male","human"]
                                     },
                                     {
                                         "baseID": "Campaign1_Nikke_Cinderella",
                                         "refID": 1000467,
                                         "firstNameOriginal": "灰姑娘",
-                                        "firstNameOverwrite": ""
+                                        "firstNameOverwrite": "",
+                                        "actorTags":["female","human"]
                                     }
                                 ],
                                 "cameraman": {

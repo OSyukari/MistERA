@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_thigh_Begin_Timestop_1",
+                                "com_touch_thigh_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -320,7 +333,9 @@
                 "com_touch_thigh_36": "$self$终于忍无可忍，眼泪夺眶而出，声音嘶哑。\"你在这个世界上只剩下这种下流的乐趣了吗？！\"",
                 "com_touch_thigh_37": "$self$的眼神彻底死寂下去，如同看着一团死肉。\"你摸够了吗？摸够了就滚。\"",
                 "com_touch_thigh_38": "$self$虽然还在被触摸，但整个人散发出一种令人窒息的冰冷气息。\"我会记住今天的……每一秒。\"",
-                "com_touch_thigh_39": "$self$不再颤抖，取而代之的是极度的愤怒和屈辱。\"把你的手拿开！立刻！马上！\""
+                "com_touch_thigh_39": "$self$不再颤抖，取而代之的是极度的愤怒和屈辱。\"把你的手拿开！立刻！马上！\"",
+                "com_touch_thigh_Begin_Timestop_1": "$target$的手掌抚上她定格的大腿揉按，指腹压进软肉又松开，陷下的指印慢慢弹回，$self$的膝盖没有并拢。",
+                "com_touch_thigh_Begin_Timestop_2": "腿根被捏着推拿，蹭热的皮肤洇出浅红，$self$裙摆下的腿保持着原本交叠的姿势，任由那只手来回拿捏。"
             },
             "en-us": {
                 "com_touch_thigh_Begin_1": "$self$ didn't dodge, instead naturally covering $target$'s hand with her own, fingertips gently rubbing. \"Hmm? Why so clingy all of a sudden?\"",

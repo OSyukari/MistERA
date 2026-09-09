@@ -19,13 +19,39 @@ public class KojoRecording
             cachedplaytime = false;
         }
         collect[timestamp].Merge(kol);
-        
+
     }
 
     /// <summary>
-    /// tracks the iteminstance parent
+    /// Invalidates every cache derived from collect's membership (TotalPlayTime sum, GetKojoFrom's
+    /// key list). Must be called after removing entries from collect directly (e.g.
+    /// canvas_videoEdit.SaveRecording), since only AddCollector invalidates these on its own.
     /// </summary>
-    public int parentRecordingRef = -1;
+    public void InvalidateCache()
+    {
+        cachedplaytime = false;
+        cached_datetime = null;
+    }
+
+    /// <summary>
+    /// Origin finalize timestamp (ticks, as string) shared by every edited copy of this recording.
+    /// Stamped once at the true origin and never reassigned afterward, so all descendants trace
+    /// back to the same value regardless of whether the originating item still exists.
+    /// </summary>
+    public string parentRecordingID = "";
+
+    /// <summary>
+    /// Appraised worth from the last evaluation at save time (see canvas_videoEdit.SaveRecording).
+    /// Null until a recording has been saved with an evaluator selected.
+    /// </summary>
+    public int? value = null;
+
+    /// <summary>
+    /// ID of the RecordingEvaluator used to appraise this recording, stamped at save time whenever an
+    /// evaluator is selected (see canvas_videoEdit.SaveRecording). Also surfaces as an item tag via
+    /// ItemComponent_Records.GetTags(), so sales clientele can match on it (see SalesClienteleDef.itemReq).
+    /// </summary>
+    public string evaluatorID = "";
 
     /// <summary>
     /// Unique ID that allows comparing whether 2 recording has same source
@@ -43,6 +69,9 @@ public class KojoRecording
         }
         ActorSettings = new List<ActorRecord>(rectemp.Values);
         RecordUID = $"{DateTime.Now.Ticks}";
+        if (string.IsNullOrEmpty(parentRecordingID)) parentRecordingID = $"{DateTime.Now.Ticks}";
+
+        InitializePlayTime(true);
     }
 
     bool initialized = false;
@@ -60,6 +89,29 @@ public class KojoRecording
         {
             m.Value.ReadActorRecord(_MessageCountByActor);
         }
+
+        InitializePlayTime();
+    }
+
+    void InitializePlayTime(bool forceInit = false)
+    {
+        if (forceInit || !initializedPlayTime)
+        {
+            initializedPlayTime = true;
+
+            DateTime prev_time = DateTime.MinValue;
+            MessageCollect prev_col = null;
+            // foreach
+            foreach (var kvp in collect)
+            {
+                if (prev_col != null)
+                {
+                    kvp.Value.Duration = (int)(kvp.Key - prev_time).TotalMinutes;
+                }
+                prev_col = kvp.Value;
+                prev_time = kvp.Key;
+            }
+        }
     }
 
     [JsonIgnore]
@@ -76,13 +128,23 @@ public class KojoRecording
 
     int playtime_cache = 0;
     bool cachedplaytime = false;
+
+    [JsonProperty] protected bool initializedPlayTime = false;
+
     [JsonIgnore]
     public int TotalPlayTime { get
         {
             if (!cachedplaytime)
             {
                 cachedplaytime = true;
-                playtime_cache = (collect.Last().Key - collect.First().Key).Minutes;
+
+                InitializePlayTime();
+                playtime_cache = 0;
+                foreach (var kvp in collect)
+                {
+                    playtime_cache += kvp.Value.Duration;
+                }
+                //playtime_cache = (int)(collect.Last().Key - collect.First().Key).TotalMinutes;
             }
             return playtime_cache;
         } }
@@ -117,7 +179,29 @@ public class KojoRecording
         }
     }
 
+    static List<string> _null = new List<string>();
 
+    /// <summary>
+    /// Placeholder - actor tags aren't registered on the recording yet. Pretend this returns
+    /// baseID's aggregated identity/feature tags until that's actually implemented.
+    /// </summary>
+    public List<string> GetActorTags(string baseID)
+    {
+        if (_MessageCountByActor.TryGetValue(baseID, out var val)) return val.actorTags;
+        else return _null;
+    }
+
+    /// <summary>
+    /// RefIDs of every actor whose portrait was shown with an expression/pose override anywhere
+    /// in this recording (see MessageCollect.CollectPortraitRefs). Recorded-data only -
+    /// does not require any actor to currently be a live instance.
+    /// </summary>
+    public HashSet<int> GetPortraitOverrideRefs()
+    {
+        var refs = new HashSet<int>();
+        foreach (var kvp in collect) kvp.Value.CollectPortraitRefs(refs, true);
+        return refs;
+    }
 
     List<DateTime> cached_datetime = null;
     [JsonIgnore]
@@ -158,17 +242,19 @@ public class KojoRecording
         }
 
         var message = new MessageCollect();
-        var startTime = collect.First().Key;
-        var targetTime = startTime.AddMinutes(elapsedTime);
+        int cumulative = 0;
 
         foreach(var key in cached_datetime)
         {
-            if (key <= targetTime) continue;
-            if (collect.TryGetValue(key, out var msg) && message.MergeVisible(msg, c))
+            if (!collect.TryGetValue(key, out var msg)) continue;
+            cumulative += msg.Duration;
+            if (cumulative <= elapsedTime) continue;
+
+            if (message.MergeVisible(msg, c))
             {
                 if (msg.apRecords != null) message.apRecords.AddRange(msg.apRecords);
-                newDuration = (key - targetTime).Minutes;
-                elapsedTime += newDuration;
+                newDuration = cumulative - elapsedTime;
+                elapsedTime = cumulative;
 
                 message.AddReplaceString(_MessageCountByActor);
 

@@ -21,14 +21,19 @@ public class KojoCollector : I_ResultStorage, I_Records
     }
     public bool IsRelevantActor(int i)
     {
-        return relevantActorRefs.Contains(i);
+        return RelevantActorRefs.Contains(i);
+    }
+    public bool IsRelevantActor(ActorRecord i)
+    {
+        if (i == null) return false;
+        return IsRelevantActor(i.refID_overwrite != -1 ? i.refID_overwrite : i.refID);
     }
     [JsonIgnore]
     public bool IsSingleActor
     {
         get
         {
-            return relevantActorRefs.Count == 1;
+            return RelevantActorRefs.Count == 1;
         }
     }
     [JsonIgnore] public bool isrecording = false;
@@ -41,6 +46,14 @@ public class KojoCollector : I_ResultStorage, I_Records
     }
     [JsonProperty] protected List<int> relevantActorRefs = new List<int>();
     List<int> relevantActorRefsOverride = null;
+    [JsonIgnore]
+    public List<int> RelevantActorRefs
+    {
+        get
+        {
+            return relevantActorRefsOverride != null ? relevantActorRefsOverride : relevantActorRefs;
+        }
+    }
     public bool autoAnimate = false;
     [JsonIgnore]
     public bool isValid
@@ -105,7 +118,7 @@ public class KojoCollector : I_ResultStorage, I_Records
         if (collect == null) return false;
         if (Visibility == VisibilityLevel.Global) return true;
         if (room != null && !room.RoomChara.Contains(c)) return false;
-        var actlist = relevantActorRefsOverride == null ? relevantActorRefs : relevantActorRefsOverride;
+        var actlist = RelevantActorRefs;
         return DirectlyRelated(c) || actlist.Count < 1 || actlist.Contains(c.RefID);
     }
 
@@ -499,6 +512,11 @@ public class KojoCollector : I_ResultStorage, I_Records
         if (receiverRef != doerRef && receiverRef != targetRef && receiverRef != selfRef) RecordActorSingle(receiverRef, recTable, true);
     }
 
+    public void CollectPortraitRefs(HashSet<int> refs, bool requireOverride)
+    {
+        if (collect != null) collect.CollectPortraitRefs(refs, requireOverride);
+    }
+
     public void ReadActorRecord(Dictionary<string, ActorRecord> recTable)
     {
         //foreach (var actorref in relevantActorRefs) LoadActorSingle(actorref, recTable);
@@ -507,6 +525,22 @@ public class KojoCollector : I_ResultStorage, I_Records
         //if (!relevantActorRefs.Contains(doerRef)) LoadActorSingle(doerRef, recTable);
         //if (!relevantActorRefs.Contains(receiverRef)) LoadActorSingle(receiverRef, recTable);
 
+        relevantActorRefsOverride = new List<int>();
+        foreach (var actorref in relevantActorRefs)
+        {
+            bool remapped = false;
+            foreach (var rec in recTable)
+            {
+                if (rec.Value.refID == -1) continue;
+                if (rec.Value.refID == actorref && rec.Value.refID_overwrite != -1)
+                {
+                    relevantActorRefsOverride.Add(rec.Value.refID_overwrite);
+                    remapped = true;
+                    break;
+                }
+            }
+            if (!remapped) relevantActorRefsOverride.Add(actorref);
+        }
 
         collect.ReadActorRecord(recTable);
     }

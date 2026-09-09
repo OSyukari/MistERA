@@ -64,6 +64,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_P_missionary_A_Begin_Timestop_1",
+                                "com_sex_P_missionary_A_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -487,7 +500,9 @@
                 "com_sex_P_missionary_A_25": "$self$趴着没怎么动，眉头微皱，偶尔才跟着哼几声。\n\n\"嗯……还是有点……撑得难受……你慢些好不好？\"\n\n这段她始终没能适应，菊穴绷得紧紧的，怎么也找不到舒服的感觉。",
                 "com_sex_P_missionary_A_26": "$self$敷衍地随着节奏晃，神色淡淡的。\n\n\"……还行吧，就是有点……胀……\"\n\n这段对她来说没什么滋味，菊穴被磨得发酸，她甚至悄悄分了神。",
                 "com_sex_P_missionary_A_27": "$self$皱着眉把脸埋进手臂，身子随着撞击被动地前后晃。\n\n\"……你别顶那么深……好难受……\"\n\n干涩紧绷的菊穴被反复碾磨，她咬着下唇忍着，巴不得这段赶紧翻篇。",
-                "com_sex_P_missionary_A_28": "$self$面无表情地承受着撞击，眼神冷得发寒。\n\n\"……你要干就快点。\"\n\n这段她连哼都懒得哼，菊穴被磨得难受，由着身子被撞，心思早飞到别处去了。"
+                "com_sex_P_missionary_A_28": "$self$面无表情地承受着撞击，眼神冷得发寒。\n\n\"……你要干就快点。\"\n\n这段她连哼都懒得哼，菊穴被磨得难受，由着身子被撞，心思早飞到别处去了。",
+                "com_sex_P_missionary_A_Begin_Timestop_1": "$target$把定格的腰垫高，龟头抵着菊穴缓缓碾开，穴口的软肉含住棒身不受控地吮紧，$self$的手还搭在身侧没动。",
+                "com_sex_P_missionary_A_Begin_Timestop_2": "后穴吞到最深处时，$self$垂在颈侧的头发悬着不落，静止的房间里只剩穴肉吞吐的黏腻声响。"
             },
             "en-us": {
                 "com_sex_P_missionary_A_Climax_1": "$self$ thrusts deep into that tight hole to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",

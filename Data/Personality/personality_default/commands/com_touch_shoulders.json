@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_shoulders_Begin_Timestop_1",
+                                "com_touch_shoulders_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -360,7 +373,9 @@
                 "com_touch_shoulders_L_3": "$self$咬牙切齿地低吼，声音里充满了压抑的怒火。\"放手！现在！\"",
                 "com_touch_shoulders_L_4": "$self$感觉受到了极大的冒犯，眼眶发红地瞪着前方。\"这算什么？职场霸凌吗？\"",
                 "com_touch_shoulders_L_5": "$self$身体剧烈颤抖，仿佛再也无法承受这种精神折磨。\"求你……别碰我了……\"",
-                "com_touch_shoulders_L_6": "$self$用尽全力甩动肩膀，试图摆脱那只令人作呕的手。"
+                "com_touch_shoulders_L_6": "$self$用尽全力甩动肩膀，试图摆脱那只令人作呕的手。",
+                "com_touch_shoulders_Begin_Timestop_1": "$target$的双手按上她定格的肩头揉捏，僵着的筋肉被按出酸胀，$self$的肩线没有塌下去。",
+                "com_touch_shoulders_Begin_Timestop_2": "肩胛被拇指碾着推开，蹭红的皮肤留着按痕，$self$垂着的手臂悬在身侧，被拨动时只是软软地晃。"
             },
             "en-us": {
                 "com_touch_shoulders_Begin_A_1": "$self$ naturally leans closer to $target$, dipping her shoulder slightly to meet their hand.",

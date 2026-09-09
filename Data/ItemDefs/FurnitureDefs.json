@@ -1,0 +1,28 @@
+{
+    "Items": {
+        "list": [
+            {
+                "id": "item_furniture_packed",
+                "Tags": ["furniture_packed"],
+                "value": 0,
+                "itemComps_Template": [
+                    { "compType": "ItemComponent_Furniture" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "item_furniture_packed": "打包的家具",
+                "item_furniture_packed_tooltip": "拆封后可放置到房间中的家具。",
+                "item_furniture_packed_nameOverwrite": "家具：$name$"
+            },
+            "en-us": {
+                "item_furniture_packed": "Packed Furniture",
+                "item_furniture_packed_tooltip": "Unpack to place this furniture in a room.",
+                "item_furniture_packed_nameOverwrite": "Furniture: $name$"
+            }
+        }
+    }
+}

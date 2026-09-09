@@ -27,7 +27,6 @@ public static class ResultFactionUtility
                     if (from == null && from != job.FactionOwner.Faction) from = job.FactionOwner.Faction;
                     break;
             }
-            if (from == null) return;
 
             Manageable to = null;
             switch (tr.to)
@@ -45,7 +44,7 @@ public static class ResultFactionUtility
             }
             if (to == null) return;
 
-            scr_System_CampaignManager.current.StartRetailExchange(from, to);
+            scr_System_CampaignManager.current.StartRetailExchange(c, from, to);
         }
         
         if (result.entry_results.initiateTake != null)

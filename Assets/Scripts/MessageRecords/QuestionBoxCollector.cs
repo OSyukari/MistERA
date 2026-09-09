@@ -22,14 +22,19 @@ public class QuestionBoxCollector : I_Records
     }
     public bool IsRelevantActor(int i)
     {
-        return relevantActors.Contains(i);
+        return RelevantActors.Contains(i);
+    }
+    public bool IsRelevantActor(ActorRecord i)
+    {
+        if (i == null) return false;
+        return IsRelevantActor(i.refID_overwrite != -1 ? i.refID_overwrite : i.refID);
     }
     [JsonIgnore]
     public bool IsSingleActor
     {
         get
         {
-            return relevantActors.Count == 1;
+            return RelevantActors.Count == 1;
         }
     }
     [JsonIgnore]
@@ -98,6 +103,23 @@ public class QuestionBoxCollector : I_Records
                 }
             }
         }
+
+        relevantActorsOverride = new List<int>();
+        foreach (var actorref in relevantActors)
+        {
+            bool remapped = false;
+            foreach (var rec in recTable)
+            {
+                if (rec.Value.refID == -1) continue;
+                if (rec.Value.refID == actorref && rec.Value.refID_overwrite != -1)
+                {
+                    relevantActorsOverride.Add(rec.Value.refID_overwrite);
+                    remapped = true;
+                    break;
+                }
+            }
+            if (!remapped) relevantActorsOverride.Add(actorref);
+        }
     }
     public bool RightAlign(Character_Trainable c)
     {
@@ -133,13 +155,22 @@ public class QuestionBoxCollector : I_Records
     public bool rightAlign = false;
 
     public List<int> relevantActors = new List<int>();
+    List<int> relevantActorsOverride = null;
+    [JsonIgnore]
+    public List<int> RelevantActors
+    {
+        get
+        {
+            return relevantActorsOverride != null ? relevantActorsOverride : relevantActors;
+        }
+    }
     public bool DirectlyRelated(Character_Trainable c)
     {
-        return c == null || this.relevantActors.Count < 1 || this.relevantActors.Contains(c.RefID);
+        return c == null || this.RelevantActors.Count < 1 || this.RelevantActors.Contains(c.RefID);
     }
     public bool DirectlyRelated(int c)
     {
-        return this.relevantActors.Count < 1 || this.relevantActors.Contains(c);
+        return this.RelevantActors.Count < 1 || this.RelevantActors.Contains(c);
     }
 
 

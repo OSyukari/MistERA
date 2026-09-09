@@ -2234,7 +2234,7 @@ public class scr_panel_COMmanager : scr_Menu
             Debug.Log("Debug Feeding Ingestible Item [" + baseItem.DisplayName + "] to [" + chara.FirstName + "]");
 
             
-            Item_Instance i = WorldManager.Instantiate(baseItem.id, baseItem.displayName);
+            Item_Instance i = WorldManager.Instantiate(baseItem.id, baseItem.DisplayName);
 
             if(!chara.Body.ConsumeIngestible(i, ingestTag))
             {

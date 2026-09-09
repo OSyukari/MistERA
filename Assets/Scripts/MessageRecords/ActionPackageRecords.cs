@@ -5,6 +5,16 @@ using System.Text;
 using Newtonsoft.Json;
 using UnityEngine;
 
+public enum ActorRole
+{
+    // no manual override - RecordingEvaluatorInstance decides main/support via its
+    // participation/co-occurrence heuristic, same as before this enum existed.
+    Auto,
+    Main,
+    Support,
+    None
+}
+
 public class ActorRecord
 {
     public string baseID = "";
@@ -12,6 +22,11 @@ public class ActorRecord
     [JsonIgnore] public int refID_overwrite = -1;
     public string firstNameOriginal = "";
     public string firstNameOverwrite = "";
+    public List<string> actorTags = new List<string>();
+
+    // set via the video-edit canvas's Main Actor/Support Cast/None buttons; persisted so the
+    // choice survives save/reload instead of being recomputed by the heuristic every time.
+    public ActorRole roleOverride = ActorRole.Auto;
     public ActorRecord() { }
     public ActorRecord(Character_Trainable c)
     {
@@ -24,6 +39,7 @@ public class ActorRecord
             this.baseID = c.BaseID;
             this.refID = c.RefID;
             this.firstNameOriginal = c.FirstName;
+            UtilityEX.GetActorTag(ref actorTags, c);
         }
     }
 
@@ -54,9 +70,6 @@ public class ActorRecord
         return this.baseID != "" && this.baseID == rec.baseID;
     }
 
-    bool actorCached = false;
-    Character_Trainable cached_actor = null;
-
     public void Update()
     {
         var Match = scr_System_CampaignManager.current.FindInstanceByID(refID);
@@ -78,7 +91,6 @@ public class ActorRecord
 }
 public class ActionPackageRecords
 {
-    [JsonIgnore] public scr_actionHolder RecordBox = null;
     bool disable = false;
     [JsonIgnore] public bool Disable
     {
@@ -89,7 +101,6 @@ public class ActionPackageRecords
         set
         {
             disable = value;
-            if (RecordBox != null) RecordBox.Activate = !value;
         }
     }
 
@@ -106,16 +117,35 @@ public class ActionPackageRecords
     public MessageCollect mcol = new MessageCollect();
 
     /// <summary>
-    /// AP loadActor load actual actor behavior
+    /// AP loadActor load actual actor behavior. Participation (Count) is driven by this AP's own
+    /// attached message data (who its portrait references actually feature), not by Doers/
+    /// Receivers/Master role membership - a Doer/Master slot can be filled by a non-featured
+    /// actor (e.g. a cameraman), and Master duplicating a Doer shouldn't double-count them.
     /// </summary>
     /// <param name="recTable"></param>
     public void ReadActorRecord(Dictionary<string, ActorRecord> recTable)
     {
-        //foreach (var c in Doers) ReadActorRecordSingle(c, recTable);
-        //foreach (var c in Receivers) ReadActorRecordSingle(c, recTable);
-        //ReadActorRecordSingle(Master, recTable);
+        if (this.mcol != null)
+        {
+            this.mcol.ReadActorRecord(recTable);
 
-        if (this.mcol != null) this.mcol.ReadActorRecord(recTable);
+            var featuredRefs = new HashSet<int>();
+            this.mcol.CollectPortraitRefs(featuredRefs, false);
+            foreach (var refID in featuredRefs)
+            {
+                if (refID == -1) continue;
+                foreach (var rec in recTable)
+                {
+                    if (rec.Value.refID == -1) continue;
+                    int effectiveRefID = rec.Value.refID_overwrite != -1 ? rec.Value.refID_overwrite : rec.Value.refID;
+                    if (effectiveRefID == refID)
+                    {
+                        rec.Value.Count += 1;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public bool hasActor(int i)
@@ -123,6 +153,22 @@ public class ActionPackageRecords
         foreach (var c in Doers) if (c.refID == i) return true;
         foreach (var c in Receivers) if (c.refID == i) return true;
         if (Master != null && Master.refID == i) return true;
+        return false;
+    }
+    public bool hasActor(ActorRecord act)
+    {
+        if (act == null) return false;
+
+        bool Matches(ActorRecord c)
+        {
+            if (act.refID != -1 && c.refID == act.refID) return true;
+            if (act.baseID != "" && c.baseID == act.baseID) return true;
+            return false;
+        }
+
+        foreach (var c in Doers) if (Matches(c)) return true;
+        foreach (var c in Receivers) if (Matches(c)) return true;
+        if (Master != null && Matches(Master)) return true;
         return false;
     }
     public bool isSingleActor()
@@ -180,7 +226,7 @@ public class ActionPackageRecords
         this.internalState = ap.internalState;
         // doer, receiver, master
         foreach (var actor in ap.doer) this.Doers.Add(new ActorRecord(actor));
-        foreach (var actor in ap.receiver) this.Doers.Add(new ActorRecord(actor));
+        foreach (var actor in ap.receiver) this.Receivers.Add(new ActorRecord(actor));
         this.Master = ap.Master == null ? null : new ActorRecord(ap.Master);
 
         var aproom = scr_System_CampaignManager.current.Map.GetRoomByRef(ap.RoomKey);

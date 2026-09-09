@@ -141,6 +141,8 @@
                 "displayName":"学生课桌",
                 "recipe":[],
                 "furnitureSize":0,
+                "value":8000,
+                "Tags":["rarity_common"],
                 "givesJob": [ { "comID":["jp_high_school_student_lesson"] } ]
             },
             {
@@ -148,6 +150,8 @@
                 "displayName":"讲台",
                 "recipe":[],
                 "furnitureSize":0,
+                "value":20000,
+                "Tags":["rarity_common"],
                 "givesJob": [ { "comID":["jp_high_school_teachers_lesson"] } ]
             }
         ]

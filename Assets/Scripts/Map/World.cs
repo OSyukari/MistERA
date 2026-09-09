@@ -30,6 +30,8 @@ public class WorldPlan
     /// </summary>
     public string parentWorldID = "";
 
+    public WorldClienteleInfo clienteleInfo = new WorldClienteleInfo();
+
     public string mapImagePath = "";
 
     // map alignment axis

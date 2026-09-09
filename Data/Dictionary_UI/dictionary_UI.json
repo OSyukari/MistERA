@@ -45,6 +45,7 @@
 "ui_entry_memory_sleep_end": "睡醒了",
 "ui_entry_multipleCount": "$item$x$count$",
 
+"ui_item_furniture_packed_tooltip": "可安置的家具",
 
 "ui_entry_memory_blacklist": "尝试在$room$寻找$comName$$comTags$工作失败",
 
@@ -400,6 +401,35 @@
 "ui_management_tab_production": "订单生产",
 "ui_management_tab_jobs": "工作分配",
 "ui_management_tab_expeditions": "远征队伍",
+"ui_management_tab_roomEdit": "房间编辑",
+
+"ui_management_roomEdit_roomType": "<link=ui_management_roomEdit_roomType_tooltip>房间类别标签：</link>",
+"ui_management_roomEdit_roomType_tooltip": "该房间的所属类别\n房间内的家具配置能够增加或移除部分类别标签",
+"ui_management_roomEdit_roomOwners": "<link=ui_management_roomEdit_roomOwners_tooltip>房间归属：</link>",
+"ui_management_roomEdit_roomOwners_tooltip": "私人房间归属\n角色会在私人房间睡觉",
+"ui_management_roomEdit_furnitures": "房间内家具",
+"ui_management_roomEdit_editowners": "变更房间归属",
+"ui_management_roomEdit_editowners_tooltip": "重新安排私人房间归属\n角色会在私人房间睡觉",
+"ui_management_roomEdit_editbutton": "变更房间家具",
+"ui_management_roomEdit_editbutton_tooltip": "将据点道具栏的家具安置进房间\n或者将房间内的家具拆除并置于道具栏",
+
+"room_type_requireCleaning":"<link=room_type_requireCleaning_tooltip>需要清洁</link>",
+"room_type_requireCleaning_tooltip":"该房间会积累灰尘",
+
+"room_type_prison":"<link=room_type_prison_tooltip>监狱</link>",
+"room_type_prison_tooltip":"囚犯只会在监狱内沙盒",
+
+"room_type_privateRoom":"<link=room_type_privateRoom_tooltip>私人房间</link>",
+"room_type_privateRoom_tooltip":"该房间有床，可以设为角色的卧室",
+
+"room_type_offerMeals":"<link=room_type_offerMeals_tooltip>可用餐</link>",
+"room_type_offerMeals_tooltip":"餐点准备好后，可在该房间用餐",
+"room_type_prepMeals":"<link=room_type_prepMeals_tooltip>准备餐点</link>",
+"room_type_prepMeals_tooltip":"可在该房间下厨以及准备餐点（准备餐点后才可用餐）",
+
+"room_type_mainExit":"<link=room_type_mainExit_tooltip>出口</link>",
+"room_type_mainExit_tooltip":"此处与外界连接",
+
 "ui_management_factionName":"阵营名称",
 "ui_management_linkStatus":"链接状态",
 
@@ -419,10 +449,14 @@
 
 "ui_management_production_addProduction":"<link=ui_management_production_addProduction_tooltip>增加制造订单</link>",
 "ui_management_production_addProduction_tooltip":"制造订单会按照优先顺序（从上到下）判定是否能够和需要执行",
+"ui_management_production_addTrade_faction":"<link=ui_management_production_addTrade_faction_tooltip>贸易对象阵营</link>",
+"ui_management_production_addTrade_faction_tooltip":"",
 "ui_management_production_addTrade":"<link=ui_management_production_addTrade_tooltip>增加贸易订单（批发）</link>",
 "ui_management_production_addTrade_tooltip":"贸易订单会根据交易阵营的不同而收取不同的货币\n批发订单每日结束时才会结算，没有购买上限",
+"ui_management_production_addSales":"<link=ui_management_production_addSales_tooltip>增加零售订单</link>",
+"ui_management_production_addSales_tooltip":"（施工中）",
 "ui_management_production_retailTrade":"<link=ui_management_production_retailTrade_tooltip>增加贸易订单（零售）</link>",
-"ui_management_production_retailTrade_tooltip":"贸易订单会根据交易阵营的不同而收取不同的货币\n零售订单会在确认购买时立刻结算，但有购买上限（每日重置）",
+"ui_management_production_retailTrade_tooltip":"贸易订单会根据交易阵营的不同而收取不同的货币\n零售订单会在确认购买时立刻结算，但有购买上限（每日重置）\n\n贸易对象阵营可更换，限制为 【角色家庭 或 角色当前工作阵营】 + 每个角色身为管理者的阵营",
 
 "ui_management_production_addTransfer":"<link=ui_management_production_addTransfer_tooltip>转移道具至...</link>",
 "ui_management_production_addTransfer_tooltip":"将该阵营的钱或道具转移至另一个玩家管理的阵营",
@@ -452,22 +486,38 @@
 "ui_management_inventory_TITLE": "据点道具栏",
 "ui_management_production_PO_TITLE": "制造订单",
 "ui_management_production_Trade_TITLE": "贸易订单",
+"ui_management_production_Sales_TITLE": "零售订单",
 "ui_management_production_Trade_target": "贸易对象",
-"ui_management_production_Trade_pricing": "订单价格",
+"ui_management_production_Trade_pricing": "<link=ui_management_production_Trade_pricing_tooltip>订单价格</link>",
+"ui_management_production_Trade_pricing_tooltip": "根据订单类型的不同，此处会显示商品的总价或者单价",
+"ui_management_production_Trade_pricing_tooltip_each": "该价格为物品平均单价",
 "ui_management_production_Trade_stock": "库存量",
 "ui_management_production_Trade_buyCount": "购入量",
 
 "ui_management_production_Trade_Display_straight": "<color=#008000>购入</color> $name$",
 "ui_management_production_Trade_Display_reverse": "<color=#FF2C2C>送出</color> $name$",
+"ui_management_production_Trade_Display_retail": "<color=#FF2C2C>贩售</color> $name$",
+"ui_management_sales_daily_report": "卖出了$count$份$name$，利润$profit$",
 
 "ui_management_production_orderName": "订单内容",
 "ui_management_production_currentlyOwn": "目前持有",
+"ui_management_production_activateTitle": "订单状态",
 "ui_management_production_jobkeyword": "工作类别",
 "ui_management_production_orderType": "订单类别",
 "ui_management_production_add": "添加",
 "ui_management_production_movePriority": "<link=ui_management_production_movePriority_tooltip> ≡ </link>",
 "ui_management_production_movePriority_tooltip": "长按此处拖动，即可调整订单的优先级顺序",
 "ui_management_production_amount": "订单数",
+
+
+"ui_management_sales_orderType": "<link=ui_management_sales_orderType_tooltip>生效中</link>",
+"ui_management_sales_orderType_tooltip": "该物品会在每日更新时结算销售",
+"ui_management_sales_amount_exist": "<link=ui_management_sales_amount_exist_tooltip>可供应</link>",
+"ui_management_sales_amount_exist_tooltip": "该物品为电子商品，可无限量供应",
+"ui_management_sales_amount_nonexist": "<link=ui_management_sales_amount_nonexist_tooltip>不可供应</link>",
+"ui_management_sales_amount_nonexist_tooltip": "缺乏对应物品",
+"ui_management_sales_amount_unlimited": "<link=ui_management_sales_amount_unlimited_tooltip>不限量</link>",
+"ui_management_sales_amount_unlimited_tooltip": "该物品为电子商品，没有销售量限制",
 "ui_management_jobs_edit_tooltip": "更改NPC的每日工作安排\nNPC会遵循 工作阵营>家庭阵营>私人时间 的阵营优先级来决定和执行执行时间安排\nNPC会在私人时间内安排睡眠时间（优先选择无间断的私人时间）\n为了确保NPC适当休息，请确保NPC至少有等同于睡眠时长需求的无间断私人时间\nNPC的私人时间行动优先级为 进食>睡觉>娱乐\n\n更详细的解释请见%%helper_messageTitle%%",
 "ui_management_jobs_edit": "更改日程",
 "ui_management_jobs_schedule": "工作日程表",
@@ -611,6 +661,16 @@
 "ui_management_jobs_viewCharaDetail_tooltip": "打开角色的详细信息面板",
 "ui_management_jobs_viewCharaDetail": "查看角色详细",
 "ui_management_jobs_currentInfo": "当前位置：$location$，当前正在：$jobdescription$",
+
+"ui_furniturUnpack_title":"变更房间内家具",
+"ui_furniturUnpack_title_items":"$faction$的道具库存",
+"ui_furniturUnpack_title_furnitures":"$room$内的家具",
+"ui_furniturUnpack_abort":"放弃变更",
+"ui_furniturUnpack_confirm":"确认变更",
+"ui_furniturUnpack_pack":"拆卸家具，送入阵营道具栏",
+"ui_furniturUnpack_unpack":"安装家具至当前房间",
+
+
 "ui_map_roomName_prison": "监狱",
 "ui_map_roomName_privateroom_0": "闲置的房间",
 "ui_map_roomName_privateroom_1": "$owner$的房间",
@@ -704,6 +764,21 @@
 
 "ui_ActionPackage_ItemUse_Recording_BEGIN": "<align=\"center\">录像回放开始</align>",
 "ui_ActionPackage_ItemUse_Recording_END": "<align=\"center\">录像回放结束</align>",
+
+"ui_videoEdit_score_withEval": "当前分数：$base$ x $mult$ = $total$",
+"ui_videoEdit_score_noEval": "当前分数：$total$",
+"ui_videoEdit_keepCurrentName": "（保持当前名称）",
+"ui_videoEdit_titleWithEvaluator": "[$evaluator$] $name$",
+"ui_videoEdit_actorsType_Main": "主演",
+"ui_videoEdit_actorsType_Support": "配角",
+"ui_videoEdit_actorsType_None": "非演员",
+"ui_videoEdit_actorsMain": "主演：$names$",
+"ui_videoEdit_actorsSupporting": "配角：$names$",
+"ui_videoEdit_actorsTags": "角色TAG：$tags$",
+"ui_videoEdit_contentTags": "类型TAG：$tags$",
+"ui_videoEdit_scoreReq": "最低分数需求：$score$",
+"ui_videoEdit_durationReq": "影片时长限制：$req$ 分钟",
+"ui_videoEdit_durationCurrent": "当前影片时长：$total$",
 
 "ui_diceroll_autosuccess":"必定接受",
 "ui_diceroll_autofailure":"必定拒绝",
@@ -1433,6 +1508,18 @@
 
 "ui_ActionPackage_ItemUse_Recording_BEGIN": "<align=\"center\">Recording Playback Started</align>",
 "ui_ActionPackage_ItemUse_Recording_END": "<align=\"center\">Recording Playback Ended</align>",
+
+"ui_videoEdit_score_withEval": "Current Score: $base$ x $mult$ = $total$",
+"ui_videoEdit_score_noEval": "Current Score: $total$",
+"ui_videoEdit_keepCurrentName": "(Keep Current Name)",
+"ui_videoEdit_titleWithEvaluator": "[$evaluator$] $name$",
+"ui_videoEdit_actorsMain": "Main Cast: $names$",
+"ui_videoEdit_actorsSupporting": "Supporting Cast: $names$",
+"ui_videoEdit_actorsTags": "Character Tags: $tags$",
+"ui_videoEdit_contentTags": "Content Tags: $tags$",
+"ui_videoEdit_scoreReq": "Minimum Score Required: $score$",
+"ui_videoEdit_durationReq": "Duration Limit: $req$ min",
+"ui_videoEdit_durationCurrent": "Current Duration: $total$",
 
 "ui_ap_onHoverTooltip_conflictAP": "Due to conflict, the following commands will be removed:\n$names$",
 

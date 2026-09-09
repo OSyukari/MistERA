@@ -16,6 +16,7 @@ public class scr_Menu_Daycount : MonoBehaviour
 
         scr_System_Time.current.Observer_globalTime_Day += observerUpdate;
         scr_System_CampaignManager.current.Observer_CurrentRoom += RoomUpdate;
+        scr_System_CampaignManager.current.Observer_LoadCache += refreshCount;
 
         text_dayCount = LocalizeDictionary.QueryThenParse("ui_calendar_dayCount");
         text_month = LocalizeDictionary.QueryThenParse("ui_calendar_month");

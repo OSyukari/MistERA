@@ -6,30 +6,59 @@ using UnityEngine.EventSystems;
 
 public class scr_Menu_RetailTrade : scr_Menu, IPointerClickHandler
 {
+    Character_Trainable trader;
     Manageable sourceFaction;
     public Manageable targetFaction;
+    List<Manageable> possibleSources = new List<Manageable>();
+    int sourceIndex = -1;
     public RectTransform recipeList;
     public scr_retailTrade prefab_trade;
     public scr_HoverableText title2;
 
-    public void InitializeWithArgument(Manageable sourceFaction, Manageable targetFaction, Action onExit)
+    public void InitializeWithArgument(Character_Trainable trader, Manageable sourceFactionDefault, Manageable targetFaction, Action onExit)
     {
         this.onSelfExit = onExit;
         if (!initialized) Initialize();
 
-        this.sourceFaction = sourceFaction;
+        this.trader = trader;
         this.targetFaction = targetFaction;
 
-        Utility.DestroyAllChildrenFrom( recipeList);
+        possibleSources = trader.FactionManager.ManagerFactions;
+        if (sourceFactionDefault != null && !possibleSources.Contains(sourceFactionDefault)) possibleSources.Insert(0, sourceFactionDefault);
 
-        foreach(var entry in targetFaction.salesInventory.Inventory)
+        sourceIndex = sourceFactionDefault != null ? possibleSources.IndexOf(sourceFactionDefault) : (possibleSources.Count > 0 ? 0 : -1);
+
+        RefreshSource();
+    }
+
+    void RefreshSource()
+    {
+        sourceFaction = sourceIndex >= 0 && sourceIndex < possibleSources.Count ? possibleSources[sourceIndex] : null;
+        tradeCount.Clear();
+
+        Utility.DestroyAllChildrenFrom(recipeList);
+        trackedBoxes.Clear();
+
+        if (sourceFaction != null)
         {
-            MakeRecipeButton(entry.Value, sourceFaction, targetFaction);
+            foreach (var entry in targetFaction.salesInventory.Inventory)
+            {
+                MakeRecipeButton(entry.Value, sourceFaction, targetFaction);
+            }
         }
 
-        title2.SetText($"{targetFaction.FactionDisplayName} -> {sourceFaction.FactionDisplayName}");
+        title2.SetText($"{targetFaction.FactionDisplayName} -> {(sourceFaction == null ? "?" : sourceFaction.FactionDisplayName)}{(possibleSources.Count > 1 ? $" ({sourceIndex + 1}/{possibleSources.Count})" : "")}");
 
         ValidateAll();
+    }
+
+    public void SwapSource(bool next)
+    {
+        if (possibleSources.Count < 2) return;
+        sourceIndex += next ? 1 : -1;
+        if (sourceIndex < 0) sourceIndex = possibleSources.Count - 1;
+        else if (sourceIndex >= possibleSources.Count) sourceIndex = 0;
+        RefreshSource();
     }
 
     List<scr_retailTrade> trackedBoxes = new List<scr_retailTrade>();
@@ -82,6 +111,10 @@ public class scr_Menu_RetailTrade : scr_Menu, IPointerClickHandler
                     button.Initialize(this, button_alwaysValid); break;
                 case 9998: // exit
                     button.Initialize(this, new Button_ConfirmTrade(this, button)); break;
+                case 9997: // next source
+                    button.Initialize(this, new Button_SwapSource(this, button, true)); break;
+                case 9996: // previous source
+                    button.Initialize(this, new Button_SwapSource(this, button, false)); break;
                 default:
                     button.Initialize(this, button_alwaysValid); break;
             }
@@ -271,6 +304,29 @@ public class scr_Menu_RetailTrade : scr_Menu, IPointerClickHandler
         {
             parent.ResolveTrade();
             scr_System_SceneManager.current.UnloadLastCanvasFromScene();
+        }
+    }
+
+    public class Button_SwapSource : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Menu_RetailTrade parent;
+        scr_SelectableText button;
+        bool isNext;
+        public Button_SwapSource(scr_Menu_RetailTrade parent, scr_SelectableText button, bool isNext) : base(parent)
+        {
+            this.parent = parent;
+            this.button = button;
+            this.isNext = isNext;
+        }
+
+        public override bool IsButtonValid()
+        {
+            return parent.possibleSources.Count > 1;
+        }
+
+        public void OnClickButton()
+        {
+            parent.SwapSource(isNext);
         }
     }
 }

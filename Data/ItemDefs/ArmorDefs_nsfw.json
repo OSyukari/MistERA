@@ -3,7 +3,6 @@
         "list":[
         {
             "id":"clothing_inner_killerheels",
-            "displayName":"Killer Heels",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -19,7 +18,6 @@
 
         {
             "id":"clothing_skin_bra",
-            "displayName":"Bra",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -32,7 +30,6 @@
         },
         {
             "id":"clothing_skin_panty",
-            "displayName":"Panty",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -46,7 +43,6 @@
 
         {
             "id":"clothing_skin_panty_opencrotch",
-            "displayName":"Open crotch pants",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -61,7 +57,6 @@
         },
         {
             "id":"clothing_skin_stocking",
-            "displayName":"Stocking",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -78,7 +73,6 @@
 
         {
             "id":"clothing_skin_nipple_piercing",
-            "displayName":"Nipple Piercing",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -92,7 +86,6 @@
         },
         {
             "id":"clothing_skin_clit_piercing",
-            "displayName":"Clit Piercing",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",

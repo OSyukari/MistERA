@@ -1353,14 +1353,25 @@ public class Map_Instance
     public List<Manageable> GetCommercialPactFactions(string factionID)
     {
         var list = new List<Manageable>();
-        if (!commercialPactGraphs.ContainsKey(factionID)) return list;
-
-        foreach (var i in commercialPactGraphs[factionID])
+        if (commercialPactGraphs.ContainsKey(factionID))
         {
-            var j = scr_System_CampaignManager.current.FindFactionByID(i);
-            if (j == null) continue;
-            list.Add(j);
+            foreach (var i in commercialPactGraphs[factionID])
+            {
+                var j = scr_System_CampaignManager.current.FindFactionByID(i);
+                if (j == null) continue;
+                list.Add(j);
+            }
         }
+
+#if UNITY_EDITOR
+        // editor-only convenience: jp_debug_store is treated as having a standing commercial pact with
+        // every faction, regardless of commercialPactGraphs, so it's always available for trade testing.
+        if (factionID != "jp_debug_store")
+        {
+            var debugStore = scr_System_CampaignManager.current.FindFactionByID("jp_debug_store");
+            if (debugStore != null && !list.Contains(debugStore)) list.Add(debugStore);
+        }
+#endif
         return list;
     }
 
@@ -1402,6 +1413,10 @@ public class Map_Instance
     {
         if (a == null || b == null) return false;
         if (a == b) return true;
+#if UNITY_EDITOR
+        // editor-only convenience: jp_debug_store always counts as pact-linked, see GetCommercialPactFactions.
+        if (a.ID == "jp_debug_store" || b.ID == "jp_debug_store") return true;
+#endif
         return commercialPactGraphs.TryGetValue(a.ID, out var lists) && lists.Contains(b.ID);
     }
 

@@ -15,7 +15,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public scr_HoverableText factionName;
 
     public TMP_Text production_results;
-    public RectTransform inventoryList;
+   // public RectTransform inventoryList;
     public TMP_Text chara_warnings;
 
     public initScript_ManagementOverview overviewScript;
@@ -38,14 +38,36 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             if (m != null && !factions.Contains(m)) factions.Add(m);
         }
 
-        foreach (var i in factions)
-        {
-            if (i != null)
-            {
-                LoadFactionData(i);
-                break;
-            }
-        }
+        LoadFactionData(GetDefaultFaction(targetFaction));
+    }
+
+    /// <summary>
+    /// Picks which faction this canvas opens on. An explicit targetFaction always wins (unchanged
+    /// behavior). Otherwise, prefers wherever the player physically is (their current room's faction)
+    /// over wherever they're scheduled to work this hour, over their home faction - only ever picking
+    /// something already in `factions` (targetFaction + the player's ManagerFactions), so the result is
+    /// always loadable. Falls back to the first entry in `factions` (the old priority-order behavior)
+    /// if none of those apply.
+    /// </summary>
+    private Manageable GetDefaultFaction(Manageable targetFaction)
+    {
+        if (targetFaction != null) return targetFaction;
+
+        var player = scr_System_CampaignManager.current.Player;
+
+        var roomFaction = player.CurrentRoom == null ? null : player.CurrentRoom.FactionOwner?.Faction;
+        if (roomFaction != null && factions.Contains(roomFaction)) return roomFaction;
+
+        var workFaction = player.FactionManager.CurrentJobScheduleFaction();
+        if (workFaction != null && factions.Contains(workFaction)) return workFaction;
+
+        foreach (var home in player.FactionManager.HomeFactions)
+            if (home != null && factions.Contains(home)) return home;
+
+        foreach (var f in factions)
+            if (f != null) return f;
+
+        return null;
     }
 
     public IEnumerator loadbg(string a)
@@ -100,8 +122,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         initialized_faction_productions = false;
         initialized_faction_charaList = false;
 
-        ClearProductionAndTradeLists();
-
         foreach (var temp in m.printDebugInfo_RoomOwners())
         {
             writeLine(temp, list_PrivateRooms);
@@ -113,6 +133,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         ValidateAll();
     }
+
 
 
 
@@ -133,24 +154,28 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
     }
 
+    /////// ROOM EDIT TAB
+    public RectTransform Tab_RoomEdit;
+    public initscript_roomEdit roomEditScript;
+    private void Initialize_FactionRoomEdit()
+    {
+        roomEditScript.Initialize(CurrentFaction);
+    }
+
+
 
     /////// PRODUCTION TAB
-    public RectTransform Tab_Production;
+    public initscript_production initscript_production;
     private bool initialized_faction_productions = false;
-
-    public scr_prOrderManage prefab_POEntry;
-    public scr_prefabTransactionManage prefab_TAEntry;
-    public RectTransform list_orders, list_trades;
 
     private void Initialize_FactionProduction()
     {
         if (initialized_faction_productions) return;
         else initialized_faction_productions = true;
 
-       // if (loadedOrders == null) loadedOrders = new List<Manageable.ProductionOrder>();
+        initscript_production.Initialize(CurrentFaction);
 
-        RefreshPOList();
-        RefreshTAList();
+       // if (loadedOrders == null) loadedOrders = new List<Manageable.ProductionOrder>();
     }
 
     private void CalculateProductionWarning()
@@ -158,138 +183,34 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         //production_results.text = currentFaction.printDebugInfo_Orders();
         currentFaction.RefreshProductionAlertMSG();
 
-        if(inventoryList.gameObject.activeInHierarchy)
-        {
-            Utility.DestroyAllChildrenFrom( inventoryList);
-            foreach (var entry in CurrentFaction.Inventory.ContentsPrintable)
-            {
-                var text = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
-                text.SetText(entry.Print());
-                text.SetExternalTooltip(entry.Tooltip);
-                text.transform.SetParent(inventoryList.transform, false);
-            }
-        }
         //CurrentFaction.Inventory.PrintContent(ref inventoryList, prefab_text_link);
         //inventoryListing.text = CurrentFaction.Inventory.PrintContent(true, true);
     }
 
-   // List<Manageable.ProductionOrder> loadedOrders = null;
-    Dictionary<Manageable.ProductionOrder, button_ManageProductionOrder_RemoveCount> loadOrders_Removal = new Dictionary<Manageable.ProductionOrder, button_ManageProductionOrder_RemoveCount>();
-    public void RefreshPOList()
-    {
-        //Debug.LogError("REFRESHING PO LIST!");
-        foreach (var order in currentFaction.ProductionOrders) if (!loadOrders_Removal.ContainsKey(order)) MakePOButton(order);
 
-        //foreach(var order in loadedOrders_daily) if (!currentFaction.ProductionOrdersDaily.Contains(order)) DeletePOButton(order)
-    }
-
-    Dictionary<Manageable.TradeOrder, button_ManageTradeOrder_RemoveCount> loadTrades_Removal = new Dictionary<Manageable.TradeOrder, button_ManageTradeOrder_RemoveCount>();
-    public void RefreshTAList()
-    {
-        foreach (var trade in currentFaction.TradeOrders) if (!loadTrades_Removal.ContainsKey(trade)) MakeTOButton(trade);
-    }
-
-    // RefreshPOList/RefreshTAList only add rows for orders not yet tracked, so switching to a
-    // different faction leaves the previous faction's rows (and their button registrations) behind.
-    // Clear both lists out before rebuilding for the newly selected faction.
-    private void ClearProductionAndTradeLists()
-    {
-        foreach (var order in new List<Manageable.ProductionOrder>(loadOrders_Removal.Keys))
-            DestroyPOMButton(order, loadOrders_Removal[order].ButtonID);
-        Utility.DestroyAllChildrenFrom(list_orders);
-
-        foreach (var trade in new List<Manageable.TradeOrder>(loadTrades_Removal.Keys))
-            DestroyTOMButton(trade, loadTrades_Removal[trade].ButtonID);
-        Utility.DestroyAllChildrenFrom(list_trades);
-    }
-
-    private void MakeTOButton(Manageable.TradeOrder order)
-    {
-        //TODO
-        int recipeHash = AssertUniqueHash(order.GetHashCode()) * 4;
-        scr_prefabTransactionManage entry = Instantiate(prefab_TAEntry);
-        entry.ItemName.SetText(order.Display);
-        entry.ItemName.SetExternalTooltip(order.Tooltip);
-        entry.ItemCount.text = currentFaction.Inventory.GetItemCount(order.Entry.itemID).ToString();
-        entry.FactionName.text = order.TargetFaction == currentFaction ? " - " : order.TargetFaction.FactionDisplayName;
-
-        RectTransform rect = entry.GetComponent<RectTransform>();
-
-        RegisterButton(recipeHash + 1, entry.ButtonPlus, new button_ManageTradeOrder_AddCount(this, entry.OrderAmount, order, entry));
-        RegisterButton(recipeHash + 2, entry.Button_orderType, new button_ManageTradeOrder_ChangeType(this, entry.Button_orderType, order));
-        RegisterButton(recipeHash + 3, entry.ButtonMinus, new button_ManageTradeOrder_ReduceCount(this, entry.OrderAmount, order, entry));
-        var remover = new button_ManageTradeOrder_RemoveCount(this, recipeHash, order, entry.warningMsg, entry);
-        RegisterButton(recipeHash, entry.Btn_action, remover);
-
-        rect.SetParent(list_trades, false);
-        entry.RegisterTR(this, CurrentFaction, order);
-        entry.UpdatePricingDisplay();
-        loadTrades_Removal.Add(order, remover);
-    }
-
-    private void MakePOButton(Manageable.ProductionOrder order)
-    {
-        int recipeHash = AssertUniqueHash(order.GetHashCode()) * 4;
-        //if (loadOrders_Hash.ContainsKey(order)) return;
-
-        scr_prOrderManage entry = Instantiate(prefab_POEntry);
-        entry.itemName.SetText(order.Recipe.DisplayName);
-        entry.itemName.SetExternalTooltip(order.Recipe.Tooltip);
-        entry.itemCount.text = currentFaction.Inventory.GetItemCount(order.Recipe.outputItemBaseID).ToString();
-        entry.orderAmount.text = order.CountABS.ToString();
-        RectTransform rect = entry.GetComponent<RectTransform>();
-
-        //entry.expectedWorkLoad.text = (order.Recipe.workAmount).ToString();
-
-        RegisterButton(recipeHash + 1, entry.buttonPlus, new button_ManageProductionOrder_AddCount(this, entry.orderAmount, order));
-        RegisterButton(recipeHash + 2, entry.button_orderType, new button_ManageProductionOrder_ChangeType(this, entry.button_orderType, order));
-        RegisterButton(recipeHash + 3, entry.buttonMinus, new button_ManageProductionOrder_ReduceCount(this, entry.orderAmount, order));
-        // the following validator also responsible for displaying warning message
-        var remover = new button_ManageProductionOrder_RemoveCount(this, recipeHash, order, entry.warningMsg, entry);
-        RegisterButton(recipeHash, entry.btn_action, remover);    
-
-        rect.SetParent(list_orders, false);
-        entry.RegisterPO(this, CurrentFaction, order);
-        loadOrders_Removal.Add(order, remover);
-    }
 
     /// <summary>
-    /// THIS IS NOT BEING USED AT ALL RIGHT ???
+    /// Allow calling on nonexisting values
     /// </summary>
-    /// <param name="order"></param>
-    public void DestroyPOMButton(Manageable.ProductionOrder po, int recipeHash)
+    /// <param name="optionID"></param>
+    public void DestroyCOMButton(int optionID)
     {
-        //// ??????
-        DestroyCOMButton(recipeHash);
-        DestroyCOMButton(recipeHash + 1);
-        DestroyCOMButton(recipeHash + 2);
-        DestroyCOMButton(recipeHash + 3);
-        loadOrders_Removal.Remove(po);
+        if (validatorsByID.TryGetValue(optionID, out var validator))
+        {
+            validatorsByID.Remove(optionID);
+            validator.Destroy();
+        }
+
+        if (buttonsByID.TryGetValue(optionID, out var text))
+        {
+            buttonsByID.Remove(optionID);
+
+            text.gameObject.SetActive(false);
+            Destroy(text.gameObject);
+        }
     }
 
-    public void DestroyTOMButton(Manageable.TradeOrder to, int recipeHash)
-    {
-        //// ??????
-        DestroyCOMButton(recipeHash);
-        DestroyCOMButton(recipeHash + 1);
-        DestroyCOMButton(recipeHash + 2);
-        DestroyCOMButton(recipeHash + 3);
-        loadTrades_Removal.Remove(to);
-    }
-
-    private void DestroyCOMButton(int optionID)
-    {
-        scr_SelectableText text = buttonsByID[optionID];
-        buttonsByID.Remove(optionID);
-        ButtonValidator validator = validatorsByID[optionID];
-        validatorsByID.Remove(optionID);
-
-        validator.Destroy();
-        text.gameObject.SetActive(false);
-        Destroy(text.gameObject);
-    }
-
-    private bool RegisterButton(int optionID, scr_SelectableText button, ButtonValidator validator)
+    public bool RegisterButton(int optionID, scr_SelectableText button, ButtonValidator validator)
     {
         if (!buttonsByID.ContainsKey(optionID))
         {
@@ -357,9 +278,10 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     protected override void OnEnable()
     {
         if (currentTab == Tab_Overview)  Initialize_FactionOverview(); 
-        else if (currentTab == Tab_Production) Initialize_FactionProduction();
-        else if (currentTab == Tab_Jobs) Initialize_FactionCharaList(); 
+        else if (currentTab == initscript_production.selfTab) Initialize_FactionProduction();
+        else if (currentTab == Tab_Jobs) Initialize_FactionCharaList();
         else if (currentTab == Tab_Expeditions) Initialize_FactionExpsList(true);
+        else if (currentTab == Tab_RoomEdit) Initialize_FactionRoomEdit();
 
         base.OnEnable();
     }
@@ -441,6 +363,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public scr_menu_AddProductionOrder canvas_AddPO;
     public scr_Menu_AddTrade canvas_AddTR;
     public scr_AddTransfer canvas_AddTransfer;
+    public scr_Menu_AddSalesOrder canvas_AddSO;
 
 
 
@@ -460,19 +383,23 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 case 1: // overview tab
                     button.Initialize(this, new button_ChangeTab(this, button, Tab_Overview, Initialize_FactionOverview)); break;
                 case 2: // productions tab
-                    button.Initialize(this, new button_ChangeTab(this, button, Tab_Production, Initialize_FactionProduction)); break;
+                    button.Initialize(this, new button_ChangeTab(this, button, initscript_production.selfTab, Initialize_FactionProduction)); break;
                 case 3: // jobs tab
                     button.Initialize(this, new button_ChangeTab(this, button, Tab_Jobs, Initialize_FactionCharaList)); break;
                 case 4: // expeditions tab
                     button.Initialize(this, new button_ChangeTab(this, button, Tab_Expeditions, Initialize_FactionExpsList, Script_Expeditions.GetExpeditionTabTooltip)); break;
+                case 5: // room edit tab
+                    button.Initialize(this, new button_ChangeTab(this, button, Tab_RoomEdit, Initialize_FactionRoomEdit)); break;
                 case 12:
                     button.Initialize(this, new button_modifyLinkFaction(this)); break;
                 case 20:    // add production order
-                    button.Initialize(this, new Button_LoadCanvas_AddPO(this)); break;
+                    button.Initialize(this, new initscript_production.Button_LoadCanvas_AddPO(this)); break;
                 case 21:    // add trade order
-                    button.Initialize(this, new Button_LoadCanvas_AddTR(this)); break;
+                    button.Initialize(this, new initscript_production.Button_LoadCanvas_AddTR(this)); break;
                 case 22:    // add transfer order
-                    button.Initialize(this, new Button_LoadCanvas_AddTransfer(this)); break;
+                    button.Initialize(this, new initscript_production.Button_LoadCanvas_AddTransfer(this)); break;
+                case 23:   // add sales order
+                    button.Initialize(this, new initscript_production.Button_LoadCanvas_AddSO(this)); break;
                 case 31: // chara detail tab
                     button.Initialize(this, new button_CharaDetail(this)); break;
                 case 32: // chara edit schedule
@@ -495,6 +422,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     button.Initialize(this, new initScript_Expeditions.ButtonValidator_EditCamp(this, button)); break;
                 case 48:
                     button.Initialize(this, new initScript_Expeditions.ButtonValidator_PrioritizeResting(this, button)); break;
+                case 50: // edit room furniture
+                    button.Initialize(this, new initscript_roomEdit.Button_EditFurniture(this)); break;
+                case 51: // toggle room ownership edit mode on
+                    button.Initialize(this, new initscript_roomEdit.Button_ToggleOwnerEditOn(this)); break;
+                case 52: // toggle room ownership edit mode off
+                    button.Initialize(this, new initscript_roomEdit.Button_ToggleOwnerEditOff(this)); break;
                 case 9999: // exit
                     button.Initialize(this, button_alwaysValid); break;
                 default:
@@ -646,6 +579,11 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     ValidateAll();
                 }
                 else (validatorsByID[32] as I_ButtonClickable).OnClickButton();
+            }
+            else if (roomEditScript != null && roomEditScript.EditMode)
+            {
+                roomEditScript.EditMode = false;
+                ValidateAll();
             }
             else scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         }
@@ -877,61 +815,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             else order.AddCount(-1);
 
             //expectedWork.text = ((int) Math.Ceiling( order.Count * order.Recipe.workAmount / 60f)).ToString();
-        }
-    }
-
-    public class button_ManageProductionOrder_RemoveCount : ButtonValidator, I_ButtonClickable
-    {
-
-        new scr_Canvas_Management parent;
-        Manageable.ProductionOrder order;
-        TMP_Text warning;
-        scr_prOrderManage parentRect;
-
-        Color32 conflictColor;
-        string alert_hours, alert_items;
-        int buttonID;
-        public int ButtonID { get { return buttonID; } }
-        public button_ManageProductionOrder_RemoveCount(scr_Canvas_Management parent, int buttonID, Manageable.ProductionOrder order, TMP_Text warning, scr_prOrderManage parentRect) : base(parent)
-        {
-            this.parent = parent;
-            this.order = order;
-            this.buttonID = buttonID;
-            this.parentRect = parentRect;
-            this.warning = warning;
-           // this.tooltip = "Delete This Order\nThis functionality is currently disabled";
-            this.conflictColor = scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color;
-            alert_hours = LocalizeDictionary.QueryThenParse("ui_management_production_missingHours");
-            alert_items = LocalizeDictionary.QueryThenParse("ui_management_production_missingResource");
-        }
-
-        public override bool IsButtonValid()
-        {
-            // modify warning message
-            this.warning.text = "";
-            var texts = new List<string>();
-            if (this.order.Count > 0)
-            {
-                foreach (var i in order.Recipe.itemRequirements) if (!parent.CurrentFaction.resourceWarnings.ContainsKey(i.itemID) || parent.CurrentFaction.resourceWarnings[i.itemID] < 0) texts.Add(alert_items.Replace("$itemname$", i.Print));
-                if (!parent.CurrentFaction.productionWarnings.ContainsKey(order.Recipe.jobKeyword) || parent.CurrentFaction.productionWarnings[order.Recipe.jobKeyword] < 0) texts.Add(alert_hours.Replace("$comname$", "tag_"+order.Recipe.jobKeyword ));
-                this.warning.text = texts.Count > 0 ? Utility.WrapTextColor( String.Join(" ", texts), conflictColor): "";
-            }
-
-            if (!parent.currentFaction.HasProductionOrder(order))
-            {
-                tooltip = "This Production Order no longer exists.";
-                return false;
-            }
-            return true;
-        }
-
-        public void OnClickButton()
-        {
-            parent.currentFaction.RemoveProductionOrder(order);
-            parentRect.gameObject.SetActive(false);
-            parent.DestroyPOMButton(order, buttonID);
-            DestroyImmediate(parentRect.gameObject);
-            //text.text = order.Count.ToString();
         }
     }
 
@@ -1676,190 +1559,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         ValidateAll();
     }
 
-    public class Button_LoadCanvas_AddPO : ButtonValidator, I_ButtonClickable
-    {
-        new scr_Canvas_Management parent;
-        public Button_LoadCanvas_AddPO(scr_Canvas_Management parent) : base(parent)
-        {
-            this.parent = parent;
-        }
-
-        public void OnChildExit()
-        {
-            //Debug.LogError("UNIMPLEMENTED");
-            this.parent.RefreshPOList();
-        }
-
-        public override bool IsButtonValid()
-        {
-            return parent.canvas_AddPO != null;
-        }
-        public void OnClickButton()
-        {
-            scr_menu_AddProductionOrder cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_AddPO).GetComponent<scr_menu_AddProductionOrder>(); 
-            cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
-        }
-    }
-
-    public class Button_LoadCanvas_AddTR : ButtonValidator, I_ButtonClickable
-    {
-        new scr_Canvas_Management parent;
-        public Button_LoadCanvas_AddTR(scr_Canvas_Management parent) : base(parent)
-        {
-            this.parent = parent;
-        }
-
-        public override bool IsButtonValid()
-        {
-            return parent.canvas_AddTR != null;
-        }
-
-        protected void OnChildExit()
-        {
-            //Debug.LogError("UNIMPLEMENTED");
-            this.parent.RefreshTAList();
-        }
-
-        public void OnClickButton()
-        {
-            scr_Menu_AddTrade cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_AddTR).GetComponent<scr_Menu_AddTrade>();
-            cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
-        }
-    }
-
-    public class Button_LoadCanvas_AddTransfer : ButtonValidator, I_ButtonClickable
-    {
-        new scr_Canvas_Management parent;
-        public Button_LoadCanvas_AddTransfer(scr_Canvas_Management parent) : base(parent)
-        {
-            this.parent = parent;
-            notarget = LocalizeDictionary.QueryThenParse("ui_management_production_addTransfer_nofaction");
-        }
-        string notarget;
-        public override bool IsButtonValid()
-        {
-            if (scr_System_CampaignManager.current.Player.FactionManager.ManagerFactions.Count < 2)
-            {
-                tooltip = notarget;
-                return false;
-            }
-            return parent.canvas_AddTransfer != null;
-        }
-
-        protected void OnChildExit()
-        {
-            this.parent.RefreshTAList();
-        }
-
-        public void OnClickButton()
-        {
-            scr_AddTransfer cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(parent, parent.canvas_AddTransfer).GetComponent<scr_AddTransfer>();
-            cvs.InitializeWithArgument(this.parent.CurrentFaction, OnChildExit);
-        }
-    }
-
-
-
-    public class button_ManageTradeOrder_AddCount : ButtonValidator, I_ButtonClickable
-    {
-
-        new scr_Canvas_Management parent;
-        Manageable.TradeOrder order;
-        TMP_Text text;
-        scr_prefabTransactionManage entry;
-        public button_ManageTradeOrder_AddCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order, scr_prefabTransactionManage entry) : base(parent)
-        {
-            this.parent = parent;
-            this.order = order;
-            this.text = text;
-            this.entry = entry;
-        }
-
-        public override bool IsButtonValid()
-        {
-            if (!parent.currentFaction.HasTradeOrder(order))
-            {
-                tooltip = "This Trade Order no longer exists.";
-                return false;
-            }
-            text.text = order.CountABS.ToString();
-            return true;
-        }
-
-        public void OnClickButton()
-        {
-            if (UtilityEX.SHIFT && UtilityEX.CTRL) order.AddCount(1000);
-            else if (UtilityEX.SHIFT) order.AddCount(100);
-            else if (UtilityEX.CTRL) order.AddCount(10);
-            else order.AddCount(1);
-            entry.UpdatePricingDisplay();
-            //text.text = order.Count.ToString();
-            //expectedWork.text = ((int)Math.Ceiling(order.Count * order.Recipe.workAmount / 60f)).ToString();
-        }
-    }
-
-    public class button_ManageTradeOrder_ChangeType : ButtonValidator, I_ButtonClickable
-    {
-        new scr_Canvas_Management parent;
-        Manageable.TradeOrder order;
-        scr_SelectableText text;
-        public button_ManageTradeOrder_ChangeType(scr_Canvas_Management parent, scr_SelectableText text, Manageable.TradeOrder order) : base(parent)
-        {
-            this.parent = parent;
-            this.order = order;
-            this.text = text;
-        }
-        public override bool IsButtonValid()
-        {
-            this.text.SetText(LocalizeDictionary.QueryThenParse(order.orderType.ToString()));
-            return true;
-        }
-        public void OnClickButton()
-        {
-            order.orderType = 1 - order.orderType;
-        }
-    }
-
-    public class button_ManageTradeOrder_ReduceCount : ButtonValidator, I_ButtonClickable
-    {
-
-        new scr_Canvas_Management parent;
-        Manageable.TradeOrder order;
-        TMP_Text text;
-        scr_prefabTransactionManage entry;
-        public button_ManageTradeOrder_ReduceCount(scr_Canvas_Management parent, TMP_Text text, Manageable.TradeOrder order, scr_prefabTransactionManage entry) : base(parent)
-        {
-            this.parent = parent;
-            this.order = order;
-            this.text = text;
-            this.entry = entry;
-        }
-
-        public override bool IsButtonValid()
-        {
-            if (!parent.currentFaction.HasTradeOrder(order))
-            {
-                tooltip = "This Production Order no longer exists.";
-                return false;
-            }
-            text.text = order.CountABS.ToString();
-            if (order.CountABS > 0) return true;
-            else return false;
-        }
-
-        public void OnClickButton()
-        {
-            //parent.currentFaction.AddProductionOrder(order.Recipe, -1);
-            if (UtilityEX.SHIFT && UtilityEX.CTRL) order.AddCount(-1000);
-            else if (UtilityEX.SHIFT) order.AddCount(-100);
-            else if (UtilityEX.CTRL) order.AddCount(-10);
-            else order.AddCount(-1);
-            entry.UpdatePricingDisplay();
-
-            //expectedWork.text = ((int) Math.Ceiling( order.Count * order.Recipe.workAmount / 60f)).ToString();
-        }
-    }
-
     public class ButtonValidator_charaSelect : ButtonValidator, I_ButtonClickable
     {
         //Character_Trainable target;
@@ -1900,63 +1599,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             parent.ValidateAll();
         }
     }
-    public class button_ManageTradeOrder_RemoveCount : ButtonValidator, I_ButtonClickable
-    {
 
-        new scr_Canvas_Management parent;
-        Manageable.TradeOrder order;
-        TMP_Text warning;
-        scr_prefabTransactionManage parentRect;
-
-        Color32 conflictColor;
-        string alert_hours, alert_items;
-        int buttonID;
-        public int ButtonID { get { return buttonID; } }
-        public button_ManageTradeOrder_RemoveCount(scr_Canvas_Management parent, int buttonID, Manageable.TradeOrder order, TMP_Text warning, scr_prefabTransactionManage parentRect) : base(parent)
-        {
-            this.parent = parent;
-            this.order = order;
-            this.buttonID = buttonID;
-            this.parentRect = parentRect;
-            this.warning = warning;
-            // this.tooltip = "Delete This Order\nThis functionality is currently disabled";
-            this.conflictColor = scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color;
-            alert_hours = LocalizeDictionary.QueryThenParse("ui_management_production_missingHours");
-            alert_items = LocalizeDictionary.QueryThenParse("ui_management_production_missingResource");
-        }
-
-        public override bool IsButtonValid()
-        {
-            // modify warning message
-            this.warning.text = "";
-            var texts = new List<string>();
-            if (this.order.Count > 0)
-            {
-                // reversed orders pay out Entry instead of Cost (see TradeOrder.ProcessOrder) - check
-                // whichever one this faction is actually on the hook for.
-                var paidItem = order.reversed ? order.Entry : order.Cost;
-                if (paidItem.itemID != "") if(!parent.CurrentFaction.resourceWarnings.ContainsKey(paidItem.itemID) || parent.CurrentFaction.resourceWarnings[paidItem.itemID] < 0) texts.Add(alert_items.Replace("$itemname$", paidItem.PrintName));
-                //if (!parent.CurrentFaction.productionWarnings.ContainsKey(order.Recipe.jobKeyword) || parent.CurrentFaction.productionWarnings[order.Recipe.jobKeyword] < 0) texts.Add(alert_hours.Replace("$comname$", order.Recipe.jobKeyword));
-                this.warning.text = texts.Count > 0 ? Utility.WrapTextColor(String.Join(" ", texts), conflictColor) : "";
-            }
-
-            if (!parent.currentFaction.HasTradeOrder(order))
-            {
-                tooltip = "This Production Order no longer exists.";
-                return false;
-            }
-            return true;
-        }
-
-        public void OnClickButton()
-        {
-            parent.currentFaction.RemoveTradeOrder(order);
-            parentRect.gameObject.SetActive(false);
-            parent.DestroyTOMButton(order, buttonID);
-            DestroyImmediate(parentRect.gameObject);
-            //text.text = order.Count.ToString();
-        }
-    }
 
     public scr_Menu_addlinkfaction canvas_AddLink;
     public class button_modifyLinkFaction : ButtonValidator, I_ButtonClickable

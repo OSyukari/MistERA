@@ -258,10 +258,7 @@ public class SpineAnimator42 : SpineAnimatorBase
         for (int i = 0; i < texturePath.Count; i++)
         {
             int idx = i;
-            Texture2D imageTexture = new(2, 2, TextureFormat.RGBA32, false);
-            imageTexture.name = Path.GetFileNameWithoutExtension(texturePath[idx]);
-            dataloader.imageTextures[idx] = imageTexture;
-            StartCoroutine(AssetsLoader.LoadSkelCoroutine(texturePath[idx], bytes => { imageTexture.LoadImage(bytes); texDone++; }));
+            StartCoroutine(AssetsLoader.LoadCachedAtlasTextureCoroutine(texturePath[idx], tex => { dataloader.imageTextures[idx] = tex; texDone++; }));
         }
         while (texDone < texturePath.Count) yield return null;
 

@@ -67,6 +67,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_P_doggy_A_Begin_Timestop_1",
+                                "com_sex_P_doggy_A_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -526,7 +539,9 @@
                 "com_sex_P_doggy_A_41": "$self$的身子随着顶撞前后晃，眼神空洞。\n\"滚出去……别让我再看到你……\"",
                 "com_sex_P_doggy_A_36": "$self$皱着眉往前缩了缩，额上渗出冷汗。\n\"停停……太大了……后面撑得难受……\"",
                 "com_sex_P_doggy_A_37": "$self$有气无力地随着顶撞晃动，腰懒得迎合。\n\"……根本没有润滑好，干巴巴的。\"",
-                "com_sex_P_doggy_A_38": "$self$捂着小腹蜷了蜷，眼角挂着泪痕。\n\"太大了……你就只顾着自己爽吗……\""
+                "com_sex_P_doggy_A_38": "$self$捂着小腹蜷了蜷，眼角挂着泪痕。\n\"太大了……你就只顾着自己爽吗……\"",
+                "com_sex_P_doggy_A_Begin_Timestop_1": "$target$掰开定住的臀瓣把龟头抵进菊穴，穴口的褶皱被缓缓撑平，软肉不受控地咬着棒身，$self$埋着的脸侧过来的角度纹丝没变。",
+                "com_sex_P_doggy_A_Begin_Timestop_2": "后穴吞到根时$self$背脊的弧度都没塌分毫，被顶得晃动的臀肉荡出波纹，又停在半途。"
             }
         }
     }

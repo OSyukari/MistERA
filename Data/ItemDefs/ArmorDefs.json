@@ -3,7 +3,6 @@
         "list":[
         {
             "id":"clothing_outer_head_helmet",
-            "displayName":"Armor Hemlet",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -17,7 +16,6 @@
             ]
         },{
             "id":"clothing_outer_breastplate",
-            "displayName":"Armor Chestplate",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -31,7 +29,6 @@
             ]
         },{
             "id":"clothing_outer_waistplate",
-            "displayName":"Armor Waistplate",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -44,7 +41,6 @@
             ]
         },{
             "id":"clothing_outer_gauntlet",
-            "displayName":"Armor Gauntlet",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -58,7 +54,6 @@
             ]
         },{
             "id":"clothing_outer_boots",
-            "displayName":"Armor Boots",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -73,7 +68,6 @@
         },
 {
     "id":"clothing_outer_suit",
-    "displayName":"Suit",
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
@@ -87,7 +81,6 @@
 },
 {
     "id":"clothing_outer_longcoat",
-    "displayName":"Long Coat",
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
@@ -112,7 +105,6 @@
 },
 {
     "id":"clothing_inner_longdress",
-    "displayName":"Long Dress",
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
@@ -137,7 +129,6 @@
 },
         {
             "id":"clothing_outer_hat",
-            "displayName":"Hat",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -160,7 +151,6 @@
         },
         {
             "id":"clothing_outer_waistAccessory",
-            "displayName":"Waist Accessory",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -174,7 +164,6 @@
         },
         {
             "id":"clothing_outer_wristcuff_single",
-            "displayName":"Wristcuff",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -188,7 +177,6 @@
         },
         {
             "id":"clothing_skin_bracelet_double",
-            "displayName":"Bracelet",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -203,7 +191,6 @@
         },
         {
             "id":"clothing_outer_blanket_lower",
-            "displayName":"Blanket",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -218,7 +205,6 @@
         },
         {
             "id":"clothing_inner_shirt",
-            "displayName":"Shirt",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -242,7 +228,6 @@
         },
         {
             "id":"clothing_inner_pants",
-            "displayName":"Pants",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -266,7 +251,6 @@
         },
         {
             "id":"clothing_inner_skirt",
-            "displayName":"Skirt",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -280,7 +264,6 @@
         },
         {
             "id":"clothing_inner_hairpin",
-            "displayName":"Hairpin",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -294,7 +277,6 @@
         },
         {
             "id":"clothing_inner_glove",
-            "displayName":"Glove",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -318,7 +300,6 @@
         },
         {
             "id":"clothing_inner_glove_lace",
-            "displayName":"Lace Glove",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -333,7 +314,6 @@
         },
 {
     "id":"clothing_inner_shoes",
-    "displayName":"Shoes",
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
@@ -359,7 +339,6 @@
 },
 {
     "id":"clothing_inner_boots",
-    "displayName":"Boots",
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
@@ -384,7 +363,6 @@
 },
         {
             "id":"clothing_inner_hair_ribbon",
-            "displayName":"Hair Ribbon",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -398,7 +376,6 @@
         },
         {
             "id":"clothing_skin_hair_hairpin",
-            "displayName":"Hairpin",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -412,7 +389,6 @@
         },
         {
             "id":"clothing_inner_choker",
-            "displayName":"Choker",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -426,7 +402,6 @@
         },
         {
             "id":"clothing_inner_necktie",
-            "displayName":"Necktie",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -440,7 +415,6 @@
         },
         {
             "id":"clothing_skin_earring",
-            "displayName":"Earring",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -454,7 +428,6 @@
         },
         {
             "id":"clothing_skin_contactlens",
-            "displayName":"Contact lens",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -469,7 +442,6 @@
 
         {
             "id":"clothing_skin_ring",
-            "displayName":"Ring",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -484,7 +456,6 @@
 
         {
             "id":"clothing_cape",
-            "displayName":"Cape",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -499,7 +470,6 @@
 
         {
             "id":"clothing_skin_socks",
-            "displayName":"Socks",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -514,7 +484,6 @@
         },
         {
             "id":"clothing_skin_necklace",
-            "displayName":"Necklace",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -556,7 +525,20 @@
         "clothing_outer_blanket_lower":"毛毯",
         "clothing_skin_contactlens":"隐形眼镜",
         "clothing_skin_necklace":"项链",
-        "clothing_skin_neckribbon":"颈带"
+        "clothing_skin_neckribbon":"颈带",
+
+        "clothing_outer_head_helmet":"铠甲头盔",
+        "clothing_outer_breastplate":"铠甲胸甲",
+        "clothing_outer_waistplate":"铠甲腰甲",
+        "clothing_outer_gauntlet":"铠甲护手",
+        "clothing_outer_boots":"铠甲战靴",
+        "clothing_outer_hat":"帽子",
+        "clothing_outer_waistAccessory":"腰饰",
+        "clothing_inner_glove":"手套",
+        "clothing_inner_glove_lace":"蕾丝手套",
+        "clothing_inner_choker":"颈圈",
+        "clothing_skin_ring":"戒指",
+        "clothing_cape":"披风"
             },
             "en-us":
             {
@@ -580,7 +562,20 @@
         "clothing_outer_blanket_lower": "Blanket",
         "clothing_skin_contactlens": "Contact Lenses",
         "clothing_skin_necklace": "Necklace",
-        "clothing_skin_neckribbon": "Neck Ribbon"
+        "clothing_skin_neckribbon": "Neck Ribbon",
+
+        "clothing_outer_head_helmet": "Armor Helmet",
+        "clothing_outer_breastplate": "Armor Chestplate",
+        "clothing_outer_waistplate": "Armor Waistplate",
+        "clothing_outer_gauntlet": "Armor Gauntlet",
+        "clothing_outer_boots": "Armor Boots",
+        "clothing_outer_hat": "Hat",
+        "clothing_outer_waistAccessory": "Waist Accessory",
+        "clothing_inner_glove": "Glove",
+        "clothing_inner_glove_lace": "Lace Glove",
+        "clothing_inner_choker": "Choker",
+        "clothing_skin_ring": "Ring",
+        "clothing_cape": "Cape"
             }
         }
     }

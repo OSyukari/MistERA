@@ -735,6 +735,15 @@ public class Manageable_Party : I_IsJobGiver
         RefreshRoomJobs();
     }
 
+    public void RemoveJobPost(Job_Furniture job)
+    {
+        foreach (var com in job.allusableCOMs)
+        {
+            if (nonjobPosts.TryGetValue(com, out var nlist)) nlist.RemoveAll(x => x.RefID == job.RefID);
+            if (jobPosts.TryGetValue(com, out var jlist)) jlist.RemoveAll(x => x.RefID == job.RefID);
+        }
+    }
+
     /// <summary>
     /// Remove C from job unresolved results, remove from job, and internalUpdate
     /// </summary>

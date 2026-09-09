@@ -126,6 +126,8 @@
                 "displayName":"frontdesk",
                 "recipe":[],
                 "furnitureSize":2,
+                "value":40000,
+                "Tags":["rarity_common"],
                 "givesJob": [ { "comID":["jp_convenience_store_frontDesk"] },
                                 { "comTags":["furniture","retailTrade"] } ]
             },
@@ -135,6 +137,7 @@
                 "noDisplay":true,
                 "recipe":[],
                 "furnitureSize":2,
+                "value":0,
                 "givesJob": [  ]
             }
         ]

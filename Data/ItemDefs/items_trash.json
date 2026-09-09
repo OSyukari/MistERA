@@ -4,15 +4,11 @@
 [
     {
         "id":"item_trash",
-        "displayName":"Trash",
-        "tooltip":"is trash",
         "Tags":["trash"],
         "cleanlinessMod":-1
     },
     {
         "id":"item_dust",
-        "displayName":"Dust",
-        "tooltip":"is trash",
         "Tags":["trash"],
         "cleanlinessMod":-1
     }
@@ -25,12 +21,18 @@
         {
             "zh-cn":
             {
-                "item_trash":"垃圾"
+                "item_trash":"垃圾",
+                "item_trash_tooltip":"只是垃圾。",
+                "item_dust":"灰尘",
+                "item_dust_tooltip":"细小的灰尘，几乎毫无价值。"
 
             },
             "en-us":
             {
-  "item_trash": "Trash"
+  "item_trash": "Trash",
+  "item_trash_tooltip": "Just trash.",
+  "item_dust": "Dust",
+  "item_dust_tooltip": "Fine dust, essentially worthless."
             }
         }
     }

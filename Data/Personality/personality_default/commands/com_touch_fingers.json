@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_fingers_Begin_Timestop_1",
+                                "com_touch_fingers_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -312,7 +325,9 @@
                 "com_touch_fingers_33": "$self$忍耐到了极限，猛地站起身，椅子在地板上划出刺耳的声响：\"够了！\"",
                 "com_touch_fingers_34": "$self$眼里的恐惧逐渐转变为厌恶，用力挣脱了束缚，呼吸急促不稳。",
                 "com_touch_fingers_35": "$self$虽然没有说话，但眼泪已经在眼眶里打转，屈辱感让$self$浑身发冷。",
-                "com_touch_fingers_36": "$self$咬牙切齿地盯着$target$：\"这下你满意了吗？放开我！\""
+                "com_touch_fingers_36": "$self$咬牙切齿地盯着$target$：\"这下你满意了吗？放开我！\"",
+                "com_touch_fingers_Begin_Timestop_1": "$target$拿起她悬在半途的手，把$self$的手指逐根捏过，指节被掰得轻响，那只手软得任人摆布。",
+                "com_touch_fingers_Begin_Timestop_2": "掌心被指尖描着画圈，蹭出浅浅的红痕，$self$的手指没有回握，只是摊着被把玩。"
             },
             "en-us": {
                 "com_touch_fingers_Begin_1": "$self$ didn't pull back; instead, she interlaced her fingers with $target$'s, holding hands tightly.",

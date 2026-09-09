@@ -284,6 +284,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     public event Action<bool> Observer_GameReload;
 
     public event Action Observer_LoadStart;
+    public event Action Observer_LoadCache;
     public event Action<float, string> Observer_LoadProgress;
     public event Action Observer_LoadComplete;
 
@@ -2003,6 +2004,19 @@ public class scr_System_CampaignManager : MonoBehaviour
                     scr_System_CampaignManager.current.Map.ConnectFactions(f1, f2);
                     // FindInstanceByID(0).baseID = ini.initArguments[0];
                 }
+                else if (ini.initClass == "campaign_init_commercialPact")
+                {
+                    var f1 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[0]);
+                    var f2 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[1]);
+                    if (f1 != null && f2 != null)
+                    {
+                        scr_System_CampaignManager.current.Map.ConnectCommercialPact(f1, f2);
+                    }
+                    else
+                    {
+                        Debug.LogError($"campaign_init_commercialPact: cannot connect, {(f1 == null ? ini.initArguments[0] + " missing" : "")} {(f2 == null ? ini.initArguments[1] + " missing" : "")}");
+                    }
+                }
                 else if (ini.initClass == "campaign_init_factionInventory")
                 {
                     var f1 = scr_System_CampaignManager.current.FindFactionByID(ini.initArguments[0]);
@@ -2027,6 +2041,15 @@ public class scr_System_CampaignManager : MonoBehaviour
             foreach (var world in GetLoadedWorldPlans()) WorldManager.ProcessNPCInit(world);
         }
 
+#if UNITY_EDITOR
+        // editor-only convenience: jp_debug_store is normally only brought in by world_kivotos_debug
+        // (campaign1_start_debug's campaign_init_world). Force it in for every other start option too,
+        // but skip if worldinit above already instantiated it to avoid a duplicate faction.
+        if (FindFactionByID("jp_debug_store") == null)
+        {
+            map.AddMapTemplate("jp_debug_store", "jp_debug_store", true);
+        }
+#endif
 
 
 
@@ -2133,7 +2156,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         Observer_LoadStart?.Invoke();
         yield return null;
         scr_UpdateHandler.current.LoadSaveFile(saveHolder, true);
-        yield return null;
+        Observer_LoadCache?.Invoke();
         yield return CachePortraitCoroutine();
         yield return Resources.UnloadUnusedAssets(); 
         System.GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
@@ -2696,6 +2719,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         Combat.EndOngoingCombatWith(charRef);
     }
 
+    public canvas_furniturePacking prefab_furniturePacking;
+    public void QueueFurniturePacking(Room_Instance room)
+    {
+        canvas_furniturePacking cvs = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_furniturePacking.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<canvas_furniturePacking>();
+        cvs.InitializeWithArgument(room);
+    }
+
     public menu_combatSim prefab_Simulation;
     public void QueueCombatSimulation(Character_Trainable self, List<int> teammates)
     {
@@ -2747,11 +2777,11 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     public scr_Menu_RetailTrade prefab_RetailTrade;
-    public void StartRetailExchange(Manageable fa, Manageable fb)
+    public void StartRetailExchange(Character_Trainable trader, Manageable sourceFactionDefault, Manageable targetFaction)
     {
         //Combat.StartCombat(teamA, teamB, victoryEvID, drawEvID, defeatEvID, source, forcePlayerInstance);
         scr_Menu_RetailTrade trade = scr_System_SceneManager.current.LoadCanvasIntoScene(prefab_RetailTrade.GetComponent<RectTransform>(), CanvasAnchor == null ? null : CanvasAnchor.PanelAnchor_AlwaysEnable).GetComponent<scr_Menu_RetailTrade>();
-        trade.InitializeWithArgument(fa, fb, null);
+        trade.InitializeWithArgument(trader, sourceFactionDefault, targetFaction, null);
     }
 }
 

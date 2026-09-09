@@ -53,6 +53,38 @@ public class ItemComponent_Records : ItemComponent_Base
         return base.canMergeWith(other) && this.Records == null && other2.Records == null;
     }
 
+    public override string GetRetailID() { return Records == null ? "" : $"_records{Records.parentRecordingID}"; }
+
+    [JsonIgnore] public override bool CanBeSold { get { return Records != null && !string.IsNullOrEmpty(Records.parentRecordingID); } }
+
+    public override void ValueMod(ref float value)
+    {
+        if (Records == null || string.IsNullOrEmpty(Records.evaluatorID)) return;
+        var evaluator = scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(Records.evaluatorID);
+        if (evaluator != null) value += evaluator.basePrice;
+    }
+
+    /// <summary>
+    /// Quality (score-derived value, still Records.value from SaveRecording) no longer inflates price
+    /// directly - it's expressed here as a ratio against the item's fixed price (parentvalue), added as
+    /// a deviation from QualityModifier's neutral 1f baseline (see Item_Instance.QualityModifier).
+    /// </summary>
+    public override float AddQualityMod(ref float value, float parentvalue)
+    {
+        if (Records != null && Records.value.HasValue && parentvalue > 0f)
+        {
+            float ratio = Records.value.Value / parentvalue;
+            value += ratio - 1f;
+        }
+        return value;
+    }
+
+    public override List<string> GetTags()
+    {
+        if (Records == null || string.IsNullOrEmpty(Records.evaluatorID)) return null;
+        return new List<string> { Records.evaluatorID };
+    }
+
 
 
     [JsonIgnore] public override bool Serializable { get { return true; } }

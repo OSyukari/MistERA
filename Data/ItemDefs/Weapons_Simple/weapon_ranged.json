@@ -3,7 +3,6 @@
         "list":[
         {
             "id":"weapon_simple_sling",
-            "displayName":"Sling",
             "Tags":["ranged","simple"],
             "itemComps_Template":[
                 {
@@ -23,7 +22,6 @@
         },
         {
             "id":"weapon_simple_shortbow",
-            "displayName":"Shortbow",
             "Tags":["simple","ranged"],
             "itemComps_Template":[
                 {
@@ -43,7 +41,6 @@
         },
         {
             "id":"weapon_simple_lightcrossbow",
-            "displayName":"Crossbow",
             "Tags":["simple","ranged"],
             "itemComps_Template":[
                 {

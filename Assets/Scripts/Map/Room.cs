@@ -34,6 +34,38 @@ public class Room_Instance: IDisposable, I_Disposable
             return roomCharaRefs;
         }
     }
+
+    List<string> _typetags = new List<string>();
+
+    [JsonIgnore]
+    public List<string> roomTypeTags
+    {
+        get
+        {
+            _typetags.Clear();
+
+            if (requireCleaning) _typetags.Add("room_type_requireCleaning");
+            if (isRoomPrison) _typetags.Add("room_type_prison");
+            if (isRoomPrivate) _typetags.Add("room_type_privateRoom");
+            if (factionOwner != null && factionOwner.MainExit == this) _typetags.Add("room_type_mainExit");
+
+            if (Furnitures.Find(x => x.JobGiver.HasAvailableCOMwithCOMTags("cooking")) != null)
+            {
+                _typetags.Add("room_type_prepMeals");
+            }
+            if (Furnitures.Find(x => x.JobGiver.HasAvailableCOMwithCOMTags("food_getmeal") || x.JobGiver.HasAvailableCOMwithCOMTags("food_meal")) != null)
+            {
+                _typetags.Add("room_type_offerMeals");
+            }
+
+
+
+            return _typetags;
+        }
+    }
+
+
+
     public void MoveTo(Character_Trainable c, Room_Instance ri)
     {
         RoomChara.Remove(c);
@@ -80,12 +112,6 @@ public class Room_Instance: IDisposable, I_Disposable
         } }
     [JsonProperty] private int refID = -1;
     [JsonIgnore] public int RefID { get { return refID; } }
-    [JsonIgnore] protected string displayName { get
-        {
-            if (displayNameOverwrite != "") return LocalizeDictionary.QueryThenParse(displayNameOverwrite);
-            if (Base != null) return LocalizeDictionary.QueryThenParse(Base.displayName, LocalizeDictionary.QueryThenParse(Base.ID, Base.ID));
-            else return "room";
-        } }
 
     public string displayNameOverwrite = "";
 
@@ -96,7 +122,15 @@ public class Room_Instance: IDisposable, I_Disposable
     protected string _displayNameCache = "";
     protected string _displayNameShortCache = "";
 
-    [JsonIgnore]public string DisplayNameShort
+    string displayName(string defaultvalue = "")
+    {
+        if (displayNameOverwrite != "") return LocalizeDictionary.QueryThenParse(displayNameOverwrite);
+        else if (defaultvalue != "") return LocalizeDictionary.QueryThenParse(defaultvalue);
+        else if (Base != null) return LocalizeDictionary.QueryThenParse(Base.displayName, LocalizeDictionary.QueryThenParse(Base.ID, Base.ID));
+        else return "room";
+    }
+
+    [JsonIgnore] public string DisplayNameShort
     {
         get
         {
@@ -117,33 +151,33 @@ public class Room_Instance: IDisposable, I_Disposable
                     if (this.FactionOwner == null)
                     {
                         //Debug.Log("PRIVATE ROOM HAS NO FACTION OWNER");
-                        _displayNameShortCache = displayName;
+                        _displayNameShortCache = displayName();
                     }
                     else if (OwnerNames.Count > 2)
                     {
                         var owners = String.Join(",", OwnerNames);
-                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_more").Replace("$owners$", owners);
+                        _displayNameShortCache = displayName("ui_map_roomName_privateroom_more").Replace("$owners$", owners);
                     }
                     else if (OwnerNames.Count > 1)
                     {
                         //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_2").Replace("$owner1$", OwnerNames[0]).Replace("$owner2$", OwnerNames[1]);
+                        _displayNameShortCache = displayName("ui_map_roomName_privateroom_2").Replace("$owner1$", OwnerNames[0]).Replace("$owner2$", OwnerNames[1]);
                     }
                     else if (OwnerNames.Count > 0)
                     {
                         //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_1").Replace("$owner$", OwnerNames[0]);
+                        _displayNameShortCache = displayName("ui_map_roomName_privateroom_1").Replace("$owner$", OwnerNames[0]);
                     }
                     else
                     {
                         //Debug.LogError("RoomDisplaynameCond12");
-                        _displayNameShortCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_0");
+                        _displayNameShortCache = displayName("ui_map_roomName_privateroom_0");
                     }
                 }
                 else
                 {
                     //Debug.LogError("RoomDisplaynameCond2, isRoomPrivate ["+isRoomPrivate+"] hasFactionOwner ["+(this.factionOwner != null)+"]");
-                    _displayNameShortCache = displayName;
+                    _displayNameShortCache = displayName();
                 }
             }
 
@@ -154,16 +188,18 @@ public class Room_Instance: IDisposable, I_Disposable
 
     [JsonIgnore] public string DisplayName { get
         {
+            
             if (isNameDynamic)
             {
                 return (this.FactionOwner as Manageable_Party).ExpeditionName;
             }
             else if (_displayNameCache == "")
             {
-                
+                _displayNameCache = DisplayNameShort;
+                var baseroomname = Base == null ? "" : $" ({LocalizeDictionary.QueryThenParse(Base.displayName, LocalizeDictionary.QueryThenParse(Base.ID, Base.ID))})";
                 if (isRoomPrison)
                 {
-                    _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_prison") + " (" + displayName + ")";
+                    _displayNameCache += baseroomname;
                 }
                 else if (isRoomPrivate)
                 {
@@ -171,36 +207,30 @@ public class Room_Instance: IDisposable, I_Disposable
                     if(this.FactionOwner == null)
                     {
                         //Debug.Log("PRIVATE ROOM HAS NO FACTION OWNER");
-                        _displayNameCache = displayName;
+                        //
                     }
                     else if (OwnerNames.Count > 2)
                     {
-                        var owners = String.Join(",", OwnerNames);
-                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_more").Replace("$owners$", owners) + " (" + displayName + ")";
+                        _displayNameCache += baseroomname;
                     }
                     else if (OwnerNames.Count > 1)
                     {
-                        //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_2").Replace("$owner1$", OwnerNames[0]).Replace("$owner2$", OwnerNames[1]) + " (" + displayName + ")";
+                        _displayNameCache += baseroomname;
                     }
                     else if (OwnerNames.Count > 0)
                     {
-                        //Debug.LogError("RoomDisplaynameCond11");
-                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_1").Replace("$owner$", OwnerNames[0]) + " (" + displayName + ")";
+                        _displayNameCache += baseroomname;
                     }
                     else
                     {
-                        //Debug.LogError("RoomDisplaynameCond12");
-                        _displayNameCache = LocalizeDictionary.QueryThenParse("ui_map_roomName_privateroom_0") + " (" + displayName + ")";
+                        _displayNameCache += baseroomname;
                     }
                 }
                 else
                 {
-                    //Debug.LogError("RoomDisplaynameCond2, isRoomPrivate ["+isRoomPrivate+"] hasFactionOwner ["+(this.factionOwner != null)+"]");
-                    _displayNameCache = displayName;
+                    //
                 }
             }
-            
             return _displayNameCache;
         } }
 
@@ -240,6 +270,7 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         this.ownerNames = null;
         this._displayNameCache = "";
+        this._displayNameShortCache = "";
 
     }
 
@@ -413,9 +444,9 @@ public class Room_Instance: IDisposable, I_Disposable
 
     
 
-    public void AddFurniture(FurnitureBase baseFurniture)
+    public FurnitureInstance AddFurniture(FurnitureBase baseFurniture)
     {
-        if (baseFurniture == null) return;
+        if (baseFurniture == null) return null;
 
         FurnitureInstance inst = new FurnitureInstance(this, baseFurniture);
 
@@ -430,6 +461,9 @@ public class Room_Instance: IDisposable, I_Disposable
 
         roomJobs = null;
         displayableFurnitures = null;
+        InvalidateFurnitureDependentCache();
+
+        return inst;
     }
 
 
@@ -509,9 +543,54 @@ public class Room_Instance: IDisposable, I_Disposable
         foreach (var furniture in this.Furnitures) if (furniture.JobGiver != null) furniture.JobGiver.FactionOwner = org;// SetOwner(org);
     }
 
-    public void AddFurniture(string s)
+    public FurnitureInstance AddFurniture(string s)
     {
-        AddFurniture(scr_System_Serializer.current.GetByNameOrID_FurnitureBase(s));
+        return AddFurniture(scr_System_Serializer.current.GetByNameOrID_FurnitureBase(s));
+    }
+
+    public bool RemoveFurniture(FurnitureInstance inst)
+    {
+        if (inst == null) return false;
+        bool removed;
+        if (inst.JobGiver != null)
+        {
+            var job = inst.JobGiver;
+            removed = roomJobFurnitures.Remove(inst);
+            if (removed)
+            {
+                roomJobRefs.Remove(job.RefID);
+
+                // evict every actor still assigned to this job before it's disposed/unregistered -
+                // otherwise their Character_Trainable.CurrentJob is left pointing at a job that no
+                // longer resolves via FindJobInstanceByID, which surfaces as errors on the next save/load
+                foreach (var charaRef in new List<int>(job.actorRefID))
+                {
+                    scr_System_CampaignManager.current.FindInstanceByID(charaRef)?.ChangeCurrentJob(null);
+                }
+
+                this.FactionOwner?.RemoveJobPost(job);
+                job.DisposeInternal();
+                scr_System_CampaignManager.current.Unregister(job);
+                roomJobs = null;
+            }
+        }
+        else
+        {
+            removed = furnitures.Remove(inst);
+        }
+
+        if (removed)
+        {
+            InvalidateFurnitureDependentCache();
+
+            if (this.FactionOwner != null)
+            {
+                FactionOwner.NotifyFurnitureChange(this);
+                if (!isRoomPrivate) (this.FactionOwner as Manageable)?.ClearRoomOwnership(this.RefID);
+            }
+            displayableFurnitures = null;
+        }
+        return removed;
     }
 
 
@@ -600,15 +679,34 @@ public class Room_Instance: IDisposable, I_Disposable
             return _isRoomPrison;
         }
     }
+
+
+
     bool _isRoomPrivate = false;
     bool _isRoomPrivate_cached = false;
     [JsonIgnore] public bool isRoomPrivate{ get {
+            if (isRoomPrison) return false;
             if (!_isRoomPrivate_cached)
             {
                 _isRoomPrivate_cached = true;
                 _isRoomPrivate = !isRoomPrison && Furnitures.Find(x => x.FurnitureBase.ID.Contains("furniture_bed")) != null;
             }
             return _isRoomPrivate; } }
+
+    /// <summary>
+    /// isRoomPrison/isRoomPrivate are cached off the furniture list - must be invalidated whenever
+    /// that list changes or they'll keep returning a stale verdict for the rest of the room's life.
+    /// DisplayName/DisplayNameShort branch on those same flags (prison/private/plain), so a furniture
+    /// change can flip which branch applies and must refresh the name caches too, or the room keeps
+    /// showing its pre-change name until something unrelated (an ownership change) happens to clear it.
+    /// </summary>
+    public void InvalidateFurnitureDependentCache()
+    {
+        _isRoomPrison_cached = false;
+        _isRoomPrivate_cached = false;
+        _displayNameCache = "";
+        _displayNameShortCache = "";
+    }
 
     [JsonProperty] private RoomActivityState? activityStateOverride = null;
 
@@ -792,10 +890,20 @@ public class Room_Instance: IDisposable, I_Disposable
 
     int cachedCleanliness = 0;
 
+    [JsonIgnore]
+    public bool requireCleaning
+    {
+        get
+        {
+            if (Base == null || Base.noCleaning) return false;
+            return true;
+        }
+    }
+
     public CleaningStatus RoomCleanliness(float extraMod = 1f)
     {
         {
-            if (Base == null || Base.noCleaning) return CleaningStatus.None;
+            if (!requireCleaning) return CleaningStatus.None;
 
             if (_cachedCleanliness == false)
             {

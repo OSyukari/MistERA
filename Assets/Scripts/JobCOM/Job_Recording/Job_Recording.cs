@@ -288,6 +288,7 @@ public class Job_Recording : Job, I_CanEndJob, I_RequireSpecialTracker
 
                     createItem.Comp_Records.LoadRecords(this.currentRecording);
                     createItem.Comp_Records.Records.cameraman = new ActorRecord(cameraman);// = this._cameramanRef;
+                    createItem.InvalidateTagsCache();
                     createItem.nameOverwrite = "new tape";
                     FactionOwner.Inventory.AddItem(createItem);
 

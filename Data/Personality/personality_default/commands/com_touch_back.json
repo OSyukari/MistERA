@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_back_Begin_Timestop_1",
+                                "com_touch_back_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -360,7 +373,9 @@
                 "com_touch_back_51": "$self$虽然没有说话，但眼眶已经红了，满是委屈和愤怒。",
                 "com_touch_back_52": "$self$突然感到一阵恶寒，用力搓着自己的手臂，逃也似地离开了座位。",
                 "com_touch_back_53": "$self$深吸一口气，用最冰冷的语气说道：\"请你立刻停止，否则我就叫人了。\"",
-                "com_touch_back_54": "$self$浑身散发着拒绝的气息，像躲避瘟疫一样极力向旁边躲闪。"
+                "com_touch_back_54": "$self$浑身散发着拒绝的气息，像躲避瘟疫一样极力向旁边躲闪。",
+                "com_touch_back_Begin_Timestop_1": "$target$的手掌从她定格的肩头缓缓抚到腰窝，指腹压过的皮肤留下浅浅的白印又慢慢平复，$self$的脊背没有绷紧。",
+                "com_touch_back_Begin_Timestop_2": "脊背被揉捏推拿，肩胛骨下的酸胀被按开，$self$低垂的头发悬在颊侧不落，房间里只有皮肉被拿捏的轻响。"
             },
             "en-us": {
                 "com_touch_back_Begin_1": "$self$ senses something and sighs comfortably, leaning back into $target$'s embrace.",

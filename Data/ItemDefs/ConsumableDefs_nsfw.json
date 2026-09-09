@@ -3,8 +3,6 @@
 "list":[
         {
             "id":"consumable_cum",
-            "displayName":"Cum",
-            "tooltip":"Cum",
             "Tags":["trash"],
             "itemComps_Template":[
                 {
@@ -35,13 +33,15 @@
             "zh-cn":
             {
                 "consumable_drug_rapedrug":"迷药",
-                "consumable_cum":"精液"
+                "consumable_cum":"精液",
+                "consumable_cum_tooltip":"精液。"
             },
             "en-us":
             {
                 "consumable_drug_rapedrug":"Aphrodisiac",
-                "consumable_cum":"Semen"
-  
+                "consumable_cum":"Semen",
+                "consumable_cum_tooltip":"Semen."
+
             }
         }
     }

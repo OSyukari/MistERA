@@ -1,0 +1,675 @@
+{
+    "ErAV": {
+        "globalOptionalGoals": [
+            {
+                "displayName": "goal_victim",
+                "matchTags_DoerTargetTag": [],
+                "matchTags_DoerSelfTag": [],
+                "matchTags_DoerTag": [],
+                "matchTags_ReceiverTag": [],
+                "matchTags_ReceiverSelfTag": [ "raped" ],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreMultiplier": 1.3,
+                "namingTemplateOverride": [
+                    "receval_proper_av_goal_victim_title_01",
+                    "receval_proper_av_goal_victim_title_02",
+                    "receval_proper_av_goal_victim_title_03",
+                    "receval_proper_av_goal_victim_title_04",
+                    "receval_proper_av_goal_victim_title_05"
+                ],
+                "minOccurrences": 2,
+                "subCategories": []
+            },
+            {
+                "displayName": "goal_aggressor",
+                "matchTags_DoerTargetTag": [],
+                "matchTags_DoerSelfTag": [ "rape" ],
+                "matchTags_DoerTag": [],
+                "matchTags_ReceiverTag": [],
+                "matchTags_ReceiverSelfTag": [],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreMultiplier": 1.2,
+                "namingTemplateOverride": [
+                    "receval_proper_av_goal_aggressor_title_01",
+                    "receval_proper_av_goal_aggressor_title_02",
+                    "receval_proper_av_goal_aggressor_title_03",
+                    "receval_proper_av_goal_aggressor_title_04"
+                ],
+                "minOccurrences": 2,
+                "subCategories": []
+            },
+            {
+                "displayName": "goal_femdom",
+                "matchTags_DoerTargetTag": [],
+                "matchTags_DoerSelfTag": [],
+                "matchTags_DoerTag": [ "female" ],
+                "matchTags_ReceiverTag": [ "male" ],
+                "matchTags_ReceiverSelfTag": [],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreMultiplier": 1.1,
+                "namingTemplateOverride": [
+                    "receval_proper_av_goal_femdom_title_01",
+                    "receval_proper_av_goal_femdom_title_02",
+                    "receval_proper_av_goal_femdom_title_03",
+                    "receval_proper_av_goal_femdom_title_04"
+                ],
+                "minOccurrences": 2,
+                "subCategories": []
+            }
+        ],
+
+        "recordingEvaluators":
+        [
+            {
+                "id": "receval_proper_av",
+                "description": "Studio-quality release. Requires real sexual content to clear minimumScoreRequirement; rewards role-specific content and position variety. Score is (baseScore + 1pt per matched sex AP via goal_sexual_content) x actorFeatures bonuses x satisfied-goal multipliers - reference scoreToValueRatio comment for JPY pricing calibration.",
+
+                "baseScore": 100,
+
+                "scoreToValueRatio": 20.0,
+
+                "basePrice": 3000,
+
+                "minimumScoreRequirement": 130,
+
+                "durationRequirement": {
+                    "minMinutes": 20,
+                    "maxMinutes": 60,
+                    "belowMinPenalty": -5000,
+                    "aboveMaxPenaltyPerMinute": -2
+                },
+
+                "namingTemplate": [
+                    "receval_proper_av_title_01",
+                    "receval_proper_av_title_02",
+                    "receval_proper_av_title_03",
+                    "receval_proper_av_title_04",
+                    "receval_proper_av_title_05",
+                    "receval_proper_av_title_06",
+                    "receval_proper_av_title_07",
+                    "receval_proper_av_title_08",
+                    "receval_proper_av_title_09",
+                    "receval_proper_av_title_10",
+                    "receval_proper_av_title_11",
+                    "receval_proper_av_title_12",
+                    "receval_proper_av_title_13",
+                    "receval_proper_av_title_14",
+                    "receval_proper_av_title_15",
+                    "receval_proper_av_title_16",
+                    "receval_proper_av_title_17",
+                    "receval_proper_av_title_18",
+                    "receval_proper_av_title_19",
+                    "receval_proper_av_title_20",
+                    "receval_proper_av_title_21",
+                    "receval_proper_av_title_22",
+                    "receval_proper_av_title_23",
+                    "receval_proper_av_title_24"
+                ],
+
+                "actorFeatures": [
+                    {
+                        "featureID": "actorfeature_shoujo",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "young" ],
+                        "excludeTag_Any": [ "married" ], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_joshikousei",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "student" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_hitozuma",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "married" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.15
+                    },
+                    {
+                        "featureID": "actorfeature_jukujo",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "mature" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_joukyoushi",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "teacher" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_ol",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "office_worker" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_nurse",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "nurse" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_virgin",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [ "virgin" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.2
+                    },
+                    {
+                        "featureID": "actorfeature_gal",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "gal" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_miko",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "shrine_maiden" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_idol",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "idol" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.2
+                    },
+                    {
+                        "featureID": "actorfeature_bigbreasts",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [ "huge_breasts", "big_breasts" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+                    },
+                    {
+                        "featureID": "actorfeature_danshigakusei",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "male", "student" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_salaryman",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "male", "office_worker" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_jukudan",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "male", "mature" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_dankyoushi",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "male", "teacher" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_ikemen",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "male", "handsome" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_coser",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [ "cosplay" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+                    },
+                    {
+                        "featureID": "actorfeature_girls",
+                        "minCount": 2, "maxCount": 0,
+                        "requireTag_Any": [ "female" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_boys",
+                        "minCount": 2, "maxCount": 0,
+                        "requireTag_Any": [ "male" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    }
+                ],
+
+                "optionalGoals": [
+                    {
+                        "displayName": "goal_sexual_content",
+                        "matchTags_DoerTargetTag": [ "sex" ],
+                        "matchTags_DoerSelfTag": [],
+                        "matchTags_DoerTag": [],
+                        "matchTags_ReceiverTag": [],
+                        "matchTags_ReceiverSelfTag": [],
+                        "matchTags_ReceiverTargetTag": [],
+                        "scoreMultiplier": 1.0,
+                        "scoreBonus_flat": 1,
+                        "namingTemplateOverride": [],
+                        "minOccurrences": 1,
+                        "subCategories": []
+                    },
+                    {
+                        "displayName": "goal_position_variety",
+                        "matchTags_DoerTargetTag": [ "penetration" ],
+                        "matchTags_DoerSelfTag": [],
+                        "matchTags_DoerTag": [],
+                        "matchTags_ReceiverTag": [],
+                        "matchTags_ReceiverSelfTag": [],
+                        "matchTags_ReceiverTargetTag": [],
+                        "scoreMultiplier": 1.1,
+                        "namingTemplateOverride": [
+                            "receval_proper_av_goal_position_variety_title_01",
+                            "receval_proper_av_goal_position_variety_title_02"
+                        ],
+                        "minOccurrences": 3,
+                        "subCategories": [
+                            {
+                                "displayName": "goal_position_face",
+                                "matchTags_DoerTargetTag": [ "position_face" ],
+                                "matchTags_DoerSelfTag": [],
+                                "matchTags_DoerTag": [],
+                                "matchTags_ReceiverTag": [],
+                                "matchTags_ReceiverSelfTag": [],
+                                "matchTags_ReceiverTargetTag": [],
+                                "scoreMultiplier": 1.05,
+                                "namingTemplateOverride": [
+                                    "receval_proper_av_goal_position_face_title_01",
+                                    "receval_proper_av_goal_position_face_title_02",
+                                    "receval_proper_av_goal_position_face_title_03"
+                                ],
+                                "minOccurrences": 2,
+                                "subCategories": []
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "receval_homemade_tape",
+                "description": "Amateur/homemade secret-filming tape. Short, low-effort, tolerant scoring (accepts failed APs and thin content, but needs a handful of matched sex APs via goal_amateur_content to clear minimumScoreRequirement). Much lower price ceiling than a studio release.",
+
+                "baseScore": 10,
+
+                "scoreToValueRatio": 30.0,
+
+                "basePrice": 800,
+
+                "minimumScoreRequirement": 15,
+
+                "durationRequirement": {
+                    "minMinutes": 5,
+                    "maxMinutes": 30,
+                    "belowMinPenalty": -200,
+                    "aboveMaxPenaltyPerMinute": -1
+                },
+
+                "namingTemplate": [
+                    "receval_homemade_tape_title_01",
+                    "receval_homemade_tape_title_02",
+                    "receval_homemade_tape_title_03",
+                    "receval_homemade_tape_title_04",
+                    "receval_homemade_tape_title_05",
+                    "receval_homemade_tape_title_06",
+                    "receval_homemade_tape_title_07",
+                    "receval_homemade_tape_title_08",
+                    "receval_homemade_tape_title_09",
+                    "receval_homemade_tape_title_10",
+                    "receval_homemade_tape_title_11",
+                    "receval_homemade_tape_title_12",
+                    "receval_homemade_tape_title_13",
+                    "receval_homemade_tape_title_14",
+                    "receval_homemade_tape_title_15",
+                    "receval_homemade_tape_title_16",
+                    "receval_homemade_tape_title_17",
+                    "receval_homemade_tape_title_18",
+                    "receval_homemade_tape_title_19",
+                    "receval_homemade_tape_title_20"
+                ],
+
+                "actorFeatures": [
+                    {
+                        "featureID": "actorfeature_shoujo",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "young" ],
+                        "excludeTag_Any": [ "married" ], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_joshikousei",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "student" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_hitozuma",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "married" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+                    },
+                    {
+                        "featureID": "actorfeature_jukujo",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "mature" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_gal",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "female", "gal" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_bigbreasts",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [ "huge_breasts", "big_breasts" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+                    },
+                    {
+                        "featureID": "actorfeature_danshigakusei",
+                        "minCount": 0, "maxCount": 0,
+                        "requireTag_Any": [], "requireTag_All": [ "male", "student" ],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_girls",
+                        "minCount": 2, "maxCount": 0,
+                        "requireTag_Any": [ "female" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    },
+                    {
+                        "featureID": "actorfeature_boys",
+                        "minCount": 2, "maxCount": 0,
+                        "requireTag_Any": [ "male" ], "requireTag_All": [],
+                        "excludeTag_Any": [], "excludeTag_All": [],
+                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+                    }
+                ],
+
+                "optionalGoals": [
+                    {
+                        "displayName": "goal_amateur_content",
+                        "matchTags_DoerTargetTag": [ "sex" ],
+                        "matchTags_DoerSelfTag": [],
+                        "matchTags_DoerTag": [],
+                        "matchTags_ReceiverTag": [],
+                        "matchTags_ReceiverSelfTag": [],
+                        "matchTags_ReceiverTargetTag": [],
+                        "scoreMultiplier": 1.15,
+                        "scoreBonus_flat": 1,
+                        "namingTemplateOverride": [
+                            "receval_homemade_tape_goal_amateur_title_01",
+                            "receval_homemade_tape_goal_amateur_title_02",
+                            "receval_homemade_tape_goal_amateur_title_03"
+                        ],
+                        "minOccurrences": 1,
+                        "subCategories": []
+                    },
+                    {
+                        "displayName": "goal_risky_filming",
+                        "matchTags_DoerTargetTag": [ "unsafe" ],
+                        "matchTags_DoerSelfTag": [],
+                        "matchTags_DoerTag": [],
+                        "matchTags_ReceiverTag": [],
+                        "matchTags_ReceiverSelfTag": [],
+                        "matchTags_ReceiverTargetTag": [],
+                        "scoreMultiplier": 1.1,
+                        "namingTemplateOverride": [
+                            "receval_homemade_tape_goal_risky_title_01",
+                            "receval_homemade_tape_goal_risky_title_02"
+                        ],
+                        "minOccurrences": 1,
+                        "subCategories": []
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "default": {
+                "receval_proper_av_title_01": "新人NO.1STYLE $actor$ AVデビュー",
+                "receval_proper_av_title_02": "極上素人 $actor$ 初撮りドキュメント",
+                "receval_proper_av_title_03": "$actor$ 生中出し3本番SPECIAL",
+                "receval_proper_av_title_04": "$location$で見つけた美少女 $actor$",
+                "receval_proper_av_title_05": "$actor$ ハメ撮りFILE",
+                "receval_proper_av_title_06": "絶頂 $actor$ イキ果てる夜",
+                "receval_proper_av_title_07": "痴女 $actor$ の誘惑",
+                "receval_proper_av_title_08": "$rivals$と$actor$ 3P密着ドキュメント",
+                "receval_proper_av_title_09": "$actor$ 濃厚SEX 敏感体質",
+                "receval_proper_av_title_10": "業界初解禁 $actor$ AVデビュー",
+                "receval_proper_av_title_11": "$actor$ 潮吹き絶頂スペシャル",
+                "receval_proper_av_title_12": "本物人妻 $actor$ 中出し体験",
+                "receval_proper_av_title_13": "$location$の密室で $actor$ が乱れる",
+                "receval_proper_av_title_14": "新人発掘 $actor$ 淫らな素顔",
+                "receval_proper_av_title_15": "$actor$ 生撮りリアルドキュメント",
+                "receval_proper_av_title_16": "$actor$ 感じすぎイキまくり4時間",
+                "receval_proper_av_title_17": "$rivals$たちと$actor$の乱交パーティー",
+                "receval_proper_av_title_18": "$actor$ 初めての中出し 涙の告白",
+                "receval_proper_av_title_19": "$actor$ 露出願望 野外SEX",
+                "receval_proper_av_title_20": "$actor$ 現役COSER 秘密撮影会",
+                "receval_proper_av_title_21": "$actor$ 敏感ボディ 濃密ハメ撮り",
+                "receval_proper_av_title_22": "美熟女 $actor$ 淫欲の午後",
+                "receval_proper_av_title_23": "$actor$ 素人ナンパ 即ハメ企画",
+                "receval_proper_av_title_24": "$location$出張 $actor$ の淫乱接待",
+
+                "receval_proper_av_goal_victim_title_01": "$actor$ 凌辱の記録 ～声も出せずに～",
+                "receval_proper_av_goal_victim_title_02": "禁断 ～$actor$の被害告白～",
+                "receval_proper_av_goal_victim_title_03": "$actor$ 無理やり犯された夜",
+                "receval_proper_av_goal_victim_title_04": "$location$に監禁された$actor$の恐怖",
+                "receval_proper_av_goal_victim_title_05": "$actor$ 涙の凌辱ファイル",
+
+                "receval_proper_av_goal_aggressor_title_01": "$actor$の凌辱記録 ～支配する快感～",
+                "receval_proper_av_goal_aggressor_title_02": "$actor$ 加害者の告白",
+                "receval_proper_av_goal_aggressor_title_03": "$actor$ 女を狂わせる男",
+                "receval_proper_av_goal_aggressor_title_04": "$rivals$を屈服させた$actor$",
+
+                "receval_proper_av_goal_femdom_title_01": "$actor$の逆襲 ～女王様SEX～",
+                "receval_proper_av_goal_femdom_title_02": "$actor$ M男調教スペシャル",
+                "receval_proper_av_goal_femdom_title_03": "$actor$ 立場逆転 ドS痴女",
+                "receval_proper_av_goal_femdom_title_04": "$rivals$を跪かせる$actor$",
+
+                "receval_proper_av_goal_position_variety_title_01": "$actor$ 体位コンプリートSEX",
+                "receval_proper_av_goal_position_variety_title_02": "$actor$ あらゆる体位で乱れる夜",
+
+                "receval_proper_av_goal_position_face_title_01": "$actor$の正常位実録",
+                "receval_proper_av_goal_position_face_title_02": "見つめ合いながら $actor$ と",
+                "receval_proper_av_goal_position_face_title_03": "$actor$ 正常位で絶頂",
+
+                "actorfeature_shoujo": "少女",
+                "actorfeature_joshikousei": "女子校生",
+                "actorfeature_hitozuma": "人妻",
+                "actorfeature_jukujo": "熟女",
+                "actorfeature_joukyoushi": "女教師",
+                "actorfeature_ol": "OL",
+                "actorfeature_nurse": "ナース",
+                "actorfeature_virgin": "処女",
+                "actorfeature_gal": "ギャル",
+                "actorfeature_miko": "巫女",
+                "actorfeature_idol": "アイドル",
+                "actorfeature_bigbreasts": "巨乳",
+                "actorfeature_danshigakusei": "男子学生",
+                "actorfeature_salaryman": "サラリーマン",
+                "actorfeature_jukudan": "熟男",
+                "actorfeature_dankyoushi": "男教師",
+                "actorfeature_ikemen": "イケメン",
+                "actorfeature_coser": "COSER",
+                "actorfeature_girls": "ガールズ",
+                "actorfeature_boys": "ボーイズ",
+
+                "goal_victim": "凌辱（被害）",
+                "goal_aggressor": "凌辱（加害）",
+                "goal_femdom": "女王様プレイ",
+                "goal_sexual_content": "本番描写",
+                "goal_position_variety": "体位バリエーション",
+                "goal_position_face": "正常位",
+
+                "receval_homemade_tape_title_01": "素人 $actor$ 隠し撮りファイル",
+                "receval_homemade_tape_title_02": "$actor$ 自宅盗撮 流出映像",
+                "receval_homemade_tape_title_03": "個人撮影 $actor$ 生々しい記録",
+                "receval_homemade_tape_title_04": "$location$で撮った $actor$ の秘密",
+                "receval_homemade_tape_title_05": "$actor$ 実録ハメ撮り 素人娘",
+                "receval_homemade_tape_title_06": "流出注意 $actor$ の私生活",
+                "receval_homemade_tape_title_07": "$actor$ 彼女の隠し撮り",
+                "receval_homemade_tape_title_08": "素人カップル $actor$と$rivals$の自宅撮影",
+                "receval_homemade_tape_title_09": "$actor$ 盗撮 生々しい吐息",
+                "receval_homemade_tape_title_10": "$location$の密会 $actor$",
+                "receval_homemade_tape_title_11": "$actor$ 素人手撮り 個人流出",
+                "receval_homemade_tape_title_12": "隠しカメラが捉えた $actor$",
+                "receval_homemade_tape_title_13": "$actor$ 彼氏との自宅ハメ撮り",
+                "receval_homemade_tape_title_14": "素人投稿 $actor$ ナマ撮影",
+                "receval_homemade_tape_title_15": "$actor$ 一般人 リアル映像",
+                "receval_homemade_tape_title_16": "$location$で目撃した $actor$",
+                "receval_homemade_tape_title_17": "$actor$ 友人が撮った素人動画",
+                "receval_homemade_tape_title_18": "自撮り流出 $actor$",
+                "receval_homemade_tape_title_19": "$actor$ 素人カップルの夜",
+                "receval_homemade_tape_title_20": "$rivals$と$actor$ 隠し撮りドキュメント",
+
+                "receval_homemade_tape_goal_amateur_title_01": "$actor$ 生々しいSEX 素人記録",
+                "receval_homemade_tape_goal_amateur_title_02": "$actor$ 素人ハメ撮り リアル",
+                "receval_homemade_tape_goal_amateur_title_03": "自宅で $actor$ が乱れる夜",
+
+                "receval_homemade_tape_goal_risky_title_01": "$actor$ バレたら大変 危険な撮影",
+                "receval_homemade_tape_goal_risky_title_02": "$actor$ スリル満点 隠し撮り",
+
+                "goal_amateur_content": "生撮り記録",
+                "goal_risky_filming": "盗撮リスク"
+            },
+            "zh-cn": {
+                "receval_proper_av": "专业AV",
+
+                "receval_proper_av_title_01": "新人NO.1STYLE $actor$ AV出道",
+                "receval_proper_av_title_02": "极品素人 $actor$ 初次拍摄纪实",
+                "receval_proper_av_title_03": "$actor$ 生中出3连发SPECIAL",
+                "receval_proper_av_title_04": "在$location$发现的美少女 $actor$",
+                "receval_proper_av_title_05": "$actor$ 视角实拍档案",
+                "receval_proper_av_title_06": "绝顶 $actor$ 高潮不断的夜晚",
+                "receval_proper_av_title_07": "痴女 $actor$ 的诱惑",
+                "receval_proper_av_title_08": "$rivals$与$actor$的3P密着纪实",
+                "receval_proper_av_title_09": "$actor$ 浓厚SEX 敏感体质",
+                "receval_proper_av_title_10": "业界首次解禁 $actor$ AV出道",
+                "receval_proper_av_title_11": "$actor$ 潮吹绝顶特辑",
+                "receval_proper_av_title_12": "真实人妻 $actor$ 中出体验",
+                "receval_proper_av_title_13": "在$location$的密室中 $actor$ 淫乱失控",
+                "receval_proper_av_title_14": "新人发掘 $actor$ 淫荡的素颜",
+                "receval_proper_av_title_15": "$actor$ 生撮真实纪录片",
+                "receval_proper_av_title_16": "$actor$ 敏感到爆 高潮不断4小时",
+                "receval_proper_av_title_17": "$actor$与$rivals$们的乱交派对",
+                "receval_proper_av_title_18": "$actor$ 第一次中出 泪之告白",
+                "receval_proper_av_title_19": "$actor$ 露出愿望 野外SEX",
+                "receval_proper_av_title_20": "$actor$ 现役COSER 秘密摄影会",
+                "receval_proper_av_title_21": "$actor$ 敏感身体 浓密实拍",
+                "receval_proper_av_title_22": "美熟女 $actor$ 淫欲的午后",
+                "receval_proper_av_title_23": "$actor$ 素人搭讪 即操企划",
+                "receval_proper_av_title_24": "$location$出差 $actor$ 的淫乱接待",
+
+                "receval_proper_av_goal_victim_title_01": "$actor$ 凌辱的记录 ～连声音都发不出～",
+                "receval_proper_av_goal_victim_title_02": "禁忌 ～$actor$的受害告白～",
+                "receval_proper_av_goal_victim_title_03": "$actor$ 被强行侵犯的夜晚",
+                "receval_proper_av_goal_victim_title_04": "被监禁在$location$的$actor$的恐惧",
+                "receval_proper_av_goal_victim_title_05": "$actor$ 泪之凌辱档案",
+
+                "receval_proper_av_goal_aggressor_title_01": "$actor$的凌辱记录 ～支配的快感～",
+                "receval_proper_av_goal_aggressor_title_02": "$actor$ 加害者的告白",
+                "receval_proper_av_goal_aggressor_title_03": "$actor$ 让女人疯狂的男人",
+                "receval_proper_av_goal_aggressor_title_04": "让$rivals$屈服的$actor$",
+
+                "receval_proper_av_goal_femdom_title_01": "$actor$的逆袭 ～女王様SEX～",
+                "receval_proper_av_goal_femdom_title_02": "$actor$ M男调教特辑",
+                "receval_proper_av_goal_femdom_title_03": "$actor$ 立场逆转 强势S痴女",
+                "receval_proper_av_goal_femdom_title_04": "让$rivals$下跪的$actor$",
+
+                "receval_proper_av_goal_position_variety_title_01": "$actor$ 体位全收录SEX",
+                "receval_proper_av_goal_position_variety_title_02": "$actor$ 各种体位淫乱的夜晚",
+
+                "receval_proper_av_goal_position_face_title_01": "$actor$的正常位实录",
+                "receval_proper_av_goal_position_face_title_02": "与$actor$深情对视",
+                "receval_proper_av_goal_position_face_title_03": "$actor$ 正常位绝顶",
+
+                "actorfeature_shoujo": "少女",
+                "actorfeature_joshikousei": "女高中生",
+                "actorfeature_hitozuma": "人妻",
+                "actorfeature_jukujo": "熟女",
+                "actorfeature_joukyoushi": "女教师",
+                "actorfeature_ol": "OL",
+                "actorfeature_nurse": "护士",
+                "actorfeature_virgin": "处女",
+                "actorfeature_gal": "辣妹",
+                "actorfeature_miko": "巫女",
+                "actorfeature_idol": "偶像",
+                "actorfeature_bigbreasts": "巨乳",
+                "actorfeature_danshigakusei": "男学生",
+                "actorfeature_salaryman": "上班族",
+                "actorfeature_jukudan": "熟男",
+                "actorfeature_dankyoushi": "男教师",
+                "actorfeature_ikemen": "帅哥",
+                "actorfeature_coser": "COSER",
+                "actorfeature_girls": "女孩们",
+                "actorfeature_boys": "男孩们",
+
+                "goal_victim": "凌辱（受害）",
+                "goal_aggressor": "凌辱（加害）",
+                "goal_femdom": "女王様Play",
+                "goal_sexual_content": "性描写",
+                "goal_position_variety": "体位多样性",
+                "goal_position_face": "正常位",
+
+                "receval_homemade_tape": "业余偷拍",
+
+                "receval_homemade_tape_title_01": "素人 $actor$ 偷拍档案",
+                "receval_homemade_tape_title_02": "$actor$ 自宅偷拍 流出影像",
+                "receval_homemade_tape_title_03": "个人拍摄 $actor$ 真实记录",
+                "receval_homemade_tape_title_04": "在$location$拍摄的 $actor$ 的秘密",
+                "receval_homemade_tape_title_05": "$actor$ 实录实拍 素人女孩",
+                "receval_homemade_tape_title_06": "流出警告 $actor$ 的私生活",
+                "receval_homemade_tape_title_07": "$actor$ 女友的偷拍",
+                "receval_homemade_tape_title_08": "素人情侣 $actor$与$rivals$的自宅拍摄",
+                "receval_homemade_tape_title_09": "$actor$ 偷拍 真实喘息",
+                "receval_homemade_tape_title_10": "在$location$的密会 $actor$",
+                "receval_homemade_tape_title_11": "$actor$ 素人手持拍摄 个人流出",
+                "receval_homemade_tape_title_12": "被隐藏摄像头拍下的 $actor$",
+                "receval_homemade_tape_title_13": "$actor$ 与男友的自宅实拍",
+                "receval_homemade_tape_title_14": "素人投稿 $actor$ 生拍摄",
+                "receval_homemade_tape_title_15": "$actor$ 普通人 真实影像",
+                "receval_homemade_tape_title_16": "在$location$目击的 $actor$",
+                "receval_homemade_tape_title_17": "朋友拍摄的素人视频 $actor$",
+                "receval_homemade_tape_title_18": "自拍流出 $actor$",
+                "receval_homemade_tape_title_19": "$actor$ 素人情侣的夜晚",
+                "receval_homemade_tape_title_20": "$rivals$与$actor$的偷拍纪实",
+
+                "receval_homemade_tape_goal_amateur_title_01": "$actor$ 真实SEX 素人记录",
+                "receval_homemade_tape_goal_amateur_title_02": "$actor$ 素人实拍 真实感",
+                "receval_homemade_tape_goal_amateur_title_03": "在家中 $actor$ 淫乱的夜晚",
+
+                "receval_homemade_tape_goal_risky_title_01": "$actor$ 被发现就麻烦了 危险的拍摄",
+                "receval_homemade_tape_goal_risky_title_02": "$actor$ 惊险刺激 偷拍实录",
+
+                "goal_amateur_content": "本色实拍",
+                "goal_risky_filming": "偷拍风险"
+            }
+        }
+    }
+}

@@ -82,6 +82,8 @@ public class ItemComponentTemplate
                 return new ItemComponent_Records(parent);
             case "ItemComponent_Knowledges":
                 return new ItemComponent_Knowledges(parent);
+            case "ItemComponent_Furniture":
+                return new ItemComponent_Furniture(parent);
             default:
                 return null;
 

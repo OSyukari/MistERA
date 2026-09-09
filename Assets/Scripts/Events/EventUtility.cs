@@ -1232,6 +1232,33 @@ public static class EventUtility
 
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.InitializeRelationshipsBetween:
+                {
+                    List<Character_Trainable> resolved = new List<Character_Trainable>();
+                    foreach (var refKey in exec.arguments)
+                    {
+                        if (refKey == "self")
+                        {
+                            if (owner.Self != null) resolved.Add(owner.Self);
+                        }
+                        else if (owner.Targets.TryGetValue(refKey, out var list))
+                        {
+                            foreach (var c in list) if (c != null) resolved.Add(c);
+                        }
+                        // unresolved refKey: skip, no error - actor may simply be missing from this event instance
+                    }
+                    resolved = resolved.Distinct().ToList();
+
+                    for (int i = 0; i < resolved.Count; i++)
+                    {
+                        for (int j = i + 1; j < resolved.Count; j++)
+                        {
+                            resolved[i].Relationships.FindRelationshipWith(resolved[j]);
+                            resolved[j].Relationships.FindRelationshipWith(resolved[i]);
+                        }
+                    }
+                }
+                return true;
             case Event.EventEntry.ExecutionType.TransferItemByKey:
                 if (exec.arguments.Count >= 4 && exec.arguments[2] != "" && int.TryParse(exec.arguments[3], out var transferCount) && transferCount > 0)
                 {

@@ -8,6 +8,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_touch_cheek_Begin_Timestop_1",
+                                "com_touch_cheek_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -314,7 +327,9 @@
                 "com_touch_cheek_Bad_NoAllow_1": "$self$忍无可忍地一把推开$target$，呼吸急促。\"够了！你到底想羞辱我到什么时候！\"",
                 "com_touch_cheek_Bad_NoAllow_2": "$self$眼里的厌恶已经掩饰不住，冷冷地看着$target$。\"摸够了吗？我可以走了吗？\"",
                 "com_touch_cheek_Bad_NoAllow_3": "$self$不再掩饰自己的反感，直接转身离开，留下一个决绝的背影。",
-                "com_touch_cheek_Bad_NoAllow_4": "$self$虽然没有反抗，但眼神已经完全死寂，把$target$当成了透明人。"
+                "com_touch_cheek_Bad_NoAllow_4": "$self$虽然没有反抗，但眼神已经完全死寂，把$target$当成了透明人。",
+                "com_touch_cheek_Begin_Timestop_1": "$target$的指背贴上她定格的脸颊轻擦，拇指蹭过颧骨，焐热的皮肤慢慢洇出浅红，$self$的眼睫没有颤。",
+                "com_touch_cheek_Begin_Timestop_2": "$self$的脸被捧住端详，颊肉被指腹按出浅窝又弹回，瞳孔停在原来的落点上，纹丝没挪。"
             },
             "en-us": {
                 "com_touch_cheek_Begin_1": "$self$ doesn't shy away, but instead leans her cheek into $target$'s palm, like a small animal seeking affection.",

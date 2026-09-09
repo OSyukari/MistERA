@@ -63,6 +63,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_P_doggy_Begin_Timestop_1",
+                                "com_sex_P_doggy_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -482,7 +495,9 @@
                 "com_sex_P_doggy_31": "$self$痛苦地皱起脸，每次撞击都难受得想躲。\n\"好恶心……把这东西拿出去……\"",
                 "com_sex_P_doggy_32": "$self$的身子随着顶撞前后晃，眼神空洞。\n\"随便你吧……反正我也没有拒绝的权利。\"",
                 "com_sex_P_doggy_29": "$self$皱着眉往前缩了缩，额上渗出冷汗。\n\"停停……太深了……撞得好疼……\"",
-                "com_sex_P_doggy_30": "$self$有气无力地随着撞击晃动，腰懒得迎合。\n\"……你只顾着自己舒服。\""
+                "com_sex_P_doggy_30": "$self$有气无力地随着撞击晃动，腰懒得迎合。\n\"……你只顾着自己舒服。\"",
+                "com_sex_P_doggy_Begin_Timestop_1": "$target$掰开她定格的臀瓣从后方抵入，穴口被龟头缓缓撑开，含住的软肉不受控地收缩吮紧，$self$的眼神停在半空没动。",
+                "com_sex_P_doggy_Begin_Timestop_2": "肉棒整根没入时，$self$垂在身侧的手还悬在离地半寸的地方，定格的房间里只剩穴肉吞吐的水声在响。"
             }
         }
     }

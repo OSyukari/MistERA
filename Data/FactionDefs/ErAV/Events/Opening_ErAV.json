@@ -53,7 +53,13 @@
                         "UISpec": {
                             "portraitRefKey": ""
                         },
-                        "line": "event_OpeningErAV_L01"
+                        "line": "event_OpeningErAV_L01",
+                        "Results":[
+                            {
+                                "Type": "InitializeRelationshipsBetween",
+                                "arguments": ["self", "kanade", "kanon"]
+                            }
+                        ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",

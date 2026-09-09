@@ -578,6 +578,15 @@ public class Event : I_SerializationCallbackReceiver
             CheckRelationship,
 
             /// <summary>
+            /// [refKeys...], e.g. ["self", "kanade", "kanon"] <br/>
+            /// Resolves each refKey via owner.Self ("self") or owner.Targets[refKey], skipping any refKey
+            /// that fails to resolve (or resolves to a null actor), then calls FindRelationshipWith in both
+            /// directions between every pair of resolved actors - seeds/initializes relationships between
+            /// event actors the same way Manageable.AddToFaction does for new faction members.
+            /// </summary>
+            InitializeRelationshipsBetween,
+
+            /// <summary>
             /// [from, to, itemID, count, bool logIntoEventMessage]<br/>
             /// from/to are target scopeKeys (or "self"), resolved to the actor's active faction/party
             /// </summary>

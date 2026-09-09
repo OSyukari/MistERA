@@ -634,6 +634,10 @@ public class scr_System_Serializer : MonoBehaviour
     {
         return MasterList.MapPlans.GetByID_WorldPlan(name_or_id);
     }
+    public SalesClienteleDef GetByNameOrID_SalesClienteleDef(string name_or_id)
+    {
+        return MasterList.MapPlans.GetByID_SalesClienteleDef(name_or_id);
+    }
 
     public FurnitureBase GetByNameOrID_FurnitureBase(string name_or_id)
     {

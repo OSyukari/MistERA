@@ -65,6 +65,19 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": [
+                                    "timestop"
+                                ]
+                            },
+                            "_comment": "2.3.3 开始 时停中 口上文（开工时已时停）",
+                            "responses": [
+                                "com_sex_P_V_outside_Begin_Timestop_1",
+                                "com_sex_P_V_outside_Begin_Timestop_2"
+                            ]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -512,7 +525,9 @@
                 "com_sex_P_V_outside_42": "$self$极力忍耐着想要呕吐的冲动，身子因为厌恶而不断瑟缩。\n\"好恶心……只感到恶心……\"",
                 "com_sex_P_V_outside_37": "$self$有些不耐烦地推了推$target$的胸口。\n\"只是这样磨来磨去的，皮都要破了。\"",
                 "com_sex_P_V_outside_38": "$self$皱着眉，身子僵硬地承受着摩擦。\n\"有点疼……今天状态不太好，算了吧。\"",
-                "com_sex_P_V_outside_39": "$self$长叹了口气，松开了夹紧的双腿。\n\"除了痒什么感觉都没有。\""
+                "com_sex_P_V_outside_39": "$self$长叹了口气，松开了夹紧的双腿。\n\"除了痒什么感觉都没有。\"",
+                "com_sex_P_V_outside_Begin_Timestop_1": "滚烫的肉棒挤进她定格的腿缝贴着穴口来回碾磨，磨出的津液把腿根润得发亮，$self$的膝盖还保持着原本张开的距离。",
+                "com_sex_P_V_outside_Begin_Timestop_2": "龟头蹭过阴蒂时穴口不受控地渗出水，$self$的腿缝被磨得发红，静止的房间里只有黏腻的摩擦声在响。"
             }
         }
     }

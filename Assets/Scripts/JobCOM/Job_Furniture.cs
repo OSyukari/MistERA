@@ -157,6 +157,16 @@ public class Job_Furniture : Job
 
     [JsonIgnore] public override bool CanBeInterrupted { get { return base.CanBeInterrupted; } }//&& !this.isContainer; } }
 
+    [JsonIgnore] public override bool IsInUse
+    {
+        get
+        {
+            if (base.IsInUse) return true;
+            if (isContainer && Container != null && Container.HasContent) return true;
+            return false;
+        }
+    }
+
     public void RefreshValidCOMs(bool allowLazyRefresh = true)
     {
         if (allowLazyRefresh && this.actorRefID.Count < 1 && (this.Container == null || !this.Container.HasContent)) return;
