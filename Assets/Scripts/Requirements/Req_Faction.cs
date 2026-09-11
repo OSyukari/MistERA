@@ -22,20 +22,20 @@ public class Requirement_Faction
     {
         tooltip = "";
         var mm = m as Manageable;
-        if (jobKeyword != "" && (mm == null || !mm.ExistOngoingProductionOrder(jobKeyword)))
+        if (jobKeyword != "" && (m == null || mm == null || !mm.ExistOngoingProductionOrder(jobKeyword)))
         {
             tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_jobKeyword")
                     .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName)
                     .Replace("$keywords$", jobKeyword);
             return false;
         }
-        if (!allowInNonPlayerFaction && !m.isPlayerFaction)
+        if (!allowInNonPlayerFaction && (m == null || !m.isPlayerFaction))
         {
             tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_disallowInNonPlayerFaction")
                     .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName);
             return false;
         }
-        if (!allowInPlayerFaction && m.isPlayerFaction)
+        if (!allowInPlayerFaction && (m == null || m.isPlayerFaction))
         {
             tooltip = LocalizeDictionary.QueryThenParse("ui_RequireFactionExisting_disallowInPlayerFaction")
                     .Replace("$faction$", mm == null ? "-" : mm.FactionDisplayName);
@@ -54,7 +54,7 @@ public class Requirement_Faction
         if (requireCanPrepMeal)
         {
             var nextHour = Math.Clamp(scr_System_Time.current.getCurrentTime().Hour + 1, 0, 23);
-            if (!m.isPlayerFaction)
+            if (m == null || !m.isPlayerFaction)
             {
                 tooltip = "non player faction, can always prep";
             }
@@ -66,12 +66,15 @@ public class Requirement_Faction
             else
             {
                 bool existFood = false;
-                foreach (var item in m.Inventory.Contents)
+                if (m.Inventory != null)
                 {
-                    if (item.isFoodConsumable)
+                    foreach (var item in m.Inventory.Contents)
                     {
-                        existFood = true;
-                        break;
+                        if (item.isFoodConsumable)
+                        {
+                            existFood = true;
+                            break;
+                        }
                     }
                 }
                 if (!existFood)

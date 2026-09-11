@@ -49,11 +49,11 @@ public class Room_Instance: IDisposable, I_Disposable
             if (isRoomPrivate) _typetags.Add("room_type_privateRoom");
             if (factionOwner != null && factionOwner.MainExit == this) _typetags.Add("room_type_mainExit");
 
-            if (Furnitures.Find(x => x.JobGiver.HasAvailableCOMwithCOMTags("cooking")) != null)
+            if (Furnitures.Find(x => x.JobGiver != null && x.JobGiver.HasAvailableCOMwithCOMTags("cooking")) != null)
             {
                 _typetags.Add("room_type_prepMeals");
             }
-            if (Furnitures.Find(x => x.JobGiver.HasAvailableCOMwithCOMTags("food_getmeal") || x.JobGiver.HasAvailableCOMwithCOMTags("food_meal")) != null)
+            if (Furnitures.Find(x => x.JobGiver != null && (x.JobGiver.HasAvailableCOMwithCOMTags("food_getmeal") || x.JobGiver.HasAvailableCOMwithCOMTags("food_meal"))) != null)
             {
                 _typetags.Add("room_type_offerMeals");
             }

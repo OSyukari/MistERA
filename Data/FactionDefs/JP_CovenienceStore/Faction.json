@@ -127,7 +127,7 @@
                 "recipe":[],
                 "furnitureSize":2,
                 "value":40000,
-                "Tags":["rarity_common"],
+                "Tags":[],
                 "givesJob": [ { "comID":["jp_convenience_store_frontDesk"] },
                                 { "comTags":["furniture","retailTrade"] } ]
             },

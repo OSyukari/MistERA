@@ -325,7 +325,7 @@
             "recipe":[],
             "furnitureSize":0,
             "value":50000,
-            "Tags":["rarity_common"],
+            "Tags":[],
             "givesJob":
             [   { "comTags":["furniture","bed"] },
                 { "comTags":["furniture","food_getmeal"] } ,

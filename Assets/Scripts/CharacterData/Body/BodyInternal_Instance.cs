@@ -269,10 +269,10 @@ public class BodyInternal_Instance
         }
         foreach (Item_Instance item in delete)
         {
-            Contains.Clear();
             ContainedRefs_Delays.Remove(item.RefID);
             scr_System_CampaignManager.current.Unregister(item);
         }
+        if (delete.Count > 0) contains_cache = null;
 
 
 

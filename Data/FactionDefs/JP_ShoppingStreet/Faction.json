@@ -417,7 +417,7 @@
                 "recipe":[],
                 "furnitureSize":2,
                 "value":50000,
-                "Tags":["rarity_common"],
+                "Tags":[],
                 "givesJob": [ { "comTags":["furniture","retailTrade"] } ]
             }
         ]

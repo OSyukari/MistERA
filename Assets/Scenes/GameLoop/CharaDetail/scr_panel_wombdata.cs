@@ -143,9 +143,9 @@ public class scr_panel_wombdata : MonoBehaviour
                 .Replace("$total$", $"{womb.eggs.Count}"));
 
             string debug = $"{womb.source.VolumeCapacity.ToString("N0")}ml|{womb.source.VisiblyExpandedCapacity.ToString("N0")}ml|{womb.source.MaxCapacity.ToString("N0")}ml";
-            if (scr_System_CampaignManager.current.DebugMode && ovum_foetus_object != ovum_foetus_count)
+            if (scr_System_CampaignManager.current.DebugMode && ovum_foetus_object != ovum_implanted + ovum_foetus_count)
             {
-                debug += $"\nDiscrepancy between ovum count {ovum_foetus_count} and object count {ovum_foetus_object}";
+                debug += $"\nDiscrepancy between ovum count {ovum_implanted} + {ovum_foetus_count} and object count {ovum_foetus_object}";
             }
 
             desc.SetText(LocalizeDictionary.QueryThenParse("charaDetail_panel_womb_content").Replace("$volume$", totalVolume.ToString($"N1")));
