@@ -37,6 +37,9 @@
 "helper_era_guide": "调教",
 "helper_era_guide_content": "调教互动可以简单分为两种：\n\n- 非调教中，【互动】界面下的1对1的EraTW式接触互动（无本番）：选择任意目标后，触摸界面的所有指令都在此类（除开推倒）\n不满足条件的互动（脱得不够）不会显示\n\n-正式进入调教的N对N式EraTK多目标互动：在选择了任意目标后点选触摸界面的推倒按钮，与当前房间内的所有人开始调教。\n所有互动都会显示，但不满足条件的话无法点选\n在任何1对N，N对1，或者N对N的互动中，每个执行者都只能与一个对象进行互动，所以每次都是随机在N个对象中抽选一位进行互动。\n\n调教中，大部分调教指令都默认持续执行。若需要取消持续执行，请在左侧的对象选择界面取消。\n\n调教指令会给NPC增加对应经验，积累了足够的经验后角色的对应技能会自动升级（可在【%%comManager_bottom_inspect%%】的【%%charaDetail_btn_sexRecord%%】中查看）\n部位感度，部位尺寸等也能够通过提升对应等级来提高\n目前有实装效果的技能只有感度和扩张（没记错的话……）所以请不要花太多时间肝了（且下版本能不能兼容存档都存疑）\n\n所有调教系指令都有对身体部位的要求，如果部分指令无法执行，可能是因为缺乏必要的身体部位，也可能是因为执行者或对象的衣服没脱够\n\n如何测试？\n等NPC睡着后眠奸，或者时停奸。选择了NPC后第二个【%%comManager_tab_interact%%】界面内有推倒指令。\n部分指令无法执行时，鼠标悬停该指令会显示该指令无法执行的理由\n若有随行NPC的话也请解散随行，且部分指令需要指令的执行者能够行动（就不要想着让时停/睡眠中的角色主动为你做什么了）",
 
+"helper_AVFilming_guide":"AV摄影和贩卖",
+"helper_AVFilming_guide_content":"AV摄影和贩卖分为几个环节：拍摄、剪辑、贩售。\n\n拍摄：需要玩家持有%%item_recording_camera%%和%%item_recording_camera_Tape%%。持有%%item_recording_camera%%时，可以随时开始%%com_recording_begin_displayName_1%%。\n%%com_recording_end_displayName_1%%后，如果持有%%item_recording_camera_Tape%%会消耗道具生成录像原片\n不持有%%item_recording_camera_Tape%%的话则什么都不会生成\n\n剪辑：需要在任意%%furniture_computer_terminal%%处使用【%%com_recording_edit_displayName_1%%】指令开始编辑\n需要选择一个【%%recording_edit_canvas_genre_title%%】，通过剪辑录像满足其需求，然后保存录像\n只有设定 %%recording_edit_canvas_genre_title%% 并且保存后，该道具才会被视为可贩售的AV\n\n贩售：目前只有 ErAV 剧本中的【宫间映画】阵营有贩卖AV的能力\n该阵营会在接受了%%ErAV_Kanon_firstname%%的提案后生成\n请确保需要贩售的AV在【宫间映画】阵营道具栏内（不在的话请通过 阵营管理 的 转移道具至 功能转移道具）\n通过【%%ui_management_production_addSales%%】将目标AV设为贩售中即可",
+
 "comManager_filter_touch": "触摸",
 "comManager_filter_service": "奉仕",
 "comManager_filter_breast": "胸",

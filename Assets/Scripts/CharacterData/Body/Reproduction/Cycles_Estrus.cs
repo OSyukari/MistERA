@@ -112,7 +112,7 @@ public class Cycles_Estrus : ReproductionCycle
         {
             return -1;
         }
-        else if (CycleStage == EstrusStatus.PrePuberty)
+        else if (CycleStage == EstrusStatus.PrePuberty || CycleStage == EstrusStatus.PostPregnancy)
         {
             return (int)cycleValue;
         }

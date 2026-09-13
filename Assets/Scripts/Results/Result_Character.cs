@@ -50,6 +50,7 @@ public class Result_Character
         public int statMod_EN = 0;
 
         public string useItemFromTargetInventory = "";
+        public string ingestBodyTag = "";
 
         public bool toggleTeamStatus = false;
 

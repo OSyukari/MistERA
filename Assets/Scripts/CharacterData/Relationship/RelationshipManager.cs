@@ -1111,7 +1111,7 @@ public class RelationshipManager
         box.SetExternalTooltip($"{(attitudeTooltip.Length > 0 ? attitudeTooltip + "\n" : "")}{obedienceLine}{(rel == null ? "" : $"\n{String.Join("\n", rel.CurrentAttitudeTooltip)}")}");
     }
 
-    public static void Draw(Character_Relationship rel, scr_box_relationship box)
+    public static void Draw(Character_Relationship rel, scr_box_relationship box, bool reverseScore = false)
     {
         List<string> relName = new List<string>();
         List<string> relTooltip = new List<string>();
@@ -1153,6 +1153,11 @@ public class RelationshipManager
         box.targetName.SetText(rel.relationText.Replace("$name$", $"{rel.TargetName}" + (rel.Target.isTemporaryActor && rel.Target.Title.Length > 0 ? $"({rel.Target.Title})" : "")).Replace("$relation$", relName.Count > 0 ? String.Join(",", relName) : "no relation"));
         box.targetName.SetExternalTooltip(String.Join( "\n\n", relTooltip));
 
+        if (reverseScore)
+        {
+            rel = rel.Target.Relationships.FindRelationshipWith(rel.Owner);
+        }
+
         box.trustBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_trust")}: {rel.Trust_Base.ToString("N0")}{rel.Trust_Bonus.ToString("+0;-#")}", false, "relationship_trust_tooltip");
         box.fearBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_fear")}: {rel.Fear_Base.ToString("N0")}{rel.Fear_Bonus.ToString("+0;-#")}", false, "relationship_fear_tooltip");
         box.goodwillBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_goodwill")}: {rel.Goodwill_Base.ToString("N0")}{rel.Goodwill_Bonus.ToString("+0;-#")}", false, "relationship_goodwill_tooltip");
@@ -1162,7 +1167,7 @@ public class RelationshipManager
         else box.desireBox.SetText($"{LocalizeDictionary.QueryThenParse("relationship_desire")}: {rel.Desire_Base.ToString("N1")}{rel.Desire_Bonus.ToString("+0;-#")}", false, "relationship_desire_tooltip");
 
         //RelationshipManager.Draw_Obedience(rel, box.obedienceBox);
-        if (box.attitudeBox != null) RelationshipManager.Draw_Attitude(rel.Owner, rel, box.attitudeBox);
+        //if (box.attitudeBox != null) RelationshipManager.Draw_Attitude(rel.Owner, rel, box.attitudeBox);
     }
     public static void DrawFinal(Character_Relationship rel, scr_box_relationship box)
     {

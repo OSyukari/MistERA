@@ -23,7 +23,6 @@ public class initScript_ManagementOverview : MonoBehaviour
         if (this.m != null && this.nameInputField.interactable && m.FactionDisplayName != value)
         {
             m.FactionDisplayName = value;
-            parent.UpdateFactionName();
         }
     }
 
@@ -106,6 +105,7 @@ public class initScript_ManagementOverview : MonoBehaviour
         {
             s_chara.Add(LocalizeDictionary.QueryThenParse("tag_" + kvp.Key) + " " + kvp.Value.ToString("+0;-#"));
         }
+        if (s_chara.Count < 1) s_chara.Add(LocalizeDictionary.QueryThenParse("none"));
         factionPopMaintenance.text = factionPopTooltip.Replace("$costs$", String.Join(" | ", s_chara));
 
 

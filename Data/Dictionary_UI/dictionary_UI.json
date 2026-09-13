@@ -483,6 +483,7 @@
 "ui_management_production_order_typeChange": "可切换该订单的执行次数。\n%%craftCount%%：执行指定回数的订单生产\n%%craftUntilCount%%：只要当前据点的道具数量低于指定数就会持续生产",
 "craftCount": "单回",
 "craftUntilCount": "持续",
+"ui_management_TITLE": "可管理阵营：",
 "ui_management_inventory_TITLE": "据点道具栏",
 "ui_management_production_PO_TITLE": "制造订单",
 "ui_management_production_Trade_TITLE": "贸易订单",

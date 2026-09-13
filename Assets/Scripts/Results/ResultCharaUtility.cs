@@ -80,7 +80,7 @@ public static class ResultCharaUtility
         {
             Item_Instance instance = null;
             if (jobOwner != null) instance = jobOwner.Inventory.RemoveItem(r.useItemFromTargetInventory, c);
-            if (instance != null && instance.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(instance);
+            if (instance != null && instance.GetComp_Ingestible() != null) c.Body.ConsumeIngestible(instance, r.ingestBodyTag);
             // Debug.Log("Applying COM Result, useItemFromTargetInventory[" + useItemFromTargetInventory + "], factionOwner?[" + (m.job.FactionOwner != null) + "] instance?[" + (instance != null) + "]");
         }
         if (r.modifyStatusValue != null && r.modifyStatusValue.isValid)

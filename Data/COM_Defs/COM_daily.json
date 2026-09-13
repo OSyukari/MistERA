@@ -118,12 +118,13 @@
             "timeScale":1,
             "comTags": [
                 "action",
-                "player"
+                "player",
+                "allowedDuringSex"
             ],
             "requirements":{
                 "requirement":{
                     "treatReceiverAsDoer":true ,
-                    "req_Doers":{ "allowNPC":false }
+                    "req_Doers":{ "allowNPC":false, "requireConscious":false, "requireAction":false }
                 }
             },
             "results_EP": 

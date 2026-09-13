@@ -495,7 +495,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         return index;
     }
 
-    [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex"); } }
+    [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex") || comTags.Contains("allowedDuringSex"); } }
 
     public int GetValidVariant(ref List<string> tooltip, Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
@@ -730,12 +730,16 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
     /// <summary>
     /// Used during serialization, check internal data valid or not. if invalid, dont add to DB.
+    /// Also doubles as a runtime check for generator parents (see ButtonValidator_validateCOM.IsButtonValid):
+    /// a COM with a GenerateCOM block but zero generated children (e.g. no item in the game currently
+    /// matches its itemTag/route) is structurally invalid - whether that then hides or merely disables
+    /// the button is controlled per-COM by the existing HideWhenInvalid field.
     /// </summary>
     [JsonIgnore]
-    
+
     public virtual bool isValid { get
         {
-            return true;
+            return GenerateCOM == null || childCOMs.Count > 0;
         } }
 
     [JsonIgnore]

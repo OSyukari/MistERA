@@ -305,6 +305,12 @@ public class PortraitManager
             scr_System_CampaignManager.current.CurrentTargetEXPortrait = box.currentHandler;
             box.Draw(handler.DrawPortrait(box, path));
         }
+        else if (path != "" && !(handler is CharaPortrait_Spine) && !scr_System_CentralControl.current.GetSprite(path, out _))
+        {
+            // same portrait as before, but its cached sprite lapsed while still on screen - reload it
+            // (spine handlers don't route their main portrait through the sprite cache, so they're excluded)
+            box.Draw(handler.DrawPortrait(box, path));
+        }
     }
 
     public void CollectAllTags(List<string> s, List<string> s2)
@@ -343,6 +349,12 @@ public class PortraitManager
             //box.currentPortrait = _cache_CombatPortrait_path;
             box.Draw( _cache_CombatPortrait.DrawPortrait(box, _cache_CombatPortrait_path));
         }
+        else if (_cache_CombatPortrait_path != "" && !(_cache_CombatPortrait is CharaPortrait_Spine) && !scr_System_CentralControl.current.GetSprite(_cache_CombatPortrait_path, out _))
+        {
+            // same portrait as before, but its cached sprite lapsed while still on screen - reload it
+            // (spine handlers don't route their main portrait through the sprite cache, so they're excluded)
+            box.Draw(_cache_CombatPortrait.DrawPortrait(box, _cache_CombatPortrait_path));
+        }
     }
     public void DrawCombatIcon(I_StatsManager stats, scr_CharIconBox box, bool forceRefresh = false)
     {
@@ -355,6 +367,11 @@ public class PortraitManager
         {
             box.currentHandler = _cache_CombatPortrait;
             box.currentIcon = _cache_CombatPortrait_icon;
+            box.Draw(_cache_CombatPortrait.DrawIcon(box, _cache_CombatPortrait_icon));
+        }
+        else if (_cache_CombatPortrait_icon != "" && !scr_System_CentralControl.current.GetSprite(_cache_CombatPortrait_icon, out _))
+        {
+            // same icon as before, but its cached sprite lapsed while still on screen - reload it
             box.Draw(_cache_CombatPortrait.DrawIcon(box, _cache_CombatPortrait_icon));
         }
     }
@@ -408,6 +425,12 @@ public class PortraitManager
             if (ppath != "" && ppath != _cache_ActivityPortrait_path)
             {
                 _cache_ActivityPortrait_path = ppath;
+                box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
+            }
+            else if (_cache_ActivityPortrait_path != "" && !(_cache_ActivityPortrait is CharaPortrait_Spine) && !scr_System_CentralControl.current.GetSprite(_cache_ActivityPortrait_path, out _))
+            {
+                // same portrait as before, but its cached sprite lapsed while still on screen - reload it
+                // (spine handlers don't route their main portrait through the sprite cache, so they're excluded)
                 box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
             }
             else
@@ -489,6 +512,11 @@ public class PortraitManager
             if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} drawActivityIcon Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_icon}");
             box.currentHandler = _cache_ActivityPortrait;
             box.currentIcon = _cache_ActivityPortrait_icon;
+            box.Draw(_cache_ActivityPortrait.DrawIcon(box, _cache_ActivityPortrait_icon));
+        }
+        else if (_cache_ActivityPortrait_icon != "" && !scr_System_CentralControl.current.GetSprite(_cache_ActivityPortrait_icon, out _))
+        {
+            // same icon as before, but its cached sprite lapsed while still on screen - reload it
             box.Draw(_cache_ActivityPortrait.DrawIcon(box, _cache_ActivityPortrait_icon));
         }
 

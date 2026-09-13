@@ -18,7 +18,8 @@
                         "treatReceiverAsDoer": true,
                         "req_Doers": {
                             "clothingRequirement":"Skin",
-                            "requireConscious": false
+                            "requireConscious": false,
+                            "requireAction": false
                         }
                     }
                 },

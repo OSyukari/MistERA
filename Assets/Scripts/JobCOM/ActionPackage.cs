@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -518,7 +519,14 @@ public abstract class ActionPackage
     [JsonIgnore] public Job job { get {
             if (job_cached == null && jobRefID > -1) job_cached = scr_System_CampaignManager.current.FindJobInstanceByID(jobRefID);
             return job_cached;
-        } }
+        }
+    }
+
+    public void SetJob(Job value)
+    {
+        job_cached = value;
+        jobRefID = value == null ? -1 : value.RefID;
+    }
 
     [JsonProperty] public List<string> tooltip = new List<string>();
     [JsonProperty] protected List<string> extraCOMTags = new List<string>();
@@ -2244,6 +2252,27 @@ public abstract class ActionPackage
                     {
                         UseItem(executeSuccessful, actor, itemInstance, m);
                     }
+                }
+            }
+        }
+        else if (targetCOM is COM_IngestItem ingestCOM && ingestCOM.InnerItem != null)
+        {
+            // Same dynamic-faction resolution as the COM_UseItemCOM branch above, but this command
+            // actually consumes the item (take-and-ingest) rather than just using it in place.
+            I_IsJobGiver itemFaction = targetCOM.requirements.requireInventory != null
+                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job)
+                : this.job.FactionOwner;
+
+            if (executeSuccessful && itemFaction != null && itemFaction.Inventory != null)
+            {
+                var variant = (COMVariantID >= 0 && COMVariantID < targetCOM.variants.Count) ? targetCOM.variants[COMVariantID] : null;
+                var effectiveRequirements = variant != null ? variant.requirements : targetCOM.requirements;
+                var targets = effectiveRequirements.TreatDoerAsReceiver ? doer : receiver;
+
+                foreach (var target in targets)
+                {
+                    var instance = itemFaction.Inventory.RemoveItem(ingestCOM.InnerItem.ID, target);
+                    if (instance != null && instance.GetComp_Ingestible() != null) target.Body.ConsumeIngestible(instance, ingestCOM.ingestBodyTag);
                 }
             }
         }

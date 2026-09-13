@@ -1,0 +1,80 @@
+{
+    "COMs": {
+        "list": [
+            {
+                "ID": "com_furniture_ingestStomach",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_ingestStomach_displayName",
+                "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
+                "requirements": {
+                    "requirement": {
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "GenerateCOM": {
+                    "itemTag": "consumable",
+                    "targetCOMClass": {
+                        "$type": "COM_IngestItem, Assembly-CSharp",
+                        "ID": "com_furniture_ingestStomach",
+                        "ActionPackageClass": "ActionPackage_Interaction",
+                        "HideWhenInvalid": true,
+                        "displayName": "com_furniture_ingestStomach_displayName",
+                        "ingestBodyTag": "stomach",
+                        "timeScale": 5,
+                        "comTags": ["interaction", "ingestItem", "allowedDuringSex"],
+                        "requirements": {
+                            "requirement": {
+                                "req_Receivers": { "requireConscious": false, "requireAction": false }
+                            }
+                        },
+                        "variants": [
+                            {
+                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 0, "treatDoerAsReceiver": true } },
+                                "displayName": "com_furniture_ingestStomach_displayName_self"
+                            },
+                            {
+                                "requirements": { "requirement": { "doerCount": 1, "receiverCount": 1 } },
+                                "displayName": "com_furniture_ingestStomach_displayName_administer",
+                                "useBaseDescription": false,
+                                "description_begin": { "Entries":[{"texts":["com_furniture_ingestStomach_begin_administer"]}], "keepLooking": false },
+                                "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_administer"]}], "keepLooking": false },
+                                "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_administer"]}] }
+                            }
+                        ],
+                        "AcceptanceCheck": { "baseAcceptanceValue": 40 },
+                        "DifficultyCheck": { "baseD20Check": 0 },
+                        "description_begin": { "Entries":[{"texts":["com_furniture_ingestStomach_begin_1"]}], "keepLooking": false },
+                        "description_ongoing": { "Entries":[{"texts":["com_furniture_ingestStomach_ongoing_1"]}], "keepLooking": false },
+                        "description_onComplete": { "Entries":[{"keepLooking": true, "texts":["com_furniture_ingestStomach_onComplete_1"]}] }
+                    }
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "com_furniture_ingestStomach_displayName": "服药",
+                "com_furniture_ingestStomach_displayName_self": "服用$name$",
+                "com_furniture_ingestStomach_displayName_administer": "喂服$name$",
+                "com_furniture_ingestStomach_begin_1": "$doer.firstname$吞下了$name$",
+                "com_furniture_ingestStomach_ongoing_1": "$doer.firstname$正在服药",
+                "com_furniture_ingestStomach_onComplete_1": "$doer.firstname$服下了药",
+                "com_furniture_ingestStomach_begin_administer": "$doer.firstname$给$receiver.firstname$喂下了$name$",
+                "com_furniture_ingestStomach_ongoing_administer": "$doer.firstname$正在给$receiver.firstname$喂药",
+                "com_furniture_ingestStomach_onComplete_administer": "$doer.firstname$给$receiver.firstname$喂药完毕"
+            },
+            "en-us": {
+                "com_furniture_ingestStomach_displayName": "Take Medicine",
+                "com_furniture_ingestStomach_displayName_self": "Take $name$",
+                "com_furniture_ingestStomach_displayName_administer": "Administer $name$",
+                "com_furniture_ingestStomach_begin_1": "$doer.firstname$ swallowed $name$",
+                "com_furniture_ingestStomach_ongoing_1": "$doer.firstname$ is taking medicine",
+                "com_furniture_ingestStomach_onComplete_1": "$doer.firstname$ took the medicine",
+                "com_furniture_ingestStomach_begin_administer": "$doer.firstname$ fed $name$ to $receiver.firstname$",
+                "com_furniture_ingestStomach_ongoing_administer": "$doer.firstname$ is administering medicine to $receiver.firstname$",
+                "com_furniture_ingestStomach_onComplete_administer": "$doer.firstname$ finished administering medicine to $receiver.firstname$"
+            }
+        }
+    }
+}

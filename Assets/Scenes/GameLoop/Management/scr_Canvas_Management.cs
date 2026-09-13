@@ -12,7 +12,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public List<Manageable> factions = new List<Manageable>();
     protected Manageable currentFaction = null;
     public Manageable CurrentFaction { get { return currentFaction; } set { currentFaction = value; } }
-    public scr_HoverableText factionName;
 
     public TMP_Text production_results;
    // public RectTransform inventoryList;
@@ -21,6 +20,9 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     public initScript_ManagementOverview overviewScript;
 
     public Image background;
+
+    public RectTransform factionsRect;
+    public scr_SelectableText prefab_factionBTN;
 
     public void InitializeWithArgument(Manageable targetFaction = null)
     {
@@ -37,6 +39,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         {
             if (m != null && !factions.Contains(m)) factions.Add(m);
         }
+
+        foreach (var m in factions)
+        {
+            MakeButton_Faction(m);
+        }
+
 
         LoadFactionData(GetDefaultFaction(targetFaction));
     }
@@ -114,8 +122,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             }
             co = StartCoroutine(loadbg(m.backgroundIMG));
         }
-
-        UpdateFactionName();
 
         currentTab = Tab_Overview;
         initialized_faction_overview = false;
@@ -376,10 +382,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             // Debug.Log("Button " + button + " " + button.optionID);
             switch (button.optionID)
             {
-                case 10: // faction left
-                    button.Initialize(this, new button_FactionSwitch(this, true)); break;
-                case 11: // faction right
-                    button.Initialize(this, new button_FactionSwitch(this, false)); break;
                 case 1: // overview tab
                     button.Initialize(this, new button_ChangeTab(this, button, Tab_Overview, Initialize_FactionOverview)); break;
                 case 2: // productions tab
@@ -500,6 +502,23 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         button.Validate();
     }
 
+    private void MakeButton_Faction(Manageable m)
+    {
+        var player = scr_System_CampaignManager.current.Player;
+
+        scr_SelectableText button = Instantiate(prefab_factionBTN);
+        button.SelfRect.SetParent(factionsRect, false);
+
+        button.Initialize(this, new button_FactionSelect(this, button, m));
+        button.SetText(m.FactionDisplayName);
+        button.optionID = AssertUniqueHash(m.GetHashCode());
+
+        buttonsByID.Add(button.optionID, button);
+        validatorsByID.Add(button.optionID, button.Validator);
+
+        button.Validate();
+    }
+
     public Manageable_Party currentParty = null;
     public void LoadParty(Manageable_Party p, bool iskidnap = false, bool forceRefresh = false)
     {
@@ -507,16 +526,6 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         Script_Expeditions.Draw(p, iskidnap, forceRefresh);
     }
 
-    public void UpdateFactionName()
-    {
-        var player = scr_System_CampaignManager.current.Player;
-        var m = this.CurrentFaction;
-        if (player.FactionManager.HomeFactions.Contains(m)) factionName.SetText(homef.Replace("$name$", m.FactionDisplayName), false, "management_faction_home_tooltip");
-        else if (player.FactionManager.WorkFactions.Contains(m)) factionName.SetText(workf.Replace("$name$", m.FactionDisplayName), false, "management_faction_work_tooltip");
-        else factionName.SetText(otherf.Replace("$name$", m.FactionDisplayName));
-
-        factionName.SetExternalTooltip(m.ID);
-    }
     public void UpdatePartyNames()
     {
         foreach(var i in this.validatorsByID)
@@ -650,32 +659,54 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
     }
 
-    public class button_FactionSwitch : ButtonValidator , I_ButtonClickable
+    public class button_FactionSelect : ButtonValidator, I_ButtonClickable
     {
         new scr_Canvas_Management parent;
-        bool left;
-        public button_FactionSwitch(scr_Canvas_Management parent, bool left = false) : base(parent)
+        scr_SelectableText text;
+        Manageable faction;
+
+        string tooltip2 = "";
+        string title = "";
+        public button_FactionSelect(scr_Canvas_Management parent, scr_SelectableText text, Manageable m) : base(parent)
         {
             this.parent = parent;
-            this.left = left;
+            this.text = text;
+            this.faction = m;
+            this.text.isButtonToggle = true;
+
+            var player = scr_System_CampaignManager.current.Player;
+
+            if (player.FactionManager.HomeFactions.Contains(m))
+            {
+                title = parent.homef;
+                tooltip2 += LocalizeDictionary.QueryThenParse("management_faction_home_tooltip");
+            }
+            else if (player.FactionManager.WorkFactions.Contains(m))
+            {
+                title = parent.workf;
+                tooltip2 += LocalizeDictionary.QueryThenParse("management_faction_work_tooltip");
+            }
+            else
+            {
+                title = parent.otherf;
+            }
+            tooltip2 += (tooltip2.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(m.ID);
         }
 
         public override bool IsButtonValid()
         {
-            return parent.factions.Count > 1;
+            text.SetText(title.Replace("$name$", faction.FactionDisplayName));
+            tooltip = tooltip2;
+            text.Toggle(true, parent.CurrentFaction == faction);
+            return true;
         }
+
         public void OnClickButton()
         {
-            var index = parent.factions.IndexOf(parent.CurrentFaction);
-            Manageable targetF = null;
-
-            if (left) targetF = index - 1 >= 0 ? parent.factions[index - 1] : parent.factions[parent.factions.Count - 1];
-            else targetF = index + 1 >= parent.factions.Count ? parent.factions[0] : parent.factions[index + 1];
-
-            parent.LoadFactionData(targetF);
+            parent.LoadFactionData(faction);
         }
-
     }
+
 
     public scr_Menu_CharaDetail prefab_Canvas_CharaDetail;
     public class button_CharaDetail : ButtonValidator, I_ButtonClickable

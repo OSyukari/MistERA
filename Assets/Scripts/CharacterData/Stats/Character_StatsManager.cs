@@ -1087,8 +1087,14 @@ public class StatsManager : I_StatsManager
 
 
 
-    [JsonIgnore] public bool isConsciousnessUnconscious { get { return hasStatusEXTag(StatsUtility.Stat_Tag_Unconscious); } }
-    [JsonIgnore] public bool isConsciousnessReduced { get { return hasStatusEXTag(StatsUtility.Stat_Tag_ConsReduced) || hasStatusEXTag(StatsUtility.Stat_Tag_Unconscious); } }
+    /// <summary>
+    /// Console command "forcePlayerConscious" override. false: use the game's system. true: always treated as conscious.
+    /// Not saved - resets to false on load.
+    /// </summary>
+    [JsonIgnore] public bool DebugForceConscious = false;
+
+    [JsonIgnore] public bool isConsciousnessUnconscious { get { return !DebugForceConscious && hasStatusEXTag(StatsUtility.Stat_Tag_Unconscious); } }
+    [JsonIgnore] public bool isConsciousnessReduced { get { return !DebugForceConscious && (hasStatusEXTag(StatsUtility.Stat_Tag_ConsReduced) || hasStatusEXTag(StatsUtility.Stat_Tag_Unconscious)); } }
 
     private StatusEx_Instance consciousness = null;
 

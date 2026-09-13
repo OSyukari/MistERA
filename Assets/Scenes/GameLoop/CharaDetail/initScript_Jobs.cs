@@ -58,7 +58,7 @@ public class initScript_Relations : MonoBehaviour
             rect.SetParent(parent.boxRelationshipList, false);
             listRelationship.Add(rect);
             var scrbox = rect.GetComponent<scr_box_relationship>();
-            RelationshipManager.Draw(rel, scrbox);
+            RelationshipManager.Draw(rel, scrbox, c == scr_System_CampaignManager.current.Player);
 
             if (safe)
             {

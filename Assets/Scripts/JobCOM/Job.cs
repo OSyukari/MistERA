@@ -590,6 +590,25 @@ public class Job : IDisposable, I_Disposable
         return results;
     }
 
+    /// <summary>
+    /// Returns true if any COM in <paramref name="coms"/> passes both its faction and inventory
+    /// requirement checks against this job - same factionReqOk/inventoryReqOk pre-filter used by
+    /// MakePackages, extracted so a generator parent's own button validation (e.g. a folder command
+    /// whose children are all currently unavailable) can cheaply ask "is any child currently reachable"
+    /// without building packages for all of them.
+    /// </summary>
+    public bool AnyComPassesFactionOrInventoryCheck(List<COM> coms)
+    {
+        if (coms == null) return false;
+        foreach (var com in coms)
+        {
+            bool factionReqOk = !com.hasFactionReq || com.requirements.requireFaction.Validate(FactionOwner, out var r);
+            bool inventoryReqOk = com.requirements.requireInventory == null || com.requirements.requireInventory.Validate(this, out var rInv);
+            if (factionReqOk && inventoryReqOk) return true;
+        }
+        return false;
+    }
+
     public virtual bool isCOMValid(COM com)
     {
         return allusableCOMs.Contains(com);

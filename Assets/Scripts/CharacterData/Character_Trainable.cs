@@ -1701,8 +1701,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         get
         {
+            // Already unconscious (any cause) - let them lie down regardless of schedule/time,
+            // otherwise an unconscious player can never issue any command, including sleep,
+            // and since time only advances on player command execution, that's a permanent hardlock.
+            if (this.Stats.isConsciousnessUnconscious) return true;
             var induced = this.Stats.FindStatusByExactID("chara_status_inducedSleep");
-            if (induced != null && induced.Severity > 5) return true;
+            if (induced != null && induced.SeverityDisplayable) return true;
             return false;
         }
     }

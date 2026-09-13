@@ -89,26 +89,36 @@ public class scr_panel_PlayerInfo : MonoBehaviour
     public RectTransform prefab_text_link;
 
     Dictionary<Status_Instance, scr_HoverableText> trackedStatus = new Dictionary<Status_Instance, scr_HoverableText>();
+    List<Status_Instance> _scratch_toRemove = new List<Status_Instance>();
+    HashSet<Status_Instance> _scratch_displayableSet = new HashSet<Status_Instance>();
 
     private void RefreshStatusBox()
     {
         var displayables = Chara.Stats.StatusInstances;
 
-        var tracked = trackedStatus.Keys.ToList();
-
-        var removed = tracked.Except(displayables);
-        var added = displayables.Except(tracked);
-
-        foreach (var r in removed)
+        _scratch_displayableSet.Clear();
+        for (int i = 0; i < displayables.Count; i++)
         {
+            if (displayables[i].Displayable) _scratch_displayableSet.Add(displayables[i]);
+        }
+
+        _scratch_toRemove.Clear();
+        foreach (var key in trackedStatus.Keys)
+        {
+            if (!_scratch_displayableSet.Contains(key)) _scratch_toRemove.Add(key);
+        }
+
+        for (int i = 0; i < _scratch_toRemove.Count; i++)
+        {
+            var r = _scratch_toRemove[i];
             var obj = trackedStatus[r];
             trackedStatus.Remove(r);
             DestroyImmediate(obj.gameObject);
         }
 
-        foreach(var a in added)
+        foreach (var a in _scratch_displayableSet)
         {
-            if (!a.Displayable) continue;
+            if (trackedStatus.ContainsKey(a)) continue;
             RectTransform box = Instantiate(prefab_text_link);
             box.SetParent(StatusBox, false);
             trackedStatus.Add(a, box.GetComponent<scr_HoverableText>());

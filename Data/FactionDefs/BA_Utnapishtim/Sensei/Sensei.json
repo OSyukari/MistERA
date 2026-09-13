@@ -11,12 +11,13 @@
                     "requireAction":false,
                     "requireMale":true
                 },
+                "random_portrait_folder":"Sensei_Anime",
                     
-                "portrait_offset_x": 20,    "portrait_offset_y": -235,    "portrait_offset_size": 0.9,
-                "icon_offset_x":0.0,            "icon_offset_y":-269,            "icon_offset_size":0.5,
+                "portrait_offset_x": 0,    "portrait_offset_y": -200,    "portrait_offset_size": 0.9,
+                "icon_offset_x":-9.2,            "icon_offset_y":-312.7,            "icon_offset_size":0.6,
 
-                "portrait_path":"BA_Utnapishtim/Sensei/Sensei_Male.png",
-                "icon_path":"BA_Utnapishtim/Sensei/Sensei_Male.png"
+                "portrait_path":"Sensei/Sensei_Anime/_36.webp",
+                "icon_path":"Sensei/Sensei_Anime/_36.webp"
             },
             {
                 "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
@@ -26,12 +27,13 @@
                     "requireAction":false,
                     "requireFemale":true
                 },
+                "random_portrait_folder":"Sensei_Xipa",
                     
-                "portrait_offset_x": 20,    "portrait_offset_y": -235,    "portrait_offset_size": 0.9,
-                "icon_offset_x":0.0,            "icon_offset_y":-269,            "icon_offset_size":0.5,
+                "portrait_offset_x": 0,    "portrait_offset_y": -200,    "portrait_offset_size": 0.9,
+                "icon_offset_x":0.0,            "icon_offset_y":-309,            "icon_offset_size":0.6,
 
-                "portrait_path":"BA_Utnapishtim/Sensei/Sensei_Female.png",
-                "icon_path":"BA_Utnapishtim/Sensei/Sensei_Female.png"
+                "portrait_path":"Sensei/Sensei_Xipa/_05.webp",
+                "icon_path":"Sensei/Sensei_Xipa/_05.webp"
             },
             {
                 "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",

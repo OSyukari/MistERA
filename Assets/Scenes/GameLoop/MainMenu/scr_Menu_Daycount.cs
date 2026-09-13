@@ -43,7 +43,14 @@ public class scr_Menu_Daycount : MonoBehaviour
 
         string dayofWeek = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_"+currentTime.DayOfWeek);
 
-        DayCount.text = text_dayCount.Replace("$yearCount$", (currentTime.Year - startTime.Year + 1).ToString()).Replace("$dayOfYear$", (dayCount.Days + 1).ToString());
+        int yearCount = currentTime.Year - startTime.Year + 1;
+        if (currentTime.Month < startTime.Month ||
+           (currentTime.Month == startTime.Month && currentTime.Day < startTime.Day))
+        {
+            yearCount--;
+        }
+
+        DayCount.text = text_dayCount.Replace("$yearCount$", yearCount.ToString()).Replace("$dayOfYear$", (dayCount.Days + 1).ToString());
         Seasons.text = text_month.Replace("$seasons$",Screen.width+"x"+Screen.height).Replace("$monthName$","").Replace("$dayOfWeek$", dayofWeek);
     }
 

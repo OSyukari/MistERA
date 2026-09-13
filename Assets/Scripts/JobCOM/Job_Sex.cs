@@ -21,6 +21,10 @@ public class Job_Sex_Group : Job
             return $"|Sex Job actors {String.Join("|",actorRefID)} rapists {String.Join("|", Rapist)}|";
         }
     }
+    public override bool isCOMValid(COM com)
+    {
+        return allusableCOMs.Contains(com) || com.comTags.Contains("allowedDuringSex");
+    }
     public override void DisposeInternal()
     {
         base.DisposeInternal();
@@ -171,6 +175,19 @@ public class Job_Sex_Group : Job
             return parentRoomRef;
         }
     }
+
+    /// <summary>
+    /// Job_Sex_Group has no single character "owner" like Job_CharaCOM does, so item access can't be
+    /// resolved from any one participant's home/work factions - unlike an interaction job, this job
+    /// can't change rooms during its lifetime, so item availability is resolved against the current
+    /// room's own faction owner only.
+    /// </summary>
+    public override List<I_IsJobGiver> GetValidInventoryFactions()
+    {
+        var faction = this.ParentRoom?.FactionOwner;
+        return faction != null ? new List<I_IsJobGiver> { faction } : new List<I_IsJobGiver>();
+    }
+
     public void SetForced(List<int> refID)
     {
        // Debug.Log("SetForced");
@@ -593,6 +610,22 @@ public class Job_Sex_Group : Job
                 ActionPackage ap = p.Copy();
                 packages_current.Add(ap);
                 if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);
+            }   // commands explicitly opted in to run during sex (e.g. ingest-item) - register directly like Undress, no extra processing
+            else if (packages[i] is ActionPackage_Interaction pInteract && pInteract.targetCOM != null && pInteract.targetCOM.comTags.Contains("allowedDuringSex"))
+            {
+                for (int ii = packages_current.Count - 1; ii >= 0; ii--)
+                {
+                    if (UtilityEX.DetectConflict(pInteract, packages_current[ii]))
+                    {   // leave the conflict package in previous to use for COM text selection purposes.
+                        packages_current[ii].PackageRepeat = false;
+                        packages_current[ii].DisablePackage();
+                        packages_previous.Add(packages_current[ii]);
+                        packages_current.RemoveAt(ii);
+                    }
+                }
+
+                ActionPackage ap = pInteract.Copy();
+                packages_current.Add(ap);
             }
             else
             {

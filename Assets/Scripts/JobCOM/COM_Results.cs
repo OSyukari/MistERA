@@ -10,8 +10,11 @@ public class COM_Results
     {
         //Manageable faction; // job.FactionOwner
 
-        bool isDoer = p.doer.Contains(c) || (p.targetCOM.requirements.TreatReceiverAsDoer && p.receiver.Contains(c));
-        bool isReceiver = p.receiver.Contains(c) || (p.targetCOM.requirements.TreatDoerAsReceiver && p.doer.Contains(c));
+        var variant = (p.COMVariantID >= 0 && p.targetCOM != null && p.COMVariantID < p.targetCOM.variants.Count) ? p.targetCOM.variants[p.COMVariantID] : null;
+        var effectiveRequirements = variant != null ? variant.requirements : p.targetCOM.requirements;
+
+        bool isDoer = p.doer.Contains(c) || (effectiveRequirements.TreatReceiverAsDoer && p.receiver.Contains(c));
+        bool isReceiver = p.receiver.Contains(c) || (effectiveRequirements.TreatDoerAsReceiver && p.doer.Contains(c));
 
         if (results_character != null) foreach (var result in results_character) ResultCharaUtility.Apply( result, evp, c, isDoer, isReceiver,log);
         if (results_jobContainer != null) foreach(var result in results_jobContainer) result.Apply(job, p, evp, c);

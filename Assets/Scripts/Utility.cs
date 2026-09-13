@@ -695,6 +695,11 @@ public static class UtilityEX
         if (p2 == null || jSex == null)
         {
             if (!Utility.ListContainsLoose(a.actorRefs, package.actorRefs)) return false;
+            else if (a.job != null && package.job != null && a.job.RefID == package.job.RefID)
+            {
+                if (log) Debug.Log("Detecting ActionPackage_Sex Conflict between " + a.DisplayName + " and " + package.DisplayName + " sharing same parent job, allowed to coexist");
+                return false;
+            }
             else
             {
 
@@ -1625,6 +1630,32 @@ public static class UtilityEX
                         Debug.LogError("parsing argument");
                         break;
                     }
+                }
+                break;
+            case "forceConscious":
+                if (parsed.Count() >= 3)
+                {
+                    if (int.TryParse(parsed[1], out int forceConsciousRef) && bool.TryParse(parsed[2], out bool forceConsciousValue))
+                    {
+                        var forceConsciousTarget = scr_System_CampaignManager.current.FindInstanceByID(forceConsciousRef);
+                        if (forceConsciousTarget == null)
+                        {
+                            Debug.LogError($"forceConscious: cannot find character [{forceConsciousRef}]");
+                        }
+                        else
+                        {
+                            forceConsciousTarget.Stats.DebugForceConscious = forceConsciousValue;
+                            parsedSuccessful = true;
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"parse console command {parsed[0]} error");
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"parse console command {parsed[0]} error");
                 }
                 break;
             case "ovulate":

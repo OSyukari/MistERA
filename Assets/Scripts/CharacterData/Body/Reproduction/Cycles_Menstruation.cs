@@ -88,7 +88,7 @@ public class Cycles_Menstruation : ReproductionCycle
         {
             return -1;
         }
-        else if (CycleStage == MenstruationStatus.PrePuberty)
+        else if (CycleStage == MenstruationStatus.PrePuberty || CycleStage == MenstruationStatus.PostPregnancy)
         {
             return (int)cycleValue;
         }

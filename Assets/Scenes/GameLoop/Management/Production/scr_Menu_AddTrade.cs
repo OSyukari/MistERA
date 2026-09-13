@@ -71,8 +71,9 @@ public class scr_Menu_AddTrade : scr_Menu, IPointerClickHandler
     {
         int recipeHash = AssertUniqueHash((entry.itemID+"|"+entry.itemCount.ToString()).GetHashCode());
         scr_addTrade box = Instantiate(prefab_trade);
-        box.LoadItemEntry(entry, source, target);
-        RegisterButton(recipeHash, box.Button, new Button_SelectTrade(this, entry, target, box.Button));
+        box.LoadItemEntry(entry, source, target, true);
+        // reversed source and target
+        RegisterButton(recipeHash, box.Button, new Button_SelectTrade(this, entry, source, box.Button));
         box.GetComponent<RectTransform>().SetParent(parent, false);
     }
 

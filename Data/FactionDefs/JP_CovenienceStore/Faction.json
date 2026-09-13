@@ -463,11 +463,11 @@
                 "variants":[
                     {
                         "displayable":false,
-                        "threshold":0
+                        "threshold":5
                     },
                     {
                         "displayName":"安眠效果: 轻微疲劳",
-                        "threshold":5,
+                        "threshold":25,
                         "stat_modifiers":[
                             {
                                 "statID":"chara_status_consciousness",

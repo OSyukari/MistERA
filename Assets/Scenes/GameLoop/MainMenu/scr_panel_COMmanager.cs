@@ -820,25 +820,10 @@ public class scr_panel_COMmanager : scr_Menu
                         if (c.hidden) continue;
 
                         //Debug.Log("Making Chara COM " + c.ID);
-                        if (c.comTags.Contains("initSex") || c.comTags.Contains("endSex"))
+                        var targetRect = GetManagedCOMRect(c.comTags);
+                        if (targetRect != null)
                         {
-                            MakeCOMButton(Box_InitiateSex, buttonPrefab_COM, jobChara, c, true, true);
-                        }
-                        else if (c.comTags.Contains("massage") && !c.comTags.Contains("sex"))
-                        {
-                            MakeCOMButton(Box_MassageCOMs, buttonPrefab_COM, jobChara, c, true, true);
-                        }
-                        else if (c.comTags.Contains("touch") && !c.comTags.Contains("sex"))
-                        {
-                            MakeCOMButton(Box_TouchCOMs, buttonPrefab_COM, jobChara, c, true, false);
-                        }
-                        else if (c.comTags.Contains("service") && !c.comTags.Contains("sex"))
-                        {
-                            MakeCOMButton(Box_ServiceCOMs, buttonPrefab_COM, jobChara, c, true, true);
-                        }
-                        else if (c.comTags.Contains("interaction") || c.comTags.Contains("action"))
-                        {
-                            MakeCOMButton(Box_InteractionCOMs, buttonPrefab_COM, jobChara, c, true, true);
+                            MakeCOMButton(targetRect, buttonPrefab_COM, jobChara, c, true, !c.comTags.Contains("touch"));
                         }
                         else
                         {
@@ -862,7 +847,7 @@ public class scr_panel_COMmanager : scr_Menu
                         if (c.comTags.Contains("interaction") || c.comTags.Contains("action"))
                         {
                            // Debug.Log("Making Player COM " + c.ID);
-                            MakeCOMButton(Box_InteractionCOMs, buttonPrefab_COM, jPlayer, c, true, true);
+                            MakeCOMButton(playerCOMRect.selfRect, buttonPrefab_COM, jPlayer, c, true, true);
                         }
                         else
                         {
@@ -1319,6 +1304,7 @@ public class scr_panel_COMmanager : scr_Menu
         indexCOM.Remove(matchKey);
     }
 
+
     public class ButtonValidator_validateAP : ButtonValidator, I_ButtonClickable
     {
         new scr_panel_COMmanager parent;
@@ -1331,7 +1317,7 @@ public class scr_panel_COMmanager : scr_Menu
         { 
             get { 
                 if (job == null) return null;
-                else return job.allusableCOMs.Find(x => x.ID == comID);
+                return scr_System_Serializer.current.MasterList.COMs.GetByID(comID);
             } 
         }
         Job job { get { return scr_System_CampaignManager.current.FindJobInstanceByID(jobRefID); } }
@@ -1371,6 +1357,7 @@ public class scr_panel_COMmanager : scr_Menu
             if (injectAP != null) this.cachedAP = injectAP;
             if (cachedAP == null) this.package_cache = null;
             else this.package_cache = cachedAP.Copy();
+
         }
 
         public override bool IsButtonValid()
@@ -1573,6 +1560,25 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    public List<comRect> managedCOMRect = new List<comRect>();
+
+    public comRect playerCOMRect;
+    /// <summary>
+    /// Data-driven replacement for the old per-comTag if/else chain routing a COM's button into one of
+    /// several fixed RectTransform fields (Box_TouchCOMs/Box_MassageCOMs/etc). Returns the selfRect of
+    /// the first managedCOMRect whose Match(comtags) accepts this COM's tags, or null if none do (in
+    /// which case, same as before, no button is created for it). Sex COMs never reach this - Job_Sex_Group
+    /// still routes via GetGrid/labelGrid, untouched.
+    /// </summary>
+    RectTransform GetManagedCOMRect(List<string> comtags)
+    {
+        foreach (var r in managedCOMRect)
+        {
+            if (r != null && r.Match(comtags)) return r.selfRect;
+        }
+        return null;
+    }
+
     public class ButtonValidator_validateCOM : ButtonValidator, I_ButtonClickable
     {
         new scr_panel_COMmanager parent;
@@ -1585,7 +1591,7 @@ public class scr_panel_COMmanager : scr_Menu
         { 
             get { 
                 if (job == null) return null;
-                return job.allusableCOMs.Find(x => x.ID == comID);
+                return scr_System_Serializer.current.MasterList.COMs.GetByID(comID);
             } 
         }
         Job job { get { return scr_System_CampaignManager.current.FindJobInstanceByID(jobRefID); } }
@@ -1611,8 +1617,8 @@ public class scr_panel_COMmanager : scr_Menu
         public ButtonValidator_validateCOM(scr_Menu parent, ActionPackage AP, scr_SelectableText text, bool COMRepeat = false, bool hidingOverride = false, bool allowChildPanel = true) :base(parent)
         {
             innerAP = AP;
-            this.package_cache = RemakePackage();
             this.parent = parent as scr_panel_COMmanager;
+            this.package_cache = RemakePackage();
             this.jobRefID = AP.job.RefID;
             this.comID = AP.targetCOM.ID;
             this.text = text;
@@ -1673,6 +1679,7 @@ public class scr_panel_COMmanager : scr_Menu
                 cachedDoers.Clear();
                 cachedReceivers.Clear();
             }
+
             return injectAP;
         }
 
@@ -1688,11 +1695,13 @@ public class scr_panel_COMmanager : scr_Menu
             return previous;
         }
 
+        bool returnVal = true;
+        bool display = true;
         public override bool IsButtonValid()
         {
-            bool returnVal = true;
+            returnVal = true;
             //returnVal = returnVal && (com != null) && (com.IsActorValid(0, scr_System_CampaignManager.current.CurrentTarget));
-            bool display = true;
+            display = true;
             //if (com.comTags.Contains("sex") && )
             if (!parent.gameObject.activeInHierarchy) return false;
             if (package == null)
@@ -1704,7 +1713,24 @@ public class scr_panel_COMmanager : scr_Menu
             if (scr_System_CampaignManager.current.DebugMode) tooltip = $"parentJob {this.job.DisplayName} refID {this.job.RefID}{(this.jobRefID != this.job.RefID ? " -> "+this.jobRefID : "")}\ntags: {String.Join(" ", package.ComTags)}{(package.targetCOM == null?"\n":$"\ncommand AC {package.targetCOM.baseAcceptanceValue}\n")}";
             else tooltip = "";
 
-            if (!parent.ValidateCOMByTags(com, out var index))
+            if (!com.isValid)
+            {
+                // Generator COM with zero currently-generated children (e.g. no item in the game
+                // matches its itemTag/route) - unconditionally hidden via the existing hidingOverride
+                // mechanism, regardless of this COM's own HideWhenInvalid setting.
+                returnVal = false;
+                display = false;
+                tooltip += "command has GenerateCOM but no currently generated children";
+            }
+            else if (com.GenerateCOM != null && !job.AnyComPassesFactionOrInventoryCheck(com.childCOMs))
+            {
+                // Children exist structurally, but none currently pass faction/inventory check (e.g. no
+                // item in a reachable faction right now) - invalid, but respects this COM's own
+                // HideWhenInvalid setting (no hidingOverride) rather than forcing a hide.
+                returnVal = false;
+                tooltip += "command has children but none currently pass faction/inventory check";
+            }
+            else if (!parent.ValidateCOMByTags(com, out var index))
             {
                 returnVal = false;
                 tooltip += $"package did not pass external validation {index}";
@@ -1729,7 +1755,17 @@ public class scr_panel_COMmanager : scr_Menu
                             package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0);
                         }
                     }
-                    else 
+                    else if (parent.TryOverrideForActiveSex(package, job, scr_System_CampaignManager.current.FindInstanceByID(job.targetActorRef)))
+                    {
+                        // Generator folder buttons keep their own jobRefID pointed at the original
+                        // Job_CharaCOM regardless - OnClickButton() passes this.job into
+                        // LoadChildCOMPanel to enumerate children, and Job_Sex_Group.allusableCOMs
+                        // deliberately excludes these commands (see UpdateAllUsableCOMs). Only leaf/
+                        // executable commands need their own jobRefID redirected too, so Execute() adds
+                        // the package to the sex job instead of the original Job_CharaCOM.
+                        if (com.childCOMs.Count < 1) ChangeValidatorReference(parent.currentSexJob, parent.currentSexJob.RefID);
+                    }
+                    else
                     {
                         var doers = new List<int>();
                         var receivers = new List<int>(cachedReceivers);
@@ -2013,6 +2049,14 @@ public class scr_panel_COMmanager : scr_Menu
         foreach (var ap in sourceJob.MakePackages(scr_System_CampaignManager.current.Player, false, true, true, sourceAP.targetCOM, debug ? ss : null))
         {
             //if (ap.targetCOM.ParentCOM == null || ap.targetCOM.ParentCOM != sourceAP.targetCOM) continue;
+            // Job.MakePackages always builds child packages with an empty receiver list (it has no
+            // knowledge of who the parent folder button was opened against) - re-inject the parent's
+            // already-resolved receiver(s) so each child's variant match (e.g. self vs administer-to-
+            // target) reflects the same target the folder itself was opened with.
+            if (!TryOverrideForActiveSex(ap, sourceJob, scr_System_CampaignManager.current.FindInstanceByID(sourceJob.targetActorRef)) && sourceAP.ReceiverRefs.Count > 0)
+            {
+                ap.ResetRequest(new List<int>(ap.DoerRefs), new List<int>(sourceAP.ReceiverRefs), 0);
+            }
             var index = MakeCOMButton(childCOMPanel.comList, buttonPrefab_COM, sourceJob, ap.targetCOM, true, false, ap, ap.DisplayName, false);
             if (index != -1 && !childCOMPanel.trackedIDs.Contains(index)) childCOMPanel.trackedIDs.Add(index);
             else
@@ -2055,6 +2099,23 @@ public class scr_panel_COMmanager : scr_Menu
     
     public List<int> SexComDoers;
     public List<int> SexComReceivers;
+
+    /// <summary>
+    /// If ap's COM is tagged "allowedDuringSex" and either currentJob is already the sex job (a button
+    /// that was redirected on a previous validation tick - its own targetActorRef no longer means
+    /// anything once currentJob is Job_Sex_Group, since that falls back to the unrelated global
+    /// CurrentTargetRef) or relevantTarget is currently in an active Job_Sex_Group, redirect ap's parent
+    /// job and doer/receiver/master to that sex job instead of the normal single-target flow, reusing
+    /// the sex panel's own actor-selection state (SexComDoers/SexComReceivers) - lets these commands
+    /// execute without evicting anyone from the sex job.
+    /// </summary>
+    private bool TryOverrideForActiveSex(ActionPackage ap, Job currentJob, Character_Trainable relevantTarget)
+    {
+        if (currentSexJob == null || ap == null || !ap.ComTags.Contains("allowedDuringSex")) return false; 
+        ap.ResetRequest(new List<int>(SexComDoers), new List<int>(SexComReceivers), 0);
+        ap.ReEstablishParent(currentSexJob);
+        return true;
+    }
 
     public RectTransform prefab_Canvas_charaDetail;
     public class ButtonValidator_InspectChara : ButtonValidator, I_ButtonClickable
