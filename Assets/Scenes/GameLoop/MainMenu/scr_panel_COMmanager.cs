@@ -1583,18 +1583,38 @@ public class scr_panel_COMmanager : scr_Menu
     {
         new scr_panel_COMmanager parent;
         int jobRefID;
+        int jobRefIDOverride = -1;
         string comID;
 
         scr_SelectableText text;
 
-        COM com 
-        { 
-            get { 
+        COM com
+        {
+            get {
                 if (job == null) return null;
                 return scr_System_Serializer.current.MasterList.COMs.GetByID(comID);
-            } 
+            }
         }
-        Job job { get { return scr_System_CampaignManager.current.FindJobInstanceByID(jobRefID); } }
+        /// <summary>
+        /// jobRefID is the button's permanent original job (e.g. the target's Job_CharaCOM), never
+        /// overwritten. jobRefIDOverride is a transient redirect (e.g. an active sex job) applied on top
+        /// via ChangeValidatorOverrideReference - tried first, but if that job no longer exists (sex job
+        /// ended/disposed) it's cleared and jobRefID is used instead. If jobRefID is also gone, this
+        /// returns null and callers treat the button as invalid.
+        /// </summary>
+        Job job
+        {
+            get
+            {
+                if (jobRefIDOverride != -1)
+                {
+                    var overrideJob = scr_System_CampaignManager.current.FindJobInstanceByID(jobRefIDOverride, false);
+                    if (overrideJob != null) return overrideJob;
+                    jobRefIDOverride = -1;
+                }
+                return scr_System_CampaignManager.current.FindJobInstanceByID(jobRefID);
+            }
+        }
 
         ActionPackage package_cache = null;
         ActionPackage package
@@ -1694,6 +1714,10 @@ public class scr_panel_COMmanager : scr_Menu
             this.jobRefID = jobRef;
             return previous;
         }
+        public void ChangeValidatorOverrideReference(Job job, int jobRef)
+        {
+            this.jobRefIDOverride = jobRef;
+        }
 
         bool returnVal = true;
         bool display = true;
@@ -1707,6 +1731,15 @@ public class scr_panel_COMmanager : scr_Menu
             if (package == null)
             {
                 Debug.LogError("COMVALIDATOR ISBUTTON VALID ERROR PACKAGE NULL");
+                return false;
+            }
+
+            if (job == null)
+            {
+                // both jobRefIDOverride (e.g. a sex job) and the original jobRefID are gone - nothing
+                // left to fall back to, so this button is invalid.
+                returnVal = false;
+                tooltip = "job null";
                 return false;
             }
 
@@ -1763,10 +1796,16 @@ public class scr_panel_COMmanager : scr_Menu
                         // deliberately excludes these commands (see UpdateAllUsableCOMs). Only leaf/
                         // executable commands need their own jobRefID redirected too, so Execute() adds
                         // the package to the sex job instead of the original Job_CharaCOM.
-                        if (com.childCOMs.Count < 1) ChangeValidatorReference(parent.currentSexJob, parent.currentSexJob.RefID);
+                        if (com.childCOMs.Count < 1) ChangeValidatorOverrideReference(parent.currentSexJob, parent.currentSexJob.RefID);
                     }
                     else
                     {
+                        // Resync package.job with the button's own (possibly just-fallen-back) job -
+                        // ReEstablishParent is cheap/idempotent, and without this a package that was
+                        // previously redirected to a sex job would keep pointing at it internally even
+                        // after this.job has already fallen back to the original job.
+                        if (package.job != job) package.ReEstablishParent(job);
+
                         var doers = new List<int>();
                         var receivers = new List<int>(cachedReceivers);
                         bool forbidInjectTarget = false;
@@ -2053,7 +2092,14 @@ public class scr_panel_COMmanager : scr_Menu
             // knowledge of who the parent folder button was opened against) - re-inject the parent's
             // already-resolved receiver(s) so each child's variant match (e.g. self vs administer-to-
             // target) reflects the same target the folder itself was opened with.
-            if (!TryOverrideForActiveSex(ap, sourceJob, scr_System_CampaignManager.current.FindInstanceByID(sourceJob.targetActorRef)) && sourceAP.ReceiverRefs.Count > 0)
+            // Deliberately NOT calling TryOverrideForActiveSex here: the AP-object constructor below
+            // reads AP.job.RefID straight into jobRefID (the button's permanent "original" slot), so
+            // pre-redirecting ap.job to the sex job here would bake the sex job in as the original and
+            // break the ChangeValidatorOverrideReference fallback if that job later ends. Instead, leave
+            // ap pointed at sourceJob (the real original) and let IsButtonValid()'s own generic
+            // TryOverrideForActiveSex branch apply the override on the button's first validation tick,
+            // exactly as it already does for plain (non-generator) leaf commands.
+            if (sourceAP.ReceiverRefs.Count > 0)
             {
                 ap.ResetRequest(new List<int>(ap.DoerRefs), new List<int>(sourceAP.ReceiverRefs), 0);
             }

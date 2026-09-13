@@ -98,8 +98,20 @@ public class Index_COM : I_IndexHasID, I_SerializationCallbackReceiver, I_NeedLa
 
                         if (hideChild) newCOM1.isHiddenChild = true;
 
-                        if (newCOM1.isValid && newCOMs.Find(x => x.ID == newCOM1.ID) == null) newCOMs.Add(newCOM1);
-                        else Debug.LogError($"already contain mealcom with id {newCOM1.ID}");
+                        if (!newCOM1.isValid)
+                        {
+                            // Not an error: this item just doesn't qualify for this particular generator
+                            // (e.g. an oral-only consumable failing COM_IngestItem's anus/vagina route
+                            // check) - itemTag matching is necessary but not sufficient for validity.
+                        }
+                        else if (newCOMs.Find(x => x.ID == newCOM1.ID) != null)
+                        {
+                            Debug.LogError($"already contain mealcom with id {newCOM1.ID}");
+                        }
+                        else
+                        {
+                            newCOMs.Add(newCOM1);
+                        }
                     }
                 }
             }

@@ -27,9 +27,17 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
             if (_base == null && BaseID != "") _base = scr_System_Serializer.current.GetByNameOrID_Item_Base(BaseID);
             return _base; } }
 
+    /// <summary>
+    /// Currency stacks in particular can grow huge (stack-merging in Inventory.AddItem, wallets, etc.),
+    /// so this adds via long math and clamps to [0, int.MaxValue] instead of letting the int addition
+    /// silently wrap around (e.g. a fortune flipping negative).
+    /// </summary>
     public void ModCount(int count)
     {
-        this.count += count;
+        long result = (long)this.count + count;
+        if (result > int.MaxValue) result = int.MaxValue;
+        else if (result < 0) result = 0;
+        this.count = (int)result;
     }
 
     //[JsonIgnore]
@@ -56,7 +64,7 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         }
     }
 
-    public void SetCount(int count) { this.count = count; }
+    public void SetCount(int count) { this.count = count < 0 ? 0 : count; }
     [JsonProperty] protected int count;
     [JsonIgnore] public int Count { get { return count - markTokenUsed; } }
     [JsonIgnore] public int InnerCount { get { return count; } }

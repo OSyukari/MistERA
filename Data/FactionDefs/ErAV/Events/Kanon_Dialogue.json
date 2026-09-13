@@ -412,28 +412,6 @@
                             ]
                         },
                         "line": "Kanon_Dialogue_inoffice_Explain02",
-                        "Results": [
-                            {
-                                "Type": "TransferItemByFactionID",
-                                "arguments": [
-                                    "ErAV_KiryuGumi_Office",
-                                    "ErAV_miyama_Household",
-                                    "item_recording_camera",
-                                    "1",
-                                    "true"
-                                ]
-                            },
-                            {
-                                "Type": "TransferItemByFactionID",
-                                "arguments": [
-                                    "ErAV_KiryuGumi_Office",
-                                    "ErAV_miyama_Household",
-                                    "item_recording_camera_Tape",
-                                    "3",
-                                    "true"
-                                ]
-                            }
-                        ],
                         "nextEntryLabel": "job_intro_explain_terms"
                     },
                     {
@@ -570,6 +548,26 @@
                             {
                                 "Type": "SetWorkFaction",
                                 "arguments": [ "self", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_director", "false", "true" ]
+                            },
+                            {
+                                "Type": "TransferItemByFactionID",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "ErAV_KiryuGumi_Filmstudio",
+                                    "item_recording_camera",
+                                    "1",
+                                    "true"
+                                ]
+                            },
+                            {
+                                "Type": "TransferItemByFactionID",
+                                "arguments": [
+                                    "ErAV_KiryuGumi_Office",
+                                    "ErAV_KiryuGumi_Filmstudio",
+                                    "item_recording_camera_Tape",
+                                    "3",
+                                    "true"
+                                ]
                             }
                         ],
                         "isLast": true

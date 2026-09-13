@@ -350,6 +350,14 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         var variant = (p.COMVariantID >= 0 && p.COMVariantID < variants.Count) ? variants[p.COMVariantID] : null;
         if ((variant == null || variant.useDefaultEventResult_AP) && results_AP.result_event != null) results_AP.result_event.Apply(p, null);
         if (variant != null && variant.result_event_AP != null) variant.result_event_AP.Apply(p, null);
+
+        // AP-scoped, fires once for the whole ActionPackage regardless of teammate count (unlike results_EP,
+        // which runs once per doer). Resolves the faction using the AP's own single doer.
+        if (p.executeSuccessful && results_AP.results_factionWide != null)
+        {
+            var c = p.doer.Count > 0 ? p.doer[0] : null;
+            if (c != null) foreach (var result in results_AP.results_factionWide) ResultFactionUtility.Apply(result, p.job, p, null, c);
+        }
     }
 
     public bool ValidateJob(Job j, out string msg)

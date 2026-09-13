@@ -13,10 +13,10 @@
     ],
     "requirements": {
         "requirement": {
-            "treatReceiverAsDoer": true
+            "treatReceiverAsDoer": false
         }
     },
-    "results_EP": {
+    "results_AP": {
         "results_factionWide": [
             {
                 "entry_results": {
@@ -37,7 +37,8 @@
         {
             "requirements": {
                 "requirement": {
-                    "doerCount": 99
+                    "doerCount": 1,
+                    "receiverCount":99
                 }
             },
             "displayName": "com_special_retailTrade_displayName_1"
