@@ -691,11 +691,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 trade.TargetFaction.DailyReport.AddTradeWarning($"{FactionDisplayName} failed to process transaction: {text}");
             }
         }
-
+        /*
         for(int i = TradeOrders.Count - 1; i >= 0; i--)
         {
             if (TradeOrders[i].Count < 1 && TradeOrders[i].orderType == ProductionOrderType.craftCount) TradeOrders.RemoveAt(i);
         }
+        */
     }
 
     [JsonProperty] protected int rallyJobID = -1;
