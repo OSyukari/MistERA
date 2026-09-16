@@ -9,6 +9,12 @@
                 "floorHeight":500.0,
                 "resize":1.75,
                 "mapExit":"store_1F_entrance",
+                "_comment_wholeBuildingRent":"commercial storefront lease, charged monthly",
+                "wholeBuildingRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 40000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 350000 },
+                    "cadence": "Monthly"
+                },
                 "exits":[
                     {
                         "ID":"South",

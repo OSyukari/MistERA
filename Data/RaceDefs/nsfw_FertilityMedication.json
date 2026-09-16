@@ -38,7 +38,16 @@
                     }
                 },
                 "variants": [
-                    { "displayable": false, "threshold": 0 },
+                    { 
+                        "displayName": "",
+                        "displayable": false, 
+                        "threshold": 0 
+                    },
+                    { 
+                        "displayName": "",
+                        "displayable": false, 
+                        "threshold": 25 
+                    },
                     {
                         "displayName": "chara_status_fertility_boost_1",
                         "threshold": 50,

@@ -142,16 +142,17 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "debt_status_check",
-                        "_comment": "Block A - debt-cycle commentary. Only fires once at least one repayment cycle has passed (erav_debt_month >= 1). Independent of, and always evaluated before, the job-offer block below.",
+                        "_comment": "Block A - debt-cycle commentary. Only fires once at least one repayment cycle has passed (requireFactionDebt resolvedCount >= 1, in units of the debt's own cadence). Independent of, and always evaluated before, the job-offer block below.",
                         "options": [
                             {
                                 "option": "debt_month_reached",
                                 "self_chara_conditions": [
                                     {
-                                        "requireKojoVariable": {
-                                            "variableID": "erav_debt_month",
-                                            "operand": "gte",
-                                            "value": 1
+                                        "requireFactionDebt": {
+                                            "borrowerFactionID": "ErAV_miyama_Household",
+                                            "lenderFactionID": "ErAV_KiryuGumi_Office",
+                                            "resolvedCount": 1,
+                                            "operand": "gte"
                                         }
                                     }
                                 ],
@@ -398,6 +399,16 @@
                             "selfTags": [ "yakuza", "focused", "serious" ]
                         },
                         "line": "Kanon_Dialogue_inoffice_Explain01",
+                        "nextEntryLabel": "job_intro_explain_studio"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "job_intro_explain_studio",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Explain01b",
                         "nextEntryLabel": "job_intro_explain_equipment"
                     },
                     {
@@ -636,6 +647,7 @@
                 "Kanon_Dialogue_inoffice_firstMeeting_verydelayed": "「……我还当你改了主意。」",
 
                 "Kanon_Dialogue_inoffice_Explain01": "$kanon.name$起身走到靠墙的柜子前，拉开抽屉。\n「把话说明白——桐生组做的是成人影像这桩生意，拍出来，卖出去。你来当监督，负责拍摄，拍成了交到我这里分销。这一行赚得快，足够你还清那笔债。」",
+                "Kanon_Dialogue_inoffice_Explain01b": "「桐生组名下正好有一间空置的摄影棚——宫间映画，从今天起交给你打理，算是分店，你就是这儿的负责人。」\n「场地租金加维护费，一个月四十六万，跟你欠我们那笔利息是两本账，分开算、按月照收，没有人替你出这份钱。」\n「说白了，你这个月要担的数目翻了不止一倍。不过这买卖做起来，赚头远不止还债那点——够不够本，看你自己的本事。」",
                 "Kanon_Dialogue_inoffice_Explain02": "她从抽屉里取出摄影机和几盘空白录像带，搁到桌上。\n「这些先拿去用，算桐生组借给你的。拍什么、怎么拍，由你自己斟酌。」",
                 "Kanon_Dialogue_inoffice_Explain03": "「销售收入由事务所统一经手。你只需在毕业前把债还清，提前还清也随你。渠道、发行那些琐事，我这边会处理好，款项当场结清。」\n「只要你肯用心去做，桐生组保你们兄妹平安无事。若是做得好，我还能拨出些许自由活动的时间给你。」\n「事务所的人手由我安排，顺带也替我盯着你——这层意思，你该明白。」",
                 "Kanon_Dialogue_inoffice_Explain04": "「你负责拍AV，我们负责销售，赚的足够你还债。」\n「至于女优的人选，我手里有一份名单，都是事先考察过的。你想看的话，回头拿给你。」",

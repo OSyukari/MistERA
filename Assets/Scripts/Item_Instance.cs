@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 
@@ -82,6 +83,28 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
             if (comp == null) continue;
             var comp2 = item.compInstances.Find(x => x.CompType == comp.CompType);
             if (comp2 == null || !comp.canMergeWith(comp2)) return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Whether this item's per-instance state can be combined with item's (e.g. two liquids' amounts
+    /// summed), as opposed to canStackWith which asks whether two instances are identical enough to
+    /// collapse into one inventory stack (same Count, same everything). Basic identity still has to
+    /// match - same BaseID/name/token-ness - but unlike canStackWith, every component instance must
+    /// explicitly agree via canMergeComp rather than defaulting to allowed.
+    /// </summary>
+    public virtual bool canMergeComp(Item_Instance item)
+    {
+        if (this.isToken != item.isToken) return false;
+        if (this.BaseID != item.BaseID) return false;
+        if (this.nameOverwrite != item.nameOverwrite) return false;
+
+        foreach (var comp in this.compInstances)
+        {
+            if (comp == null) continue;
+            var comp2 = item.compInstances.Find(x => x.CompType == comp.CompType);
+            if (comp2 == null || !comp.canMergeComp(comp2)) return false;
         }
         return true;
     }
@@ -208,6 +231,8 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         }
     }
 
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
     public string nameOverwrite = "";
     [JsonProperty] protected List<ItemComponent_Base> compInstances = new List<ItemComponent_Base>();
     protected List<ItemComponent_Base> compInstances_nonSerialized = new List<ItemComponent_Base>();
@@ -351,8 +376,8 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         this.count = count;
     }
 
-    [JsonProperty] public int markTokenUsed = 0;
-    [JsonProperty] public bool markForDelete = false;
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)] public int markTokenUsed = 0;
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)] public bool markForDelete = false;
 
     public void Tick(TimeSpan t)
     {

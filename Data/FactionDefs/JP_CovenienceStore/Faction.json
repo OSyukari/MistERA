@@ -7,6 +7,8 @@
                 "ID":"jp_convenience_store_SunMart",
                 "z_rotation":0.0,
                 "setPrivateRoomOwner":true,
+                "isRentingFloor": true,
+                "_comment_isRentingFloor": "leases the storefront, unspecified landlord",
                 "mainExit": { "roomID": "store_1F_entrance", "exitCost": 5 },
                 "floors":
                 [
@@ -68,7 +70,8 @@
                     "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
                     "workCommands":["jp_convenience_store_frontDesk"],
                     "activeHours":[ 6, 7, 8, 9,10,11,12,13],
-                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1200" }  ]
+                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1200" }  ],
+                    "paymentCadence":"Daily"
                 }
             },
             {
@@ -90,7 +93,8 @@
                     "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
                     "workCommands":["jp_convenience_store_frontDesk"],
                     "activeHours":[14,15,16,17,18,19,20,21],
-                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1200" }  ]
+                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1200" }  ],
+                    "paymentCadence":"Daily"
                 }
             },
             {
@@ -112,7 +116,8 @@
                     "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
                     "workCommands":["jp_convenience_store_frontDesk"],
                     "activeHours":[22,23, 0, 1, 2, 3, 4, 5],
-                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1500" }  ]
+                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1500" }  ],
+                    "paymentCadence":"Daily"
                 }
             }
         ]
@@ -358,6 +363,7 @@
                     {
                         "compType":"ItemComponent_Ingestible",
                         "comp_Ingestible":{
+                            "isLiquid":true,
                             "ingestMethod":[
                                 {
                                     "bodyTags":"stomach",
@@ -391,6 +397,7 @@
                     {
                         "compType":"ItemComponent_Ingestible",
                         "comp_Ingestible":{
+                            "isLiquid":true,
                             "ingestMethod":[
                                 {
                                     "bodyTags":"stomach",
@@ -462,6 +469,7 @@
                 } ,
                 "variants":[
                     {
+                        "displayName":"",
                         "displayable":false,
                         "threshold":5
                     },

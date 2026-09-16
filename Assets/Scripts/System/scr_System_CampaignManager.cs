@@ -242,7 +242,6 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.refIDCounter = refIDCounter;
 
         obj.DeletedRefIDs = deletedRefIDs;
-        if (this.Recycler.ContentRefs.Count > 0) obj.DeletedRefIDs.AddRange(this.Recycler.ContentRefs);
 
         obj.Items = Index_ItemReferenceID;
         obj.Party = party;
@@ -274,6 +273,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
         PartyCleanup();
         ExpeditionInstancesCleanup();
+
+        // Recycler is a session-only sink whose contents were never meant to survive a save (see its
+        // doc comment) - actually unregister them now so their refIDs land in deletedRefIDs for real,
+        // instead of the item surviving the save/load round-trip fully live under the same refID.
+        Recycler.Destroy();
     }
 
     protected void PartyCleanup()
@@ -295,6 +299,14 @@ public class scr_System_CampaignManager : MonoBehaviour
         foreach (var i in Index_ItemReferenceID.Values) i.DisposeInternal();
         Index_ItemReferenceID.Clear();
 
+        // Recycler is a plain field on this singleton, not part of the serialized data, so loading
+        // mid-session would otherwise leave it holding stale pre-load contentRefs pointing at items
+        // just disposed above. Reset outright rather than Destroy(): those refIDs may now coincide
+        // with unrelated items from the newly-loaded save (refIDs get recycled), and Destroy() would
+        // either blow up looking up an already-gone item or, worse, unregister an unrelated live one
+        // on the next save.
+        Recycler = new FactionInventory();
+
         foreach (var i in Index_JobReferenceID.Values) i.DisposeInternal();
         Index_JobReferenceID.Clear();
 
@@ -313,7 +325,11 @@ public class scr_System_CampaignManager : MonoBehaviour
         deterministicThreshold = obj.deterministicThreshold;
 
         refIDCounter = obj.refIDCounter;
-        deletedRefIDs = obj.DeletedRefIDs;
+        deletedRefIDs = obj.DeletedRefIDs ?? new List<int>();
+        // Must happen now, before anything below can call GetRefID (AddWorldTemplate/
+        // ProcessPlayerInit/ProcessNPCInit) - a duplicate entry left in place could get popped out
+        // and handed to two different freshly-created objects, colliding with each other.
+        DedupeDeletedRefIDs();
 
         this.CurrentCampaignID = obj.campaignSettingID;
         this.currentWorldPlanIDs = obj.WorldPlanIDs ?? new List<string>();
@@ -370,6 +386,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         this.specialUpdateJobs = obj.specialUpdateJobs != null ? obj.specialUpdateJobs : new List<int>();
 
         this._uniqueExpeditionInstances = null;
+
+        // Every registry GetRefID can be checked against is live now.
+        ScrubDeletedRefIDs();
 
         this.statisRoomID = obj.statisRoomRef;
         this.tempRoomID = obj.tempRoomRef;
@@ -2246,11 +2265,95 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
     private int refIDCounter;
+    /// <summary>
+    /// Pops a freed refID off deletedRefIDs LIFO (cheap List.RemoveAt at the end, no shifting) if one
+    /// is available, else hands out a fresh monotonic one. Safe to reuse without re-validating here:
+    /// PreSaveCleanup destroys Recycler's contents before every save so nothing still-live ever gets
+    /// added going forward, and ScrubDeletedRefIDs removes any pre-existing bad entry once at load.
+    /// </summary>
     protected int GetRefID { get {
+            if (deletedRefIDs.Count > 0)
+            {
+                int reused = deletedRefIDs[deletedRefIDs.Count - 1];
+                deletedRefIDs.RemoveAt(deletedRefIDs.Count - 1);
+                return reused;
+            }
             refIDCounter++;
             return refIDCounter - 1; } }
 
     [SerializeField] protected List<int> deletedRefIDs;
+
+    /// <summary>
+    /// Removes duplicate entries from deletedRefIDs (the old Recycler-at-save-time bug re-added the
+    /// same still-live item's refID on every single save, so a long playthrough's save can carry many
+    /// repeats here - large enough that Utility.DistinctInPlace's O(N^2) nested loop, fine for the
+    /// short lists it's normally used on, is far too slow). Just rebuild the list from a HashSet -
+    /// this runs once at load, so the extra allocation doesn't matter, only the speed does.
+    ///
+    /// Must run immediately once deletedRefIDs is assigned in LoadSerializable, before anything else
+    /// in that method can call GetRefID - otherwise two copies of the same duplicated entry could
+    /// each get popped out and handed to two different freshly-created objects, colliding with
+    /// each other.
+    /// </summary>
+    private void DedupeDeletedRefIDs()
+    {
+        deletedRefIDs = new List<int>(new HashSet<int>(deletedRefIDs));
+    }
+
+    /// <summary>
+    /// Called once right after loading, once every registry GetRefID draws refIDs from is live (and
+    /// after DedupeDeletedRefIDs has already run, so every candidate here is unique). Older saves can
+    /// carry a deletedRefIDs entry that's actually still in use (predates the Recycler.Destroy() fix
+    /// in PreSaveCleanup, or other legacy corruption). Single O(N) forward pass with write-pointer
+    /// compaction rather than N calls to List.RemoveAt (each O(N) for a non-tail index) - a long
+    /// playthrough's save can carry tens of thousands of entries here.
+    ///
+    /// For an item specifically, "its refID is in deletedRefIDs AND Index_ItemReferenceID still
+    /// holds it" is an unambiguous fingerprint of old Recycler trash: under the pre-fix save code,
+    /// the item was serialized fully alive while its refID was separately (and wrongly) dumped into
+    /// DeletedRefIDs at the same time. Now that PreSaveCleanup actually destroys Recycler's contents
+    /// before every save, nothing else can produce that combination - so it's actually unregistered
+    /// here instead of just being left behind as a permanent zombie item.
+    ///
+    /// Any other type (character/job/room/floor/expedition) just gets the stale entry dropped; a
+    /// conflict there isn't provably trash the way it is for items, and destroying a live object on
+    /// the strength of a bookkeeping error would be a real regression.
+    /// </summary>
+    private void ScrubDeletedRefIDs()
+    {
+        List<Item_Instance> trashItems = null;
+        int writeIndex = 0;
+
+        for (int readIndex = 0; readIndex < deletedRefIDs.Count; readIndex++)
+        {
+            int candidate = deletedRefIDs[readIndex];
+
+            if (Index_ItemReferenceID.TryGetValue(candidate, out var trashItem))
+            {
+                if (trashItems == null) trashItems = new List<Item_Instance>();
+                trashItems.Add(trashItem);
+                continue;
+            }
+
+            bool stillInUse = Index_referenceID.ContainsKey(candidate)
+                || Index_JobReferenceID.ContainsKey(candidate)
+                || Index_ExpeditionInstances.ContainsKey(candidate)
+                || map.HasRoomWithRef(candidate)
+                || map.HasFloorWithRef(candidate);
+            if (stillInUse) continue;
+
+            deletedRefIDs[writeIndex] = candidate;
+            writeIndex++;
+        }
+        deletedRefIDs.RemoveRange(writeIndex, deletedRefIDs.Count - writeIndex);
+
+        // Deferred until after compaction: Unregister() re-appends each item's freed refID to
+        // deletedRefIDs, which would otherwise interleave more writes into the list mid-pass.
+        if (trashItems != null)
+        {
+            foreach (var item in trashItems) Unregister(item);
+        }
+    }
 
     public void UnregisterRoom(int refID)
     {
@@ -2286,6 +2389,13 @@ public class scr_System_CampaignManager : MonoBehaviour
         foreach(var m in c.FactionManager.Factions)
         {
             m.RemoveFromFaction(c);
+        }
+        // A captor faction holding c isn't necessarily one of c's own factions above (kidnappedTime
+        // is keyed on the captor, not the captive's membership), so it needs its own sweep across
+        // every faction rather than relying on the FactionManager.Factions loop.
+        foreach (var m in organizations.Values)
+        {
+            m.NotifyCharaRescued(c);
         }
         c.DisposeInternal();
     }
@@ -2909,7 +3019,7 @@ public static class WorldManager
             // add floor to faction and set all chara in map as faction member and set private room ownership
             foreach (var f in list.Values)
             {
-                org.AddToFaction(f, true, map.setPrivateRoomOwner);
+                org.AddToFaction(f, true, map.setPrivateRoomOwner, map.isRentingFloor, map.landlordFactionID);
             }
             
             foreach (var ini in map.initializers)

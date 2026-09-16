@@ -159,21 +159,13 @@
                         "line": "event_OpeningErAV_L19",
                         "Results": [
                             {
-                                "Type": "SetSelfKojoVariable",
+                                "Type": "AddDebtObligation",
                                 "arguments": [
-                                    "self",
-                                    "false",
-                                    "erav_kanon_debt_total",
+                                    "ErAV_miyama_Household",
+                                    "ErAV_KiryuGumi_Office",
+                                    "debtclass_erav_kanon",
+                                    "currency_JPY",
                                     "30000000"
-                                ]
-                            },
-                            {
-                                "Type": "SetSelfKojoVariable",
-                                "arguments": [
-                                    "self",
-                                    "false",
-                                    "erav_debt_month",
-                                    "0"
                                 ]
                             }
                         ]

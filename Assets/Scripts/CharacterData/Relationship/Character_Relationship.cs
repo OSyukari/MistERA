@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -124,6 +125,8 @@ public class Character_Relationship
     [JsonProperty] int targetRefID = -1;
     [JsonProperty] string targetBaseID = "";
     [JsonProperty] string targetRaceID = "";
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
     public string displayName = "";
     [JsonIgnore] public bool displayable { get { return targetRefID != -1 && this.Owner.RefID != targetRefID; } }
 
@@ -587,8 +590,11 @@ public class Character_Relationship
         _Relationship_Personal = null;
         this.isA_Personal = isA;
     }
-    [JsonProperty] string relationshipTypeID_Bio = "";
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
+    string relationshipTypeID_Bio = "";
     protected RelationshipType _Relationship_Bio = null;
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public bool isA_Bio = false;
     [JsonIgnore]
     public RelationshipType Relationship_Bio
@@ -743,8 +749,11 @@ public class Character_Relationship
     }
 
 
-    [JsonProperty] string relationshipTypeID_Personal = "";
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
+    string relationshipTypeID_Personal = "";
     protected RelationshipType _Relationship_Personal = null;
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public bool isA_Personal = false;
     [JsonIgnore]
     public RelationshipType Relationship_Personal
@@ -1171,7 +1180,7 @@ public class Character_Relationship
 
     }
 
-    public string relationText = "";
+    [JsonIgnore] public string relationText = "";
     public void ReEstablishParent(RelationshipManager manager)
     {
         this.Manager = manager;

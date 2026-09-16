@@ -656,9 +656,9 @@ public class StatsManager : I_StatsManager
     }
 
     protected List<Stat_Modifier> modifiers = new List<Stat_Modifier>();
-    public List<Stat_Modifier> Modifiers { get { return this.modifiers; } }
+    [JsonIgnore] public List<Stat_Modifier> Modifiers { get { return this.modifiers; } }
     protected List<Stat_Modifier> modifiers_temporary = new List<Stat_Modifier>();
-    public List<Stat_Modifier> Modifiers_Temporary { get { return this.modifiers_temporary; } }
+    [JsonIgnore] public List<Stat_Modifier> Modifiers_Temporary { get { return this.modifiers_temporary; } }
 
     public void GetModifiers(List<Stat_Modifier> results, Stats_Derived_Base obj, string statID, List<string> contexts = null, bool forbidStatus = false)
     {

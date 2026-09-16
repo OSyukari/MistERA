@@ -7,6 +7,7 @@
                 "cooldownRestrictSelf": true,
                 "cooldownRestrictTarget": true,
                 "cooldownRestrictAND": true,
+                "manualCooldown": true,
                 "SelfValidator": {
                     "chara_conditions": [
                         {
@@ -119,6 +120,14 @@
                             {
                                 "option": "event_CharaLeaveRoom_ev01_op2",
                                 "Results": [
+                                    {
+                                        "Type": "AddCooldown",
+                                        "arguments": [
+                                            "RequestLeave_PrivateAction",
+                                            "requestFrom",
+                                            "self"
+                                        ]
+                                    },
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [

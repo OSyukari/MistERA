@@ -209,7 +209,7 @@
                                 "option": "silent branch event, this shouldnt be displayed",
                                 "Results": [
                                     {
-                                        "Type": "ExecuteCallback",
+                                        "Type": "ExecuteCallbackPermissive",
                                         "arguments": [
                                             "OnRefusedJoin"
                                         ]

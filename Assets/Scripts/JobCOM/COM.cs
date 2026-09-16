@@ -426,6 +426,8 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     public bool allowInPrivateRoom = false;
     public virtual string DisplayName(Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs = null, bool excludeRequireExisting = false, int actorCountMult = 1)
     {
+        // Display-only - no Master actor available here, so requireInventory's checkMaster role is
+        // simply skipped (same as passing master: null into GetValidVariant).
         int index = GetValidVariant(sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
         if (index < 0) return LocalizeDictionary.QueryThenParse(this.displayName);
         else return LocalizeDictionary.QueryThenParse(variants[index].displayName);
@@ -448,10 +450,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     [JsonIgnore] public bool isSleepCOM { get { return ID == "com_furniture_sleep"; } }
     [JsonIgnore] public bool isRecreationCOM { get { return !isSleepCOM && !isJobCOM; } }
 
-    public int GetValidVariant(Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
+    public int GetValidVariant(Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1, Character_Trainable master = null)
     {
         List<string> s = new List<string>();
-        return GetValidVariant(ref s, sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult);
+        return GetValidVariant(ref s, sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult, master);
     }
 
     public int GetValidVariant(Character_Trainable doerRefIDs, bool excludeRequireExisting = false)
@@ -505,7 +507,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
 
     [JsonIgnore] public bool AllowDuringSex { get { return comTags.Contains("sex") || comTags.Contains("canbeignored") || comTags.Contains("initSex") || comTags.Contains("endSex") || comTags.Contains("allowedDuringSex"); } }
 
-    public int GetValidVariant(ref List<string> tooltip, Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1)
+    public int GetValidVariant(ref List<string> tooltip, Job sourceJob, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, bool excludeRequireExisting = false, int actorCountMult = 1, Character_Trainable master = null)
     {
         int index = -1;
         bool logging = tooltip != null && !scr_UpdateHandler.current.Updating;
@@ -515,7 +517,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (logging) tooltip.Add(tooltips);
             return -1;
         }
-        if (this.requirements.requireInventory != null && !requirements.requireInventory.Validate(sourceJob, out var tooltipsInv))
+        if (this.requirements.requireInventory != null && !requirements.requireInventory.Validate(sourceJob, doerRefIDs, receiverRefIDs, master, out var tooltipsInv))
         {
             if (logging) tooltip.Add(tooltipsInv);
             return -1;
@@ -624,7 +626,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 s2.Add($"{DisplayName(i)}: {tooltips2}");
                 continue;
             }
-            if (this.requirements.requireInventory != null && !requirements.requireInventory.Validate(sourceJob, out var tooltips2Inv))
+            if (this.requirements.requireInventory != null && !requirements.requireInventory.Validate(sourceJob, doerRefIDs, receiverRefIDs, master, out var tooltips2Inv))
             {
                 s2.Add($"{DisplayName(i)}: {tooltips2Inv}");
                 continue;

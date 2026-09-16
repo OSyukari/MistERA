@@ -408,6 +408,21 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         if (!scr_System_CentralControl.current.isSafeMode) this.Body.CheckClimax(this.InteractionJob.m);
         this.Relationships.ClearEPCache();
+        CheckConsciousness();
+    }
+
+    /// <summary>
+    /// Cause-agnostic consciousness edge detector: whichever unconscious cause (sleep, pain, etc.)
+    /// happens first starts the shared snapshot; WakeUp() is the sole consumer regardless of cause,
+    /// since sleep's own trigger already no-ops correctly while a different cause still holds the
+    /// character under (Memory.consciousnessMemory just stays populated until that resolves).
+    /// </summary>
+    private void CheckConsciousness()
+    {
+        if (this.isTemporaryActor) return;
+
+        if (Stats.isConsciousnessUnconscious) Memory.ConsciousnessLost_TryStart();
+        else if (Memory.consciousnessMemory != null) WakeUp(true);
     }
 
     private void PostUpdateTime3()
@@ -797,7 +812,6 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     public void NotifyFactionChange()
     {
         this.Relationships.NotifyFactionChange();
-        this.InteractionJob?.InvalidateInventoryFactionsCache();
     }
 
     // Recovery
@@ -2163,22 +2177,23 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 callbacks.AddRange(apEventCollector);
 
                 var selfTags = new List<string>();
-                if (Memory == null || Memory.sleepMemory == null)
+                if (Memory == null || Memory.consciousnessMemory == null)
                 {
-                    Debug.LogError($"{FirstName} error no sleep memory");
+                    Debug.LogError($"{FirstName} error no consciousness memory");
                 }
-                else if (!Utility.ListEquals(Memory.sleepMemory.lastEquipRefs, EquippedItemRefs))
+                else if (!Utility.ListEquals(Memory.consciousnessMemory.lastEquipRefs, EquippedItemRefs))
                 {
                     selfTags.Add("removedClothing");
                 }
                 bool foundCum = false;
-                foreach (var organ in this.Body.Internals)
+                if (Memory != null && Memory.consciousnessMemory != null)
                 {
-                    if (foundCum) break;
-                    foreach (var content in organ.Contains)
+                    foreach (var organ in this.Body.Internals)
                     {
                         if (foundCum) break;
-                        if (content is Item_Instance_Cum)
+                        if (!organ.canContain) continue;
+                        int baseline = Memory.consciousnessMemory.container.TryGetValue(organ.baseID, out var b) ? b : 0;
+                        if ((int)organ.CurrentlyContained > baseline && organ.ContainsCum)
                         {
                             selfTags.Add("cum");
                             foundCum = true;
@@ -2278,7 +2293,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 // so, if last memory is ended and uncons, then, problem!
 
                 this.Stats.RefreshAllStats();
-                Memory.SleepEnd();
+                Memory.ConsciousnessRegained_End();
 
 
                 /*
@@ -2363,7 +2378,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_begin"));
         this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" });
 
-        Memory.SleepStart();
+        Memory.ConsciousnessLost_TryStart();
 
         if (scr_System_CampaignManager.current.Player == this)
         {

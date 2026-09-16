@@ -80,4 +80,8 @@ public class QuestCharaRequirement
     /// "self" resolves the character's own self-relationship (FindRelationshipWith(self)).
     /// </summary>
     public string relationshipTargetKey = "self";
+
+    /// <summary>Debt/loan comparators between two named factions - see RequireFactionDebt. Needs no
+    /// relationshipTargetKey (unlike requireKojoVariables), since it isn't scoped to any character.</summary>
+    public List<RequireFactionDebt> requireFactionDebts = new List<RequireFactionDebt>();
 }

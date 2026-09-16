@@ -252,6 +252,24 @@ public static class QuestUtility
             if (!valid) return false;
         }
 
+        if (req.requireFactionDebts.Count > 0)
+        {
+            bool valid = true;
+            foreach (var debtReq in req.requireFactionDebts)
+            {
+                if (!debtReq.isValid) continue;
+
+                if (debtReq.appendStringKey != "")
+                {
+                    if (!appendStrings.ContainsKey(debtReq.appendStringKey)) appendStrings.Add(debtReq.appendStringKey, new List<string>());
+                    appendStrings[debtReq.appendStringKey].Add(debtReq.CurrentAmount.ToString());
+                }
+
+                if (!debtReq.Validate()) valid = false;
+            }
+            if (!valid) return false;
+        }
+
         return true;
     }
 }

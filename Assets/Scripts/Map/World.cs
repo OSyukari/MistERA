@@ -50,6 +50,16 @@ public class WorldPlan
     /// </summary>
     public string playerInitLocationFaction = "";
 
+    /// <summary>
+    /// World-level fallback rent payment-outcome events - used by Obligation_Rent.HandlePaymentEvent when
+    /// the tenant's rented floor has no concrete landlord override (MapPlan.onRentPaidEventID/
+    /// onRentFailedEventID on the landlord's own template) set. Participates in the parentWorldID
+    /// inheritance chain like the other unset-falls-back-to-parent fields above, so e.g. an ErAV-specific
+    /// world can leave these empty and inherit a shared default from a broader parent world (JP World).
+    /// </summary>
+    public string onRentPaidEventID = "";
+    public string onRentFailedEventID = "";
+
     // while traveling, where is the NPC?
     // -> move to worldspace temporary room with AP cannot be interrupted
     public List<DoorConnection> doors = new List<DoorConnection>();

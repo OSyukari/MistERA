@@ -53,6 +53,8 @@
                 "z_rotation": 0.0,
                 "setPrivateRoomOwner": true,
                 "isPublic": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "the Miyama family owns their home outright",
                 "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 5 },
                 "floors": [
         {

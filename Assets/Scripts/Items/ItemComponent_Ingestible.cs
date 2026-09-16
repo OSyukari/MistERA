@@ -45,6 +45,18 @@ public class ItemComponentTemplate_Ingestible
             newinstance.giveStatus = targetmethod.giveStatus;
             return newinstance;
         }
+
+        /// <summary>
+        /// Dilutes this addon's amountMod by factor (its share of some new total amount) - same
+        /// amount-weighted concentration math as Mix, used when merging two liquid stacks so an addon
+        /// calibrated against its item's old (pre-merge) amount stays accurate against the combined one.
+        /// </summary>
+        public Ingestible_IngestMethod Rescale(float factor)
+        {
+            var newinstance = this.Copy();
+            newinstance.amountMod *= factor;
+            return newinstance;
+        }
     }
 
     public List<OnUseEffect> OnUseEffects = new List<OnUseEffect>();
@@ -109,6 +121,39 @@ public class ItemComponent_Ingestible : ItemComponent_Base
         if (!(other is ItemComponent_Ingestible)) return false;
         var other2 = other as ItemComponent_Ingestible;
         return base.canMergeWith(other) && (this.amount == other2.amount) && this.ingestMethod_addons.Count < 1 && other2.ingestMethod_addons.Count < 1;
+    }
+
+    /// <summary>
+    /// Unlike canMergeWith (identical-amount inventory-stack equality), this asks whether two
+    /// Ingestible instances can be combined into one with their amounts summed - liquids only, for now.
+    /// ingestMethod_addons are deliberately not compared: MergeLiquid rescales/carries them across so a
+    /// laced drink can still merge with a plain one instead of being blocked outright.
+    /// </summary>
+    public override bool canMergeComp(ItemComponent_Base other)
+    {
+        if (!(other is ItemComponent_Ingestible)) return false;
+        var other2 = other as ItemComponent_Ingestible;
+        return this.isLiquid && other2.isLiquid;
+    }
+
+    /// <summary>
+    /// Combines other into this: amount is summed, and each side's ingestMethod_addons are rescaled by
+    /// their share of the new combined amount (dilution) before being carried over - an addon's
+    /// amountMod is calibrated against its own item's amount at the time it was added, so simply adding
+    /// amounts without rescaling would silently change its effective potency.
+    /// </summary>
+    public void MergeLiquid(ItemComponent_Ingestible other)
+    {
+        float newTotal = this.amount + other.amount;
+        if (newTotal > 0)
+        {
+            var rescaled = new List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod>();
+            foreach (var addon in this.ingestMethod_addons) rescaled.Add(addon.Rescale(this.amount / newTotal));
+            foreach (var addon in other.ingestMethod_addons) rescaled.Add(addon.Rescale(other.amount / newTotal));
+            this.ingestMethod_addons = rescaled;
+            this._ingestMethod = null;
+        }
+        this.amount = newTotal;
     }
 
     [JsonIgnore] public override bool Serializable { get { return true; } }

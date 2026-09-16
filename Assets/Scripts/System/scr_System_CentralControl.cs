@@ -189,7 +189,7 @@ public class scr_System_CentralControl : MonoBehaviour
     }
     public void SaveUserPref()
     {
-        string filePath = Application.dataPath + "/UserPrefs.json";
+        string filePath = Application.persistentDataPath + "/UserPrefs.json";
         FileInfo file = new System.IO.FileInfo(filePath);
         var prefFile = GetSerializable();
         string s = JsonConvert.SerializeObject(prefFile, Formatting.Indented, UtilityEX.SerializerSettings);
@@ -240,7 +240,7 @@ public class scr_System_CentralControl : MonoBehaviour
 
 
 
-        string filePath = Application.dataPath + "/UserPrefs.json";
+        string filePath = Application.persistentDataPath + "/UserPrefs.json";
         FileInfo file = new System.IO.FileInfo(filePath);
         if (!File.Exists(filePath))
         {

@@ -15,7 +15,8 @@
 "console_ascii_tooltip":"ascii\nToggle ascii render setting",
 "console_showQuestStages_tooltip":"showQuestStages [optional string questID]\nOutput all quest stage validation in log",
 "console_furnitureUnpack_tooltip":"furnitureUnpack\ninitiate furniture packing/unpacking in current room",
-"console_forceConscious_tooltip":"forceConscious [int targetRefID] [bool true/false]\nfalse: use game's system\ntrue: target is always treated as conscious"
+"console_forceConscious_tooltip":"forceConscious [int targetRefID] [bool true/false]\nfalse: use game's system\ntrue: target is always treated as conscious",
+"console_advanceTime_tooltip":"advanceTime [int days]\nAdvance the current clock by the given number of days"
 
 
             }

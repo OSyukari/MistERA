@@ -3,6 +3,7 @@ using NUnit;
 using QuikGraph;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using UnityEngine;
 
@@ -59,38 +60,97 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (temp != null) Currency = temp;
     }
 
+    /// <summary>Index 0 = Monday ... 6 = Sunday, matching MapPlan.WorkModuleInit.activeDays.</summary>
+    static readonly string[] WeekdayNames = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+    /// <summary>
+    /// Prints all 7 weekdays in short form (Mon Tue ...), graying out days not in activeDays via
+    /// TextColor_disabled - an empty activeDays means unrestricted (7/7), so every day prints active.
+    /// </summary>
+    public static string FormatActiveDays(List<int> activeDays)
+    {
+        var names = new List<string>();
+        for (int i = 0; i < WeekdayNames.Length; i++)
+        {
+            var name = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_" + WeekdayNames[i] + "_short");
+            bool active = activeDays.Count < 1 || (i < activeDays.Count && activeDays[i] == 1);
+            names.Add(active ? name : Utility.WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
+        }
+        return String.Join(" ", names);
+    }
+
+    /// <summary>Empty activeDays means unrestricted (7/7) - see MapPlan.WorkModuleInit.activeDays.</summary>
+    public static int CountActiveDays(List<int> activeDays)
+    {
+        return activeDays.Count < 1 ? WeekdayNames.Length : activeDays.Count(x => x == 1);
+    }
+
+    /// <summary>
+    /// Groups activeHours into consecutive begin-end blocks (e.g. [10,11,...,17] -> "10AM-6PM"),
+    /// printing separate non-consecutive blocks individually (e.g. [9,10,17,18] -> "9AM-11AM, 5PM-7PM").
+    /// End of each block is printed exclusive (one past the last active hour) to read as a normal
+    /// work-shift range rather than listing the last active hour itself. A night shift that crosses
+    /// midnight (e.g. [22,23,0,...,5]) sorts into a block touching hour 0 and one touching hour 23 -
+    /// those two get stitched back into a single wrapping range (e.g. "10PM-6AM"). A round-the-clock
+    /// job (all 24 hours active) has no meaningful range to show, so it prints "".
+    /// </summary>
+    public static string FormatHourRanges(List<int> activeHours)
+    {
+        var sorted = new List<int>(new HashSet<int>(activeHours));
+        if (sorted.Count < 1) return "";
+        if (sorted.Count >= 24) return "";
+        sorted.Sort();
+
+        var ranges = new List<(int start, int end)>();
+        int rangeStart = sorted[0];
+        int prev = sorted[0];
+        for (int i = 1; i <= sorted.Count; i++)
+        {
+            if (i < sorted.Count && sorted[i] == prev + 1)
+            {
+                prev = sorted[i];
+                continue;
+            }
+            ranges.Add((rangeStart, prev));
+            if (i < sorted.Count)
+            {
+                rangeStart = sorted[i];
+                prev = sorted[i];
+            }
+        }
+
+        if (ranges.Count > 1 && ranges[0].start == 0 && ranges[ranges.Count - 1].end == 23)
+        {
+            var wrapped = (start: ranges[ranges.Count - 1].start, end: ranges[0].end);
+            ranges.RemoveAt(ranges.Count - 1);
+            ranges[0] = wrapped;
+            ranges.Sort((a, b) => a.start.CompareTo(b.start));
+        }
+
+        var strs = new List<string>();
+        foreach (var r in ranges) strs.Add($"{FormatHour12(r.start)}-{FormatHour12((r.end + 1) % 24)}");
+        return String.Join(", ", strs);
+    }
+
+    static string FormatHour12(int hour24)
+    {
+        int h = hour24 % 12;
+        if (h == 0) h = 12;
+        return $"{h}{(hour24 < 12 ? "AM" : "PM")}";
+    }
+
     public string GetWorkDaysPerWeekString(Character_Trainable c)
     {
         var member = GetMemberType(c);
-        string extratooltip2 = null;
-        bool setDays = false;
+        var activeDays = member != null && member.workModule != null ? member.workModule.activeDays : new List<int>();
+        return FormatActiveDays(activeDays);
+    }
 
-        if (member != null && member.workModule != null && member.workModule.activeDays.Count > 0)
-        {
-            var module = member.workModule;
-            int dayInWeek = scr_System_Time.current.getCurrentDayInWeek();
-            //if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) text.Text.color = text.disableColor;// (true,true);
-
-            
-            var count = 0;
-            List<int> days = new List<int>();
-            for (int i = 0; i < module.activeDays.Count; i++)
-            {
-                if (module.activeDays[i] == 1)
-                {
-                    count++;
-                    days.Add(i + 1);
-                }
-            }
-            setDays = true;
-            extratooltip2 = LocalizeDictionary.QueryThenParse("ui_management_workfaction_activedays").Replace("$count$", $"{count}").Replace("$list$", String.Join(" ", days));
-
-        }
-        if (!setDays)
-        {
-            extratooltip2 = LocalizeDictionary.QueryThenParse("ui_management_workfaction_alwaysActive");
-        }
-        return extratooltip2;
+    public int GetWorkDayCountPerWeek(Character_Trainable c)
+    {
+        var member = GetMemberType(c);
+        var activeDays = member != null && member.workModule != null ? member.workModule.activeDays : new List<int>();
+        return CountActiveDays(activeDays);
     }
 
     public string GetWorkHoursPerDayString(Character_Trainable c)
@@ -101,7 +161,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (member != null && member.workModule != null && member.workModule.activeHours.Count > 0)
         {
             var module = member.workModule;
-            extratooltip2 = LocalizeDictionary.QueryThenParse("ui_management_workfaction_activehours").Replace("$count$", $"{module.activeHours.Count}").Replace("$list$", String.Join(" ", module.activeHours));
+            extratooltip2 = LocalizeDictionary.QueryThenParse("ui_management_workfaction_activehours").Replace("$count$", $"{module.activeHours.Count}").Replace("$list$", FormatHourRanges(module.activeHours));
 
         }
         return extratooltip2;
@@ -598,18 +658,34 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (!isCharaInManagedSpace(c.RefID)) continue;
 
             List<ItemEntry> payout = null;
+            PaymentCadence cadence = PaymentCadence.Biweekly;
+            string payoutSourceName = null;
+            string paidEventID = "";
+            string failedEventID = "";
 
             var workModule = GetActiveWorkModule(c, currentHour);
             if (workModule != null && workModule.hourlyPayout != null)
             {
                 payout = workModule.hourlyPayout;
+                cadence = workModule.paymentCadence;
+                payoutSourceName = GetMemberType(c)?.DisplayName;
+                paidEventID = workModule.onPaidEventID;
+                failedEventID = workModule.onFailedEventID;
             }
             else if (charaSchedules.TryGetValue(c.RefID, out var schedule ) && schedule.Get(currentHour).isActive)
             {
                 // pay wage whenever the previous hour was active - a specific command, or just Sandboxed
                 var jobID = schedule.Get(currentHour).jobID;
 
-                payout = jobID != "" ? this.JobPostsPresets.Find(x => x.jobPostID == jobID)?.hourlyPayout : null;
+                var preset = jobID != "" ? this.JobPostsPresets.Find(x => x.jobPostID == jobID) : null;
+                payout = preset?.hourlyPayout;
+                if (preset != null)
+                {
+                    cadence = preset.paymentCadence;
+                    payoutSourceName = preset.Name;
+                    paidEventID = preset.onPaidEventID;
+                    failedEventID = preset.onFailedEventID;
+                }
             }
 
             if (payout == null) continue;
@@ -621,14 +697,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 ?? (c.FactionManager.HomeFactions.Count > 0 ? c.FactionManager.HomeFactions[0] : null);
             if(targetFaction == null) continue;
 
-            // self will pay wage to targetfaction
-
-            foreach(var pay in payout)
+            // self owes wage to targetFaction - accrued into a System 2 Obligation_Salary (accumulates
+            // hours worked until its own PaymentCadence resolves) rather than System 1's immediately-
+            // daily-resolved TradeOrder. See TradeManager.GetOrCreateSalaryObligation/Obligation_Salary.
+            // One obligation per payee (c.RefID), not shared across everyone holding the same job post -
+            // see GetOrCreateSalaryObligation's doc comment.
+            var salaryObligation = this.TradeManager.GetOrCreateSalaryObligation(targetFaction, cadence, payoutSourceName, c.RefID);
+            foreach (var pay in payout)
             {
-                Debug.Log($"adding payment {this.FactionDisplayName} to {targetFaction.FactionDisplayName} ");
-                AddPayment(targetFaction, null, pay, 1);
+                salaryObligation.AccrueHour(pay, paidEventID, failedEventID);
             }
-
         }
     }
 
@@ -669,7 +747,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
     protected void OnDayUpdate_1(int updateOrder)
     {
         if (updateOrder != 1) return;
-        this.ProcessAllTransactions();
+        // TradeOrders/Obligations already fully settled by now - see OnDayUpdate_PaymentResolve, which runs
+        // (across every faction, over several retry passes) between Observer_globalTime_Day(0) and (1).
         this.SalesManager.DailyUpdate();
         CheckDailyResourceConsumption();
         // character log their daily consumption at updateOrder 2
@@ -680,23 +759,68 @@ public class Manageable : I_Disposable, I_IsJobGiver
         this.TradeOrders.Add(new TradeOrder(this, targetFaction, entry, cost, count, orderType));
     }
 
-    protected void ProcessAllTransactions()
+    /// <summary>
+    /// Live registry (JsonIgnore) of this faction's own TradeOrders still awaiting resolution today -
+    /// populated fresh each day on pass 0, drained as each one's ProcessOrder call succeeds. See
+    /// OnDayUpdate_PaymentResolve.
+    /// </summary>
+    [JsonIgnore] List<TradeOrder> pendingTradeOrdersToday = new List<TradeOrder>();
+
+    /// <summary>
+    /// Multi-pass daily settlement for both payment systems - replaces the old single-shot
+    /// ProcessAllTransactions/TradeManager.ResolveDue, called once per Observer_globalTime_PaymentResolve
+    /// pass (between Observer_globalTime_Day(0) and (1); see that event's doc comment). Pass 0 snapshots
+    /// every TradeOrder actually needing resolution today; every pass retries each still-pending one
+    /// (TradeOrder.ProcessOrder already re-checks live inventory on every call, so it's naturally safe to
+    /// retry), and the final pass reports whatever's still unresolved as a real failure instead of retrying
+    /// forever - fixing the case where e.g. a cost of 20 fails against a current balance of 10, even though
+    /// a different order due the same day would have brought in 100 first. TradeManager.ResolveDuePass gets
+    /// the exact same pass/totalPasses so Obligations (salary/rent/debt/sales) settle on the same schedule,
+    /// including cross-faction dependencies (every faction gets a chance to receive pass-N income before
+    /// pass-N+1 starts for anyone).
+    /// </summary>
+    protected void OnDayUpdate_PaymentResolve(int pass, int totalPasses)
     {
-        foreach(var trade in TradeOrders)
+        if (pass == 0)
         {
-            if (trade.Count < 1) continue;
-            if (!trade.ProcessOrder(out string text))
+            pendingTradeOrdersToday.Clear();
+            foreach (var t in TradeOrders) if (t.Count >= 1) pendingTradeOrdersToday.Add(t);
+        }
+
+        bool isFinalPass = pass == totalPasses - 1;
+        for (int i = pendingTradeOrdersToday.Count - 1; i >= 0; i--)
+        {
+            var trade = pendingTradeOrdersToday[i];
+            if (trade.Count < 1) { pendingTradeOrdersToday.RemoveAt(i); continue; }
+
+            if (trade.ProcessOrder(out string text))
+            {
+                pendingTradeOrdersToday.RemoveAt(i);
+            }
+            else if (isFinalPass)
             {
                 DailyReport.AddTradeWarning(text);
                 trade.TargetFaction.DailyReport.AddTradeWarning($"{FactionDisplayName} failed to process transaction: {text}");
+                pendingTradeOrdersToday.RemoveAt(i);
             }
         }
-        /*
-        for(int i = TradeOrders.Count - 1; i >= 0; i--)
+
+        // Settled single-buy-in (craftCount) orders are kept around after completion so the player can see
+        // them as fulfilled in the trade UI - see CHANGELOG 09/12. That's only meaningful for a
+        // player-viewed faction though; NPC factions have no UI to show it off in, so leaving this disabled
+        // for them just accumulates dead TradeOrder objects forever. See also the load-time sweep in
+        // OnAfterDeserialize, which purges any such backlog NPC factions already picked up on 09/12-09/14 saves.
+        if (isFinalPass && !isPlayerFaction) RemoveSettledSingleBuyInOrders();
+
+        this.TradeManager.ResolveDuePass(scr_System_Time.current.getCurrentTime(), pass, totalPasses);
+    }
+
+    void RemoveSettledSingleBuyInOrders()
+    {
+        for (int i = TradeOrders.Count - 1; i >= 0; i--)
         {
             if (TradeOrders[i].Count < 1 && TradeOrders[i].orderType == ProductionOrderType.craftCount) TradeOrders.RemoveAt(i);
         }
-        */
     }
 
     [JsonProperty] protected int rallyJobID = -1;
@@ -733,9 +857,30 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonProperty] protected FactionInventory _inventory;
     [JsonIgnore] public FactionInventory Inventory { get { return _inventory; } }
     public List<ProductionOrder> ProductionOrders = new List<ProductionOrder>();
-    public List<TradeOrder> TradeOrders = new List<TradeOrder>();
+
+    /// <summary>
+    /// Legacy save-format storage for TradeOrder ("System 1") - old save files serialize this list
+    /// directly under Manageable as "TradeOrders", so this field is kept (under that same JSON name, via
+    /// the explicit JsonProperty name below) purely so existing saves still deserialize their data instead
+    /// of silently losing it. Actual ownership now lives on TradeManager.TradeOrders; OnAfterDeserialize
+    /// migrates any entries found here into it exactly once, then this list is left empty going forward -
+    /// use the TradeOrders property below, never this field, for anything but that migration.
+    /// </summary>
+    [JsonProperty("TradeOrders")] protected List<TradeOrder> legacyTradeOrders = new List<TradeOrder>();
+
+    /// <summary>
+    /// Storage for TradeOrder ("System 1" - player-authored, daily-resolved trades) lives on TradeManager
+    /// (which also owns "System 2" - salary/rent/fee/debt RecurringObligations, resolved on their own
+    /// PaymentCadence). This property is a pass-through so every existing caller (AddTradeOrder,
+    /// OnDayUpdate_PaymentResolve, and the UI trade panels that mutate this list directly) keeps working
+    /// unchanged - the two systems' storage is shared, but their resolution logic stays separate: both are
+    /// driven by the same Observer_globalTime_PaymentResolve passes (OnDayUpdate_PaymentResolve /
+    /// TradeManager.ResolveDuePass), but each resolves its own list independently.
+    /// </summary>
+    [JsonIgnore] public List<TradeOrder> TradeOrders { get { return TradeManager.TradeOrders; } }
 
     public SalesManager SalesManager = null;
+    public TradeManager TradeManager = null;
 
     public Manageable()
     {
@@ -753,6 +898,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         charaGuestStatus.Clear();
         this._inventory = new FactionInventory(this);
         this.SalesManager = new SalesManager(this);
+        this.TradeManager = new TradeManager(this);
     }
 
     string socialStatus_manager, socialStatus_member, socialStatus_visitor, socialStatus_prisoner, socialStatus_baseString;
@@ -830,6 +976,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_0;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_1;
         scr_System_Time.current.Observer_globalTime_Day += OnDayUpdate_3;
+        scr_System_Time.current.Observer_globalTime_PaymentResolve += OnDayUpdate_PaymentResolve;
 
         scr_System_Time.current.Observer_globalTime_5min += OnTimeUpdate5;
         scr_System_Time.current.Observer_globalTime_Hours += OnHourUpdate;
@@ -1305,17 +1452,17 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (managedRoomRefs.ContainsKey(roomRef)) return managedRoomRefs[roomRef];
         return new List<int>(); }
 
-    public void AddToFaction(Floor_Instance floor, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
+    public void AddToFaction(Floor_Instance floor, bool addAllCharaToFaction = false, bool setRoomOwnership = false, bool isRenting = true, string landlordFactionID = "")
     {
         foreach (Room_Instance ri in floor.rooms)
         {
             if (managedRoomRefs.ContainsKey(ri.RefID)) continue;
-            AddToFaction(ri, addAllCharaToFaction, setRoomOwnership);
-            
+            AddToFaction(ri, addAllCharaToFaction, setRoomOwnership, isRenting, landlordFactionID);
+
         }
     }
 
-    public void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false)
+    public void AddToFaction(Room_Instance room, bool addAllCharaToFaction = false, bool setRoomOwnership = false, bool isRenting = true, string landlordFactionID = "")
     {
         this.managedRoomRefs.Add(room.RefID, new List<int>());
         this.roomRefsCache = null;
@@ -1326,7 +1473,10 @@ public class Manageable : I_Disposable, I_IsJobGiver
             var overwriteOrg = scr_System_CampaignManager.current.FindorAddSubfactionByID(overwriteID, this);
             if (overwriteOrg != null)
             {
-                overwriteOrg.AddToFaction(room, addAllCharaToFaction, setRoomOwnership);
+                // the subfaction's own owning/renting status (and landlord, if any) comes from its own
+                // MapPlan template, not from the host's - the host's occupancy status has no bearing on
+                // whether the subfaction occupying this one unit is itself renting it, or from whom.
+                overwriteOrg.AddToFaction(room, addAllCharaToFaction, setRoomOwnership, overwriteOrg.GetTemplateIsRentingFloor(), overwriteOrg.GetTemplateLandlordFactionID());
                 Debug.Log($"add room {room.DisplayNameShort} to override faction {overwriteID}");
                 return;
             }
@@ -1334,6 +1484,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
 
         room.SetFaction(this);
+        // rentedFloors absent = owned; present (landlordFactionID may be empty = unspecified landlord,
+        // charged to the Recycler) = renting - see TradeManager.rentedFloors / Obligation_Rent.GetCycleAccrual.
+        // GetOrCreateRentObligationFor does NOT resolve/check that the landlord faction actually exists
+        // yet (it may not, depending on faction init order) - it only stores the ID; resolution happens
+        // lazily whenever it's actually needed.
+        if (isRenting && room.parentFloor != null)
+        {
+            this.TradeManager.rentedFloors[room.parentFloor.refID] = landlordFactionID ?? "";
+            if (!string.IsNullOrEmpty(landlordFactionID)) this.TradeManager.GetOrCreateRentObligationFor(landlordFactionID);
+        }
         //if (room.isRoomPrivate) roomOwnerships.Add(room.RefID, new List<int>());
 
         if (addAllCharaToFaction)
@@ -1662,6 +1822,67 @@ public class Manageable : I_Disposable, I_IsJobGiver
             foreach(var room in ManagedRooms.Values) if (!list.Contains(room.parentFloor)) list.Add(room.parentFloor);
             return list;
         }
+    }
+
+    /// <summary>
+    /// This faction's own MapPlan template's isRentingFloor default - used when a subfaction (created via
+    /// a room's subfactionOwnerOverwrite redirect, see AddToFaction(Room_Instance,...)) needs to determine
+    /// its own owning/renting status independently of whatever the host faction that redirected to it was
+    /// instantiated with.
+    /// </summary>
+    protected bool GetTemplateIsRentingFloor()
+    {
+        if (string.IsNullOrEmpty(mapPlanID)) return false;
+        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+        return plan != null && plan.isRentingFloor;
+    }
+
+    /// <summary>This faction's own MapPlan template's landlordFactionID - see GetTemplateIsRentingFloor
+    /// for why this reads the occupying faction's own template rather than any caller-passed value.</summary>
+    protected string GetTemplateLandlordFactionID()
+    {
+        if (string.IsNullOrEmpty(mapPlanID)) return "";
+        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+        return plan != null ? plan.landlordFactionID : "";
+    }
+
+    /// <summary>
+    /// This faction's own MapPlan template's rent payment-outcome event override, for when THIS faction is
+    /// acting as a concrete landlord (called on the landlord's Manageable, not the tenant's) - see
+    /// Obligation_Rent.HandlePaymentEvent. Public (unlike GetTemplateIsRentingFloor/
+    /// GetTemplateLandlordFactionID) since it's read cross-faction, from the tenant's obligation.
+    /// </summary>
+    public string GetTemplateRentEventID(bool success)
+    {
+        if (string.IsNullOrEmpty(mapPlanID)) return "";
+        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+        if (plan == null) return "";
+        return success ? plan.onRentPaidEventID : plan.onRentFailedEventID;
+    }
+
+    /// <summary>
+    /// World-level fallback rent payment-outcome event for THIS faction (called on the tenant's
+    /// Manageable) - resolves which world this faction is actually in via ResolveWorldID (the same
+    /// room->floor->faction->world tracing canvas_RoomDisplay uses for world-map navigation), then walks
+    /// that world's own parentWorldID chain looking for the first non-empty value, so e.g. an ErAV-
+    /// specific world left unset can fall back to a broader shared parent world (JP World). Queried on
+    /// demand rather than baked into WorldPlan's own inheritance-merge cache
+    /// (Index_MapPlan.ResolveWorldPlanInheritance), since this is a narrow, single-consumer need rather
+    /// than something every WorldPlan consumer needs merged in.
+    /// </summary>
+    public string GetWorldFallbackRentEventID(bool success)
+    {
+        var currentID = ResolveWorldID(this, null);
+        var visited = new HashSet<string>();
+        while (!string.IsNullOrEmpty(currentID) && visited.Add(currentID))
+        {
+            var world = scr_System_Serializer.current.MasterList.MapPlans.GetByID_WorldPlan(currentID);
+            if (world == null) break;
+            string eventID = success ? world.onRentPaidEventID : world.onRentFailedEventID;
+            if (!string.IsNullOrEmpty(eventID)) return eventID;
+            currentID = world.parentWorldID;
+        }
+        return "";
     }
 
     /// <summary>
@@ -2025,6 +2246,30 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// </summary>
     [JsonIgnore] public List<Manageable> factionConnection = new List<Manageable>();
 
+    /// <summary>
+    /// Resolves the WorldPlan a faction belongs to via its cached worldConnection, falling back to
+    /// whichever world a door-connected faction belongs to (searched recursively through
+    /// factionConnection) for a faction with no world membership of its own - e.g. an on-demand-
+    /// instantiated annex faction like ErAV_KiryuGumi_Filmstudio, door-connected to
+    /// ErAV_KiryuGumi_Office but never listed in any WorldPlan.initializeFactions. Promoted here from
+    /// canvas_RoomDisplay (world-map navigation), which now delegates to this instead of keeping its own
+    /// copy - Obligation_Rent.HandlePaymentEvent needs the exact same "which world is this faction
+    /// actually in" resolution for its world-level rent event fallback.
+    /// </summary>
+    public static string ResolveWorldID(Manageable faction, HashSet<Manageable> visited = null)
+    {
+        visited = visited ?? new HashSet<Manageable>();
+        if (faction == null || visited.Contains(faction)) return "";
+        visited.Add(faction);
+        if (faction.worldConnection.Count > 0) return faction.worldConnection[0];
+        foreach (var connected in faction.factionConnection)
+        {
+            var found = ResolveWorldID(connected, visited);
+            if (!string.IsNullOrEmpty(found)) return found;
+        }
+        return "";
+    }
+
 
     public class Job_Schedule
     {
@@ -2104,7 +2349,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public class HourlySchedule
     {
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue(true)]
         public bool AllowOverride = true;
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue("")]
         public string jobID = "";
         public List<string> comIDs = new List<string>();
 
@@ -2114,6 +2363,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         /// for how this combines with comIDs to decide whether to run a command or fall back to the
         /// status's own original behavior.
         /// </summary>
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
         public bool Sandbox = false;
 
         public bool Equals(COM com)
@@ -2394,6 +2644,21 @@ public class Manageable : I_Disposable, I_IsJobGiver
         {
             warning = "";
             if (TargetFaction == null) return false;
+
+            if (FactionOwner == TargetFaction)
+            {
+                // Legacy data bug: some trade orders (e.g. ones added via the pre-fix "item ingest" flow
+                // in scr_Menu_AddTrade.cs) had their targetFactionID wrongly registered as their own owner
+                // faction. Such an order can never resolve correctly - falling through would just destroy
+                // Cost into the Recycler and manufacture Entry from nothing, silently, forever - so flag
+                // it as a failure instead so the player notices and deletes it. New trade orders can no
+                // longer be created this way; this only guards against already-corrupted save data.
+                warning = Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("msg_trade_selfTargetError")
+                    .Replace("$source$", FactionOwner.FactionDisplayName)
+                    .Replace("$target$", TargetFaction.FactionDisplayName)
+                    .Replace("$content$", Display), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+                return false;
+            }
 
             FactionInventory recycler = scr_System_CampaignManager.current.Recycler;
             FactionInventory ownerInv = FactionOwner.isPlayerFaction ? FactionOwner.Inventory : recycler;
@@ -2732,8 +2997,35 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         InitScript();   // include wiping nonjobpost and jobpost so run this first before anything else
 
+        if (this.TradeManager == null)
+        {
+            this.TradeManager = new TradeManager(this);
+        }
+        else
+        {
+            this.TradeManager.ReEstablishParent(this);
+        }
+
+        // one-time migration: old saves stored TradeOrder entries directly on Manageable (see
+        // legacyTradeOrders) - move any such entries into TradeManager.TradeOrders, the new storage
+        // location, so pre-existing trade orders aren't silently dropped on load.
+        if (legacyTradeOrders != null && legacyTradeOrders.Count > 0)
+        {
+            foreach (var order in legacyTradeOrders)
+            {
+                order.ReEstablishParent(this);
+                TradeManager.TradeOrders.Add(order);
+            }
+            legacyTradeOrders.Clear();
+        }
+
+        // one-time cleanup: 09/12-09/14 saves disabled settled-order removal for every faction, not just
+        // player-managed ones (see OnDayUpdate_PaymentResolve/RemoveSettledSingleBuyInOrders), so NPC factions
+        // loaded from those saves may be carrying a backlog of no-longer-relevant, already-fulfilled
+        // TradeOrders. Sweep it once here rather than waiting for the next daily payment-resolve pass.
+        if (!isPlayerFaction) RemoveSettledSingleBuyInOrders();
+
         foreach (var p in ProductionOrders) p.ReEstablishParent(this);
-        foreach (var p in TradeOrders) p.ReEstablishParent(this);
         if (this.managedRoomRefs != null) foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
         if (this.Inventory != null) this.Inventory.ReEstablishParent(this);
         if (this.MealManager != null) MealManager.ReEstablishParent(this);
@@ -2765,6 +3057,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_0;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_1;
         scr_System_Time.current.Observer_globalTime_Day -= OnDayUpdate_3;
+        scr_System_Time.current.Observer_globalTime_PaymentResolve -= OnDayUpdate_PaymentResolve;
 
         scr_System_Time.current.Observer_globalTime_5min -= OnTimeUpdate5;
         scr_System_Time.current.Observer_globalTime_Hours -= OnHourUpdate;
@@ -2972,6 +3265,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
             Utility.DistinctInPlace(this.activeHours);
             this.activeHours.RemoveAll(x => x < 0 || x > 23);
 
+            this.activeDays = new List<int>(module.activeDays);
+
             foreach (var item in module.hourlyPayout)
             {
                 if (item != null) this.hourlyPayout.Add(new ItemEntry(item));
@@ -2981,7 +3276,15 @@ public class Manageable : I_Disposable, I_IsJobGiver
             {
                 if (item != null) this.hourlyCost.Add(new ItemEntry(item));
             }
+
+            this.paymentCadence = module.paymentCadence;
+            this.onPaidEventID = module.onPaidEventID;
+            this.onFailedEventID = module.onFailedEventID;
         }
+
+        /// <summary>Copied from MapPlan.WorkModuleInit at construction - see that field's doc comment.</summary>
+        public string onPaidEventID = "";
+        public string onFailedEventID = "";
 
         [JsonIgnore] public string Name { get
             {
@@ -2990,8 +3293,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
         public string jobPostID = "";
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
+        /// <summary>Per-weekday toggle, index 0 = Monday ... 6 = Sunday - see MapPlan.WorkModuleInit.activeDays.</summary>
+        public List<int> activeDays = new List<int>();
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
         public List<ItemEntry> hourlyCost = new List<ItemEntry>();
+        public PaymentCadence paymentCadence = PaymentCadence.Biweekly;
         
         [JsonIgnore] 
         public bool isActive { get { return this.workCommands.Count > 0 && this.activeHours.Count > 0; } }
@@ -3009,8 +3315,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
             }
         }
 
+        [JsonIgnore]
+        public string PrintActiveDays { get { return FormatActiveDays(activeDays); } }
 
-        
+        [JsonIgnore]
+        public int ActiveDayCount { get { return CountActiveDays(activeDays); } }
+
+        [JsonIgnore]
+        public string PrintHourRanges { get { return FormatHourRanges(activeHours); } }
+
+
     }
 
     public DailyReportHandler DailyReport = new DailyReportHandler();
@@ -3102,6 +3416,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
         [JsonIgnore] public string msg_tradeFailure = "";
         [JsonIgnore] public string msg_tradeSuccess = "";
 
+        [JsonIgnore] public string msg_paymentFailure = "";
+        [JsonIgnore] public string msg_paymentSuccess = "";
+
         [JsonIgnore] public bool initialized = false;
 
         public void Initialize()
@@ -3111,6 +3428,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
             msg_manageFailure = Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("msg_manageFailure"), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
             msg_tradeFailure = Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("msg_tradeFailure"), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
             msg_tradeSuccess = LocalizeDictionary.QueryThenParse("msg_tradeSuccess");
+            msg_paymentFailure = Utility.WrapTextColor(LocalizeDictionary.QueryThenParse("msg_paymentFailure"), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+            msg_paymentSuccess = LocalizeDictionary.QueryThenParse("msg_paymentSuccess");
         }
     }
 }

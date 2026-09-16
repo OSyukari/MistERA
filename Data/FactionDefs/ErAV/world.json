@@ -280,6 +280,17 @@
             "usePopularityCurve": false
         }
     ],
+    "debtClasses": [
+        {
+            "_comment": "Kanon/Kiryu-gumi joint-guarantor debt (Opening_ErAV) - flat Y450,000/month interest, compounds every month regardless of payment, principal payable at the player's own pace (no auto-charged installment).",
+            "ID": "debtclass_erav_kanon",
+            "interestRatePercent": 0,
+            "interestFlatAmount": { "itemID": "currency_JPY", "itemCount": 450000 },
+            "cadence": "Monthly",
+            "onPaidEventID": "",
+            "onFailedEventID": ""
+        }
+    ],
     "factionTemplate":
     [
 

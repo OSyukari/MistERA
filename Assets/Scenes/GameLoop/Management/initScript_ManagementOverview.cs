@@ -67,6 +67,67 @@ public class initScript_ManagementOverview : MonoBehaviour
         else report_tradeResults.SetText(report.msg_tradeSuccess);
         report_tradeResults.SetExternalTooltip(String.Join("\n", report.tradeLogs) + (report.tradeWarnings.Count > 0 ? "\n" + Utility.WrapTextColor(String.Join("\n", report.tradeWarnings), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color) : ""));
 
+        // -----------------print obligations (System 2 - salary/rent/fee/debt) report
+        // Two kinds of content, kept in separate sections instead of interleaved per cadence: what actually
+        // resolved (past tense, from every obligation's own last-resolution outcome - see
+        // TradeManager.GetResolvedSummary/RecurringObligation.PrintOutcome) goes in one combined "收支变动"
+        // section up front; what's still upcoming (live GetDueSummary/GetIncomingDueSummary preview) is
+        // grouped per cadence below that, under a header with a days-until-next-resolution countdown.
+        List<string> obligationReportBlocks = new List<string>();
+
+        List<string> resolvedLines = new List<string>();
+        foreach (PaymentCadence cadence in Enum.GetValues(typeof(PaymentCadence)))
+        {
+            resolvedLines.AddRange(m.TradeManager.GetResolvedSummary(cadence));
+        }
+        // Sales' own daily activity (PrintDailyActivity) isn't a cadence resolution - a product can sell
+        // every day while its Obligation_Sales only resolves once a month - so it's queried directly here
+        // instead of through GetResolvedSummary, which only ever reflects actual resolutions.
+        foreach (var salesObligation in m.TradeManager.Obligations.OfType<Obligation_Sales>())
+        {
+            var line = salesObligation.PrintDailyActivity(m);
+            if (!string.IsNullOrEmpty(line)) resolvedLines.Add(line);
+        }
+        if (resolvedLines.Count > 0) obligationReportBlocks.Add(LocalizeDictionary.QueryThenParse("obligation_report_header_resolved") + "\n" + String.Join("\n", resolvedLines));
+
+        // PrintOutcome always marks a failed resolution with a bare "$name$: failed" line (see its doc
+        // comment) - checking for that directly reuses what RecordObligationOutcome already collected,
+        // rather than inferring failure from owed/IsSuspended (wrong for Debt, whose owed is the loan
+        // principal and stays positive for a loan's entire normal life, not just after a missed payment).
+        bool obligationsError = resolvedLines.Any(l => l.Contains(": failed"));
+
+        foreach (PaymentCadence cadence in Enum.GetValues(typeof(PaymentCadence)))
+        {
+            // amount due/incoming is queried live (not read from the report above) so it stays accurate
+            // between resolutions - e.g. a daily-cadence salary accrues every work hour, long before
+            // ResolveDue actually charges it once a day, so a value baked in at the last resolution would
+            // go stale the moment a new hour is worked. GetDueSummary covers what m itself owes others;
+            // GetIncomingDueSummary covers what others (e.g. a work faction paying m's dispatched workers)
+            // owe m, which lives on their TradeManager, not m's own Obligations.
+            var dueLines = String.Join("\n", m.TradeManager.GetDueSummary(cadence).Concat(m.TradeManager.GetIncomingDueSummary(cadence)));
+
+            // skip cadences with nothing due at all - otherwise joining below inserts a "\n\n" for every
+            // empty cadence too, piling up as several blank lines between the sections that do have content.
+            if (dueLines.Length == 0) continue;
+
+            // Daily has no "days until" countdown (it's always due by EOD, today); every other cadence
+            // gets a live countdown to its next actual resolution day (never 0 - see
+            // PaymentCadenceUtility.DaysUntilNextResolution).
+            string headerKey = "obligation_report_header_" + cadence.ToString().ToLowerInvariant();
+            string header = LocalizeDictionary.QueryThenParse(headerKey);
+            if (cadence != PaymentCadence.Daily)
+            {
+                int daysRemaining = PaymentCadenceUtility.DaysUntilNextResolution(cadence, scr_System_Time.current.getCurrentTime());
+                header = header.Replace("$days$", daysRemaining.ToString());
+            }
+
+            obligationReportBlocks.Add(header + "\n" + dueLines);
+        }
+
+        if (obligationsError) report_obligations.SetText(report.msg_paymentFailure);
+        else report_obligations.SetText(report.msg_paymentSuccess);
+        report_obligations.SetExternalTooltip(String.Join("\n\n", obligationReportBlocks));
+
         Utility.DestroyAllChildrenFrom(messageRect);
 
         foreach (var misc in report.miscMessages)
@@ -241,4 +302,7 @@ public class initScript_ManagementOverview : MonoBehaviour
 
     public RectTransform managedBabyRect;
     public scr_HoverableText managedBabyList;
+
+    public scr_HoverableText report_obligations;
+
 }

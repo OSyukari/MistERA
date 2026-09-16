@@ -27,6 +27,17 @@ public abstract class ItemComponent_Base
     }
 
     /// <summary>
+    /// Whether this component's per-instance state can be combined (e.g. summed) with other's, as
+    /// opposed to canMergeWith which asks whether two whole item instances are identical enough to
+    /// collapse into one inventory stack. Defaults to forbidding merge - components that support it
+    /// (currently only ItemComponent_Ingestible, for liquids) override this explicitly.
+    /// </summary>
+    public virtual bool canMergeComp(ItemComponent_Base other)
+    {
+        return false;
+    }
+
+    /// <summary>
     /// Contribution this component makes to its owning item's RetailID (see Item_Instance.RetailID).
     /// Most components contribute nothing.
     /// </summary>

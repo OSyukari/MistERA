@@ -135,8 +135,26 @@ public class Memory_Entry
                 if (c.RefID == Owner.RefID) continue;
                 names.Add(c.FirstName);
             }
+            foreach (var i in interactions) if (i.unregisteredTargetNames != null) names.AddRange(i.unregisteredTargetNames);
+            Utility.DistinctInPlace(names);
             return names;
         } }
+
+    /// <summary>
+    /// Called for every remaining character's memory when refID is unregistered, so no interaction
+    /// keeps a target reference that could later resolve to an unrelated character (e.g. if refID is
+    /// ever reused). Returns true if this entry was changed.
+    /// </summary>
+    public bool NotifyTargetUnregistered(int refID, string firstName)
+    {
+        bool changed = false;
+        foreach (var inst in interactions)
+        {
+            if (inst.NotifyTargetUnregistered(refID, firstName)) changed = true;
+        }
+        if (changed) InternalUpdate();
+        return changed;
+    }
 
 
     [JsonProperty] protected int duration = -1;
@@ -572,9 +590,9 @@ public class Memory_Entry
         }
     }
 
-    public List<Stat_Modifier> Mod_Stress = new List<Stat_Modifier>();
-    public List<Stat_Modifier> Mod_Mood = new List<Stat_Modifier>();
-    public List<Stat_Modifier> Mod_Lust = new List<Stat_Modifier>();
+    [JsonIgnore] public List<Stat_Modifier> Mod_Stress = new List<Stat_Modifier>();
+    [JsonIgnore] public List<Stat_Modifier> Mod_Mood = new List<Stat_Modifier>();
+    [JsonIgnore] public List<Stat_Modifier> Mod_Lust = new List<Stat_Modifier>();
 
 
     private Stat_Modifier initMoodlet(string statID, int addEx = 0)
@@ -782,6 +800,12 @@ public class MemBlacklist
 public class MemInstance
 {
     public List<int> targets = new List<int>();
+    /// <summary>
+    /// FirstName of any target removed from <see cref="targets"/> by <see cref="NotifyTargetUnregistered"/>,
+    /// kept so this memory can still be displayed/printed after its subject no longer exists.
+    /// Left null until first needed - almost no MemInstance ever has one.
+    /// </summary>
+    public List<string> unregisteredTargetNames = null;
     public List<string> tags = new List<string>();
     public bool isDoer = true;
     public int masterRef = -1;
@@ -851,6 +875,25 @@ public class MemInstance
     {
         this.attitude = attitude == Memory_Attitude.None ? (int)Memory_Attitude.Neutral : (int)attitude;
         this.response = response > Memory_Response.Accept ? Memory_Response.Accept : response;
+    }
+
+    /// <summary>
+    /// Removes refID from targets (a character being unregistered can no longer be resolved by
+    /// FindInstanceByID) and stacks its FirstName into unregisteredTargetNames instead, once per
+    /// occurrence removed. Returns true if targets was modified.
+    /// </summary>
+    public bool NotifyTargetUnregistered(int refID, string firstName)
+    {
+        bool changed = false;
+        for (int i = targets.Count - 1; i >= 0; i--)
+        {
+            if (targets[i] != refID) continue;
+            targets.RemoveAt(i);
+            if (unregisteredTargetNames == null) unregisteredTargetNames = new List<string>();
+            unregisteredTargetNames.Add(firstName);
+            changed = true;
+        }
+        return changed;
     }
 
 

@@ -9,6 +9,12 @@
                 "floorHeight": 992,
                 "AnchorType": "TopLeft",
                 "mapExit": "floor_2ldk_2floor_1_1L_frontDoor",
+                "_comment_wholeBuildingRent": "2LDK house lease, charged monthly",
+                "wholeBuildingRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 10000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 90000 },
+                    "cadence": "Monthly"
+                },
                 "rooms": [
                     {
                         "ID": "floor_2ldk_2floor_1_2L_kitchen",

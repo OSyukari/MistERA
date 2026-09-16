@@ -698,23 +698,11 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         else Notify(-9999);
     }
 
-    /// <summary>
-    /// Resolves the world a faction belongs to via its cached worldConnection, falling back to whichever world
-    /// a door-connected faction belongs to (searched recursively through factionConnection) for a faction with
-    /// no world membership of its own - e.g. an on-demand-instantiated annex faction like ErAV_KiryuGumi_Filmstudio,
-    /// door-connected to ErAV_KiryuGumi_Office but never listed in any WorldPlan.initializeFactions.
-    /// </summary>
+    /// <summary>Delegates to Manageable.ResolveWorldID (promoted there so Obligation_Rent's world-level
+    /// rent event fallback can reuse the exact same faction-to-world resolution).</summary>
     private string ResolveWorldID(Manageable faction, HashSet<Manageable> visited)
     {
-        if (faction == null || visited.Contains(faction)) return "";
-        visited.Add(faction);
-        if (faction.worldConnection.Count > 0) return faction.worldConnection[0];
-        foreach (var connected in faction.factionConnection)
-        {
-            var found = ResolveWorldID(connected, visited);
-            if (!string.IsNullOrEmpty(found)) return found;
-        }
-        return "";
+        return Manageable.ResolveWorldID(faction, visited);
     }
 
     private static WorldPlan FindWorldByChildWorldID(string worldID)

@@ -21,8 +21,9 @@
                             }
                         },
                         {
-                            "requireKojoVariable": {
-                                "variableID": "erav_kanon_debt_total",
+                            "requireFactionDebt": {
+                                "borrowerFactionID": "ErAV_miyama_Household",
+                                "lenderFactionID": "ErAV_KiryuGumi_Office",
                                 "operand": "gt",
                                 "value": 0
                             }
@@ -126,7 +127,15 @@
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "UISpec": {
                             "portraitRefKey": "kanon",
-                            "selfTags": [                                 
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "Kanon_Dialogue_inoffice_Explain01b"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [
                                 "yakuza",
                                 "confident",
                                 "relaxed" ]

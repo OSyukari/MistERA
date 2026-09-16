@@ -1759,10 +1759,10 @@ public partial class EvaluationPackage : I_ResultStorage
 
                 var painMultiplier = Mathf.Clamp( fucker.CurrentSize / fucked.CurrentSize, 1, 10);
 
-                fuckerPl = baseStrength * 1.2f; ; fuckerPn = painMultiplier * 0.1f;
+                fuckerPl = baseStrength * 1.2f;
                 fuckedPl = baseStrength * 0.3f;  fuckedPn = baseStrength * painMultiplier;
                 expansion = painMultiplier;
-                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 3 times currentSize [" + fucked.CurrentSize + $"] : response heavy pain, expanding\nFucker pl {fuckerPl} baseStr {baseStrength} pain {fuckerPn} mult {painMultiplier}");
+                s.Add("Fucker Size [" + fucker.CurrentSize + "] above 3 times currentSize [" + fucked.CurrentSize + $"] : response heavy pain, expanding\nFucker pl {fuckerPl} baseStr {baseStrength} mult {painMultiplier}");
             }
             else if (fucker.CurrentSize > fucked.CurrentSize * 1.25)
             {
@@ -1927,6 +1927,13 @@ public partial class EvaluationPackage : I_ResultStorage
 
         pain = Math.Clamp(pain, 0, 99);
         expansion = Math.Clamp(expansion, 0, 99);
+
+        if (pain > 0)
+        {
+            float painSensitivity = body.Owner.Stats.HasStat("stats_derived_painSensitivity") ? body.Owner.Stats.GetStatValue("stats_derived_painSensitivity") : 1f;
+            if (painSensitivity <= 0) pain = 0;
+            else pain /= painSensitivity;
+        }
 
         switch (isDoer ? this.attitude_doer : this.attitude_receiver)
         {

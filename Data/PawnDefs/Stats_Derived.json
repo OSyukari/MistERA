@@ -364,7 +364,7 @@
                 "stats_derived_alcoholSensitivity":"酒精耐受",
                 "stats_derived_alcoholSensitivity_tooltip": "该数值（倍率）决定角色有多容易醉，越低越易醉\n默认1.0",
                 "stats_derived_painSensitivity":"疼痛耐受",
-                "stats_derived_painSensitivity_tooltip": "该数值（倍率）决定角色有多容易疼痛，越低疼痛越剧烈\n默认1.0",
+                "stats_derived_painSensitivity_tooltip": "该数值（倍率）决定角色有多容易疼痛，越低疼痛越剧烈\n默认1.0\n该数值为0时，反之不会感到疼痛\n也会影响调教中%%experience_pain%%的获取量",
                 "stats_derived_cleanlinessSensitivity":"脏污耐性",
                 "stats_derived_cleanlinessSensitivity_tooltip": "该数值（倍率）决定角色有多能容忍房间脏乱，越高越无法容忍\n默认1.0",
                 "stats_derived_cleaningThreshold":"打扫阈值",
@@ -425,7 +425,7 @@
                 "stats_derived_alcoholSensitivity":"Alcohol Tolerance",
                 "stats_derived_alcoholSensitivity_tooltip": "This value (multiplier) determines how easily the character gets drunk; lower means easier to get drunk\nDefault 1.0",
                 "stats_derived_painSensitivity":"Pain Tolerance",
-                "stats_derived_painSensitivity_tooltip": "This value (multiplier) determines how easily the character feels pain; lower means more intense pain\nDefault 1.0"
+                "stats_derived_painSensitivity_tooltip": "This value (multiplier) determines how easily the character feels pain; lower means more intense pain\nDefault 1.0\nAlso affects %%experience_pain%% gain during training"
 
             }
         }

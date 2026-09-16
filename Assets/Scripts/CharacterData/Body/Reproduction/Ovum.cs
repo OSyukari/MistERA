@@ -39,6 +39,7 @@ public class Ovum
         totalLifespan = template.ovumLifespanMinutes;
         fertilizationChance = template.fertilizationChance;
         Owner = owner;
+        motherNameFallback = owner == null ? "" : owner.FirstName;
     }
 
     [JsonIgnore]
@@ -61,6 +62,13 @@ public class Ovum
     Character_Trainable _owner = null;
     [JsonProperty]
     protected int ownerRef = -1;
+
+    // Snapshot of the mother's FirstName taken at conception. Ovum/managedChilds can outlive the
+    // mother (e.g. she's deleted from the world while a birthed-but-unmanaged child is still
+    // tracked), at which point Owner resolves to null and this is the only remaining name to show -
+    // same reasoning as fatherName below, mirrored for the mother's side.
+    [JsonProperty] protected string motherNameFallback = "";
+    [JsonIgnore] public string MotherName { get { return Owner != null ? Owner.FirstName : motherNameFallback; } }
 
     // Legacy reference from before fatherName/fatherRaceID existed. Kept only so old saves can
     // still recover their father data on load; MigrateLegacyFatherData() copies it out into the
@@ -177,7 +185,7 @@ public class Ovum
         {
             var header = LocalizeDictionary.QueryThenParse("ovum_itemTooltip")
                 .Replace("$race$", LocalizeDictionary.QueryThenParse(FoetusRaceID))
-                .Replace("$mother$", Owner == null ? "" : Owner.FirstName)
+                .Replace("$mother$", MotherName)
                 .Replace("$motherRace$", Owner == null ? "" : LocalizeDictionary.QueryThenParse(Owner.Race.ID))
                 .Replace("$father$", fatherName)
                 .Replace("$fatherRace$", LocalizeDictionary.QueryThenParse(fatherRaceID));
@@ -267,7 +275,7 @@ public class Ovum
             if (_ovumname == null)
             {
                 _ovumname = LocalizeDictionary.QueryThenParse("ovum_finalName")
-                    .Replace("$mother$", Owner.FirstName)
+                    .Replace("$mother$", MotherName)
                     .Replace("$father$", fatherName);
             }
             return _ovumname;

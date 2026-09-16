@@ -185,9 +185,15 @@ public class EventInstance
     {
         get
         {
-            return currentEvent == null ? "null" : currentEvent.ID;
+            // Mirrors EventCooldown/CooldownRestrictSelf/etc.'s fallback: CheckConflict (and thus
+            // hasCooldown/AddCooldown) runs before Start() ever promotes nextEvent to currentEvent, so
+            // without this fallback every cooldown-configured event was being bucketed under the
+            // literal string "null" instead of its real ID - harmless while add/check both used that
+            // same wrong key, but it breaks the moment a cooldown is registered under the real ID from
+            // elsewhere (e.g. the AddCooldown executor).
+            return currentEvent == null ? nextEvent == null ? "null" : nextEvent.ID : currentEvent.ID;
         }
-    }    
+    }
 
     public int EventCooldown
     {
@@ -222,6 +228,14 @@ public class EventInstance
         {
             return currentEvent == null ? nextEvent == null ? false : nextEvent.cooldownRestrictAND : currentEvent.cooldownRestrictAND;
 
+        }
+    }
+
+    public bool ManualCooldown
+    {
+        get
+        {
+            return currentEvent == null ? nextEvent == null ? false : nextEvent.manualCooldown : currentEvent.manualCooldown;
         }
     }
 

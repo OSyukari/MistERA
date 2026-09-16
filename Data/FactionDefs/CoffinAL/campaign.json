@@ -72,6 +72,8 @@
                 "z_rotation":0.0,
                 "isPublic":false,
                 "setPrivateRoomOwner":true,
+                "isRentingFloor": true,
+                "_comment_isRentingFloor": "renting their apartment, unspecified landlord",
                 "mainExit": { "roomID": "floor_2ldk_2floor_1_1L_frontDoor", "exitCost": 5 },
                 "floors":[
                     {

@@ -39,7 +39,10 @@ public class scr_Menu_Daycount : MonoBehaviour
 
         startTime = scr_System_Time.current.getStartTime();
         currentTime = scr_System_Time.current.getCurrentTime();
-        dayCount = currentTime - scr_System_Time.current.getStartTime();
+        // .Date difference (not the raw TimeSpan) so the count reflects calendar days elapsed, not full
+        // 24-hour periods - otherwise any time before startTime's hour-of-day undercounts by one (e.g. a
+        // campaign starting 08/01 07:00 would still read as "day 2" at 08/03 00:00, only 1.7 days elapsed).
+        dayCount = currentTime.Date - startTime.Date;
 
         string dayofWeek = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_"+currentTime.DayOfWeek);
 

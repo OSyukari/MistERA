@@ -525,7 +525,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
     public void Tick()
     {
-        if (this.Base != null && !this.Base.noCleaning && RoomChara.Count > 0)
+        if (this.Base != null && !this.Base.noCleaning && RoomChara.Count > 0 && FactionOwner != null && FactionOwner.isPlayerFaction)
         {
             dustLevel += RoomChara.Count;
             if (dustLevel >= 5000)
@@ -890,12 +890,18 @@ public class Room_Instance: IDisposable, I_Disposable
 
     int cachedCleanliness = 0;
 
+    /// <summary>
+    /// NPC factions can't schedule cleaning hours (their schedules are auto-driven and can be
+    /// overwritten by a lot of things), so rooms outside a player-managed faction never accumulate
+    /// dust (see Tick) and are never flagged as needing cleaning.
+    /// </summary>
     [JsonIgnore]
     public bool requireCleaning
     {
         get
         {
             if (Base == null || Base.noCleaning) return false;
+            if (FactionOwner == null || !FactionOwner.isPlayerFaction) return false;
             return true;
         }
     }

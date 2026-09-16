@@ -138,7 +138,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "ascii",
         "showQuestStages",
         "furnitureUnpack",
-        "forceConscious"
+        "forceConscious",
+        "advanceTime"
     };
 
     string[] devConsoleCommands = new string[]

@@ -1,0 +1,35 @@
+{
+    "_doc": "Generic, reusable real-life-style DebtClassDef templates (bank-loan-shaped: interestRatePercent + repaymentTermCycles, auto-amortized into a fixed per-cycle installment by Obligation_Debt's constructor - see that class and DebtClassDef's doc comments) - not tied to any single faction/campaign, same shared-defaults convention as MemberDefs/memberTypes.json. Contrast with ErAV/world.json's debtclass_erav_kanon, which is the OTHER supported shape: interestRatePercent 0 + interestFlatAmount set + repaymentTermCycles 0, i.e. no fixed term at all, interest-only auto-collection, principal repaid solely via TradeManager.RepayDebtExtra. These templates are for ordinary fixed-term loans instead, referenced by ID from AddDebtObligation event actions or TradeManager.AddDebt calls.",
+
+    "MapPlans": {
+        "debtClasses": [
+            {
+                "_comment": "Retail installment plan (分割払い) - buying an appliance/furniture/electronics on a short installment plan. Fixed per-cycle installment is auto-computed once from the starting principal (see Obligation_Debt's constructor) so a missed payment just leaves more owed (plus continued interest) rather than resetting the schedule.",
+                "ID": "debtclass_installment_retail_6mo",
+                "interestRatePercent": 1.5,
+                "cadence": "Monthly",
+                "repaymentTermCycles": 6,
+                "onPaidEventID": "",
+                "onFailedEventID": ""
+            },
+            {
+                "_comment": "Ordinary unsecured bank personal loan (銀行ローン) - 2-year term at a lower monthly rate than retail installment credit.",
+                "ID": "debtclass_bank_loan_personal_24mo",
+                "interestRatePercent": 0.8,
+                "cadence": "Monthly",
+                "repaymentTermCycles": 24,
+                "onPaidEventID": "",
+                "onFailedEventID": ""
+            },
+            {
+                "_comment": "Long-term secured bank loan (e.g. a housing/business loan) - 10-year term at the lowest rate of the three, reflecting the longer amortization and (implied) collateral.",
+                "ID": "debtclass_bank_loan_secured_120mo",
+                "interestRatePercent": 0.35,
+                "cadence": "Monthly",
+                "repaymentTermCycles": 120,
+                "onPaidEventID": "",
+                "onFailedEventID": ""
+            }
+        ]
+    }
+}

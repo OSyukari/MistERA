@@ -58,6 +58,26 @@ public class EventManager
             cooldowns.Add(cd);
 
         }
+        /// <summary>
+        /// Registers a cooldown from an explicit self/target pair instead of an EventInstance's own
+        /// Self/Targets - lets a manualCooldown event register its cooldown from within a
+        /// differently-rooted follow-up EventInstance (e.g. a chained Question whose Self/Targets are
+        /// reversed relative to the original triggering event).
+        /// </summary>
+        public void AddCooldown(int cooldownTime, Character_Trainable self, List<Character_Trainable> targets)
+        {
+            var cd = new CooldownCounter();
+            cd.selfRef = self == null ? -1 : self.RefID;
+            cd.cooldownTime = cooldownTime;
+            if (targets != null)
+            {
+                foreach (var target in targets)
+                {
+                    if (target != null && !cd.targetRef.Contains(target.RefID)) cd.targetRef.Add(target.RefID);
+                }
+            }
+            cooldowns.Add(cd);
+        }
         public void TickCooldown()
         {
             for(int i = cooldowns.Count - 1; i >= 0; i--)
@@ -73,6 +93,18 @@ public class EventManager
         if (ev.EventCooldown < 1) return;
         if (!eventCooldowns.ContainsKey(ev.CurrentEventID)) eventCooldowns.Add(ev.CurrentEventID, new EventCooldown());
         eventCooldowns[ev.CurrentEventID].AddCooldown(ev);
+    }
+
+    /// <summary>
+    /// Explicit-outcome cooldown registration for manualCooldown events (see Event.manualCooldown) -
+    /// registers against eventDef's own cooldownTime, keyed by eventDef.ID, using the given self/target
+    /// pair rather than whatever EventInstance happens to be resolving at the call site.
+    /// </summary>
+    public void AddCooldown(Event eventDef, Character_Trainable self, List<Character_Trainable> targets)
+    {
+        if (eventDef == null || eventDef.cooldownTime < 1) return;
+        if (!eventCooldowns.ContainsKey(eventDef.ID)) eventCooldowns.Add(eventDef.ID, new EventCooldown());
+        eventCooldowns[eventDef.ID].AddCooldown(eventDef.cooldownTime, self, targets);
     }
 
     public bool hasCooldown(EventInstance ev)
@@ -188,7 +220,10 @@ public class EventManager
         }
 
 
-        AddCooldown(ev);
+        // manualCooldown events (see Event.manualCooldown) decide for themselves, via the AddCooldown
+        // executor, whether/when their cooldown actually gets registered (e.g. only on refusal) -
+        // registering it here unconditionally on every start would defeat that.
+        if (!ev.ManualCooldown) AddCooldown(ev);
         return false;
     }
 

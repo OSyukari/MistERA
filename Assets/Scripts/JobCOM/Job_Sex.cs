@@ -182,7 +182,7 @@ public class Job_Sex_Group : Job
     /// can't change rooms during its lifetime, so item availability is resolved against the current
     /// room's own faction owner only.
     /// </summary>
-    public override List<I_IsJobGiver> GetValidInventoryFactions()
+    public override List<I_IsJobGiver> GetValidInventoryFactions(Character_Trainable actor)
     {
         var faction = this.ParentRoom?.FactionOwner;
         return faction != null ? new List<I_IsJobGiver> { faction } : new List<I_IsJobGiver>();

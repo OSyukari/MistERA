@@ -1020,7 +1020,7 @@ public abstract class ActionPackage
     {
         //Debug.Log("ActionPackage Base Evaluate on "+DisplayName);
 
-        validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1);
+        validVariant = targetCOM.GetValidVariant(ref this.tooltip, job, this.doer, this.receiver, false, this.job is Job_Furniture ? (int)(this.job as Job_Furniture).ParentInstance.FurnitureBase.furnitureSize : 1, this.Master);
 
         if (validVariant >= 0)
         {
@@ -1641,6 +1641,12 @@ public abstract class ActionPackage
 
     public void LogAcceptanceCheck(MessageCollect m = null)
     {
+        if (this.job == null)
+        {
+            Debug.LogError($"LogAcceptanceCheck called with null job on AP {DisplayName} (jobRefID {jobRefID}), skipping");
+            return;
+        }
+
         bool logging = true;
         if (m == null)
         {
@@ -2124,7 +2130,7 @@ public abstract class ActionPackage
                             // have validated via requireInventory against a non-active faction - resolve
                             // the same way instead of only checking job.FactionOwner.
                             I_IsJobGiver recordingFaction = targetCOM.requirements.requireInventory != null
-                                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job)
+                                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job, this.doer, this.receiver, this.Master)
                                 : this.job.FactionOwner;
 
                             existingJob = new Job_Recording(recordingFaction, targetcomp2.RecorderItem.ID, targetcomp2.Recorder, this.RoomKey, filmcrew);
@@ -2241,7 +2247,7 @@ public abstract class ActionPackage
             // available via a faction other than job.FactionOwner - resolve the same way here instead of
             // only checking job.FactionOwner, or a validated item could silently fail to be found.
             I_IsJobGiver itemFaction = targetCOM.requirements.requireInventory != null
-                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job)
+                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job, this.doer, this.receiver, this.Master)
                 : this.job.FactionOwner;
             if (item != null && itemFaction != null && itemFaction.Inventory != null)
             {
@@ -2260,7 +2266,7 @@ public abstract class ActionPackage
             // Same dynamic-faction resolution as the COM_UseItemCOM branch above, but this command
             // actually consumes the item (take-and-ingest) rather than just using it in place.
             I_IsJobGiver itemFaction = targetCOM.requirements.requireInventory != null
-                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job)
+                ? targetCOM.requirements.requireInventory.ResolveFaction(this.job, this.doer, this.receiver, this.Master)
                 : this.job.FactionOwner;
 
             if (executeSuccessful && itemFaction != null && itemFaction.Inventory != null)
@@ -2272,7 +2278,7 @@ public abstract class ActionPackage
                 foreach (var target in targets)
                 {
                     var instance = itemFaction.Inventory.RemoveItem(ingestCOM.InnerItem.ID, target);
-                    if (instance != null && instance.GetComp_Ingestible() != null) target.Body.ConsumeIngestible(instance, ingestCOM.ingestBodyTag);
+                    if (instance != null && instance.GetComp_Ingestible() != null) target.Body.ConsumeIngestible(instance, ingestCOM.ingestBodyTag, true);
                 }
             }
         }

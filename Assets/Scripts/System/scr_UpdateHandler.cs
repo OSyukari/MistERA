@@ -26,15 +26,6 @@ public enum LLMStatus
     waiting
 }
 
-public class LLMManager
-{
-
-
-
-
-
-
-}
 
 public class scr_UpdateHandler : MonoBehaviour
 {
@@ -553,11 +544,18 @@ public class scr_UpdateHandler : MonoBehaviour
     public event Action<bool> Observer_LogsSingleStepUpdate;
     public event Action<EventStatus, bool> Observer_EventStatus;
 
-    protected void PreUpdate()
+    /// <summary>
+    /// tickCooldown should stay true for every call representing an actual simulated minute (the
+    /// SingleUpdate loop's own per-iteration call). StartUpdate's eager pre-flight call happens once
+    /// per issued command, before the loop ticks any simulated time at all, so it must pass false -
+    /// otherwise every command ticks cooldowns down by one extra minute beyond how much time actually
+    /// elapsed (a 1-minute command ticking cooldown by 2, a 15-minute one by 16).
+    /// </summary>
+    protected void PreUpdate(bool tickCooldown = true)
     {
         var time = scr_System_Time.current.getCurrentTime();
         Observer_PreUpdateTime?.Invoke();
-        this.EventHandler.TickCooldown();
+        if (tickCooldown) this.EventHandler.TickCooldown();
         if (time.Minute == 0) Observer_PreUpdateTime_Hourly?.Invoke();
     }
 
@@ -568,7 +566,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (init)
         {
             firstPreUpdate = true;
-            PreUpdate();
+            PreUpdate(false);
             timeStop = scr_System_Time.current.TimeStop;
             oneLoop = true;
         }
@@ -684,6 +682,13 @@ public class scr_UpdateHandler : MonoBehaviour
                 EventHandler.Run(false, true);
                 ExecuteEventCallbacks(CallbackResumeUpdate);
                 yield return null;
+                // World time must not advance while any event is still queued/running - the loop's own
+                // condition only guards against EventHandler.Waiting, so without this continue the
+                // per-minute world tick below would run in the same pass as draining the event queue,
+                // letting characters move/change jobs while events referencing their prior state are
+                // still backlogged (e.g. a witnessed-join event firing minutes late against a character
+                // who has since left and taken a different job).
+                continue;
             }
             else if (EventHandler.Active && EventHandler.Waiting) break;
             else if (firstLoopCounter != 2)
@@ -723,6 +728,16 @@ public class scr_UpdateHandler : MonoBehaviour
             cnManager.UpdateAllRoom();  // parallel foreach
 
             cnManager.UpdateAllCharaJob();
+
+            // Some results (e.g. a witnessed-job "try to join" launchEvent without startImmediate)
+            // only queue a callback into eventCallbacks rather than starting the event outright - see
+            // ResponseEntryVariant.EventInitializer.Execute(). Without draining that queue here, the
+            // callback sits unprocessed while the loop moves on to the next simulated minute, and by
+            // the time it eventually fires (next time an event happens to already be active, or once
+            // the whole update finishes) the character(s) it was queued against may have moved on and
+            // changed jobs. Flush it immediately so any event it starts is caught by the Active check
+            // at the top of the next iteration, before another minute ticks.
+            ExecuteEventCallbacks(CallbackResumeUpdate);
 
             cnManager.ClearExecutedAPs();
             //cnManager.ClearLogs(true);

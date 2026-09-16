@@ -12,6 +12,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     public List<WorldPlan> worldInit = new List<WorldPlan>();
     public List<MemberType> memberTypes = new List<MemberType>();
     public List<SalesClienteleDef> clienteleDefs = new List<SalesClienteleDef>();
+    public List<DebtClassDef> debtClasses = new List<DebtClassDef>();
 
     // MemberType.GetRelationshipWithType will consult this list and lazily build its cache
     // though, we do need to make sure the game does not store membertype inside save file, and always have the game use pointer to this object's stored membertypes
@@ -58,6 +59,14 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         {
             if (string.IsNullOrEmpty(o.ID)) continue;
             if (!ID_Dictionary_Clientele.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_SalesClienteleDef id [{o.ID}] due to duplicate");
+        }
+
+        message.Add("Index_DebtClassDef : registering ID with list length [" + debtClasses.Count + "]");
+
+        foreach (DebtClassDef o in this.debtClasses)
+        {
+            if (string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary_DebtClass.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_DebtClassDef id [{o.ID}] due to duplicate");
         }
 
         message.Add("Index_MemberRelations : registering ID with list length [" + memberRelations.Count + "]");
@@ -144,6 +153,9 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     Dictionary<string, SalesClienteleDef> ID_Dictionary_Clientele = new Dictionary<string, SalesClienteleDef>();
     public SalesClienteleDef GetByID_SalesClienteleDef(string id) { return ID_Dictionary_Clientele.ContainsKey(id) ? ID_Dictionary_Clientele[id] : null; }
 
+    Dictionary<string, DebtClassDef> ID_Dictionary_DebtClass = new Dictionary<string, DebtClassDef>();
+    public DebtClassDef GetByID_DebtClassDef(string id) { return ID_Dictionary_DebtClass.ContainsKey(id) ? ID_Dictionary_DebtClass[id] : null; }
+
     Dictionary<string, MemberType> ID_Dictionary_MemberType = new Dictionary<string, MemberType>();
     public MemberType GetByID_MemberType(string id) { return ID_Dictionary_MemberType.ContainsKey(id) ? ID_Dictionary_MemberType[id] : null; }
 
@@ -166,6 +178,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.worldInit != null) this.worldInit.AddRange(l.worldInit);
         if (l.memberTypes != null) this.memberTypes.AddRange(l.memberTypes);
         if (l.clienteleDefs != null) this.clienteleDefs.AddRange(l.clienteleDefs);
+        if (l.debtClasses != null) this.debtClasses.AddRange(l.debtClasses);
         if (l.memberRelations != null) this.memberRelations.AddRange(l.memberRelations);
     }
     public void OnAfterDeserialize()
@@ -208,6 +221,33 @@ public class MapPlan
     public List<FloorDoor> floorDoors = new List<FloorDoor>();
 
     public bool setPrivateRoomOwner = false;
+
+    /// <summary>
+    /// Whether this faction is renting (not owning) the floor(s)/unit it occupies - defaults to true
+    /// (renting); set false explicitly for a faction that owns its premises outright. Read once at
+    /// instantiation time (see scr_System_CampaignManager.Instantiate's AddToFaction(Floor_Instance,...)
+    /// call) into TradeManager.rentedFloors; gates whether Obligation_Rent's rentFee component applies on
+    /// top of the always-charged maintenanceFee - see Floor_Base.wholeBuildingRent/.unitRent.
+    /// </summary>
+    public bool isRentingFloor = true;
+
+    /// <summary>
+    /// If isRentingFloor is true and this faction rents from a specific, real landlord faction (rather
+    /// than an unspecified/abstracted one), that landlord's faction ID - e.g. erav_kiryu_filmstudio rents
+    /// from erav_kiryu_office. Read once at instantiation time alongside isRentingFloor. Leave empty for
+    /// "renting, but no specific landlord" (charged to the Recycler as a plain expenditure instead).
+    /// </summary>
+    public string landlordFactionID = "";
+
+    /// <summary>
+    /// Optional rent payment-outcome event override for THIS faction acting as a landlord (read off the
+    /// landlord's own MapPlan template via Manageable.GetTemplateRentEventID) - only consulted for floors
+    /// rented from a specific, concrete landlord (Obligation_Rent.TargetFaction resolves to someone), and
+    /// takes precedence over the broader WorldPlan-level fallback (WorldPlan.onRentPaidEventID/
+    /// onRentFailedEventID) when set. See Obligation_Rent.HandlePaymentEvent.
+    /// </summary>
+    public string onRentPaidEventID = "";
+    public string onRentFailedEventID = "";
 
     /// <summary>
     /// open to public, everyone knows and have access to this location by default. Copied onto the
@@ -300,6 +340,23 @@ public class MapPlan
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
         public List<ItemEntry> hourlyCost = new List<ItemEntry>();
 
+        /// <summary>
+        /// How often hourlyPayout accrued by this job post gets resolved into an actual payment - see
+        /// TradeManager/Obligation_Salary. Defaults to Biweekly so job posts authored before this field
+        /// existed (no "paymentCadence" key in their JSON) keep the same real-world-payday cadence as
+        /// newly-authored ones, rather than silently falling back to Daily.
+        /// </summary>
+        public PaymentCadence paymentCadence = PaymentCadence.Biweekly;
+
+        /// <summary>
+        /// Optional payment-outcome events for this specific job post, sourced here (rather than a
+        /// per-obligation field) since a single Obligation_Salary can aggregate hours from several
+        /// characters sharing this same job post/MemberType - see Obligation_Salary.AccrueHour/
+        /// HandlePaymentEvent. Copied across onto JobPostPreset by its WorkModuleInit constructor.
+        /// </summary>
+        public string onPaidEventID = "";
+        public string onFailedEventID = "";
+
         [JsonIgnore] Manageable.HourlySchedule _cachedSchedule = null;
         /// <summary>
         /// Lazily-built HourlySchedule for jobPostID/workCommands, shared by every character holding
@@ -334,6 +391,26 @@ public class MapPlan
         public string ID = "";
         public List<MapPlan_FloorInit> Additional = new List<MapPlan_FloorInit>();
         public string nameOverwrite = "";
+    }
+
+    /// <summary>
+    /// One rent/maintenance cost definition, referenced by Floor_Base.wholeBuildingRent/.unitRent (rent
+    /// describes the physical floor itself, authored once in floorPlans - not repeated per factionInit
+    /// reference to it). Pure expenditure for now - charged and deducted, with no receiving faction (see
+    /// TradeManager.TryChargeObligation's null-target handling). A landlord/recipient concept is planned
+    /// but will live on Floor_Instance later, not here.
+    /// </summary>
+    public class RentCostInit
+    {
+        /// <summary>Always charged, whether the occupying faction owns or rents (taxes/water/electricity
+        /// etc). Null = no maintenance charge.</summary>
+        public ItemEntry maintenanceFee = null;
+
+        /// <summary>Only charged while the occupying faction is renting, not owning - see
+        /// TradeManager.rentedFloors. Null = no rent charge (e.g. a maintenance-only condo fee).</summary>
+        public ItemEntry rentFee = null;
+
+        public PaymentCadence cadence = PaymentCadence.Monthly;
     }
 
     public class MapPlan_FloorInit

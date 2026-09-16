@@ -26,7 +26,10 @@
                     "trait_ID": "trait_PainSensitivity_sensitive",
                     "trait_displayname": "Pain sensitive",
                     "trait_score":-1,
-                    "trait_tooltip": "respond much stronger to pain, whether its beneficial or detrimental."
+                    "trait_tooltip": "respond much stronger to pain, whether its beneficial or detrimental.",
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_painSensitivity", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"-0.5" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_PainSensitivity_default",
@@ -39,13 +42,19 @@
                     "trait_ID": "trait_PainSensitivity_insensitive",
                     "trait_displayname": "Pain tolerant",
                     "trait_score":1,
-                    "trait_tooltip": "respond much less to pain."
+                    "trait_tooltip": "respond much less to pain.",
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_painSensitivity", "modKey":"traitMod", "type":"addBase", "valueType":"number", "valueString":"1.0" }
+                    ]
                 },
                 {
                     "trait_ID": "trait_PainSensitivity_nopain",
                     "trait_displayname": "No Pain",
                     "trait_score":2,
-                    "trait_tooltip": "does not feel pain."
+                    "trait_tooltip": "does not feel pain.",
+                    "stat_modifiers":[
+                        { "statID":"stats_derived_painSensitivity", "modKey":"baseValue", "type":"setBase", "valueType":"number", "valueString":"0" }
+                    ]
                 }
             ],
             "type": 0,

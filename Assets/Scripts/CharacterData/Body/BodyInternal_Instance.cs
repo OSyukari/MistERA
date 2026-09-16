@@ -45,26 +45,27 @@ public class BodyInternal_Instance
         {
             if (canContain && basePointer.images_volume.Count > 0)
             {
-                var fillPercentage = this.ExpandedCapacityPercentage;
+                var fillPercentage = this.ExpandedCapacityPercentageLiquid;
                 var maxcount = basePointer.images_volume.Count;
                 int index = (int)Math.Clamp(fillPercentage * maxcount, 0, maxcount - 1);
 
-                if (index == 0 && basePointer.images_expansion != null && basePointer.images_expansion.Count > 0)
-                {
-                    // use expansion image instead
-                }
-                else
-                {
-                    return basePointer.images_volume[index];
-                }
+                if (index != 0 && basePointer.images_expansion != null && basePointer.images_expansion.Count > 0) return basePointer.images_volume[index];
                 //return image based on fill percentage
             }
 
-            var sklevel = ExpansionSkill == null ? 0 : ExpansionSkill.GetSkillLevel;
+
+
             if (basePointer.images_expansion != null && basePointer.images_expansion.Count > 0)
             {
+
+
+                var solidPercentage = this.ExpandedCapacityPercentage;
+                var maxcountSolid = basePointer.images_expansion.Count;
+                var sklevel = ExpansionSkill == null ? 0 : ExpansionSkill.GetSkillLevel;
+                int index = (int)Math.Clamp(solidPercentage * maxcountSolid, 0, maxcountSolid - 1);
                 sklevel = Math.Clamp(sklevel, 0, basePointer.images_expansion.Count - 1);
-                return basePointer.images_expansion[sklevel];
+
+                return basePointer.images_expansion[Math.Max(index, sklevel)];
             }
             return "";
         }
@@ -952,12 +953,40 @@ public class BodyInternal_Instance
             return CurrentlyContained / MaxCapacity;
         }
     }
+
+    [JsonIgnore]
+    public float CurrentlyContainedLiquid
+    {
+        get
+        {
+            float sum = 0;
+            foreach (var i in Contains) if (i.GetComp_Ingestible() != null && i.GetComp_Ingestible().isLiquid) sum += i.GetComp_Ingestible().amount;
+            return sum;
+        }
+    }
+
+    [JsonIgnore]
+    public float MaxCapacityPercentageLiquid
+    {
+        get
+        {
+            return CurrentlyContainedLiquid / MaxCapacity;
+        }
+    }
     [JsonIgnore]
     public float ExpandedCapacityPercentage
     {
         get
         {
             return CurrentlyContained / VisiblyExpandedCapacity;
+        }
+    }
+    [JsonIgnore]
+    public float ExpandedCapacityPercentageLiquid
+    {
+        get
+        {
+            return CurrentlyContainedLiquid / VisiblyExpandedCapacity;
         }
     }
 
@@ -1294,6 +1323,23 @@ public class BodyInternal_Instance
             {
                 if (kvpair is Item_Instance_Cum && (kvpair as Item_Instance_Cum).Merge(cum))
                 {
+                    return;
+                }
+            }
+        }
+        else if (comp != null && comp.isLiquid)
+        {
+            // Liquids of the same kind combine into one stomach entry instead of each sitting as its
+            // own separately-timed ContainedRefs_Delays entry and digesting in parallel. canMergeComp
+            // (unlike canStackWith) doesn't require identical amount/addons, since the whole point here
+            // is combining two differently-digested/possibly-doctored amounts - MergeLiquid handles
+            // rescaling addons and summing amount correctly.
+            foreach (var kvpair in Contains)
+            {
+                if (kvpair.canMergeComp(i))
+                {
+                    kvpair.GetComp_Ingestible().MergeLiquid(comp);
+                    scr_System_CampaignManager.current.Unregister(i);
                     return;
                 }
             }

@@ -6,6 +6,8 @@
                 "ID": "ErAV_Kiryu_Household",
                 "z_rotation": 0.0,
                 "isPublic": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "the Kiryu family owns their home outright",
                 "mainExit": { "roomID": "4ldk_floor_1L_frontDoor", "exitCost": 5 },
                 "floors": [ {  "ID": "house_floor_4ldk",
                         "nameOverwrite": "ErAV_Kiryu_Household" } ],

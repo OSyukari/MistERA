@@ -7,6 +7,8 @@
                 "ID": "jp_shopping_street",
                 "z_rotation": 0.0,
                 "setPrivateRoomOwner": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "host faction owns the building outright, not a tenant of anyone",
                 "mainExit": { "roomID": "jp_shopping_street_entrance", "exitCost": 5 },
                 "floors": [
                     { "ID": "floor_jp_shopping_street", "nameOverwrite": "jp_shopping_street" }
@@ -269,6 +271,12 @@
                 "floorHeight": 729,
                 "AnchorType": "TopLeft",
                 "mapExit": "jp_shopping_street_entrance",
+                "_comment_unitRent": "per-shop rent/maintenance for whichever of the 8 rooms below are reassigned to a tenant faction via subfactionOwnerOverwrite, charged monthly. isRentingFloor defaults true on each shop's own factionInit, so they're treated as tenants automatically.",
+                "unitRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 30000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 200000 },
+                    "cadence": "Monthly"
+                },
                 "rooms": [
                     {
                         "ID": "jp_shopping_street_entrance",

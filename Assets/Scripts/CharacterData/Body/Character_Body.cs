@@ -342,7 +342,7 @@ public class Character_Body
     /// </summary>
     /// <param name="i"></param>
     /// <param name="bodyTag"></param>
-    public bool ConsumeIngestible(Item_Instance i, string bodyTag = "")
+    public bool ConsumeIngestible(Item_Instance i, string bodyTag = "", bool forcefill = false)
     {
         ItemComponent_Ingestible ingest = i.GetComp_Ingestible();
         if (ingest == null) {
@@ -371,7 +371,7 @@ public class Character_Body
             {
                 var randInternal = Utility.GetRandomElement(internals);
                 if (randInternal == null) return false;
-                randInternal.Ingest(i);
+                randInternal.Ingest(i, null, forcefill);
                 if (i.Tags.Contains("food_meal")) Owner.NotifyFoodConsume(i);
                 return true;
             }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
-using QuikGraph.Predicates;
 using System.Linq;
 
 
@@ -59,7 +58,7 @@ public class MemoryManager
     }
 
     public MemoryPackage timestopMemory = null;
-    public MemoryPackage sleepMemory = null;
+    public MemoryPackage consciousnessMemory = null;
     public void TimestopStart()
     {
         timestopMemory = new MemoryPackage(Owner);
@@ -70,13 +69,14 @@ public class MemoryManager
         timestopMemory = null;
     }
 
-    public void SleepStart()
+    public void ConsciousnessLost_TryStart()
     {
-        sleepMemory = new MemoryPackage(Owner);
+        if (consciousnessMemory != null) return;
+        consciousnessMemory = new MemoryPackage(Owner);
     }
-    public void SleepEnd()
+    public void ConsciousnessRegained_End()
     {
-        sleepMemory = null;
+        consciousnessMemory = null;
     }
     //public ExperienceManager Experience;
     //public SexLogManager SexLogManager;
@@ -479,10 +479,12 @@ public class MemoryManager
 
     public void NotifyCharaUnregister(Character_Trainable c)
     {
+        bool changed = false;
         foreach (var m in this.Entries)
         {
-            
+            if (m.NotifyTargetUnregistered(c.RefID, c.FirstName)) changed = true;
         }
+        if (changed) ClearCache();
     }
     public void NotifyRoomUnregister(Room_Instance r)
     {

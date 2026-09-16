@@ -26,19 +26,19 @@
                 "prerequisiteRequirements":{
                     "hero":[
                         {
-                            "requireKojoVariables":[
+                            "requireFactionDebts":[
                                 {
-                                    "variableID":"erav_kanon_debt_total",
-                                    "isDailyVariable":false,
+                                    "borrowerFactionID":"ErAV_miyama_Household",
+                                    "lenderFactionID":"ErAV_KiryuGumi_Office",
                                     "checkExistOnly":true,
                                     "value":1,
                                     "appendStringKey":"debt_value"
                                 },
                                 {
-                                    "variableID":"erav_debt_month",
-                                    "isDailyVariable":false,
-                                    "checkExistOnly":true,
-                                    "value":1,
+                                    "borrowerFactionID":"ErAV_miyama_Household",
+                                    "lenderFactionID":"ErAV_KiryuGumi_Office",
+                                    "resolvedCount":0,
+                                    "operand":"gte",
                                     "appendStringKey":"debt_pay_count"
                                 }
                             ]
@@ -52,10 +52,10 @@
     "chara_requirement":{
         "hero":[
             {
-                "requireKojoVariables":[
+                "requireFactionDebts":[
                     {
-                        "variableID":"erav_kanon_debt_total",
-                        "isDailyVariable":false,
+                        "borrowerFactionID":"ErAV_miyama_Household",
+                        "lenderFactionID":"ErAV_KiryuGumi_Office",
                         "operand":"gt",
                         "value":"0"
                     }
@@ -194,10 +194,10 @@
     "chara_requirement":{
         "hero":[
             {
-                "requireKojoVariables":[
+                "requireFactionDebts":[
                     {
-                        "variableID":"erav_kanon_debt_total",
-                        "isDailyVariable":false,
+                        "borrowerFactionID":"ErAV_miyama_Household",
+                        "lenderFactionID":"ErAV_KiryuGumi_Office",
                         "operand":"lte",
                         "value":"0"
                     }
@@ -216,7 +216,7 @@
         "Entries": {
             "zh-cn": {
 "erav_debt_tracker":"偿还欠债",
-"erav_debt_tracker_01":"想办法还上30M日元的欠债，剩余欠款$debt_value$。偿款次数$debt_pay_count$",
+"erav_debt_tracker_01":"想办法还上30M日元的欠债。剩余本金$debt_value$。偿款次数$debt_pay_count$",
 "erav_debt_tracker_01_00":"拒绝了歌音的提案。得想别的办法还上这笔债。",
 "erav_debt_tracker_01_01":"放学后去%%ErAV_KiryuGumi_Office%%与歌音【交谈】",
 "erav_debt_tracker_01_01_late":"迟到了$late_count$天",

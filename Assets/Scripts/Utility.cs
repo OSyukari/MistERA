@@ -1392,6 +1392,18 @@ public static class UtilityEX
                     Debug.LogError($"parse console command {parsed[0]} error");
                 }
                 break;
+            case "advanceTime":
+                if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int advanceDays))
+                {
+                    scr_System_Time.current.UpdateTime(advanceDays, 0, 0);
+                    scr_System_CampaignManager.current.NotifyUpdate();
+                    parsedSuccessful = true;
+                }
+                else
+                {
+                    Debug.LogError($"parse console command {parsed[0]} error");
+                }
+                break;
             case "addItemToChara":
                 if (parsed.Count() >= 4)
                 {

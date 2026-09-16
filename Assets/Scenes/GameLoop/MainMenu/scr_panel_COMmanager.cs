@@ -1755,7 +1755,7 @@ public class scr_panel_COMmanager : scr_Menu
                 display = false;
                 tooltip += "command has GenerateCOM but no currently generated children";
             }
-            else if (com.GenerateCOM != null && !job.AnyComPassesFactionOrInventoryCheck(com.childCOMs))
+            else if (com.GenerateCOM != null && !job.AnyComPassesFactionOrInventoryCheck(com.childCOMs, package))
             {
                 // Children exist structurally, but none currently pass faction/inventory check (e.g. no
                 // item in a reachable faction right now) - invalid, but respects this COM's own
@@ -1788,7 +1788,7 @@ public class scr_panel_COMmanager : scr_Menu
                             package.ResetRequest(new List<int>() { scr_System_CampaignManager.current.Player.RefID }, scr_System_CampaignManager.current.CurrentTargetRef > 0 ? new List<int>() { job.targetActorRef } : new List<int>() { }, 0);
                         }
                     }
-                    else if (parent.TryOverrideForActiveSex(package, job, scr_System_CampaignManager.current.FindInstanceByID(job.targetActorRef)))
+                    else if (parent.TryOverrideForActiveSex(package, scr_System_CampaignManager.current.FindInstanceByID(job.targetActorRef)))
                     {
                         // Generator folder buttons keep their own jobRefID pointed at the original
                         // Job_CharaCOM regardless - OnClickButton() passes this.job into
@@ -2147,17 +2147,20 @@ public class scr_panel_COMmanager : scr_Menu
     public List<int> SexComReceivers;
 
     /// <summary>
-    /// If ap's COM is tagged "allowedDuringSex" and either currentJob is already the sex job (a button
-    /// that was redirected on a previous validation tick - its own targetActorRef no longer means
-    /// anything once currentJob is Job_Sex_Group, since that falls back to the unrelated global
-    /// CurrentTargetRef) or relevantTarget is currently in an active Job_Sex_Group, redirect ap's parent
-    /// job and doer/receiver/master to that sex job instead of the normal single-target flow, reusing
-    /// the sex panel's own actor-selection state (SexComDoers/SexComReceivers) - lets these commands
-    /// execute without evicting anyone from the sex job.
+    /// If ap's COM is tagged "allowedDuringSex", redirect ap's parent job and doer/receiver/master to
+    /// currentSexJob instead of the normal single-target flow, reusing the sex panel's own
+    /// actor-selection state (SexComDoers/SexComReceivers) - lets these commands execute without
+    /// evicting anyone from the sex job. Only applies when the player is actually a participant in
+    /// currentSexJob (their CurrentJob) and relevantTarget is also one of its actors - otherwise this
+    /// stale/unrelated sex job must not hijack an unrelated interaction's doer/receiver.
     /// </summary>
-    private bool TryOverrideForActiveSex(ActionPackage ap, Job currentJob, Character_Trainable relevantTarget)
+    private bool TryOverrideForActiveSex(ActionPackage ap, Character_Trainable relevantTarget)
     {
-        if (currentSexJob == null || ap == null || !ap.ComTags.Contains("allowedDuringSex")) return false; 
+        if (currentSexJob == null || ap == null || !ap.ComTags.Contains("allowedDuringSex")) return false;
+        var player = scr_System_CampaignManager.current.Player;
+        if (player.CurrentJob != currentSexJob) return false;
+        if (!currentSexJob.actorRefID.Contains(player.RefID)) return false;
+        if (relevantTarget == null || !currentSexJob.actorRefID.Contains(relevantTarget.RefID)) return false;
         ap.ResetRequest(new List<int>(SexComDoers), new List<int>(SexComReceivers), 0);
         ap.ReEstablishParent(currentSexJob);
         return true;

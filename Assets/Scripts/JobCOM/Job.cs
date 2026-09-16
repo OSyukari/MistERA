@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 public interface I_Disposable
@@ -93,7 +94,9 @@ public class Job : IDisposable, I_Disposable
     }
 
     [JsonProperty] protected string factionOwnerRef = "";
-    [JsonProperty] protected string factionOwnerPartyRef = "";
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
+    protected string factionOwnerPartyRef = "";
     protected I_IsJobGiver factionOwner = null;
     [JsonIgnore] public virtual I_IsJobGiver FactionOwner 
     {
@@ -145,13 +148,14 @@ public class Job : IDisposable, I_Disposable
 
     private List<I_IsJobGiver> _validInventoryFactionsCache = null;
     /// <summary>
-    /// Which faction(s) requireInventory should search for item availability. Default matches the
-    /// existing single-FactionOwner behavior exactly (scheduled/furniture jobs); Job_CharaCOM overrides
-    /// this to the character's accessible factions instead of just their single CurrentlyActiveFaction.
+    /// Which faction(s) requireInventory should search for item availability, for the given actor.
+    /// Default matches the existing single-FactionOwner behavior exactly (scheduled/furniture jobs,
+    /// where the actor doesn't change which faction applies); Job_CharaCOM overrides this to that
+    /// specific actor's own accessible factions instead of just their single CurrentlyActiveFaction.
     /// Cached (invalidated by the FactionOwner setter) so repeated validation/execution calls within the
     /// same faction-owner state don't re-allocate a new list every time.
     /// </summary>
-    public virtual List<I_IsJobGiver> GetValidInventoryFactions()
+    public virtual List<I_IsJobGiver> GetValidInventoryFactions(Character_Trainable actor)
     {
         if (_validInventoryFactionsCache == null) _validInventoryFactionsCache = new List<I_IsJobGiver> { FactionOwner };
         return _validInventoryFactionsCache;
@@ -333,6 +337,8 @@ public class Job : IDisposable, I_Disposable
             return cache_jobDescString;
         } }
 
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
     public string jobDescriptionOverride = "";
 
     public virtual string GetJobDescription(int charaRef)
@@ -504,11 +510,10 @@ public class Job : IDisposable, I_Disposable
                     if (debug != null) debug.Add($"{com.ID} skipped by failing faction req");
                     continue;
                 }
-                if (com.requirements.requireInventory != null && !com.requirements.requireInventory.Validate(this, out var reqdInv))
-                {
-                    if (debug != null) debug.Add($"{com.ID} skipped by failing inventory req");
-                    continue;
-                }
+                // requireInventory is intentionally not checked here - it needs a resolved
+                // ActionPackage's actual doer/receiver/master to check the correct actor(s), which this
+                // per-actor pre-filter doesn't have. The package built below is validated for real
+                // (Evaluate -> GetValidVariant) once it exists.
 
                 if (filter != null)
                 {
@@ -551,8 +556,9 @@ public class Job : IDisposable, I_Disposable
         foreach (var com in possibleCOMs)
         {
             bool factionReqOk = !com.hasFactionReq || com.requirements.requireFaction.Validate(FactionOwner, out var r);
-            bool inventoryReqOk = com.requirements.requireInventory == null || com.requirements.requireInventory.Validate(this, out var rInv);
-            if (factionReqOk && inventoryReqOk)
+            // requireInventory is checked once the real package exists (Validate() below), against its
+            // actual doer/receiver/master - not here against a bare actor.
+            if (factionReqOk)
             {
                 bool haspackage = false;
                 if (allowChild && com.GenerateAP != null)
@@ -592,18 +598,19 @@ public class Job : IDisposable, I_Disposable
 
     /// <summary>
     /// Returns true if any COM in <paramref name="coms"/> passes both its faction and inventory
-    /// requirement checks against this job - same factionReqOk/inventoryReqOk pre-filter used by
-    /// MakePackages, extracted so a generator parent's own button validation (e.g. a folder command
-    /// whose children are all currently unavailable) can cheaply ask "is any child currently reachable"
-    /// without building packages for all of them.
+    /// requirement checks - extracted so a generator parent's own button validation (e.g. a folder
+    /// command whose children are all currently unavailable) can cheaply ask "is any child currently
+    /// reachable" without building packages for all of them. Children aren't resolved ActionPackages of
+    /// their own, so the inventory check reads doer/receiver/master straight off <paramref
+    /// name="parentAP"/> - the same actors a child would run with if opened from this folder.
     /// </summary>
-    public bool AnyComPassesFactionOrInventoryCheck(List<COM> coms)
+    public bool AnyComPassesFactionOrInventoryCheck(List<COM> coms, ActionPackage parentAP)
     {
         if (coms == null) return false;
         foreach (var com in coms)
         {
             bool factionReqOk = !com.hasFactionReq || com.requirements.requireFaction.Validate(FactionOwner, out var r);
-            bool inventoryReqOk = com.requirements.requireInventory == null || com.requirements.requireInventory.Validate(this, out var rInv);
+            bool inventoryReqOk = com.requirements.requireInventory == null || parentAP == null || com.requirements.requireInventory.Validate(this, parentAP.doer, parentAP.receiver, parentAP.Master, out var rInv);
             if (factionReqOk && inventoryReqOk) return true;
         }
         return false;

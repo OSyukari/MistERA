@@ -240,6 +240,18 @@ public class MemberType
     public MapPlan.WorkModuleInit workModule = null;
 
     /// <summary>
+    /// Optional flat, hours-independent fee this MemberType's holder's HOME faction owes to this
+    /// MemberType's own faction each cadence (e.g. school tuition, club dues) - the mirror-image of
+    /// workModule's salary: instead of this faction paying the member's home faction for hours worked,
+    /// the member's home faction pays this faction, regardless of hours. See Obligation_MembershipFee/
+    /// TradeManager.EnsureMembershipFeeObligations (called daily from Manageable.OnDayUpdate_1), which
+    /// reads this live every cycle rather than baking a snapshot into any obligation - a MemberType
+    /// wouldn't normally set both workModule and membershipFee, though nothing enforces that. Leave null
+    /// for statuses that don't charge a fee (the default).
+    /// </summary>
+    public MembershipFeeInit membershipFee = null;
+
+    /// <summary>
     /// If true (the default), the Schedule UI additionally lets the player control, per hour, whether
     /// a character holding this status is sandboxed (present) at this faction - see
     /// Manageable.HourlySchedule.Sandbox and Manageable.HasCustomOverride. Defaults on so every
@@ -315,4 +327,11 @@ public class MemberType
         return best;
     }
 
+}
+
+/// <summary>See MemberType.membershipFee.</summary>
+public class MembershipFeeInit
+{
+    public ItemEntry feeAmount = new ItemEntry();
+    public PaymentCadence cadence = PaymentCadence.Monthly;
 }

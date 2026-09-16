@@ -107,7 +107,7 @@ public class scr_System_Time : MonoBehaviour
     public bool TimeStopStrict { get { return timeStop == TimestopState.timestop; } }
     public bool TimeResume { get { return timeStop < TimestopState.timestop && timeStop > TimestopState.normal; } }
 
-    public void initializeTime(int initYear = 1980, int initMonth = 08, int initDay = 29, int initHour = 7, int initMinute = 0, int initSecond = 0)
+    public void initializeTime(int initYear = 1980, int initMonth = 08, int initDay = 01, int initHour = 7, int initMinute = 0, int initSecond = 0)
     {
         startDate = new DateTime(initYear, initMonth, initDay, initHour, initMinute, initSecond);
         currentDate = startDate;
@@ -153,6 +153,17 @@ public class scr_System_Time : MonoBehaviour
     /// Day update happens after Hours update
     /// </summary>
     public event Action<int> Observer_globalTime_Day;
+
+    /// <summary>
+    /// Multi-pass daily payment resolution (Manageable.OnDayUpdate_PaymentResolve / TradeManager.ResolveDuePass)
+    /// - invoked (pass, totalPasses) several times between Observer_globalTime_Day(0) and (1), so a same-day
+    /// TradeOrder/Obligation that fails for insufficient funds gets retried after other orders/obligations
+    /// (this faction's own, or another faction's - every listener gets called once per pass before any
+    /// listener sees the next pass) have had a chance to pay in. Whatever's still unresolved on the final
+    /// pass is then treated as a real failure.
+    /// </summary>
+    public event Action<int, int> Observer_globalTime_PaymentResolve;
+    public const int PaymentResolvePasses = 5;
     public event Action<TimeSpan> Observer_globalTime_5min;
     private void UpdateSingleHour()
     {
@@ -165,6 +176,13 @@ public class scr_System_Time : MonoBehaviour
     {
         // different invoke input calls for hard-coded ordering of update sequences
         Observer_globalTime_Day?.Invoke(0); // all debug reset/update
+
+        // TradeOrders/Obligations settle over several retry passes before stage 1 (which reads the
+        // now-settled inventory for sales/resource consumption) runs - see Observer_globalTime_PaymentResolve's
+        // doc comment.
+        for (int pass = 0; pass < PaymentResolvePasses; pass++)
+            Observer_globalTime_PaymentResolve?.Invoke(pass, PaymentResolvePasses);
+
         Observer_globalTime_Day?.Invoke(1); // faction/settlement update
         Observer_globalTime_Day?.Invoke(2); // character update
         Observer_globalTime_Day?.Invoke(3);

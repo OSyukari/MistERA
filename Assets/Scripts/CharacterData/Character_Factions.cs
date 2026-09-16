@@ -674,7 +674,15 @@ public class Character_Factions
         this.Faction_Home_Cache = null;
         this.Factions_Work_Cache = null;
 
-        foreach (var v in HomeFactions) v.NotifyFactionMemberChange();
+        // Alerts each home faction to recalculate/recollect this character's membership fees right now,
+        // rather than waiting for that faction's next daily TradeManager.ResolveDuePass sweep - covers
+        // every faction-membership change (added/removed from a faction, home/temp-home reassigned),
+        // since every mutation that can change HomeFactions/WorkFactions calls UpdateFactionPriorityList.
+        foreach (var v in HomeFactions)
+        {
+            v.NotifyFactionMemberChange();
+            v.TradeManager?.EnsureMembershipFeeObligationFor(Owner);
+        }
         foreach (var v in WorkFactions) v.NotifyFactionMemberChange();
 
         this.Owner.NotifyFactionChange();

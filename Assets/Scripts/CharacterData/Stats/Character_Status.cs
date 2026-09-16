@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.ComponentModel;
 using Newtonsoft.Json;
 
 public enum StatusTags
@@ -26,6 +27,8 @@ public class Status_Instance
     [JsonProperty] protected string baseID;
     [JsonIgnore] public string ID { get { return baseID; } }
 
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue(-1)]
     public int duration = -1;
 
 
@@ -49,6 +52,7 @@ public class Status_Instance
     {
 
     }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public bool maxed = false;
     public void FlagMaxed()
     {
@@ -56,6 +60,7 @@ public class Status_Instance
     }
 
     // Per-instance pause timer: decay is frozen while this > 0
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public int pauseXMinAfterMod = 0;
 
     Stats_Derived_Instance _variantThresholdMod = null;
@@ -174,6 +179,7 @@ public class Status_Instance
         }
     }
 
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     public int elapsedTime = 0;
 
     [JsonIgnore] public int TickTillExpire

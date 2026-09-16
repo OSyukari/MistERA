@@ -8,6 +8,8 @@
                 "z_rotation": 0.0,
                 "initializeFaction": "jp_high_school",
                 "setPrivateRoomOwner": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "school owns its own facility outright",
                 "mainExit": { "roomID": "school_frontGate", "exitCost": 5 },
                 "floors": [
                     {
@@ -28,6 +30,12 @@
                 "floorHeight":400.0,
                 "resize":1.0,
                 "mapExit":"school_frontGate",
+                "_comment_wholeBuildingRent": "full school facility upkeep (multi-building campus, gym, grounds), charged monthly - the school itself owns the building (see isRentingFloor:false on the jp_high_school factionInit), so only maintenanceFee ever applies; NPC faction, never actually charged in practice",
+                "wholeBuildingRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 300000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 1000000 },
+                    "cadence": "Monthly"
+                },
                 "rooms":[
                     {
                         "ID":"school_frontGate",
@@ -55,7 +63,16 @@
                 "skipsJobDispatch": false,
                 "isPurgedOnPartyCleanup": false,
                 "isDisplayableInFactionUI": true,
-                "participatesInCombat": true
+                "participatesInCombat": true,
+                "_comment_workModule": "no physical job/furniture tied to board duty (workCommands empty) - just a light administrative stipend, paid hourly for these active hours same as any other salary",
+                "workModule": {
+                    "jobPostID":"jp_high_school_board_duty",
+                    "workCommands":[],
+                    "activeHours":[10,11],
+                    "activeDays":[1,1,1,1,1,0,0],
+                    "hourlyPayout":[ { "itemID": "currency_JPY", "itemCount": 5000 } ],
+                    "paymentCadence": "Monthly"
+                }
             },
             {
                 "ID": "membertype_jp_high_school_teacher",
@@ -75,7 +92,9 @@
                     "jobPostID":"jp_high_school_teacher_class",
                     "workCommands":["jp_high_school_teachers_lesson"],
                     "activeHours":[8,9,10,11,12,13,14,15,16],
-                    "activeDays":[1,1,1,1,1,0,0]
+                    "activeDays":[1,1,1,1,1,0,0],
+                    "hourlyPayout":[ { "itemID": "currency_JPY", "itemCount": 2200 } ],
+                    "paymentCadence": "Monthly"
                 },
                 "behaviorOverrides":{
                     "behavior_job":{
@@ -112,6 +131,11 @@
                     "workCommands":["jp_high_school_student_lesson"],
                     "activeHours":[8,9,10,11,12,13,14,15,16],
                     "activeDays":[1,1,1,1,1,0,0]
+                },
+                "_comment_membershipFee": "private-school monthly tuition, owed by the student's own home faction to the school",
+                "membershipFee": {
+                    "feeAmount": { "itemID": "currency_JPY", "itemCount": 35000 },
+                    "cadence": "Monthly"
                 },
                 "behaviorOverrides":{
                     "behavior_job":{
@@ -305,6 +329,8 @@
                 "jp_high_school_student_lesson_displayName":"上课",
                 "jp_high_school_teachers_lesson_displayName":"授课",
                 "jp_high_school_student_class":"上学",
+                "jp_high_school_teacher_class":"教课",
+                "jp_high_school_board_duty":"校董事务",
 
                 "school_frontGate":"XX私立高中"
             }

@@ -264,7 +264,7 @@ public abstract class BodyInternal_Womb
             }
             if (defaultImage)
             {
-                var fill = source.MaxCapacityPercentage;
+                var fill = source.MaxCapacityPercentageLiquid;
 
                 if (fill == 0 || fill < float.Epsilon)
                 {

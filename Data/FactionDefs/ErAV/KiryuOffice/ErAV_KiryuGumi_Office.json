@@ -8,6 +8,8 @@
                 "z_rotation": 0.0,
                 "isPublic": false,
                 "setPrivateRoomOwner": true,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "Kiryu-gumi owns this property outright",
                 "mainExit": { "roomID": "erav_kiryu_office_frontDoor", "exitCost": 5 },
                 "floors": [
                     {
@@ -29,6 +31,12 @@
                 "floorHeight": 742,
                 "AnchorType": "TopLeft",
                 "mapExit": "erav_kiryu_office_frontDoor",
+                "_comment_wholeBuildingRent": "commercial office lease, charged monthly",
+                "wholeBuildingRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 50000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 300000 },
+                    "cadence": "Monthly"
+                },
                 "exits":[
                     {
                         "ID":"South",

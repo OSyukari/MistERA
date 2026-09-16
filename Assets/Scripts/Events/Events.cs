@@ -153,6 +153,12 @@ public class Event_CharaCondition
     /// when validating requireKojoVariable. "self" resolves the character's own self-relationship.
     /// </summary>
     public string relationshipTargetKey = "self";
+
+    /// <summary>
+    /// Debt/loan comparator between two named factions - see RequireFactionDebt. Needs no
+    /// relationshipTargetKey (unlike requireKojoVariable), since it isn't scoped to any character.
+    /// </summary>
+    public RequireFactionDebt requireFactionDebt = null;
 }
 public class Event : I_SerializationCallbackReceiver
 {
@@ -166,6 +172,15 @@ public class Event : I_SerializationCallbackReceiver
     /// restrictions (self AND target) rather than any one of them (self OR target).
     /// </summary>
     public bool cooldownRestrictAND = false;
+
+    /// <summary>
+    /// When true, EventManager.CheckConflict will NOT auto-register this event's cooldown the moment
+    /// it starts - the cooldown still exists (cooldownTime/restrict fields still gate future attempts
+    /// via hasCooldown), but something in this event's own Results must explicitly call the
+    /// AddCooldown executor to actually register it. Use this when the cooldown should depend on how
+    /// the event resolves (e.g. only apply on refusal) rather than always applying on start.
+    /// </summary>
+    public bool manualCooldown = false;
 
     /// <summary>
     /// Since there is jump involved, Event itself should not be managing the flow
@@ -489,6 +504,14 @@ public class Event : I_SerializationCallbackReceiver
             ModStatEXValue,
             WakeUp,
             Undress,
+            /// <summary>
+            /// [string eventID, string selfLabel, string targetLabel] - registers a cooldown against
+            /// eventID's own cooldownTime/cooldownRestrictSelf/cooldownRestrictTarget/cooldownRestrictAND,
+            /// using selfLabel/targetLabel (each "self" or an owner.Targets key) as the self/target pair.
+            /// Meant for events with manualCooldown=true, where the cooldown should only be applied on
+            /// a specific outcome (e.g. refusal) rather than automatically on start.
+            /// </summary>
+            AddCooldown,
             ExecuteCallback,
             /// <summary>
             /// same as ExecuteCallback, but will return true even if callback not found
@@ -596,6 +619,19 @@ public class Event : I_SerializationCallbackReceiver
             /// [string fromFactionID, string toFactionID, string itemID, int count, bool logIntoEventMessage]
             /// </summary>
             TransferItemByFactionID,
+
+            /// <summary>
+            /// [string borrowerFactionID, string lenderFactionID, string debtClassID, string currencyItemID,
+            /// int principal] - creates (or tops up, if one already exists - see TradeManager.AddDebt) a
+            /// real Obligation_Debt on borrowerFactionID's own TradeManager, owed to lenderFactionID.
+            /// Interest/cadence/payment events all come from debtClassID's DebtClassDef (Index_MapPlan.
+            /// debtClasses/GetByID_DebtClassDef), authored once and reused across however many individual
+            /// loans reference it, rather than repeated inline on every AddDebtObligation call. No
+            /// auto-charged installment is set (principal repayment is manual-only, via a future
+            /// RepayDebtExtra-driven action) - matches the "pay principal at your own pace" narration this
+            /// was built for (ErAV's Kanon debt).
+            /// </summary>
+            AddDebtObligation,
 
             /// <summary>
             /// [string factionInitID] - instantiates the given factionInit (MapPlan) if not already present in the

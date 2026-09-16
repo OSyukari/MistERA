@@ -958,6 +958,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             box.description.text = parent.CurrentFaction == null || parent.currentChara == null ? ""
                 : tooltip_desc
+                .Replace("$dayCount$", parent.CurrentFaction.GetWorkDayCountPerWeek(parent.currentChara).ToString())
                 .Replace("$workdays$", parent.CurrentFaction.GetWorkDaysPerWeekString(parent.currentChara))
                 .Replace("$workhours$", parent.CurrentFaction.GetWorkHoursPerDayString(parent.currentChara));
 
@@ -1170,8 +1171,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 }
                 description.text = LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
                     .Replace("$description$", String.Join(",", strs))
-                    .Replace("$hour$", display.activeHours.Count.ToString())
+                    .Replace("$hourCount$", display.activeHours.Count.ToString())
+                    .Replace("$hourRange$", display.PrintHourRanges)
                     .Replace("$payout$", display.PrintPayout)
+                    .Replace("$paymentCadence$", PaymentCadenceUtility.DisplayName(display.paymentCadence))
+                    .Replace("$days$", display.PrintActiveDays)
+                    .Replace("$dayCount$", display.ActiveDayCount.ToString())
                     .Replace("$additionalDescription$", "");
             }
             else description.text = "error";
@@ -1297,8 +1302,12 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 }
                 description.text = LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
                     .Replace("$description$", String.Join(",", strs))
-                    .Replace("$hour$", preset.activeHours.Count.ToString())
+                    .Replace("$hourCount$", preset.activeHours.Count.ToString())
+                    .Replace("$hourRange$", preset.PrintHourRanges)
                     .Replace("$payout$", preset.PrintPayout)
+                    .Replace("$paymentCadence$", PaymentCadenceUtility.DisplayName(preset.paymentCadence))
+                    .Replace("$days$", preset.PrintActiveDays)
+                    .Replace("$dayCount$", preset.ActiveDayCount.ToString())
                     .Replace("$additionalDescription$", "");
 
             }

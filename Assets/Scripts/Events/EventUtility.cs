@@ -251,6 +251,18 @@ public static class EventUtility
     /// <returns></returns>
     public static bool isValid(Event_CharaCondition r, EventInstance ev, Character_Trainable c)
     {
+        if (r.requireFactionDebt != null && r.requireFactionDebt.isValid)
+        {
+            if (r.requireFactionDebt.appendStringKey != "")
+            {
+                var value = r.requireFactionDebt.CurrentAmount;
+                if (!ev.AppendStrings.ContainsKey(r.requireFactionDebt.appendStringKey)) ev.AppendStrings.Add(r.requireFactionDebt.appendStringKey, new List<string>());
+                ev.AppendStrings[r.requireFactionDebt.appendStringKey].Add(value.ToString());
+            }
+
+            return r.requireFactionDebt.Validate();
+        }
+
         if (r.requireKojoVariable != null && r.requireKojoVariable.isValid)
         {
             if (c == null) return false;
@@ -1407,6 +1419,20 @@ public static class EventUtility
                     return true;
                 }
                 return false;
+            case Event.EventEntry.ExecutionType.AddDebtObligation:
+                // AddDebtObligation [borrowerFactionID] [lenderFactionID] [debtClassID] [currencyItemID] [principal]
+                if (exec.arguments.Count >= 5 && exec.arguments[2] != "" && exec.arguments[3] != ""
+                    && int.TryParse(exec.arguments[4], out var debtPrincipal))
+                {
+                    Manageable borrowerFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[0]);
+                    Manageable lenderFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
+                    if (borrowerFaction == null || lenderFaction == null || borrowerFaction.TradeManager == null) return false;
+
+                    var principal = new ItemEntry(exec.arguments[3], "", debtPrincipal, false);
+                    borrowerFaction.TradeManager.AddDebt(lenderFaction.ID, principal, exec.arguments[2]);
+                    return true;
+                }
+                return false;
             case Event.EventEntry.ExecutionType.InitializeFaction:
                 if (exec.arguments.Count >= 1 && exec.arguments[0] != "")
                 {
@@ -1697,6 +1723,24 @@ public static class EventUtility
                         foreach (var c in tgts) c.Undress(layer, reveal, armor);
                         return true;
                     }
+                }
+                return false;
+            case Event.EventEntry.ExecutionType.AddCooldown:
+                if (exec.arguments.Count >= 3)
+                {
+                    var cooldownEventDef = scr_System_Serializer.current.GetEventByID(exec.arguments[0]);
+                    if (cooldownEventDef == null) return false;
+
+                    Character_Trainable cdSelf = exec.arguments[1] == "self" ? owner.Self
+                        : owner.Targets.TryGetValue(exec.arguments[1], out var cdSelfList) && cdSelfList.Count > 0 ? cdSelfList[0]
+                        : null;
+
+                    List<Character_Trainable> cdTargets = exec.arguments[2] == "self" ? (owner.Self != null ? new List<Character_Trainable>() { owner.Self } : new List<Character_Trainable>())
+                        : owner.Targets.TryGetValue(exec.arguments[2], out var cdTargetList) ? cdTargetList
+                        : new List<Character_Trainable>();
+
+                    scr_UpdateHandler.current.EventHandler.AddCooldown(cooldownEventDef, cdSelf, cdTargets);
+                    return true;
                 }
                 return false;
             case Event.EventEntry.ExecutionType.FlushMessageExpAll:
