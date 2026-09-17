@@ -52,13 +52,8 @@ public class BodyInternal_Instance
                 if (index != 0 && basePointer.images_expansion != null && basePointer.images_expansion.Count > 0) return basePointer.images_volume[index];
                 //return image based on fill percentage
             }
-
-
-
             if (basePointer.images_expansion != null && basePointer.images_expansion.Count > 0)
             {
-
-
                 var solidPercentage = this.ExpandedCapacityPercentage;
                 var maxcountSolid = basePointer.images_expansion.Count;
                 var sklevel = ExpansionSkill == null ? 0 : ExpansionSkill.GetSkillLevel;
@@ -67,7 +62,8 @@ public class BodyInternal_Instance
 
                 return basePointer.images_expansion[Math.Max(index, sklevel)];
             }
-            return "";
+            else if (basePointer.images_volume.Count > 0) return basePointer.images_volume[0];
+            else return "";
         }
     }
 

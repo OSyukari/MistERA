@@ -4,8 +4,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using Newtonsoft.Json;
-using System.Text.RegularExpressions;
-using QuikGraph;
 
 
 public class scr_System_Serializer : MonoBehaviour
@@ -14,6 +12,8 @@ public class scr_System_Serializer : MonoBehaviour
     string _datapath = "";
 
     public bool Debug_KojoIntegrityCheck = false;
+
+    public bool DisableFontFallback = false;
 
     public static string DataPath
     {
@@ -192,134 +192,168 @@ public class scr_System_Serializer : MonoBehaviour
 
     }
 
-    bool initialized = false;
-    private void Update()
-    {
-        if (!initialized)
-        {
-            initialized = true;
-
-            CustomCalls();
-
-            BuildAddressables(scr_System_CentralControl.current.isSafeMode);
-
-            // before master dictionary load, central control player pref must exist to check language
-            LoadDefs(scr_System_CentralControl.current.isSafeMode);
-
-            // parkour every file
-            LoadCharactersFoldersJSON();
-            LoadCharactersPresetsJSON();
-
-#if UNITY_EDITOR
-            if (scr_System_CentralControl.current.isSafeMode)
-            {   // update safelist
-                SafeList.InitializeLists();
-
-                SafeList.MergeWith(MasterList);
-
-                MasterList = SafeList;
-                CharaOrigins.Instance.Humanoid_Race_Index = SafeList.humanoid_Races;
-                CharaOrigins.Instance.Origins_Index = SafeList.Character_Origins;
-                CharaOrigins.Instance.StartingOption_Index = SafeList.Character_Origin_StartingOptions;
-                CharaOrigins.Instance.RaceTemplateIndex = SafeList.humanoid_RaceTemplates;
-                CharaOrigins.Instance.BodyPartIndex = SafeList.BodyPartBases;
-                CharaOrigins.Instance.Traits = SafeList.Traits_Groups;
-                Masterlist_Items.Instance.Index = SafeList.Items;
-                LocalizeDictionary.Instance.Index = SafeList.Dictionary;
-
-                Expeditions.Instance.ResetMasterlist();
-
-                MasterList.RemoveNSFW();
-            }
-
-            // update untranslated list
-            Dictionary_Index untranslated = new Dictionary_Index();
-            var baseDict = LocalizeDictionary.Instance.Index.Entries["zh-cn"];
-            foreach (var language in LocalizeDictionary.Instance.Index.Languages)
-            {
-                if (language == "zh-cn") continue;
-                var currentLib = LocalizeDictionary.Instance.Index.Entries[language];
-                var currentTarget = untranslated.Entries[language];
-                foreach (var key in baseDict.Keys)
-                {
-                    if (!currentLib.ContainsKey(key)) currentTarget.Add(key, baseDict[key]);
-                }
-            }
-
-            string untransDictPath = Application.dataPath + "/untranslatedDict.json";
-
-            var s2 = JsonConvert.SerializeObject(untranslated, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
-            if (File.Exists(untransDictPath)) File.Delete(untransDictPath);
-
-            FileInfo untransDict = new System.IO.FileInfo(untransDictPath);
-            untransDict.Directory.Create();
-            File.WriteAllText(untransDict.FullName, s2);
-            Debug.Log($"creating/updating untranslated Dictionary in {untransDictPath}");
-
-            // source string tracking: compare current zh-cn against snapshot
-            string snapshotPath = Application.dataPath + "/dict_zh_cn_snapshot.json";
-            string reportPath = Application.dataPath + "/dict_source_updated.json";
-
-            if (File.Exists(snapshotPath))
-            {
-                var snapshot = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(snapshotPath));
-                var changedEntries = new Dictionary<string, Dictionary<string, string>>();
-
-                foreach (var kvp in baseDict)
-                {
-                    if (!snapshot.ContainsKey(kvp.Key))
-                        changedEntries[kvp.Key] = new Dictionary<string, string> { { "old", null }, { "new", kvp.Value } };
-                    else if (snapshot[kvp.Key] != kvp.Value)
-                        changedEntries[kvp.Key] = new Dictionary<string, string> { { "old", snapshot[kvp.Key] }, { "new", kvp.Value } };
-                }
-
-                File.WriteAllText(reportPath, JsonConvert.SerializeObject(changedEntries, Formatting.Indented));
-
-                if (changedEntries.Count > 0)
-                    Debug.Log($"[SourceTracking] {changedEntries.Count} zh-cn source string(s) changed since snapshot. Other languages may need updating. See dict_source_updated.json");
-                else
-                    Debug.Log("[SourceTracking] No source string changes since snapshot.");
-            }
-#endif
-            MasterList.Initialize();
-
-#if UNITY_EDITOR
-
-            if (scr_System_CentralControl.current.isSafeMode)
-            {
-                MasterList.RemoveNonExisting();
-
-                string safeListpath = Application.dataPath + " /safeMasterList.json";
-                var s = JsonConvert.SerializeObject(SafeList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
-                if (File.Exists(safeListpath)) File.Delete(safeListpath);
-
-                FileInfo safeFile = new System.IO.FileInfo(safeListpath);
-                safeFile.Directory.Create();
-                File.WriteAllText(safeFile.FullName, s);
-                Debug.Log($"creating/updating safeList in {safeListpath}");
-            }
-            else
-            {
-                string safeListpath = Application.dataPath + " /MasterList.json";
-                var s = JsonConvert.SerializeObject(MasterList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
-                if (File.Exists(safeListpath)) File.Delete(safeListpath);
-
-                FileInfo safeFile = new System.IO.FileInfo(safeListpath);
-                safeFile.Directory.Create();
-                File.WriteAllText(safeFile.FullName, s);
-                Debug.Log($"creating/updating Masterlist in {safeListpath}");
-
-            }
-#endif
-
-            scr_System_CentralControl.current.NotifyLoadComplete();
-        }
-    }
+    public event Action Observer_LoadStart;
+    public event Action<float, string> Observer_LoadProgress;
+    public event Action Observer_LoadComplete;
 
     private void Start()
     {
-        // build addressable
-        
+        StartCoroutine(BootSequence());
+    }
+
+    private IEnumerator BootSequence()
+    {
+        Observer_LoadStart?.Invoke();
+        Observer_LoadProgress?.Invoke(0.00f, "Loading data...");
+
+        CustomCalls();
+
+        yield return null;
+        BuildAddressables(scr_System_CentralControl.current.isSafeMode);
+
+        Observer_LoadProgress?.Invoke(0.10f, "Loading definitions...");
+        yield return null;
+        // before master dictionary load, central control player pref must exist to check language
+        LoadDefs(scr_System_CentralControl.current.isSafeMode);
+
+        Observer_LoadProgress?.Invoke(0.35f, "Loading characters...");
+        yield return null;
+        // parkour every file
+        LoadCharactersFoldersJSON();
+        LoadCharactersPresetsJSON();
+
+#if UNITY_EDITOR
+        Observer_LoadProgress?.Invoke(0.50f, "Updating localization tables...");
+        yield return null;
+        if (scr_System_CentralControl.current.isSafeMode)
+        {   // update safelist
+            SafeList.InitializeLists();
+
+            SafeList.MergeWith(MasterList);
+
+            MasterList = SafeList;
+            CharaOrigins.Instance.Humanoid_Race_Index = SafeList.humanoid_Races;
+            CharaOrigins.Instance.Origins_Index = SafeList.Character_Origins;
+            CharaOrigins.Instance.StartingOption_Index = SafeList.Character_Origin_StartingOptions;
+            CharaOrigins.Instance.RaceTemplateIndex = SafeList.humanoid_RaceTemplates;
+            CharaOrigins.Instance.BodyPartIndex = SafeList.BodyPartBases;
+            CharaOrigins.Instance.Traits = SafeList.Traits_Groups;
+            Masterlist_Items.Instance.Index = SafeList.Items;
+            LocalizeDictionary.Instance.Index = SafeList.Dictionary;
+
+            Expeditions.Instance.ResetMasterlist();
+
+            MasterList.RemoveNSFW();
+        }
+
+        // update untranslated list
+        Dictionary_Index untranslated = new Dictionary_Index();
+        var baseDict = LocalizeDictionary.Instance.Index.Entries["zh-cn"];
+        foreach (var language in LocalizeDictionary.Instance.Index.Languages)
+        {
+            if (language == "zh-cn") continue;
+            var currentLib = LocalizeDictionary.Instance.Index.Entries[language];
+            var currentTarget = untranslated.Entries[language];
+            foreach (var key in baseDict.Keys)
+            {
+                if (!currentLib.ContainsKey(key)) currentTarget.Add(key, baseDict[key]);
+            }
+        }
+
+        string untransDictPath = Application.dataPath + "/untranslatedDict.json";
+
+        var s2 = JsonConvert.SerializeObject(untranslated, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
+        if (File.Exists(untransDictPath)) File.Delete(untransDictPath);
+
+        FileInfo untransDict = new System.IO.FileInfo(untransDictPath);
+        untransDict.Directory.Create();
+        File.WriteAllText(untransDict.FullName, s2);
+        Debug.Log($"creating/updating untranslated Dictionary in {untransDictPath}");
+
+        // source string tracking: compare current zh-cn against snapshot
+        string snapshotPath = Application.dataPath + "/dict_zh_cn_snapshot.json";
+        string reportPath = Application.dataPath + "/dict_source_updated.json";
+
+        if (File.Exists(snapshotPath))
+        {
+            var snapshot = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(snapshotPath));
+            var changedEntries = new Dictionary<string, Dictionary<string, string>>();
+
+            foreach (var kvp in baseDict)
+            {
+                if (!snapshot.ContainsKey(kvp.Key))
+                    changedEntries[kvp.Key] = new Dictionary<string, string> { { "old", null }, { "new", kvp.Value } };
+                else if (snapshot[kvp.Key] != kvp.Value)
+                    changedEntries[kvp.Key] = new Dictionary<string, string> { { "old", snapshot[kvp.Key] }, { "new", kvp.Value } };
+            }
+
+            File.WriteAllText(reportPath, JsonConvert.SerializeObject(changedEntries, Formatting.Indented));
+
+            if (changedEntries.Count > 0)
+                Debug.Log($"[SourceTracking] {changedEntries.Count} zh-cn source string(s) changed since snapshot. Other languages may need updating. See dict_source_updated.json");
+            else
+                Debug.Log("[SourceTracking] No source string changes since snapshot.");
+        }
+#endif
+        Observer_LoadProgress?.Invoke(0.55f, "Finalizing definitions...");
+        yield return null;
+        MasterList.Initialize();
+
+        Observer_LoadProgress?.Invoke(0.60f, "Preparing fonts...");
+        scr_System_FontManager.Observer_FontProgress += OnFontProgress;
+        try
+        {
+            string currentLang = scr_System_CentralControl.current.Language;
+            string currentFontSelection = scr_System_CentralControl.current.DisplaySetting.FontSelection
+                .TryGetValue(currentLang, out var fs) ? fs : "";
+            yield return scr_System_FontManager.EnsureFontsCoroutine(
+                scr_System_CentralControl.current.DefaultFallbackFont, currentLang, currentFontSelection);
+        }
+        finally
+        {
+            scr_System_FontManager.Observer_FontProgress -= OnFontProgress;
+        }
+
+#if UNITY_EDITOR
+        Observer_LoadProgress?.Invoke(0.95f, "Writing debug dumps...");
+        yield return null;
+        if (scr_System_CentralControl.current.isSafeMode)
+        {
+            MasterList.RemoveNonExisting();
+
+            string safeListpath = Application.dataPath + " /safeMasterList.json";
+            var s = JsonConvert.SerializeObject(SafeList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
+            if (File.Exists(safeListpath)) File.Delete(safeListpath);
+
+            FileInfo safeFile = new System.IO.FileInfo(safeListpath);
+            safeFile.Directory.Create();
+            File.WriteAllText(safeFile.FullName, s);
+            Debug.Log($"creating/updating safeList in {safeListpath}");
+        }
+        else
+        {
+            string safeListpath = Application.dataPath + " /MasterList.json";
+            var s = JsonConvert.SerializeObject(MasterList, formatting: Formatting.Indented, UtilityEX.SerializerSettings);
+            if (File.Exists(safeListpath)) File.Delete(safeListpath);
+
+            FileInfo safeFile = new System.IO.FileInfo(safeListpath);
+            safeFile.Directory.Create();
+            File.WriteAllText(safeFile.FullName, s);
+            Debug.Log($"creating/updating Masterlist in {safeListpath}");
+
+        }
+#endif
+
+        Observer_LoadProgress?.Invoke(1.00f, "Ready");
+        scr_System_CentralControl.current.NotifyLoadComplete();
+        Observer_LoadComplete?.Invoke();
+    }
+
+    // Font phase occupies the [0.60, 0.95) slice of overall boot progress.
+    private void OnFontProgress(string description, int index, int total)
+    {
+        float t = total > 0 ? (float)index / total : 1f;
+        Observer_LoadProgress?.Invoke(0.60f + t * 0.35f, description);
     }
 
 

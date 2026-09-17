@@ -40,6 +40,9 @@
 "helper_AVFilming_guide":"AV摄影和贩卖",
 "helper_AVFilming_guide_content":"AV摄影和贩卖分为几个环节：拍摄、剪辑、贩售。\n\n拍摄：需要玩家持有%%item_recording_camera%%和%%item_recording_camera_Tape%%。持有%%item_recording_camera%%时，可以随时开始%%com_recording_begin_displayName_1%%。\n%%com_recording_end_displayName_1%%后，如果持有%%item_recording_camera_Tape%%会消耗道具生成录像原片\n不持有%%item_recording_camera_Tape%%的话则什么都不会生成\n\n剪辑：需要在任意%%furniture_computer_terminal%%处使用【%%com_recording_edit_displayName_1%%】指令开始编辑\n需要选择一个【%%recording_edit_canvas_genre_title%%】，通过剪辑录像满足其需求，然后保存录像\n只有设定 %%recording_edit_canvas_genre_title%% 并且保存后，该道具才会被视为可贩售的AV\n\n贩售：目前只有 ErAV 剧本中的【宫间映画】阵营有贩卖AV的能力\n该阵营会在接受了%%ErAV_Kanon_firstname%%的提案后生成\n请确保需要贩售的AV在【宫间映画】阵营道具栏内（不在的话请通过 阵营管理 的 转移道具至 功能转移道具）\n通过【%%ui_management_production_addSales%%】将目标AV设为贩售中即可",
 
+"helper_UserPref_guide":"性别和偏好设定",
+"helper_UserPref_guide_content":"于游戏主界面的【偏好设置】-> 【要素设定】中变更\n\n游戏默认是不允许BL互动的，也不允许扶她->男性（对应的调教指令会无法执行）。如需要更改允许的性别互动，可在该界面的【调教设定】中更改。\n此界面也可更改什么样的角色会被游戏认为是男性/女性等，以此来细化游戏允许的互动条件。",
+
 "comManager_filter_touch": "触摸",
 "comManager_filter_service": "奉仕",
 "comManager_filter_breast": "胸",

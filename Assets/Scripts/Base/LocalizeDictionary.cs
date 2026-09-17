@@ -78,6 +78,8 @@ public class Dictionary_Index : I_IndexMergeable
                 else
                 {
                     dict.Add(value.Key, value.Value);
+                    scr_FontCharsetCollector.Collect(entry.Key, value.Key);
+                    scr_FontCharsetCollector.Collect(entry.Key, value.Value);
                 }
             }
            // var tempdic = this.Entries[entry.Key].Concat(entry.Value).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);

@@ -176,10 +176,25 @@ public class scr_System_CentralControl : MonoBehaviour
         {
             if (LocalizeDictionary.Instance.Index.Entries.ContainsKey(value))
             {
+                bool languageChanged = DisplaySetting.Language != value;
                 DisplaySetting.Language = value;
                 LocalizeDictionary.Instance.Index.cachedLang = value;
                 LocalizeDictionary.ClearCache();
-                scr_System_CentralControl.current.SaveUserPref();
+
+                if (languageChanged)
+                {
+                    // Switching language must never silently trigger an unannounced font
+                    // (re)build for whatever was previously selected for it (LoadFontAsset would
+                    // do a synchronous bake with no progress UI). Reset to that language's
+                    // fallback font instead - the player can re-pick and Refresh Fonts from
+                    // Settings if they want a custom font for this language again.
+                    // SetFontSelection also saves the user pref.
+                    SetFontSelection(value, "");
+                }
+                else
+                {
+                    scr_System_CentralControl.current.SaveUserPref();
+                }
             }
             else
             {
@@ -422,10 +437,52 @@ public class scr_System_CentralControl : MonoBehaviour
         }
     }
 
-    public TMP_FontAsset alphabet;
-    public TMP_FontAsset chinese;
+    public TMP_FontAsset DefaultFallbackFont;
+    public List<LanguageFontFallback> LanguageFallbackFonts = new List<LanguageFontFallback>();
 
-    public TMP_FontAsset Font { get { return alphabet; } }
+    string _resolvedFontLanguage = null;
+    TMP_FontAsset _resolvedFont = null;
+
+    public TMP_FontAsset Font
+    {
+        get
+        {
+            string lang = Language;
+            if (_resolvedFont == null || _resolvedFontLanguage != lang) ResolveFont(lang);
+            return _resolvedFont;
+        }
+    }
+
+    void ResolveFont(string lang)
+    {
+        _resolvedFontLanguage = lang;
+        _resolvedFont = null;
+
+        if (DisplaySetting.FontSelection.TryGetValue(lang, out var assetName) && !string.IsNullOrEmpty(assetName))
+        {
+            _resolvedFont = scr_System_FontManager.LoadFontAsset(lang, assetName);
+        }
+
+        if (_resolvedFont == null) _resolvedFont = GetFallbackFont(lang);
+    }
+
+    /// <summary>
+    /// The font this language would use with no saved FontSelection override - i.e. what "default
+    /// font" resolves to. Used by the display settings preview so it reflects the actual fallback
+    /// even while a different font is currently active.
+    /// </summary>
+    public TMP_FontAsset GetFallbackFont(string lang)
+    {
+        var fallback = LanguageFallbackFonts.Find(f => f.Language == lang);
+        return fallback != null ? fallback.Font : DefaultFallbackFont;
+    }
+
+    public void SetFontSelection(string language, string assetName)
+    {
+        DisplaySetting.FontSelection[language] = assetName ?? "";
+        SaveUserPref();
+        _resolvedFontLanguage = null;
+    }
 
     public XRay_Mode xray_mode
     {
@@ -836,6 +893,15 @@ public class DisplaySettings
     public BoolSetting displayPlayerPortraitInLogs = new BoolSetting(true, "displayPlayerPortraitInLogs");
 
     public BoolSetting asciiRenderEnabled = new BoolSetting(false, "asciiRenderEnabled");
+
+    public Dictionary<string, string> FontSelection = new Dictionary<string, string>();
+}
+
+[System.Serializable]
+public class LanguageFontFallback
+{
+    public string Language;
+    public TMP_FontAsset Font;
 }
 
 [System.Serializable]

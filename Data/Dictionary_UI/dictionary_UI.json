@@ -330,11 +330,18 @@
 
 "ui_prefs_button_displaySetting": "显示设定",
 "ui_prefs_button_displaySetting_tooltip": "设定字体背景颜色等显示相关要素",
+"ui_prefs_font_default": "默认字体",
 "ui_prefs_bgColorTitle": "背景颜色",
 "ui_prefs_bgColor_solid": "<link=ui_prefs_bgColor_solid_tooltip>背景底色</link>",
 "ui_prefs_bgColor_solid_tooltip": "当前界面的背景色",
 "ui_prefs_bgColor_transparent": "<link=ui_prefs_bgColor_transparent_tooltip>半透明底色</link>",
 "ui_prefs_bgColor_transparent_tooltip": "覆盖在背景色之上的半透明界面颜色",
+
+"ui_prefs_textFontTitle": "<link=ui_prefs_textFontTitle_tooltip>刷新字体选项</link>",
+"ui_prefs_textFontTitle_tooltip": "添加了新的字体文件的话，由于需要重建文字asset因此初次加载时间会较长（可能会超过30秒）\n那之后再刷新的话速度会快很多",
+"ui_prefs_textFontButton": "<link=ui_prefs_textFontButton_tooltip>保存字体</link>",
+"ui_prefs_textFontButton_tooltip": "保存后，会退回主界面并适用新字体",
+"ui_prefs_textFontPreview": "当前选中的字体：",
 
 "ui_prefs_textColorTitle": "字体颜色",
 "ui_prefs_textColor_base": "<link=ui_prefs_textColor_base_tooltip>默认字体颜色</link>",
@@ -1130,6 +1137,7 @@
 
 "ui_prefs_button_displaySetting": "Display Settings",
 "ui_prefs_button_displaySetting_tooltip": "Modify settings related to text and background colors.",
+"ui_prefs_font_default": "Default Font",
 "ui_prefs_bgColorTitle": "Background Color",
 "ui_prefs_bgColor_solid": "<link=ui_prefs_bgColor_solid_tooltip>Base Background</link>",
 "ui_prefs_bgColor_solid_tooltip": "Background color of current menu",

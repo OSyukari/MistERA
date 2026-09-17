@@ -22,6 +22,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
     [HideInInspector] public RectTransform CurrentPanel;
 
     public initScript_prefs_Display initScript_Prefs_Display;
+    public TextMeshProUGUI previewText;
 
     public override void Initialize()
     {
@@ -237,6 +238,13 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                     case 0109: // ColorPicker text toggled
                         button.Initialize(this, new ButtonValidator_LoadColorSwap(this, button, "ui_prefs_textColor_toggled", scr_System_CentralControl.current.DisplaySetting.TextColor_toggle, initScript_Prefs_Display.TextColorUpdate)); break;
                     
+                    case 0210: // font preview/apply button
+                        button.Initialize(this, new initScript_prefs_Display.ButtonValidator_ApplyFont(this, button));
+                        break;
+                    case 0211: // refresh fonts button
+                        button.Initialize(this, new initScript_prefs_Display.ButtonValidator_RefreshFonts(this, button));
+                        break;
+
                     case 0200: // Logs toggle clearlogs
                         button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.clearLogs)); break;
 
@@ -673,6 +681,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             parent.colorPickerScript.LoadMenu( LocalizeDictionary.QueryThenParse(titleString), target.Color, OnValueChangeWrapper, OnRevertWrapper);
         }
     }
+
 
 
     class ButtonValidator_ApplyColor : ButtonValidator, I_ButtonClickable

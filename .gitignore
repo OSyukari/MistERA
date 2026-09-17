@@ -15,12 +15,14 @@
 
 !Data/
 !Demo/
+!FontAssets/
 
 !Assets/
 Assets/*
 !Assets/Data
 !Assets/Scripts
 !Assets/Scenes
+!Assets/Editor
 
 **/forbidCopy
 **/forbidCopy.*
@@ -70,3 +72,4 @@ Assets/*
 *.opendb
 *.VC.db
 !Demo/*.png
+!FontAssets/*/testCharacters.txt
