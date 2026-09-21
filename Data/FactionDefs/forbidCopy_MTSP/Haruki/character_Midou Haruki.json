@@ -1,0 +1,46 @@
+{
+  "baseID": "MTSP_Char_Haruki",
+  "Template": {
+    "Appearance": "Male",
+    "BodyType": "Default",
+    "stat_STR": 9,
+    "stat_CON": 10,
+    "stat_PSY": 11,
+    "stat_WIL": 12,
+    "personalityID": "personality_default",
+    "sensitivity_B": "trait_Sensitivity_B_default",
+    "sensitivity_M": "trait_Sensitivity_M_default",
+    "sensitivity_C": "trait_Sensitivity_C_sensitive",
+    "sensitivity_V": "trait_Sensitivity_V_none",
+    "sensitivity_A": "trait_Sensitivity_A_default",
+    "size_B": "trait_Size_B_AAA",
+    "size_P": "trait_Size_P_average",
+    "size_V": "trait_Size_V_none",
+    "size_A": "trait_Size_A_1",
+    "Height": 173,
+    "Weight": 64,
+    "traits": [
+      "trait_FatigueResistance_high",
+      "trait_MemoryCapacity_high",
+      "trait_MemoryRetention_high",
+      "trait_EnergyCapacity_high",
+      "trait_MentalFortitude_low"
+    ],
+    "initialInventory": [
+      {
+        "ID": "clothing_skin_socks"
+      }
+    ],
+    "characterComment": "MTSP_Jin_Midou_Haruki_charCard_comment",
+    "Skills": null,
+    "CharacterCard": "<Midou_Haruki>\ncharacter:\n  name:\n    english: Midou Haruki\n    chinese: 美堂春树\n    japanese: 美堂春樹\n  basic_settings:\n    gender: Male\n    age: 18\n    height: 173cm\n    weight: 64kg\n    identity: Third-year honor student at Suginami High School; stepson and secret devoted admirer of Midou Sakiko\n    occupation: High school senior with a university recommendation and scholarship prospects\n    residence: Modest family home in Suginami Ward shared with his stepmother Sakiko\n  character_brief_description:\n    - Clean, handsome, earnest senior with a reserved intelligent face and kind eyes\n    - Diligent and disciplined to the point of near-asceticism; studying is both exam preparation and his moral way of loving\n    - Fell in love with his stepmother at first sight in middle school; his early rebellion against her was denial of that\n    - Believes he must become a full-fledged independent adult before confessing to her\n    - Cannot bring himself to call her 'mother' - he calls her 'Sakiko-san' - and she notices\n    - Virgin with no experience; even in dreams it is always Sakiko who crosses the line first\n    - Structurally avoidant: protects the fragile household by leaving painful truths unasked\n  overall_appearance:\n    - Neat short dark-brown hair; clean well-kept student build, lean and healthy\n    - Understated good looks - attractive enough to draw a young teacher's infatuation without seeming vain\n    - Signature item: a well-used study planner and mechanical pencil with Sakiko's encouraging notes tucked between pages\n  overall_clothing:\n    - Simple school uniform and plain casual clothes; practical, unobtrusive, student-like\n  important_background:\n    - Father died four years ago; the death insurance cleared the mortgage, leaving a stable but tight household\n    - Studying hard partly to reduce Sakiko's financial burden, partly to become a man worthy of her\n    - When the teacher Satou was forced to seduce him, he wavered but did not fall - he comforted her instead\n    - Called Sakiko past midnight when she was out with the Grade Level Chair; heard something off, and retreated rather than press\n  important_relationship:\n    - Midou Sakiko: stepmother, guardian, and the woman he loves as a woman; his restraint is an attempt to protect her dignity\n    - Satou Sensei: young teacher with a poorly hidden crush on him; he treats her kindly and carefully\n    - Kuroda (Grade Level Chair): a threat he senses but cannot yet prove anything against\n    - Akemichi Yuu: a first-year at his school; different years, little contact\n  personality_notes:\n    - The Earnest Stepson/The Pure-Hearted Lover archetype\n    - Hates the thought of another man hurting Sakiko, being powerless to protect her, his own youth standing in the way\n    - Likes Sakiko's cooking, her praise, peaceful mornings, quiet library study, literature\n    - His avoidance is tenderness laced with fear: he would rather suffer uncertainty than make Sakiko say something that breaks their home\n  speech_pattern:\n    - Polite and respectful, often hesitant with Sakiko; uses 'Sakiko-san', preserving distance that reveals everything\n    - Flustered around adult women; sentences trail off before the true question can be asked\n</Midou_Haruki>"
+  },
+  "firstName": "MTSP_Char_Haruki_FirstName",
+  "middleName": "",
+  "lastName": "MTSP_Char_Haruki_LastName",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

@@ -104,10 +104,10 @@ public class initScript_ManageChara : MonoBehaviour
 
         chara_location_ap.SetText(charaLocAP.Replace("$location$", scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID).DisplayName).Replace("$jobdescription$", parent.currentChara.GetJobDescription()));
 
-        FillFactionRect(chara_HomeFaction, c.FactionManager.Faction_Home, c, "management_faction_home_tooltip");
+        Utility.FillFactionRect(chara_HomeFaction, c.FactionManager.Faction_Home, c, "management_faction_home_tooltip", parent.CurrentFaction);
         //chara_HomeFaction.SetText(currentChara.FactionManager.Faction_Home == null ? " - " : currentChara.FactionManager.Faction_Home.FactionDisplayName);
 
-        FillFactionRect(chara_TempHomeFaction, c.FactionManager.Faction_Home_Temporary, c, "management_faction_home_temporary_tooltip");
+        Utility.FillFactionRect(chara_TempHomeFaction, c.FactionManager.Faction_Home_Temporary, c, "management_faction_home_temporary_tooltip", parent.CurrentFaction);
         //chara_TempHomeFaction.SetText(currentChara.FactionManager.Faction_Home_Temporary == null ? " - " : currentChara.FactionManager.Faction_Home_Temporary.FactionDisplayName);
 
         scr_System_CampaignManager.current.CurrentTargetEX = c;
@@ -117,9 +117,8 @@ public class initScript_ManageChara : MonoBehaviour
         foreach (Manageable faction in c.FactionManager.WorkFactions)
         {
             var hover = Instantiate(prefab_worktext);
-            string extratooltip2 = faction.GetWorkDaysPerWeekString(c);
             hover.SelfRect.SetParent(list_factionWork, false);
-            FillFactionRect(hover, faction, c, "management_faction_work_tooltip", extratooltip2);
+            Utility.FillFactionRect(hover, faction, c, "management_faction_work_tooltip", parent.CurrentFaction);
         }
 
         if (c.hasSleepNeed)
@@ -138,18 +137,4 @@ public class initScript_ManageChara : MonoBehaviour
     }
 
     public scr_HoverableText prefab_worktext;
-    void FillFactionRect(scr_HoverableText text, Manageable faction, Character_Trainable c, string extraTooltip, string extratooltip2 = null)
-    {
-        if (faction == null || c == null)
-        {
-            text.SetText(Utility.WrapTextColor(" - ", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
-        }
-        else
-        {
-            var color = faction == parent.CurrentFaction ? null : scr_System_CentralControl.current.DisplaySetting.TextColor_disabled;
-            text.SetText(color == null ? faction.GetCharaSocialStandingName(c) : Utility.WrapTextColor(faction.GetCharaSocialStandingName(c), color.Color), false, extraTooltip);
-            text.SetExternalTooltip(faction.GetCharaSocialStandingTooltip(c) + (extratooltip2 == null ? "" : $"\n\n{extratooltip2}"));
-        }
-
-    }
 }

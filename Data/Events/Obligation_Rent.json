@@ -1,0 +1,85 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "OnRentPaid",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent", "line": "OnRentPaid_rent", "nextEntryLabel": "check_resumed" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance", "line": "OnRentPaid_maintenance", "nextEntryLabel": "check_resumed" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both", "line": "OnRentPaid_both", "nextEntryLabel": "check_resumed" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic", "line": "OnRentPaid_generic", "nextEntryLabel": "check_resumed" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_resumed",
+                        "options": [
+                            {
+                                "option": "resumed append string set - jump to the resumed trailer line",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["resumed"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "resumed_trailer"] }
+                                ]
+                            },
+                            {
+                                "option": "not resumed - nothing more to say",
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "resumed_trailer", "isLast": true, "line": "OnRentPaid_resumed" }
+                ]
+            },
+            {
+                "ID": "OnRentFailed",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent", "isLast": true, "line": "OnRentFailed_rent" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance", "isLast": true, "line": "OnRentFailed_maintenance" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both", "isLast": true, "line": "OnRentFailed_both" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic", "isLast": true, "line": "OnRentFailed_generic" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "OnRentPaid": "租金事件 - 已支付",
+                "OnRentPaid_rent": "$factionName$已支付租金（$amount$）。",
+                "OnRentPaid_maintenance": "$factionName$已支付房屋维护费（$amount$）。",
+                "OnRentPaid_both": "$factionName$已支付租金与房屋维护费（$amount$）。",
+                "OnRentPaid_generic": "$factionName$已还清拖欠的租金（$amount$）。",
+                "OnRentPaid_resumed": "此前因欠款而中断的服务已恢复。",
+
+                "OnRentFailed": "租金事件 - 未支付",
+                "OnRentFailed_rent": "$factionName$未能支付租金：需要$amount$，但仅有$available$。",
+                "OnRentFailed_maintenance": "$factionName$未能支付房屋维护费：需要$amount$，但仅有$available$。",
+                "OnRentFailed_both": "$factionName$未能支付租金与房屋维护费：需要$amount$，但仅有$available$。",
+                "OnRentFailed_generic": "$factionName$未能还清拖欠的租金：需要$amount$，但仅有$available$。"
+            },
+            "en-us": {
+                "OnRentPaid": "Rent Event - Paid",
+                "OnRentPaid_rent": "$factionName$ paid the rent ($amount$).",
+                "OnRentPaid_maintenance": "$factionName$ paid the maintenance fee ($amount$).",
+                "OnRentPaid_both": "$factionName$ paid rent and maintenance ($amount$).",
+                "OnRentPaid_generic": "$factionName$ paid off an outstanding rent balance ($amount$).",
+                "OnRentPaid_resumed": "Service, previously interrupted by the missed payment, has resumed.",
+
+                "OnRentFailed": "Rent Event - Unpaid",
+                "OnRentFailed_rent": "$factionName$ failed to pay rent: $amount$ needed, but only has $available$.",
+                "OnRentFailed_maintenance": "$factionName$ failed to pay the maintenance fee: $amount$ needed, but only has $available$.",
+                "OnRentFailed_both": "$factionName$ failed to pay rent and maintenance: $amount$ needed, but only has $available$.",
+                "OnRentFailed_generic": "$factionName$ failed to pay off an outstanding rent balance: $amount$ needed, but only has $available$."
+            }
+        }
+    }
+}

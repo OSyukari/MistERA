@@ -19,7 +19,7 @@ class BuildProcessorExtend : IPostprocessBuildWithReport, IPreprocessBuildWithRe
     public List<string> safeExtensiosn = new List<string>() { ".meta", ".json", ".asset", ".mat" };
     public List<string> allExtensiosn = new List<string>() { ".meta", ".asset", ".mat" };
 
-    public List<string> ForbidCopy = new List<string>() { "forbidCopy", "forbid" };
+    public List<string> ForbidCopy = new List<string>() { "forbidCopy", "forbid", "unused" };
 
     public void OnPostprocessBuild(BuildReport report)
     {
@@ -117,6 +117,6 @@ class BuildProcessorExtend : IPostprocessBuildWithReport, IPreprocessBuildWithRe
             CopyDataFrom($"{appPath}/Presets/", $"{rootDir}/Presets/", allExtensiosn);
         }
 
-        CopyDataTo($"{Application.dataPath}/", $"{rootDir}/Mist Era_Data/", "LLMrequestTemplate.json");
+        CopyDataFrom($"{Application.dataPath}/LLM/", $"{rootDir}/Mist Era_Data/LLM/", allExtensiosn);
     }
 }

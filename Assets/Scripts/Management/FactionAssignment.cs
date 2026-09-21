@@ -21,6 +21,14 @@ public class NPCInit
         public string spawnFloorID = "";
         public string spawnRoomID = "";
         public bool setRoomOwnership = false;
+
+        /// <summary>
+        /// Workfactions entries only: ID of the faction that dispatched this character into factionID's
+        /// job (see Character_Factions.AddWorkFaction's sourceFaction param) - e.g. a working member sent
+        /// to study at a school. Left blank, the source defaults to the character's own home faction (see
+        /// GetWorkFactionSourceOrDefault). Ignored on Homefaction/TempHomefaction entries.
+        /// </summary>
+        public string sourceFactionID = "";
     }
 }
 

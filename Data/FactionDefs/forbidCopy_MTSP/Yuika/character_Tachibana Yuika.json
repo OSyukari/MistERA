@@ -1,0 +1,1201 @@
+{
+  "baseID": "MTSP_Char_Yuika",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - doer. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -9.7,
+        "icon_offset_y": -141.8,
+        "icon_offset_size": 0.37,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_masturbation orgasm.webp",
+              "Yuika/Assets/yuika_nude_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_masturbation.webp",
+              "Yuika/Assets/yuika_nude_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Yuika/Assets/yuika_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - receiver. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -9.7,
+        "icon_offset_y": -141.8,
+        "icon_offset_size": 0.37,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_lactation.webp",
+              "Yuika/Assets/yuika_nude_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_breast caress.webp",
+              "Yuika/Assets/yuika_nude_breast caress_alt.webp",
+              "Yuika/Assets/yuika_nude_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Yuika/Assets/yuika_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - doer. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -9.7,
+        "icon_offset_y": -141.8,
+        "icon_offset_size": 0.37,
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_masturbation orgasm.webp",
+              "Yuika/Assets/yuika_casual_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_masturbation.webp",
+              "Yuika/Assets/yuika_casual_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Yuika/Assets/yuika_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - receiver. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -9.7,
+        "icon_offset_y": -141.8,
+        "icon_offset_size": 0.37,
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_lactation.webp",
+              "Yuika/Assets/yuika_casual_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_breast caress.webp",
+              "Yuika/Assets/yuika_casual_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Yuika/Assets/yuika_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - nude. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -9.7,
+        "icon_offset_y": -141.8,
+        "icon_offset_size": 0.37,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_jealous.webp",
+              "Yuika/Assets/yuika_nude_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_sad.webp",
+              "Yuika/Assets/yuika_nude_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_determined.webp",
+              "Yuika/Assets/yuika_nude_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_happy.webp",
+              "Yuika/Assets/yuika_nude_grateful.webp",
+              "Yuika/Assets/yuika_nude_hopeful.webp",
+              "Yuika/Assets/yuika_nude_lovestruck.webp",
+              "Yuika/Assets/yuika_nude_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_nude_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Yuika/Assets/yuika_nude_neutral.webp",
+        "icon_path": "Yuika/Assets/yuika_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - casual. Default costume, no context key required - system-wide terminal fallback (mandatory catch-all).",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -9.7,
+        "icon_offset_y": -141.8,
+        "icon_offset_size": 0.37,
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_jealous.webp",
+              "Yuika/Assets/yuika_casual_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_sad.webp",
+              "Yuika/Assets/yuika_casual_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_determined.webp",
+              "Yuika/Assets/yuika_casual_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_happy.webp",
+              "Yuika/Assets/yuika_casual_grateful.webp",
+              "Yuika/Assets/yuika_casual_hopeful.webp",
+              "Yuika/Assets/yuika_casual_lovestruck.webp",
+              "Yuika/Assets/yuika_casual_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Yuika/Assets/yuika_casual_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Yuika/Assets/yuika_casual_neutral.webp",
+        "icon_path": "Yuika/Assets/yuika_casual_neutral.webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "BodyType": "Default",
+    "stat_STR": 10,
+    "stat_CON": 11,
+    "stat_PSY": 11,
+    "stat_WIL": 12,
+    "personalityID": "personality_default",
+    "sensitivity_B": "trait_Sensitivity_B_sensitive",
+    "sensitivity_M": "trait_Sensitivity_M_default",
+    "sensitivity_C": "trait_Sensitivity_C_sensitive",
+    "sensitivity_V": "trait_Sensitivity_V_sensitive",
+    "sensitivity_A": "trait_Sensitivity_A_default",
+    "size_B": "trait_Size_B_H",
+    "size_P": "trait_Size_P_none",
+    "size_V": "trait_Size_V_1",
+    "size_A": "trait_Size_A_1",
+    "Height": 173,
+    "Weight": 58,
+    "traits": [
+      "trait_FatigueResistance_high",
+      "trait_SelfEsteem_high",
+      "trait_CleanlinessTolerance_low",
+      "trait_MentalFortitude_low",
+      "trait_Singular_Masochist"
+    ],
+    "initialInventory": [
+      {
+        "ID": "clothing_skin_bra"
+      },
+      {
+        "ID": "clothing_skin_panty"
+      },
+      {
+        "ID": "clothing_skin_socks"
+      }
+    ],
+    "characterComment": "MTSP_Jin_Tachibana_Yuika_charCard_comment",
+    "Skills": null,
+    "CharacterCard": "<Tachibana_Yuika>\ncharacter:\n  name:\n    english: Tachibana Yuika\n    chinese: 橘结花\n    japanese: 橘結花\n  basic_settings:\n    gender: Female\n    age: 21\n    height: 173cm\n    weight: 58kg\n    measurements: B93(H-cup) W58 H91\n    identity: Eldest daughter of the Tachibana household; university student; Yuu's teasing childhood friend and secret lover\n    occupation: Student at Seijo University majoring in Fashion Business; part-time model/influencer work\n    residence: Lives with mother Kyouka, sister Koharu, and Yuu in the Tachibana family home\n  character_brief_description:\n    - Two-faced charm: cool beauty at university, bright teasing slightly-sadistic older sister at home\n    - High pride and quick wit; hides vulnerability behind confidence and verbal sparring\n    - Former kendo club member with strong competition results; toned athletic build\n    - Hypervigilant toward outside threats: scans unfamiliar places for hidden cameras, watches men who look at Koharu\n    - Kept her virginity for Yuu for years; actively seduced him after discovering his relationship with her mother\n    - Proposed the 'seeding trip' to settle who becomes Yuu's wife, secretly timing it to her ovulation\n  overall_appearance:\n    - Long straight black hair styled neatly; black eyes; sharp modern beauty inherited from her mother\n    - Tall, long-limbed, slender athletic frame with a compact H-cup bustline\n    - Soft rose-pink areolae; fully waxed pubic area\n    - Signature item: a black choker, often changing styles and materials\n    - Perfume: light floral with a hint of sweetness, youthful and modern\n  overall_clothing:\n    - Trendy sophisticated casual: stylish dresses, skirts with blouses, fashionable jeans and tops\n    - Pool/beach: red micro bikini\n    - Night: white cropped tank top and navy drawstring shorts\n    - Favorite home tease: walking around in nothing but a bath towel to fluster Yuu\n  important_background:\n    - Father died when she was young; grew up helping her mother hold the family together\n    - Writes poetry in private and secretly loves cute animals and sentimental romance movies\n    - Strong latent masochistic side she has not fully acknowledged herself\n    - Insists Yuu wear a condom - her way of keeping control of the relationship's terms\n  important_relationship:\n    - Tachibana Kyouka: mother she trusts unconditionally; also rival for Yuu's affection\n    - Tachibana Koharu: younger sister she protects from careless men\n    - Akemichi Yuu: childhood friend and lover; calls him simply 'Yuu'; teases him constantly\n  personality_notes:\n    - The Sophisticate/The Prideful One archetype\n    - Hates being underestimated, public criticism, losing control, being ignored by Yuu\n    - Likes intelligent conversation, stylish clothes, black coffee, rainy days, feeling admired\n    - Rationalizes attraction as a test: 'I'm only testing him; I can stop whenever I want'\n    - When flustered, her volume and aggression rise rather than fall\n  speech_pattern:\n    - Confident, lively, teasing; sharp comebacks and rhetorical hooks\n    - Softer cool register in public, expressive mischief at home\n</Tachibana_Yuika>"
+  },
+  "firstName": "MTSP_Char_Yuika_FirstName",
+  "middleName": "",
+  "lastName": "MTSP_Char_Yuika_LastName",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

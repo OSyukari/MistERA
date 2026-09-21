@@ -363,15 +363,28 @@ public class Character_Factions
 
     /// <summary>
     /// The faction whose Management Canvas dispatched this character into workFactionID's job (see
-    /// AddWorkFaction's sourceFaction param), if tracked - otherwise null so callers fall back to
-    /// HomeFactions[0]. Lets a job's employer pay wages to whichever faction actually assigned the
-    /// job instead of always the character's literal home faction.
+    /// AddWorkFaction's sourceFaction param), if explicitly tracked - otherwise null. Most callers want
+    /// GetWorkFactionSourceOrDefault instead, which folds in the HomeFactions[0] fallback; this raw
+    /// accessor exists for callers (e.g. UI) that need to distinguish "explicitly overridden" from
+    /// "defaulted to home".
     /// </summary>
-    public Manageable GetWorkFactionSource(string workFactionID)
+    protected Manageable GetWorkFactionSource(string workFactionID)
     {
         if (FactionIDs_WorkSource != null && FactionIDs_WorkSource.TryGetValue(workFactionID, out var sourceID))
             return scr_System_CampaignManager.current.FindFactionByID(sourceID);
         return null;
+    }
+
+    /// <summary>
+    /// The faction that should be treated as the source for workFactionID's obligations (salary,
+    /// membership fees, etc.): the explicitly tracked dispatcher (GetWorkFactionSource) if any, otherwise
+    /// HomeFactions[0]. Every work faction assignment resolves to *some* source through this fallback, so
+    /// every caller that needs "who does this job's obligations belong to" should go through here rather
+    /// than re-deriving the HomeFactions[0] fallback itself.
+    /// </summary>
+    public Manageable GetWorkFactionSourceOrDefault(string workFactionID)
+    {
+        return GetWorkFactionSource(workFactionID) ?? (HomeFactions.Count > 0 ? HomeFactions[0] : null);
     }
 
     public void PrioritizeWorkFaction(string factionID)
@@ -674,16 +687,17 @@ public class Character_Factions
         this.Faction_Home_Cache = null;
         this.Factions_Work_Cache = null;
 
-        // Alerts each home faction to recalculate/recollect this character's membership fees right now,
-        // rather than waiting for that faction's next daily TradeManager.ResolveDuePass sweep - covers
-        // every faction-membership change (added/removed from a faction, home/temp-home reassigned),
-        // since every mutation that can change HomeFactions/WorkFactions calls UpdateFactionPriorityList.
-        foreach (var v in HomeFactions)
-        {
-            v.NotifyFactionMemberChange();
-            v.TradeManager?.EnsureMembershipFeeObligationFor(Owner);
-        }
+        foreach (var v in HomeFactions) v.NotifyFactionMemberChange();
         foreach (var v in WorkFactions) v.NotifyFactionMemberChange();
+
+        // Alerts every faction managing this character (home AND work) to recalculate/recollect
+        // membership fees right now, rather than waiting for the next daily TradeManager.ResolveDuePass
+        // sweep - covers every faction-membership change (added/removed from a faction, home/temp-home
+        // reassigned, dispatched to a work faction with an explicit sourceFaction), since every mutation
+        // that can change HomeFactions/WorkFactions calls UpdateFactionPriorityList. Not just HomeFactions:
+        // a work faction can itself be the tracked payer for another of this character's work factions
+        // (see GetWorkFactionSourceOrDefault), so it needs the same eager notification home gets.
+        foreach (var v in Factions) v.TradeManager?.EnsureMembershipFeeObligationFor(Owner);
 
         this.Owner.NotifyFactionChange();
 

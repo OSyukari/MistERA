@@ -236,7 +236,13 @@ public abstract class RecurringObligation
 
     [JsonIgnore] bool cyclePending = false;
     [JsonIgnore] ItemEntry cycleAttempt = null;
-    [JsonIgnore] bool cycleWasSuspended = false;
+
+    /// <summary>Whether this obligation was already suspended (owed > 0) before this resolved cycle began -
+    /// protected rather than private so HandlePaymentEvent overrides (see Obligation_Rent) can tell a
+    /// plain successful cycle apart from one that just cleared a prior missed payment. Still reset to false
+    /// at the end of FinishCycle like the other cycle-scoped fields above, but not yet reset by the time
+    /// HandlePaymentEvent itself runs.</summary>
+    [JsonIgnore] protected bool cycleWasSuspended = false;
 
     /// <summary>
     /// Ungated: (re-)begins today's cycle if not already begun - folds this cycle's accrual into owed and

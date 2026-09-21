@@ -126,6 +126,8 @@ public abstract class scr_Menu : MonoBehaviour
     protected Dictionary<int, ButtonValidator> ValidatorsByID { get { return validatorsByID; } }
     public virtual void ValidateAll()
     {
+        if (scr_System_LoadingScreen.IsLoading()) return;
+
         if (ButtonsByID != null)
         {
             foreach (scr_SelectableText button in ButtonsByID.Values)
@@ -350,7 +352,7 @@ public class scr_Menu_Intro : scr_Menu
 
             }
         }
-        ValidateAll();
+        if (validator != null && !validator.noValidate) ValidateAll();
     }
 
     public class ButtonValidator_HasSaveFiletoLoad : ButtonValidator

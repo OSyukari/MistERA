@@ -691,10 +691,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (payout == null) continue;
 
             // prefer the faction that actually dispatched c into this job (see
-            // Character_Factions.GetWorkFactionSource / AddWorkFaction's sourceFaction param),
+            // Character_Factions.GetWorkFactionSourceOrDefault / AddWorkFaction's sourceFaction param),
             // falling back to home faction for untracked/legacy assignments.
-            var targetFaction = c.FactionManager.GetWorkFactionSource(this.ID)
-                ?? (c.FactionManager.HomeFactions.Count > 0 ? c.FactionManager.HomeFactions[0] : null);
+            var targetFaction = c.FactionManager.GetWorkFactionSourceOrDefault(this.ID);
             if(targetFaction == null) continue;
 
             // self owes wage to targetFaction - accrued into a System 2 Obligation_Salary (accumulates

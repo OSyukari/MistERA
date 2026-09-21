@@ -1,0 +1,13 @@
+{
+  "default": [
+    "NotoSansSymbols-Regular.ttf",
+    "NotoSansSymbols2-Regular.ttf",
+    "unifont-17.0.05.otf",
+    "unifont_upper-17.0.05.otf"
+  ],
+  "zh-cn": [
+    "EraMonoSC-1.05.ttf",
+    "eraPixel.ttf",
+    "SarasaMonoTC-Regular.ttf"
+  ]
+}

@@ -18,6 +18,13 @@ public class scr_menu_LLMQuery : scr_Menu
 
     public TMP_Text responseText;
 
+    /// <summary>
+    /// Always-visible block above responseText/ResponseList, showing reasoning content - empty when
+    /// the response/provider has none. Updated incrementally while a streamed request is in flight,
+    /// or all at once on LoadResponse for a completed (streamed or non-streamed) response.
+    /// </summary>
+    public scr_HoverableText reasoningText;
+
     public RectTransform ResponseList;
 
     public bool _active = true;
@@ -38,6 +45,7 @@ public class scr_menu_LLMQuery : scr_Menu
                 SelfGroup.interactable = false;
                 scr_UpdateHandler.current.Observer_LLMResponse -= OnResponse;
                 scr_UpdateHandler.current.Observer_LLMStatus -= OnUpdate;
+                scr_UpdateHandler.current.Observer_LLMReasoningDelta -= OnReasoningDelta;
             }
         }
     }
@@ -56,8 +64,12 @@ public class scr_menu_LLMQuery : scr_Menu
         //Grid.cellSize = new Vector2(Grid.cellSize.x, (float)Math.Min(self.rect.width * 0.9, preferredLen));
         ValidateAll();
 
+
+        reasoningText.SetColor(scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
+
         scr_UpdateHandler.current.Observer_LLMResponse += OnResponse;
         scr_UpdateHandler.current.Observer_LLMStatus += OnUpdate;
+        scr_UpdateHandler.current.Observer_LLMReasoningDelta += OnReasoningDelta;
     }
 
     List<LLMResponse> currentList = new List<LLMResponse>();
@@ -98,9 +110,21 @@ public class scr_menu_LLMQuery : scr_Menu
         if (currentIndex < 0) currentIndex = currentList.Count - 1;
         else if (currentIndex >= currentList.Count) currentIndex = 0;
 
-        Utility.DestroyAllChildrenFrom(ResponseList);
-
         CurrentResponse = currentList[currentIndex];
+        RedisplayCurrentResponse();
+    }
+
+    /// <summary>
+    /// (Re)draws ResponseList/responseText/reasoningText from CurrentResponse without touching
+    /// currentIndex/currentList - shared by LoadResponse's navigation and by CancelResponse, which
+    /// needs to restore the last valid message's display after ClearDisplay blanked it out for the
+    /// now-cancelled regenerate request.
+    /// </summary>
+    void RedisplayCurrentResponse()
+    {
+        Utility.DestroyAllChildrenFrom(ResponseList);
+        responseText.text = "";
+        reasoningText.SetText(CurrentResponse?.Reasoning ?? "");
         reload = true;
 
         if (CurrentResponse != null && CurrentResponse.JSON != null)
@@ -133,8 +157,24 @@ public class scr_menu_LLMQuery : scr_Menu
             tooltipText.SetExternalTooltip($"Relevant actors {CurrentResponse.JSON.relevantActorRefs.Count} [{String.Join(" ",names)}]\ntimecost [{CurrentResponse.JSON.timeCost}]{(tooltips.Count > 0 ? $"\n{ String.Join("\n", tooltips)}" : "")}{(tooltips2.Count > 0 ? $"\n\n{String.Join("\n", tooltips2)}" :"")}");
         }
 
-        canAnimate = true;
+        // Only CurrentResponse != null actually has anything for Animate() to reveal - Animate() no-ops
+        // (without resetting canAnimate) when CurrentResponse is null, so leaving this true in that
+        // case would permanently block Button_Regenerate/_Confirm/_LoadPrev's `if (canAnimate) return
+        // false;` guards with nothing ever able to clear it.
+        canAnimate = CurrentResponse != null;
         Animate();
+    }
+
+    /// <summary>
+    /// Blanks the reasoning/body display for a newly-kicked-off regenerate request, so the previous
+    /// response's content doesn't linger on screen while the new one is being generated/streamed.
+    /// </summary>
+    void ClearDisplay()
+    {
+        Utility.DestroyAllChildrenFrom(ResponseList);
+        responseText.text = "";
+        reasoningText.SetText("");
+        canAnimate = false;
     }
     public void ExecuteResponse()
     {
@@ -222,7 +262,7 @@ public class scr_menu_LLMQuery : scr_Menu
     public scr_HoverableText prefab_LogLine;
     public scr_MessageLogBox prefab_LogBox;
 
-    void DrawLine( LLMMessage.MessageParagraph s)
+    void DrawLine( MessageParagraph s)
     {
         var box = Instantiate(prefab_LogBox);
         box.SelfRect.SetParent(ResponseList, false);
@@ -296,6 +336,11 @@ public class scr_menu_LLMQuery : scr_Menu
         ValidateAll();
     }
 
+    void OnReasoningDelta(string accumulatedText)
+    {
+        reasoningText.SetText(accumulatedText ?? "");
+    }
+
     public void OnResponse(LLMResponse response)
     {
         Debug.Log("OnResponse!");
@@ -329,6 +374,9 @@ public class scr_menu_LLMQuery : scr_Menu
                     break;
                 case 1003:
                     button.Initialize(this, new Button_Regenerate(this, button));
+                    break;
+                case 1004:
+                    button.Initialize(this, new Button_ToggleReasoning(this, button));
                     break;
                 default:
                     button.Initialize(this, button_alwaysValid); 
@@ -408,6 +456,7 @@ public class scr_menu_LLMQuery : scr_Menu
 
     public void Regenerate()
     {
+        ClearDisplay();
         scr_UpdateHandler.current.SendLLMRequest(this.request);
     }
 
@@ -416,7 +465,10 @@ public class scr_menu_LLMQuery : scr_Menu
     public void CancelResponse()
     {
         scr_UpdateHandler.current.InterruptLLMRoutine();
-        canAnimate = false;
+        // Regenerate's ClearDisplay blanked reasoningText/responseText/ResponseList for the request
+        // that just got cancelled - restore the last valid message's display (or leave it cleared if
+        // there was none, i.e. this was the very first request).
+        RedisplayCurrentResponse();
     }
 
     private void OnEnable()
@@ -459,6 +511,47 @@ public class scr_menu_LLMQuery : scr_Menu
             if (scr_UpdateHandler.current.CanInterruptLLMRoutine) parent.CancelResponse();
             else if (parent.HasNext) parent.LoadResponse();
             else parent.Regenerate();
+        }
+    }
+
+    /// <summary>
+    /// Fold/unfold toggle for reasoningText. Auto-unfolds whenever a request starts (initial send or
+    /// regenerate) and auto-folds back once it's no longer active (response arrived, or cancelled),
+    /// by watching for LLMStatus transitions - only reacts on the transition itself (via lastStatus),
+    /// so a manual toggle click doesn't get immediately stomped by this same check re-running on the
+    /// very next ValidateAll pass while status is unchanged.
+    /// </summary>
+    public class Button_ToggleReasoning : ButtonValidator, I_ButtonClickable
+    {
+        new scr_menu_LLMQuery parent;
+        public scr_SelectableText button;
+        bool expanded = true;
+        LLMStatus lastStatus = LLMStatus.inactive;
+
+        public Button_ToggleReasoning(scr_menu_LLMQuery parent, scr_SelectableText button) : base(parent)
+        {
+            this.parent = parent;
+            this.button = button;
+        }
+        public override bool IsButtonValid()
+        {
+            if (!parent.Active) return false;
+
+            var status = scr_UpdateHandler.current.LLMStatus;
+            if (status != lastStatus)
+            {
+                expanded = status == LLMStatus.active;
+                lastStatus = status;
+            }
+
+            parent.reasoningText.gameObject.SetActive(expanded);
+            button.SetText(LocalizeDictionary.QueryThenParse(expanded ? "ui_comPanel_LLM_reasoning_fold" : "ui_comPanel_LLM_reasoning_unfold"));
+
+            return true;
+        }
+        public void OnClickButton()
+        {
+            expanded = !expanded;
         }
     }
 

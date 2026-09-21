@@ -1,0 +1,4092 @@
+{
+  "baseID": "MTSP_Char_Kyouka_full",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - bikini - doer. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "bikini",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_masturbation orgasm.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_masturbation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - bikini - receiver. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "bikini",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_lactation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_breast caress.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - kimono - doer. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "kimono",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_masturbation orgasm.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_masturbation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - kimono - receiver. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "kimono",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_lactation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_breast caress.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - maid - doer. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "maid",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_masturbation orgasm.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_masturbation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - maid - receiver. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "maid",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_lactation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_breast caress.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nightwear - doer. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "nightwear",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_masturbation orgasm.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_masturbation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nightwear - receiver. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "nightwear",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_lactation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_breast caress.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - robe - doer. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "robe",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_masturbation orgasm.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_masturbation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - robe - receiver. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "robe",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_lactation.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_breast caress.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - doer. Undressed-state detection, mirrors Kanon's nude gating.",
+        "icon_offset_size": 0.4,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "portrait_offset_x": 0,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "charaReq": {
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1,
+          "requireAction": false,
+          "requireConscious": false,
+          "clothingRequirement": "None"
+        },
+        "Variants": [
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_fellatio cumshot.webp"
+            ],
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_fellatio.webp"
+            ],
+            "tagsMatch": [
+              "blowjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_handjob cumshot.webp"
+            ],
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_handjob.webp"
+            ],
+            "tagsMatch": [
+              "handjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_paizuri cumshot.webp"
+            ],
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_paizuri.webp"
+            ],
+            "tagsMatch": [
+              "boobjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_rimjob cumshot.webp",
+              "Kyouka/Assets/kyouka_nude_rimjob cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_rimjob.webp",
+              "Kyouka/Assets/kyouka_nude_rimjob_alt.webp"
+            ],
+            "tagsMatch": [
+              "rimjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_masturbation orgasm.webp",
+              "Kyouka/Assets/kyouka_nude_dildo orgasm.webp"
+            ],
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_masturbation.webp",
+              "Kyouka/Assets/kyouka_nude_dildo.webp"
+            ],
+            "tagsMatch": [
+              "masturbate"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - receiver. Undressed-state detection, mirrors Kanon's nude gating.",
+        "icon_offset_size": 0.4,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "portrait_offset_x": 0,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "charaReq": {
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1,
+          "requireAction": false,
+          "requireConscious": false,
+          "clothingRequirement": "None"
+        },
+        "Variants": [
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_doggystyle cumshot.webp"
+            ],
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_doggystyle.webp"
+            ],
+            "tagsMatch": [
+              "doggy"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_missionary position cumshot.webp",
+              "Kyouka/Assets/kyouka_nude_missionary position cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_missionary position.webp",
+              "Kyouka/Assets/kyouka_nude_missionary position_alt.webp"
+            ],
+            "tagsMatch": [
+              "missionary"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_cowgirl cumshot.webp",
+              "Kyouka/Assets/kyouka_nude_cowgirl cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_cowgirl.webp"
+            ],
+            "tagsMatch": [
+              "cowgirl"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_cunnilingus orgasm.webp"
+            ],
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_cunnilingus.webp"
+            ],
+            "tagsMatch": [
+              "cunnilingus"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_mating press cumshot.webp"
+            ],
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_mating press.webp"
+            ],
+            "tagsMatch": [
+              "mating_press"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_standing position cumshot.webp"
+            ],
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_standing position.webp"
+            ],
+            "tagsMatch": [
+              "standing_position"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_reverse standing position cumshot.webp"
+            ],
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_reverse standing position.webp"
+            ],
+            "tagsMatch": [
+              "reverse_standing_position"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_upright straddle cumshot.webp",
+              "Kyouka/Assets/kyouka_nude_upright straddle cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_upright straddle.webp",
+              "Kyouka/Assets/kyouka_nude_upright straddle_alt.webp"
+            ],
+            "tagsMatch": [
+              "upright_straddle"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_reverse upright straddle cumshot.webp",
+              "Kyouka/Assets/kyouka_nude_reverse upright straddle cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_reverse upright straddle.webp"
+            ],
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_spooning cumshot.webp"
+            ],
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_spooning.webp"
+            ],
+            "tagsMatch": [
+              "spooning"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_suspended congress cumshot.webp"
+            ],
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_suspended congress.webp"
+            ],
+            "tagsMatch": [
+              "suspended_congress"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_lactation.webp",
+              "Kyouka/Assets/kyouka_nude_breastfeeding.webp"
+            ],
+            "tagsMatch": [
+              "lactation"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_breast caress.webp",
+              "Kyouka/Assets/kyouka_nude_breast caress_alt.webp",
+              "Kyouka/Assets/kyouka_nude_breast sucking.webp"
+            ],
+            "tagsMatch": [
+              "breasts"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_after sex.webp"
+            ],
+            "tagsMatch": [
+              "cum"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - doer. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "icon_offset_size": 0.4,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "portrait_offset_x": 0,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_fellatio cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_fellatio cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_fellatio.webp",
+              "Kyouka/Assets/kyouka_casual_fellatio_alt.webp"
+            ],
+            "tagsMatch": [
+              "blowjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_handjob cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_handjob cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_handjob.webp"
+            ],
+            "tagsMatch": [
+              "handjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_paizuri cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_paizuri cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_paizuri.webp",
+              "Kyouka/Assets/kyouka_casual_paizuri_alt.webp"
+            ],
+            "tagsMatch": [
+              "boobjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_rimjob cumshot.webp"
+            ],
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_rimjob.webp"
+            ],
+            "tagsMatch": [
+              "rimjob"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_masturbation orgasm.webp",
+              "Kyouka/Assets/kyouka_casual_masturbation orgasm_alt.webp",
+              "Kyouka/Assets/kyouka_casual_dildo orgasm.webp",
+              "Kyouka/Assets/kyouka_casual_dildo orgasm_alt.webp"
+            ],
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_masturbation.webp",
+              "Kyouka/Assets/kyouka_casual_masturbation_alt.webp",
+              "Kyouka/Assets/kyouka_casual_dildo.webp",
+              "Kyouka/Assets/kyouka_casual_dildo_alt.webp"
+            ],
+            "tagsMatch": [
+              "masturbate"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_neutral.webp",
+              "Kyouka/Assets/kyouka_casual_neutral_alt.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - receiver. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "icon_offset_size": 0.4,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "portrait_offset_x": 0,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_doggystyle cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_doggystyle cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_doggystyle.webp",
+              "Kyouka/Assets/kyouka_casual_doggystyle_alt.webp"
+            ],
+            "tagsMatch": [
+              "doggy"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_missionary position cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_missionary position cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_missionary position.webp",
+              "Kyouka/Assets/kyouka_casual_missionary position_alt.webp"
+            ],
+            "tagsMatch": [
+              "missionary"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_cowgirl cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_cowgirl cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_cowgirl.webp",
+              "Kyouka/Assets/kyouka_casual_cowgirl_alt.webp"
+            ],
+            "tagsMatch": [
+              "cowgirl"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_cunnilingus orgasm.webp",
+              "Kyouka/Assets/kyouka_casual_cunnilingus orgasm_alt.webp"
+            ],
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_cunnilingus.webp",
+              "Kyouka/Assets/kyouka_casual_cunnilingus_alt.webp"
+            ],
+            "tagsMatch": [
+              "cunnilingus"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_mating press cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_mating press cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_mating press.webp",
+              "Kyouka/Assets/kyouka_casual_mating press_alt.webp"
+            ],
+            "tagsMatch": [
+              "mating_press"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_standing position cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_standing position cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_standing position.webp",
+              "Kyouka/Assets/kyouka_casual_standing position_alt.webp"
+            ],
+            "tagsMatch": [
+              "standing_position"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_reverse standing position cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_reverse standing position cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_reverse standing position.webp",
+              "Kyouka/Assets/kyouka_casual_reverse standing position_alt.webp"
+            ],
+            "tagsMatch": [
+              "reverse_standing_position"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_upright straddle cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_upright straddle cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_upright straddle.webp",
+              "Kyouka/Assets/kyouka_casual_upright straddle_alt.webp"
+            ],
+            "tagsMatch": [
+              "upright_straddle"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_reverse upright straddle cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_reverse upright straddle cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_reverse upright straddle.webp",
+              "Kyouka/Assets/kyouka_casual_reverse upright straddle_alt.webp"
+            ],
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_spooning cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_spooning cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_spooning.webp",
+              "Kyouka/Assets/kyouka_casual_spooning_alt.webp"
+            ],
+            "tagsMatch": [
+              "spooning"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_suspended congress cumshot.webp",
+              "Kyouka/Assets/kyouka_casual_suspended congress cumshot_alt.webp"
+            ],
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_suspended congress.webp",
+              "Kyouka/Assets/kyouka_casual_suspended congress_alt.webp"
+            ],
+            "tagsMatch": [
+              "suspended_congress"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_lactation.webp",
+              "Kyouka/Assets/kyouka_casual_lactation_alt.webp",
+              "Kyouka/Assets/kyouka_casual_breastfeeding.webp",
+              "Kyouka/Assets/kyouka_casual_breastfeeding_alt.webp"
+            ],
+            "tagsMatch": [
+              "lactation"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_breast caress.webp",
+              "Kyouka/Assets/kyouka_casual_breast caress_alt.webp",
+              "Kyouka/Assets/kyouka_casual_breast sucking.webp",
+              "Kyouka/Assets/kyouka_casual_breast sucking_alt.webp"
+            ],
+            "tagsMatch": [
+              "breasts"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_after sex.webp",
+              "Kyouka/Assets/kyouka_casual_after sex_alt.webp"
+            ],
+            "tagsMatch": [
+              "cum"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_neutral.webp",
+              "Kyouka/Assets/kyouka_casual_neutral_alt.webp"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - nude. Undressed-state detection, mirrors Kanon's nude gating.",
+        "icon_offset_size": 0.4,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "portrait_offset_x": 0,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "portrait_path": "Kyouka/Assets/kyouka_nude_neutral.webp",
+        "charaReq": {
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1,
+          "requireAction": false,
+          "requireConscious": false,
+          "clothingRequirement": "None"
+        },
+        "Variants": [
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_fearful.webp"
+            ],
+            "tagsMatch": [
+              "fear"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_disgusted.webp"
+            ],
+            "tagsMatch": [
+              "disgusted"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_angry.webp"
+            ],
+            "tagsMatch": [
+              "angry"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_frustrated.webp"
+            ],
+            "tagsMatch": [
+              "annoyed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_jealous.webp",
+              "Kyouka/Assets/kyouka_nude_lonely.webp"
+            ],
+            "tagsMatch": [
+              "disappointed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_confused.webp"
+            ],
+            "tagsMatch": [
+              "doubt"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_anxious.webp"
+            ],
+            "tagsMatch": [
+              "worry"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_embarrassed.webp"
+            ],
+            "tagsMatch": [
+              "awkward"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_sad.webp",
+              "Kyouka/Assets/kyouka_nude_lonely.webp"
+            ],
+            "tagsMatch": [
+              "sad"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_guilty.webp"
+            ],
+            "tagsMatch": [
+              "sorry"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_bored.webp"
+            ],
+            "tagsMatch": [
+              "tired"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_bored.webp"
+            ],
+            "tagsMatch": [
+              "resting"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_determined.webp"
+            ],
+            "tagsMatch": [
+              "serious"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_determined.webp"
+            ],
+            "tagsMatch": [
+              "focused"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_determined.webp",
+              "Kyouka/Assets/kyouka_nude_proud.webp"
+            ],
+            "tagsMatch": [
+              "confident"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_curious.webp"
+            ],
+            "tagsMatch": [
+              "thinking"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_curious.webp"
+            ],
+            "tagsMatch": [
+              "curious"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_embarrassed.webp"
+            ],
+            "tagsMatch": [
+              "shy"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_embarrassed.webp"
+            ],
+            "tagsMatch": [
+              "embarrassed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_surprised.webp"
+            ],
+            "tagsMatch": [
+              "surprised"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_lovestruck.webp"
+            ],
+            "tagsMatch": [
+              "love"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_happy.webp",
+              "Kyouka/Assets/kyouka_nude_grateful.webp",
+              "Kyouka/Assets/kyouka_nude_hopeful.webp",
+              "Kyouka/Assets/kyouka_nude_lovestruck.webp",
+              "Kyouka/Assets/kyouka_nude_proud.webp"
+            ],
+            "tagsMatch": [
+              "happy"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_neutral.webp"
+            ],
+            "tagsMatch": [
+              "relaxed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_nude_sleeping.webp"
+            ],
+            "tagsMatch": [
+              "sleeping"
+            ]
+          }
+        ],
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - bikini. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "bikini"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_jealous.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_sad.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_determined.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_happy.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_grateful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_hopeful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_lovestruck.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Kyouka/Assets_clothing_forbidCopy/kyouka_bikini_neutral.webp",
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - kimono. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "kimono"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_jealous.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_sad.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_determined.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_happy.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_grateful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_hopeful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_lovestruck.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Kyouka/Assets_clothing_forbidCopy/kyouka_kimono_neutral.webp",
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - maid. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "maid"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_jealous.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_sad.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_determined.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_happy.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_grateful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_hopeful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_lovestruck.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Kyouka/Assets_clothing_forbidCopy/kyouka_maid_neutral.webp",
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - nightwear. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "nightwear"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_jealous.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_sad.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_determined.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_happy.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_grateful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_hopeful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_lovestruck.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Kyouka/Assets_clothing_forbidCopy/kyouka_nightwear_neutral.webp",
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - robe. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "robe"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_jealous.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_sad.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_determined.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_happy.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_grateful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_hopeful.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_lovestruck.webp",
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Kyouka/Assets_clothing_forbidCopy/kyouka_robe_neutral.webp",
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - casual. Default costume, no context key required - system-wide terminal fallback (mandatory catch-all).",
+        "icon_offset_size": 0.4,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "portrait_offset_x": 0,
+        "icon_offset_x": -17.8,
+        "icon_offset_y": -159.5,
+        "icon_path": "Kyouka/Assets/kyouka_casual_neutral.webp",
+        "portrait_path": "Kyouka/Assets/kyouka_casual_neutral.webp",
+        "Variants": [
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_fearful.webp",
+              "Kyouka/Assets/kyouka_casual_fearful_alt.webp"
+            ],
+            "tagsMatch": [
+              "fear"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_disgusted.webp",
+              "Kyouka/Assets/kyouka_casual_disgusted_alt.webp"
+            ],
+            "tagsMatch": [
+              "disgusted"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_angry.webp",
+              "Kyouka/Assets/kyouka_casual_angry_alt.webp"
+            ],
+            "tagsMatch": [
+              "angry"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_frustrated.webp",
+              "Kyouka/Assets/kyouka_casual_frustrated_alt.webp"
+            ],
+            "tagsMatch": [
+              "annoyed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_jealous.webp",
+              "Kyouka/Assets/kyouka_casual_jealous_alt.webp",
+              "Kyouka/Assets/kyouka_casual_lonely.webp",
+              "Kyouka/Assets/kyouka_casual_lonely_alt.webp"
+            ],
+            "tagsMatch": [
+              "disappointed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_confused.webp",
+              "Kyouka/Assets/kyouka_casual_confused_alt.webp"
+            ],
+            "tagsMatch": [
+              "doubt"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_anxious.webp",
+              "Kyouka/Assets/kyouka_casual_anxious_alt.webp"
+            ],
+            "tagsMatch": [
+              "worry"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_embarrassed.webp",
+              "Kyouka/Assets/kyouka_casual_embarrassed_alt.webp"
+            ],
+            "tagsMatch": [
+              "awkward"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_sad.webp",
+              "Kyouka/Assets/kyouka_casual_sad_alt.webp",
+              "Kyouka/Assets/kyouka_casual_lonely.webp",
+              "Kyouka/Assets/kyouka_casual_lonely_alt.webp"
+            ],
+            "tagsMatch": [
+              "sad"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_guilty.webp",
+              "Kyouka/Assets/kyouka_casual_guilty_alt.webp"
+            ],
+            "tagsMatch": [
+              "sorry"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_bored.webp",
+              "Kyouka/Assets/kyouka_casual_bored_alt.webp"
+            ],
+            "tagsMatch": [
+              "tired"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_bored.webp",
+              "Kyouka/Assets/kyouka_casual_bored_alt.webp"
+            ],
+            "tagsMatch": [
+              "resting"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_determined.webp",
+              "Kyouka/Assets/kyouka_casual_determined_alt.webp"
+            ],
+            "tagsMatch": [
+              "serious"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_determined.webp",
+              "Kyouka/Assets/kyouka_casual_determined_alt.webp"
+            ],
+            "tagsMatch": [
+              "focused"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_determined.webp",
+              "Kyouka/Assets/kyouka_casual_determined_alt.webp",
+              "Kyouka/Assets/kyouka_casual_proud.webp",
+              "Kyouka/Assets/kyouka_casual_proud_alt.webp"
+            ],
+            "tagsMatch": [
+              "confident"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_curious.webp",
+              "Kyouka/Assets/kyouka_casual_curious_alt.webp"
+            ],
+            "tagsMatch": [
+              "thinking"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_curious.webp",
+              "Kyouka/Assets/kyouka_casual_curious_alt.webp"
+            ],
+            "tagsMatch": [
+              "curious"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_embarrassed.webp",
+              "Kyouka/Assets/kyouka_casual_embarrassed_alt.webp"
+            ],
+            "tagsMatch": [
+              "shy"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_embarrassed.webp",
+              "Kyouka/Assets/kyouka_casual_embarrassed_alt.webp"
+            ],
+            "tagsMatch": [
+              "embarrassed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_surprised.webp",
+              "Kyouka/Assets/kyouka_casual_surprised_alt.webp"
+            ],
+            "tagsMatch": [
+              "surprised"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_lovestruck.webp",
+              "Kyouka/Assets/kyouka_casual_lovestruck_alt.webp"
+            ],
+            "tagsMatch": [
+              "love"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_happy.webp",
+              "Kyouka/Assets/kyouka_casual_happy_alt.webp",
+              "Kyouka/Assets/kyouka_casual_grateful.webp",
+              "Kyouka/Assets/kyouka_casual_grateful_alt.webp",
+              "Kyouka/Assets/kyouka_casual_hopeful.webp",
+              "Kyouka/Assets/kyouka_casual_hopeful_alt.webp",
+              "Kyouka/Assets/kyouka_casual_lovestruck.webp",
+              "Kyouka/Assets/kyouka_casual_lovestruck_alt.webp",
+              "Kyouka/Assets/kyouka_casual_proud.webp",
+              "Kyouka/Assets/kyouka_casual_proud_alt.webp"
+            ],
+            "tagsMatch": [
+              "happy"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_neutral.webp",
+              "Kyouka/Assets/kyouka_casual_neutral_alt.webp"
+            ],
+            "tagsMatch": [
+              "relaxed"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Kyouka/Assets/kyouka_casual_sleeping.webp",
+              "Kyouka/Assets/kyouka_casual_sleeping_alt.webp"
+            ],
+            "tagsMatch": [
+              "sleeping"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "BodyType": "Default",
+    "stat_STR": 9,
+    "stat_CON": 11,
+    "stat_PSY": 13,
+    "stat_WIL": 16,
+    "personalityID": "personality_default",
+    "sensitivity_B": "trait_Sensitivity_B_supersensitive",
+    "sensitivity_M": "trait_Sensitivity_M_default",
+    "sensitivity_C": "trait_Sensitivity_C_sensitive",
+    "sensitivity_V": "trait_Sensitivity_V_sensitive",
+    "sensitivity_A": "trait_Sensitivity_A_default",
+    "size_B": "trait_Size_B_H",
+    "size_P": "trait_Size_P_none",
+    "size_V": "trait_Size_V_1",
+    "size_A": "trait_Size_A_1",
+    "Height": 171,
+    "Weight": 56,
+    "traits": [
+      "trait_SleepTiming_early",
+      "trait_SleepLength_less",
+      "trait_SelfEsteem_high",
+      "trait_MemoryCapacity_high",
+      "trait_MemoryRetention_high",
+      "trait_CleanlinessTolerance_low",
+      "trait_EnergyCapacity_low",
+      "trait_MentalFortitude_veryhigh",
+      "trait_AlcoholTolerance_good"
+    ],
+    "initialInventory": [
+      {
+        "ID": "clothing_skin_bra"
+      },
+      {
+        "ID": "clothing_skin_panty"
+      },
+      {
+        "ID": "clothing_skin_socks"
+      }
+    ],
+    "characterComment": "MTSP_Jin_Tachibana_Kyouka_charCard_comment",
+    "Skills": null,
+    "CharacterCard": "<Tachibana_Kyouka>\ncharacter:\n  name:\n    english: Tachibana Kyouka\n    chinese: 橘京香\n    japanese: 橘京香\n  basic_settings:\n    gender: Female\n    age: 42 (looks like her 20s; often mistaken for her daughters' older sister)\n    height: 171cm\n    weight: 56kg\n    measurements: B99(K-cup) W57 H90\n    identity: Widow; department manager at a major trading company; single mother of Yuika and Koharu; guardian and secret lover of Akemichi Yuu\n    occupation: Career woman in a managerial position with subordinates; high income that comfortably supports the household\n    residence: Comfortable two-story house in Suginami Ward, Tokyo (Ogikubo/Nishi-Ogikubo area)\n  character_brief_description:\n    - Strikingly beautiful widow who raised two daughters alone after her husband's death\n    - Analytical, strategic thinker; confident and composed in public, warm and nurturing at home\n    - Workaholic who checks work emails after hours and plans everything meticulously\n    - Disciplined celibacy of over a decade after being widowed; only partner was her late husband, then Yuu\n    - Carries deep guilt and maternal conflict over her secret physical relationship with Yuu\n    - Hides a private passion for painting she rarely has time for\n  overall_appearance:\n    - Dyed light-brown shoulder-length hair with subtle waves; light-brown eyes\n    - Tall, slender-limbed, model-like figure with glamorous curves; K-cup bust\n    - Pale dusty-pink areolae, small and delicate; fully waxed pubic area\n    - Wears a pearl necklace daily, a gift from her daughters\n    - Perfume: subtle sophisticated floral scent with a hint of citrus\n  overall_clothing:\n    - Work: elegant professional business casual; tailored blouses, pencil skirts, stylish pantsuits\n    - Pool/beach: black micro bikini\n    - Night: sheer lavender nightgown falling to mid-thigh\n  important_background:\n    - Husband died when the daughters were young; refused male company for over a decade\n    - Her body has drawn unwanted male attention her whole adult life; dragged to hotel rooms more than once and refused every time\n    - Took in the orphaned neighbor boy Yuu after his grandfather's hospitalization\n    - Relationship with Yuu began when she caught him masturbating to her and 'comforted' him; she later took his virginity\n    - Always makes Yuu wear a condom - non-negotiable, her one remaining practical safeguard\n    - Has an old acquaintance working as a private detective\n  important_relationship:\n    - Tachibana Yuika: eldest daughter; deep mutual trust\n    - Tachibana Koharu: younger daughter; the one she worries about most\n    - Akemichi Yuu: ward and secret lover; torn between maternal love and awakened desire\n  personality_notes:\n    - Achiever/Mother archetype; pride in competence, intelligence, good manners\n    - Hates incompetence, dishonesty, rudeness, inefficiency, lateness, disorder\n    - Likes stimulating conversation, quality time with loved ones, coffee, sunny days, good food and wine\n    - Hidden submissive nature buried under a decade of iron self-discipline\n    - Strongest ovulation-cycle libido surge among the three Tachibana women\n    - Rationalizes boundary-crossing as duty: 'I have to keep the household stable'\n  speech_pattern:\n    - Articulate, professional, confident; warm and soft with family\n    - Polite Korean/Japanese honorifics; calls Yuu 'Yuu-kun'\n    - Even her breakdowns stay articulate - composure cracks rather than shatters\n</Tachibana_Kyouka>"
+  },
+  "firstName": "MTSP_Char_Kyouka_FirstName",
+  "middleName": "",
+  "lastName": "MTSP_Char_Kyouka_LastName",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

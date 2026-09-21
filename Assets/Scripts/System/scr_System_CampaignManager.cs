@@ -2110,7 +2110,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         int total = chars.Count;
         for (int i = 0; i < total; i++)
         {
-            Observer_LoadProgress?.Invoke((float)i / Mathf.Max(total, 1), chars[i].CallName);
+            Observer_LoadProgress?.Invoke((float)i / Mathf.Max(total, 1), $"Caching portraits... {chars[i].CallName}");
             yield return chars[i].PortraitManager.CacheInternal(chars[i]);
         }
         Observer_LoadProgress?.Invoke(1f, "");
@@ -2183,6 +2183,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         yield return null;
 
         Observer_LoadComplete?.Invoke();
+        Observer_UpdateNotice?.Invoke(false);
     }
 
 
@@ -3320,7 +3321,12 @@ public static class WorldManager
                 if (FactionUtility.TryGetMemberType(w.guestStatus, out status2))
                 {
                     scr_System_CampaignManager.current.FindorAddHomeFactionByID(w.factionID);
-                    chara.FactionManager.AddWorkFaction(w.factionID, status2);
+                    // Optional dispatcher (e.g. a working member sent to study at a school) - left blank,
+                    // AddWorkFaction leaves no tracked source and Character_Factions.
+                    // GetWorkFactionSourceOrDefault falls back to the character's own home faction.
+                    Manageable sourceFaction = string.IsNullOrEmpty(w.sourceFactionID) ? null
+                        : scr_System_CampaignManager.current.FindFactionByID(w.sourceFactionID);
+                    chara.FactionManager.AddWorkFaction(w.factionID, status2, true, sourceFaction);
                     if (w.setRoomOwnership)
                     {
                         Room_Instance r = ResolveNPCInitRoom(w);

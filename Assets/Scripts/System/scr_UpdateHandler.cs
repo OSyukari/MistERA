@@ -8,8 +8,6 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
-using static LLMRequest;
-using static LLMRequest.ResponseFormatter_Tools;
 
 public enum LLMStatus
 {
@@ -34,16 +32,32 @@ public class scr_UpdateHandler : MonoBehaviour
     //---------------------------------------
 
     Coroutine LLMRoutine = null;
+    UnityWebRequest currentRequest = null;
 
     //public bool skipCurrentRoundClimaxCheck = false;
+    /// <summary>
+    /// Whether a request is currently in flight and cancellable. Deliberately keyed off LLMStatus
+    /// rather than `LLMRoutine != null`: LLMStatus is set to active as the very first line of
+    /// SendLLMRequest, before AddLog_LLM synchronously creates/draws the query panel (which calls
+    /// ValidateAll during its own InitializeWithArgs) - whereas `LLMRoutine` isn't assigned until
+    /// StartCoroutine returns, several lines later. A check against `LLMRoutine != null` would see a
+    /// stale null on that first ValidateAll pass and render the cancel/regenerate button as
+    /// not-yet-clickable for a request that is, in fact, already running.
+    /// </summary>
     public bool CanInterruptLLMRoutine { get
         {
-            return LLMRoutine != null;
+            return LLMStatus == LLMStatus.active;
         } }
     public void InterruptLLMRoutine()
     {
-        StopCoroutine(LLMRoutine);
+        if (LLMRoutine != null) StopCoroutine(LLMRoutine);
         LLMRoutine = null;
+        if (currentRequest != null)
+        {
+            currentRequest.Abort();
+            currentRequest.Dispose();
+            currentRequest = null;
+        }
         LLMStatus = LLMStatus.waiting;
         Observer_LLMStatus?.Invoke(LLMStatus);
     }
@@ -64,6 +78,11 @@ public class scr_UpdateHandler : MonoBehaviour
 
     public event Action<LLMStatus> Observer_LLMStatus;
     public event Action<LLMResponse> Observer_LLMResponse;
+    /// <summary>
+    /// Fires with the accumulated-so-far reasoning text on every reasoning-bearing streamed chunk.
+    /// Also fires once with "" at the start of a request to clear any previous request's display.
+    /// </summary>
+    public event Action<string> Observer_LLMReasoningDelta;
 
     public bool LLM_Active
     {
@@ -104,9 +123,11 @@ public class scr_UpdateHandler : MonoBehaviour
 
         if (reserializeTemplate) scr_System_CentralControl.current.ResetLLMRequestTemplate();
 
-        if (scr_System_CentralControl.current.LLMRequestTemplate != null)
+        if (scr_System_CentralControl.current.CurrentPreset != null)
         {
-            payload.LoadTemplate(scr_System_CentralControl.current.LLMRequestTemplate);
+            payload.LoadTemplate(scr_System_CentralControl.current.CurrentPreset);
+            // slow mode config for now; fast mode will need its own entry point once wired up
+            if (scr_System_CentralControl.current.LLMSlowModeConfig != null) payload.LoadTemplate(scr_System_CentralControl.current.LLMSlowModeConfig);
             // inject user
             payload.ReplaceString("<user>", scr_System_CampaignManager.current.Player.FirstName);
             var worldinfo = new LLM_WorldState();
@@ -134,7 +155,7 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         else
         {
-            var message = new LLMMessage();
+            var message = new LLMMessage_Final();
             message.role = "user";
             message.content = s;
             payload.messages.Add(message);
@@ -158,78 +179,9 @@ public class scr_UpdateHandler : MonoBehaviour
             scr_System_CampaignManager.current.AddLog_LLM(s);
         }
 
-        var baseUrl = llm.endpoint;
+        var profile = scr_System_CentralControl.current.ResolveProviderProfile(llm);
+        LLMProviderUtils.ApplyRequestShaping(s, profile);
 
-        // --- FIX: Remove top_k if using Google's OpenAI endpoint ---
-        if (baseUrl.Contains("generativelanguage.googleapis.com"))
-        {
-            s.top_k = null;
-            s.max_tokens = null;
-            s.response_format.ReplaceType("int", "integer");
-
-        }
-        else if (baseUrl.Contains("anthropic"))
-        {
-            List<string> systemMessages = new List<string>();
-            for(int i = s.messages.Count - 1; i>= 0; i--)
-            {
-                if (s.messages[i].role == "system")
-                {
-                    systemMessages.Add(s.messages[i].content);
-                    s.messages.RemoveAt(i);
-                }
-            }
-            systemMessages.Reverse();
-            s.system = String.Join("\n", systemMessages);
-            s.response_format.ReplaceType("int", "integer");
-            s.output_config = new LLMRequest.ResponseFormatter_Claude(s.response_format);
-            s.response_format = null;
-
-            s.max_completion_tokens = null;
-            if (s.max_tokens == null || s.max_tokens > 16384) s.max_tokens = 16384;
-
-            s.top_p = null;
-        }
-        else if (baseUrl.Contains("api.z.ai") || baseUrl.Contains("deepseek.com"))
-        {
-            // GLM & DeepSeek: neither honors response_format json_schema, so enforce the schema via function calling instead.
-            // Both are OpenAI-compatible and use max_tokens (not max_completion_tokens).
-            s.max_completion_tokens = null;
-            if (s.max_tokens == null) s.max_tokens = 512;
-            s.top_k = null;
-
-            var formatter = new ResponseFormatter_ZAI_tools();
-            // move the real schema from response_format into the tool's parameters (these providers enforce via tools, not response_format)
-            if (s.response_format != null && s.response_format.json_schema != null && s.response_format.json_schema.schema != null)
-            {
-                formatter.function.parameters = s.response_format.json_schema.schema;
-            }
-            formatter.ReplaceType("int", "integer");
-            formatter.function.parameters.Purge();
-            s.tools = new List<ResponseFormatter_Tools> { formatter };
-
-            // z.ai only supports tool_choice "auto"; DeepSeek can force the function call.
-            if (baseUrl.Contains("deepseek.com"))
-            {
-                s.tool_choice = new ResponseFormatter_ZAI_toolchoice();
-            }
-
-            // nudge the model to call the tool instead of emitting JSON text (GLM/DeepSeek only; json_schema providers are unaffected)
-            s.messages.Add(new LLMMessage { role = "user", content = "Submit your complete response ONLY by calling the submit_response function with all required fields populated. Do not output JSON in text." });
-
-            s.response_format = null;
-        }
-        else if (baseUrl.Contains("api.openai.com"))
-        {
-            // For OpenAI's modern models, only use max_completion_tokens
-            s.max_tokens = null;
-
-            // OpenAI supports top_k only in very specific beta models, 
-            // usually it's safer to null it out for GPT-4/5.
-            s.top_k = null;
-
-            s.response_format.ReplaceType("int", "integer");
-        }
         LLMRoutine = StartCoroutine(SendLLMRequest_Routine(s, OnLLMResponse));
 
     }
@@ -266,20 +218,6 @@ public class scr_UpdateHandler : MonoBehaviour
         else if (success)
         {
             response = JsonConvert.DeserializeObject<LLMResponse>(s);
-
-            if (response.JSON != null)
-            {
-
-            }
-
-            var s2 = JsonConvert.SerializeObject(response, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
-            if (File.Exists(collectionPath)) File.Delete(collectionPath);
-
-            FileInfo untransDict = new System.IO.FileInfo(collectionPath);
-            untransDict.Directory.Create();
-            File.WriteAllText(untransDict.FullName, s2);
-
-            Debug.Log($"Response Received!: creating file at {collectionPath}");
         }
         else
         {
@@ -294,16 +232,36 @@ public class scr_UpdateHandler : MonoBehaviour
             Debug.Log($"Response Received! LLM failed to respond! creating file at {collectionPath}");
         }
 
+        FinalizeLLMResponse(response);
+    }
 
-        Observer_LLMResponse?.Invoke(response);
+    void FinalizeLLMResponse(LLMResponse response)
+    {
+        string collectionPath = Application.persistentDataPath + "/LLMResponse.json";
+        var s2 = JsonConvert.SerializeObject(response, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+        if (File.Exists(collectionPath)) File.Delete(collectionPath);
 
+        FileInfo untransDict = new System.IO.FileInfo(collectionPath);
+        untransDict.Directory.Create();
+        File.WriteAllText(untransDict.FullName, s2);
+
+        Debug.Log($"Response Received!: creating file at {collectionPath}");
+
+        // Settle status/routine state before notifying listeners: Observer_LLMResponse triggers the
+        // UI's own ValidateAll pass (via LoadResponse -> Animate), and button validators read
+        // LLMStatus/CanInterruptLLMRoutine - if those were still stale ("active") at that point,
+        // buttons would render as still-busy until some unrelated later event happened to call
+        // ValidateAll again.
         LLMRoutine = null;
         LLMStatus = LLMStatus.waiting;
+
+        Observer_LLMResponse?.Invoke(response);
     }
 
     IEnumerator SendLLMRequest_Routine(LLMRequest payload, Action<bool, string> onResponseReceived)
     {
         Observer_LLMStatus?.Invoke(LLMStatus);
+        Observer_LLMReasoningDelta?.Invoke("");
 
         var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
         if (llm == null)
@@ -337,37 +295,44 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             Debug.Log($"Sending request to endpoint {endpoint}");
 
+            var profile = scr_System_CentralControl.current.ResolveProviderProfile(llm);
+
             using (UnityWebRequest request = new UnityWebRequest(endpoint, "POST"))
             {
+                currentRequest = request;
+
                 byte[] bodyRaw = System.Text.Encoding.UTF8.GetBytes(jsonPayload);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
-                request.downloadHandler = new DownloadHandlerBuffer();
 
-
-                request.SetRequestHeader("Content-Type", "application/json");
-
-                // Specific header for Claude if not using an OpenAI proxy
-                if (endpoint.Contains("anthropic"))
+                bool streaming = profile != null && profile.supportsStreaming;
+                LLMStreamDownloadHandler streamHandler = null;
+                if (streaming)
                 {
-                    request.SetRequestHeader("x-api-key", apiKey);
-                    request.SetRequestHeader("anthropic-version", "2023-06-01");
+                    streamHandler = new LLMStreamDownloadHandler(profile, text => Observer_LLMReasoningDelta?.Invoke(text));
+                    request.downloadHandler = streamHandler;
                 }
                 else
                 {
-                    request.SetRequestHeader("Authorization", "Bearer " + apiKey);
+                    request.downloadHandler = new DownloadHandlerBuffer();
                 }
+
+                request.SetRequestHeader("Content-Type", "application/json");
+                LLMProviderUtils.ApplyAuthHeaders(request, profile, apiKey);
 
                 yield return request.SendWebRequest();
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
-                    onResponseReceived?.Invoke(true, request.downloadHandler.text);
+                    if (streaming) FinalizeLLMResponse(streamHandler.BuildFinalResponse());
+                    else onResponseReceived?.Invoke(true, request.downloadHandler.text);
                 }
                 else
                 {
-                    Debug.LogError($"LLM Request Error: {request.error}\nResponse: {request.downloadHandler.text}");
+                    Debug.LogError($"LLM Request Error: {request.error}");
                     onResponseReceived?.Invoke(false, request.error);
                 }
+
+                currentRequest = null;
             }
         }
 

@@ -79,26 +79,260 @@ public class scr_System_CentralControl : MonoBehaviour
             return _llmSetting;
         }
     }
-    LLMRequest _llmRequestTemplate = null;
-    bool deactivate_llmRequestTemplate = false;
-    public LLMRequest LLMRequestTemplate
+    LLMPresetTemplateData _llmPresetTemplate = null;
+    bool deactivate_llmPresetTemplate = false;
+    public LLMPresetTemplateData LLMPresetTemplate
     {
         get
         {
-            if (_llmRequestTemplate == null && !deactivate_llmRequestTemplate)
+            if (_llmPresetTemplate == null && !deactivate_llmPresetTemplate)
             {
-                string filePath = Application.dataPath + "/LLMrequestTemplate.json";
+                string filePath = Application.dataPath + "/LLM/LLM_Preset.json";
                 FileInfo file = new System.IO.FileInfo(filePath);
-                if (File.Exists(filePath)) _llmRequestTemplate = JsonConvert.DeserializeObject<LLMRequest>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
-                else deactivate_llmRequestTemplate = true;
+                if (File.Exists(filePath)) _llmPresetTemplate = JsonConvert.DeserializeObject<LLMPresetTemplateData>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                else deactivate_llmPresetTemplate = true;
             }
-            return _llmRequestTemplate;
+            return _llmPresetTemplate;
+        }
+    }
+
+    LLMRequestTemplateData _llmSlowModeConfig = null;
+    bool deactivate_llmSlowModeConfig = false;
+    public LLMRequestTemplateData LLMSlowModeConfig
+    {
+        get
+        {
+            if (_llmSlowModeConfig == null && !deactivate_llmSlowModeConfig)
+            {
+                string filePath = Application.dataPath + "/LLM/Request_Slow.json";
+                FileInfo file = new System.IO.FileInfo(filePath);
+                if (File.Exists(filePath)) _llmSlowModeConfig = JsonConvert.DeserializeObject<LLMRequestTemplateData>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                else deactivate_llmSlowModeConfig = true;
+            }
+            return _llmSlowModeConfig;
         }
     }
 
     public void ResetLLMRequestTemplate()
     {
-        _llmRequestTemplate = null;
+        _llmPresetTemplate = null;
+        _llmSlowModeConfig = null;
+        _llmPresets = null;
+        _llmPresetsByID = null;
+    }
+
+    /// <summary>
+    /// One hardcoded default (LLM_Preset.json, keyed DefaultPresetID) plus every player-created
+    /// preset dropped into persistentDataPath/LLMPresets/, keyed by filename. Same list+dictionary
+    /// shape as LLMProviderProfiles, just sourced from the player-writable persistent path instead
+    /// of the shipped Assets/LLM folder, and keyed by filename rather than an in-file id.
+    /// </summary>
+    public const string DefaultPresetID = "LLM_Preset";
+
+    List<LLMPresetTemplateData> _llmPresets = null;
+    Dictionary<string, LLMPresetTemplateData> _llmPresetsByID = null;
+    public List<LLMPresetTemplateData> LLMPresets
+    {
+        get
+        {
+            if (_llmPresets == null)
+            {
+                _llmPresets = new List<LLMPresetTemplateData>();
+                _llmPresetsByID = new Dictionary<string, LLMPresetTemplateData>();
+
+                if (LLMPresetTemplate != null)
+                {
+                    _llmPresetsByID[DefaultPresetID] = LLMPresetTemplate;
+                    _llmPresets.Add(LLMPresetTemplate);
+                }
+
+                string dirPath = Application.persistentDataPath + "/LLMPresets";
+                Directory.CreateDirectory(dirPath); // no-op if it exists; keeps the folder discoverable
+                foreach (var filePath in Directory.GetFiles(dirPath, "*.json"))
+                {
+                    string id = Path.GetFileNameWithoutExtension(filePath);
+                    if (_llmPresetsByID.ContainsKey(id))
+                    {
+                        Debug.LogError($"Player LLM preset at {filePath} has id [{id}] which collides with an existing preset, skipping.");
+                        continue;
+                    }
+                    LLMPresetTemplateData preset;
+                    try { preset = JsonConvert.DeserializeObject<LLMPresetTemplateData>(File.ReadAllText(filePath), UtilityEX.SerializerSettings); }
+                    catch (Exception e) { Debug.LogError($"Player LLM preset at {filePath} failed to parse: {e.Message}, skipping."); continue; }
+                    if (preset == null) { Debug.LogError($"Player LLM preset at {filePath} failed to parse, skipping."); continue; }
+                    _llmPresetsByID[id] = preset;
+                    _llmPresets.Add(preset);
+                }
+            }
+            return _llmPresets;
+        }
+    }
+
+    public LLMPresetTemplateData GetPreset(string id)
+    {
+        var list = LLMPresets; // ensure loaded
+        if (list == null || string.IsNullOrEmpty(id)) return null;
+        return _llmPresetsByID.TryGetValue(id, out var preset) ? preset : null;
+    }
+
+    /// <summary>
+    /// Ids of every player-created prompt-template preset (persistentDataPath/LLMPresets/*.json),
+    /// excluding the shipped default - used to build the preset-selector list in the editor UI.
+    /// </summary>
+    public IEnumerable<string> PlayerPromptPresetIDs
+    {
+        get
+        {
+            var list = LLMPresets; // ensure loaded
+            if (list == null) yield break;
+            foreach (var id in _llmPresetsByID.Keys)
+            {
+                if (id == DefaultPresetID) continue;
+                yield return id;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Deep-copies a template via a JSON round-trip so the caller gets an independent draft to edit -
+    /// reuses UtilityEX.SerializerSettings since the $type discriminator is required to correctly
+    /// clone LLMMessage_All/LLMMessage_Select nodes.
+    /// </summary>
+    public LLMPresetTemplateData ClonePreset(LLMPresetTemplateData source)
+    {
+        if (source == null) return new LLMPresetTemplateData();
+        string json = JsonConvert.SerializeObject(source, UtilityEX.SerializerSettings);
+        return JsonConvert.DeserializeObject<LLMPresetTemplateData>(json, UtilityEX.SerializerSettings);
+    }
+
+    /// <summary>
+    /// Writes a player prompt-template preset to persistentDataPath/LLMPresets/&lt;id&gt;.json (creating
+    /// or overwriting), then invalidates the preset cache so LLMPresets/GetPreset re-read it from disk.
+    /// </summary>
+    public void SavePromptPreset(string id, LLMPresetTemplateData data)
+    {
+        if (string.IsNullOrEmpty(id) || id == DefaultPresetID) return;
+        string dirPath = Application.persistentDataPath + "/LLMPresets";
+        Directory.CreateDirectory(dirPath);
+        string filePath = Path.Combine(dirPath, id + ".json");
+        string json = JsonConvert.SerializeObject(data, Formatting.Indented, UtilityEX.SerializerSettings);
+        File.WriteAllText(filePath, json);
+        ResetLLMRequestTemplate();
+    }
+
+    /// <summary>
+    /// Saves data under newId, then deletes the old file if the id actually changed - used when the
+    /// player renames a preset via the "current preset name" field while saving.
+    /// </summary>
+    public void RenamePromptPreset(string oldId, string newId, LLMPresetTemplateData data)
+    {
+        SavePromptPreset(newId, data);
+        if (!string.IsNullOrEmpty(oldId) && oldId != DefaultPresetID && oldId != newId)
+        {
+            string oldPath = Application.persistentDataPath + "/LLMPresets/" + oldId + ".json";
+            if (File.Exists(oldPath)) File.Delete(oldPath);
+            ResetLLMRequestTemplate();
+        }
+    }
+
+    /// <summary>
+    /// Deletes a player prompt-template preset file. Refuses to touch the shipped default. Clears
+    /// currentPromptTemplateId (falling back to the default) if it pointed at the deleted preset.
+    /// </summary>
+    public void DeletePromptPreset(string id)
+    {
+        if (string.IsNullOrEmpty(id) || id == DefaultPresetID) return;
+        string filePath = Application.persistentDataPath + "/LLMPresets/" + id + ".json";
+        if (File.Exists(filePath)) File.Delete(filePath);
+        ResetLLMRequestTemplate();
+        if (LLMSetting.currentPromptTemplateId == id)
+        {
+            LLMSetting.currentPromptTemplateId = null;
+            StoreLLMSetting();
+        }
+    }
+
+    public LLMPresetTemplateData CurrentPreset
+    {
+        get
+        {
+            var preset = GetPreset(LLMSetting.currentPromptTemplateId);
+            if (preset != null) return preset;
+            return GetPreset(DefaultPresetID) ?? LLMPresetTemplate; // fall back to default, then to the raw loader as a last resort
+        }
+    }
+
+    /// <summary>
+    /// Provider profiles in list order (the order Directory.GetFiles returns them), each carrying
+    /// its own "id" field declared in its JSON body - same id/list/dictionary shape as the
+    /// COM/Job masterlists (see Index_COM.GetByID), just without the merge/tagging machinery those
+    /// need. List order is what drives dropdown/enumeration order; there is no separate sort field.
+    /// </summary>
+    List<LLMProviderProfile> _llmProviderProfiles = null;
+    Dictionary<string, LLMProviderProfile> _llmProviderProfilesByID = null;
+    bool deactivate_llmProviderProfiles = false;
+    public List<LLMProviderProfile> LLMProviderProfiles
+    {
+        get
+        {
+            if (_llmProviderProfiles == null && !deactivate_llmProviderProfiles)
+            {
+                string dirPath = Application.dataPath + "/LLM/Providers";
+                if (Directory.Exists(dirPath))
+                {
+                    _llmProviderProfiles = new List<LLMProviderProfile>();
+                    _llmProviderProfilesByID = new Dictionary<string, LLMProviderProfile>();
+                    foreach (var filePath in Directory.GetFiles(dirPath, "*.json"))
+                    {
+                        var profile = JsonConvert.DeserializeObject<LLMProviderProfile>(File.ReadAllText(filePath), UtilityEX.SerializerSettings);
+                        if (profile == null || string.IsNullOrEmpty(profile.id))
+                        {
+                            Debug.LogError($"LLM provider profile at {filePath} is missing its \"id\" field, skipping.");
+                            continue;
+                        }
+                        if (!_llmProviderProfilesByID.TryAdd(profile.id, profile))
+                        {
+                            Debug.LogError($"LLM provider profile at {filePath} has duplicate id [{profile.id}], skipping.");
+                            continue;
+                        }
+                        _llmProviderProfiles.Add(profile);
+                    }
+                }
+                else deactivate_llmProviderProfiles = true;
+            }
+            return _llmProviderProfiles;
+        }
+    }
+
+    public LLMProviderProfile GetProviderProfile(string id)
+    {
+        var list = LLMProviderProfiles; // ensure loaded
+        if (list == null || string.IsNullOrEmpty(id)) return null;
+        return _llmProviderProfilesByID.TryGetValue(id, out var profile) ? profile : null;
+    }
+
+    /// <summary>
+    /// Resolves a saved/draft preset to its provider profile: direct lookup by providerId when it
+    /// names a known non-custom profile, otherwise scans endpointHints/modelNameHints across all
+    /// bundled profiles (so "custom" presets pointed at a GLM/DeepSeek-compatible proxy still pick
+    /// up the right quirks), falling back to whichever resolved profile is flagged isCustomEntry.
+    /// </summary>
+    public LLMProviderProfile ResolveProviderProfile(LLM_Setting.ChatCompletion preset)
+    {
+        var list = LLMProviderProfiles;
+        if (preset == null || list == null || list.Count == 0) return null;
+
+        var direct = GetProviderProfile(preset.providerId);
+        if (direct != null && !direct.isCustomEntry) return direct;
+
+        foreach (var p in list)
+        {
+            if (p.isCustomEntry) continue;
+            if (p.endpointHints != null && preset.endpoint != null && p.endpointHints.Any(h => preset.endpoint.Contains(h, StringComparison.OrdinalIgnoreCase))) return p;
+            if (p.modelNameHints != null && preset.model != null && p.modelNameHints.Any(h => preset.model.Contains(h, StringComparison.OrdinalIgnoreCase))) return p;
+        }
+
+        return direct ?? list.FirstOrDefault(p => p.isCustomEntry);
     }
 
     public void StoreLLMSetting()
@@ -298,6 +532,20 @@ public class scr_System_CentralControl : MonoBehaviour
                 StoreLLMSetting();
             }
         }
+
+        MigrateLegacyAPIType();
+    }
+
+    static readonly string[] legacyAPITypeToProviderId = { "LLM_Provider_custom", "LLM_Provider_google", "LLM_Provider_anthropic", "LLM_Provider_openai", "LLM_Provider_zai", "LLM_Provider_deepseek" };
+    void MigrateLegacyAPIType()
+    {
+#pragma warning disable CS0618 // APIType is [Obsolete], read here only for one-time migration
+        foreach (var c in _llmSetting.chatCompletionModels)
+        {
+            if (!string.IsNullOrEmpty(c.providerId)) continue;
+            c.providerId = (c.APIType >= 0 && c.APIType < legacyAPITypeToProviderId.Length) ? legacyAPITypeToProviderId[c.APIType] : "LLM_Provider_custom";
+        }
+#pragma warning restore CS0618
     }
 
     // Called by Serializer

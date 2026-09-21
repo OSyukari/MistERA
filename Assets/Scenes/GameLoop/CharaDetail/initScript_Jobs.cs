@@ -16,19 +16,6 @@ public class initScript_Relations : MonoBehaviour
     public RectTransform workFactionsGrid;
     List<RectTransform> listRelationship = new List<RectTransform>();
 
-    void FillFactionRect(scr_HoverableText text, Manageable faction, Character_Trainable c, string extraTooltip)
-    {
-        if (faction == null || c == null) {
-            text.SetText(" - ");
-        }
-        else
-        {
-            text.SetText(faction.GetCharaSocialStandingName(c),false,extraTooltip);
-            text.SetExternalTooltip(faction.GetCharaSocialStandingTooltip(c));
-        }
-        
-    }
-
     public scr_HoverableText prefab_work;
     string worktooltip = "management_faction_work_tooltip";
     public void InitializeData(Character_Trainable c, scr_Menu_CharaDetail parent)
@@ -36,8 +23,8 @@ public class initScript_Relations : MonoBehaviour
         if (c == null) return;
         listRelationship.Clear();
 
-        FillFactionRect(homeFaction, c.FactionManager.Faction_Home, c, "management_faction_home_tooltip");
-        FillFactionRect(homeFactionTemp, c.FactionManager.Faction_Home_Temporary, c, "management_faction_home_temporary_tooltip");
+        Utility.FillFactionRect(homeFaction, c.FactionManager.Faction_Home, c, "management_faction_home_tooltip");
+        Utility.FillFactionRect(homeFactionTemp, c.FactionManager.Faction_Home_Temporary, c, "management_faction_home_temporary_tooltip");
 
         bool haswork = false;
         foreach (var i in c.FactionManager.WorkFactions)
@@ -45,7 +32,7 @@ public class initScript_Relations : MonoBehaviour
             haswork = true;
             var hov = Instantiate(prefab_work);
             hov.SelfRect.SetParent(workFactionsGrid, false);
-            FillFactionRect(hov, i, c, worktooltip);
+            Utility.FillFactionRect(hov, i, c, worktooltip);
         }
         workFactionsNone.gameObject.SetActive(!haswork);
 

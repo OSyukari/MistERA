@@ -901,6 +901,8 @@ public abstract class ActionPackage
     [JsonProperty] protected bool isValid = true;
     [JsonIgnore] public bool IsValid { get { return isValid; } }
 
+    [JsonIgnore] public string FailureReason = null;
+
 
     /// <summary>
     /// Validation to check if COM can be applied
@@ -978,12 +980,19 @@ public abstract class ActionPackage
 
         foreach (var i in Actors)
         {
+            if (i == null)
+            {
+                tooltip.Add("ActionPackage preEvaluation: referenced actor RefID does not exist.");
+                isValid = false;
+                continue;
+            }
+
             var room = scr_System_CampaignManager.current.GetCharaRoomInstance(i.RefID);
             if (room != job.ParentRoom)
             {
                 tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireSameRoom")
                                 .Replace("$name$", i.FirstName)
-                                .Replace("$location$", room.DisplayName)
+                                .Replace("$location$", room != null ? room.DisplayName : "nowhere")
                                 .Replace("$room$", job.ParentRoom.DisplayName));
                 isValid = false;
             }
@@ -1202,8 +1211,8 @@ public abstract class ActionPackage
     {
         var names_doer = new List<string>();
         var names_receiver = new List<string>();
-        foreach (var c in doer) names_doer.Add(c.FirstName);
-        foreach (var c in receiver) names_receiver.Add(c.FirstName);
+        for (int idx = 0; idx < doer.Count; idx++) names_doer.Add(doer[idx] != null ? doer[idx].FirstName : $"{DoerRefs[idx]}?");
+        for (int idx = 0; idx < receiver.Count; idx++) names_receiver.Add(receiver[idx] != null ? receiver[idx].FirstName : $"{ReceiverRefs[idx]}?");
 
         s = s.Replace("$acceptance_final$", $"{requestRate * responseRate / 100}%")
             .Replace("$time$", $"{Duration}")

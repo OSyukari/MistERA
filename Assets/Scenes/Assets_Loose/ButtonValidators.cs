@@ -41,6 +41,9 @@ public abstract class ButtonValidator
         this.parent = parent;
     }
 
+    /// <summary>
+    /// Forbid calling validateall when click ends.
+    /// </summary>
     public bool noValidate = false;
     public virtual void Destroy()
     {

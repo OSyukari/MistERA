@@ -62,8 +62,41 @@
 "ui_comPanel_filters_shortenLogs": "简化口上",
 "ui_comPanel_filters_shortenLogs_tooltip": "开启后，参与多人指令时只会打印一条随机参与者的口上\n未开启时，会打印所有参与者的口上（人多时会刷屏，且刷到重复口上的可能性非常大\n\n推荐开启）",
 
-"ui_prefs_button_llmSetting": "语言模型设定",
-"ui_prefs_button_llmSetting_tooltip": "设定语言模型接口和API",
+"ui_prefs_title_llmSetting": "<link=\"ui_prefs_title_llmSetting_tooltip\">语言模型设定</link>",
+"ui_prefs_title_llmSetting_tooltip": "设定语言模型接口和API",
+
+"ui_prefs_button_llmSetting_api": "API",
+"ui_prefs_button_llmSetting_preset": "预设",
+
+"ui_prefs_llm_preset_create":"新建预设",
+"ui_prefs_llm_preset_default":"默认预设",
+"ui_prefs_llm_preset_addRoot":"添加节点",
+"ui_prefs_llm_preset_delete":"删除预设",
+"ui_prefs_llm_preset_delete_tooltip":"删除当前的预设，并读取默认预设\n也能够清除当前未保存的新建预设",
+"ui_prefs_llm_preset_save":"保存预设",
+
+"ui_prefs_llm_preset_loading":"预设读取中……",
+"ui_prefs_llm_preset_name":"预设名：",
+
+"ui_prefs_llm_preset_message_name":"节点名",
+"ui_prefs_llm_preset_message_enableBTN":"启用",
+"ui_prefs_llm_preset_message_tags":"类别tag",
+"ui_prefs_llm_preset_message_deleteBTN":"删除",
+"ui_prefs_llm_preset_message_content":"内容",
+"ui_prefs_llm_preset_message_nodeType":"节点类型：$type$",
+"ui_prefs_llm_preset_message_roleType":"发言角色：$type$",
+"ui_prefs_llm_preset_message_addNode":"添加子节点",
+
+"ui_prefs_llm_preset_nodeType_message":"默认节点",
+"ui_prefs_llm_preset_nodeType_all":"全部子节点",
+"ui_prefs_llm_preset_nodeType_all_tooltip":"每个启用的子节点的内容都会被收录在内",
+"ui_prefs_llm_preset_nodeType_select":"FIFO节点",
+"ui_prefs_llm_preset_nodeType_select_tooltip":"只会收录第一个启用的子节点的内容",
+"ui_prefs_llm_preset_roleType_system":"系统",
+"ui_prefs_llm_preset_roleType_user":"用户",
+"ui_prefs_llm_preset_roleType_assistant":"助手",
+"ui_prefs_llm_preset_roleType_assistant_tooltip":"请注意，部分供应商在处理request时，若此类节点是request的最后一条则会拒绝服务400",
+
 
 "ui_prefs_llm_llmSetting_on": "启用",
 
@@ -74,6 +107,7 @@
 "ui_prefs_llm_apisetting_completion_title": "聊天补全模型：$modelname$",
 "ui_prefs_llm_apisetting_completion_title_initializing": "聊天补全模型：初始化中……",
 "ui_prefs_llm_apisetting_completion_api_type": "API来源",
+"ui_prefs_llm_apisetting_completion_api_key": "API Key",
 "ui_prefs_llm_apisetting_completion_dropdown_0": "自制接口（OpenAI兼容）",
 "ui_prefs_llm_apisetting_completion_dropdown_1": "Google AI Studio",
 "ui_prefs_llm_apisetting_completion_dropdown_2": "Claude",
@@ -92,12 +126,12 @@
 
 "ui_prefs_llm_apisetting_completion_customurl": "自制接口URL",
 
-"ui_prefs_llm_apisetting_completion_api_0": "自制接口Key",
-"ui_prefs_llm_apisetting_completion_api_1": "Google AI Studio API Key",
-"ui_prefs_llm_apisetting_completion_api_2": "Claude API Key",
-"ui_prefs_llm_apisetting_completion_api_3": "OpenAI API Key",
-"ui_prefs_llm_apisetting_completion_api_4": "Z.AI 编程计划 API Key",
-"ui_prefs_llm_apisetting_completion_api_5": "DeepSeek API Key",
+"LLM_Provider_custom": "自制接口",
+"LLM_Provider_google": "Google AI Studio",
+"LLM_Provider_anthropic": "Claude",
+"LLM_Provider_openai": "OpenAI",
+"LLM_Provider_zai": "Z.AI 编程计划",
+"LLM_Provider_deepseek": "DeepSeek",
 
 "ui_prefs_llm_apisetting_completion_models": "选择模型",
 "ui_prefs_llm_apisetting_comment": "附注",
@@ -114,6 +148,8 @@
 "ui_comPanel_LLM_confirm": "确认并执行",
 "ui_comPanel_LLM_regenerate": "重新生成",
 "ui_comPanel_LLM_cancelRegen": "中止生成",
+"ui_comPanel_LLM_reasoning_fold": "收起思考过程",
+"ui_comPanel_LLM_reasoning_unfold": "展开思考过程",
 
 
 "comManager_tab_skinship": "触摸",
@@ -396,6 +432,7 @@
 "management_faction_home_temporary_tooltip": "同家庭阵营，但优先级高于家庭阵营。负责处理角色暂时脱离家庭阵营的情况（例如外出探险）",
 "management_faction_work": "<link=management_faction_work_tooltip>工作阵营</link>",
 "management_faction_work_tooltip": "工作阵营不需要满足成员的每日需求，代价是不会因为管理良好而增加成员们的信任\n阵营间的道具收支不互通，要想转移请用【贸易订单】中的【转移道具至...】\n\n如果从工作阵营派出远征，那么该工作阵营需要满足远征成员们的每日需求",
+"management_faction_work_assignedBy_tooltip": "该工作由 $factionname$ 派遣安排",
 
 
 "management_faction_activeHours": "<link=management_faction_activeHours_tooltip>活跃时间段：</link>",
@@ -1026,6 +1063,8 @@
       "ui_comPanel_LLM_confirm": "Confirm and Execute",
       "ui_comPanel_LLM_next": " > ",
       "ui_comPanel_LLM_previous": " < ",
+      "ui_comPanel_LLM_reasoning_fold": "Hide Reasoning",
+      "ui_comPanel_LLM_reasoning_unfold": "Show Reasoning",
       "ui_comPanel_LLM_regenerate": "Regenerate",
       "ui_comPanel_LLM_submit": "Submit Command",
       "ui_comPanel_LLM_title": "<link=\"ui_comPanel_LLM_title_tooltip\">AI Chat Input Window</link>",
@@ -1038,12 +1077,12 @@
       "ui_prefs_button_llmSetting_tooltip": "Configure LLM Interface and API",
 
       "ui_prefs_llm_apisetting": "API Settings",
-      "ui_prefs_llm_apisetting_completion_api_0": "Custom Interface Key",
-      "ui_prefs_llm_apisetting_completion_api_1": "Google AI Studio API Key",
-      "ui_prefs_llm_apisetting_completion_api_2": "Claude API Key",
-      "ui_prefs_llm_apisetting_completion_api_3": "OpenAI API Key",
-      "ui_prefs_llm_apisetting_completion_api_4": "Z.AI Coding Plan API Key",
-      "ui_prefs_llm_apisetting_completion_api_5": "DeepSeek API Key",
+      "LLM_Provider_custom": "Custom Interface Key",
+      "LLM_Provider_google": "Google AI Studio API Key",
+      "LLM_Provider_anthropic": "Claude API Key",
+      "LLM_Provider_openai": "OpenAI API Key",
+      "LLM_Provider_zai": "Z.AI Coding Plan API Key",
+      "LLM_Provider_deepseek": "DeepSeek API Key",
       "ui_prefs_llm_apisetting_completion_api_type": "API Source",
       "ui_prefs_llm_apisetting_completion_customurl": "Custom Interface URL",
       "ui_prefs_llm_apisetting_completion_dropdown_0": "Custom Interface (OpenAI Compatible)",
@@ -1192,6 +1231,7 @@
 "management_faction_home_temporary_tooltip": "Same as Home Faction, but with higher priority. Used to handle cases where character leaves home faction for an extended amount of time.",
 "management_faction_work": "<link=management_faction_work_tooltip>Work Faction</link>",
 "management_faction_work_tooltip": "(not yet implemented)",
+"management_faction_work_assignedBy_tooltip": "This job was assigned by $factionname$",
 "ui_management_tab_overview": "Overview",
 "ui_management_tab_production": "Productions",
 "ui_management_tab_expeditions": "Expeditions",

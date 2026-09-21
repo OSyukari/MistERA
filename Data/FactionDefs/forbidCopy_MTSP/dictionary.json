@@ -1,0 +1,53 @@
+{
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "MTSP_Char_Kyouka_FirstName": "京香",
+                "MTSP_Char_Kyouka_LastName": "橘",
+                "MTSP_Char_Yuika_FirstName": "结花",
+                "MTSP_Char_Yuika_LastName": "橘",
+                "MTSP_Char_Koharu_FirstName": "小春",
+                "MTSP_Char_Koharu_LastName": "橘",
+                "MTSP_Char_Sakiko_FirstName": "咲子",
+                "MTSP_Char_Sakiko_LastName": "美堂",
+                "MTSP_Char_Yuu_FirstName": "优",
+                "MTSP_Char_Yuu_LastName": "秋道",
+                "MTSP_Char_Haruki_FirstName": "春树",
+                "MTSP_Char_Haruki_LastName": "美堂"
+            },
+            "ja-jp":
+            {
+                "MTSP_Char_Kyouka_FirstName": "京香",
+                "MTSP_Char_Kyouka_LastName": "橘",
+                "MTSP_Char_Yuika_FirstName": "結花",
+                "MTSP_Char_Yuika_LastName": "橘",
+                "MTSP_Char_Koharu_FirstName": "小春",
+                "MTSP_Char_Koharu_LastName": "橘",
+                "MTSP_Char_Sakiko_FirstName": "咲子",
+                "MTSP_Char_Sakiko_LastName": "美堂",
+                "MTSP_Char_Yuu_FirstName": "ユウ",
+                "MTSP_Char_Yuu_LastName": "秋道",
+                "MTSP_Char_Haruki_FirstName": "春樹",
+                "MTSP_Char_Haruki_LastName": "美堂"
+            },
+            "en-us":
+            {
+                "MTSP_Char_Kyouka_FirstName": "Kyouka",
+                "MTSP_Char_Kyouka_LastName": "Tachibana",
+                "MTSP_Char_Yuika_FirstName": "Yuika",
+                "MTSP_Char_Yuika_LastName": "Tachibana",
+                "MTSP_Char_Koharu_FirstName": "Koharu",
+                "MTSP_Char_Koharu_LastName": "Tachibana",
+                "MTSP_Char_Sakiko_FirstName": "Sakiko",
+                "MTSP_Char_Sakiko_LastName": "Midou",
+                "MTSP_Char_Yuu_FirstName": "Yuu",
+                "MTSP_Char_Yuu_LastName": "Akemichi",
+                "MTSP_Char_Haruki_FirstName": "Haruki",
+                "MTSP_Char_Haruki_LastName": "Midou"
+            }
+        }
+    }
+}

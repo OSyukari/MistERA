@@ -7,9 +7,9 @@
                 "portrait_offset_x": 8.6,
                 "portrait_offset_y": -231,
                 "portrait_offset_size": 0.8,
-                "icon_offset_x": 0.0,
-                "icon_offset_y": -300,
-                "icon_offset_size": 0.5,
+                "icon_offset_x": -6.6,
+                "icon_offset_y": -250.6,
+                "icon_offset_size": 0.43,
                 "charaReq": {
                     "requireConscious": false, "requireAction": false,
                     "clothingRequirement": "None", "requireUndressedTags": ["lower", "torso"], "minRevealingScore":1
@@ -30,9 +30,9 @@
                 "portrait_offset_x": 8.6,
                 "portrait_offset_y": -231,
                 "portrait_offset_size": 0.8,
-                "icon_offset_x": 0.0,
-                "icon_offset_y": -300,
-                "icon_offset_size": 0.5,
+                "icon_offset_x": -6.6,
+                "icon_offset_y": -250.6,
+                "icon_offset_size": 0.43,
                 "RequireSelfContextKeys": ["yakuza"],
                 "Variants": [
                     { "tagsMatch": ["angry"],     "PortraitVariantData": ["Kanon/Kimono/core_angry_01.webp"] },
@@ -50,9 +50,9 @@
                 "portrait_offset_x": 8.6,
                 "portrait_offset_y": -231,
                 "portrait_offset_size": 0.8,
-                "icon_offset_x": 0.0,
-                "icon_offset_y": -300,
-                "icon_offset_size": 0.5,
+                "icon_offset_x": -6.6,
+                "icon_offset_y": -250.6,
+                "icon_offset_size": 0.43,
                 "Variants": [
                     { "tagsMatch": ["angry"],     "PortraitVariantData": ["Kanon/School/core_angry_02.webp"] },
                     { "tagsMatch": ["sad"],       "PortraitVariantData": ["Kanon/School/core_sad_02.webp"] },

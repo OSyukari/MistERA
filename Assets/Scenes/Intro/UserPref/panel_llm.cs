@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -35,14 +36,25 @@ public class panel_llm : MonoBehaviour
 
         this.parent = parent;
 
-        foreach (var text in dropdown_api.options)
-        {
-            text.text = LocalizeDictionary.QueryThenParse(text.text);
-        }
+        BuildAPIDropdown();
         ResetDraft();
         BuildPresetButtons();
 
         if (presetList.childCount < 1 || scr_System_CentralControl.current.LLMSetting.currentPresetId == null) NotifyCurrentModel(null);
+    }
+
+    /// <summary>
+    /// Populates the endpoint-picker dropdown from whatever provider profiles are found in
+    /// Assets/LLM/Providers/, in list order - adding a new provider config needs no change here.
+    /// Each profile's id IS its localization key (e.g. "LLM_Provider_deepseek").
+    /// </summary>
+    void BuildAPIDropdown()
+    {
+        dropdown_api.ClearOptions();
+        var labels = scr_System_CentralControl.current.LLMProviderProfiles
+            .Select(p => LocalizeDictionary.QueryThenParse(p.id))
+            .ToList();
+        dropdown_api.AddOptions(labels);
     }
 
     public scr_HoverableText ChatCompletionTitle;
@@ -65,7 +77,7 @@ public class panel_llm : MonoBehaviour
         scr_LLMPresetRect box = Instantiate(prefab_presetRect);
         box.transform.SetParent(presetList, false);
 
-        box.text_apiType.text = LocalizeDictionary.QueryThenParse($"ui_prefs_llm_apisetting_completion_api_{preset.APIType}");
+        box.text_apiType.text = LocalizeDictionary.QueryThenParse(preset.providerId);
         box.text_model.text = preset.model;
         box.text_maskedKey.text = MaskKey(preset.key);
         box.text_comment.text = preset.comment;
@@ -115,7 +127,7 @@ public class panel_llm : MonoBehaviour
                 state = ButtonValidator_States.Invalid;
                 if (co == null)
                 {
-                    co = parent.StartCoroutine(parent.panelLLM.GetAvailableModel(preset.modellist, preset.key, (list, req) => OnValidated(list != null)));
+                    co = parent.StartCoroutine(parent.panelLLM.GetAvailableModel(preset, (list, req) => OnValidated(list != null)));
                 }
                 return false;
             }
@@ -222,9 +234,16 @@ public class panel_llm : MonoBehaviour
         pwd_custom.text = "";
         comment_custom.text = "";
         modelsDropdown.ClearOptions();
-        dropdown_api.value = 0;
         errorMSG.SetText("");
         box_createNew.gameObject.SetActive(false);
+
+        // Dropdown entries follow provider-profile list order, so "custom" isn't necessarily index 0
+        // - find it explicitly and always re-apply it (rather than relying on the dropdown's
+        // value-changed event, which won't fire if the value happens to already be at that index).
+        var profiles = scr_System_CentralControl.current.LLMProviderProfiles;
+        int customIndex = Math.Max(0, profiles.FindIndex(p => p.isCustomEntry));
+        dropdown_api.SetValueWithoutNotify(customIndex);
+        OnAPIChange(customIndex);
     }
 
     public void OnClickCreateNew()
@@ -303,44 +322,28 @@ public class panel_llm : MonoBehaviour
 
     public TMP_Dropdown dropdown_api;
     public RectTransform box_customAPI;
-    public TMP_Text api_title;
+   // public TMP_Text api_title;
     public void OnAPIChange(int i)
     {
-        box_customAPI.gameObject.SetActive(i == 0);
+        var profiles = scr_System_CentralControl.current.LLMProviderProfiles;
+        if (i < 0 || i >= profiles.Count) return;
+        var profile = profiles[i];
 
-        api_title.text = LocalizeDictionary.QueryThenParse($"ui_prefs_llm_apisetting_completion_api_{i}");
+        box_customAPI.gameObject.SetActive(profile.isCustomEntry);
+
+        //api_title.text = LocalizeDictionary.QueryThenParse(profile.id);
 
         draftPreset.key = pwd_custom.text;
-        draftPreset.APIType = i;
+        draftPreset.providerId = profile.id;
 
-        switch (i)
+        if (profile.isCustomEntry)
         {
-            case 0: // custom endpoint
-                OnContentChange_url(url_custom.text);
-                break;
-            case 1: // google ai studio
-                draftPreset.endpoint = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
-                draftPreset.modellist = "https://generativelanguage.googleapis.com/v1beta/openai/models";
-                break;
-            case 2: // claude anthropic
-                draftPreset.endpoint = "https://api.anthropic.com/v1/messages";
-                draftPreset.modellist = "https://api.anthropic.com/v1/models";
-                break;
-            case 3: // openai
-                draftPreset.endpoint = "https://api.openai.com/v1/chat/completions";
-                draftPreset.modellist = "https://api.openai.com/v1/models";
-                break;
-            case 4: // z.ai coding plan
-                draftPreset.endpoint = "https://api.z.ai/api/coding/paas/v4/chat/completions";
-                draftPreset.modellist = "https://api.z.ai/api/coding/paas/v4/models";
-                break;
-            case 5: // deepseek
-                draftPreset.endpoint = "https://api.deepseek.com/chat/completions";
-                draftPreset.modellist = "https://api.deepseek.com/models";
-                break;
-            default:
-                break;
-
+            OnContentChange_url(url_custom.text);
+        }
+        else
+        {
+            draftPreset.endpoint = profile.defaultEndpoint;
+            draftPreset.modellist = profile.defaultModelListEndpoint;
         }
 
         url_custom.text = draftPreset.endpoint;
@@ -360,7 +363,8 @@ public class panel_llm : MonoBehaviour
         var url = s;
         if (url.Contains("/chat/completions")) url = url.Replace("/chat/completions", "");
 
-        if (draftPreset.APIType == 0)
+        var profile = scr_System_CentralControl.current.GetProviderProfile(draftPreset.providerId);
+        if (profile != null && profile.isCustomEntry)
         {
             draftPreset.endpoint = url;
             if (!draftPreset.endpoint.Contains("/chat/completions")) draftPreset.endpoint += "/chat/completions";
@@ -385,7 +389,7 @@ public class panel_llm : MonoBehaviour
             StopCoroutine(refreshModels);
             refreshModels = null;
         }
-        refreshModels = StartCoroutine(GetAvailableModel(draftPreset.modellist, draftPreset.key, OnModelFound));
+        refreshModels = StartCoroutine(GetAvailableModel(draftPreset, OnModelFound));
     }
 
     protected void OnModelFound(ModelList model, UnityWebRequest request)
@@ -428,23 +432,14 @@ public class panel_llm : MonoBehaviour
     [Serializable] public class ModelList { public List<ModelData> data; }
     [Serializable] public class ModelData { public string id; }
     /// <summary>
-    /// Fetches available models from a custom URL and returns the first ID found.
+    /// Fetches available models from a preset's model-list endpoint and returns the first ID found.
     /// </summary>
-    public IEnumerator GetAvailableModel(string baseUrl, string apiKey, Action<ModelList, UnityWebRequest> onModelFound)
+    public IEnumerator GetAvailableModel(LLM_Setting.ChatCompletion preset, Action<ModelList, UnityWebRequest> onModelFound)
     {
-        using (UnityWebRequest request = UnityWebRequest.Get(baseUrl))
+        using (UnityWebRequest request = UnityWebRequest.Get(preset.modellist))
         {
-
-            if (baseUrl.Contains("anthropic"))
-            {
-                request.SetRequestHeader("x-api-key", apiKey);
-                request.SetRequestHeader("anthropic-version", "2023-06-01");
-                //request.SetRequestHeader("Accept", "application/json");
-            }
-            else
-            {
-                request.SetRequestHeader("Authorization", "Bearer " + apiKey);
-            }
+            var profile = scr_System_CentralControl.current.ResolveProviderProfile(preset);
+            LLMProviderUtils.ApplyAuthHeaders(request, profile, preset.key);
 
             yield return request.SendWebRequest();
 

@@ -1,0 +1,4011 @@
+{
+  "baseID": "MTSP_Char_Sakiko_full",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - bikini - doer. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "bikini",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_masturbation orgasm.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_masturbation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - bikini - receiver. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "bikini",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_lactation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_breast caress.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - kimono - doer. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "kimono",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_masturbation orgasm.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_masturbation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - kimono - receiver. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "kimono",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_lactation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_breast caress.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - maid - doer. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "maid",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_masturbation orgasm.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_masturbation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - maid - receiver. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "maid",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_lactation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_breast caress.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nightwear - doer. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "nightwear",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_masturbation orgasm.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_masturbation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nightwear - receiver. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "nightwear",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_lactation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_breast caress.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - robe - doer. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "robe",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_masturbation orgasm.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_masturbation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - robe - receiver. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "robe",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_lactation.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_breast caress.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - doer. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_masturbation orgasm.webp",
+              "Sakiko/Assets/sakiko_nude_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_masturbation.webp",
+              "Sakiko/Assets/sakiko_nude_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - receiver. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_lactation.webp",
+              "Sakiko/Assets/sakiko_nude_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_breast caress.webp",
+              "Sakiko/Assets/sakiko_nude_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - doer. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_masturbation orgasm.webp",
+              "Sakiko/Assets/sakiko_casual_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_masturbation.webp",
+              "Sakiko/Assets/sakiko_casual_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - receiver. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_lactation.webp",
+              "Sakiko/Assets/sakiko_casual_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_breast caress.webp",
+              "Sakiko/Assets/sakiko_casual_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - nude. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_jealous.webp",
+              "Sakiko/Assets/sakiko_nude_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_sad.webp",
+              "Sakiko/Assets/sakiko_nude_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_determined.webp",
+              "Sakiko/Assets/sakiko_nude_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_happy.webp",
+              "Sakiko/Assets/sakiko_nude_grateful.webp",
+              "Sakiko/Assets/sakiko_nude_hopeful.webp",
+              "Sakiko/Assets/sakiko_nude_lovestruck.webp",
+              "Sakiko/Assets/sakiko_nude_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_nude_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Sakiko/Assets/sakiko_nude_neutral.webp",
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - bikini. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "bikini"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_jealous.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_sad.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_determined.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_happy.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_grateful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_hopeful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_lovestruck.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Sakiko/Assets_clothing_forbidCopy/sakiko_bikini_neutral.webp",
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - kimono. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "kimono"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_jealous.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_sad.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_determined.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_happy.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_grateful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_hopeful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_lovestruck.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Sakiko/Assets_clothing_forbidCopy/sakiko_kimono_neutral.webp",
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - maid. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "maid"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_jealous.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_sad.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_determined.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_happy.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_grateful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_hopeful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_lovestruck.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Sakiko/Assets_clothing_forbidCopy/sakiko_maid_neutral.webp",
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - nightwear. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "nightwear"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_jealous.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_sad.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_determined.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_happy.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_grateful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_hopeful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_lovestruck.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Sakiko/Assets_clothing_forbidCopy/sakiko_nightwear_neutral.webp",
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - robe. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "RequireSelfContextKeys": [
+          "robe"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_jealous.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_sad.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_determined.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_happy.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_grateful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_hopeful.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_lovestruck.webp",
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Sakiko/Assets_clothing_forbidCopy/sakiko_robe_neutral.webp",
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - casual. Default costume, no context key required - system-wide terminal fallback (mandatory catch-all).",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -10.8,
+        "icon_offset_y": -149.5,
+        "icon_offset_size": 0.4,
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_jealous.webp",
+              "Sakiko/Assets/sakiko_casual_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_sad.webp",
+              "Sakiko/Assets/sakiko_casual_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_determined.webp",
+              "Sakiko/Assets/sakiko_casual_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_happy.webp",
+              "Sakiko/Assets/sakiko_casual_grateful.webp",
+              "Sakiko/Assets/sakiko_casual_hopeful.webp",
+              "Sakiko/Assets/sakiko_casual_lovestruck.webp",
+              "Sakiko/Assets/sakiko_casual_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Sakiko/Assets/sakiko_casual_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Sakiko/Assets/sakiko_casual_neutral.webp",
+        "icon_path": "Sakiko/Assets/sakiko_casual_neutral.webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "BodyType": "Default",
+    "stat_STR": 8,
+    "stat_CON": 9,
+    "stat_PSY": 11,
+    "stat_WIL": 14,
+    "personalityID": "personality_default",
+    "sensitivity_B": "trait_Sensitivity_B_sensitive",
+    "sensitivity_M": "trait_Sensitivity_M_default",
+    "sensitivity_C": "trait_Sensitivity_C_sensitive",
+    "sensitivity_V": "trait_Sensitivity_V_sensitive",
+    "sensitivity_A": "trait_Sensitivity_A_default",
+    "size_B": "trait_Size_B_G",
+    "size_P": "trait_Size_P_none",
+    "size_V": "trait_Size_V_1",
+    "size_A": "trait_Size_A_1",
+    "Height": 168,
+    "Weight": 52,
+    "traits": [
+      "trait_SleepTiming_early",
+      "trait_AlcoholTolerance_bad",
+      "trait_MemoryCapacity_high",
+      "trait_CleanlinessTolerance_low",
+      "trait_EnergyCapacity_low",
+      "trait_MentalFortitude_high"
+    ],
+    "initialInventory": [
+      {
+        "ID": "clothing_skin_bra"
+      },
+      {
+        "ID": "clothing_skin_panty"
+      },
+      {
+        "ID": "clothing_skin_socks"
+      }
+    ],
+    "characterComment": "MTSP_Jin_Midou_Sakiko_charCard_comment",
+    "Skills": null,
+    "CharacterCard": "<Midou_Sakiko>\ncharacter:\n  name:\n    english: Midou Sakiko\n    chinese: 美堂咲子\n    japanese: 美堂咲子\n  basic_settings:\n    gender: Female\n    age: 27\n    height: 168cm\n    weight: 52kg\n    measurements: B89(G-cup) W57 H86\n    identity: Young widowed stepmother and high school teacher; guardian and emotional anchor of Midou Haruki\n    occupation: Teacher at Suginami High School (same school as Haruki and Yuu)\n    residence: Modest family home in Suginami Ward shared with stepson Haruki; mortgage cleared by late husband's death insurance\n  character_brief_description:\n    - Quietly beautiful young widow whose calm tidy appearance holds a household together after loss\n    - Gentle and adult at home, professional and modest at school; deflects rather than confronts when cornered\n    - Four years of complete abstinence after her husband's death; desire buried under grief, discipline, and devotion\n    - Knows Haruki cannot see her as only a mother, and is not wholly immune to that gaze herself\n    - Once caught herself wondering 'am I sexually frustrated?' in the shower - and chose to bury the thought\n    - Household finances are tight; Haruki's university recommendation and scholarship are the family's lifeline\n  overall_appearance:\n    - Long chestnut-brown hair with face-framing locks, sometimes tied up at school; narrow glasses\n    - Model-like slender figure: long legs, long arms, narrow waist, full G-cup bust, moderately wide hips\n    - Carries the restrained sensuality of a young widow who has denied desire for years\n    - Signature item: navy-and-red jewel brooch at the collar, a gift from her late husband\n    - Perfume: soft iris and white musk with a faint powdery soap note\n  overall_clothing:\n    - School: fitted navy skirt suit over a white blouse, brooch at the collar, glasses\n    - Home: soft pale-pink loungewear\n    - Pool/beach: pink micro bikini; prefers pink kimono with purple obi on traditional occasions\n  important_background:\n    - Entered Haruki's life when he was in middle school; stayed on as his guardian after his father died four years ago\n    - Closest friend is Keiko, a calm confidante she meets for quiet tea\n    - Very light drinker; prefers reading essays, preparing simple home meals, and handwritten notes\n    - School includes Satou Sensei and the Grade Level Chair Masayuki Kuroda, a known predator protected by his position\n  important_relationship:\n    - Midou Haruki: stepson and guardian charge; the emotional center of her life; she wants him to call her mother while knowing he loves her as a woman\n    - Keiko: the only friend she might have trusted with everything\n    - Kuroda: an unwelcome colleague whose pressure she has rejected for over a year\n  personality_notes:\n    - The Stepmother/The Lonely Guardian archetype\n    - Hates crude pressure from men, being treated as sexually available, threats to Haruki's future\n    - Likes quiet domestic time, Haruki's studying effort, being relied upon, warm tea, clean laundry, early mornings\n    - Rationalizes everything as restraint: 'I am only talking to him'; 'Haruki must not be burdened by this'\n    - Her core tension is the collision between family role and womanhood\n  speech_pattern:\n    - Gentle adult warmth at home, professional clarity at school\n    - When emotionally cornered she softens, shortens sentences, and changes the subject\n    - Calls Haruki 'Haruki-kun' at home and 'Midou-kun' at school\n</Midou_Sakiko>"
+  },
+  "firstName": "MTSP_Char_Sakiko_FirstName",
+  "middleName": "",
+  "lastName": "MTSP_Char_Sakiko_LastName",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

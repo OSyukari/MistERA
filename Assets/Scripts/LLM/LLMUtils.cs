@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +6,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static LLMMessage;
 using static LLMUtils;
 
 public class LLM_Setting
@@ -16,7 +14,18 @@ public class LLM_Setting
     public class ChatCompletion
     {
         public string id = System.Guid.NewGuid().ToString();
+
+        [Obsolete("kept only for one-time migration of old llmSetting.json saves; use providerId")]
         public int APIType = 0;
+
+        /// <summary>
+        /// References an id in scr_System_CentralControl.LLMProviderProfiles (e.g.
+        /// "LLM_Provider_google", "LLM_Provider_anthropic", ...; each id doubles as its own
+        /// LocalizeDictionary key). Null, unresolved, or the isCustomEntry profile's id falls back
+        /// to hint-based auto-detection - see scr_System_CentralControl.ResolveProviderProfile.
+        /// </summary>
+        public string providerId = null;
+
         public string modellist = "";
         public string endpoint = "";
         public string key = "";
@@ -26,6 +35,13 @@ public class LLM_Setting
 
     public string currentPresetId = null;
     public List<ChatCompletion> chatCompletionModels = new List<ChatCompletion>();
+
+    /// <summary>
+    /// Selects the current prompt-template preset (resolved via
+    /// scr_System_CentralControl.CurrentPreset) - a distinct axis from currentPresetId,
+    /// which selects the API/endpoint credentials profile.
+    /// </summary>
+    public string currentPromptTemplateId = null;
 
     [JsonIgnore]
     public ChatCompletion chatCompletionModel
@@ -43,7 +59,7 @@ public class LLM_Setting
 public class LLMRequest
 {
     public List<string> prepend = null;
-    public List<LLMMessage> messages = new List<LLMMessage>();
+    public List<LLMMessage_Final> messages = new List<LLMMessage_Final>();
     public string currentString;
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -75,19 +91,59 @@ public class LLMRequest
     public List<ResponseFormatter_Tools> tools = null;
     public ResponseFormatter_ZAI_toolchoice tool_choice = null;
 
-    public void LoadTemplate(LLMRequest req)
+
+    /// <summary>
+    /// Resolves its own provider profile so root-level nodes can be force-enabled/disabled by
+    /// LLMMessage.tag via LLMProviderProfile.enableNodeByTag/disableNodeByTag, decided before
+    /// Resolve() runs (so a skipped node's {{setvar}} side effects never fire) and without mutating
+    /// req itself, since req is the shared cached LLMPresetTemplate reused across every request.
+    /// </summary>
+    public void LoadTemplate(LLMPresetTemplateData req)
     {
         this.temperature = req.temperature;
         this.max_completion_tokens = req.max_completion_tokens;
         this.max_tokens = req.max_tokens;
         this.top_p = req.top_p;
         this.top_k = req.top_k;
-        foreach(var message in req.messages)
+
+        var profile = scr_System_CentralControl.current.ResolveProviderProfile(scr_System_CentralControl.current.LLMSetting.chatCompletionModel);
+
+        var vars = new Dictionary<string, string>();
+        foreach (var root in req.messages)
         {
-            var newm = new LLMMessage(message);
-            messages.Add(newm);
+            if (root == null || !root.isValid) continue;
+
+            bool enabledByTag = profile != null && !string.IsNullOrEmpty(root.tag)
+                && profile.enableNodeByTag != null && profile.enableNodeByTag.Contains(root.tag);
+            if (!root.enabled && !enabledByTag) continue;
+
+            bool disabledByTag = profile != null && !string.IsNullOrEmpty(root.tag)
+                && profile.disableNodeByTag != null && profile.disableNodeByTag.Contains(root.tag);
+            if (disabledByTag) continue;
+
+            var content = root.Resolve(vars);
+            if (string.IsNullOrEmpty(content)) continue;
+            messages.Add(new LLMMessage_Final { role = root.role, content = content });
         }
-        if (this.response_format == null) this.response_format = req.response_format;
+    }
+
+    /// <summary>
+    /// Applies a mode-specific overlay (Request_Slow.json / Request_Fast.json) on top of an
+    /// already-loaded preset: each replacements entry is substituted as %%key%% into the
+    /// resolved messages (e.g. "rules" -> %%rules%%), and response_format supplies this
+    /// mode's own structured-output schema.
+    /// </summary>
+    public void LoadTemplate(LLMRequestTemplateData req)
+    {
+        if (req.replacements != null)
+        {
+            foreach (var kvp in req.replacements)
+            {
+                if (string.IsNullOrEmpty(kvp.Value)) continue;
+                ReplaceString($"%%{kvp.Key}%%", kvp.Value);
+            }
+        }
+        if (req.response_format != null) this.response_format = req.response_format;
     }
 
     public void ReplaceString(string a, string b)
@@ -389,148 +445,18 @@ public class LLMFormatSchema
     }
 }
 
-public class LLMMessage
+
+public class MessageParagraph : I_hasPortrait
 {
-    public string role;
-    public string content;
+    public string content_text;
+    public int portraitRefID = -1;
+    public List<string> portraitTags = new List<string>();
+    public string CommandID;
 
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public List<ToolCall> tool_calls = null;
-
-    public class ToolCall
-    {
-        public string id;
-        public string type;
-        public FunctionCall function;
-    }
-    public class FunctionCall
-    {
-        public string name;
-        public string arguments;
-    }
-
-    public LLMMessage() { }
-    public LLMMessage(LLMMessage message)
-    {
-        this.role = message.role;
-        this.content = message.content;// StripCodeFence(message.content);
-    }
-
-    static string StripCodeFence(string content)
-    {
-        if (string.IsNullOrEmpty(content)) return content;
-
-
-        MatchCollection matches = LLMUtils.regex_JSONWrapper.Matches(content);
-
-        foreach(var match in matches.ToList())
-        {
-            return match.Groups["jsonContent"].Value;
-        }
-        /*
-        int start = content.IndexOf("```json");
-        if (start < 0) return content;
-
-        int end = content.LastIndexOf("```");
-        if (end <= start) return content;
-
-        int lineStart = content.IndexOf('\n', start);
-        if (lineStart < 0 || lineStart >= end)
-        {
-            string body = content.Substring(start + 3, end - start - 3).Trim();
-            int jb = body.IndexOfAny(new[] { '{', '[' });
-            if (jb >= 0) body = body.Substring(jb);
-            return body;
-        }
-
-        return content.Substring(lineStart + 1, end - lineStart - 1).Trim();*/
-        return content;
-    }
-
-    MessageJSON json = null;
-
-    public MessageJSON json_serialized = null;
-
-    public MessageJSON GetContent()
-    {
-        if (json != null) return json;
-
-        if (string.IsNullOrEmpty(content) && tool_calls != null && tool_calls.Count > 0 && tool_calls[0].function != null)
-        {
-            content = tool_calls[0].function.arguments;
-        }
-
-        try
-        {
-            json = JsonConvert.DeserializeObject<MessageJSON>(content);
-            json_serialized = json;
-        }
-        catch(Exception e)
-        {
-            try
-            {
-                var str = StripCodeFence(content);
-                Debug.Log($"error failed to deserialize MessageJSON object, trying with strip bracket [{str}]");
-                json = JsonConvert.DeserializeObject<MessageJSON>(str);
-                json_serialized = json;
-            }
-            catch(Exception e2)
-            {
-                Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
-                json = new MessageJSON();
-                json.content_string = Utility.WrapTextColor($"ERROR failed to deserialize MessageJSON object, error code [{content}]", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
-                return json;
-            }
-        }
-
-
-        try
-        {
-            var json1 = JsonConvert.DeserializeObject<MessageJSON_blocks>(content);
-            json.content_blocks = json1.content;
-            return json;
-        }
-        catch (Exception e)
-        {
-            try
-            {
-                var json1 = JsonConvert.DeserializeObject<MessageJSON_simple>(content);
-                json.content_string = json1.content;
-                return json;
-            }
-            catch (Exception e2)
-            {
-                Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
-                if (content == null) json.content_string = "null";
-                else json.content_string = content;
-                return json;
-            }
-        }
-    }
-
-    
-    public class MessageParagraph : I_hasPortrait
-    {
-        public string content_text;
-        public int portraitRefID = -1;
-        public List<string> portraitTags = new List<string>();
-        public string CommandID;
-
-        [JsonIgnore]
-        public List<string> SelfPortraitTag { get { return portraitTags; } }
-        [JsonIgnore]
-        public List<string> TargetPortraitTag { get { return new List<string>(); } }
-    }
-
-    public class MessageJSON_blocks
-    {
-        public List<MessageParagraph> content = new List<MessageParagraph>();
-    }
-
-    public class MessageJSON_simple
-    {
-        public string content;
-    }
+    [JsonIgnore]
+    public List<string> SelfPortraitTag { get { return portraitTags; } }
+    [JsonIgnore]
+    public List<string> TargetPortraitTag { get { return new List<string>(); } }
 }
 public class MessageJSON
 {
@@ -678,6 +604,10 @@ public class LLMResponse
         public string type;
         public string text;
 
+        /// <summary>
+        /// Claude extended-thinking block text, populated only when type == "thinking".
+        /// </summary>
+        public string thinking;
 
         [JsonIgnore]
         public MessageJSON JSON
@@ -693,40 +623,10 @@ public class LLMResponse
         {
             if (json != null) return json;
 
-            try
-            {
-                json = JsonConvert.DeserializeObject<MessageJSON>(text);
-                json_serialized = json;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"error failed to deserialize MessageJSON object from [{text}]");
-                return null;
-            }
-
-
-            try
-            {
-                var json1 = JsonConvert.DeserializeObject<MessageJSON_blocks>(text);
-                json.content_blocks = json1.content;
-                return json;
-            }
-            catch (Exception e)
-            {
-                try
-                {
-                    var json1 = JsonConvert.DeserializeObject<MessageJSON_simple>(text);
-                    json.content_string = json1.content;
-                    return json;
-                }
-                catch (Exception e2)
-                {
-                    Debug.LogError($"error failed to deserialize MessageJSON object from [{text}]");
-                    if (text == null) json.content_string = "null";
-                    else json.content_string = text;
-                    return json;
-                }
-            }
+            // Claude's content[].text envelope never carries tool_calls, so toolCalls/profile are null here.
+            json = LLMProviderUtils.UnwrapMessageJSON(text, null, null);
+            json_serialized = json;
+            return json;
         }
     }
     public class usages
@@ -744,8 +644,25 @@ public class LLMResponse
         get
         {
             if (choices.Count > 0) return choices[0].JSON;
-            else if (content.Count > 0) return content[0].JSON;
-            else return null;
+            var textBlock = content.FirstOrDefault(c => c.type == "text");
+            return textBlock?.JSON;
+        }
+    }
+
+    /// <summary>
+    /// Reasoning/thinking text pulled from whichever envelope shape is populated - OpenAI-compatible
+    /// reasoning_content on the message, or Claude's thinking-typed content block. Independent of
+    /// streaming: fully populated in one shot for non-streamed responses, or accumulated
+    /// incrementally during a stream (see LLMStreamDownloadHandler).
+    /// </summary>
+    [JsonIgnore]
+    public string Reasoning
+    {
+        get
+        {
+            if (choices.Count > 0) return choices[0].message?.reasoning_content;
+            var thinkingBlock = content.FirstOrDefault(c => c.type == "thinking");
+            return thinkingBlock?.thinking;
         }
     }
 }
@@ -941,6 +858,7 @@ public class LLM_WorldState
     }
 
     public Dictionary<string, List<string>> FloorDescriptions = new Dictionary<string, List<string>>();// <floorName, <roomRefID, roomDescription>> with each room name and present chara;
+    public string CurrentRoomInfo = null;
     public Dictionary<string, string> Lorebook = new Dictionary<string, string>();
     public Dictionary<string, CharaStorage> Characters = new Dictionary<string, CharaStorage>(); // <refID, description>
     public Dictionary<string, Dictionary<string, Dictionary<string, SerializedAP>>> PossibleInteractions = new Dictionary<string, Dictionary<string, Dictionary<string, SerializedAP>>>(); // <targetName, <commandID, tooltips>>
@@ -960,6 +878,8 @@ public class LLM_WorldState
                 var dic = new List<string>();
                 foreach(var room in floor.rooms)
                 {
+                    if (!dic.Contains(room.DisplayName)) dic.Add(room.DisplayName);
+
                     if (room == currentRoom)
                     {
                         var names = new List<string>();
@@ -972,7 +892,7 @@ public class LLM_WorldState
                             if (ap.isTemporaryAP) continue;
                             aps.Add(ap.DescriptionText());
                         }
-                        dic.Add($"This is the Current Room player is in: [{room.DisplayName}]\nRoomInfo:[{room.DisplayableFurnitureNames}]\nRoom Cleanliness: {room.RoomCleanliness()}\nRoom Items:{(room.Inventory.Contents.Count > 0 ? $"[\n{room.Inventory.PrintContent()}]" : "no item")}\nChara in room:[{String.Join(", ", names)}]\nOngoing command in room:[{(aps.Count > 0 ? String.Join("\n", aps) : "no ongoing")}]");
+                        CurrentRoomInfo = $"[{room.DisplayName}]\nRoomInfo:[{room.DisplayableFurnitureNames}]\nRoom Cleanliness: {room.RoomCleanliness()}\nRoom Items:{(room.Inventory.Contents.Count > 0 ? $"[\n{room.Inventory.PrintContent()}]" : "no item")}\nChara in room:[{String.Join(", ", names)}]\nOngoing command in room:[{(aps.Count > 0 ? String.Join("\n", aps) : "no ongoing")}]";
 
                         if (room.parentFloor != null && room.parentFloor.MapTemplate != null)
                         {
@@ -981,10 +901,6 @@ public class LLM_WorldState
                                 Lorebook.Add(kvp.Key, kvp.Value);
                             }
                         }
-                    }
-                    else
-                    {
-                        if (!dic.Contains(room.DisplayName)) dic.Add($"{room.DisplayName}");
                     }
                 }
                 FloorDescriptions.Add(floor.displayName, dic);
@@ -1018,12 +934,12 @@ public class LLM_WorldState
             }
         }
 
-        List<string> relationshipTypes = new List<string>();
-        foreach(var i in scr_System_Serializer.current.MasterList.RelationshipTypes.list_personal)
-        {
-            relationshipTypes.Add($"{i.DisplayName}: {i.Tooltip}");
-        }
-        Lorebook.Add($"All personal relationship types",$"[{String.Join("\n", relationshipTypes)}]");
+        //List<string> relationshipTypes = new List<string>();
+        //foreach(var i in scr_System_Serializer.current.MasterList.RelationshipTypes.list_personal)
+        //{
+        //    relationshipTypes.Add($"{i.DisplayName}: {i.Tooltip}");
+        //}
+        //Lorebook.Add($"All personal relationship types",$"[{String.Join("\n", relationshipTypes)}]");
 
         var currentTime = scr_System_Time.current.getCurrentTime();
         string dayofWeek = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_" + currentTime.DayOfWeek);
@@ -1047,6 +963,37 @@ public static class LLMUtils
 {
 
     public static Regex regex_JSONWrapper = new Regex(@"```json(?<jsonContent>.*?)```", RegexOptions.Singleline);
+
+    static readonly Regex regex_comment = new Regex(@"\{\{//.*?\}\}", RegexOptions.Singleline);
+    static readonly Regex regex_setvar = new Regex(@"\{\{setvar::(?<name>[a-zA-Z0-9_]+)::(?<value>.*?)\}\}", RegexOptions.Singleline);
+    static readonly Regex regex_getvar = new Regex(@"\{\{getvar::(?<name>[a-zA-Z0-9_]+)\}\}", RegexOptions.Singleline);
+
+    /// <summary>
+    /// Strips {{//comment}} macros, applies {{setvar::name::value}} (mutating vars and
+    /// removing itself from the text), then substitutes {{getvar::name}} using the
+    /// now-current vars state. vars is threaded across nodes by the caller so setvar
+    /// effects from earlier nodes are visible to getvar reads in later ones.
+    /// </summary>
+    public static string ApplyMacros(string content, Dictionary<string, string> vars)
+    {
+        if (string.IsNullOrEmpty(content)) return content;
+
+        content = regex_comment.Replace(content, "");
+
+        content = regex_setvar.Replace(content, m =>
+        {
+            if (vars != null) vars[m.Groups["name"].Value] = m.Groups["value"].Value;
+            return "";
+        });
+
+        content = regex_getvar.Replace(content, m =>
+        {
+            if (vars == null) return "";
+            return vars.TryGetValue(m.Groups["name"].Value, out var v) ? v : "";
+        });
+
+        return content;
+    }
 
     static void AddChild(ActionPackage ap, SerializedAP child, Dictionary<string, SerializedAP> tooltips)
     {

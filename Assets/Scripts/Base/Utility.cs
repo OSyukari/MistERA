@@ -63,6 +63,44 @@ public static class Utility
     {
         return $"#{c.r:X2}{c.g:X2}{c.b:X2}{c.a:X2}"; ;
     }
+
+    /// <summary>
+    /// Draws c's status name/tooltip for faction into text - shared by initScript_Jobs (character detail
+    /// panel) and initScript_ManageChara (management canvas), which used to each keep their own near-
+    /// identical copy. Always appends, whenever applicable: the active-days-per-week line (only when c's
+    /// MemberType at faction actually carries a workModule - see Manageable.GetWorkDaysPerWeekString -
+    /// so a plain home-faction membership with no schedule doesn't get a meaningless "every day" line),
+    /// then "assigned by X" whenever faction's tracked (or defaulted-to-home) source differs from faction
+    /// itself - see Character_Factions.GetWorkFactionSourceOrDefault/AddWorkFaction's sourceFaction param,
+    /// so an untracked work faction still reports its implicit home-faction source, not just explicit
+    /// overrides.
+    /// <br/>highlightFaction: when non-null, dims the name if faction isn't it (management canvas's
+    /// "faction currently being viewed" highlight) - omit for callers with no such concept.
+    /// </summary>
+    public static void FillFactionRect(scr_HoverableText text, Manageable faction, Character_Trainable c, string extraTooltip, Manageable highlightFaction = null)
+    {
+        if (faction == null || c == null)
+        {
+            text.SetText(WrapTextColor(" - ", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
+            return;
+        }
+
+        bool dim = highlightFaction != null && faction != highlightFaction;
+        string name = faction.GetCharaSocialStandingName(c);
+        text.SetText(dim ? WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color) : name, false, extraTooltip);
+
+        string tooltip = faction.GetCharaSocialStandingTooltip(c);
+
+        var member = faction.GetMemberType(c);
+        if (member != null && member.workModule != null) tooltip += $"\n\n{faction.GetWorkDaysPerWeekString(c)}";
+
+        var source = c.FactionManager.GetWorkFactionSourceOrDefault(faction.ID);
+        if (source != null && source != faction)
+        {
+            tooltip += "\n\n" + LocalizeDictionary.QueryThenParse("management_faction_work_assignedBy_tooltip").Replace("$factionname$", source.FactionDisplayName);
+        }
+        text.SetExternalTooltip(tooltip);
+    }
     public static string GetEnumString(System.Type type, object value)
     {
         return System.Enum.GetName(type, value);

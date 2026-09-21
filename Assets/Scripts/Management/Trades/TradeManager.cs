@@ -294,9 +294,16 @@ public class TradeManager
     /// <summary>
     /// Fires eventID (if set) via a direct-by-ID EventInstance, mirroring FactionUtility.SendImprisonEvent's
     /// pattern rather than a trigger-tag scan, since each obligation names one specific event. No-ops if
-    /// eventID is empty or no acting character can be resolved for owner.
+    /// eventID is empty or no acting character can be resolved for owner. Always exposes $factionName$ -
+    /// owner's own FactionDisplayName, i.e. whichever faction this obligation actually belongs to (paid or
+    /// failed to pay). amount/available are exposed as $amount$/$available$ via ItemEntry.Print (item name
+    /// + count, not a bare number) - available e.g. for a failed-payment event that wants to show "$amount$
+    /// needed, only $available$ on hand" (see Obligation_Rent.HandlePaymentEvent). resumed, if true, adds a
+    /// "resumed" AppendStrings key with no particular value - callers' event JSON can branch on its mere
+    /// presence via the ExistAppendStrings executor (see OnRentPaid's check_resumed branch) rather than
+    /// needing a dedicated event/label per caller for that same "and by the way, X resumed" add-on.
     /// </summary>
-    public void FireObligationEvent(string eventID, Manageable counterpart, ItemEntry amount)
+    public void FireObligationEvent(string eventID, Manageable counterpart, ItemEntry amount, string label = "", ItemEntry available = null, bool resumed = false)
     {
         if (string.IsNullOrEmpty(eventID)) return;
 
@@ -305,7 +312,9 @@ public class TradeManager
             : owner.Managers.FirstOrDefault();
         if (actingChara == null) return;
 
-        var ev = new EventInstance(actingChara, eventID, "");
+        var ev = new EventInstance(actingChara, eventID, label);
+        ev.displayOverride = owner.isPlayerFaction || (counterpart != null && counterpart.isPlayerFaction);
+        ev.AppendStrings["factionName"] = new List<string> { owner.FactionDisplayName };
 
         if (counterpart != null)
         {
@@ -318,7 +327,19 @@ public class TradeManager
         if (amount != null)
         {
             if (!ev.AppendStrings.ContainsKey("amount")) ev.AppendStrings["amount"] = new List<string>();
-            ev.AppendStrings["amount"].Add(amount.itemCount.ToString());
+            ev.AppendStrings["amount"].Add(amount.Print);
+        }
+
+        if (available != null)
+        {
+            if (!ev.AppendStrings.ContainsKey("available")) ev.AppendStrings["available"] = new List<string>();
+            ev.AppendStrings["available"].Add(available.Print);
+        }
+
+        if (resumed)
+        {
+            if (!ev.AppendStrings.ContainsKey("resumed")) ev.AppendStrings["resumed"] = new List<string>();
+            ev.AppendStrings["resumed"].Add("true");
         }
 
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
@@ -433,32 +454,37 @@ public class TradeManager
 
     /// <summary>
     /// Ensures an Obligation_MembershipFee shell exists (on THIS, the paying faction's own TradeManager)
-    /// for whichever fee-charging faction c currently works at - only acts if owner is actually c's home
-    /// faction (a character can be "managed" by more than one faction at once - e.g. a school manages its
-    /// students as members too - but only their real home faction ever pays their fees) and owner is
-    /// player-managed (NPC-to-NPC fees are trivially faked via the Recycler substitution anyway -
-    /// TryChargeObligation - so this would be wasted work for an NPC faction). Only ensures the (work
-    /// faction, cadence) pairing exists - the fee amount itself is never stored here;
-    /// Obligation_MembershipFee.GetCycleAccrual re-reads the live MemberType.membershipFee every time it
-    /// actually resolves.
+    /// for whichever fee-charging faction c currently works at - only acts for the faction that's actually
+    /// the tracked source for that particular work faction (Character_Factions.
+    /// GetWorkFactionSourceOrDefault: the faction that dispatched c there, defaulting to c's home faction
+    /// when untracked - see AddWorkFaction's sourceFaction param). A character can be "managed" by more
+    /// than one faction at once (e.g. a school manages its students as members too, and a job's employer
+    /// manages its workers), so this is checked per work faction rather than once for the whole character -
+    /// letting a work faction that dispatched c elsewhere (e.g. sent an employee to study at a school) pick
+    /// up that fee instead of always billing home. Also requires owner to be player-managed (NPC-to-NPC
+    /// fees are trivially faked via the Recycler substitution anyway - TryChargeObligation - so this would
+    /// be wasted work for an NPC faction). Only ensures the (work faction, cadence) pairing exists - the
+    /// fee amount itself is never stored here; Obligation_MembershipFee.GetCycleAccrual re-reads the live
+    /// MemberType.membershipFee every time it actually resolves.
     ///
-    /// Two call sites: Character_Factions.UpdateFactionPriorityList calls this per-character the moment
-    /// their faction membership actually changes (added/removed from a faction, home/temp-home
-    /// reassigned) - the "alternate call site" a brand-new campaign or freshly-joined member needs, same
-    /// reasoning as Obligation_Rent's eager creation at floor-add time, so the obligation (and so the UI)
-    /// doesn't have to wait for the next daily ResolveDuePass tick. EnsureMembershipFeeObligations (below)
-    /// is the daily full-roster sweep that still runs as a catch-all.
+    /// Two call sites: Character_Factions.UpdateFactionPriorityList calls this per-character (on every
+    /// faction managing them, not just home) the moment their faction membership actually changes
+    /// (added/removed from a faction, home/temp-home reassigned, work-faction source overridden) - the
+    /// "alternate call site" a brand-new campaign or freshly-joined member needs, same reasoning as
+    /// Obligation_Rent's eager creation at floor-add time, so the obligation (and so the UI) doesn't have
+    /// to wait for the next daily ResolveDuePass tick. EnsureMembershipFeeObligations (below) is the daily
+    /// full-roster sweep that still runs as a catch-all.
     /// </summary>
     public void EnsureMembershipFeeObligationFor(Character_Trainable c)
     {
         if (!owner.isPlayerFaction || c == null) return;
-        if (!c.FactionManager.HomeFactions.Contains(owner)) return;
 
         foreach (var workFaction in c.FactionManager.WorkFactions)
         {
             if (workFaction == null || workFaction == owner) continue;
             var status = workFaction.GetMemberType(c);
             if (status == null || status.membershipFee == null) continue;
+            if (c.FactionManager.GetWorkFactionSourceOrDefault(workFaction.ID) != owner) continue;
 
             GetOrCreateMembershipFeeObligation(workFaction, status.membershipFee.cadence);
         }

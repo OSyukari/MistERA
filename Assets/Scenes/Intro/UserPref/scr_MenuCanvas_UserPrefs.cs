@@ -15,6 +15,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         demoCharaList = new List<scr_Gender_demoChara>();
     }
     public panel_llm panelLLM;
+    public initScript_llmpref_prompt initScript_LLMPref_Prompt;
     //public RectTransform SelfRect;
     public RectTransform ContentPanel, DisplayPanel;
     public scr_SelectableText ContentButton, DisplayButton;
@@ -216,6 +217,8 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                         button.Initialize(this, new ButtonValidator_OptionPanel(this, button, DisplayPanel)); break;
                     case 0012: // Display button
                         button.Initialize(this, new ButtonValidator_OptionPanel(this, button, panelLLM.selfRect, panelLLM.LoadPanel)); break;
+                    case 0013: // LLM prompt preset button
+                        button.Initialize(this, new ButtonValidator_OptionPanel(this, button, initScript_LLMPref_Prompt.selfRect, initScript_LLMPref_Prompt.LoadPanel)); break;
 
                     case 0100: // ColorPicker Apply button
                         button.Initialize(this, new ButtonValidator_ApplyColor(this, button)); break;
@@ -258,6 +261,17 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
                     case 1702: // LLM cancel new preset
                         button.Initialize(this, new panel_llm.ButtonValidator_CancelCreate(this)); break;
 
+                    case 1800: // LLM prompt preset: delete current preset
+                        button.Initialize(this, new initScript_llmpref_prompt.ButtonValidator_DeleteCurrentPreset(this, initScript_LLMPref_Prompt)); break;
+                    case 1801: // LLM prompt preset: save/overwrite current preset
+                        button.Initialize(this, new initScript_llmpref_prompt.ButtonValidator_SaveCurrentPreset(this, initScript_LLMPref_Prompt)); break;
+                    case 1802: // LLM prompt preset: add root-level message
+                        button.Initialize(this, new initScript_llmpref_prompt.ButtonValidator_AddRootMessage(this, initScript_LLMPref_Prompt)); break;
+                    case 1803: // LLM prompt preset: create new preset (copy of default), not yet saved to disk
+                        button.Initialize(this, new initScript_llmpref_prompt.ButtonValidator_CreateNewPreset(this, initScript_LLMPref_Prompt)); break;
+                    case 1804: // LLM prompt preset: select/load the default (fallback) preset
+                        button.Initialize(this, new initScript_llmpref_prompt.ButtonValidator_SelectPromptPreset(this, initScript_LLMPref_Prompt, scr_System_CentralControl.DefaultPresetID, button)); break;
+
                     case 9999:  //exit without saving
                         button.Initialize(this, button_alwaysValid); break;
                     case -1:
@@ -284,17 +298,22 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
         }
 
         ValidateAll();
-
        //
-
     }
+
 
     public void RegisterButton(int id, scr_SelectableText btn, ButtonValidator validator)
     {
         buttonsByID.Add(id, btn);
         validatorsByID.Add(id, validator);
     }
-    
+
+    public void UnregisterButton(int id)
+    {
+        buttonsByID.Remove(id);
+        validatorsByID.Remove(id);
+    }
+
 
     public override void ValidateAll()
     {
@@ -329,7 +348,14 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             }
         }
 
+        if (validateAll_postLoadInit != null)
+        {
+            validateAll_postLoadInit.Invoke();
+            validateAll_postLoadInit = null;
+        }
+
     }
+    public Action validateAll_postLoadInit = null;
 
 
     protected override void Start()
@@ -386,7 +412,7 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
             }
         }
         //ValidateGenderDemo();
-        ValidateAll();
+        if (validator != null && !validator.noValidate) ValidateAll();
     }
 
 

@@ -57,8 +57,8 @@ public class WorldPlan
     /// inheritance chain like the other unset-falls-back-to-parent fields above, so e.g. an ErAV-specific
     /// world can leave these empty and inherit a shared default from a broader parent world (JP World).
     /// </summary>
-    public string onRentPaidEventID = "";
-    public string onRentFailedEventID = "";
+    public string onRentPaidEventID = "OnRentPaid";
+    public string onRentFailedEventID = "OnRentFailed";
 
     // while traveling, where is the NPC?
     // -> move to worldspace temporary room with AP cannot be interrupted

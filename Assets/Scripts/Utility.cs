@@ -348,6 +348,7 @@ public static class UtilityEX
     {
         var newString = LocalizeDictionary.QueryThenParse( s);
         newString = newString.Replace("$currentTime$", scr_System_Time.current.getCurrentTime().ToString());
+        newString = newString.Replace("$currentTimeShort$", scr_System_Time.current.getCurrentTime().ToString("MM/dd hh:mm tt"));
 
         MatchCollection matches = regex_eventKeyword.Matches(newString);
         foreach (var match in matches.ToList())

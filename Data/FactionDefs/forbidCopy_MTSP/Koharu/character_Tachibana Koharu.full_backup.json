@@ -1,0 +1,4009 @@
+{
+  "baseID": "MTSP_Char_Koharu_full",
+  "Portrait": {
+    "portraitPriorityList": [
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - bikini - doer. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "bikini",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_masturbation orgasm.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_masturbation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - bikini - receiver. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "bikini",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_lactation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_breast caress.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - kimono - doer. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "kimono",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_masturbation orgasm.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_masturbation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - kimono - receiver. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "kimono",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_lactation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_breast caress.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - maid - doer. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "maid",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_masturbation orgasm.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_masturbation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - maid - receiver. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "maid",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_lactation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_breast caress.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nightwear - doer. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "nightwear",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_masturbation orgasm.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_masturbation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nightwear - receiver. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "nightwear",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_lactation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_breast caress.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - robe - doer. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "robe",
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_masturbation orgasm.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_masturbation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - robe - receiver. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "robe",
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_lactation.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_breast caress.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - doer. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_masturbation orgasm.webp",
+              "Koharu/Assets/koharu_nude_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_masturbation.webp",
+              "Koharu/Assets/koharu_nude_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - nude - receiver. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_lactation.webp",
+              "Koharu/Assets/koharu_nude_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_breast caress.webp",
+              "Koharu/Assets/koharu_nude_breast caress_alt.webp",
+              "Koharu/Assets/koharu_nude_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - doer. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "sex",
+          "doer"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "blowjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_fellatio cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "blowjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_fellatio.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_handjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "handjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_handjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_paizuri cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "boobjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_paizuri.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_rimjob cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "rimjob"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_rimjob.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_masturbation orgasm.webp",
+              "Koharu/Assets/koharu_casual_dildo orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "masturbate"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_masturbation.webp",
+              "Koharu/Assets/koharu_casual_dildo.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "SEX - casual - receiver. Default costume, no costume key required - catches sex scenes when no other costume key matched.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "sex",
+          "receiver"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "doggy",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_doggystyle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doggy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_doggystyle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_missionary position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "missionary"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_missionary position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_cowgirl cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cowgirl"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_cowgirl.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_cunnilingus orgasm.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cunnilingus"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_cunnilingus.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_mating press cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "mating_press"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_mating press.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_reverse standing position cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_standing_position"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_reverse standing position.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_reverse upright straddle cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "reverse_upright_straddle"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_reverse upright straddle.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_spooning cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "spooning"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_spooning.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress",
+              "climax"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_suspended congress cumshot.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "suspended_congress"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_suspended congress.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "lactation"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_lactation.webp",
+              "Koharu/Assets/koharu_casual_breastfeeding.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "breasts"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_breast caress.webp",
+              "Koharu/Assets/koharu_casual_breast sucking.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "cum"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_after sex.webp"
+            ]
+          },
+          {
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_neutral.webp"
+            ]
+          }
+        ],
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - nude. Undressed-state detection, mirrors Kanon's nude gating.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "charaReq": {
+          "requireConscious": false,
+          "requireAction": false,
+          "clothingRequirement": "None",
+          "requireUndressedTags": [
+            "lower",
+            "torso"
+          ],
+          "minRevealingScore": 1
+        },
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_jealous.webp",
+              "Koharu/Assets/koharu_nude_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_sad.webp",
+              "Koharu/Assets/koharu_nude_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_determined.webp",
+              "Koharu/Assets/koharu_nude_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_happy.webp",
+              "Koharu/Assets/koharu_nude_grateful.webp",
+              "Koharu/Assets/koharu_nude_hopeful.webp",
+              "Koharu/Assets/koharu_nude_lovestruck.webp",
+              "Koharu/Assets/koharu_nude_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_nude_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Koharu/Assets/koharu_nude_neutral.webp",
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - bikini. 'bikini' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "bikini"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_jealous.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_sad.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_determined.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_happy.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_grateful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_hopeful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_lovestruck.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_bikini_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Koharu/Assets_clothing_forbidCopy/koharu_bikini_neutral.webp",
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - kimono. 'kimono' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "kimono"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_jealous.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_sad.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_determined.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_happy.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_grateful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_hopeful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_lovestruck.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_kimono_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Koharu/Assets_clothing_forbidCopy/koharu_kimono_neutral.webp",
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - maid. 'maid' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "maid"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_jealous.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_sad.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_determined.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_happy.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_grateful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_hopeful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_lovestruck.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_maid_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Koharu/Assets_clothing_forbidCopy/koharu_maid_neutral.webp",
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - nightwear. 'nightwear' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "nightwear"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_jealous.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_sad.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_determined.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_happy.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_grateful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_hopeful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_lovestruck.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Koharu/Assets_clothing_forbidCopy/koharu_nightwear_neutral.webp",
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - robe. 'robe' is a placeholder costume context key - wire to the real costume/location key once it exists.",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "RequireSelfContextKeys": [
+          "robe"
+        ],
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_jealous.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_sad.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_determined.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_happy.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_grateful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_hopeful.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_lovestruck.webp",
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets_clothing_forbidCopy/koharu_robe_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Koharu/Assets_clothing_forbidCopy/koharu_robe_neutral.webp",
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      },
+      {
+        "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+        "_comment": "NON-SEX - casual. Default costume, no context key required - system-wide terminal fallback (mandatory catch-all).",
+        "portrait_offset_x": 0,
+        "portrait_offset_y": -20,
+        "portrait_offset_size": 0.7,
+        "icon_offset_x": -8.6,
+        "icon_offset_y": -128.5,
+        "icon_offset_size": 0.35,
+        "Variants": [
+          {
+            "tagsMatch": [
+              "fear"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_fearful.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disgusted"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_disgusted.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "angry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_angry.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "annoyed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_frustrated.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "disappointed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_jealous.webp",
+              "Koharu/Assets/koharu_casual_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "doubt"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_confused.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "worry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_anxious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "awkward"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sad"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_sad.webp",
+              "Koharu/Assets/koharu_casual_lonely.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sorry"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_guilty.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "tired"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "resting"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_bored.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "serious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "focused"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_determined.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "confident"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_determined.webp",
+              "Koharu/Assets/koharu_casual_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "thinking"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "curious"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_curious.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "shy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "embarrassed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_embarrassed.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "surprised"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_surprised.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "love"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_lovestruck.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "happy"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_happy.webp",
+              "Koharu/Assets/koharu_casual_grateful.webp",
+              "Koharu/Assets/koharu_casual_hopeful.webp",
+              "Koharu/Assets/koharu_casual_lovestruck.webp",
+              "Koharu/Assets/koharu_casual_proud.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "relaxed"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_neutral.webp"
+            ]
+          },
+          {
+            "tagsMatch": [
+              "sleeping"
+            ],
+            "PortraitVariantData": [
+              "Koharu/Assets/koharu_casual_sleeping.webp"
+            ]
+          }
+        ],
+        "portrait_path": "Koharu/Assets/koharu_casual_neutral.webp",
+        "icon_path": "Koharu/Assets/koharu_casual_neutral.webp"
+      }
+    ]
+  },
+  "Template": {
+    "Appearance": "Female",
+    "BodyType": "Default",
+    "stat_STR": 8,
+    "stat_CON": 10,
+    "stat_PSY": 11,
+    "stat_WIL": 8,
+    "personalityID": "personality_default",
+    "sensitivity_B": "trait_Sensitivity_B_supersensitive",
+    "sensitivity_M": "trait_Sensitivity_M_default",
+    "sensitivity_C": "trait_Sensitivity_C_sensitive",
+    "sensitivity_V": "trait_Sensitivity_V_supersensitive",
+    "sensitivity_A": "trait_Sensitivity_A_default",
+    "size_B": "trait_Size_B_H",
+    "size_P": "trait_Size_P_none",
+    "size_V": "trait_Size_V_1",
+    "size_A": "trait_Size_A_1",
+    "Height": 170,
+    "Weight": 65,
+    "traits": [
+      "trait_FatigueResistance_low",
+      "trait_SelfEsteem_low",
+      "trait_SleepQuality_deep"
+    ],
+    "initialInventory": [
+      {
+        "ID": "clothing_skin_bra"
+      },
+      {
+        "ID": "clothing_skin_panty"
+      },
+      {
+        "ID": "clothing_skin_socks"
+      }
+    ],
+    "characterComment": "MTSP_Jin_Tachibana_Koharu_charCard_comment",
+    "Skills": null,
+    "CharacterCard": "<Tachibana_Koharu>\ncharacter:\n  name:\n    english: Tachibana Koharu\n    chinese: 橘小春\n    japanese: 橘小春\n  basic_settings:\n    gender: Female\n    age: 20\n    height: 170cm\n    weight: 65kg\n    measurements: B103(K-cup, largest in the family) W64 H97\n    identity: Second daughter of the Tachibana household; university student; Yuu's affectionate childhood friend and lover\n    occupation: Student at Tokyo Kasei University majoring in Social Welfare (earlier canon: Education major, part-time tutor for children, aspiring teacher)\n    residence: Lives with mother Kyouka, sister Yuika, and Yuu in the Tachibana family home\n  character_brief_description:\n    - Gentle, soft-spoken, and slow-paced; the warm heart of the family\n    - Not stupid - her mind prioritizes feelings over analysis: where Kyouka reads situations and Yuika reads intentions, Koharu reads emotions\n    - Underdeveloped threat recognition: slow to suspect exploitation, little caution about male attention, unaware how exposed she appears\n    - Inherited her mother's inclusive warmth - can find compassion even for someone hurting her\n    - Near-total sexual innocence: almost never masturbated, largely unaware of her own sexuality\n    - Gave her virginity to Yuu during an intimate bath; the only time they have been together\n  overall_appearance:\n    - Dyed blonde long wavy hair; soft approachable features and a gentle smile; brown eyes\n    - The most voluptuous of the three Tachibana women - largest bust in the family, softest fullest curves\n    - Breasts renowned for exceptional softness and firmness; light cherry-blossom-pink areolae; fully waxed pubic area\n    - Round-rimmed glasses for nearsightedness, worn only occasionally\n  overall_clothing:\n    - Casual and comfortable: loose-fitting clothing, sweaters, comfortable dresses; prioritizes practicality over trends\n    - Pool/beach: yellow micro bikini\n    - Night: orange off-shoulder loose top with drawstring pants loungewear set\n  important_background:\n    - Father died when she was young; it left her with a deep desire for stable, harmonious relationships\n    - Secretly collects children's books and practices reading them aloud even when alone\n    - Privately worries she is not smart or capable enough compared to her mother and sister\n    - Ovulation-cycle hormone shift makes her skin flush and hypersensitive, but she never recognizes it as arousal\n  important_relationship:\n    - Tachibana Kyouka: mother; the one whose tears could persuade her through hard decisions\n    - Tachibana Yuika: admired older sister; warns her not to drink outside near her ovulation\n    - Akemichi Yuu: dear childhood friend and lover; calls him 'Yuu-chan'; invites him to bathe together without any sexual awareness\n  personality_notes:\n    - The Caregiver/The Innocent archetype\n    - Hates rudeness, aggression, conflict, harsh noises, seeing anyone hurt or upset\n    - Likes kindness, gentle humor, helping others, sunny days, the smell of books, soft blankets, warm drinks, children's laughter\n    - Apologizes even when not at fault; forgives easily; drifts into daydreams\n    - Rationalizes closeness as kindness: 'He looked lonely'; 'I only wanted to help'\n  speech_pattern:\n    - Gentle, soft-spoken, slow-paced; often stretches the ends of her words in a relaxed airy way\n    - Polite considerate language; hesitant and indirect about her own needs\n</Tachibana_Koharu>"
+  },
+  "firstName": "MTSP_Char_Koharu_FirstName",
+  "middleName": "",
+  "lastName": "MTSP_Char_Koharu_LastName",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

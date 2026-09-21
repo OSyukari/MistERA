@@ -1488,11 +1488,16 @@ public static class EventUtility
 
                     bool highPriority = exec.arguments.Count >= 4 && bool.TryParse(exec.arguments[3], out var hpParsed) && hpParsed;
                     bool overwriteExistingWork = exec.arguments.Count >= 5 && bool.TryParse(exec.arguments[4], out var owWorkParsed) && owWorkParsed;
+                    // Optional dispatcher (e.g. "assign this employee to study at a school") - left blank,
+                    // AddWorkFaction leaves no tracked source and Character_Factions.
+                    // GetWorkFactionSourceOrDefault falls back to the character's own home faction.
+                    Manageable sourceFaction = exec.arguments.Count >= 6 && exec.arguments[5] != ""
+                        ? scr_System_CampaignManager.current.FindFactionByID(exec.arguments[5]) : null;
 
                     foreach (var c in workTargets)
                     {
                         if (c == null) continue;
-                        if (!workFaction.isManagedChara(c.RefID) || overwriteExistingWork) c.FactionManager.AddWorkFaction(exec.arguments[1], workMemberType);
+                        if (!workFaction.isManagedChara(c.RefID) || overwriteExistingWork) c.FactionManager.AddWorkFaction(exec.arguments[1], workMemberType, true, sourceFaction);
                         if (highPriority) c.FactionManager.PrioritizeWorkFaction(exec.arguments[1]);
                     }
                     return true;

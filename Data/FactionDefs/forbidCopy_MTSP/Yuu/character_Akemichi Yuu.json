@@ -1,0 +1,44 @@
+{
+  "baseID": "MTSP_Char_Yuu",
+  "Template": {
+    "Appearance": "Male",
+    "BodyType": "Default",
+    "stat_STR": 8,
+    "stat_CON": 9,
+    "stat_PSY": 9,
+    "stat_WIL": 9,
+    "personalityID": "personality_default",
+    "sensitivity_B": "trait_Sensitivity_B_default",
+    "sensitivity_M": "trait_Sensitivity_M_default",
+    "sensitivity_C": "trait_Sensitivity_C_supersensitive",
+    "sensitivity_V": "trait_Sensitivity_V_none",
+    "sensitivity_A": "trait_Sensitivity_A_default",
+    "size_B": "trait_Size_B_AAA",
+    "size_P": "trait_Size_P_small",
+    "size_V": "trait_Size_V_none",
+    "size_A": "trait_Size_A_1",
+    "Height": 165,
+    "Weight": 50,
+    "traits": [
+      "trait_CumSpeed_premature",
+      "trait_SelfEsteem_low",
+      "trait_MentalFortitude_low"
+    ],
+    "initialInventory": [
+      {
+        "ID": "clothing_skin_socks"
+      }
+    ],
+    "characterComment": "MTSP_Jin_Akemichi_Yuu_charCard_comment",
+    "Skills": null,
+    "CharacterCard": "<Akemichi_Yuu>\ncharacter:\n  name:\n    english: Akemichi Yuu\n    chinese: 秋道优\n    japanese: 秋道ユウ\n  basic_settings:\n    gender: Male\n    age: 16\n    height: 165cm (below average; his goal is to outgrow the tall Tachibana women)\n    weight: 50kg\n    identity: First-year high school student; part-timer at a local rental shop; temporary housemate of the Tachibana family; secret lover of Kyouka, Yuika, and Koharu\n    occupation: Student at Suginami High School (same school as Midou Haruki, different year); rental shop clerk\n    residence: Lives with the Tachibana family; originally lived next door with his grandfather\n  character_brief_description:\n    - Orphaned young and raised by his grandfather, who is now hospitalized\n    - Polite, gentle, helpful, and conflict-avoidant; speaks softly and downplays his own needs\n    - Was taken in by Kyouka after she found him eating plain rice with a single umeboshi, hoarding money out of an obsessive frugality\n    - Secretly physically involved with all three Tachibana women; carries intense guilt and irresistible excitement about it\n    - Rationalizes constantly: 'They also want it'; 'I'm making them happy'\n    - Small penis size with high sensitivity leading to premature ejaculation; none of the three women have ever climaxed with him\n    - A devoted fan of illegal realistic hidden-camera (hamedori) adult video series - unaware of the irony this creates\n  overall_appearance:\n    - Neat short dark-brown hair, kind eyes, gentle smile; looks younger than his age\n    - Slim, slightly toned physique; healthy but unremarkable\n    - Simple digital watch as his signature item; clean soap or laundry scent\n  overall_clothing:\n    - Casual and practical: jeans, t-shirts, hoodies; simple unassuming clothing\n  important_background:\n    - Lost his parents young; grandfather raised him next door to the Tachibana family\n    - Busy routine balancing school, part-time work, household chores, and hospital visits\n    - The rental shop clerk saves 'super rare' underground DVDs for him\n    - During the family trip he was drugged asleep and knows nothing of what happened to the three women\n    - Currently under an abstinence order he misreads as punishment for falling asleep first\n  important_relationship:\n    - Tachibana Kyouka: guardian and first lover; he calls her 'Kyouka-san' and secretly longs for a mother figure\n    - Tachibana Yuika: childhood friend and lover; calls her 'Yuika-nee'\n    - Tachibana Koharu: childhood friend and lover; calls her 'Haru-nee'\n    - Grandfather: hospitalized; Yuu visits regularly\n  personality_notes:\n    - Sincere, honest in all things except his sexual relationships\n    - Hates being a burden, household disharmony, loud chaotic environments\n    - Likes kindness, gentle smiles, quiet evenings, the smell of old books, warm tea, cooking simple meals for the family as gratitude\n    - Deep gratitude toward the Tachibana family functions as both armor and chain\n  speech_pattern:\n    - Polite and respectful, gentle considerate language; soft calm voice; avoids confrontation\n    - Slow to react to teasing, then blushes at the ears\n</Akemichi_Yuu>"
+  },
+  "firstName": "MTSP_Char_Yuu_FirstName",
+  "middleName": "",
+  "lastName": "MTSP_Char_Yuu_LastName",
+  "nameDisplayFormat": "chara_fullname_lastToFirst",
+  "origin": "charOrigin_none",
+  "race": "humanRace_human",
+  "raceTemplate": "humanRaceAddon_standard",
+  "startingGift": "charOriginGift_none"
+}

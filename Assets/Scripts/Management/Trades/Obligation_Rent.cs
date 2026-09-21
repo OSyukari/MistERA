@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// Rent/maintenance owed by the owning faction for the floors it currently occupies. Accumulate-type: a
@@ -75,29 +74,48 @@ public class Obligation_Rent : RecurringObligation
     }
 
     /// <summary>
-    /// Scaffolding for a future rent-payment event: gathers the actors a real implementation will need -
-    /// the tenant faction/manager, and (if this obligation targets a concrete landlord rather than the
-    /// Recycler-bound unspecified case) the landlord faction/manager - without constructing or firing
-    /// anything yet. Event ID resolution is two-tier: a concrete landlord's own override
-    /// (Manageable.GetTemplateRentEventID, read off that landlord's own MapPlan) takes precedence; falling
-    /// back to a world-level default (Manageable.GetWorldFallbackRentEventID) when no override is set (or
-    /// there's no concrete landlord at all, e.g. renting with an unspecified landlord or owning outright).
+    /// Fires the rent payment-outcome event, if any. Event ID resolution is two-tier: a concrete landlord's
+    /// own override (Manageable.GetTemplateRentEventID, read off that landlord's own MapPlan) takes
+    /// precedence; falling back to a world-level default (Manageable.GetWorldFallbackRentEventID) when no
+    /// override is set (or there's no concrete landlord at all, e.g. renting with an unspecified landlord or
+    /// owning outright). Silently skipped on a trivial cycle (nothing actually charged - e.g. a Recycler-
+    /// bound obligation covering no live floors) same as PrintOutcome's own "empty on trivial success" rule.
+    /// Since a single instance can cover both rentFee and maintenanceFee floors at once (see
+    /// GetRelevantFloors), the fired event is told which kind of charge this cycle actually was via the
+    /// EventInstance's starting label - "rent"/"maintenance"/"both", or "generic" for the edge case where
+    /// owed still carries arrears from a floor GetRelevantFloors no longer tracks (e.g. vacated/sold). On a
+    /// successful cycle that just cleared a prior missed payment (cycleWasSuspended - owed was already > 0
+    /// before this cycle), FireObligationEvent's resumed flag is also set, letting the event's own
+    /// check_resumed branch decide whether to additionally call out that service has resumed - independent
+    /// of which of the four labels above it started from.
     /// </summary>
     protected override void HandlePaymentEvent(TradeManager manager, Manageable owner, bool success, ItemEntry attempt)
     {
+        if (attempt == null || attempt.itemCount <= 0) return;
+
         var landlord = TargetFaction;
 
         string eventID = landlord != null ? landlord.GetTemplateRentEventID(success) : "";
         if (string.IsNullOrEmpty(eventID)) eventID = owner.GetWorldFallbackRentEventID(success);
         if (string.IsNullOrEmpty(eventID)) return;
 
-        Manageable tenantFaction = owner;
-        Character_Trainable tenantManager = owner.Managers.FirstOrDefault();
-        Manageable landlordFaction = landlord;
-        Character_Trainable landlordManager = landlord != null ? landlord.Managers.FirstOrDefault() : null;
+        bool hasRent = false, hasMaintenance = false;
+        foreach (var entry in GetRelevantFloors(owner))
+        {
+            if (entry.isRented && entry.rentCost.rentFee != null) hasRent = true;
+            if (entry.rentCost.maintenanceFee != null) hasMaintenance = true;
+        }
+        string label = hasRent && hasMaintenance ? "both" : hasRent ? "rent" : hasMaintenance ? "maintenance" : "generic";
+        bool resumed = success && cycleWasSuspended;
 
-        // Scaffolding only - eventID/tenantFaction/tenantManager/landlordFaction/landlordManager are
-        // exactly what a future EventInstance(...) call will need. No EventInstance is constructed/fired yet.
+        // Only a real (player) faction can ever actually fail a payment - TradeManager.TryChargeObligation
+        // substitutes the Recycler (which always "succeeds") for any non-player owner - so owner.Inventory
+        // is always the genuine, meaningful balance to report here, never an NPC's faked one. Same
+        // itemID/itemNameOverwrite/itemCountOverride as attempt so ItemEntry.Print formats it identically
+        // (currency vs. item, K/M suffixing), just with the actually-on-hand count instead of what was due.
+        ItemEntry available = success ? null : new ItemEntry(attempt.itemID, attempt.itemNameOverwrite, owner.Inventory.GetItemCount(attempt.itemID), attempt.itemCountOverride);
+
+        manager.FireObligationEvent(eventID, landlord, attempt, label, available, resumed);
     }
 
     /// <summary>

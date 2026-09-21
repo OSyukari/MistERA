@@ -72,4 +72,3 @@ Assets/*
 *.opendb
 *.VC.db
 !Demo/*.png
-!FontAssets/*/testCharacters.txt
