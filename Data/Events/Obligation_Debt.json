@@ -1,0 +1,73 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "OnDebtPaid",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "OnDebtPaid_paid", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "line": "OnDebtPaid_paid_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_resumed",
+                        "options": [
+                            {
+                                "option": "resumed append string set - jump to the resumed trailer line",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["resumed"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "resumed_trailer"] }
+                                ]
+                            },
+                            {
+                                "option": "not resumed - nothing more to say",
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "resumed_trailer", "isLast": true, "line": "OnDebtPaid_resumed", "tooltip": "target character: $target.name$" }
+                ]
+            },
+            {
+                "ID": "OnDebtFailed",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "OnDebtFailed_failed", "tooltip": "target character: $target.name$" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "isLast": true, "line": "OnDebtFailed_failed_payee", "tooltip": "target character: $target.name$" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "OnDebtPaid": "欠款事件 - 已支付",
+                "OnDebtPaid_paid": "$factionName$已向$counterpartName$偿还$sourceName$（$amount$）。",
+                "OnDebtPaid_paid_payee": "$factionName$已从$counterpartName$处收到$sourceName$的偿还（$amount$）。",
+                "OnDebtPaid_resumed": "此前因欠款而中断的服务已恢复。",
+
+                "OnDebtFailed": "欠款事件 - 未支付",
+                "OnDebtFailed_failed": "$factionName$未能向$counterpartName$偿还$sourceName$：需要$amount$，但仅有$available$。",
+                "OnDebtFailed_failed_payee": "$factionName$未能从$counterpartName$处收到$sourceName$的偿还：需要$amount$，但对方仅有$available$。"
+            },
+            "en-us": {
+                "OnDebtPaid": "Debt Event - Paid",
+                "OnDebtPaid_paid": "$factionName$ repaid $sourceName$ to $counterpartName$ ($amount$).",
+                "OnDebtPaid_paid_payee": "$factionName$ collected a repayment on $sourceName$ from $counterpartName$ ($amount$).",
+                "OnDebtPaid_resumed": "Service, previously interrupted by the missed payment, has resumed.",
+
+                "OnDebtFailed": "Debt Event - Unpaid",
+                "OnDebtFailed_failed": "$factionName$ failed to repay $sourceName$ to $counterpartName$: $amount$ needed, but only has $available$.",
+                "OnDebtFailed_failed_payee": "$factionName$ did not receive a repayment on $sourceName$ from $counterpartName$: $amount$ was due, but they only have $available$."
+            }
+        }
+    }
+}

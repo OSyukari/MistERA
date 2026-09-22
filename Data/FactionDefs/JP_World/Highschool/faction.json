@@ -135,7 +135,8 @@
                 "_comment_membershipFee": "private-school monthly tuition, owed by the student's own home faction to the school",
                 "membershipFee": {
                     "feeAmount": { "itemID": "currency_JPY", "itemCount": 35000 },
-                    "cadence": "Monthly"
+                    "cadence": "Monthly",
+                    "membershipFeeName": "obligation_membershipfee_name_tuition"
                 },
                 "behaviorOverrides":{
                     "behavior_job":{

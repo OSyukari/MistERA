@@ -177,7 +177,7 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         {
             c.SetText(c.replaceText);
         }*/
-
+        ValidateAll();
     }
 
 

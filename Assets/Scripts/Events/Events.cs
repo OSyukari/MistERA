@@ -338,6 +338,10 @@ public class Event : I_SerializationCallbackReceiver
         {
             public override string Name { get { return line; } }
             public string line = "";
+            /// <summary>Optional hover tooltip for this line - same localization-key + $X.Y$ interpolation
+            /// treatment as line itself (see scr_System_CampaignManager.AddLog_LineContent), propagated to
+            /// the printed line's scr_HoverableText via SetExternalTooltip. Empty means no tooltip.</summary>
+            public string tooltip = "";
             public List<Executor> Results = new List<Executor>();
         }
 

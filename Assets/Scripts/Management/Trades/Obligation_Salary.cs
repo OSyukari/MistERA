@@ -1,4 +1,3 @@
-using System.Linq;
 using Newtonsoft.Json;
 
 /// <summary>
@@ -72,21 +71,33 @@ public class Obligation_Salary : RecurringObligation
     }
 
     /// <summary>
-    /// Scaffolding for a future salary-payment event: gathers the actors a real implementation will need -
-    /// the employing faction, that faction's manager, and the specific worker being paid - without
-    /// constructing or firing anything yet.
+    /// Fires the salary payment-outcome event, if any - eventID comes straight off onPaidEventID/
+    /// onFailedEventID (unlike Rent/Debt/MembershipFee's live-template lookups, these are legitimately
+    /// per-instance here: AccrueHour re-baked them from the current workModule/preset every active work
+    /// hour, so they're already effectively live despite being stored fields - see AccrueHour's doc
+    /// comment). Silently skipped on a trivial cycle (no hours accrued this cadence). Fired both ways via
+    /// FireObligationEventBothSides - label "" for the paying employer's own framing, "payee" for the
+    /// employee's home faction's; each side's visibility is independently gated on that side's own
+    /// isPlayerFaction (see TradeManager.FireObligationEvent), so an unrelated NPC employer's payroll never
+    /// surfaces just because the employee's home faction happens to be player-managed, or vice versa.
     /// </summary>
     protected override void HandlePaymentEvent(TradeManager manager, Manageable owner, bool success, ItemEntry attempt)
     {
+        if (attempt == null || attempt.itemCount <= 0) return;
+
         string eventID = success ? onPaidEventID : onFailedEventID;
         if (string.IsNullOrEmpty(eventID)) return;
 
-        Manageable jobOwnerFaction = owner;
-        Character_Trainable jobOwnerManager = owner.Managers.FirstOrDefault();
         Character_Trainable paidActor = payeeRefID >= 0 ? scr_System_CampaignManager.current.FindInstanceByID(payeeRefID) : null;
 
-        // Scaffolding only - eventID/jobOwnerFaction/jobOwnerManager/paidActor are exactly what a future
-        // EventInstance(...) call will need. No EventInstance is constructed/fired yet.
+        // owner.GetCharaSocialStandingName gives the full "employer的role" title (e.g. "SunMart的便利店员"),
+        // not just the bare role - see Manageable.GetCharaSocialStandingName. Falls back to the plain
+        // sourceName field if paidActor can no longer be resolved or no longer holds any status at owner
+        // (matches GetDisplayName's own fallback for the same edge case).
+        string fullSourceName = paidActor != null ? owner.GetCharaSocialStandingName(paidActor) : "";
+        if (string.IsNullOrEmpty(fullSourceName)) fullSourceName = sourceName;
+
+        FireObligationEventBothSides(manager, owner, eventID, "", "payee", attempt, targetChara: paidActor, sourceName: fullSourceName);
     }
 
     /// <summary>

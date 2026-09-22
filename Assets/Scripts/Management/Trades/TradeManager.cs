@@ -302,8 +302,30 @@ public class TradeManager
     /// "resumed" AppendStrings key with no particular value - callers' event JSON can branch on its mere
     /// presence via the ExistAppendStrings executor (see OnRentPaid's check_resumed branch) rather than
     /// needing a dedicated event/label per caller for that same "and by the way, X resumed" add-on.
+    /// targetChara, if set, is used as "target" instead of resolving a generic manager off counterpart -
+    /// for callers whose event is actually about one specific character rather than a faction-to-faction
+    /// relationship (see Obligation_MembershipFee.HandlePaymentEvent, which fires one event per affected
+    /// member rather than one per resolved cycle). feeName, if set, is exposed as $feeName$ - a
+    /// caller-resolved noun (e.g. a school's membershipFee overriding the generic "会员费"/"Membership fee"
+    /// wording with "学费") the event text can substitute in wherever it would otherwise hardcode the
+    /// generic term. sourceName, if set, is exposed as $sourceName$ - e.g. the MemberType/job post name a
+    /// salary payment was for (see Obligation_Salary.HandlePaymentEvent).
+    ///
+    /// Regardless of targetChara, counterpart's own FactionDisplayName (when counterpart is set) is always
+    /// additionally exposed as $counterpartName$ - the raw interpolation engine only ever resolves "$X.name$"
+    /// off a Character_Trainable (see Utility.CollectString), so this is the only way to name the OTHER
+    /// faction directly rather than a manager's personal name. Naturally swaps identity across the two
+    /// FireObligationEventBothSides calls (payer call: counterpart=TargetFaction; payee call:
+    /// counterpart=the original owner) exactly like $factionName$ does, so e.g. Obligation_Rent's "rent"
+    /// message can say "paid rent to $counterpartName$" on one side and "collected rent from
+    /// $counterpartName$" on the other, each correctly naming whichever faction isn't the one speaking.
+    ///
+    /// displayOverride is always owner.isPlayerFaction alone - single-sided, never considering counterpart.
+    /// Every obligation type fires this once "as" the payer and once "as" the payee (see
+    /// RecurringObligation.FireObligationEventBothSides), each via that side's own TradeManager, so each
+    /// call's owner is already whichever faction that particular firing is narrating for - no OR needed.
     /// </summary>
-    public void FireObligationEvent(string eventID, Manageable counterpart, ItemEntry amount, string label = "", ItemEntry available = null, bool resumed = false)
+    public void FireObligationEvent(string eventID, Manageable counterpart, ItemEntry amount, string label = "", ItemEntry available = null, bool resumed = false, Character_Trainable targetChara = null, string feeName = "", string sourceName = "")
     {
         if (string.IsNullOrEmpty(eventID)) return;
 
@@ -313,10 +335,15 @@ public class TradeManager
         if (actingChara == null) return;
 
         var ev = new EventInstance(actingChara, eventID, label);
-        ev.displayOverride = owner.isPlayerFaction || (counterpart != null && counterpart.isPlayerFaction);
+        ev.displayOverride = owner.isPlayerFaction;
         ev.AppendStrings["factionName"] = new List<string> { owner.FactionDisplayName };
+        if (counterpart != null) ev.AppendStrings["counterpartName"] = new List<string> { counterpart.FactionDisplayName };
 
-        if (counterpart != null)
+        if (targetChara != null)
+        {
+            ev.Targets["target"] = new List<Character_Trainable> { targetChara };
+        }
+        else if (counterpart != null)
         {
             Character_Trainable counterpartChara = counterpart.isPlayerFaction
                 ? scr_System_CampaignManager.current.Player
@@ -340,6 +367,18 @@ public class TradeManager
         {
             if (!ev.AppendStrings.ContainsKey("resumed")) ev.AppendStrings["resumed"] = new List<string>();
             ev.AppendStrings["resumed"].Add("true");
+        }
+
+        if (!string.IsNullOrEmpty(feeName))
+        {
+            if (!ev.AppendStrings.ContainsKey("feeName")) ev.AppendStrings["feeName"] = new List<string>();
+            ev.AppendStrings["feeName"].Add(feeName);
+        }
+
+        if (!string.IsNullOrEmpty(sourceName))
+        {
+            if (!ev.AppendStrings.ContainsKey("sourceName")) ev.AppendStrings["sourceName"] = new List<string>();
+            ev.AppendStrings["sourceName"].Add(sourceName);
         }
 
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);

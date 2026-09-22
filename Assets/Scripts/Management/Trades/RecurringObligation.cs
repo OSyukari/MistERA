@@ -181,6 +181,29 @@ public abstract class RecurringObligation
     }
 
     /// <summary>
+    /// Fires eventID via TradeManager.FireObligationEvent twice - once as owner (payerLabel, the paying
+    /// side, using manager - the caller's own TradeManager) and once as TargetFaction (payeeLabel, the
+    /// receiving side, via TargetFaction's own TradeManager with owner/TargetFaction swapped) - so one
+    /// authored Event can show two independently-visible, perspective-correct framings of the same outcome
+    /// (FireObligationEvent's displayOverride is always owner.isPlayerFaction, so each call is gated on its
+    /// own acting faction only - no OR needed across the two). No-ops entirely if eventID is empty; skips
+    /// only the payee call if TargetFaction is null (no real counterpart faction to represent, e.g.
+    /// Obligation_Rent's Recycler-bound unspecified-landlord case). targetChara (the specific character a
+    /// payment is about, if any) stays the same for both calls - only the acting/counterpart factions swap.
+    /// </summary>
+    protected void FireObligationEventBothSides(TradeManager manager, Manageable owner, string eventID, string payerLabel, string payeeLabel, ItemEntry amount, ItemEntry available = null, bool resumed = false, Character_Trainable targetChara = null, string feeName = "", string sourceName = "")
+    {
+        if (string.IsNullOrEmpty(eventID)) return;
+
+        manager.FireObligationEvent(eventID, TargetFaction, amount, payerLabel, available, resumed, targetChara, feeName, sourceName);
+
+        if (TargetFaction != null)
+        {
+            TargetFaction.TradeManager.FireObligationEvent(eventID, owner, amount, payeeLabel, available, resumed, targetChara, feeName, sourceName);
+        }
+    }
+
+    /// <summary>
     /// Attempts to actually move this cycle's charge - default behavior is the normal "owner owes target"
     /// direction (TradeManager.TryChargeObligation deducts from owner, credits TargetFaction). Obligation_Sales
     /// overrides this to flip direction entirely: a sales obligation is a receivable, not a payable - money

@@ -286,9 +286,7 @@
             "ID": "debtclass_erav_kanon",
             "interestRatePercent": 0,
             "interestFlatAmount": { "itemID": "currency_JPY", "itemCount": 450000 },
-            "cadence": "Monthly",
-            "onPaidEventID": "",
-            "onFailedEventID": ""
+            "cadence": "Monthly"
         }
     ],
     "factionTemplate":

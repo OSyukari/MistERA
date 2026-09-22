@@ -349,13 +349,16 @@ public class MapPlan
         public PaymentCadence paymentCadence = PaymentCadence.Biweekly;
 
         /// <summary>
-        /// Optional payment-outcome events for this specific job post, sourced here (rather than a
-        /// per-obligation field) since a single Obligation_Salary can aggregate hours from several
-        /// characters sharing this same job post/MemberType - see Obligation_Salary.AccrueHour/
-        /// HandlePaymentEvent. Copied across onto JobPostPreset by its WorkModuleInit constructor.
+        /// Payment-outcome events for this specific job post, sourced here (rather than a per-obligation
+        /// field) since a single Obligation_Salary can aggregate hours from several characters sharing this
+        /// same job post/MemberType - see Obligation_Salary.AccrueHour/HandlePaymentEvent. Copied across
+        /// onto JobPostPreset by its WorkModuleInit constructor. Non-empty by default (same "always-on
+        /// global default" treatment as WorldPlan.onRentPaidEventID/onRentFailedEventID and
+        /// MembershipFeeInit.onPaidEventID/onFailedEventID) so every job post fires the generic default
+        /// event for free.
         /// </summary>
-        public string onPaidEventID = "";
-        public string onFailedEventID = "";
+        public string onPaidEventID = "OnSalaryPaid";
+        public string onFailedEventID = "OnSalaryFailed";
 
         [JsonIgnore] Manageable.HourlySchedule _cachedSchedule = null;
         /// <summary>

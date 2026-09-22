@@ -74,20 +74,26 @@ public class Obligation_Rent : RecurringObligation
     }
 
     /// <summary>
-    /// Fires the rent payment-outcome event, if any. Event ID resolution is two-tier: a concrete landlord's
-    /// own override (Manageable.GetTemplateRentEventID, read off that landlord's own MapPlan) takes
-    /// precedence; falling back to a world-level default (Manageable.GetWorldFallbackRentEventID) when no
-    /// override is set (or there's no concrete landlord at all, e.g. renting with an unspecified landlord or
-    /// owning outright). Silently skipped on a trivial cycle (nothing actually charged - e.g. a Recycler-
-    /// bound obligation covering no live floors) same as PrintOutcome's own "empty on trivial success" rule.
-    /// Since a single instance can cover both rentFee and maintenanceFee floors at once (see
-    /// GetRelevantFloors), the fired event is told which kind of charge this cycle actually was via the
-    /// EventInstance's starting label - "rent"/"maintenance"/"both", or "generic" for the edge case where
-    /// owed still carries arrears from a floor GetRelevantFloors no longer tracks (e.g. vacated/sold). On a
-    /// successful cycle that just cleared a prior missed payment (cycleWasSuspended - owed was already > 0
-    /// before this cycle), FireObligationEvent's resumed flag is also set, letting the event's own
-    /// check_resumed branch decide whether to additionally call out that service has resumed - independent
-    /// of which of the four labels above it started from.
+    /// Fires the rent payment-outcome event, if any - one independent event per relevant floor rather than
+    /// one for the whole resolved cycle, since GetRelevantFloors can span several floors at once (e.g. the
+    /// Recycler-bound obligation covering several owned floors together) and each should be named
+    /// individually with its own floor and charge, not merged into one generic line. Event ID resolution is
+    /// two-tier: a concrete landlord's own override (Manageable.GetTemplateRentEventID, read off that
+    /// landlord's own MapPlan) takes precedence; falling back to a world-level default
+    /// (Manageable.GetWorldFallbackRentEventID) when no override is set (or there's no concrete landlord at
+    /// all). Silently skipped entirely on a trivial cycle (nothing actually charged). success/failure and
+    /// the paying faction's on-hand balance (available, on failure) are shared across every floor fired here
+    /// (the underlying charge is one atomic transaction for the whole cycle) - only the label (which kind of
+    /// charge that specific floor was) and the amount/floor name shown differ per floor. Falls back to a
+    /// single "generic" firing for the whole remaining attempt if no floor accounts for it at all (owed still
+    /// carrying arrears from a floor GetRelevantFloors no longer tracks, e.g. vacated/sold). A floor with a
+    /// real rentFee but no concrete landlord (renting with an unspecified landlord, a pure Recycler
+    /// expenditure) is folded into "maintenance" wording instead of "rent"/"both", since there's no landlord
+    /// to name via $counterpartName$ in that case. On a successful cycle that just cleared a prior missed
+    /// payment (cycleWasSuspended), FireObligationEvent's resumed flag is also set on every firing, letting
+    /// the event's own check_resumed branch decide whether to additionally call out that service has
+    /// resumed. Fired both ways via FireObligationEventBothSides per floor - the label starts the tenant's
+    /// own framing, the same label with a "_payee" suffix the landlord's (skipped when there's no landlord).
     /// </summary>
     protected override void HandlePaymentEvent(TradeManager manager, Manageable owner, bool success, ItemEntry attempt)
     {
@@ -99,13 +105,6 @@ public class Obligation_Rent : RecurringObligation
         if (string.IsNullOrEmpty(eventID)) eventID = owner.GetWorldFallbackRentEventID(success);
         if (string.IsNullOrEmpty(eventID)) return;
 
-        bool hasRent = false, hasMaintenance = false;
-        foreach (var entry in GetRelevantFloors(owner))
-        {
-            if (entry.isRented && entry.rentCost.rentFee != null) hasRent = true;
-            if (entry.rentCost.maintenanceFee != null) hasMaintenance = true;
-        }
-        string label = hasRent && hasMaintenance ? "both" : hasRent ? "rent" : hasMaintenance ? "maintenance" : "generic";
         bool resumed = success && cycleWasSuspended;
 
         // Only a real (player) faction can ever actually fail a payment - TradeManager.TryChargeObligation
@@ -115,7 +114,25 @@ public class Obligation_Rent : RecurringObligation
         // (currency vs. item, K/M suffixing), just with the actually-on-hand count instead of what was due.
         ItemEntry available = success ? null : new ItemEntry(attempt.itemID, attempt.itemNameOverwrite, owner.Inventory.GetItemCount(attempt.itemID), attempt.itemCountOverride);
 
-        manager.FireObligationEvent(eventID, landlord, attempt, label, available, resumed);
+        bool firedAny = false;
+        foreach (var entry in GetRelevantFloors(owner))
+        {
+            bool hasRentHere = entry.isRented && entry.rentCost.rentFee != null;
+            bool hasMaintenanceHere = entry.rentCost.maintenanceFee != null;
+            if (!hasRentHere && !hasMaintenanceHere) continue;
+
+            ItemEntry floorAmount = null;
+            if (hasMaintenanceHere) floorAmount = AddInto(floorAmount, entry.rentCost.maintenanceFee);
+            if (hasRentHere) floorAmount = AddInto(floorAmount, entry.rentCost.rentFee);
+            if (floorAmount == null || floorAmount.itemCount <= 0) continue;
+
+            string label = hasRentHere && landlord != null ? (hasMaintenanceHere ? "both" : "rent") : "maintenance";
+
+            FireObligationEventBothSides(manager, owner, eventID, label, label + "_payee", floorAmount, available, resumed, sourceName: entry.floor.displayName);
+            firedAny = true;
+        }
+
+        if (!firedAny) FireObligationEventBothSides(manager, owner, eventID, "generic", "generic_payee", attempt, available, resumed);
     }
 
     /// <summary>

@@ -49,7 +49,7 @@ public class BodyInternal_Instance
                 var maxcount = basePointer.images_volume.Count;
                 int index = (int)Math.Clamp(fillPercentage * maxcount, 0, maxcount - 1);
 
-                if (index != 0 && basePointer.images_expansion != null && basePointer.images_expansion.Count > 0) return basePointer.images_volume[index];
+                if (index != 0) return basePointer.images_volume[index];
                 //return image based on fill percentage
             }
             if (basePointer.images_expansion != null && basePointer.images_expansion.Count > 0)

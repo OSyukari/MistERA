@@ -649,15 +649,15 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="animate">whether on add line invoke a ui update</param>
     public void AddLog_Line(EventInstance instance, Event.EventEntry.EventEntry_Line line, bool rA, bool animate = true, UISpec displaySnapshot = null)
     {
-        AddLog_LineContent(instance, line, line.line, displaySnapshot ?? line.UISpec, rA);
+        AddLog_LineContent(instance, line, line.line, displaySnapshot ?? line.UISpec, rA, line.tooltip);
     }
 
     public void AddLog_Line(EventInstance instance, Event.EventEntry.Options option, bool rA, bool animate = true, UISpec displaySnapshot = null)
     {
-        AddLog_LineContent(instance, option, option.line, displaySnapshot ?? option.UISpec, rA);
+        AddLog_LineContent(instance, option, option.line, displaySnapshot ?? option.UISpec, rA, option.tooltip);
     }
 
-    private void AddLog_LineContent(EventInstance instance, I_hasPortrait handler, string rawLine, UISpec spec, bool rA)
+    private void AddLog_LineContent(EventInstance instance, I_hasPortrait handler, string rawLine, UISpec spec, bool rA, string rawTooltip = "")
     {
         // here we need to process line into translated
         //Debug.Log($"Event Addline {line}");
@@ -666,21 +666,22 @@ public class scr_System_CampaignManager : MonoBehaviour
         var content = UtilityEX.ParseEventEntry(instance, rawLine);
         if (content.Length < 1) return;
         //Debug.Log($"AddLog_Line parsed content: {content}");
+        var tooltip = string.IsNullOrEmpty(rawTooltip) ? "" : UtilityEX.ParseEventEntry(instance, rawTooltip);
         if (spec.PortraitRefKey == "self" && instance.Self != null && instance.Self.RefID != 0)
         {
-            var msglog = new Message_Text(instance.Self, handler, content, rA, "", default, instance);
+            var msglog = new Message_Text(instance.Self, handler, content, rA, tooltip, default, instance);
             //msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
         else if (instance.Targets.TryGetValue(spec.PortraitRefKey, out var targetrefs))
         {
-            var msglog = new Message_Text(targetrefs, handler, null, "", default, instance);
+            var msglog = new Message_Text(targetrefs, handler, null, tooltip, default, instance);
             msglog.AddMessage(content, rA);
             log = LogManager.AddLog(msglog) as Message_Text;
         }
         else
         {
-            log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, "", false, false) as Message_Text;
+            log = LogManager.AddLog(null, rA ? $"<align=\"right\">{content}</align>" : content, tooltip, false, false) as Message_Text;
         }
 
         if (log != null) log.Display.LoadDataFrom(spec);

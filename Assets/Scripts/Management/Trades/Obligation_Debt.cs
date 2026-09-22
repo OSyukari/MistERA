@@ -34,9 +34,18 @@ public class DebtClassDef
     public int repaymentTermCycles = 0;
 
     /// <summary>Fired via TradeManager.FireObligationEvent (see Obligation_Debt.HandlePaymentEvent) when a
-    /// debt using this class resolves successfully/fails, if set.</summary>
-    public string onPaidEventID = "";
-    public string onFailedEventID = "";
+    /// debt using this class resolves successfully/fails, if set. Non-empty by default (same "always-on
+    /// global default" treatment as WorldPlan.onRentPaidEventID/MembershipFeeInit.onPaidEventID/
+    /// MapPlan.WorkModuleInit.onPaidEventID) so every debt fires the generic default event for free.</summary>
+    public string onPaidEventID = "OnDebtPaid";
+    public string onFailedEventID = "OnDebtFailed";
+
+    /// <summary>Optional localization dictionary key naming this specific debt (e.g. "Kanon's debt" for
+    /// debtclass_erav_kanon) - shown in GetDisplayName and the paid/failed event text (as $sourceName$/
+    /// $debtName$) in place of the generic "欠款"/"the debt" wording when set, so a faction with several
+    /// distinct debts can tell which one a notification is about. Same override/fallback convention as
+    /// MembershipFeeInit.membershipFeeName (see Obligation_Debt.GetDisplayName/HandlePaymentEvent).</summary>
+    public string debtName = "";
 }
 
 /// <summary>
@@ -185,26 +194,51 @@ public class Obligation_Debt : RecurringObligation
             .Replace("$name$", GetDisplayName(owner)).Replace("$item$", installment.Print + suffix);
     }
 
-    /// <summary>"欠款（lender faction name）"</summary>
+    /// <summary>"欠款（lender faction name）", or DebtClass.debtName in place of the generic "欠款" wording
+    /// when set - same override/fallback convention as Obligation_MembershipFee.GetDisplayName's feeName.</summary>
     public override string GetDisplayName(Manageable owner)
     {
         string lenderName = TargetFaction != null ? TargetFaction.FactionDisplayName : targetFactionID;
-        return LocalizeDictionary.QueryThenParse("obligation_debt_name").Replace("$lender$", lenderName);
+
+        var def = DebtClass;
+        string debtName = def != null && !string.IsNullOrEmpty(def.debtName)
+            ? LocalizeDictionary.QueryThenParse(def.debtName)
+            : LocalizeDictionary.QueryThenParse("obligation_debt_generic_name");
+
+        return LocalizeDictionary.QueryThenParse("obligation_debt_name").Replace("$debtName$", debtName).Replace("$lender$", lenderName);
     }
 
     /// <summary>
     /// Sources onPaidEventID/onFailedEventID from DebtClass instead of a per-instance field - see
     /// DebtClassDef's doc comment for why these live on the shared class, not the individual loan. Also
     /// updates lastPaymentFailed/totalFailureCount, since this is already called once per resolution with
-    /// success known.
+    /// success known. Silently skipped on a trivial cycle (nothing actually charged), same "empty on
+    /// trivial success" rule as PrintOutcome/the other obligation types. Fired both ways via
+    /// FireObligationEventBothSides, always with DebtClass.debtName (or the generic "欠款"/"the debt"
+    /// fallback) as sourceName - same override/fallback convention as Obligation_MembershipFee's feeName -
+    /// so a faction with several distinct debts can tell which one a notification is about.
     /// </summary>
     protected override void HandlePaymentEvent(TradeManager manager, Manageable owner, bool success, ItemEntry attempt)
     {
         lastPaymentFailed = !success;
         if (!success) totalFailureCount++;
 
+        if (attempt == null || attempt.itemCount <= 0) return;
+
         var def = DebtClass;
         string eventID = success ? (def != null ? def.onPaidEventID : "") : (def != null ? def.onFailedEventID : "");
-        manager.FireObligationEvent(eventID, TargetFaction, attempt);
+
+        bool resumed = success && cycleWasSuspended;
+
+        // Only a real (player) faction can ever actually fail a payment - TradeManager.TryChargeObligation
+        // substitutes the Recycler (which always "succeeds") for any non-player owner - so owner.Inventory
+        // is always the genuine, meaningful balance to report here, never an NPC's faked one.
+        ItemEntry available = success ? null : new ItemEntry(attempt.itemID, attempt.itemNameOverwrite, owner.Inventory.GetItemCount(attempt.itemID), attempt.itemCountOverride);
+
+        string debtName = def != null && !string.IsNullOrEmpty(def.debtName)
+            ? LocalizeDictionary.QueryThenParse(def.debtName)
+            : LocalizeDictionary.QueryThenParse("obligation_debt_generic_name");
+
+        FireObligationEventBothSides(manager, owner, eventID, "", "payee", attempt, available, resumed, sourceName: debtName);
     }
 }

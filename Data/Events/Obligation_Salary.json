@@ -1,0 +1,52 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "OnSalaryPaid",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "OnSalaryPaid_paid" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "isLast": true, "line": "OnSalaryPaid_paid_payee" }
+                ]
+            },
+            {
+                "ID": "OnSalaryFailed",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "OnSalaryFailed_failed" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "isLast": true, "line": "OnSalaryFailed_failed_payee" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "OnSalaryPaid": "工资事件 - 已支付",
+                "OnSalaryPaid_paid": "$factionName$已向$target.name$（$sourceName$）支付工资（$amount$）。",
+                "OnSalaryPaid_paid_payee": "$factionName$已收到$target.name$（$sourceName$）的工资（$amount$）。",
+
+                "OnSalaryFailed": "工资事件 - 未支付",
+                "OnSalaryFailed_failed": "$factionName$未能向$target.name$（$sourceName$）支付工资：需要$amount$。",
+                "OnSalaryFailed_failed_payee": "$factionName$未能收到$target.name$（$sourceName$）的工资：需要$amount$。"
+            },
+            "en-us": {
+                "OnSalaryPaid": "Salary Event - Paid",
+                "OnSalaryPaid_paid": "$factionName$ paid $target.name$'s wages for $sourceName$ ($amount$).",
+                "OnSalaryPaid_paid_payee": "$factionName$ received $target.name$'s wages for $sourceName$ ($amount$).",
+
+                "OnSalaryFailed": "Salary Event - Unpaid",
+                "OnSalaryFailed_failed": "$factionName$ failed to pay $target.name$'s wages for $sourceName$: $amount$ due.",
+                "OnSalaryFailed_failed_payee": "$factionName$ did not receive $target.name$'s wages for $sourceName$ this cycle: $amount$ was due."
+            }
+        }
+    }
+}

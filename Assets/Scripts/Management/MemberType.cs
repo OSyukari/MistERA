@@ -334,4 +334,19 @@ public class MembershipFeeInit
 {
     public ItemEntry feeAmount = new ItemEntry();
     public PaymentCadence cadence = PaymentCadence.Monthly;
+
+    /// <summary>Fired via TradeManager.FireObligationEvent (see Obligation_MembershipFee.HandlePaymentEvent)
+    /// when a fee under this MemberType resolves successfully/fails, if set. Non-empty by default (unlike
+    /// DebtClassDef's own onPaidEventID/onFailedEventID) so every membershipFee fires the generic default
+    /// event for free - same "always-on global default" treatment as WorldPlan.onRentPaidEventID/
+    /// onRentFailedEventID.</summary>
+    public string onPaidEventID = "OnMembershipFeePaid";
+    public string onFailedEventID = "OnMembershipFeeFailed";
+
+    /// <summary>Optional localization dictionary key overriding the generic "会员费"/"Membership fee" noun
+    /// used both in Obligation_MembershipFee.GetDisplayName and in the paid/failed event text (as
+    /// $feeName$) - e.g. a school's membershipFee can set this to a key resolving to "学费" so tuition
+    /// reads correctly everywhere instead of the generic wording. Empty (the default) keeps the generic
+    /// "obligation_membershipfee_generic_name" wording.</summary>
+    public string membershipFeeName = "";
 }
