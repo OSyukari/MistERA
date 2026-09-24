@@ -120,7 +120,7 @@ public class scr_HoverableText : MonoBehaviour, IPointerEnterHandler, IPointerEx
         if (this.GetComponent<scr_SelectableText>() == null) this.m_TextMeshPro.text = replaceText != "" ? LocalizeDictionary.QueryThenParse(replaceText) : LocalizeDictionary.QueryThenParse(this.m_TextMeshPro.text);
         this.m_TextMeshPro.font = scr_System_CentralControl.current.Font;
         this.m_TextMeshPro.UpdateFontAsset();
-        this.m_TextMeshPro.verticalAlignment = VerticalAlignmentOptions.Capline;
+        this.m_TextMeshPro.verticalAlignment = VerticalAlignmentOptions.Geometry;
 /*
         this.m_TextMeshPro.enableAutoSizing = true;
         this.m_TextMeshPro.fontSizeMax = 24;
