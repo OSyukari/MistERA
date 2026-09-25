@@ -7,7 +7,7 @@ using System;
 public class scr_Menu_Clock : MonoBehaviour
 {
     public TMP_Text hour_minute, quadran;
-
+    public scr_HoverableText resolution;
 
     //protected DateTime lastUpdate;
     protected DateTime currentUpdate;
@@ -55,6 +55,7 @@ public class scr_Menu_Clock : MonoBehaviour
         else if (currentUpdate.Hour < 21) quadran.text = lateevening;
         else quadran.text = night;
 
+        resolution.SetText($"{Screen.width}x{Screen.height}");
     }
 
     private void observerUpdate(TimeSpan elapsedTime, TimeSpan elapsed_real)

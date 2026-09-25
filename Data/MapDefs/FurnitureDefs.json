@@ -53,7 +53,6 @@
         },
         {
             "ID":"furniture_sofa_3",
-            "displayName":"长沙发",
             "recipe":[],
             "furnitureSize":4,
             "value":50000,
@@ -62,7 +61,6 @@
         },
         {
             "ID":"furniture_sofa_1",
-            "displayName":"沙发",
             "recipe":[],
             "furnitureSize":1,
             "value":25000,
@@ -72,11 +70,10 @@
         },
         {
             "ID":"furniture_TV_flatscreen",
-            "displayName":"平面电视",
             "recipe":[],
             "furnitureSize":4,
             "value":50000,
-            "Tags":["industrial","rarity_common"],
+            "Tags":["industrial","rarity_common","electric"],
             "givesJob": [ { "comTags":["furniture","TV"] } ]
         },
         {
@@ -107,7 +104,7 @@
             "recipe":[],
             "furnitureSize":3,
             "value":400000,
-            "Tags":["industrial","rarity_common"],
+            "Tags":["industrial","rarity_common","electric","plumbing"],
             "givesJob":
             [ { "comTags":["furniture","production_cooking"] },
                 { "comTags":["furniture","cooking"] } ]
@@ -118,7 +115,7 @@
             "recipe":[],
             "furnitureSize":2,
             "value":50000,
-            "Tags":["industrial","rarity_common"],
+            "Tags":["industrial","rarity_common","electric"],
             "givesJob":
             [ { "comTags":["furniture","cooking"] } ]
         },
@@ -128,7 +125,7 @@
             "recipe":[],
             "furnitureSize":1,
             "value":80000,
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","plumbing"],
             "givesJob":
             [ { "comTags":["furniture","shower"] } ]
         },
@@ -138,7 +135,7 @@
             "recipe":[],
             "furnitureSize":1,
             "value":120000,
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","plumbing"],
             "givesJob":
             [ { "comTags":["furniture","shower"] } ]
         },
@@ -148,7 +145,7 @@
             "recipe":[],
             "furnitureSize":1,
             "value":150000,
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","plumbing"],
             "givesJob": [
                 { "comTags":["furniture","bathroom"] },
             { "comID":["com_furniture_restroom_fix"] } ]
@@ -159,7 +156,7 @@
             "recipe":[],
             "furnitureSize":1,
             "value":200000,
-            "Tags":["rarity_common"],
+            "Tags":["rarity_common","plumbing"],
             "givesJob":
             [ { "comTags":["furniture","bathroom"] },
             { "comTags":["furniture","shower"] },
@@ -215,7 +212,7 @@
             "recipe":[],
             "furnitureSize":1,
             "value":150000,
-            "Tags":["industrial","rarity_common"],
+            "Tags":["industrial","rarity_common","electric"],
             "givesJob": [  { "comTags":["furniture", "computer"] }]
         },
         {
@@ -233,6 +230,7 @@
             "recipe":[],
             "furnitureSize":1,
             "value":300000,
+            "Tags":["electric","plumbing"],
             "givesJob": [  { "comTags":["furniture", "farm_cultivate_crop"] },
                             { "comTags":["furniture", "farm_maintain"] },
                             { "comTags":["furniture","farm_remove"] }]
@@ -243,45 +241,42 @@
             "recipe":[],
             "furnitureSize":1,
             "value":200000,
-            "Tags":["industrial","rarity_rare"],
+            "Tags":["industrial","rarity_rare","electric"],
             "givesJob": [  { "comTags":["furniture","production_engineering"] },
                             { "comTags":["furniture","research_engineering"] } ]
         },
         {
             "ID":"furniture_carniculture_pod",
-            "displayName":"肉类培育槽",
             "recipe":[],
             "furnitureSize":1,
             "value":500000,
+            "Tags":["electric","plumbing"],
             "givesJob": [  { "comTags":["furniture","farm_cultivate_meat"] },
                             { "comTags":["furniture","farm_maintain"] },
                             { "comTags":["furniture","farm_remove"] }]
         },
         {
             "ID":"furniture_research_biochem",
-            "displayName":"生物化学研究室",
             "recipe":[],
             "furnitureSize":1,
             "value":800000,
-            "Tags":["rarity_rare"],
+            "Tags":["rarity_rare","electric"],
             "givesJob": [ { "comTags":["furniture","research_biochemistry"] } ]
         },
         {
             "ID":"furniture_research_physics",
-            "displayName":"物理研究室",
             "recipe":[],
             "furnitureSize":1,
             "value":800000,
-            "Tags":["rarity_rare"],
+            "Tags":["rarity_rare","electric"],
             "givesJob": [ { "comTags":["furniture","research_physics"] } ]
         },
         {
             "ID":"furniture_workbench_chemistry",
-            "displayName":"化学制造台",
             "recipe":[],
             "furnitureSize":1,
             "value":300000,
-            "Tags":["industrial","rarity_rare"],
+            "Tags":["industrial","rarity_rare","electric"],
             "givesJob": [ { "comTags":["furniture","production_chemistry"] } ]
         },
         {
@@ -299,7 +294,7 @@
             "recipe":[],
             "furnitureSize":1,
             "value":250000,
-            "Tags":["industrial","rarity_rare"]
+            "Tags":["industrial","rarity_rare","electric"]
         },
         {
             "ID":"furniture_shooting_range_spot",
@@ -370,7 +365,7 @@
 "furniture_hydroponics":"水培舱",
 "furniture_workbench_engineering":"工程制造台",
 "furniture_carniculture_pod":"肉类培育槽",
-"furniture_research_biochem":"生化研究室",
+"furniture_research_biochem":"生物化学研究室",
 "furniture_research_physics":"物理研究室",
 "furniture_workbench_chemistry":"化学制造台",
 

@@ -7,7 +7,6 @@ using System;
 public class scr_Menu_Daycount : MonoBehaviour
 {
 
-    private TimeSpan dayCount;
     private DateTime currentTime;
     private DateTime startTime;
     // Start is called before the first frame update
@@ -20,13 +19,15 @@ public class scr_Menu_Daycount : MonoBehaviour
 
         text_dayCount = LocalizeDictionary.QueryThenParse("ui_calendar_dayCount");
         text_month = LocalizeDictionary.QueryThenParse("ui_calendar_month");
+        text_dateTooltip = LocalizeDictionary.QueryThenParse("ui_calendar_dateTooltip");
 
         refreshCount();
         RoomUpdate(1, scr_System_CampaignManager.current.CurrentRoom);
     }
 
-    string text_dayCount, text_month;
-    public TMP_Text DayCount, Seasons;
+    string text_dayCount, text_month, text_dateTooltip;
+    public TMP_Text Seasons;
+    public scr_HoverableText DayCount;
 
     private void observerUpdate(int updateOrder)
     {
@@ -39,10 +40,6 @@ public class scr_Menu_Daycount : MonoBehaviour
 
         startTime = scr_System_Time.current.getStartTime();
         currentTime = scr_System_Time.current.getCurrentTime();
-        // .Date difference (not the raw TimeSpan) so the count reflects calendar days elapsed, not full
-        // 24-hour periods - otherwise any time before startTime's hour-of-day undercounts by one (e.g. a
-        // campaign starting 08/01 07:00 would still read as "day 2" at 08/03 00:00, only 1.7 days elapsed).
-        dayCount = currentTime.Date - startTime.Date;
 
         string dayofWeek = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_"+currentTime.DayOfWeek);
 
@@ -53,8 +50,17 @@ public class scr_Menu_Daycount : MonoBehaviour
             yearCount--;
         }
 
-        DayCount.text = text_dayCount.Replace("$yearCount$", yearCount.ToString()).Replace("$dayOfYear$", (dayCount.Days + 1).ToString());
-        Seasons.text = text_month.Replace("$seasons$",Screen.width+"x"+Screen.height).Replace("$monthName$","").Replace("$dayOfWeek$", dayofWeek);
+        int monthCount = (currentTime.Year - startTime.Year) * 12 + (currentTime.Month - startTime.Month) + 1;
+        if (currentTime.Day < startTime.Day)
+        {
+         //   Debug.LogError($"{currentTime.Day}<{startTime.Day}={currentTime.Day < startTime.Day}");
+            monthCount--;
+        }
+        DayCount.SetText(text_dayCount.Replace("$yearCount$", yearCount.ToString()).Replace("$monthCount$", monthCount.ToString()).Replace("$dayOfYear$", currentTime.Day.ToString()).Replace("$dayOfWeek$", dayofWeek));
+        DayCount.SetExternalTooltip(text_dateTooltip
+            .Replace("$year$", currentTime.Year.ToString())
+            .Replace("$month$", currentTime.Month.ToString())
+            .Replace("$day$", currentTime.Day.ToString()));
     }
 
 

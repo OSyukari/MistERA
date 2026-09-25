@@ -164,7 +164,7 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
     /// <summary>
     /// Synthesizes a fully-populated LLMResponse matching what a non-streamed response of the same
     /// shape would look like, so the rest of the pipeline (LLMResponse.JSON, LLMResponse.Reasoning,
-    /// scr_menu_LLMQuery.LoadResponse/Animate) needs no streaming-specific branches downstream.
+    /// scr_panel_LLM's single-shot response handling) needs no streaming-specific branches downstream.
     /// </summary>
     public LLMResponse BuildFinalResponse()
     {

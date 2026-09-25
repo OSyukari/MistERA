@@ -23,6 +23,24 @@ public class FurnitureInstance: IDisposable, I_Disposable
 
     [JsonIgnore] public string DisplayName { get { return FurnitureBase.DisplayName; } }
 
+    /// <summary>
+    /// Whether this furniture's jobs require the floor it sits on to be maintained (its rent/maintenance
+    /// charge actually paid - see Manageable.IsFloorMaintained / TradeManager.unmaintainedFloorRefs).
+    /// True when the furniture's FurnitureBase template is tagged "electric" or "plumbing" (utility
+    /// hookups stop working when the building isn't maintained). When true and the floor is currently
+    /// unmaintained, Job_Furniture's package validation rejects the COM with a tooltip explanation - see
+    /// Job_Furniture.ValidateFloorMaintenance. Floors with no rent/maintenance cost at all are always
+    /// considered maintained (see Manageable.IsFloorMaintained).
+    /// </summary>
+    [JsonIgnore] public virtual bool requireFloorMaintenance
+    {
+        get
+        {
+            var fb = FurnitureBase;
+            return fb != null && (fb.Tags.Contains("electric") || fb.Tags.Contains("plumbing"));
+        }
+    }
+
     protected int jobGiverID = -1;
     protected Job_Furniture JobGiverCache = null;
     [JsonIgnore] public Job_Furniture JobGiver

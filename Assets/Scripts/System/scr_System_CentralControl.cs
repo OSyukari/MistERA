@@ -1103,7 +1103,8 @@ public class SaveFile
                 .Replace("$minutes$", Time.currentDate.TimeOfDay.Minutes.ToString("D2"))
                 .Replace("$playerName$", scr_System_CampaignManager.current.Player.FullName)
                 .Replace("$floor$", playerFloor == null? "unknown" : playerFloor.displayName)
-                .Replace("$room$", playerRoom.DisplayName);
+                .Replace("$room$", playerRoom.DisplayName)
+                .Replace("$scenarioName$", LocalizeDictionary.QueryThenParse(this.Campaign.campaignSettingID));
         this.SafeMode = scr_System_CentralControl.current.isSafeMode;
     }
     public void LoadSave()

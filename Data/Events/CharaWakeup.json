@@ -57,11 +57,11 @@
         {
             "zh-cn":
             {
-                "event_OnCharaWakeUp_ev01":"$currentTimeShort$ - $self.name$醒来了"
+                "event_OnCharaWakeUp_ev01":"$currentTime$ - $self.name$醒来了"
             },
             "en-us":
             {
-                "event_OnCharaWakeUp_ev01":"$currentTimeShort$ - $self.name$ wakes up"
+                "event_OnCharaWakeUp_ev01":"$currentTime$ - $self.name$ wakes up"
             }
         }
     }

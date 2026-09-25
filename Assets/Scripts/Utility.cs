@@ -347,8 +347,9 @@ public static class UtilityEX
     public static string ParseEventEntry(EventInstance owner, string s, string separator = ",")
     {
         var newString = LocalizeDictionary.QueryThenParse( s);
-        newString = newString.Replace("$currentTime$", scr_System_Time.current.getCurrentTime().ToString());
-        newString = newString.Replace("$currentTimeShort$", scr_System_Time.current.getCurrentTime().ToString("MM/dd hh:mm tt"));
+        newString = newString.Replace("$currentDate$", scr_System_Time.current.getCurrentTime().ToString());
+        newString = newString.Replace("$currentDateShort$", scr_System_Time.current.getCurrentTime().ToString("MM/dd hh:mm tt"));
+        newString = newString.Replace("$currentTime$", scr_System_Time.current.getCurrentTime().ToString("hh:mm tt"));
 
         MatchCollection matches = regex_eventKeyword.Matches(newString);
         foreach (var match in matches.ToList())

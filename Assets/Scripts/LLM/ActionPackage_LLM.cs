@@ -17,6 +17,18 @@ public class ActionPackage_LLM : ActionPackage
 
     [JsonIgnore] public override List<int> actorRefs { get { return _actorRefs; } }
 
+    /// <summary>
+    /// Every character RefID in the FULL submitted plan this wrapper's round belongs to - batch
+    /// participants AND conflict-deferred "keep for future's sake" actors alike - populated by
+    /// scr_System_CampaignManager.ExecuteLLMResponseBatch. Pure reservation record: deliberately
+    /// NOT part of actorRefs, so reserved actors get no job enrollment (Job.AddActor), no
+    /// participant memories in Execution(), and no log treatment - their actual room-pin is the
+    /// wait-package refreshed on every agent round (scr_System_CampaignManager.PinActorForLLMPlan).
+    /// Kept as the hook for any future hard-pin/visibility check that wants to ask the LLM AP
+    /// itself who it is holding.
+    /// </summary>
+    public List<int> pinnedActorRefs = new List<int>();
+
     public ActionPackage_LLM()
     {
 

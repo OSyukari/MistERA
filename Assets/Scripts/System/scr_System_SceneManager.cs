@@ -169,7 +169,11 @@ public class scr_System_SceneManager : MonoBehaviour
             }
             else
             {
-                Destroy(this.gameObject);
+                // Do NOT fall back to Destroy(this.gameObject) here - this component lives on the
+                // shared System "Serializer" GameObject alongside CentralControl/Time/UpdateHandler,
+                // so that destroy nukes every core singleton (MissingReferenceException cascade).
+                // An empty canvas stack just means there is no overlay canvas to unload.
+                Debug.LogWarning("UnloadLastCanvasFromScene: canvas stack is empty, nothing to unload.");
             }
         }
         Observer_OnPageUnload?.Invoke();
