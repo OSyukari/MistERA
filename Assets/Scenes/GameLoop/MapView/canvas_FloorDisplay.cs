@@ -614,6 +614,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
             return;
         }
+        scr_System_CentralControl.current.AutoSave();
 
         var playerJob = scr_System_CampaignManager.current.Player.InteractionJob;
         ActionPackage_PathTo package = new ActionPackage_PathTo(playerJob, 0, room.RefID);
