@@ -1488,6 +1488,18 @@ public static class UtilityEX
                     scr_System_CentralControl.current.DisplaySetting.asciiRenderEnabled.Toggle();
                 }
                 break;
+            case "debug_refuse_salary_payment":
+                if (parsed.Count() >= 2 && bool.TryParse(parsed[1], out bool refuseSalaryValue))
+                {
+                    scr_System_CentralControl.current.debug_refuse_salary_payment = refuseSalaryValue;
+                }
+                else
+                {
+                    scr_System_CentralControl.current.debug_refuse_salary_payment = !scr_System_CentralControl.current.debug_refuse_salary_payment;
+                }
+                Debug.Log($"debug_refuse_salary_payment = {scr_System_CentralControl.current.debug_refuse_salary_payment}");
+                parsedSuccessful = true;
+                break;
             case "inspectjob":
                 if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int targetjobref))
                 {

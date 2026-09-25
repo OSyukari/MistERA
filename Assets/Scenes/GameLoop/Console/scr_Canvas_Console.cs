@@ -100,6 +100,10 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
             foreach (var str in devConsoleCommands) MakeCommandButton(str);
         }
 
+#if UNITY_EDITOR
+        foreach (var str in editorConsoleCommands) MakeCommandButton(str);
+#endif
+
         ValidateAll();
 
         // consoleCount = scr_System_CentralControl.current.allusedConsoleCommands.Count;
@@ -149,6 +153,11 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "wombAddSpermByID",
         "ovulate",
         "forceBirth"
+    };
+
+    string[] editorConsoleCommands = new string[]
+    {
+        "debug_refuse_salary_payment"
     };
 
     protected void ActivateUI()

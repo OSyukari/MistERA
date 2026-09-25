@@ -70,6 +70,16 @@ public class scr_System_CentralControl : MonoBehaviour
     [SerializeField]
     public DebugLogSettings_NSFW DLOG_NSFW = new DebugLogSettings_NSFW();
 
+    [JsonIgnore]
+    protected bool _debug_refuse_salary_payment = false;
+
+    [JsonIgnore]
+    public bool debug_refuse_salary_payment
+    {
+        get { return _debug_refuse_salary_payment; }
+        set { _debug_refuse_salary_payment = value; }
+    }
+
     LLM_Setting _llmSetting = null;
     public LLM_Setting LLMSetting
     {
