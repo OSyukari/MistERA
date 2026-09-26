@@ -34,6 +34,17 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
     // Claude-envelope content_block_start bookkeeping: which index is "thinking" vs "text".
     readonly Dictionary<int, string> claudeBlockTypes = new Dictionary<int, string>();
 
+    // Token usage as reported inside the stream: OpenAI-envelope endpoints put it on the last chunk,
+    // Claude splits it across message_start (input/cache) and message_delta (output) - merged here.
+    JObject usage = null;
+
+    void MergeUsage(JToken u)
+    {
+        if (!(u is JObject uo)) return;
+        if (usage == null) usage = new JObject();
+        foreach (var prop in uo.Properties()) usage[prop.Name] = prop.Value;
+    }
+
     public LLMStreamDownloadHandler(LLMProviderProfile profile, Action<string> onReasoningDelta) : base()
     {
         this.profile = profile;
@@ -85,7 +96,12 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
 
     void ProcessOpenAIChunk(JObject obj)
     {
-        var choice = obj["choices"]?[0];
+        MergeUsage(obj["usage"]);
+
+        // the include_usage final chunk carries an empty choices array
+        var choices = obj["choices"] as JArray;
+        if (choices == null || choices.Count == 0) return;
+        var choice = choices[0];
         if (choice == null) return;
         var delta = choice["delta"];
         if (delta == null) return;
@@ -146,8 +162,14 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
                     }
                     break;
                 }
-            // content_block_stop / message_start / message_delta / message_stop: no bookkeeping
-            // needed beyond what content_block_start/delta already captured.
+            case "message_start":
+                MergeUsage(obj["message"]?["usage"]);
+                break;
+            case "message_delta":
+                MergeUsage(obj["usage"]);
+                break;
+            // content_block_stop / message_stop: no bookkeeping needed beyond what
+            // content_block_start/delta already captured.
         }
     }
 
@@ -169,6 +191,8 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
     public LLMResponse BuildFinalResponse()
     {
         var response = new LLMResponse();
+        UnityEngine.Debug.Log($"LLM stream usage: {(usage != null ? usage.ToString(Newtonsoft.Json.Formatting.None) : "none reported")}");
+        if (usage != null) response.usage = usage.ToObject<LLMResponse.usages>();
         if (profile != null && profile.responseEnvelope == "claude")
         {
             if (reasoning.Length > 0) response.content.Add(new LLMResponse.choice_claude { type = "thinking", thinking = reasoning.ToString() });

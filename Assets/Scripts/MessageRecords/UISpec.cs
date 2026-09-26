@@ -6,7 +6,8 @@ public enum LogsDisplayMode
 {
     Dontcare,
     ERA,
-    AVG
+    AVG,
+    LLM
 }
 
 public enum InfoTabDisplayMode

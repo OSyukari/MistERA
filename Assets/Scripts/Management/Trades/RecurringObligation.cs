@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 /// <summary>
@@ -190,16 +191,22 @@ public abstract class RecurringObligation
     /// only the payee call if TargetFaction is null (no real counterpart faction to represent, e.g.
     /// Obligation_Rent's Recycler-bound unspecified-landlord case). targetChara (the specific character a
     /// payment is about, if any) stays the same for both calls - only the acting/counterpart factions swap.
+    /// payerName/payeeName (see TradeManager.FireObligationEvent) are likewise passed unchanged to both
+    /// calls - resolve them once from owner/TargetFaction here rather than per call, since they're fixed
+    /// roles, not "whoever is narrating."
     /// </summary>
-    protected void FireObligationEventBothSides(TradeManager manager, Manageable owner, string eventID, string payerLabel, string payeeLabel, ItemEntry amount, ItemEntry available = null, bool resumed = false, Character_Trainable targetChara = null, string feeName = "", string sourceName = "")
+    protected void FireObligationEventBothSides(TradeManager manager, Manageable owner, string eventID, string payerLabel, string payeeLabel, ItemEntry amount, ItemEntry available = null, bool resumed = false, Character_Trainable targetChara = null, string feeName = "", string sourceName = "", List<Character_Trainable> trustManagers = null, int trustChange = 0, bool interrupted = false)
     {
         if (string.IsNullOrEmpty(eventID)) return;
 
-        manager.FireObligationEvent(eventID, TargetFaction, amount, payerLabel, available, resumed, targetChara, feeName, sourceName);
+        string payerName = owner != null ? owner.FactionDisplayName : "";
+        string payeeName = TargetFaction != null ? TargetFaction.FactionDisplayName : "";
+
+        manager.FireObligationEvent(eventID, TargetFaction, amount, payerLabel, available, resumed, targetChara, feeName, sourceName, trustManagers, trustChange, interrupted, payerName, payeeName);
 
         if (TargetFaction != null)
         {
-            TargetFaction.TradeManager.FireObligationEvent(eventID, owner, amount, payeeLabel, available, resumed, targetChara, feeName, sourceName);
+            TargetFaction.TradeManager.FireObligationEvent(eventID, owner, amount, payeeLabel, available, resumed, targetChara, feeName, sourceName, trustManagers, trustChange, interrupted, payerName, payeeName);
         }
     }
 

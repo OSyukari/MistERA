@@ -98,6 +98,18 @@ public class TradeManager
     [JsonProperty] public Dictionary<int, string> rentedFloors = new Dictionary<int, string>();
 
     /// <summary>
+    /// Floors (by Floor_Instance.refID) whose rent/maintenance charge FAILED at its last resolution - see
+    /// Obligation_Rent.HandlePaymentEvent, which marks every floor a failed obligation covers (rent and
+    /// maintenance alike - an unpaid Obligation_Rent of any kind leaves its floors "unmaintained") and
+    /// clears them again on a successful one. Persisted so the state survives past the payment event and
+    /// across saves; queried via Manageable.IsFloorMaintained (job-based - future job types will refuse to
+    /// run on unmaintained floors) and re-reported daily via Manageable.OnDayUpdate_1's warnings. Stale
+    /// entries for vacated/sold floors are inert: IsFloorMaintained only ever asks about live jobs' floors,
+    /// and the daily warning only iterates current ManagedFloors.
+    /// </summary>
+    [JsonProperty] public HashSet<int> unmaintainedFloorRefs = new HashSet<int>();
+
+    /// <summary>
     /// Last-resolved-cycle print line for every obligation, per cadence, keyed by obligationID - the
     /// historical counterpart to the live GetDueSummary/GetIncomingDueSummary preview. TradeManager owns
     /// this storage (not the obligation itself - see RecurringObligation.PrintOutcome/PrintIncome, which
@@ -311,6 +323,17 @@ public class TradeManager
     /// generic term. sourceName, if set, is exposed as $sourceName$ - e.g. the MemberType/job post name a
     /// salary payment was for (see Obligation_Salary.HandlePaymentEvent).
     ///
+    /// trustManagers/trustChange, when set together (non-empty list, non-zero amount), narrate a
+    /// just-applied relationship change toward this faction's managers: the managers go in as event
+    /// target key "managers" (so $managers.name$ interpolates every name, comma-joined - see
+    /// Utility.ParseEventEntry), and the change is exposed as a single $trustChange$ AppendString -
+    /// explicitly signed, "+0;-#" format (e.g. "+7"/"-14", so line text reads "信赖+7"/"信赖-14" with no
+    /// 增加/减少 wording) - whose mere presence (non-empty) doubles as the gate for an EventEntry_Branch
+    /// via ExistAppendStrings, so the trust line only prints when a change actually happened - see
+    /// Obligation_Salary/Obligation_Rent's check_trust branch. The actual relationship change is applied
+    /// by the caller BEFORE firing (the event only narrates it); the amount is identical across managers,
+    /// so one injected number covers all.
+    ///
     /// Regardless of targetChara, counterpart's own FactionDisplayName (when counterpart is set) is always
     /// additionally exposed as $counterpartName$ - the raw interpolation engine only ever resolves "$X.name$"
     /// off a Character_Trainable (see Utility.CollectString), so this is the only way to name the OTHER
@@ -324,8 +347,22 @@ public class TradeManager
     /// Every obligation type fires this once "as" the payer and once "as" the payee (see
     /// RecurringObligation.FireObligationEventBothSides), each via that side's own TradeManager, so each
     /// call's owner is already whichever faction that particular firing is narrating for - no OR needed.
+    ///
+    /// interrupted, if true, adds an "interrupted" AppendStrings key with no particular value, same
+    /// ExistAppendStrings-branch idiom as resumed - the mirror-image signal: this failed cycle is the one
+    /// that just newly suspended the obligation (as opposed to a repeat failure on an already-suspended
+    /// backlog), so callers' event JSON can narrate "service just interrupted" exactly once, the moment it
+    /// actually happens, the same way resumed narrates "service just restored" exactly once.
+    ///
+    /// payerName/payeeName, if set, are exposed as $payerName$/$payeeName$ - unlike $factionName$/
+    /// $counterpartName$ (which always mean "whoever is narrating this specific call" / "the other side",
+    /// and so swap meaning between the payer and payee FireObligationEventBothSides calls), these are fixed
+    /// roles the caller resolves once and passes unchanged to both calls, so a single shared trailer line
+    /// (e.g. the "service interrupted" narration, which needs to name who failed to pay - always the payer
+    /// - regardless of which side is currently speaking) can name both parties unambiguously no matter
+    /// which of the two firings is rendering it.
     /// </summary>
-    public void FireObligationEvent(string eventID, Manageable counterpart, ItemEntry amount, string label = "", ItemEntry available = null, bool resumed = false, Character_Trainable targetChara = null, string feeName = "", string sourceName = "")
+    public void FireObligationEvent(string eventID, Manageable counterpart, ItemEntry amount, string label = "", ItemEntry available = null, bool resumed = false, Character_Trainable targetChara = null, string feeName = "", string sourceName = "", List<Character_Trainable> trustManagers = null, int trustChange = 0, bool interrupted = false, string payerName = "", string payeeName = "")
     {
         if (string.IsNullOrEmpty(eventID)) return;
 
@@ -351,6 +388,12 @@ public class TradeManager
             if (counterpartChara != null) ev.Targets["target"] = new List<Character_Trainable> { counterpartChara };
         }
 
+        if (trustManagers != null && trustManagers.Count > 0 && trustChange != 0)
+        {
+            ev.Targets["managers"] = new List<Character_Trainable>(trustManagers);
+            ev.AppendStrings["trustChange"] = new List<string> { trustChange.ToString("+0;-#") };
+        }
+
         if (amount != null)
         {
             if (!ev.AppendStrings.ContainsKey("amount")) ev.AppendStrings["amount"] = new List<string>();
@@ -369,6 +412,12 @@ public class TradeManager
             ev.AppendStrings["resumed"].Add("true");
         }
 
+        if (interrupted)
+        {
+            if (!ev.AppendStrings.ContainsKey("interrupted")) ev.AppendStrings["interrupted"] = new List<string>();
+            ev.AppendStrings["interrupted"].Add("true");
+        }
+
         if (!string.IsNullOrEmpty(feeName))
         {
             if (!ev.AppendStrings.ContainsKey("feeName")) ev.AppendStrings["feeName"] = new List<string>();
@@ -379,6 +428,18 @@ public class TradeManager
         {
             if (!ev.AppendStrings.ContainsKey("sourceName")) ev.AppendStrings["sourceName"] = new List<string>();
             ev.AppendStrings["sourceName"].Add(sourceName);
+        }
+
+        if (!string.IsNullOrEmpty(payerName))
+        {
+            if (!ev.AppendStrings.ContainsKey("payerName")) ev.AppendStrings["payerName"] = new List<string>();
+            ev.AppendStrings["payerName"].Add(payerName);
+        }
+
+        if (!string.IsNullOrEmpty(payeeName))
+        {
+            if (!ev.AppendStrings.ContainsKey("payeeName")) ev.AppendStrings["payeeName"] = new List<string>();
+            ev.AppendStrings["payeeName"].Add(payeeName);
         }
 
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);

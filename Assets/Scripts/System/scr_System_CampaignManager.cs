@@ -780,6 +780,12 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void FinalizeLog_Question(QuestionBoxCollector box, Room_Instance room)
     {
+        // The prompt + player's actual answer are only known here (both scr_menu_question and
+        // scr_menu_inputField call this on resolution), independent of which rect drew the box -
+        // capture it into the running agent session's context, same buffer ambient messages use.
+        if (scr_UpdateHandler.current != null && scr_UpdateHandler.current.IsAgentRunning)
+            scr_UpdateHandler.current.CurrentAgentSession?.AppendInterceptedMessage(box.timestamp, QuestionBoxPlainText(box));
+
         if (room != null && room.HasRecording)
         {
             Debug.Log($"FinalizeLog_Question {(room == null ? "room null" : !room.HasRecording ? "no recording" : "recording...")}");
@@ -787,17 +793,247 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
     }
 
-    public void AddLog_LLM(LLMRequest request)
+    string QuestionBoxPlainText(QuestionBoxCollector box)
     {
-        PortraitManager portraitRef = null;
-        MessageLog log = LogManager.AddLog(new Message_LLMQuery(portraitRef, new List<string>(), request));
-        
-        Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait);
+        var chosen = box.options.FirstOrDefault(o => o.selected);
+        return chosen != null && !box.message.Contains("->")
+            ? $"{box.message}\n-> {chosen.message}"
+            : box.message; // input-field message already embeds "-> [typed text]"
     }
+
     public void FinalizeLog_LLM(LLMCollector box, Room_Instance room)
     {
         Debug.LogError("UNIMPLEMENTED");
         //if (room != null) room.NotifyKojoCollect(box);
+    }
+
+    /// <summary>
+    /// Registers and actually applies one finished LLM response's package/UpdateVariable content to the
+    /// game - the exact logic scr_panel_LLM's single-shot Confirm runs when the player clicks "Confirm
+    /// and Execute" on a single-shot response, extracted here so agent mode's orchestration loop
+    /// (scr_UpdateHandler.AgentLoop_Routine) can also run it automatically on its final answer, since
+    /// agent mode has no popup/confirm button for a player to click. No-op if json is null.
+    /// </summary>
+    public void ExecuteLLMResponse(MessageJSON json)
+    {
+        if (json == null) return;
+
+        scr_System_CentralControl.current.AutoSave();
+
+        var allrelevantActors = new List<int>(json.relevantActorRefs);
+        var allrelevantJobRefs = new List<int>();
+
+        foreach (var ap in json.GetActionPackages(out var tooltips2))
+        {
+            allrelevantActors.AddRange(ap.DoerRefs);
+            allrelevantActors.AddRange(ap.ReceiverRefs);
+            allrelevantJobRefs.Add(ap.job.RefID);
+        }
+        allrelevantActors.RemoveAll(x => x < 0);
+        allrelevantActors = Utility.Distinct(allrelevantActors);
+        allrelevantJobRefs = Utility.Distinct(allrelevantJobRefs);
+
+        var player = scr_System_CampaignManager.current.Player;
+        var currentjob = player.CurrentJob;
+
+        var playerjob = currentjob == null || currentjob.CanBeInterrupted ? scr_System_CampaignManager.current.FindJobInstanceByID(scr_System_CampaignManager.current.jobRef_playerCOM) : currentjob;
+        playerjob.m.displayOverride = true;
+
+        var apLLM = new ActionPackage_LLM(playerjob, json.timeCost, new List<int>() { player.RefID }, json);
+
+        foreach (var jobref in allrelevantJobRefs)
+        {
+            // placeholder package should be added to every job mentioned in json
+            var job = scr_System_CampaignManager.current.FindJobInstanceByID(jobref);
+            if (job != null && job != playerjob) job.AddPlaceholderPackage(apLLM);
+        }
+
+        List<string> errors = new List<string>();
+
+        foreach (var actorref in allrelevantActors)
+        {
+            var actor = scr_System_CampaignManager.current.FindInstanceByID(actorref);
+            if (actor == null)
+            {
+                errors.Add($"hallucinating actorref {actorref}");
+                continue;
+            }
+            if (scr_System_CampaignManager.current.Map.FindRoomByChara(actorref) != scr_System_CampaignManager.current.CurrentRoom)
+            {
+                errors.Add($"actorref {actorref} not in current room");
+                continue;
+            }
+            if (actor == player) continue;
+
+            var actorjob = actor.CurrentJob != null ? actor.CurrentJob : actor.InteractionJob;
+            if (actorjob != actor.CurrentJob)
+            {
+                // changejob
+                actor.ChangeCurrentJob(actorjob);
+            }
+            actor.Stats.pauseLLMTicks = apLLM.Duration;
+            var waiting = new ActionPackage_Wait(actorjob, actorref, json.timeCost);
+            actorjob.AddPackage(new List<ActionPackage>() { waiting });
+        }
+
+        player.ChangeCurrentJob(playerjob);
+        playerjob.AddPackage(new List<ActionPackage>() { apLLM }, true);
+
+        scr_System_CampaignManager.current.FreeUpdate(flushLogsOnly: true);
+    }
+
+    /// <summary>
+    /// Agent-mode stepwise execution (see scr_UpdateHandler.AgentLoop_Routine): registers an
+    /// ActionPackage_LLM wrapper for ONE batch of the submitted plan - the anchor package plus
+    /// whatever JoinAP-merged into it - while pinning every actor of the FULL remaining plan, so
+    /// characters only scheduled for later batches cannot wander off while an earlier batch
+    /// resolves ("talk with A" running first must not let B leave the room before "talk with B"
+    /// gets its turn). Mirrors ExecuteLLMResponse's registration recipe exactly, but wraps
+    /// batchJson instead of the whole response - the single-shot flow (Button_Confirm ->
+    /// ExecuteLLMResponse) is untouched. batchJson's APs get trackCapture set so the orchestrator
+    /// can read their capturedLog for the post-settle report back to the model.
+    ///
+    /// Pinning is RE-PINNED on every call (PinActorForLLMPlan): wait-packages are sized to the
+    /// whole REMAINING plan (this batch + every deferred package's scale) and refreshed in place,
+    /// never stacked - an event-extended update can outlive the batch's own duration and would
+    /// otherwise release deferred actors mid-plan exactly when their later batch needs them.
+    /// </summary>
+    public void ExecuteLLMResponseBatch(MessageJSON batchJson, List<ActionPackage> fullPlanPackages)
+    {
+        scr_System_CentralControl.current.AutoSave();
+
+        var allrelevantActors = new List<int>(batchJson.relevantActorRefs);
+        var allrelevantJobRefs = new List<int>();
+
+        foreach (var ap in fullPlanPackages)
+        {
+            allrelevantActors.AddRange(ap.DoerRefs);
+            allrelevantActors.AddRange(ap.ReceiverRefs);
+            if (ap.job != null) allrelevantJobRefs.Add(ap.job.RefID);
+        }
+        allrelevantActors.RemoveAll(x => x < 0);
+        allrelevantActors = Utility.Distinct(allrelevantActors);
+        allrelevantJobRefs = Utility.Distinct(allrelevantJobRefs);
+
+        var player = scr_System_CampaignManager.current.Player;
+        var currentjob = player.CurrentJob;
+
+        var playerjob = currentjob == null || currentjob.CanBeInterrupted ? scr_System_CampaignManager.current.FindJobInstanceByID(scr_System_CampaignManager.current.jobRef_playerCOM) : currentjob;
+        playerjob.m.displayOverride = true;
+
+        var apLLM = new ActionPackage_LLM(playerjob, batchJson.timeCost, new List<int>() { player.RefID }, batchJson);
+        // Reservation record on the wrapper itself: every FULL-plan actor (batch participants and
+        // deferred "keep for future's sake" actors alike). Bookkeeping only - the enforcement pin
+        // is the wait-package issued/refreshed per actor below.
+        apLLM.pinnedActorRefs = new List<int>(allrelevantActors);
+
+        foreach (var jobref in allrelevantJobRefs)
+        {
+            // placeholder package should be added to every job mentioned in the full plan, not just this batch
+            var job = scr_System_CampaignManager.current.FindJobInstanceByID(jobref);
+            if (job != null && job != playerjob) job.AddPlaceholderPackage(apLLM);
+        }
+
+        // capture hook for the orchestrator's post-settle report (same mechanism Tool_ExecuteAP uses)
+        foreach (var ap in batchJson.GetActionPackages(out _)) ap.trackCapture = true;
+
+        // Whole REMAINING plan duration: this batch's scale plus every deferred package's. Wait-
+        // packages below are sized to this, not to the batch alone.
+        int planDuration = batchJson.timeCost;
+        for (int i = 1; i < fullPlanPackages.Count; i++)
+        {
+            planDuration += fullPlanPackages[i].targetCOM != null ? fullPlanPackages[i].targetCOM.TimeScale : 1;
+        }
+
+        foreach (var actorref in allrelevantActors)
+        {
+            var actor = scr_System_CampaignManager.current.FindInstanceByID(actorref);
+            if (actor == null) continue;
+            if (scr_System_CampaignManager.current.Map.FindRoomByChara(actorref) != scr_System_CampaignManager.current.CurrentRoom) continue;
+            if (actor == player) continue;
+
+            PinActorForLLMPlan(actor, planDuration);
+        }
+
+        player.ChangeCurrentJob(playerjob);
+        playerjob.AddPackage(new List<ActionPackage>() { apLLM }, true);
+
+        scr_System_CampaignManager.current.FreeUpdate(flushLogsOnly: true);
+    }
+
+    [NonSerialized][JsonIgnore] Dictionary<int, (ActionPackage_Wait wait, Job job)> llmPinnedWaits = new Dictionary<int, (ActionPackage_Wait, Job)>();
+
+    /// <summary>
+    /// The re-pin at the heart of agent-mode stepwise execution: called on EVERY
+    /// ExecuteLLMResponseBatch (each execute_actions / submit_response plan-step round) for every
+    /// FULL-plan actor, so deferred actors' room-pins never lapse mid-plan. A wait-package already
+    /// ticking on the same job is REFILLED in place (ActionPackage_Wait.Refill - never stacked, so
+    /// finished plans don't leave NPCs idling on leftover waits) to cover at least this round's
+    /// whole remaining-plan duration, topping up whatever earlier rounds' event tails consumed. A
+    /// stale wait (expired, or the actor changed jobs since it was issued) is cleanly evicted via
+    /// Job.RemovePackage (disable + unregister + untrack - never a bare Remove) before a fresh one
+    /// is issued on the actor's current job.
+    /// </summary>
+    void PinActorForLLMPlan(Character_Trainable actor, int minutes)
+    {
+        var actorjob = actor.CurrentJob != null ? actor.CurrentJob : actor.InteractionJob;
+        if (actorjob != actor.CurrentJob)
+        {
+            // changejob
+            actor.ChangeCurrentJob(actorjob);
+        }
+
+        if (llmPinnedWaits.TryGetValue(actor.RefID, out var prev) && prev.wait != null)
+        {
+            if (prev.job == actorjob && prev.wait.Duration > 0)
+            {
+                // live pin on the same job - refresh it, no stacking
+                prev.wait.Refill(minutes);
+                actor.Stats.pauseLLMTicks = Math.Max(actor.Stats.pauseLLMTicks, minutes);
+                return;
+            }
+            // expired or stranded on an old job - evict cleanly before re-issuing
+            if (prev.job != null) prev.job.RemovePackage(prev.wait);
+        }
+
+        var waiting = new ActionPackage_Wait(actorjob, actor.RefID, minutes);
+        actorjob.AddPackage(new List<ActionPackage>() { waiting });
+        llmPinnedWaits[actor.RefID] = (waiting, actorjob);
+        actor.Stats.pauseLLMTicks = minutes;
+    }
+
+    /// <summary>
+    /// Shared strict-JoinAP batch partition for agent-mode stepwise execution - used by both
+    /// scr_UpdateHandler.AgentLoop_Routine's submit_response plan steps and the execute_actions
+    /// tool. Anchor = packages[0]; every subsequent APJSON that JoinAP-merges into the anchor (same
+    /// commandID/sourceJobID/result-acceptance + canJoinAP variant check - the existing conflict
+    /// detection normal game APs use) joins this round's batch; everything else is deferred for
+    /// later rounds (e.g. two talks against different jobs never merge, so they always cost two
+    /// rounds). Returns the batch as a standalone sub-MessageJSON with its own GetActionPackages
+    /// cache and timeCost (the anchor's own COM scale), ready for ExecuteLLMResponseBatch;
+    /// summary/relevantActorRefs carry over from source.
+    /// </summary>
+    public static MessageJSON BuildAPBatch(MessageJSON source, List<ActionPackage> packages, out List<APJSON> deferred)
+    {
+        deferred = new List<APJSON>();
+        var anchor = packages[0];
+
+        for (int i = 1; i < packages.Count; i++)
+        {
+            // A successful join mutates the anchor's epjson list - that merged list IS the batch.
+            foreach (var ep in packages[i].epjson)
+            {
+                if (anchor.JoinAP(ep, out _)) continue;
+                deferred.Add(ep);
+            }
+        }
+
+        var batchJson = new MessageJSON();
+        batchJson.summary = source.summary;
+        batchJson.relevantActorRefs = new List<int>(source.relevantActorRefs);
+        batchJson.timeCost = anchor.targetCOM != null ? anchor.targetCOM.TimeScale : 1;
+        batchJson.UpdateVariable.AddRange(anchor.epjson);
+        return batchJson;
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;
@@ -1892,6 +2128,10 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void StartCampaign(CampaignSettings camp, CampaignSettings_ExtraOptions camp_ex, Character_Trainable main, Character_Trainable sub = null)
     {
+        // Regular-load wipe (user decision 2.2): a brand-new campaign must never inherit a stale LLM
+        // comparison chain (or its checkpoint files) from whatever play session preceded it.
+        LLMSessionStore.Clear();
+
         // Debug.Log("3d8 " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8) + " " + Utility.Dice(1, 8));
 
         viewMode = ViewMode.View_Room;
@@ -2504,6 +2744,10 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <param name="flushOnly">if true, do not clear logs. else, clear logs.</param>
     public void ClearLogs(bool flushOnly = false, bool clearAll = false)
     {
+        // Nothing about the log - UI or underlying history - should change while an agent run's
+        // content is pending review in the LLM display.
+        if (scr_UpdateHandler.current != null && scr_UpdateHandler.current.IsAgentRunning) return;
+
         if (!flushOnly) LogManager.Clear();
         Observer_LogsClear?.Invoke(flushOnly, clearAll);
     }

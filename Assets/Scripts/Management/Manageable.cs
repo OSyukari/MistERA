@@ -751,6 +751,57 @@ public class Manageable : I_Disposable, I_IsJobGiver
         this.SalesManager.DailyUpdate();
         CheckDailyResourceConsumption();
         // character log their daily consumption at updateOrder 2
+
+        // Re-add (daily, after OnDayUpdate_0's DailyReport.Clear wiped yesterday's - see OnDayUpdate_0) a
+        // conflict-colored warning per floor whose rent/maintenance last failed to resolve - see
+        // TradeManager.unmaintainedFloorRefs. Only floors still currently held are reported, so a vacated
+        // floor's stale entry never surfaces.
+        foreach (var floor in this.ManagedFloors)
+        {
+            if (floor == null || !this.TradeManager.unmaintainedFloorRefs.Contains(floor.refID)) continue;
+            DailyReport.AddManageReport(LocalizeDictionary.QueryThenParse("obligation_rent_unmaintained_warning").Replace("$floor$", floor.displayName), true);
+        }
+    }
+
+    /// <summary>
+    /// Whether the floor job takes place on is currently maintained (its rent/maintenance charge paid at
+    /// the last resolution - see TradeManager.unmaintainedFloorRefs / Obligation_Rent.HandlePaymentEvent).
+    /// Intended as the gate future job types check before running on a location. Jobs with no resolvable
+    /// room/floor (rally points, world-map moves, etc.) are always considered maintained - unmaintenance
+    /// is a floor-level state that must never hard-block floor-less jobs. Floors carrying no
+    /// rent/maintenance cost at all are ALSO always considered maintained (nothing to fail paying - and
+    /// no payment event ever fires for them, see Obligation_Rent.HandlePaymentEvent's per-floor skip);
+    /// a stale unmaintained entry left behind by a later cost removal self-heals here.
+    /// </summary>
+    public bool IsFloorMaintained(Job job)
+    {
+        var floor = job == null || job.ParentRoom == null ? null : job.ParentRoom.parentFloor;
+        if (floor == null) return true;
+        if (!TradeManager.unmaintainedFloorRefs.Contains(floor.refID)) return true;
+
+        if (!FloorHasAnyRentCost(floor))
+        {
+            TradeManager.unmaintainedFloorRefs.Remove(floor.refID);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Whether floor carries any rent/maintenance cost under THIS faction at all - same whole-vs-unit
+    /// template resolution as Obligation_Rent.GetRelevantFloors (which faction's own MapPlan instantiated
+    /// the floor decides which cost table applies), with a null/zero fee counting as no cost.
+    /// </summary>
+    bool FloorHasAnyRentCost(Floor_Instance floor)
+    {
+        var floorBase = floor.FloorBase;
+        var mapTemplate = floor.MapTemplate;
+        if (floorBase == null || mapTemplate == null) return false;
+
+        var rentCost = mapTemplate.ID == this.mapPlanID ? floorBase.wholeBuildingRent : floorBase.unitRent;
+        return rentCost != null
+            && ((rentCost.maintenanceFee != null && rentCost.maintenanceFee.itemCount > 0)
+                || (rentCost.rentFee != null && rentCost.rentFee.itemCount > 0));
     }
 
     public void AddPayment(Manageable targetFaction, ItemEntry entry, ItemEntry cost, int count, ProductionOrderType orderType = ProductionOrderType.craftCount)

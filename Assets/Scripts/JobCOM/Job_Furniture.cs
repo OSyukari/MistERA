@@ -224,6 +224,12 @@ public class Job_Furniture : Job
                 continue;
             }
             //if (pkg.Duration * 2 < pkg.targetCOM.TimeScale) continue;
+            /*  we are checking active packages and they necessarily passed the maintenance check
+            if (!ValidateFloorMaintenance(out var floorReason))
+            {
+                if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, {floorReason}");
+                continue;
+            }*/
             if (false && !CanCOMAcceptMoreActor(pkg.targetCOM, c))
             {
                 if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, {pkg.DisplayName} cannot accept more actor");
@@ -275,6 +281,11 @@ public class Job_Furniture : Job
             {
                 if (!ValidCOMs.Contains(com)) continue;
                 if (!CanCOMAcceptMoreActor(com, c)) continue;
+                if (!ValidateFloorMaintenance(out var floorReason))
+                {
+                    if (debug != null) debug.Add(floorReason);
+                    continue;
+                }
                 if (com.hasFactionReq && !com.requirements.requireFaction.Validate(FactionOwner, out var reqd)) continue;
                 if (com.hasFactionReq && com.isJobCOM && (m == null || !m.GetProductionOrder(this, out var xxx, out var po))) continue;
 
@@ -872,6 +883,28 @@ public class Job_Furniture : Job
                 if (isPlayerCOM) scr_System_CampaignManager.current.SetDisplayCOM(ap, scr_System_CampaignManager.displayAP_Reason.isPlayerCOM);
             }
         }
+    }
+
+    /// <summary>
+    /// Fails when this furniture requires a maintained floor (FurnitureInstance.requireFloorMaintenance)
+    /// but its floor's rent/maintenance charge is currently unpaid (Manageable.IsFloorMaintained via this
+    /// job's FactionOwner - floor-less jobs are always maintained, see that method). reason receives a
+    /// localized, tooltip-ready explanation on failure; used by FilterPossibleCOMs/MakePackagesJoinable
+    /// alongside CanCOMAcceptMoreActor so an unmaintained floor blocks both new and joinable packages.
+    /// </summary>
+    public bool ValidateFloorMaintenance(out string reason)
+    {
+        reason = "";
+        if (ParentInstance == null || !ParentInstance.requireFloorMaintenance) return true;
+
+        var faction = FactionOwner as Manageable;
+        if (faction == null || faction.IsFloorMaintained(this)) return true;
+
+        var floor = ParentRoom == null ? null : ParentRoom.parentFloor;
+        reason = LocalizeDictionary.QueryThenParse("job_furniture_floorUnmaintained")
+            .Replace("$furniture$", DisplayName)
+            .Replace("$floor$", floor == null ? "" : floor.displayName);
+        return false;
     }
 
     public bool CanCOMAcceptMoreActor(COM com, List<int> cs)

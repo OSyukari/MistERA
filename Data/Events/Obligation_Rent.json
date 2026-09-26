@@ -9,15 +9,34 @@
                     ]
                 },
                 "events": [
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent", "line": "OnRentPaid_rent", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance", "line": "OnRentPaid_maintenance", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both", "line": "OnRentPaid_both", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic", "line": "OnRentPaid_generic", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent", "line": "OnRentPaid_rent", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance", "line": "OnRentPaid_maintenance", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both", "line": "OnRentPaid_both", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic", "line": "OnRentPaid_generic", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
 
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent_payee", "line": "OnRentPaid_rent_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance_payee", "line": "OnRentPaid_maintenance_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both_payee", "line": "OnRentPaid_both_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic_payee", "line": "OnRentPaid_generic_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent_payee", "line": "OnRentPaid_rent_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance_payee", "line": "OnRentPaid_maintenance_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both_payee", "line": "OnRentPaid_both_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic_payee", "line": "OnRentPaid_generic_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_trust",
+                        "options": [
+                            {
+                                "option": "trust changed - narrate it",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["trustChange"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "trust_change"] }
+                                ]
+                            },
+                            {
+                                "option": "no trust change - check resumed next",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "check_resumed"] } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "trust_change", "line": "rent_trust_change", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_resumed" },
 
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
@@ -47,15 +66,53 @@
                     ]
                 },
                 "events": [
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent", "isLast": true, "line": "OnRentFailed_rent", "tooltip": "target character: $target.name$" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance", "isLast": true, "line": "OnRentFailed_maintenance", "tooltip": "target character: $target.name$" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both", "isLast": true, "line": "OnRentFailed_both", "tooltip": "target character: $target.name$" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic", "isLast": true, "line": "OnRentFailed_generic", "tooltip": "target character: $target.name$" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent", "line": "OnRentFailed_rent", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance", "line": "OnRentFailed_maintenance", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both", "line": "OnRentFailed_both", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic", "line": "OnRentFailed_generic", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
 
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent_payee", "isLast": true, "line": "OnRentFailed_rent_payee", "tooltip": "target character: $target.name$" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance_payee", "isLast": true, "line": "OnRentFailed_maintenance_payee", "tooltip": "target character: $target.name$" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both_payee", "isLast": true, "line": "OnRentFailed_both_payee", "tooltip": "target character: $target.name$" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic_payee", "isLast": true, "line": "OnRentFailed_generic_payee", "tooltip": "target character: $target.name$" }
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "rent_payee", "line": "OnRentFailed_rent_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "maintenance_payee", "line": "OnRentFailed_maintenance_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "both_payee", "line": "OnRentFailed_both_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "generic_payee", "line": "OnRentFailed_generic_payee", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_trust" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_trust",
+                        "options": [
+                            {
+                                "option": "trust changed - narrate it",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["trustChange"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "trust_change"] }
+                                ]
+                            },
+                            {
+                                "option": "no trust change - check interrupted next",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "check_interrupted"] } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "trust_change", "line": "rent_trust_change", "tooltip": "target character: $target.name$", "nextEntryLabel": "check_interrupted" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_interrupted",
+                        "options": [
+                            {
+                                "option": "interrupted append string set - jump to the interrupted trailer line",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["interrupted"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "interrupted_trailer"] }
+                                ]
+                            },
+                            {
+                                "option": "not newly interrupted - nothing more to say",
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "interrupted_trailer", "isLast": true, "line": "OnRentFailed_interrupted", "tooltip": "target character: $target.name$" }
                 ]
             }
         ]
@@ -69,6 +126,7 @@
                 "OnRentPaid_both": "$factionName$已向$counterpartName$支付$sourceName$的租金与房屋维护费（$amount$）。",
                 "OnRentPaid_generic": "$factionName$已还清拖欠的租金（$amount$）。",
                 "OnRentPaid_resumed": "此前因欠款而中断的服务已恢复。",
+                "rent_trust_change": "$factionName$成员对管理者（$managers.name$）的信赖$trustChange$。",
 
                 "OnRentPaid_rent_payee": "$factionName$已从$counterpartName$处收取$sourceName$的租金（$amount$）。",
                 "OnRentPaid_maintenance_payee": "$factionName$已从$counterpartName$处收取$sourceName$的房屋维护费（$amount$）。",
@@ -84,7 +142,8 @@
                 "OnRentFailed_rent_payee": "$factionName$本期未能从$counterpartName$处收到$sourceName$的租金：需要$amount$，但对方仅有$available$。",
                 "OnRentFailed_maintenance_payee": "$factionName$本期未能从$counterpartName$处收到$sourceName$的房屋维护费：需要$amount$，但对方仅有$available$。",
                 "OnRentFailed_both_payee": "$factionName$本期未能从$counterpartName$处收到$sourceName$的租金与房屋维护费：需要$amount$，但对方仅有$available$。",
-                "OnRentFailed_generic_payee": "$factionName$未能从$counterpartName$处收到拖欠的租金：需要$amount$，但对方仅有$available$。"
+                "OnRentFailed_generic_payee": "$factionName$未能从$counterpartName$处收到拖欠的租金：需要$amount$，但对方仅有$available$。",
+                "OnRentFailed_interrupted": "由于未能支付租金，$sourceName$的部分设施和家具停止了工作。"
             },
             "en-us": {
                 "OnRentPaid": "Rent Event - Paid",
@@ -93,6 +152,7 @@
                 "OnRentPaid_both": "$factionName$ paid $sourceName$'s rent and maintenance to $counterpartName$ ($amount$).",
                 "OnRentPaid_generic": "$factionName$ paid off an outstanding rent balance ($amount$).",
                 "OnRentPaid_resumed": "Service, previously interrupted by the missed payment, has resumed.",
+                "rent_trust_change": "The members' trust toward $managers.name$ $trustChange$.",
 
                 "OnRentPaid_rent_payee": "$factionName$ collected $sourceName$'s rent from $counterpartName$ ($amount$).",
                 "OnRentPaid_maintenance_payee": "$factionName$ collected $sourceName$'s maintenance fee from $counterpartName$ ($amount$).",
@@ -108,7 +168,8 @@
                 "OnRentFailed_rent_payee": "$factionName$ did not receive $sourceName$'s rent from $counterpartName$ this cycle: $amount$ was due, but they only have $available$.",
                 "OnRentFailed_maintenance_payee": "$factionName$ did not receive $sourceName$'s maintenance fee from $counterpartName$ this cycle: $amount$ was due, but they only have $available$.",
                 "OnRentFailed_both_payee": "$factionName$ did not receive $sourceName$'s rent and maintenance from $counterpartName$ this cycle: $amount$ was due, but they only have $available$.",
-                "OnRentFailed_generic_payee": "$factionName$ did not receive the outstanding rent balance from $counterpartName$: $amount$ was due, but they only have $available$."
+                "OnRentFailed_generic_payee": "$factionName$ did not receive the outstanding rent balance from $counterpartName$: $amount$ was due, but they only have $available$.",
+                "OnRentFailed_interrupted": "Because $payerName$ failed to pay $payeeName$, service has been interrupted."
             }
         }
     }

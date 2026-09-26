@@ -123,10 +123,36 @@ public class scr_System_CentralControl : MonoBehaviour
         }
     }
 
+    LLMRequestTemplateData _llmAgentSlowModeConfig = null;
+    bool deactivate_llmAgentSlowModeConfig = false;
+    /// <summary>
+    /// Agent-mode's own slow-mode overlay (Assets/LLM/Request_Slow_Agent.json) - same shape as
+    /// LLMSlowModeConfig but with the task/rules replacements rewritten for the stepwise
+    /// execute_actions-then-submit_response workflow, plus the agent-mode feedback strings under
+    /// reserved replacement keys (agent_feedback_* / agent_nextStep_*), fetched at runtime by
+    /// scr_UpdateHandler.AgentText so no orchestrator prompt text lives in code. Self-deactivates
+    /// when the file is absent - callers fall back to the regular LLMSlowModeConfig there.
+    /// </summary>
+    public LLMRequestTemplateData LLMAgentSlowModeConfig
+    {
+        get
+        {
+            if (_llmAgentSlowModeConfig == null && !deactivate_llmAgentSlowModeConfig)
+            {
+                string filePath = Application.dataPath + "/LLM/Request_Slow_Agent.json";
+                FileInfo file = new System.IO.FileInfo(filePath);
+                if (File.Exists(filePath)) _llmAgentSlowModeConfig = JsonConvert.DeserializeObject<LLMRequestTemplateData>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                else deactivate_llmAgentSlowModeConfig = true;
+            }
+            return _llmAgentSlowModeConfig;
+        }
+    }
+
     public void ResetLLMRequestTemplate()
     {
         _llmPresetTemplate = null;
         _llmSlowModeConfig = null;
+        _llmAgentSlowModeConfig = null;
         _llmPresets = null;
         _llmPresetsByID = null;
     }
@@ -399,6 +425,7 @@ public class scr_System_CentralControl : MonoBehaviour
         if (current == null)
         {
             current = this;
+            LLMToolRegistry.RegisterDefaults();
         }
         else
         {
@@ -1011,22 +1038,13 @@ public class scr_System_CentralControl : MonoBehaviour
         return false;
     }
 
-    FileInfo autoSave = null;
     public void AutoSave()
     {
         if (scr_UpdateHandler.current.Lock) return;
         if (scr_System_CampaignManager.current.Player.CurrentJob is Job_Sex_Group) return;
 
         scr_UpdateHandler.current.NotifySL(true);
-
-        var time = DateTime.Now;
-        var save = new SaveFile(true);
-        string s = JsonConvert.SerializeObject(save, Formatting.Indented, UtilityEX.SerializerSettings);
-
-        if (autoSave == null) autoSave = new System.IO.FileInfo(scr_System_Serializer.AutosavePath);
-        autoSave.Directory.Create();
-        File.WriteAllText(autoSave.FullName, s);
-
+        WriteSaveTo(scr_System_Serializer.AutosavePath);
         scr_UpdateHandler.current.NotifySL(false);
     }
 
@@ -1036,17 +1054,28 @@ public class scr_System_CentralControl : MonoBehaviour
 
         var time = DateTime.Now;
         var fileName = time.Year+"-"+time.Month.ToString("D2")+"-"+time.Day.ToString("D2") + " "+time.Hour.ToString("D2") + "H "+time.Minute.ToString("D2") +"M " + time.Second.ToString("D2") + "S";
-        var save = new SaveFile(true);
-        string s = JsonConvert.SerializeObject(save, Formatting.Indented, UtilityEX.SerializerSettings);
-
-        FileInfo file = new System.IO.FileInfo($"{scr_System_Serializer.SavePath}/{fileName}.json");
-        file.Directory.Create();
-        File.WriteAllText(file.FullName, s);
-
-        scr_System_CampaignManager.current.QuickSaveFilePath = file.FullName;
+        var path = $"{scr_System_Serializer.SavePath}/{fileName}.json";
+        WriteSaveTo(path);
+        scr_System_CampaignManager.current.QuickSaveFilePath = path;
 
         scr_UpdateHandler.current.NotifySL(false);
         Debug.Log("Saving Complete!");
+    }
+
+    /// <summary>
+    /// Plain player-facing save write: serializes the full current game state to an arbitrary path.
+    /// No overlay/guards of its own - AutoSave/QuickSave wrap this with NotifySL and their validity
+    /// checks. This is deliberately NOT a "silent save": background saving with no UI side effects
+    /// is LLM-checkpoint-exclusive and lives in LLMCheckpointStore.WriteCheckpoint.
+    /// </summary>
+    void WriteSaveTo(string path)
+    {
+        var save = new SaveFile(true);
+        string s = JsonConvert.SerializeObject(save, Formatting.Indented, UtilityEX.SerializerSettings);
+
+        var file = new System.IO.FileInfo(path);
+        file.Directory.Create();
+        File.WriteAllText(file.FullName, s);
     }
 
     public void QuickLoad()
@@ -1057,6 +1086,12 @@ public class scr_System_CentralControl : MonoBehaviour
             Debug.LogError("QuickLoad path invalid");
             return;
         }
+
+        // Regular-load wipe (user decision 2.2): QuickLoad bypasses scr_UpdateHandler.LoadSaveFile,
+        // so the LLM comparison chain's wipe has to happen here explicitly - loading a save must
+        // never resurrect a stale comparison chain.
+        LLMSessionStore.Clear();
+
         SaveFile save = JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(path), UtilityEX.SerializerSettings);
 
         save.LoadSave();
@@ -1081,7 +1116,14 @@ public class SaveFileHolder
         return JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(FilePath), UtilityEX.SerializerSettings);
     }}
 
-    [JsonIgnore] public bool isValid{get{ return FilePath != ""; }}
+    /// <summary>
+    /// True only when a path is set AND the file actually exists on disk - InnerFile deserializes
+    /// synchronously from that path, so a missing file must be caught here (graceful degradation
+    /// at the validity check) instead of throwing FileNotFoundException at the load site. The
+    /// existence probe only runs on explicit validity checks (load attempts, save-browser
+    /// selection), never per-frame.
+    /// </summary>
+    [JsonIgnore] public bool isValid{get{ return FilePath != "" && File.Exists(FilePath); }}
 
 }
 

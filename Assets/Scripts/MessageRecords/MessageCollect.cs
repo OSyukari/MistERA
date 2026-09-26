@@ -486,6 +486,23 @@ public class MessageCollect
 
 
 
+    /// <summary>
+    /// Returns a readable I_Records.Dump line for every message this collect holds, in the same
+    /// order FlushCollectLogs adds them to the visible game log - for callers (e.g. the LLM agent-mode
+    /// ExecuteAP tool) that need the text itself rather than writing it to the log.
+    /// </summary>
+    public List<string> DumpMessages()
+    {
+        var lines = new List<string>();
+        foreach (var m in messages_checks) lines.Add(m.Dump);
+        foreach (var m in messages_before) lines.Add(m.Dump);
+        foreach (var m in messages_kojo) lines.Add(m.Dump);
+        foreach (var m in messages_exp) lines.Add(m.Dump);
+        foreach (var m in messages_kojo_after) lines.Add(m.Dump);
+        foreach (var m in messages_after) lines.Add(m.Dump);
+        return lines;
+    }
+
     public void Merge(MessageCollect m, bool clear = true)
     {
         if (m.messages_checks.Count > 0)

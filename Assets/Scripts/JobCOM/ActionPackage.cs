@@ -776,7 +776,7 @@ public abstract class ActionPackage
     /// doers.allUnconscious will prevent this from ticking<br/><br/>
     /// actorList is currently null
     /// </summary>
-    public virtual bool Tick(List<int> actorList, int tickDuration = 1)
+    public virtual bool Tick(List<int> actorList, int tickDuration = 1, MessageCollect m = null)
     {
         //Debug.Log("AP TICK for " + DisplayName);
         bool timeStop = DoerRefs.Count > 0;
@@ -830,14 +830,14 @@ public abstract class ActionPackage
                     Ticked = true;
                     internalState = AP_Status.refused;
                     toggleRepeat = false;
-                    LogAcceptanceCheck();
-                    LogMessage_Begin_Refuse();
-                    ExecutePackage();
+                    LogAcceptanceCheck(m);
+                    LogMessage_Begin_Refuse(m);
+                    ExecutePackage(m);
                     return true;
                 }
                 else
                 {   // accept
-                    LogAcceptanceCheck();
+                    LogAcceptanceCheck(m);
                     internalState = AP_Status.accepted;
                     if (receiver.Count > 0 && duration > 0)
                     {
@@ -855,20 +855,20 @@ public abstract class ActionPackage
                             }
                         }
                     }
-                    PackageBegin();
+                    PackageBegin(m);
                 }
             }
             else
             {
                 internalState = AP_Status.running;
             }
-            PackageTick();
+            PackageTick(m);
         }
        
         if (duration <= 0)
         {
             internalState = AP_Status.success;
-            ExecutePackage();
+            ExecutePackage(m);
             return true;
         }
         else
@@ -962,7 +962,17 @@ public abstract class ActionPackage
 
         if (job is Job_Furniture)
         {
-            if (!(job as Job_Furniture).CanCOMAcceptMoreActor(targetCOM, this.actorRefs))
+            var jj = job as Job_Furniture;
+
+            if (!jj.ValidateFloorMaintenance(out var floorReason))
+            {
+                tooltip.Add($"{floorReason}");
+                //if (debug) Debug.LogError($"{c.FirstName} try join {pkg.DisplayName} fail, {floorReason}");
+                isValid = false;
+                return isValid;
+            }
+
+            if (!jj.CanCOMAcceptMoreActor(targetCOM, this.actorRefs))
             {
                 tooltip.Add("cannot accept more actor");
                 isValid = false;
@@ -1274,11 +1284,11 @@ public abstract class ActionPackage
 
         if (repeated)
         {
-            LogMessage_Begin_Ongoing();
+            LogMessage_Begin_Ongoing(m);
         }
         else
         {
-            LogMessage_Begin();
+            LogMessage_Begin(m);
         }
 
     }
@@ -1648,7 +1658,7 @@ public abstract class ActionPackage
         if (!logging) packageStateChanged = true;
     }
 
-    public void LogAcceptanceCheck(MessageCollect m = null)
+    public virtual void LogAcceptanceCheck(MessageCollect m = null)
     {
         if (this.job == null)
         {
@@ -1736,6 +1746,24 @@ public abstract class ActionPackage
     {
         this.duration = 0;
         ExecutePackage(m, eventCollector);
+    }
+
+    /// <summary>
+    /// Public entry to Request() for callers driving another AP's lifecycle (ActionPackage_LLM's
+    /// inner packages), same role as ExecutePackageOutsideUpdate for ExecutePackage.
+    /// </summary>
+    public bool RequestOutsideUpdate(Memory_Response forceAccept = Memory_Response.None)
+    {
+        return Request(true, forceAccept);
+    }
+
+    /// <summary>
+    /// Public entry to PackageBegin() (ExecuteImmediate + launch options + LogMessage_Begin), same role
+    /// as ExecutePackageOutsideUpdate for ExecutePackage.
+    /// </summary>
+    public void PackageBeginOutsideUpdate(MessageCollect m = null)
+    {
+        PackageBegin(m);
     }
 
     public bool LowPriority = false;
@@ -2308,8 +2336,8 @@ public abstract class ActionPackage
             this.temporaryM = null;
         }
 
-        LogMessage_Climax();
-        LogMessage_After();
+        LogMessage_Climax(m);
+        LogMessage_After(m);
     }
 
     protected void UseItem(bool success, Character_Trainable c, Item_Instance item, MessageCollect m = null)
@@ -2506,7 +2534,7 @@ public abstract class ActionPackage
         }
     }
 
-    public void LogMessage_Kojo(MessageCollect m = null)
+    public virtual void LogMessage_Kojo(MessageCollect m = null)
     {
         if (LoggedKojo) return;
 
@@ -2547,7 +2575,7 @@ public abstract class ActionPackage
 
     List<int> joinAP_list = new List<int>();
 
-    public bool LogMessage_Join(Character_Trainable target, string tooltip, MessageCollect m = null)
+    public virtual bool LogMessage_Join(Character_Trainable target, string tooltip, MessageCollect m = null)
     {
         if (m == null) m = this.job.m;
 
@@ -2590,6 +2618,25 @@ public abstract class ActionPackage
 
     public MessageCollect mcol = new MessageCollect();
 
+    /// <summary>
+    /// When true, Job.CollectLogs copies mcol into capturedLog immediately before merging it into
+    /// job.m and clearing it (via CaptureRecording) - lets an external caller (Tool_ExecuteAP, the
+    /// LLM agent-mode action-execution tool) read exactly what messages this one AP produced, without
+    /// interfering with the normal merge/clear/visible-log flow every other concurrently-ticking AP
+    /// still goes through untouched.
+    /// </summary>
+    [JsonIgnore] public bool trackCapture = false;
+    [JsonIgnore] public MessageCollect capturedLog = null;
+
+    /// <summary>
+    /// Whether this AP is running as part of an LLM agent-mode round rather than a single-shot
+    /// response. Internally just reads trackCapture (only ever set true for inner APs coming through
+    /// ExecuteLLMResponseBatch, never ExecuteLLMResponse's single-shot ones) - exposed under its own
+    /// name so callers deciding accept/refuse semantics (see ActionPackage_LLM.Execution) don't have to
+    /// know about capturedLog's unrelated capture-reporting purpose.
+    /// </summary>
+    [JsonIgnore] public bool IsAgentRun { get { return trackCapture; } }
+
     string keyReplace(string s)
     {
         if (keyReplaceDictionary == null || keyReplaceDictionary.Count < 1) return s;
@@ -2605,7 +2652,7 @@ public abstract class ActionPackage
     }
 
 
-    public void LogMessage_Begin(MessageCollect m = null, Character_Trainable injectChara = null)
+    public virtual void LogMessage_Begin(MessageCollect m = null, Character_Trainable injectChara = null)
     {
         if (LoggedBegin) return;
         if (targetCOM == null || COMVariantID < 0) return;
@@ -2667,7 +2714,7 @@ public abstract class ActionPackage
      /// This one should be allowed to repeat on every player command input, so there is less check
      /// </summary>
      /// <param name="ep"></param>
-    public void LogMessage_Begin_Ongoing(MessageCollect m = null)
+    public virtual void LogMessage_Begin_Ongoing(MessageCollect m = null)
     {
         if (LoggedBegin) return;
         bool logging = true;
@@ -2680,14 +2727,14 @@ public abstract class ActionPackage
 
         foreach (var ep in this.ListEP)
         {
-            var response = ep.LogMessage_Begin_Ongoing(mcol);
+            var response = ep.LogMessage_Begin_Ongoing(m);
             if (response.Length < 1) continue;
 
 
             var desc = new DescriptionCollector(response);
             desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message_excludeRelated = response;
-            mcol.AddMessage_Before(desc, true, logging ? Room : null);
+            m.AddMessage_Before(desc, true, logging ? Room : null);
             if (!logging) packageStateChanged = true;
         }
     }
@@ -2700,7 +2747,7 @@ public abstract class ActionPackage
     /// <param name="rightAlign"></param>
     /// <param name="m"></param>
     /// <param name="target"></param>
-    public void LogMessage_Ongoing(MessageCollect m, Character_Trainable target = null)
+    public virtual void LogMessage_Ongoing(MessageCollect m, Character_Trainable target = null)
     {
         if (this.isTemporaryAP) return;
         if (LoggedOngoing) { LoggedOngoing = false; return; }  // AP began this same turn - Begin already printed, skip Ongoing once
@@ -2756,7 +2803,7 @@ public abstract class ActionPackage
     }
 
 
-    public void LogMessage_Climax(MessageCollect m = null)
+    public virtual void LogMessage_Climax(MessageCollect m = null)
     {
         bool logging = true;
         if (m == null)
@@ -2766,18 +2813,18 @@ public abstract class ActionPackage
         }
         foreach (var ep in this.ListEP)
         {
-            var responses = ep.LogMessage_Climax(mcol);
+            var responses = ep.LogMessage_Climax(m);
 
             foreach (var kol in responses)
             {
-                mcol.AddKojo(kol);
+                m.AddKojo(kol);
                 if (!logging) packageStateChanged = true;
                 else if (Room != null && Room.HasRecording) Room.NotifyKojoCollect(kol);
             }
         }
 
     }
-    public void LogMessage_Begin_Refuse(MessageCollect m = null)
+    public virtual void LogMessage_Begin_Refuse(MessageCollect m = null)
     {
         if (LoggedBegin) return;
         bool logging = true;
@@ -2789,20 +2836,20 @@ public abstract class ActionPackage
         LoggedBegin = true;
         foreach (var ep in this.ListEP)
         {
-            var responses = ep.LogMessage_Begin_Refuse(false, mcol);
+            var responses = ep.LogMessage_Begin_Refuse(false, m);
 
             if (responses.Length > 0)
             {
                 var desc = new DescriptionCollector(responses);
                 desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.message_excludeRelated = responses;
-                mcol.AddMessage_Before(desc, true, logging ? Room : null);
+                m.AddMessage_Before(desc, true, logging ? Room : null);
                 if (!logging) packageStateChanged = true;
             }
         }
     }
 
-    public void LogMessage_Begin_Abort(MessageCollect m = null)
+    public virtual void LogMessage_Begin_Abort(MessageCollect m = null)
     {
         bool logging = true;
         if (m == null)
@@ -2831,7 +2878,7 @@ public abstract class ActionPackage
         this.LoggedBegin = true;
     }
 
-    public void LogMessage_After(MessageCollect m = null)
+    public virtual void LogMessage_After(MessageCollect m = null)
     {
         //if (!visible && recordingRoom == null) return;
         if (isTemporaryAP) return;
@@ -2882,7 +2929,7 @@ public abstract class ActionPackage
             if (targetCOM == null) continue;
             if (targetCOM is COM_Sex) continue;
             if (ep.Response < Memory_Response.Success) continue;
-            var rs = ep.LogMessage_After(false, mcol);
+            var rs = ep.LogMessage_After(false, m);
 
             if (rs.Length > 0)
             {
@@ -2892,7 +2939,7 @@ public abstract class ActionPackage
 
             else if (!isPlayerRelatedPackage)
             {
-                var responses = ep.LogMessage_Ongoing(mcol, null);
+                var responses = ep.LogMessage_Ongoing(m, null);
                 if (responses.Count < 1) continue;
                 bool hasresponse = false;
                 foreach (var kol in responses)
@@ -2921,7 +2968,7 @@ public abstract class ActionPackage
 
             //desc.LoadPortraits(this.actorRefs, true);
             //Debug.Log($"logmessageafter!\n{desc.message}\n{desc.message_excludeRelated}");
-            mcol.AddMessage_After(desc, logging ? Room : null);
+            m.AddMessage_After(desc, logging ? Room : null);
             if (!logging) packageStateChanged = true;
         }
 

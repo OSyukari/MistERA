@@ -9,10 +9,10 @@ public class LLMCollector
     public MessageJSON json = null;
 
     public LLMCollector() { }
-    public LLMCollector(scr_menu_LLMQuery query) 
+    public LLMCollector(scr_panel_logs query)
     {
         json = query.CurrentResponse.JSON;
-    
+
     }
 }
 

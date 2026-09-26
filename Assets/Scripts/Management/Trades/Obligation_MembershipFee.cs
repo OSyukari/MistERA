@@ -106,12 +106,17 @@ public class Obligation_MembershipFee : RecurringObligation
     /// differ per character. Silently skipped entirely on a trivial cycle (nothing actually charged) same as
     /// PrintOutcome's own "empty on trivial success" rule. Each character's event fires both ways via
     /// FireObligationEventBothSides - label "" for the home faction's own framing, "payee" for the provider's.
+    /// resumed (success clearing a prior missed payment) lets OnMembershipFeePaid's check_resumed branch
+    /// announce access has resumed; interrupted (the mirror-image - a failure that newly suspends the
+    /// obligation, not a repeat failure on an already-suspended backlog) lets OnMembershipFeeFailed's own
+    /// check_interrupted branch announce access has just been cut off.
     /// </summary>
     protected override void HandlePaymentEvent(TradeManager manager, Manageable owner, bool success, ItemEntry attempt)
     {
         if (attempt == null || attempt.itemCount <= 0) return;
 
         bool resumed = success && cycleWasSuspended;
+        bool interrupted = !success && !cycleWasSuspended;
 
         // Only a real (player) faction can ever actually fail a payment - TradeManager.TryChargeObligation
         // substitutes the Recycler (which always "succeeds") for any non-player owner - so owner.Inventory
@@ -128,7 +133,7 @@ public class Obligation_MembershipFee : RecurringObligation
                 ? LocalizeDictionary.QueryThenParse(entry.def.membershipFeeName)
                 : LocalizeDictionary.QueryThenParse("obligation_membershipfee_generic_name");
 
-            FireObligationEventBothSides(manager, owner, eventID, "", "payee", entry.fee, available, resumed, entry.chara, feeName);
+            FireObligationEventBothSides(manager, owner, eventID, "", "payee", entry.fee, available, resumed, entry.chara, feeName, interrupted: interrupted);
         }
     }
 

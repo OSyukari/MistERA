@@ -422,7 +422,8 @@ public class scr_panel_COMmanager : scr_Menu
                 case -6511: button.Initialize(this, new ButtonValidator_ChangeDeterministicRollsFilter(this, COMFilter.DeterministicRolls, button)); break;
                 case -6512: button.Initialize(this, new ButtonValidator_ChangeShorterLogs(this, COMFilter.ShorterLogs, button)); break;
                 case -6513: button.Initialize(this, new Button_ToggleLLM(this, COMFilter.LLM, button)); break;
-                
+                case -6514: button.Initialize(this, new ButtonValidator_ToggleAgentMode(this, button)); break;
+
             case -6509:
                 if (safeMode) button.gameObject.SetActive(false);
                 else button.Initialize(this, new ButtonValidator_ChangeCOMFilter(this, COMFilter.Sex_Touch, button)); 
@@ -2481,6 +2482,31 @@ public class scr_panel_COMmanager : scr_Menu
         }
     }
 
+    public class ButtonValidator_ToggleAgentMode : ButtonValidator, I_ButtonClickable
+    {
+        new scr_panel_COMmanager parent;
+        scr_SelectableText text;
+        public ButtonValidator_ToggleAgentMode(scr_panel_COMmanager parent, scr_SelectableText text) : base(parent)
+        {
+            this.parent = parent;
+            this.text = text;
+            text.isButtonToggle = true;
+            text.useDisabledColorWhenUntoggled = true;
+        }
+        public override bool IsButtonValid()
+        {
+            bool value = scr_System_CentralControl.current.LLMSetting.useAgentMode;
+            text.Toggle(true, value);
+            //this.tooltip = LocalizeDictionary.QueryThenParse("ui_llm_agentmode_toggle_tooltip");
+            return true;
+        }
+        public void OnClickButton()
+        {
+            scr_System_CentralControl.current.LLMSetting.useAgentMode = !scr_System_CentralControl.current.LLMSetting.useAgentMode;
+            scr_System_CentralControl.current.StoreLLMSetting();
+        }
+    }
+
     public class Button_RecentCOM: ButtonValidator, I_ButtonClickable
     {
         new scr_panel_COMmanager parent;
@@ -2633,13 +2659,20 @@ public class scr_panel_COMmanager : scr_Menu
         public override bool IsButtonValid()
         {
             if (!text.gameObject.activeInHierarchy) return false;
+            if (scr_UpdateHandler.current.CanInterruptLLMRoutine)
+            {
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_comPanel_LLM_cancelRegen"));
+                return true;
+            }
+            text.SetText(LocalizeDictionary.QueryThenParse("ui_comPanel_LLM_submit"));
             if (parent.inputfield_llm.text == "") return false;
             return true;
         }
 
         public void OnClickButton()
         {
-            parent.OnSubmit_LLM("s");
+            if (scr_UpdateHandler.current.CanInterruptLLMRoutine) scr_UpdateHandler.current.InterruptLLMRoutine(false, parent.ValidateAll);
+            else parent.OnSubmit_LLM("s");
         }
     }
 

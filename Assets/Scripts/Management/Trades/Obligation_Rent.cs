@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Rent/maintenance owed by the owning faction for the floors it currently occupies. Accumulate-type: a
-/// missed payment does not trigger an instant eviction - the charge just keeps piling onto owed every
-/// missed cycle until it's eventually paid down (eviction/consequence logic is future work - see
-/// OnSuspended). Unlike other obligation types, the amount due isn't authored on the instance itself - it
+/// Rent/maintenance owed by the owning faction for the floors it currently occupies. Partially
+/// accumulate-type: a missed payment does not trigger an instant eviction - the RENT portion keeps
+/// piling onto owed every missed cycle, while a missed MAINTENANCE fee freezes at the single month
+/// already folded into owed instead of accumulating (see GetCycleAccrual) - so resuming service never
+/// costs extra maintenance (eviction/consequence logic is future work - see OnSuspended). Unlike other
+/// obligation types, the amount due isn't authored on the instance itself - it
 /// is recomputed live every cycle from the owning faction's current floor holdings (see GetCycleAccrual),
 /// per Floor_Base.wholeBuildingRent/.unitRent on each floor's own physical template
 /// (Floor_Instance.FloorBase - rent describes the space itself, authored once in floorPlans), cross-
@@ -26,9 +28,19 @@ public class Obligation_Rent : RecurringObligation
     protected override ItemEntry GetCycleAccrual(Manageable owner)
     {
         ItemEntry total = null;
+        // While a prior cycle's charge is still unpaid (IsSuspended - true for BeginCycleIfNeeded's
+        // arrears fold AND for GetProjectedDue's live preview alike), only the RENT portion keeps
+        // accumulating: a missed maintenance fee never piles up - the single month already folded into
+        // owed stays as the frozen bookkeeping marker that keeps the floor marked unmaintained and the
+        // retry cycle going, so resuming service never costs extra maintenance. A floor with no rent at
+        // all (owned / maintenance-only) therefore accrues nothing while suspended - freeze-type
+        // semantics, e.g. 6 interrupted months of a maintenance-only floor resume for exactly 1 month's
+        // fee; a rent+maintenance floor after 6 interrupted months owes 6 rents + 1 maintenance, plus one
+        // new rent on the resuming cycle.
+        bool rentOnly = IsSuspended;
         foreach (var entry in GetRelevantFloors(owner))
         {
-            if (entry.rentCost.maintenanceFee != null) total = AddInto(total, entry.rentCost.maintenanceFee);
+            if (!rentOnly && entry.rentCost.maintenanceFee != null) total = AddInto(total, entry.rentCost.maintenanceFee);
             if (entry.isRented && entry.rentCost.rentFee != null) total = AddInto(total, entry.rentCost.rentFee);
         }
         return total;
@@ -94,6 +106,23 @@ public class Obligation_Rent : RecurringObligation
     /// the event's own check_resumed branch decide whether to additionally call out that service has
     /// resumed. Fired both ways via FireObligationEventBothSides per floor - the label starts the tenant's
     /// own framing, the same label with a "_payee" suffix the landlord's (skipped when there's no landlord).
+    ///
+    /// Side effects that run BEFORE the eventID early-return below, so they happen even when no rent event
+    /// is configured:
+    /// - Floor maintenance tracking: a failed resolution marks every floor this obligation charges (rent
+    ///   OR maintenance - any unpaid Obligation_Rent leaves its floors unmaintained) in
+    ///   TradeManager.unmaintainedFloorRefs; a success (which always attempts the full owed balance) clears
+    ///   them. Persists past the payment event - see Manageable.IsFloorMaintained / OnDayUpdate_1's daily
+    ///   warnings. Within one obligation instance a resolution is all-or-nothing (one atomic charge), so
+    ///   "every floor paid" == success and "no floor paid" == failure; a faction holding several rent
+    ///   obligations simply applies this per obligation.
+    /// - Member trust: each charged floor resolves its own trust change separately (same formula as
+    /// salary - gain = (int)cadence * 2 + 1 when that floor's charge was paid, loss = gain * 2 when it
+    /// wasn't): applied per floor to every non-manager member toward every manager, and narrated via the
+    /// trustManagers/trustChange injection on that floor's OWN event call (see
+    /// TradeManager.FireObligationEvent) - never accumulated, never merged into one line. Skipped
+    /// entirely (no application, no narration) when the faction has no managers or no non-manager
+    /// members; the "generic" fallback firing (no floor accounts for the charge at all) carries no trust.
     /// </summary>
     protected override void HandlePaymentEvent(TradeManager manager, Manageable owner, bool success, ItemEntry attempt)
     {
@@ -101,11 +130,62 @@ public class Obligation_Rent : RecurringObligation
 
         var landlord = TargetFaction;
 
+        // materialized once - the maintenance tracking and the per-floor event loop below must never drift
+        // apart on which floors they consider relevant/charged
+        var entries = new List<(Floor_Instance floor, MapPlan.RentCostInit rentCost, bool isRented)>(GetRelevantFloors(owner));
+
+        List<int> chargedFloorRefs = new List<int>();
+        foreach (var entry in entries)
+        {
+            bool hasRentHere = entry.isRented && entry.rentCost.rentFee != null;
+            bool hasMaintenanceHere = entry.rentCost.maintenanceFee != null;
+            if (!hasRentHere && !hasMaintenanceHere) continue;
+            chargedFloorRefs.Add(entry.floor.refID);
+        }
+        if (success)
+        {
+            foreach (var r in chargedFloorRefs) owner.TradeManager.unmaintainedFloorRefs.Remove(r);
+        }
+        else
+        {
+            foreach (var r in chargedFloorRefs) owner.TradeManager.unmaintainedFloorRefs.Add(r);
+        }
+
+        // per-floor trust: each charged floor resolves its own cadence-scaled change (gain or loss - same
+        // formula as salary) against every non-manager member toward every manager; no manager list / no
+        // member roster means nothing applied and nothing narrated (the event's check_trust then falls
+        // through on every floor call)
+        int trustGain = (int)cadence * 2 + 1;
+        int trustChange = success ? trustGain : -(trustGain * 2);
+        var managers = new List<Character_Trainable>();
+        foreach (var m in owner.Managers) if (m != null) managers.Add(m);
+        var plainMembers = new List<Character_Trainable>();
+        foreach (var mem in owner.ManagedChara_Members)
+        {
+            if (mem == null || managers.Contains(mem)) continue;
+            plainMembers.Add(mem);
+        }
+        List<Character_Trainable> trustManagers = managers.Count > 0 && plainMembers.Count > 0 ? managers : null;
+        if (trustManagers != null)
+        {
+            foreach (var mem in plainMembers)
+            {
+                foreach (var m in managers)
+                {
+                    foreach (var floorRef in chargedFloorRefs)
+                    {
+                        mem.Relationships.IncreaseRelationshipWith(m.RefID, RelationshipScoreType.Trust, trustChange);
+                    }
+                }
+            }
+        }
+
         string eventID = landlord != null ? landlord.GetTemplateRentEventID(success) : "";
         if (string.IsNullOrEmpty(eventID)) eventID = owner.GetWorldFallbackRentEventID(success);
         if (string.IsNullOrEmpty(eventID)) return;
 
         bool resumed = success && cycleWasSuspended;
+        bool interrupted = !success && !cycleWasSuspended;
 
         // Only a real (player) faction can ever actually fail a payment - TradeManager.TryChargeObligation
         // substitutes the Recycler (which always "succeeds") for any non-player owner - so owner.Inventory
@@ -115,8 +195,9 @@ public class Obligation_Rent : RecurringObligation
         ItemEntry available = success ? null : new ItemEntry(attempt.itemID, attempt.itemNameOverwrite, owner.Inventory.GetItemCount(attempt.itemID), attempt.itemCountOverride);
 
         bool firedAny = false;
-        foreach (var entry in GetRelevantFloors(owner))
+        for (int i = 0; i < entries.Count; i++)
         {
+            var entry = entries[i];
             bool hasRentHere = entry.isRented && entry.rentCost.rentFee != null;
             bool hasMaintenanceHere = entry.rentCost.maintenanceFee != null;
             if (!hasRentHere && !hasMaintenanceHere) continue;
@@ -128,11 +209,15 @@ public class Obligation_Rent : RecurringObligation
 
             string label = hasRentHere && landlord != null ? (hasMaintenanceHere ? "both" : "rent") : "maintenance";
 
-            FireObligationEventBothSides(manager, owner, eventID, label, label + "_payee", floorAmount, available, resumed, sourceName: entry.floor.displayName);
+            // this floor's own event call carries its own single-floor trust narration - see doc comment
+            FireObligationEventBothSides(manager, owner, eventID, label, label + "_payee", floorAmount, available, resumed,
+                sourceName: entry.floor.displayName, trustManagers: trustManagers, trustChange: trustChange, interrupted: interrupted);
             firedAny = true;
         }
 
-        if (!firedAny) FireObligationEventBothSides(manager, owner, eventID, "generic", "generic_payee", attempt, available, resumed);
+        // no floor accounts for the charge (stale arrears from vacated/sold floors) - per-floor trust
+        // semantics mean this fallback carries no trust narration
+        if (!firedAny) FireObligationEventBothSides(manager, owner, eventID, "generic", "generic_payee", attempt, available, resumed, interrupted: interrupted);
     }
 
     /// <summary>

@@ -9,6 +9,22 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 
+/// <summary>
+/// What an agent-mode session is currently doing - reported through
+/// scr_UpdateHandler.Observer_AgentProgress for the panel's status line. Derived entirely from the
+/// agent loop's own control flow; nothing extra is asked of the model.
+/// </summary>
+public enum AgentPhase
+{
+    Requesting,
+    Reasoning,
+    ToolCall,
+    ExecutingPlan,
+    Revising,
+    Completed,
+    Terminated
+}
+
 public enum LLMStatus
 {
     /// <summary>
@@ -34,6 +50,25 @@ public class scr_UpdateHandler : MonoBehaviour
     Coroutine LLMRoutine = null;
     UnityWebRequest currentRequest = null;
 
+    /// <summary>
+    /// The in-progress agent-mode conversation, if any (Workstream C's orchestrator - not yet built -
+    /// is what actually creates/advances/clears this; it's declared here now so Workstream B's
+    /// LLMAgentSession has its intended home). Null whenever no agent-mode session is active.
+    /// </summary>
+    public LLMAgentSession CurrentAgentSession = null;
+
+    /// <summary>
+    /// True only while an agent round is actually in flight/executing. CurrentAgentSession alone is
+    /// stale (never nulled on normal completion, see its own doc comment) - LLMStatus is what actually
+    /// flips away from `active` in FinalizeLLMResponse on every AgentLoop_Routine exit path, so the
+    /// combination is the reliable "suppress the normal log + reroute to the LLM rect" signal.
+    /// </summary>
+    public bool IsAgentRunning => CurrentAgentSession != null && LLMStatus == LLMStatus.active;
+
+    /// <summary>Editor-wired reference to the logs panel, for dispatching single-shot query display
+    /// (BeginSingleShot) - no static singleton lookup, per project convention for this reference.</summary>
+    public scr_panel_logs logsPanel;
+
     //public bool skipCurrentRoundClimaxCheck = false;
     /// <summary>
     /// Whether a request is currently in flight and cancellable. Deliberately keyed off LLMStatus
@@ -48,10 +83,33 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             return LLMStatus == LLMStatus.active;
         } }
-    public void InterruptLLMRoutine()
+    /// <summary>
+    /// Unwinds an in-flight LLM/agent request: stops the coroutine chain, aborts the web request,
+    /// and clears the agent session reference. `suppressUI` (set by TerminateHangedAgent - the
+    /// application is going away) skips all aftermath handling: no coroutines, no panel work on the
+    /// way out. For a player-interrupted AGENT run, the aftermath coroutine (after the half-run's
+    /// last update/event fully settles) hands the session to the panel's HandleInterruptedSession:
+    /// the interrupted entry leaves the session chain, then either the previous completed attempt is
+    /// full-restored (decision 1.1) or the run's own root is rolled back to with an error shown and
+    /// Confirm forbidden (decision 1.2). Interrupted SINGLE-SHOT requests have nothing to unwind
+    /// state-wise, so they get no aftermath.
+    /// </summary>
+    /// <summary>
+    /// Stops the running LLM request/agent loop. onComplete runs once the interruption has fully
+    /// completed: right away when there is nothing left to settle, or - for an interrupted agent
+    /// session with UI - after InterruptedSessionRoutine has waited out the update/events and handed
+    /// the session to the panel.
+    /// </summary>
+    public void InterruptLLMRoutine(bool suppressUI = false, Action onComplete = null)
     {
+        var session = CurrentAgentSession;
+        if (LLMStatus == LLMStatus.active && session != null)
+        {
+            Debug.Log($"[Agent] session {session.sessionId} interrupted{(suppressUI ? " (application exiting)" : " by player")}.");
+        }
         if (LLMRoutine != null) StopCoroutine(LLMRoutine);
         LLMRoutine = null;
+        CurrentAgentSession = null;
         if (currentRequest != null)
         {
             currentRequest.Abort();
@@ -60,6 +118,28 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         LLMStatus = LLMStatus.waiting;
         Observer_LLMStatus?.Invoke(LLMStatus);
+
+        if (!suppressUI && session != null)
+        {
+            // Lock the panel out of the half-run immediately (no Confirm on state that is about to
+            // be rolled back), then finish handling once everything has settled.
+            logsPanel?.MarkInterruptPending();
+            StartCoroutine(InterruptedSessionRoutine(session, onComplete));
+            return;
+        }
+        onComplete?.Invoke();
+    }
+
+    /// <summary>
+    /// Interrupt aftermath, deferred until the aborted run's last batch/event has fully settled -
+    /// restoring or rolling back state underneath a still-resolving event would corrupt both.
+    /// </summary>
+    IEnumerator InterruptedSessionRoutine(LLMAgentSession session, Action onComplete = null)
+    {
+        yield return new WaitUntil(() => !Updating && !EventHandler.Active);
+        // the panel's aftermath may itself restore a checkpoint (async) - onComplete waits for that
+        if (logsPanel != null) logsPanel.HandleInterruptedSession(session, onComplete);
+        else onComplete?.Invoke();
     }
     LLMStatus _LLMStatus = LLMStatus.inactive;
     public LLMStatus LLMStatus
@@ -83,6 +163,27 @@ public class scr_UpdateHandler : MonoBehaviour
     /// Also fires once with "" at the start of a request to clear any previous request's display.
     /// </summary>
     public event Action<string> Observer_LLMReasoningDelta;
+    /// <summary>
+    /// Agent mode only: fires once per round with that round's response (for its final reasoning,
+    /// which non-streaming providers never deliver through Observer_LLMReasoningDelta), the tool
+    /// calls extracted from it, and its submit_response call when that is this round's actual final
+    /// answer (null otherwise - including when the parser drops one bundled with real calls), before
+    /// any of them are dispatched.
+    /// </summary>
+    public event Action<LLMResponse, List<LLMToolCallRequest>, LLMToolCallRequest> Observer_AgentTurn;
+    /// <summary>
+    /// Agent mode only: fires on every state change of the agent loop with (1-based round, maxRounds,
+    /// phase, detail). The latest round/phase is also kept on the session so a finished entry can
+    /// rebuild its status line.
+    /// </summary>
+    public event Action<int, int, AgentPhase, string> Observer_AgentProgress;
+
+    void ReportAgentProgress(LLMAgentSession session, int roundIndex, AgentPhase phase, string detail = "")
+    {
+        session.lastRound = roundIndex + 1;
+        session.lastPhase = phase;
+        Observer_AgentProgress?.Invoke(roundIndex + 1, session.maxRounds, phase, detail ?? "");
+    }
 
     public bool LLM_Active
     {
@@ -112,6 +213,12 @@ public class scr_UpdateHandler : MonoBehaviour
     /// <param name="updateUI"></param>
     public void SendLLMRequest(string s, bool updateUI =false)
     {
+        if (scr_System_CentralControl.current.LLMSetting.useAgentMode)
+        {
+            SendAgentRequest(s, updateUI);
+            return;
+        }
+
         var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
         if (llm == null)
         {
@@ -129,7 +236,11 @@ public class scr_UpdateHandler : MonoBehaviour
             // slow mode config for now; fast mode will need its own entry point once wired up
             if (scr_System_CentralControl.current.LLMSlowModeConfig != null) payload.LoadTemplate(scr_System_CentralControl.current.LLMSlowModeConfig);
             // inject user
-            payload.ReplaceString("<user>", scr_System_CampaignManager.current.Player.FirstName);
+            var player = scr_System_CampaignManager.current.Player;
+            payload.ReplaceString("<user>", player.FirstName);
+            payload.ReplaceString("$firstname_and_refid$", $"{player.FullName} (RefID: {player.RefID})");
+            var playerInfo = new LLM_WorldState.CharaStorage(player, null, true);
+            payload.ReplaceString("%%playerInfo%%", JsonConvert.SerializeObject(playerInfo, Formatting.Indented, UtilityEX.SerializerSettings));
             var worldinfo = new LLM_WorldState();
             var worldinfostring = JsonConvert.SerializeObject(worldinfo, Formatting.Indented, UtilityEX.SerializerSettings);
 
@@ -176,20 +287,27 @@ public class scr_UpdateHandler : MonoBehaviour
         if (updateUI)
         {
             scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
-            scr_System_CampaignManager.current.AddLog_LLM(s);
+            // Single-shot queries no longer flow through AddLog_LLM/Message_LLMQuery (removed) -
+            // dispatched directly to the panel via the editor-wired logsPanel reference.
+            logsPanel?.BeginSingleShot(s);
         }
 
         var profile = scr_System_CentralControl.current.ResolveProviderProfile(llm);
         LLMProviderUtils.ApplyRequestShaping(s, profile);
 
-        LLMRoutine = StartCoroutine(SendLLMRequest_Routine(s, OnLLMResponse));
+        LLMRoutine = StartCoroutine(SendLLMRequest_Routine(s, FinalizeLLMResponse));
 
     }
 
-    void OnLLMResponse(bool success, string s)
+    /// <summary>
+    /// Shared response-text parsing (dummyLLM disk-cache / success / failure branches), extracted out
+    /// of OnLLMResponse so AgentLoop_Routine can reuse it per-round without forking this logic -
+    /// unlike the single-shot path, an agent-mode round doesn't necessarily call FinalizeLLMResponse
+    /// right after parsing (only the round that produces a final answer, with no more tool calls, does).
+    /// </summary>
+    LLMResponse ParseLLMResponseText(bool success, string s)
     {
-        LLMResponse response = null;
-
+        LLMResponse response;
         string collectionPath = Application.persistentDataPath + "/LLMResponse.json";
 
         if (dummyLLM)
@@ -224,6 +342,7 @@ public class scr_UpdateHandler : MonoBehaviour
             response = new LLMResponse();
             var choice = new LLMResponse.choice();
             choice.index = 0;
+            choice.finish_reason = "error";
             choice.message = new LLMMessage();
             choice.message.role = "assistant";
             choice.message.content = s;
@@ -232,10 +351,15 @@ public class scr_UpdateHandler : MonoBehaviour
             Debug.Log($"Response Received! LLM failed to respond! creating file at {collectionPath}");
         }
 
-        FinalizeLLMResponse(response);
+        return response;
     }
 
-    void FinalizeLLMResponse(LLMResponse response)
+    /// <summary>
+    /// Serializes the full response package to LLMResponse.json, same as the single-shot flow always
+    /// has - extracted out of FinalizeLLMResponse so AgentLoop_Routine can also call it for every
+    /// intermediate round's reply, not just the one that ends up finalizing.
+    /// </summary>
+    void DumpLLMResponseToDisk(LLMResponse response)
     {
         string collectionPath = Application.persistentDataPath + "/LLMResponse.json";
         var s2 = JsonConvert.SerializeObject(response, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
@@ -246,6 +370,11 @@ public class scr_UpdateHandler : MonoBehaviour
         File.WriteAllText(untransDict.FullName, s2);
 
         Debug.Log($"Response Received!: creating file at {collectionPath}");
+    }
+
+    void FinalizeLLMResponse(LLMResponse response)
+    {
+        DumpLLMResponseToDisk(response);
 
         // Settle status/routine state before notifying listeners: Observer_LLMResponse triggers the
         // UI's own ValidateAll pass (via LoadResponse -> Animate), and button validators read
@@ -258,8 +387,26 @@ public class scr_UpdateHandler : MonoBehaviour
         Observer_LLMResponse?.Invoke(response);
     }
 
-    IEnumerator SendLLMRequest_Routine(LLMRequest payload, Action<bool, string> onResponseReceived)
+    /// <summary>
+    /// Runs one request/response round-trip and always reports a fully-parsed LLMResponse back via
+    /// onResponseReceived - regardless of dummyLLM/streaming/non-streaming/failure path, so callers
+    /// (FinalizeLLMResponse directly, for the single-shot flow; AgentLoop_Routine, which needs to
+    /// inspect each round's response before deciding whether to loop or finalize) never have to care
+    /// which path produced it. Previously the streaming-success branch called FinalizeLLMResponse
+    /// directly instead of invoking onResponseReceived at all, which broke down the moment a caller
+    /// other than the single-shot flow needed to intercept the response first - unified here instead.
+    /// </summary>
+    IEnumerator SendLLMRequest_Routine(LLMRequest payload, Action<LLMResponse> onResponseReceived)
     {
+        // every exit path reports through onResponseReceived - stamp the round-trip time there once
+        float requestStart = Time.realtimeSinceStartup;
+        var deliver = onResponseReceived;
+        onResponseReceived = r =>
+        {
+            if (r != null) r.elapsedSeconds = Time.realtimeSinceStartup - requestStart;
+            deliver?.Invoke(r);
+        };
+
         Observer_LLMStatus?.Invoke(LLMStatus);
         Observer_LLMReasoningDelta?.Invoke("");
 
@@ -267,7 +414,7 @@ public class scr_UpdateHandler : MonoBehaviour
         if (llm == null)
         {
             Debug.LogError("SendLLMRequest_Routine: no LLM preset selected, aborting.");
-            onResponseReceived?.Invoke(false, "no LLM preset selected");
+            onResponseReceived?.Invoke(ParseLLMResponseText(false, "no LLM preset selected"));
             yield break;
         }
         var endpoint = llm.endpoint;
@@ -289,7 +436,7 @@ public class scr_UpdateHandler : MonoBehaviour
         {
             yield return new WaitForSecondsRealtime(3);
 
-            onResponseReceived?.Invoke(true, $"dummytext received {DateTime.Now}");
+            onResponseReceived?.Invoke(ParseLLMResponseText(true, $"dummytext received {DateTime.Now}"));
         }
         else
         {
@@ -323,19 +470,384 @@ public class scr_UpdateHandler : MonoBehaviour
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
-                    if (streaming) FinalizeLLMResponse(streamHandler.BuildFinalResponse());
-                    else onResponseReceived?.Invoke(true, request.downloadHandler.text);
+                    var response = streaming ? streamHandler.BuildFinalResponse() : ParseLLMResponseText(true, request.downloadHandler.text);
+                    onResponseReceived?.Invoke(response);
                 }
                 else
                 {
                     Debug.LogError($"LLM Request Error: {request.error}");
-                    onResponseReceived?.Invoke(false, request.error);
+                    onResponseReceived?.Invoke(ParseLLMResponseText(false, request.error));
                 }
 
                 currentRequest = null;
             }
         }
 
+    }
+
+    /// <summary>
+    /// Agent-mode analog of SendLLMRequest(string,bool): builds the same base template (preset +
+    /// world state + this round's input, via the exact same LoadTemplate/ReplaceString calls) but
+    /// hands it to a fresh LLMAgentSession and starts the multi-round tool-calling loop instead of a
+    /// single request/response. The user's input becomes part of the resolved base template (via
+    /// %%currentRoundInput%%) exactly as it already does for the single-shot path - LLMAgentSession's
+    /// own `turns` list only starts growing from the model's first response onward, so it doesn't
+    /// need (and shouldn't get) a redundant initial user turn appended on top.
+    /// </summary>
+    public void SendAgentRequest(string userInput, bool updateUI = false)
+    {
+        var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        if (llm == null)
+        {
+            Debug.LogError("SendAgentRequest: no LLM preset selected, aborting.");
+            return;
+        }
+
+        var baseTemplate = new LLMRequest();
+        baseTemplate.model = llm.model;
+
+        if (reserializeTemplate) scr_System_CentralControl.current.ResetLLMRequestTemplate();
+
+        if (scr_System_CentralControl.current.CurrentPreset != null)
+        {
+            // agentMode:true activates the preset's agent_only blocks (workflow contract) and skips
+            // any single_shot_only ones - one preset file serves both modes.
+            baseTemplate.LoadTemplate(scr_System_CentralControl.current.CurrentPreset, true);
+            // Dedicated agent slow-mode overlay (Request_Slow_Agent.json); fall back to the regular
+            // slow config when the agent file is absent so a missing file degrades, not breaks.
+            var agentSlow = scr_System_CentralControl.current.LLMAgentSlowModeConfig;
+            if (agentSlow != null) baseTemplate.LoadTemplate(agentSlow);
+            else if (scr_System_CentralControl.current.LLMSlowModeConfig != null) baseTemplate.LoadTemplate(scr_System_CentralControl.current.LLMSlowModeConfig);
+            var player = scr_System_CampaignManager.current.Player;
+            baseTemplate.ReplaceString("<user>", player.FirstName);
+            baseTemplate.ReplaceString("$firstname_and_refid$", $"{player.FullName} (RefID: {player.RefID})");
+            var playerInfo = new LLM_WorldState.CharaStorage(player, null, true);
+            baseTemplate.ReplaceString("%%playerInfo%%", JsonConvert.SerializeObject(playerInfo, Formatting.Indented, UtilityEX.SerializerSettings));
+            var worldinfo = new LLM_WorldState();
+            var worldinfostring = JsonConvert.SerializeObject(worldinfo, Formatting.Indented, UtilityEX.SerializerSettings);
+            baseTemplate.ReplaceString("%%worldInfo%%", worldinfostring);
+            baseTemplate.ReplaceString("%%currentRoundInput%%", userInput);
+            baseTemplate.ReplaceString("%%currentLanguage%%", LocalizeDictionary.Instance.Index.cachedLang);
+            baseTemplate.currentString = userInput;
+        }
+        else
+        {
+            baseTemplate.messages.Add(new LLMMessage_Final { role = "user", content = userInput });
+        }
+
+        CurrentAgentSession = new LLMAgentSession(Guid.NewGuid().ToString("N"), baseTemplate);
+        CurrentAgentSession.originalUserInput = userInput;
+        CurrentAgentSession.startCheckpointPath = LLMCheckpointStore.WriteCheckpoint(CurrentAgentSession.sessionId, "session_start");
+        Debug.Log($"[Agent] session {CurrentAgentSession.sessionId} started.");
+
+        if (updateUI)
+        {
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
+            logsPanel?.BeginAgentRun();
+        }
+
+        LLMStatus = LLMStatus.active;
+        LLMRoutine = StartCoroutine(AgentLoop_Routine());
+    }
+
+    /// <summary>
+    /// Fetches an agent-mode instruction/feedback string from Request_Slow_Agent.json's replacements
+    /// (reserved keys: agent_feedback_unstructured / agent_feedback_invalidAP / agent_nextStep_partial /
+    /// agent_nextStep_final), falling back to the built-in English default when the file or key is
+    /// absent - prompt text stays data-driven and player-editable, code only supplies fallbacks.
+    /// Templates may carry $reasons$ / $count$ markers for the caller to interpolate.
+    /// </summary>
+    public static string AgentText(string key, string fallback)
+    {
+        var cfg = scr_System_CentralControl.current.LLMAgentSlowModeConfig;
+        if (cfg != null && cfg.replacements != null && cfg.replacements.TryGetValue(key, out var v) && !string.IsNullOrEmpty(v)) return v;
+        return fallback;
+    }
+
+    /// <summary>
+    /// This round's stop signal, across envelopes: OpenAI-shaped choices[0].finish_reason,
+    /// Claude-shaped stop_reason. Null when absent. Read by AgentLoop_Routine's finish_reason gate:
+    /// "content_filter"/"refusal" (provider refused) and "error" (transport failure, set by
+    /// ParseLLMResponseText's failure branch) terminate the session instead of burning rounds
+    /// retrying a futile request; "length"/"max_tokens" only warn (truncation already flows into
+    /// the existing parse/dispatch feedback loops); anything else (stop/tool_calls/end_turn/...) is
+    /// normal continuation.
+    /// </summary>
+    static string GetFinishReason(LLMResponse response)
+    {
+        if (response == null) return null;
+        if (response.choices != null && response.choices.Count > 0 && !string.IsNullOrEmpty(response.choices[0].finish_reason))
+            return response.choices[0].finish_reason;
+        return response.stop_reason;
+    }
+
+    /// <summary>
+    /// Drives CurrentAgentSession round by round: build this round's full transcript, send it, parse
+    /// for tool calls, dispatch them and append results if any, or hand off to FinalizeLLMResponse
+    /// (the exact same completion path the single-shot flow uses) once a round produces a final
+    /// answer with no more tool calls. Reuses LLMRoutine/currentRequest/LLMStatus - the same fields
+    /// the single-shot flow uses - so the existing CanInterruptLLMRoutine/InterruptLLMRoutine cancel
+    /// mechanism already works for an in-progress agent loop with no changes needed.
+    /// </summary>
+    IEnumerator AgentLoop_Routine()
+    {
+        var llm = scr_System_CentralControl.current.LLMSetting.chatCompletionModel;
+        if (llm == null)
+        {
+            Debug.LogError("AgentLoop_Routine: no LLM preset selected, aborting.");
+            yield break;
+        }
+        var profile = scr_System_CentralControl.current.ResolveProviderProfile(llm);
+        var toolDefs = LLMToolRegistry.GetAllDefinitions();
+        var session = CurrentAgentSession;
+
+        // Hard cap on the resendable transcript's total wire-message count (the same list serialized
+        // to LLMRequest.json each round), independent of session.maxRounds - one round can add several
+        // messages (e.g. one "tool" message per parallel tool call), so this can trip before maxRounds
+        // does. Whichever cap is hit first stops the loop. Raised alongside maxRounds for the stepwise
+        // execution flow: a multi-action plan now costs one round per batch (plan submission + batch
+        // report) plus the concluding narrative, ~2 messages each, where the old all-at-once flow
+        // needed only a single round total.
+        const int maxMessages = 150;
+
+        for (int round = 0; round < session.maxRounds; round++)
+        {
+            var messages = session.BuildMessages(profile);
+            if (messages.Count >= maxMessages)
+            {
+                Debug.LogError($"AgentLoop_Routine: hit maxMessages ({maxMessages}) without a final answer.");
+                var forcedByMessageCap = new LLMResponse();
+                forcedByMessageCap.choices.Add(new LLMResponse.choice { index = 0, message = new LLMMessage { role = "assistant", content = AgentText("agent_feedback_terminated_messagecap",
+                    "Agent session terminated: reached the maximum transcript message count ($count$) without a final answer.").Replace("$count$", maxMessages.ToString()) }, finish_reason = "length" });
+                // No execution happened, so "the final state" is just the start state - still leave a
+                // resolvable checkpoint so this entry stays switchable like any other.
+                session.finalCheckpointPath = LLMCheckpointStore.WriteCheckpoint(session.sessionId, "final");
+                ReportAgentProgress(session, round, AgentPhase.Terminated);
+                FinalizeLLMResponse(forcedByMessageCap);
+                yield break;
+            }
+
+            Debug.Log($"[Agent] session {session.sessionId}: round {round + 1}/{session.maxRounds} ({messages.Count}/{maxMessages} messages) - sending request.");
+
+            var payload = session.BuildRequest(profile, messages);
+            LLMProviderUtils.ApplyRequestShaping(payload, profile, toolDefs);
+
+            ReportAgentProgress(session, round, AgentPhase.Requesting);
+            LLMResponse response = null;
+            yield return SendLLMRequest_Routine(payload, r => response = r);
+            session.usageStats.Add(response);
+
+            DumpLLMResponseToDisk(response);
+            session.AppendAssistantTurn(response, profile);
+
+            // finish_reason gate, before any tool dispatch/plan execution: provider-terminal signals
+            // abort the session immediately (retrying a refusal or an auth/network failure cannot
+            // change the outcome - it would just burn maxRounds worth of paid requests), while
+            // truncation only warns and falls through to the existing feedback loops.
+            var finishReason = GetFinishReason(response);
+            if (finishReason == "length" || finishReason == "max_tokens")
+            {
+                Debug.LogWarning($"[Agent] session {session.sessionId}: round {round + 1} finish_reason '{finishReason}' - response may be truncated.");
+            }
+            else if (finishReason == "content_filter" || finishReason == "refusal" || finishReason == "error")
+            {
+                var abortMessage = finishReason == "error"
+                    ? AgentText("agent_feedback_terminated_error",
+                        "LLM request failed - agent session terminated. Error: $error$")
+                        .Replace("$error$",
+                            response.choices != null && response.choices.Count > 0 && response.choices[0].message != null && !string.IsNullOrEmpty(response.choices[0].message.content)
+                                ? response.choices[0].message.content
+                                : "unknown")
+                    : AgentText("agent_feedback_terminated_filter",
+                        "The model declined to answer (safety filter/refusal) - agent session terminated.");
+                Debug.LogError($"[Agent] session {session.sessionId}: terminating on finish_reason '{finishReason}'.");
+
+                session.finalCheckpointPath = LLMCheckpointStore.WriteCheckpoint(session.sessionId, "final");
+                ReportAgentProgress(session, round, AgentPhase.Terminated);
+                FinalizeLLMResponse(ParseLLMResponseText(false, abortMessage));
+                LLMStatus = LLMStatus.inactive;
+                yield break;
+            }
+
+            bool hasToolCalls = LLMResponseToolParser.TryExtractToolCalls(response, profile, out var calls, out var isFinalAnswer, out var submitResponseCall);
+            Observer_AgentTurn?.Invoke(response, calls, isFinalAnswer ? submitResponseCall : null);
+            if (!hasToolCalls || isFinalAnswer)
+            {
+                // Structured-envelope check, before any AP validation: on a "toolcall"-strategy
+                // profile the final answer MUST arrive as structured MessageJSON (normally the
+                // arguments of a submit_response call). A model that stops with plain narrative
+                // (finish_reason "stop", no tool call - it happens) parses into the raw-text
+                // content_string fallback with empty content_blocks AND empty UpdateVariable, which
+                // would sail through AP validation vacuously (no packages = nothing invalid), execute
+                // nothing, and dump the whole unparseable narrative - <thinking> tags included - into
+                // the panel's error-text display. Reject it here and make the model resubmit properly
+                // instead. Responses that DO carry parseable structure (inline JSON content included)
+                // are unaffected; non-toolcall strategies keep their previous behavior.
+                bool structuredEmpty = response.JSON == null
+                    || (response.JSON.content_blocks.Count == 0 && response.JSON.UpdateVariable.Count == 0);
+                if (structuredEmpty && profile != null && profile.responseFormatStrategy == "toolcall")
+                {
+                    var structuredReason = AgentText("agent_feedback_unstructured",
+                        "Your final answer did not arrive as structured data - it was plain narrative text, so no content_blocks and no UpdateVariable could be parsed from it. Submit your answer by calling the submit_response tool with the complete structured payload. Do not answer in plain text.");
+                    Debug.Log($"[Agent] session {session.sessionId}: round {round + 1}'s final answer was unstructured plain text (no usable submit_response payload) - asking the model to resubmit.");
+
+                    if (submitResponseCall != null)
+                    {
+                        session.AppendToolResults(new List<LLMToolResult> { LLMToolResult.Error(submitResponseCall, structuredReason) });
+                    }
+                    else
+                    {
+                        session.AppendUserTurn(structuredReason);
+                    }
+                    ReportAgentProgress(session, round, AgentPhase.Revising);
+                    continue;
+                }
+
+                // Validate any action package(s) the final answer describes before ever finalizing/
+                // executing it - unlike single-shot mode (where an invalid AP is simply visible to the
+                // player as "error in package parsing" and never auto-applied), agent mode's auto-execute
+                // would otherwise silently skip a hallucinated/invalid AP and just move on. Instead, feed
+                // the exact validation failure back to the model so it can fix its mistake and resubmit.
+                var invalidReasons = new List<string>();
+                var packages = response.JSON?.GetActionPackages(out _) ?? new List<ActionPackage>();
+                foreach (var ap in packages)
+                {
+                    if (ap.Validate()) continue;
+                    ap.tooltip.RemoveAll(x => string.IsNullOrEmpty(x));
+                    invalidReasons.Add(ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", string.Join("\n", ap.tooltip)));
+                }
+
+                if (invalidReasons.Count > 0)
+                {
+                    var combinedReason = string.Join("\n", invalidReasons);
+                    Debug.Log($"[Agent] session {session.sessionId}: round {round + 1}'s final answer had {invalidReasons.Count} invalid action package(s) - asking the model to fix and resubmit:\n{combinedReason}");
+
+                    if (submitResponseCall != null)
+                    {
+                        session.AppendToolResults(new List<LLMToolResult> { LLMToolResult.Error(submitResponseCall, combinedReason) });
+                    }
+                    else
+                    {
+                        session.AppendUserTurn(AgentText("agent_feedback_invalidAP",
+                            "Your submitted response's action(s) failed validation and were NOT executed:\n$reasons$\nPlease fix and resubmit.").Replace("$reasons$", combinedReason));
+                    }
+                    ReportAgentProgress(session, round, AgentPhase.Revising);
+                    continue;
+                }
+
+                // Explicit dump right here, immediately before executing - guarantees LLMResponse.json
+                // reflects exactly this response before anything runs, independent of whether
+                // FinalizeLLMResponse's own internal dump call ever changes. If execution throws
+                // on malformed/hallucinated data, the response that caused it is still on disk to inspect.
+                DumpLLMResponseToDisk(response);
+
+                if (packages.Count < 1)
+                {
+                    // No actions left - by design this is the CONCLUDING narrative: every prior round's
+                    // batch results were fed back to the model, so this text is written with full
+                    // knowledge of what actually happened. A wrapper/FreeUpdate here would be a no-op
+                    // (ActionPackage_LLM.PreEvaluate invalidates on an empty inner plan), so skip
+                    // straight to checkpoint + finalize.
+                    Debug.Log($"[Agent] session {session.sessionId}: round {round + 1} produced the final narrative (no actions).");
+
+                    yield return new WaitUntil(() => !Updating && !EventHandler.Active);
+
+                    // "The world exactly as this attempt left it," written only after everything has
+                    // settled - scr_panel_logs reloads this whenever the player switches back to
+                    // reviewing this session.
+                    session.finalCheckpointPath = LLMCheckpointStore.WriteCheckpoint(session.sessionId, "final");
+
+                    ReportAgentProgress(session, round, AgentPhase.Completed);
+                    FinalizeLLMResponse(response);
+                    LLMStatus = LLMStatus.inactive;
+                    yield break;
+                }
+
+                // ---- plan step: execute ONE batch, defer the rest, then report results + remaining
+                // plan + worldstate back to the model for re-evaluation. Sequential execution with
+                // the LLM aware of the middle process, instead of the old all-at-once SUM wrapper.
+                // Partitioning (anchor + strict JoinAP merges) lives in the shared
+                // scr_System_CampaignManager.BuildAPBatch - the execute_actions tool uses it too. ----
+                var deferred = new List<APJSON>();
+                var batchJson = scr_System_CampaignManager.BuildAPBatch(response.JSON, packages, out deferred);
+
+                Debug.Log($"[Agent] session {session.sessionId}: round {round + 1} plan step - executing batch of {batchJson.UpdateVariable.Count} action(s) ({packages[0].DisplayName}), deferring {deferred.Count}.");
+                ReportAgentProgress(session, round, AgentPhase.ExecutingPlan, batchJson.UpdateVariable.Count.ToString());
+
+                // Registers the batch wrapper while pinning every actor of the FULL plan (deferred
+                // ones included) so nobody scheduled for a later batch leaves mid-run.
+                scr_System_CampaignManager.current.ExecuteLLMResponseBatch(batchJson, packages);
+
+                // Fire-and-forget registration: wait until the batch - and any player-facing event it
+                // triggered - fully settles before reporting (same WaitUntil Tool_ExecuteAP uses).
+                yield return new WaitUntil(() => !Updating && !EventHandler.Active);
+
+                // ---- build the re-evaluation report: what executed (with its captured messages),
+                // what remains, and the current worldstate. ----
+                var executedActions = new List<string>();
+                var resultMessages = new List<string>();
+                foreach (var ap in batchJson.GetActionPackages(out _))
+                {
+                    int count = 0;
+                    foreach (var ep in ap.epjson) count = Math.Max(count, ep.repeatCount);
+                    executedActions.Add($"{ap.DisplayName} x{count}");
+                    if (ap.capturedLog != null) resultMessages.AddRange(ap.capturedLog.DumpMessages());
+                }
+                resultMessages.AddRange(session.DrainInterceptedMessages());
+
+                var reportJson = JsonConvert.SerializeObject(new
+                {
+                    executedActions = executedActions,
+                    messages = resultMessages,
+                    remainingActions = deferred,
+                    currentWorldState = new LLM_WorldState(),
+                    nextStep = deferred.Count > 0
+                        ? AgentText("agent_nextStep_partial",
+                            "Partial execution complete - $count$ action(s) remain. Continue them with the execute_actions tool, then submit your final narrative via submit_response.")
+                            .Replace("$count$", deferred.Count.ToString())
+                        : AgentText("agent_nextStep_final",
+                            "All submitted actions have been executed. Submit your final narrative response with NO actions (empty UpdateVariable) to conclude, written with the execution results above in mind.")
+                }, UtilityEX.SerializerSettingsLLM);
+
+                if (submitResponseCall != null)
+                {
+                    session.AppendToolResults(new List<LLMToolResult> { new LLMToolResult
+                    {
+                        callId = submitResponseCall.callId,
+                        toolName = submitResponseCall.toolName,
+                        contentJson = reportJson
+                    } });
+                }
+                else
+                {
+                    session.AppendUserTurn(reportJson);
+                }
+
+                // Loop continues: the model re-evaluates with the report above in its transcript.
+                continue;
+            }
+
+            Debug.Log($"[Agent] session {session.sessionId}: round {round + 1} dispatching {calls.Count} tool call(s) - {string.Join(", ", calls.ConvertAll(c => c.toolName))}.");
+
+            var results = new List<LLMToolResult>();
+            foreach (var call in calls)
+            {
+                LLMToolResult result = null;
+                ReportAgentProgress(session, round, AgentPhase.ToolCall, call.toolName);
+                yield return LLMToolRegistry.Dispatch(call, r => result = r);
+                results.Add(result ?? LLMToolResult.Error(call, "tool produced no result"));
+            }
+
+            session.AppendToolResults(results);
+        }
+
+        Debug.LogError($"AgentLoop_Routine: hit maxRounds ({session.maxRounds}) without a final answer.");
+        var forced = new LLMResponse();
+        forced.choices.Add(new LLMResponse.choice { index = 0, message = new LLMMessage { role = "assistant", content = AgentText("agent_feedback_terminated_roundcap",
+            "Agent session terminated: reached the maximum round count ($count$) without a final answer.").Replace("$count$", session.maxRounds.ToString()) }, finish_reason = "length" });
+        session.finalCheckpointPath = LLMCheckpointStore.WriteCheckpoint(session.sessionId, "final");
+        ReportAgentProgress(session, session.maxRounds - 1, AgentPhase.Terminated);
+        FinalizeLLMResponse(forced);
     }
 
 
@@ -443,6 +955,13 @@ public class scr_UpdateHandler : MonoBehaviour
     }
     protected void LoadSaveFile(SaveFile save, bool unloadCanvas = true)
     {
+        // Regular-load wipe (user decision 2.2): loading a save through the normal path must clear
+        // the LLM comparison chain and prune its checkpoint files - only the LLM panel's own restores
+        // (RestoreLLMCheckpoint, which never comes through here) may keep it. Clear also resets the
+        // panel's LLM display via LLMSessionStore.Observer_Cleared, so no stale comparison UI
+        // survives the load.
+        LLMSessionStore.Clear();
+
         NotifySL(true);
         if (unloadCanvas) scr_System_SceneManager.current.UnloadLastCanvasFromScene();
         if (scr_System_CampaignManager.current.ColdLoad)
@@ -463,6 +982,41 @@ public class scr_UpdateHandler : MonoBehaviour
         scr_System_CampaignManager.current.UpdateScene();
         scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
         scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Room);
+    }
+
+    /// <summary>
+    /// LLM-exclusive full checkpoint restore (the replacement for the old LoadSilent, which only
+    /// restored data and left every UI stale): waits for any in-flight update/event to settle, then
+    /// LLMCheckpointStore.RestoreCheckpoint performs the full reload - data restore + UpdateScene +
+    /// switch to the logs view, with none of LoadSaveFile's load-menu side effects (no canvas-stack
+    /// unload, no ColdLoad scene swap, no forced View_Room fallthrough). Afterwards control returns
+    /// to the caller (scr_panel_logs) via onRestored(success) so it can reconstruct the LLM display
+    /// for the entry it is showing - reconstruction MUST happen in the callback, not before it,
+    /// because the final-response blocks resolve portraits against LIVE game state. This is the only
+    /// load path that preserves the LLM session chain; regular loads wipe it.
+    /// </summary>
+    /// <summary>
+    /// True from the moment RestoreLLMCheckpoint is called until its callback is about to fire -
+    /// UI busy-checks (scr_panel_logs.IsBusy) read this so no comparison action (Confirm/Discard/
+    /// Regenerate/browse) can interleave with an in-flight state restore, whose settle-wait can
+    /// span several frames.
+    /// </summary>
+    public bool RestoringLLMCheckpoint { get; private set; }
+
+    public void RestoreLLMCheckpoint(string path, Action<bool> onRestored)
+    {
+        RestoringLLMCheckpoint = true;
+        StartCoroutine(RestoreLLMCheckpointRoutine(path, onRestored));
+    }
+
+    IEnumerator RestoreLLMCheckpointRoutine(string path, Action<bool> onRestored)
+    {
+        yield return new WaitUntil(() => !Updating && !EventHandler.Active);
+        var success = LLMCheckpointStore.RestoreCheckpoint(path);
+        // Cleared before the callback so callback-driven follow-ups (a Regenerate's fresh request,
+        // a redraw's ValidateAll) are not themselves gated as busy.
+        RestoringLLMCheckpoint = false;
+        onRestored?.Invoke(success);
     }
 
     public void NotifySL(bool blockAction)
@@ -490,6 +1044,33 @@ public class scr_UpdateHandler : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
 
+    }
+
+    /// <summary>
+    /// Stops a hanging LLM/agent request rather than leaving it dangling when the process is going away
+    /// anyway - most relevant for agent mode, which can otherwise sit for a long time mid multi-round
+    /// loop or mid Tool_ExecuteAP's WaitUntil. Covers both an actual game close (OnApplicationQuit, also
+    /// fired by Unity when leaving Play Mode in the Editor) and OnDestroy as a second-layer catch-all.
+    /// Reuses InterruptLLMRoutine - already correctly unwinds the whole nested coroutine chain (agent
+    /// loop, tool dispatch, Tool_ExecuteAP's wait) since it's all one Coroutine object, not several.
+    /// </summary>
+    void TerminateHangedAgent()
+    {
+        if (LLMStatus != LLMStatus.active) return;
+        Debug.Log(CurrentAgentSession != null
+            ? $"[Agent] terminating in-progress session {CurrentAgentSession.sessionId} - application quitting/Play Mode ending."
+            : "Terminating in-progress LLM request - application quitting/Play Mode ending.");
+        InterruptLLMRoutine(true);
+    }
+
+    void OnApplicationQuit()
+    {
+        TerminateHangedAgent();
+    }
+
+    void OnDestroy()
+    {
+        TerminateHangedAgent();
     }
 
     int updateTime, totalUpdateTime, totalUpdateTime2;

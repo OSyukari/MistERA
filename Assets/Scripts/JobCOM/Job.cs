@@ -642,19 +642,19 @@ public class Job : IDisposable, I_Disposable
         List<string> list = new List<string>();
         foreach (var ap in this.packages_current)
         {
-            if (!ap.actorRefs.Contains(refID)) continue;
+            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
             if(packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
         }
         foreach (var ap in this.packages_previous)
         {
-            if (!ap.actorRefs.Contains(refID)) continue;
+            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
         }
         foreach (var ap in this.packages_completed)
         {
-            if (!ap.actorRefs.Contains(refID)) continue;
+            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTags(refID));
         }
@@ -673,19 +673,19 @@ public class Job : IDisposable, I_Disposable
         List<string> list = new List<string>();
         foreach (var ap in this.packages_current)
         {
-            if (!ap.actorRefs.Contains(refID)) continue;
+            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
         }
         foreach (var ap in this.packages_previous)
         {
-            if (!ap.actorRefs.Contains(refID)) continue;
+            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
         }
         foreach (var ap in this.packages_completed)
         {
-            if (!ap.actorRefs.Contains(refID)) continue;
+            if (ap.actorRefs == null || !ap.actorRefs.Contains(refID)) continue;
             if (packages != null) packages.Add(ap);
             foreach (var ep in ap.ListEP) list.AddRange(ep.GetActorEPTargetTags(refID));
         }
@@ -938,6 +938,11 @@ public class Job : IDisposable, I_Disposable
 
         if (ap.packageStateChanged)
         {
+            if (ap.trackCapture)
+            {
+                if (ap.capturedLog == null) ap.capturedLog = new MessageCollect();
+                ap.capturedLog.Merge(ap.mcol, false);
+            }
             m.Merge(ap.mcol, false);
             //Debug.Log("AP packageStateChanged, merged");
             ap.CaptureRecording();
@@ -1072,6 +1077,22 @@ public class Job : IDisposable, I_Disposable
     public void AddPlaceholderPackage(ActionPackage ap)
     {
         this.packages_placeholder.Add(ap);
+    }
+
+    /// <summary>
+    /// Evicts one specific package from current tracking: disable + unregister + untrack, the exact
+    /// teardown AddPackage's conflict-eviction path performs (Job.AddPackage) - never just Remove, or
+    /// the package lingers in the campaign manager's room registry with a frozen positive Duration.
+    /// Used by the LLM-plan re-pin (scr_System_CampaignManager.PinActorForLLMPlan) to retire a stale
+    /// wait-package before issuing its replacement on a different job. Returns false if the package
+    /// wasn't currently tracked by this job.
+    /// </summary>
+    public bool RemovePackage(ActionPackage ap)
+    {
+        if (ap == null || !packages_current.Remove(ap)) return false;
+        ap.DisablePackage();
+        scr_System_CampaignManager.current.Unregister(ap);
+        return true;
     }
 
     public virtual void AddPackage(List<ActionPackage> packages, bool isPlayerCOM = false)

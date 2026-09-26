@@ -40,8 +40,27 @@
                     ]
                 },
                 "events": [
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "OnMembershipFeeFailed_failed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "isLast": true, "line": "OnMembershipFeeFailed_failed_payee" }
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "OnMembershipFeeFailed_failed", "nextEntryLabel": "check_interrupted" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "line": "OnMembershipFeeFailed_failed_payee", "nextEntryLabel": "check_interrupted" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_interrupted",
+                        "options": [
+                            {
+                                "option": "interrupted append string set - jump to the interrupted trailer line",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["interrupted"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "interrupted_trailer"] }
+                                ]
+                            },
+                            {
+                                "option": "not newly interrupted - nothing more to say",
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "interrupted_trailer", "isLast": true, "line": "OnMembershipFeeFailed_interrupted" }
                 ]
             }
         ]
@@ -56,7 +75,8 @@
 
                 "OnMembershipFeeFailed": "会员费事件 - 未支付",
                 "OnMembershipFeeFailed_failed": "$factionName$未能向$counterpartName$支付$target.name$的$feeName$：需要$amount$，但仅有$available$。",
-                "OnMembershipFeeFailed_failed_payee": "$factionName$未能从$counterpartName$处收到$target.name$的$feeName$：需要$amount$，但对方仅有$available$。"
+                "OnMembershipFeeFailed_failed_payee": "$factionName$未能从$counterpartName$处收到$target.name$的$feeName$：需要$amount$，但对方仅有$available$。",
+                "OnMembershipFeeFailed_interrupted": "由于拖欠了$feeName$，$target.name$暂时无法享受$payeeName$的服务。"
             },
             "en-us": {
                 "OnMembershipFeePaid": "Membership Fee Event - Paid",
@@ -66,7 +86,8 @@
 
                 "OnMembershipFeeFailed": "Membership Fee Event - Unpaid",
                 "OnMembershipFeeFailed_failed": "$factionName$ failed to pay $target.name$'s $feeName$ to $counterpartName$: $amount$ needed, but only has $available$.",
-                "OnMembershipFeeFailed_failed_payee": "$factionName$ did not receive $target.name$'s $feeName$ from $counterpartName$: $amount$ was due, but they only have $available$."
+                "OnMembershipFeeFailed_failed_payee": "$factionName$ did not receive $target.name$'s $feeName$ from $counterpartName$: $amount$ was due, but they only have $available$.",
+                "OnMembershipFeeFailed_interrupted": "Because $payerName$ failed to pay $payeeName$ for $target.name$'s $feeName$, service has been interrupted."
             }
         }
     }

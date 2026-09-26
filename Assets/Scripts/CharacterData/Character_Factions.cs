@@ -715,7 +715,10 @@ public class Character_Factions
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
         foreach (var faction in Factions)
         {
-            if (faction.HasScheduleFor(this.Owner, hour, daysLookahead)) return faction;
+            if (faction.HasScheduleFor(this.Owner, hour, daysLookahead))
+            {
+                if (HomeFactions.Contains(faction) || (Owner.CanWorkFor(faction) && Owner.ShouldWorkFor(faction))) return faction;
+            }
         }
         return null;
     }

@@ -57,6 +57,17 @@ public class ActionPackage_Wait : ActionPackage
     }
     //[JsonIgnore] public override string DisplayName { get { return targetCOM.DisplayName(COMVariantID); } }
 
+    /// <summary>
+    /// LLM-plan re-pin support (scr_System_CampaignManager.PinActorForLLMPlan): extends this wait to
+    /// cover at least the given remaining-plan duration. Never shortens - each agent round refreshes
+    /// the pin to its own whole remaining plan, so whatever earlier rounds' event tails consumed is
+    /// topped back up without stacking a second wait on top of a live one.
+    /// </summary>
+    public void Refill(int minutes)
+    {
+        duration = Math.Max(duration, minutes);
+    }
+
     public override ActionPackage Copy()
     {
         return this;

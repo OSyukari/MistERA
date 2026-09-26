@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,14 @@ using static LLMUtils;
 public class LLM_Setting
 {
     public bool enabled = true;
+
+    /// <summary>
+    /// When true, scr_UpdateHandler.SendLLMRequest(string,bool) redirects to SendAgentRequest instead of
+    /// the single-shot path - see scr_UpdateHandler.cs. Persisted via the same encrypted llmSetting.json
+    /// round-trip as the rest of LLM_Setting (StoreLLMSetting/LoadLLMSetting).
+    /// </summary>
+    public bool useAgentMode = false;
+
     public class ChatCompletion
     {
         public string id = System.Guid.NewGuid().ToString();
@@ -75,12 +84,33 @@ public class LLMRequest
     public int? max_completion_tokens = 512;
     public bool stream = false;
 
+    /// <summary>OpenAI-envelope streaming option; set by ApplyRequestShaping only when the profile's
+    /// streamIncludeUsage asks for a usage chunk at the end of the stream.</summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public StreamOptions stream_options = null;
+
+    public class StreamOptions
+    {
+        public bool include_usage = true;
+    }
+
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public double? top_p = 1.0; 
     
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public int? top_k = 40;
+
+    /// <summary>
+    /// Provider-specific reasoning/thinking effort level (e.g. "low"/"medium"/"high"). Valid values
+    /// differ per provider - see the "_reasoningEffortOptions" comment in each Assets/LLM/Providers/*.json
+    /// file. Stripped by LLMProviderUtils.ApplyRequestShaping when LLMProviderProfile.supportsReasoningEffort
+    /// is false, same as top_k/top_p. For the "claude" responseEnvelope this field is never actually sent
+    /// under this name - ApplyRequestShaping.ApplyClaudeEffort relocates it to output_config.effort instead,
+    /// since Claude has no flat reasoning_effort parameter.
+    /// </summary>
+    [JsonProperty("reasoning_effort", NullValueHandling = NullValueHandling.Ignore)]
+    public string reasoningEffort = null;
 
     public ResponseFormatter response_format = null;
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -89,7 +119,24 @@ public class LLMRequest
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public List<ResponseFormatter_Tools> tools = null;
-    public ResponseFormatter_ZAI_toolchoice tool_choice = null;
+
+    /// <summary>
+    /// Either a ResponseFormatter_ZAI_toolchoice (existing forced-single-tool structured-output
+    /// workaround), the string "auto" (OpenAI-envelope agent mode), or a
+    /// ResponseFormatter_ClaudeToolChoice (Claude-envelope agent mode) - whichever ApplyRequestShaping
+    /// assigned for this request. Never read back in code, only serialized.
+    /// </summary>
+    public object tool_choice = null;
+
+    /// <summary>
+    /// True for a request built by the agentic tool-calling orchestrator, as opposed to the existing
+    /// single-shot/structured-output path. Read by LLMProviderUtils.ApplyRequestShaping to decide
+    /// whether to shape `tools`/`tool_choice` for a real multi-tool agent turn instead of the existing
+    /// toolcall-strategy submit_response workaround - the two are mutually exclusive per request.
+    /// Never sent to the API.
+    /// </summary>
+    [JsonIgnore]
+    public bool agentTurn = false;
 
 
     /// <summary>
@@ -97,8 +144,10 @@ public class LLMRequest
     /// LLMMessage.tag via LLMProviderProfile.enableNodeByTag/disableNodeByTag, decided before
     /// Resolve() runs (so a skipped node's {{setvar}} side effects never fire) and without mutating
     /// req itself, since req is the shared cached LLMPresetTemplate reused across every request.
+    /// agentMode gates the two mode-reserved tags - "agent_only" nodes ride only on agent-mode
+    /// builds, "single_shot_only" only on single-shot builds - so one preset file serves both modes.
     /// </summary>
-    public void LoadTemplate(LLMPresetTemplateData req)
+    public void LoadTemplate(LLMPresetTemplateData req, bool agentMode = false)
     {
         this.temperature = req.temperature;
         this.max_completion_tokens = req.max_completion_tokens;
@@ -112,6 +161,15 @@ public class LLMRequest
         foreach (var root in req.messages)
         {
             if (root == null || !root.isValid) continue;
+
+            // Mode-reserved tags: agent-vs-single-shot is a request-time decision (unlike the
+            // profile tag overrides below, which are provider-driven). A node's own enabled flag
+            // and the profile overrides still apply on top of this gate.
+            if (!string.IsNullOrEmpty(root.tag))
+            {
+                if (root.tag == "agent_only" && !agentMode) continue;
+                if (root.tag == "single_shot_only" && agentMode) continue;
+            }
 
             bool enabledByTag = profile != null && !string.IsNullOrEmpty(root.tag)
                 && profile.enableNodeByTag != null && profile.enableNodeByTag.Contains(root.tag);
@@ -150,6 +208,11 @@ public class LLMRequest
     {
         foreach(var message in this.messages)
         {
+            // content is always null on an LLMMessage_Final_Claude (its override returns null - the
+            // real data lives in contentBlocks instead, see LLMMessage_Final.cs) - these only ever get
+            // appended after this substitution pass runs on the initial template build, but guard
+            // anyway since it's now a valid state for any LLMMessage_Final to be in.
+            if (message.content == null) continue;
             message.content = message.content.Replace(a, b);
         }
     }
@@ -157,6 +220,7 @@ public class LLMRequest
     {
         foreach (var message in this.messages)
         {
+            if (message.content == null) continue;
             message.content = message.content.Replace(a, b);
         }
     }
@@ -197,6 +261,46 @@ public class LLMRequest
         }
     }
 
+    /// <summary>
+    /// One OpenAI-style function-tool definition entry for agent-mode's real multi-tool loop
+    /// (responseEnvelope == "openai"). Shares the wire shape with ResponseFormatter_ZAI_tools
+    /// ({type:"function", function:{name,description,parameters}}) but is kept as a distinct type
+    /// since ZAI_tools is specifically the single-synthetic-"submit_response"-tool structured-output
+    /// workaround (responseFormatStrategy == "toolcall"). For "toolcall"-strategy agent turns, a
+    /// ResponseFormatter_ZAI_tools entry for submit_response rides alongside a list of these in the
+    /// same `tools` array (see LLMProviderProfile.ApplyRequestShaping's "toolcall" agent branch) -
+    /// the two types stay distinct so LLMResponseToolParser can tell them apart by shape/origin, not
+    /// because they're mutually exclusive on the wire.
+    /// </summary>
+    public class ResponseFormatter_AgentTool : ResponseFormatter_Tools
+    {
+        public class FunctionDef
+        {
+            public string name;
+            public string description;
+            public LLMFormatSchema parameters;
+        }
+        public string type = "function";
+        public FunctionDef function = new FunctionDef();
+    }
+
+    /// <summary>
+    /// One Claude-style tool definition entry for agent mode (responseEnvelope == "claude") - flat
+    /// {name, description, input_schema} shape, distinct from OpenAI's nested {type,function{...}}.
+    /// </summary>
+    public class ResponseFormatter_ClaudeTool : ResponseFormatter_Tools
+    {
+        public string name;
+        public string description;
+        public LLMFormatSchema input_schema;
+    }
+
+    /// <summary>Claude's {"type":"auto"} tool_choice shape for agent mode.</summary>
+    public class ResponseFormatter_ClaudeToolChoice
+    {
+        public string type = "auto";
+    }
+
     public LLMRequest() { }
     public LLMRequest(bool initialize)
     {
@@ -205,13 +309,23 @@ public class LLMRequest
 
     public class ResponseFormatter_Claude
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public ResponseFormatter_Claude_2 format;
+
+        /// <summary>
+        /// Claude's real reasoning-effort control - "low" | "medium" | "high" | "xhigh" | "max",
+        /// set here instead of as a top-level reasoning_effort field. See ApplyRequestShaping.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string effort;
 
         public class ResponseFormatter_Claude_2
         {
             public string type = "json_schema";
             public LLMFormatSchema schema;
         }
+
+        public ResponseFormatter_Claude() { }
 
         public ResponseFormatter_Claude(ResponseFormatter format)
         {
@@ -453,6 +567,16 @@ public class MessageParagraph : I_hasPortrait
     public List<string> portraitTags = new List<string>();
     public string CommandID;
 
+    /// <summary>
+    /// In-game clock time ("HH:mm") this block's content takes place, LLM-provided per the schema.
+    /// Copied by the model from its context's time anchors (worldInfo current time, the [HH:mm]
+    /// prefixes on tool-result/batch-report messages) rather than invented. Read by
+    /// scr_panel_logs.DrawBlockHeader for the block header label and its cumulative
+    /// "every captured game message with time <= this block's time" tooltip. Null/empty/garbage on
+    /// old or nonconforming responses - consumers must TryParseClock it.
+    /// </summary>
+    public string time = null;
+
     [JsonIgnore]
     public List<string> SelfPortraitTag { get { return portraitTags; } }
     [JsonIgnore]
@@ -609,6 +733,15 @@ public class LLMResponse
         /// </summary>
         public string thinking;
 
+        /// <summary>
+        /// Tool-use block fields, populated only when type == "tool_use" - see
+        /// LLMResponseToolParser.TryExtractToolCalls, which reads these to build a normalized
+        /// LLMToolCallRequest for the agent-mode orchestration loop.
+        /// </summary>
+        public string id;
+        public string name;
+        public JToken input;
+
         [JsonIgnore]
         public MessageJSON JSON
         {
@@ -629,6 +762,12 @@ public class LLMResponse
             return json;
         }
     }
+    /// <summary>
+    /// Token usage as each provider reports it - OpenAI/ZAI/DeepSeek (prompt_/completion_tokens, with
+    /// cache hits under prompt_tokens_details.cached_tokens or DeepSeek's prompt_cache_hit_tokens) or
+    /// Claude (input_/output_tokens, cache under cache_read_/cache_creation_input_tokens). Use the
+    /// normalized Input/Output/Cached getters rather than the raw fields.
+    /// </summary>
     public class usages
     {
         public int prompt_tokens;
@@ -636,7 +775,31 @@ public class LLMResponse
         public int total_tokens;
         public int input_tokens;
         public int output_tokens;
+
+        public promptDetails prompt_tokens_details;
+        public int? prompt_cache_hit_tokens;
+        public int? prompt_cache_miss_tokens;
+        public int? cache_read_input_tokens;
+        public int? cache_creation_input_tokens;
+
+        public class promptDetails
+        {
+            public int? cached_tokens;
+        }
+
+        /// <summary>Total prompt tokens, cached ones included (Claude reports cache reads/writes
+        /// separately from input_tokens, so they are added back).</summary>
+        [JsonIgnore] public int Input => prompt_tokens > 0 ? prompt_tokens
+            : input_tokens + (cache_read_input_tokens ?? 0) + (cache_creation_input_tokens ?? 0);
+        [JsonIgnore] public int Output => completion_tokens > 0 ? completion_tokens : output_tokens;
+        /// <summary>Prompt tokens served from the provider's cache; null when the provider reports no
+        /// cache figure at all (distinct from a reported 0).</summary>
+        [JsonIgnore] public int? Cached => prompt_tokens_details?.cached_tokens ?? prompt_cache_hit_tokens ?? cache_read_input_tokens;
+        [JsonIgnore] public bool HasData => Input > 0 || Output > 0;
     }
+
+    /// <summary>Wall-clock seconds the request took, stamped by SendLLMRequest_Routine (not sent/saved).</summary>
+    [JsonIgnore] public double elapsedSeconds;
 
     [JsonIgnore]
     public MessageJSON JSON
@@ -922,6 +1085,19 @@ public class LLM_WorldState
             }
         }
 
+        // A character can be physically present in the current room without being a managed member of
+        // its owning faction (e.g. an unaffiliated guest/visitor NPC) - the loop above only covers
+        // faction.ManagedChara, so anyone else in the room was otherwise visible only by first name in
+        // CurrentRoomInfo's "Chara in room" list, with no RefID anywhere in world info at all. Serialize
+        // everyone physically in the room regardless of faction ownership. Indexer assignment since
+        // faction.ManagedChara may already have added some of them above.
+        if (currentRoom != null)
+        {
+            foreach (var c in currentRoom.RoomChara)
+            {
+                if (!Characters.ContainsKey(c.FullName)) Characters[c.FullName] = new CharaStorage(c, faction, true);
+            }
+        }
 
         // collect world info
         if (scr_System_CampaignManager.current.CurrentCampaign != null)

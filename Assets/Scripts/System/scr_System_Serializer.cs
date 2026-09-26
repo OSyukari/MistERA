@@ -44,6 +44,22 @@ public class scr_System_Serializer : MonoBehaviour
         }
     }
 
+    string _checkpointPath = "";
+    /// <summary>
+    /// Disposable checkpoint saves for the agentic LLM tool-calling loop (see LLMCheckpointStore) - a
+    /// subdirectory of SavePath, which the player-facing save browser (scr_Canvas_LoadSave.
+    /// BuildSaveButtons) never scans since it only lists "*.json" directly inside SavePath itself,
+    /// non-recursively. No exclusion logic needed on the UI side, just this directory separation.
+    /// </summary>
+    public static string CheckpointPath
+    {
+        get
+        {
+            if (current._checkpointPath == "") current._checkpointPath = $"{SavePath}/Checkpoints";
+            return current._checkpointPath;
+        }
+    }
+
     string _presetPath = "";
     public static string PresetPath
     {

@@ -1144,6 +1144,86 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
 
 
+    /// <summary>
+    /// Whether c should take/keep working jobs dispatched at faction - false only while faction is one of
+    /// c's work factions AND still owes c an unpaid salary backlog: a suspended Obligation_Salary
+    /// (payeeRefID == c.RefID, owed > 0 - see RecurringObligation.IsSuspended) on that faction's own
+    /// TradeManager, which self-clears the moment the missed wage is paid off. Non-work factions (home,
+    /// locale visits) are never gated. See TryFindScheduledJobNode's strike check.
+    /// <br/>reason: when returning false, a localized, human-readable explanation (one line per suspended
+    /// obligation, amount via ItemEntry.Print) - see Utility.FillFactionRect's tooltip/red-name handling.
+    /// </summary>
+    public bool ShouldWorkFor(I_IsJobGiver faction)
+    {
+        return ShouldWorkFor(faction, out _);
+    }
+
+    public bool ShouldWorkFor(I_IsJobGiver faction, out string reason)
+    {
+        reason = "";
+        var employer = faction == null ? null : faction.Faction;
+        if (employer == null || employer.TradeManager == null) return true;
+        if (FactionManager == null || !FactionManager.WorkFactions.Contains(employer)) return true;
+
+        var owedSalaries = employer.TradeManager.Obligations.OfType<Obligation_Salary>()
+            .Where(x => x.payeeRefID == RefID && x.IsSuspended).ToList();
+        if (owedSalaries.Count > 0)
+        {
+            // case for failing salary
+            reason = string.Join("\n", owedSalaries.Select(x =>
+                LocalizeDictionary.QueryThenParse("management_faction_work_strike_tooltip")
+                    .Replace("$item$", x.owed == null ? "" : x.owed.Print)));
+            return false;
+        }
+        return true;
+    }
+
+    public bool CanWorkFor(I_IsJobGiver faction)
+    {
+        return CanWorkFor(faction, out var stringss);
+    }
+
+    /// <summary>
+    /// Blocks working a job at faction (C) when the faction that actually dispatched this character there
+    /// (A - Character_Factions.GetWorkFactionSourceOrDefault, the explicitly tracked source or else
+    /// HomeFactions[0]) owes C an unpaid membership fee (suspended Obligation_MembershipFee - see
+    /// Obligation_MembershipFee.HandlePaymentEvent). Mirror-image of ShouldWorkFor's strike check (C owing
+    /// this character unpaid salary); this is "A hasn't paid C for B's membership, so B can't work there,"
+    /// not "B personally owes anything" - Obligation_MembershipFee is scoped to (A, C, cadence), not per
+    /// character, so this can block every character A dispatched to C at once, same granularity the
+    /// obligation itself already has. Filtered to THIS character's own membershipFee.cadence at C (same
+    /// lookup Obligation_MembershipFee.GetRelevantFees itself uses) so an unrelated sibling's unpaid dues
+    /// under a different MemberType/cadence at the same provider never blocks this character - only the
+    /// obligation actually covering this character's own membership arrangement counts.
+    /// </summary>
+    public bool CanWorkFor(I_IsJobGiver faction, out string reason)
+    {
+        reason = "";
+        var provider = faction == null ? null : faction.Faction;
+        if (provider == null) return true;
+        if (FactionManager == null || !FactionManager.WorkFactions.Contains(provider)) return true;
+
+        var status = provider.GetMemberType(this);
+        if (status == null || status.membershipFee == null) return true;
+
+        var sourceFaction = FactionManager.GetWorkFactionSourceOrDefault(provider.ID);
+        if (sourceFaction == null || sourceFaction.TradeManager == null) return true;
+
+        var unpaidFees = sourceFaction.TradeManager.Obligations.OfType<Obligation_MembershipFee>()
+            .Where(x => x.TargetFaction == provider && x.cadence == status.membershipFee.cadence && x.IsSuspended).ToList();
+        if (unpaidFees.Count > 0)
+        {
+            // GetDisplayName already resolves the fee's own membershipFeeName override (e.g. "学费"),
+            // falling back to the generic "会员费" wording when unset - see Obligation_MembershipFee.
+            reason = string.Join("\n", unpaidFees.Select(x =>
+                LocalizeDictionary.QueryThenParse("management_faction_work_feeUnpaid_tooltip")
+                    .Replace("$name$", x.GetDisplayName(sourceFaction))
+                    .Replace("$item$", x.owed == null ? "" : x.owed.Print)));
+            return false;
+        }
+        return true;
+    }
+
     public Manageable.HourlySchedule GetJobPost(int hour = -1, int daysLookahead = 0)
     {
         if (FactionManager == null) return null;

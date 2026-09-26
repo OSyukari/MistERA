@@ -9,8 +9,46 @@
                     ]
                 },
                 "events": [
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "OnSalaryPaid_paid" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "isLast": true, "line": "OnSalaryPaid_paid_payee" }
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "OnSalaryPaid_paid", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "line": "OnSalaryPaid_paid_payee", "nextEntryLabel": "check_trust" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_trust",
+                        "options": [
+                            {
+                                "option": "trust changed - narrate it",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["trustChange"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "trust_change"] }
+                                ]
+                            },
+                            {
+                                "option": "no trust change - check resumed next",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "check_resumed"] } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "trust_change", "line": "salary_trust_change", "nextEntryLabel": "check_resumed" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_resumed",
+                        "options": [
+                            {
+                                "option": "resumed append string set - jump to the resumed trailer line",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["resumed"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "resumed_trailer"] }
+                                ]
+                            },
+                            {
+                                "option": "not resumed - nothing more to say",
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "resumed_trailer", "isLast": true, "line": "OnSalaryPaid_resumed" }
                 ]
             },
             {
@@ -21,8 +59,46 @@
                     ]
                 },
                 "events": [
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "isLast": true, "line": "OnSalaryFailed_failed" },
-                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "isLast": true, "line": "OnSalaryFailed_failed_payee" }
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "OnSalaryFailed_failed", "nextEntryLabel": "check_trust" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "payee", "line": "OnSalaryFailed_failed_payee", "nextEntryLabel": "check_trust" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_trust",
+                        "options": [
+                            {
+                                "option": "trust changed - narrate it",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["trustChange"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "trust_change"] }
+                                ]
+                            },
+                            {
+                                "option": "no trust change - check interrupted next",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": ["", "check_interrupted"] } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "trust_change", "line": "salary_trust_change", "nextEntryLabel": "check_interrupted" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_interrupted",
+                        "options": [
+                            {
+                                "option": "interrupted append string set - jump to the interrupted trailer line",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["interrupted"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "interrupted_trailer"] }
+                                ]
+                            },
+                            {
+                                "option": "not newly interrupted - nothing more to say",
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "interrupted_trailer", "isLast": true, "line": "OnSalaryFailed_interrupted" }
                 ]
             }
         ]
@@ -33,19 +109,27 @@
                 "OnSalaryPaid": "工资事件 - 已支付",
                 "OnSalaryPaid_paid": "$factionName$已向$target.name$（$sourceName$）支付工资（$amount$）。",
                 "OnSalaryPaid_paid_payee": "$factionName$已收到$target.name$（$sourceName$）的工资（$amount$）。",
+                "OnSalaryPaid_resumed": "此前拖欠的工资已结清，$target.name$回到了工作岗位。",
+
+                "salary_trust_change": "$target.name$对$managers.name$的信赖$trustChange$。",
 
                 "OnSalaryFailed": "工资事件 - 未支付",
                 "OnSalaryFailed_failed": "$factionName$未能向$target.name$（$sourceName$）支付工资：需要$amount$。",
-                "OnSalaryFailed_failed_payee": "$factionName$未能收到$target.name$（$sourceName$）的工资：需要$amount$。"
+                "OnSalaryFailed_failed_payee": "$factionName$未能收到$target.name$（$sourceName$）的工资：需要$amount$。",
+                "OnSalaryFailed_interrupted": "由于拖欠工资，$target.name$在$payerName$的工作暂时停止。"
             },
             "en-us": {
                 "OnSalaryPaid": "Salary Event - Paid",
                 "OnSalaryPaid_paid": "$factionName$ paid $target.name$'s wages for $sourceName$ ($amount$).",
                 "OnSalaryPaid_paid_payee": "$factionName$ received $target.name$'s wages for $sourceName$ ($amount$).",
+                "OnSalaryPaid_resumed": "The previously owed wages have been settled; $target.name$ has returned to work.",
+
+                "salary_trust_change": "$target.name$'s trust toward $managers.name$ $trustChange$.",
 
                 "OnSalaryFailed": "Salary Event - Unpaid",
                 "OnSalaryFailed_failed": "$factionName$ failed to pay $target.name$'s wages for $sourceName$: $amount$ due.",
-                "OnSalaryFailed_failed_payee": "$factionName$ did not receive $target.name$'s wages for $sourceName$ this cycle: $amount$ was due."
+                "OnSalaryFailed_failed_payee": "$factionName$ did not receive $target.name$'s wages for $sourceName$ this cycle: $amount$ was due.",
+                "OnSalaryFailed_interrupted": "Because $payerName$ failed to pay $payeeName$, $target.name$ will no longer come to work."
             }
         }
     }

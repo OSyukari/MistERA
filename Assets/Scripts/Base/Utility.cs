@@ -73,7 +73,9 @@ public static class Utility
     /// then "assigned by X" whenever faction's tracked (or defaulted-to-home) source differs from faction
     /// itself - see Character_Factions.GetWorkFactionSourceOrDefault/AddWorkFaction's sourceFaction param,
     /// so an untracked work faction still reports its implicit home-faction source, not just explicit
-    /// overrides.
+    /// overrides. Also flags an on-strike member (ShouldWorkFor false - faction owes them unpaid salary):
+    /// name wrapped in TextColor_conflict red (only when not dimmed - dim takes precedence) and the
+    /// localized strike reason appended to extraTooltip.
     /// <br/>highlightFaction: when non-null, dims the name if faction isn't it (management canvas's
     /// "faction currently being viewed" highlight) - omit for callers with no such concept.
     /// </summary>
@@ -85,9 +87,17 @@ public static class Utility
             return;
         }
 
-        bool dim = highlightFaction != null && faction != highlightFaction;
+        bool dim = highlightFaction != null && faction != highlightFaction && !faction.isPlayerFaction;
+        bool shouldWork = c.ShouldWorkFor(faction, out string strikeReason);
+
+        bool canWork = c.CanWorkFor(faction, out string haltReason);
+
+
         string name = faction.GetCharaSocialStandingName(c);
-        text.SetText(dim ? WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color) : name, false, extraTooltip);
+        if (!shouldWork || !canWork) name = WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+        else if (dim) name = WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
+         
+        text.SetText(name, false, extraTooltip);
 
         string tooltip = faction.GetCharaSocialStandingTooltip(c);
 
@@ -99,6 +109,8 @@ public static class Utility
         {
             tooltip += "\n\n" + LocalizeDictionary.QueryThenParse("management_faction_work_assignedBy_tooltip").Replace("$factionname$", source.FactionDisplayName);
         }
+        if (!shouldWork) tooltip += "\n" + WrapTextColor(strikeReason, scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
+        if (!canWork) tooltip += "\n" + WrapTextColor(haltReason, scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
         text.SetExternalTooltip(tooltip);
     }
     public static string GetEnumString(System.Type type, object value)

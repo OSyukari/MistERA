@@ -23,8 +23,26 @@ public class scr_Panel_BottomBar : scr_Menu
         scr_System_CampaignManager.current.Observer_PlayerJob += OnPlayerJobChange;
         scr_System_CampaignManager.current.Observer_CurrentTarget += OnCurrentTargetChange;
         scr_System_CampaignManager.current.Observer_UpdateNotice += OnUpdateNotice;
+        scr_panel_logs.Observer_LLMModeChanged += ValidateAll;
 
         image = this.GetComponent<Image>();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        scr_panel_logs.Observer_LLMModeChanged -= ValidateAll;
+    }
+
+    /// <summary>
+    /// Every bottom-bar button except the help guide is locked while the LLM panel is in LLM mode -
+    /// until the player confirms or discards and fully leaves it (scr_panel_logs.LLMModeActive).
+    /// </summary>
+    static bool LLMLocked(ref string tooltip)
+    {
+        if (!scr_panel_logs.LLMModeActive) return false;
+        tooltip = LocalizeDictionary.QueryThenParse("ui_bottomBar_tooltip_llmMode", "Confirm or discard the AI response first");
+        return true;
     }
     private void OnViewModeChange(ViewMode vm, bool lockView)
     {
@@ -121,6 +139,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (LLMLocked(ref tooltip)) return false;
             tooltip = "";
             //Debug.Log("isbuttonvalid " + targetVM);
             if(scr_UpdateHandler.current.Lock)
@@ -186,6 +205,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (LLMLocked(ref tooltip)) return false;
             if (scr_UpdateHandler.current.Lock)
             {
                 this.tooltip = errorTooltip1;
@@ -225,6 +245,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (LLMLocked(ref tooltip)) return false;
             tooltip = "";
             if (scr_UpdateHandler.current.Lock)
             {
@@ -273,6 +294,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (LLMLocked(ref tooltip)) return false;
             if (scr_UpdateHandler.current.Lock)
             {
                 this.tooltip = errorTooltip1;
@@ -305,6 +327,7 @@ public class scr_Panel_BottomBar : scr_Menu
 
         public override bool IsButtonValid()
         {
+            if (LLMLocked(ref tooltip)) return false;
             if (scr_UpdateHandler.current.Lock)
             {
                 this.tooltip = errorTooltip1;
@@ -345,6 +368,7 @@ public class scr_Panel_BottomBar : scr_Menu
         string errorTooltip1, errorTooltip2;
         public override bool IsButtonValid()
         {
+            if (LLMLocked(ref tooltip)) return false;
             this.tooltip = "";
             //return false;
             if (parent.DisableQuickSave)
@@ -390,6 +414,7 @@ public class scr_Panel_BottomBar : scr_Menu
         string errorTooltip1, errorTooltip2;
         public override bool IsButtonValid()
         {
+            if (LLMLocked(ref tooltip)) return false;
             this.tooltip = "";
             if (scr_UpdateHandler.current.Lock)
             {

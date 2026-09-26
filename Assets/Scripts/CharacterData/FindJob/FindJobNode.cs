@@ -401,6 +401,22 @@ public class TryFindScheduledJobNode : FindJobNode
             else if (currentJobFaction != null)
             {   // current job is null, or current job is not schedule
 
+
+                if (!c.CanWorkFor(currentJobFaction, out var reason))
+                {
+                    if (s != null) s.Add($"|cannot benefit from {currentJobFaction.FactionDisplayName} - {reason}|");
+                    return false;
+                }
+
+                // strike: currentJobFaction is a work faction of c and still owes c unpaid salary
+                // (suspended Obligation_Salary backlog - see Character_Trainable.ShouldWorkFor) - refuse
+                // to take any scheduled job there until the missed wage is paid off.
+                if (!c.ShouldWorkFor(currentJobFaction, out var reason2))
+                {
+                    if (s != null) s.Add($"|on strike against {currentJobFaction.FactionDisplayName} - {reason2}| ");
+                    return false;
+                }
+
                 // at this point we know the previous job can be break
                 //foreach (Manageable faction in FactionManager.Factions)
                 //{   // get closest schedule job

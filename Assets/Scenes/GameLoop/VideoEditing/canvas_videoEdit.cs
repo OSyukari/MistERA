@@ -320,7 +320,6 @@ public class canvas_videoEdit : scr_Menu
     public scr_HoverableText prefab_LogLine;
     public scr_menu_question prefab_question;
     public scr_menu_inputField prefab_inputField;
-    public scr_menu_LLMQuery prefab_llm;
 
     public RectTransform RectList_Messages;
     public scr_videoEdit_message_record prefab_message_holder;
@@ -396,12 +395,6 @@ public class canvas_videoEdit : scr_Menu
             var question = Instantiate(prefab_inputField);
             question.transform.SetParent(parent.messageList, false);
             (current as Message_InputField).Draw(true, this.m_Canvas, question);
-        }
-        else if (current is Message_LLMQuery)
-        {
-            var query = Instantiate(prefab_llm);
-            query.transform.SetParent(parent.messageList, false);
-            (current as Message_LLMQuery).Draw(true, this.m_Canvas, query);
         }
         else if (current is Message_Question_Record)
         {

@@ -133,6 +133,15 @@ public class MessageLogManager
 
     public MessageLog AddLog(MessageLog log)
     {
+        // While an agent run's content is pending review (scr_panel_LLM), don't commit it to permanent
+        // history yet - it becomes permanent only once the player accepts it (Confirm migrates it into
+        // rect_ERA and adds it to Logs there). Still return the log object (not null): several callers
+        // in scr_System_CampaignManager.cs dereference the return value unconditionally right after
+        // this call (e.g. `Observer_MessageLogs?.Invoke(log, !log.DisplaPortrait)`), so returning null
+        // would NPE there. Actual UI suppression is handled by scr_panel_logs.OnLogAdd's own guard.
+        if (scr_UpdateHandler.current != null && scr_UpdateHandler.current.IsAgentRunning)
+            return log;
+
         Logs.Add(log);
         return log;
     }
@@ -222,6 +231,19 @@ public class Message_Text : MessageLog
         //Debug.Log($"Lines Iterate:\nHeader: {Header}");
 
         return lines;
+    }
+
+    /// <summary>
+    /// Flat plain-text of this message (header + causes + paragraphs + experience lines), for feeding
+    /// intercepted content to the agent-mode LLM buffer / live feed (scr_panel_LLM). Reuses Iterate().
+    /// </summary>
+    public string GetPlainText()
+    {
+        var sb = new System.Text.StringBuilder();
+        foreach (var group in Iterate())
+            foreach (var line in group)
+                if (!string.IsNullOrEmpty(line)) sb.AppendLine(line);
+        return sb.ToString().TrimEnd();
     }
 
     public void AddMessage(string s, bool rA)
@@ -425,59 +447,6 @@ public class Message_Text : MessageLog
 
 
 
-
-public class Message_LLMQuery : MessageLog
-{
-    public override bool DisplaPortrait
-    {
-        get
-        {
-            return true;
-        }
-    }
-
-    public override bool canAnimate()
-    {
-        return questionBox != null && questionBox.Active;
-    }
-    LLMRequest request;
-
-    public Message_LLMQuery(PortraitManager portraitRef, List<string> tags, LLMRequest request, DateTime time = default) : base(portraitRef, time, null)
-    {
-        this.Display.SelfTags = tags;
-        this.request = request;
-    }
-
-
-    public override void Animate()
-    {
-        questionBox.Animate();
-    }
-
-    scr_menu_LLMQuery questionBox = null;
-
-    public bool Draw(bool skipImage, Canvas mainCanvas, scr_menu_LLMQuery questionBox, scr_panel_logs logs = null)
-    {
-        // question log always draw
-        base.Draw(true);
-        this.questionBox = questionBox;
-        questionBox.InitializeWithArgs(mainCanvas,this, request, logs);
-        return true;
-    }
-    public bool Draw(bool skipImage, scr_MessageLogBox box, scr_HoverableText linePrefab)
-    {
-        //Debug.Log($"Draw text, skipImage? {skipImage} display? {DisplaPortrait} tags {String.Join("|", tagsOverride)}");
-        //if (skipImage || !DisplaPortrait) Debug.Log($"SkipImage? {skipImage}");
-        var returnval = base.Draw(skipImage || !DisplaPortrait);
-
-        box.Initialize(Display.PortraitRef);
-        if (canAnimate()) Animate();
-
-        return returnval;
-    }
-
-
-}
 
 public abstract class MessageLog : I_hasPortrait
 {
