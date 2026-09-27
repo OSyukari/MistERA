@@ -366,7 +366,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
     {
         var c = scr_System_CampaignManager.current.FindInstanceByID(s.portraitRefID);
         //if (s.portraitTags.Count < 1 && scr_System_CampaignManager.current.Player == c) c = null;
-        return new Message_Text(c, s, s.content_text, false);
+        // no live tags: the block carries its own (execution snapshot, or MessageParagraph's own
+        // live fallback for unlinked blocks) - adding the current state here would mix end-of-run
+        // activity into every block
+        return new Message_Text(c, s, s.content_text, false, addLiveTags: false);
     }
 
     /// <summary>Port of the old scr_menu_LLMQuery.DrawLine(MessageParagraph), targeting

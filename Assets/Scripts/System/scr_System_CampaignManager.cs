@@ -591,6 +591,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
         var chara = refID >= 0 ? FindInstanceByID(refID) : null;
         var lg = LogManager.AddLog(chara == null ? null : chara.PortraitManager, s, tooltip, false, rightAlign);
+        //lg.DisplaPortrait
         Observer_MessageLogs?.Invoke(lg, animate);
         //ChangeCurrentViewMode(ViewMode.View_Logs);
     }
@@ -942,7 +943,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         int planDuration = batchJson.timeCost;
         for (int i = 1; i < fullPlanPackages.Count; i++)
         {
-            planDuration += fullPlanPackages[i].targetCOM != null ? fullPlanPackages[i].targetCOM.TimeScale : 1;
+            planDuration += LLMPackageTimeCost(fullPlanPackages[i]);
         }
 
         foreach (var actorref in allrelevantActors)
@@ -1032,9 +1033,22 @@ public class scr_System_CampaignManager : MonoBehaviour
         batchJson.gameRollsUnsetResults = source.gameRollsUnsetResults;
         batchJson.summary = source.summary;
         batchJson.relevantActorRefs = new List<int>(source.relevantActorRefs);
-        batchJson.timeCost = anchor.targetCOM != null ? anchor.targetCOM.TimeScale : 1;
+        // the wrapper re-executes the anchor repeatCount times (ActionPackage_LLM.Execution), so the
+        // batch must advance time for every repetition, not just one
+        batchJson.timeCost = LLMPackageTimeCost(anchor);
         batchJson.UpdateVariable.AddRange(anchor.epjson);
         return batchJson;
+    }
+
+    /// <summary>
+    /// Game time an agent-mode package consumes: its COM's TimeScale times its repeat count (the
+    /// highest repeatCount among its merged APJSONs - the same count ActionPackage_LLM executes it).
+    /// </summary>
+    public static int LLMPackageTimeCost(ActionPackage ap)
+    {
+        int count = 1;
+        if (ap.epjson != null) foreach (var ep in ap.epjson) count = Math.Max(count, ep.repeatCount);
+        return (ap.targetCOM != null ? ap.targetCOM.TimeScale : 1) * count;
     }
 
     public event Action<MessageLog, bool> Observer_MessageLogs;

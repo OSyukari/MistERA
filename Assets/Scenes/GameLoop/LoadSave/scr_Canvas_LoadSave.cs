@@ -66,7 +66,10 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         if (Directory.Exists(scr_System_Serializer.SavePath))
         {
             DirectoryInfo d = new DirectoryInfo(scr_System_Serializer.SavePath);
-            foreach (var file in d.GetFiles("*.json"))
+            var files = d.GetFiles("*.json");
+            // newest first by last write time, so renamed files keep their place
+            Array.Sort(files, (a, b) => b.LastWriteTimeUtc.CompareTo(a.LastWriteTimeUtc));
+            foreach (var file in files)
             {
                // Debug.Log($"reading save file {file.Name}");
                 BuildSingleButton(file, file.Name == "AutoSave.json");

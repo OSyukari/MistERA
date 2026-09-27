@@ -478,7 +478,7 @@ public class ActionPackage_LLM : ActionPackage
                 // loop in EvaluationPackage.Execute produces, replayed here at confirm time
                 string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", body.DisplayName);
                 UtilityEX.StringReplace(body.Owner, ref s);
-                scr_System_CampaignManager.current.AddLog(body.Owner.RefID, s, true);
+                scr_System_CampaignManager.current.AddLog(-1, s, true);
 
                 var memInst2 = new MemInstance(new List<int>() { fe.exp.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Accept, fe.attitude, body.FirstExperienceDesc);
                 body.Owner.Memory.AddEntry(memInst2, new List<string>() { "important" }, -2, true);

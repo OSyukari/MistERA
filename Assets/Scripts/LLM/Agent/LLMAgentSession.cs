@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// One turn in an agent-mode conversation. See LLMAgentSession.BuildMessages for how each kind gets
@@ -116,6 +118,28 @@ public class LLMMemoryInteraction
     public List<string> tags = new List<string>();
 }
 
+/// <summary>
+/// One execute_actions execution snapshot, keyed by the execution_callback_id echoed to the model in
+/// that tool's result: per-actor action-tag pairs (the same sources as MessageParagraph's live
+/// fallback, but captured the moment the batch settled) frozen at execution time, so final content
+/// blocks linked to this id can display execution-accurate portraits even after the world has moved
+/// on. Extensible - any future per-execution data can ride on this record.
+/// </summary>
+public class AgentExecutionCallback
+{
+    public int id;
+
+    /// <summary>In-game clock time (HH:mm) when the batch settled - display/debug context only,
+    /// NEVER a join key (the id is): the in-game clock can stall or collide across executions.</summary>
+    public string time;
+
+    /// <summary>actor RefID -> action self-tags captured at settle time (executed actions only).</summary>
+    public Dictionary<int, List<string>> selfTags = new Dictionary<int, List<string>>();
+
+    /// <summary>actor RefID -> partner (target) tags captured at settle time (executed actions only).</summary>
+    public Dictionary<int, List<string>> targetTags = new Dictionary<int, List<string>>();
+}
+
 public class LLMAgentSession
 {
     public string sessionId;
@@ -207,6 +231,125 @@ public class LLMAgentSession
         foreach (var m in intercepted) outp.Add($"[{m.time:HH:mm}] {m.text}");
         intercepted.Clear();
         return outp;
+    }
+
+    /// <summary>
+    /// Execution-callback registry: one AgentExecutionCallback per execute_actions call that actually
+    /// executed something (validation-error and fully-deferred calls register nothing), keyed by the
+    /// execution_callback_id the tool result echoed to the model. The final submit_response's content
+    /// blocks reference these ids; AttachExecutionData resolves them back onto the blocks.
+    /// Session-scoped on purpose: ids are reissued after a whole-run Regenerate rollback, so they
+    /// never persist past the session that issued them.
+    /// </summary>
+    readonly Dictionary<int, AgentExecutionCallback> executionCallbacks = new Dictionary<int, AgentExecutionCallback>();
+    int executionCallbackCounter = 0;
+
+    /// <summary>
+    /// Snapshot per-actor portrait tags for the batch that just settled (only APs that actually ran -
+    /// refused ones carry a captured log too and count as executed) and register them under a fresh
+    /// execution_callback_id, which Tool_ExecuteAP echoes back to the model in its result.
+    /// Three sources, unioned per actor:
+    /// <br/>- the tags every captured message was going to draw its portrait with
+    ///   (MessageCollect.CollectPortraitTags) - the kojo lines' emotion/response tags and the
+    ///   kol's action tags, i.e. exactly what the live log path would have shown;
+    /// <br/>- the executed EPs' own actor/partner tags;
+    /// <br/>- the settle-time GetOwnerActionTagsByPriority/TargetTags lookup (actor keywords,
+    ///   job-type tags like "sex"/"raped", still-active AP tags) - the same contextual layer
+    ///   Message_Text adds on top of a handler's tags, frozen here instead of read at display time.
+    /// </summary>
+    public int RegisterExecutionCallback(List<ActionPackage> executedAps)
+    {
+        var record = new AgentExecutionCallback
+        {
+            id = ++executionCallbackCounter,
+            time = scr_System_Time.current.getCurrentTime().ToString("HH:mm")
+        };
+
+        var actors = new HashSet<int>();
+        foreach (var ap in executedAps)
+        {
+            if (ap == null || ap.capturedLog == null) continue;
+
+            ap.capturedLog.CollectPortraitTags(record.selfTags, record.targetTags);
+
+            foreach (var actor in ap.actorRefs)
+            {
+                actors.Add(actor);
+                foreach (var ep in ap.ListEP)
+                {
+                    MessageCollect.AddPortraitTags(record.selfTags, actor, ep.GetActorEPTags(actor));
+                    MessageCollect.AddPortraitTags(record.targetTags, actor, ep.GetActorEPTargetTags(actor));
+                }
+            }
+        }
+
+        foreach (var actor in actors)
+        {
+            var c = scr_System_CampaignManager.current.FindInstanceByID(actor);
+            if (c == null || c.PortraitManager == null) continue;
+            MessageCollect.AddPortraitTags(record.selfTags, actor, c.PortraitManager.GetOwnerActionTagsByPriority());
+            MessageCollect.AddPortraitTags(record.targetTags, actor, c.PortraitManager.GetOwnerActionTargetTagsByPriority());
+        }
+
+        var selfKeys = record.selfTags.Keys.ToList();
+        foreach (var r in selfKeys)  record.selfTags[r] = Utility.Distinct(record.selfTags[r]);
+        var targetKeys = record.targetTags.Keys.ToList();
+        foreach (var r in targetKeys) record.targetTags[r] = Utility.Distinct(record.targetTags[r]);
+
+        executionCallbacks[record.id] = record;
+        return record.id;
+    }
+
+    /// <summary>
+    /// Resolve each content block's execution_callback_id against the registry, MERGING the
+    /// execution-collected tags into the block: the record's self tags are folded straight into
+    /// block.portraitTags (the model's own emotion keywords first, the execution's action tags
+    /// appended, deduped) and the record's partner tags are stashed as the block's target-tag
+    /// source. Blocks resolved this way skip the live PortraitManager fallback entirely - their
+    /// tags describe the moment the linked actions executed, not whatever the character is doing
+    /// at display time. Lenient by design: unknown ids and ids without tags for the block's
+    /// portraitRefID only log and leave the block untouched on the live-tag fallback, and an
+    /// issued id the model never referenced only logs - none of it ever rejects an otherwise
+    /// complete narrative. Called once on the final agent response, just before
+    /// FinalizeLLMResponse.
+    /// </summary>
+    public void AttachExecutionData(MessageJSON json)
+    {
+        if (json == null) return;
+
+        var used = new HashSet<int>();
+        foreach (var block in json.content_blocks)
+        {
+            if (block == null || block.execution_callback_id <= 0) continue;
+            used.Add(block.execution_callback_id);
+
+            if (!executionCallbacks.TryGetValue(block.execution_callback_id, out var record))
+            {
+                Debug.Log($"[Agent] session {sessionId}: content block references unknown execution_callback_id {block.execution_callback_id} - ignoring (lenient).");
+                continue;
+            }
+
+            if (block.executionDataResolved) continue; // already merged - never double-merge
+
+            if (block.portraitRefID >= 0 && record.selfTags.TryGetValue(block.portraitRefID, out var selfTags))
+            {
+                block.portraitTags.AddRange(selfTags);
+                Utility.DistinctInPlace(block.portraitTags);
+                block.executionTargetTags = record.targetTags.TryGetValue(block.portraitRefID, out var targetTags)
+                    ? new List<string>(targetTags)
+                    : new List<string>();
+                block.executionDataResolved = true;
+            }
+            else
+            {
+                Debug.Log($"[Agent] session {sessionId}: execution_callback_id {block.execution_callback_id} carries no tags for portraitRefID {block.portraitRefID} - block stays on live-tag fallback (lenient).");
+            }
+        }
+
+        foreach (var id in executionCallbacks.Keys)
+        {
+            if (!used.Contains(id)) Debug.Log($"[Agent] session {sessionId}: execution_callback_id {id} was never referenced by any content block (lenient).");
+        }
     }
 
     public LLMAgentSession(string sessionId, LLMRequest baseTemplate)

@@ -534,7 +534,7 @@ public class Job : IDisposable, I_Disposable
                     continue;
                 }
 
-                if (com is COM_TakeMeal && !FactionOwner.isMealHour)
+                if (com is COM_TakeMeal && (FactionOwner == null || !FactionOwner.isMealHour))
                 {
                     if (debug != null) debug.Add($"{com.ID} skipped by not meeting meal hour req");
                     continue;
@@ -548,6 +548,17 @@ public class Job : IDisposable, I_Disposable
 
     }
     public virtual List<ActionPackage> MakePackages(Character_Trainable c, bool allowParent, bool allowChild, bool allowInvalid = false, COM filter = null,  List<string> debug = null)
+    {
+        return MakePackages(c, new List<int>() { c.RefID }, new List<int>(), -1, allowParent, allowChild, allowInvalid, filter, debug);
+    }
+
+    /// <summary>
+    /// Same COM filtering as MakePackages(c, ...) - <paramref name="c"/> only drives FilterPossibleCOMs -
+    /// but every package is constructed straight from COM.MakePackage(s) with the given doer/receiver/master
+    /// lists (fresh copies per package), so multi-actor packages are built properly rather than built for c
+    /// alone and re-targeted afterwards.
+    /// </summary>
+    public List<ActionPackage> MakePackages(Character_Trainable c, List<int> doers, List<int> receivers, int masterRef, bool allowParent, bool allowChild, bool allowInvalid = false, COM filter = null, List<string> debug = null)
     {
         var possibleCOMs = FilterPossibleCOMs(c, allowParent, allowChild, allowInvalid, filter, debug);
 
@@ -563,7 +574,7 @@ public class Job : IDisposable, I_Disposable
                 bool haspackage = false;
                 if (allowChild && com.GenerateAP != null)
                 {
-                    foreach(var package in com.MakePackages(this, new List<int>() { c.RefID }, new List<int>(), -1))
+                    foreach(var package in com.MakePackages(this, new List<int>(doers), new List<int>(receivers), masterRef))
                     {
                         if (package.Validate() || allowInvalid)
                         {
@@ -576,7 +587,7 @@ public class Job : IDisposable, I_Disposable
                 }
                 else
                 {
-                    var package = com.MakePackage(this, new List<int>() { c.RefID }, new List<int>(), -1);
+                    var package = com.MakePackage(this, new List<int>(doers), new List<int>(receivers), masterRef);
                     if (package.Validate() || allowInvalid)
                     {
                         haspackage = true;

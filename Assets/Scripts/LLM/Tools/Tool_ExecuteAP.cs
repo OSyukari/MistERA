@@ -37,6 +37,7 @@ public class Tool_ExecuteAP : ILLMTool
         public int sourceJobID;
         public int doerRefID = -1;
         public int receiverRefID = -1;
+        public int masterRef = -1;
         public int repeatCount = 1;
         [JsonConverter(typeof(StringEnumConverter))] public Memory_Response commandResult = Memory_Response.None;
     }
@@ -57,6 +58,7 @@ public class Tool_ExecuteAP : ILLMTool
                 sourceJobID = ep.SourceJobID,
                 doerRefID = ep.doer_RefID,
                 receiverRefID = ep.receiver_RefID,
+                masterRef = ep.master_RefID,
                 repeatCount = ep.repeatCount,
                 commandResult = ep.command_result
             });
@@ -91,24 +93,40 @@ public class Tool_ExecuteAP : ILLMTool
         public List<Arg> remainingActions = new List<Arg>();
         /// <summary>What to do next, per the agent preset's agent_nextStep_* strings.</summary>
         public string nextStep;
+        /// <summary>
+        /// Session-scoped id of THIS execution (every call that actually executed something gets a
+        /// fresh one; 0 = nothing executed, e.g. a fully-deferred or errored call). The model echoes
+        /// it back on the final submit_response's content blocks (execution_callback_id) to tie each
+        /// block to the execution it narrates, so the game can attach execution-time data (portrait
+        /// tags) to the right narrative blocks. NOT a timestamp - an opaque id; the in-game clock can
+        /// stall or collide across executions.
+        /// </summary>
+        public int execution_callback_id;
+        /// <summary>World state refreshed after this call's execution settled: the player's current
+        /// room in full detail.</summary>
+        public LLM_WorldState.RoomStorage currentRoomInfo;
+        /// <summary>Default interaction refresh: the player as sole doer, everyone else in the room as
+        /// receivers (solo commands when alone). Query get_possible_interactions for other combos.</summary>
+        public LLM_WorldState.PossibleInteractions possibleInteractions;
     }
 
     public LLMToolDefinition GetDefinition()
     {
         var itemSchema = new LLMFormatSchema.Type_Object(new Dictionary<string, LLMFormatSchema.Type>
         {
-            { "commandID", new LLMFormatSchema.Type_Simple("string", "ID of the command/COM to execute (see get_room_detail's possibleCommands for valid values).") },
-            { "sourceJobID", new LLMFormatSchema.Type_Simple("integer", "RefID of the job this command runs against (see get_room_detail's possibleCommands).") },
+            { "commandID", new LLMFormatSchema.Type_Simple("string", "ID of the command/COM to execute (see get_possible_interactions for valid values).") },
+            { "sourceJobID", new LLMFormatSchema.Type_Simple("integer", "RefID of the job this command runs against (see get_possible_interactions).") },
             { "doerRefID", new LLMFormatSchema.Type_Simple("integer", "RefID of the character performing the action, or -1 if none.") },
             { "receiverRefID", new LLMFormatSchema.Type_Simple("integer", "RefID of the character receiving the action, or -1 if none.") },
+            { "masterRef", new LLMFormatSchema.Type_Simple("integer", "RefID of the character ordering the action. Default -1 = inactive (the doer acts on their own intent). If set and different from the doer, the action is NOT the doer's own choice but an order from that master - the doer may then refuse the master's order and remembers being ordered.") },
             { "repeatCount", new LLMFormatSchema.Type_Simple("integer", "How many times to repeat the action. Defaults to 1.") },
             { "commandResult", new LLMFormatSchema.Type_Enum(new List<string> { "None", "Refuse", "Accept", "CriticalFailure", "Failure", "Success", "CriticalSuccess" },
-                "Outcome override. None (default) = the game performs the real acceptance and DifficultyCheck rolls - use this unless you deliberately intend to force the outcome. Refuse = force the action to be refused. Accept = force acceptance and skip the DifficultyCheck roll. CriticalFailure/Failure/Success/CriticalSuccess = force acceptance AND force that DifficultyCheck outcome.") }
+                "Outcome override. None (default) = the game performs the real acceptance and DifficultyCheck rolls - use this unless you deliberately intend to force the outcome. Refuse = force the action to be refused. Accept = force acceptance and skip the DifficultyCheck roll, should only applied to commands without DC. CriticalFailure/Failure/Success/CriticalSuccess = force acceptance AND force that DifficultyCheck outcome.") }
         }, "One action to execute.");
         var schema = new LLMFormatSchema();
         schema.properties["actions"] = new LLMFormatSchema.Type_Array(itemSchema,
             "The actions to execute, in intended execution order. All-or-nothing validation: if ANY action is invalid, nothing executes and the error names each offending entry.");
-        return new LLMToolDefinition(Name, "Validate and actually execute a list of actions for real. If any action is invalid, returns why and executes nothing. Otherwise this round executes the first action plus every later action that can run together with it (conflicting ones are NOT executed - they come back as remainingActions to resubmit next round, so submit independent groups per call when you can). The executed actions really happen (visible in-game, not a preview) and this call waits until they - and any events they trigger - fully resolve before returning each action's results.", schema);
+        return new LLMToolDefinition(Name, "Validate and actually execute a list of actions for real. If any action is invalid, returns why and executes nothing. Otherwise this round executes the first action plus every later action that can run together with it (conflicting ones are NOT executed - they come back as remainingActions to resubmit next round, so submit independent groups per call when you can). The executed actions really happen (visible in-game, not a preview) and this call waits until they - and any events they trigger - fully resolve before returning each action's results, plus the refreshed world state after execution: currentRoomInfo (the player's room in full detail) and possibleInteractions (the player as sole doer with everyone else in the room as receivers - use get_possible_interactions for any other actor combination). Every call that actually executes something also returns an execution_callback_id: when you later submit your final response, attach that id (content block field execution_callback_id) to each block that narrates that execution - EVERY execution_callback_id you received must appear on at least one block, while blocks not tied to any execution use -1.", schema);
     }
 
     public IEnumerator Execute(LLMToolCallRequest call, Action<LLMToolResult> done)
@@ -132,6 +150,7 @@ public class Tool_ExecuteAP : ILLMTool
                 SourceJobID = args.actions[i].sourceJobID,
                 doer_RefID = args.actions[i].doerRefID,
                 receiver_RefID = args.actions[i].receiverRefID,
+                master_RefID = args.actions[i].masterRef,
                 repeatCount = Math.Max(1, args.actions[i].repeatCount),
                 command_result = args.actions[i].commandResult
             });
@@ -156,7 +175,7 @@ public class Tool_ExecuteAP : ILLMTool
             for (int i = 0; i < json.UpdateVariable.Count; i++)
             {
                 if (resolved.Contains(json.UpdateVariable[i])) continue;
-                invalid.Add($"actions[{i}] ({json.UpdateVariable[i].CommandID} / job {json.UpdateVariable[i].SourceJobID}): could not resolve an action - check commandID/sourceJobID/doerRefID/receiverRefID against get_room_detail's possibleCommands");
+                invalid.Add($"actions[{i}] ({json.UpdateVariable[i].CommandID} / job {json.UpdateVariable[i].SourceJobID}): could not resolve an action - check commandID/sourceJobID/doerRefID/receiverRefID against get_possible_interactions");
             }
         }
 
@@ -199,12 +218,17 @@ public class Tool_ExecuteAP : ILLMTool
         yield return new WaitUntil(() => !scr_UpdateHandler.current.Updating && !scr_UpdateHandler.current.EventHandler.Active);
 
         var result = new Result();
+        var executedAps = new List<ActionPackage>();
         foreach (var ap in batchJson.GetActionPackages(out _))
         {
             int count = 0;
             foreach (var ep in ap.epjson) count = Math.Max(count, ep.repeatCount);
             var entry = new ActionResult { action = $"{ap.DisplayName} x{count}", executed = ap.capturedLog != null };
-            if (ap.capturedLog != null) entry.messages.AddRange(ap.capturedLog.DumpMessages());
+            if (ap.capturedLog != null)
+            {
+                entry.messages.AddRange(ap.capturedLog.DumpMessages());
+                executedAps.Add(ap);
+            }
             result.actions.Add(entry);
         }
 
@@ -220,6 +244,15 @@ public class Tool_ExecuteAP : ILLMTool
             if (ambient.Count > 0) result.messages.AddRange(ambient);
         }
 
+        // Execution callback: register this batch's executed APs (refused ones carry a captured log
+        // too and count as executed; fully-deferred/errored calls register nothing) and echo the id
+        // to the model, which attaches it to the final content blocks so the game can resolve
+        // execution-time data (portrait tags) onto the right narrative blocks.
+        if (session != null && executedAps.Count > 0)
+        {
+            result.execution_callback_id = session.RegisterExecutionCallback(executedAps);
+        }
+
         // Conflict-deferred APs go back to the model in this tool's own argument shape (resubmittable
         // as-is), with the same nextStep guidance the submit_response plan-batch report uses.
         result.remainingActions = ToResubmittable(deferred);
@@ -229,6 +262,17 @@ public class Tool_ExecuteAP : ILLMTool
                 .Replace("$count$", deferred.Count.ToString())
             : scr_UpdateHandler.AgentText("agent_nextStep_final",
                 "All submitted actions have been executed. Submit your final narrative response with NO actions (empty UpdateVariable) to conclude, written with the execution results above in mind.");
+
+        // Refreshed world state - the execution just changed it (jobs started/ended, actors moved), so
+        // the model gets the post-execution room and the player's default interactions without having
+        // to re-query.
+        var mgr = scr_System_CampaignManager.current;
+        var room = mgr.CurrentRoom;
+        result.currentRoomInfo = new LLM_WorldState.RoomStorage(room, true);
+        var others = new List<Character_Trainable>();
+        if (room != null) foreach (var c in room.RoomChara) if (c != null && c != mgr.Player) others.Add(c);
+        result.possibleInteractions = new LLM_WorldState.PossibleInteractions(new List<Character_Trainable>() { mgr.Player }, others);
+        LLMUtils.CollectCOMInfo(result.possibleInteractions);
 
         done?.Invoke(new LLMToolResult
         {

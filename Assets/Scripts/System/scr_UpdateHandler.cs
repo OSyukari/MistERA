@@ -265,7 +265,6 @@ public class scr_UpdateHandler : MonoBehaviour
             payload.ReplaceString("%%currentLanguage%%", LocalizeDictionary.Instance.Index.cachedLang);
             payload.currentString = s;
 
-
             string collectionPath = Application.persistentDataPath + "/worldStateInfo.json";
 
             var s2 = JsonConvert.SerializeObject(worldinfo, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
@@ -275,6 +274,15 @@ public class scr_UpdateHandler : MonoBehaviour
             untransDict.Directory.Create();
             File.WriteAllText(untransDict.FullName, s2);
             Debug.Log($"creating/updating worldstateinfo collection in {collectionPath}");
+
+            string playerPath = Application.persistentDataPath + "/playerInfo.json";
+            var s3 = JsonConvert.SerializeObject(playerInfo, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+            if (File.Exists(playerPath)) File.Delete(playerPath);
+
+            FileInfo playerFile = new System.IO.FileInfo(playerPath);
+            playerFile.Directory.Create();
+            File.WriteAllText(playerFile.FullName, s3);
+            Debug.Log($"creating/updating playerinfo collection in {playerPath}");
 
 
         }
@@ -569,6 +577,15 @@ public class scr_UpdateHandler : MonoBehaviour
             untransDict.Directory.Create();
             File.WriteAllText(untransDict.FullName, s2);
             Debug.Log($"creating/updating agentic worldstateinfo collection in {collectionPath}");
+
+            string playerPath = Application.persistentDataPath + "/playerInfo.json";
+            var s3 = JsonConvert.SerializeObject(playerInfo, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+            if (File.Exists(playerPath)) File.Delete(playerPath);
+
+            FileInfo playerFile = new System.IO.FileInfo(playerPath);
+            playerFile.Directory.Create();
+            File.WriteAllText(playerFile.FullName, s3);
+            Debug.Log($"creating/updating agentic playerinfo collection in {playerPath}");
         }
         else
         {
@@ -794,6 +811,11 @@ public class scr_UpdateHandler : MonoBehaviour
 
                     yield return new WaitUntil(() => !Updating && !EventHandler.Active);
 
+                    // Resolve the blocks' execution_callback_id links onto the response (execution-time
+                    // portrait tags replace the live-tag fallback per linked block) - lenient by design:
+                    // unknown/missing ids only log, never reject an otherwise complete narrative.
+                    session.AttachExecutionData(response.JSON);
+
                     // "The world exactly as this attempt left it," written only after everything has
                     // settled - scr_panel_logs reloads this whenever the player switches back to
                     // reviewing this session.
@@ -825,7 +847,7 @@ public class scr_UpdateHandler : MonoBehaviour
                 yield return new WaitUntil(() => !Updating && !EventHandler.Active);
 
                 // ---- build the re-evaluation report: what executed (with its captured messages),
-                // what remains, and the current worldstate. ----
+                // what remains, and the refreshed current room (full detail). ----
                 var executedActions = new List<string>();
                 var resultMessages = new List<string>();
                 foreach (var ap in batchJson.GetActionPackages(out _))
@@ -843,7 +865,7 @@ public class scr_UpdateHandler : MonoBehaviour
                     messages = resultMessages,
                     // told to continue via execute_actions, so hand them over in that tool's argument shape
                     remainingActions = Tool_ExecuteAP.ToResubmittable(deferred),
-                    currentWorldState = new LLM_WorldState(),
+                    currentRoomInfo = new LLM_WorldState.RoomStorage(scr_System_CampaignManager.current.CurrentRoom, true),
                     nextStep = deferred.Count > 0
                         ? AgentText("agent_nextStep_partial",
                             "Partial execution complete - $count$ action(s) remain. Continue them with the execute_actions tool, then submit your final narrative via submit_response.")

@@ -4,11 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// Agent-mode tool: fetch furniture/occupants/ownership for a room, plus (for the player's current
-/// room only) the available interactive commands - reuses the exact same building blocks
-/// LLM_WorldState's constructor already uses for its CurrentRoomInfo string and PossibleInteractions
-/// dump (LLMUtils.cs), just exposed as an on-demand, callable query instead of an always-included
-/// upfront prompt section.
+/// Agent-mode tool: fetch a room's data via LLM_WorldState.RoomStorage (LLM/Worldstate/
+/// RoomStorage.cs) - furniture/cleanliness/items/ongoing commands via RoomInfo, ownership via
+/// OwnerFaction/RoomNameShort (prison/private-with-owners/plain, from DisplayNameShort), and
+/// occupants via the cheap-vs-full-detail constructor split (full load embeds a per-character
+/// CharaStorage for everyone present; cheap load is just name + RefID + current activity).
 /// </summary>
 public class Tool_GetRoomDetail : ILLMTool
 {
@@ -18,34 +18,15 @@ public class Tool_GetRoomDetail : ILLMTool
     {
         /// <summary>Omit/null to inspect the player's current room.</summary>
         public int? roomRef = null;
-    }
-
-    class Result
-    {
-        public string roomName;
-        public string furniture;
-        public string cleanliness;
-        public string items;
-        public List<string> charactersPresent = new List<string>();
-        public string ongoingCommands;
-        public string ownerFaction;
-        public List<string> roomOwners;
-        public bool isPrison;
-        public bool isPrivate;
-
-        /// <summary>
-        /// Only populated when the resolved room is the player's current room - available commands
-        /// are computed relative to the player's own position/interactions (LLMUtils.CollectCOMInfo),
-        /// so they aren't meaningful for an arbitrary room elsewhere in the faction.
-        /// </summary>
-        public Dictionary<string, Dictionary<string, Dictionary<string, LLMUtils.SerializedAP>>> possibleCommands = null;
+        public bool fullDetail = false;
     }
 
     public LLMToolDefinition GetDefinition()
     {
         var schema = new LLMFormatSchema();
         schema.properties["roomRef"] = new LLMFormatSchema.Type_Simple("integer", "RefID of the room to inspect. Omit to inspect the player's current room.");
-        return new LLMToolDefinition(Name, "Fetch furniture, occupants, cleanliness, and ownership for a room. When the room is the player's current room, also returns the commands currently available there.", schema);
+        schema.properties["fullDetail"] = new LLMFormatSchema.Type_Simple("boolean", "If false (default), occupants are listed with just full name, RefID, and current activity. If true, each occupant additionally gets a per-character detail entry (identity, statuses, attitude toward the player, equipment, and more) - use it when you need to know who exactly is in the room, not just that they are there.");
+        return new LLMToolDefinition(Name, "Fetch a room's data: furniture, cleanliness, items, ongoing commands, ownership, and occupants.", schema);
     }
 
     public IEnumerator Execute(LLMToolCallRequest call, Action<LLMToolResult> done)
@@ -64,40 +45,9 @@ public class Tool_GetRoomDetail : ILLMTool
             yield break;
         }
 
-        var result = new Result
-        {
-            roomName = room.DisplayName,
-            furniture = room.DisplayableFurnitureNames,
-            cleanliness = room.RoomCleanliness().ToString(),
-            items = room.Inventory.Contents.Count > 0 ? room.Inventory.PrintContent() : "no item",
-            isPrison = room.isRoomPrison,
-            isPrivate = room.isRoomPrivate
-        };
-        foreach (var c in room.RoomChara) result.charactersPresent.Add(c.FirstName);
+        var storage = new LLM_WorldState.RoomStorage(room, args.fullDetail);
 
-        if (room.FactionOwner != null)
-        {
-            result.ownerFaction = room.FactionOwner.FactionDisplayName;
-            result.roomOwners = room.OwnerNames;
-        }
-
-        bool isCurrentRoom = room == mgr.CurrentRoom;
-        if (isCurrentRoom)
-        {
-            var aps = new List<string>();
-            foreach (var ap in mgr.GetRegisteredAPByRoom(room.RefID, false))
-            {
-                if (ap.job.isPlayerRelatedJob) continue;
-                if (ap.isTemporaryAP) continue;
-                aps.Add(ap.DescriptionText());
-            }
-            result.ongoingCommands = aps.Count > 0 ? String.Join("\n", aps) : "no ongoing";
-
-            result.possibleCommands = new Dictionary<string, Dictionary<string, Dictionary<string, LLMUtils.SerializedAP>>>();
-            LLMUtils.CollectCOMInfo(result.possibleCommands, room);
-        }
-
-        var json = JsonConvert.SerializeObject(result, UtilityEX.SerializerSettingsLLM);
+        var json = JsonConvert.SerializeObject(storage, UtilityEX.SerializerSettingsLLM);
         done?.Invoke(new LLMToolResult { callId = call.callId, toolName = Name, contentJson = json });
     }
 }

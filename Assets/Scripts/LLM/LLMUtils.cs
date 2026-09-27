@@ -577,34 +577,71 @@ public class MessageParagraph : I_hasPortrait
     /// </summary>
     public string time = null;
 
+    /// <summary>
+    /// Execution-data link, resolved by LLMAgentSession.AttachExecutionData at finalize time
+    /// (agent mode only): the execution_callback_id echoed in an execute_actions tool result,
+    /// attached by the model to the block narrating that execution (-1/omitted = not tied to any
+    /// execution). Not a timestamp - an opaque session-scoped id; the in-game clock can stall or
+    /// collide across executions, so only the id is a valid join key. Once resolved, the record's
+    /// self tags are MERGED into portraitTags and executionTargetTags holds the record's partner
+    /// tags, so both getters below skip their live PortraitManager fallbacks.
+    /// </summary>
+    public int execution_callback_id = -1;
+
+    /// <summary>
+    /// True once an execution record's tags were merged into this block (see AttachExecutionData) -
+    /// suppresses the live-tag fallback in SelfPortraitTag/TargetPortraitTag, since the merged tags
+    /// describe the moment the linked actions executed, not display time.
+    /// </summary>
+    [JsonIgnore]
+    public bool executionDataResolved = false;
+
+    /// <summary>Partner (target) tags captured at execution time by AttachExecutionData; null on
+    /// unlinked blocks and old responses (live fallback applies).</summary>
+    [JsonIgnore]
+    public List<string> executionTargetTags = null;
+
 
     [JsonIgnore]
-    public List<string> SelfPortraitTag { 
+    public List<string> SelfPortraitTag {
         get {
             if (portraitRefID == -1) return portraitTags;
             if (_portraitTags_Self == null)
             {
+                // execution-resolved blocks already carry the record's action tags inside
+                // portraitTags (merged by AttachExecutionData) - only unresolved ones add the
+                // live lookups below
                 _portraitTags_Self = new List<string>(portraitTags);
-                var c = scr_System_CampaignManager.current.FindInstanceByID(portraitRefID);
-                if (c != null && c.PortraitManager != null)
+                if (!executionDataResolved)
                 {
-                    _portraitTags_Self.AddRange( c.PortraitManager.GetOwnerActionTagsByPriority());
+                    var c = scr_System_CampaignManager.current.FindInstanceByID(portraitRefID);
+                    if (c != null && c.PortraitManager != null)
+                    {
+                        _portraitTags_Self.AddRange( c.PortraitManager.GetOwnerActionTagsByPriority());
+                    }
                 }
             }
             return _portraitTags_Self;
         } }
     [JsonIgnore]
-    public List<string> TargetPortraitTag { 
+    public List<string> TargetPortraitTag {
         get
         {
             if (portraitRefID == -1) return new List<string>();
             if (_portraitTags_Target == null)
             {
                 _portraitTags_Target = new List<string>();
-                var c = scr_System_CampaignManager.current.FindInstanceByID(portraitRefID);
-                if (c != null && c.PortraitManager != null)
+                if (executionTargetTags != null)
                 {
-                    _portraitTags_Target.AddRange(c.PortraitManager.GetOwnerActionTargetTagsByPriority());
+                    _portraitTags_Target.AddRange(executionTargetTags);
+                }
+                else
+                {
+                    var c = scr_System_CampaignManager.current.FindInstanceByID(portraitRefID);
+                    if (c != null && c.PortraitManager != null)
+                    {
+                        _portraitTags_Target.AddRange(c.PortraitManager.GetOwnerActionTargetTagsByPriority());
+                    }
                 }
             }
             return _portraitTags_Target;
@@ -671,7 +708,10 @@ public class MessageJSON
                 var receivers = new List<int>();
                 if (tempAP.receiver_RefID != -1) receivers.Add(tempAP.receiver_RefID);
 
-                var masterRef = tempAP.doer_RefID;
+                // -1 (default/inactive) keeps the original behavior: the doer is their own master.
+                // A master_RefID that differs from the doer marks the action as ordered by that
+                // master rather than the doer's own intent.
+                var masterRef = tempAP.master_RefID >= 0 ? tempAP.master_RefID : tempAP.doer_RefID;
 
                 bool merged = false;
                 foreach (var ap in actionpackages)
@@ -709,6 +749,7 @@ public class APJSON
     public int SourceJobID;
     public Memory_Response command_result = Memory_Response.None;
     public int doer_RefID = -1;
+    public int master_RefID = -1;
     public Memory_Attitude participant_attitude = Memory_Attitude.None;
     public int receiver_RefID = -1;
     public int source_content_text_Index;
@@ -959,7 +1000,8 @@ public static class LLMUtils
         }
 
         var tooltips = validateJob(job, doer, receiver, masterRef, showInvalidAP);
-        if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
+        // distinct jobs can share a display name (e.g. two participants on two same-named furnitures)
+        if (tooltips.Count > 0 && !collection.TryAdd(job.DisplayName, tooltips)) collection.TryAdd($"{job.DisplayName} (jobRefID {job.RefID})", tooltips);
     }
 
     /// <summary>
@@ -973,62 +1015,63 @@ public static class LLMUtils
     /// </summary>
     static Dictionary<string, SerializedAP> validateJob(Job job, List<int> doer, List<int> receiver, int masterRef, bool showInvalidAP = false)
     {
+        // chara only drives the job's COM filtering; the packages themselves are constructed with the
+        // full doer/receiver/master set - the same way execute_actions builds them (COM.MakePackage),
+        // with the same defaults: master falls back to the first doer, the player is never both
+        // doer and receiver, and -1 is not a receiver.
         var chara = scr_System_CampaignManager.current.FindInstanceByID(doer[0]);
+        var doers = new List<int>(doer);
+        var receivers = receiver == null ? new List<int>() : new List<int>(receiver);
+        receivers.RemoveAll(r => r == -1 || (r == 0 && doers.Contains(0)));
+        var master = masterRef >= 0 ? masterRef : doers[0];
+
         Dictionary<string, SerializedAP> tooltips = new Dictionary<string, SerializedAP>();
         List<COM> parentCOMs = new List<COM>();
 
-        if (job is Job_Furniture)
+        foreach (var ap in job.MakePackages(chara, doers, receivers, master, true, false, true))
         {
-            foreach (var ap in job.MakePackages(chara, true, false, true))
+            var app = validateAP(ap, showInvalidAP);
+            if (app == null) continue;
+
+            if (ap.targetCOM.childCOMs.Count > 0 || ap.targetCOM.GenerateAP != null)
             {
-                var app = validateAP(ap, doer, receiver, masterRef, showInvalidAP);
-                if (app != null)
+                if (tooltips.TryAdd(ap.targetCOM.DisplayName(), app))
                 {
-                    if (ap.targetCOM.childCOMs.Count > 0 || ap.targetCOM.GenerateAP != null)
-                    {
-                        if (tooltips.TryAdd(ap.targetCOM.DisplayName(), app))
-                        {
-                            app.CommandName = null;
-                            parentCOMs.Add(ap.targetCOM);
-                        }
-                    }
-                    else tooltips.Add(ap.DisplayName, app);
+                    app.CommandName = null;
+                    parentCOMs.Add(ap.targetCOM);
                 }
             }
+            else tooltips.TryAdd(ap.DisplayName, app);
         }
-        else
+
+        // orphan children: a child whose parent folder isn't in this job's COM list (e.g. Job_Sex_Group
+        // excludes its folder parents) would otherwise never be reached - list it top-level, UI style
+        foreach (var com in job.allusableCOMs)
         {
-            foreach (var ap in job.CachedPackages)
+            if (com.ParentCOM == null || com.isHiddenChild || job.allusableCOMs.Contains(com.ParentCOM)) continue;
+            foreach (var ap in job.MakePackages(chara, doers, receivers, master, false, true, true, com))
             {
-                if (ap.targetCOM == null || ap.targetCOM.ParentCOM != null) continue;
-                var app = validateAP(ap, doer, receiver, masterRef, showInvalidAP);
-                if (app != null)
-                {
-                    if (ap.targetCOM.childCOMs.Count > 0 || ap.targetCOM.GenerateAP != null)
-                    {
-                        if (tooltips.TryAdd(ap.targetCOM.DisplayName(), app))
-                        {
-                            app.CommandName = null;
-                            parentCOMs.Add(ap.targetCOM);
-                        }
-                    }
-                    else tooltips.TryAdd(ap.DisplayName, app);
-                }
+                var app = validateAP(ap, showInvalidAP);
+                if (app != null) tooltips.TryAdd(ap.DisplayName, app);
             }
         }
 
         // children per parent, LoadChildCOMPanel style: the filter keeps the parent's static
         // childCOMs plus the parent itself (whose GenerateAP branch spawns one package per matching
         // inventory item); allowInvalid keeps currently-invalid children visible with their reason.
-        // validateAP's ResetRequest re-injects the collector's doer/receiver/master into each child,
-        // replacing the UI's manual receiver re-injection.
         foreach (var parentCOM in parentCOMs)
         {
-            foreach (var ap in job.MakePackages(chara, false, true, true, parentCOM))
+            bool anyChild = false;
+            foreach (var ap in job.MakePackages(chara, doers, receivers, master, false, true, true, parentCOM))
             {
-                var app = validateAP(ap, doer, receiver, masterRef, showInvalidAP);
+                var app = validateAP(ap, showInvalidAP);
+                if (app == null) continue;
                 AddChild(parentCOM.DisplayName(), app, tooltips);
+                anyChild = true;
             }
+            // a folder is never executable itself - with no child left to show it's just noise
+            // (e.g. item generators like ingestItem with no matching item in reach)
+            if (!anyChild) tooltips.Remove(parentCOM.DisplayName());
         }
 
         return tooltips;
@@ -1077,18 +1120,19 @@ public static class LLMUtils
         var tooltips = new Dictionary<string, SerializedAP>();
         foreach (var ap in job.MakePackagesJoinable(scr_System_CampaignManager.current.Player))
         {
-            var app = validateAP(ap, null, null);
-            if (app != null) tooltips.Add(app.CommandID, app);
+            var app = validateAP(ap);
+            if (app != null) tooltips.TryAdd(app.CommandID, app);
         }
 
         if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
     }
 
-
     /// <summary>
-    /// masterRef &lt; 0 keeps the original behavior of defaulting the master to the first doer.
+    /// Serializes an already-constructed package (actors must be set by whoever built it - see
+    /// validateJob / Job.MakePackages(c, doers, receivers, master, ...)). Never re-targets the package,
+    /// so live packages (joinables) are read without being mutated.
     /// </summary>
-    static SerializedAP validateAP(ActionPackage ap, List<int> doer, List<int> receiver, int masterRef = -1, bool showInvalid = false)
+    static SerializedAP validateAP(ActionPackage ap, bool showInvalid = false)
     {
         if (ap.targetCOM == null) return null;
 
@@ -1108,8 +1152,16 @@ public static class LLMUtils
         }
 
 
-        if (doer != null && receiver != null) ap.ResetRequest(doer, receiver, masterRef >= 0 ? masterRef : (doer.Count > 0 ? doer[0] : -1), true);
-        if (!ap.Validate())
+        bool valid = ap.Validate();
+
+        // sleep is NPC sandbox behavior - never offered to the LLM simulation, whatever its validity
+        if (ap.targetCOM.comTags.Contains("sleep") || ap.ComTags.Contains("sleep"))
+        {
+            app.AcceptanceRate = "invalid: sleep is handled by NPC sandbox behavior and cannot be commanded by the LLM simulation";
+            return app;
+        }
+
+        if (!valid)
         {
             if (ap.COMVariantID < -1) return null;
             if (!showInvalid) return null;
@@ -1122,10 +1174,6 @@ public static class LLMUtils
             var invalidReason = RegexStrip(String.Join("; ", ap.tooltip));
             app.AcceptanceRate = invalidReason.Length > 0 ? $"invalid: {invalidReason}" : "invalid";
             return app;
-        }
-        else if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !scr_System_CampaignManager.current.DebugMode)
-        {
-            //app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
         }
         else
         {
@@ -1233,10 +1281,11 @@ public static class LLMUtils
     /// <summary>
     /// Collects the possible commands for one specific PossibleInteractions context (strictly
     /// one-way doer -&gt; receiver, under info.Master's order). All participants must share one room.
-    /// Fills info.possibleInteractions (job-name-keyed: the 1:1 receiver InteractionJob + playerCOM
-    /// commands, plus participants' current jobs) and info.FurnitureInteractions (flat
-    /// command-keyed entries whose PossibleJobSources list every room furniture job offering the
-    /// command, so identical commands from multiple furnitures merge into one entry).
+    /// Fills info.possibleInteractions (job-name-keyed: the 1:1 receiver InteractionJob, playerCOM
+    /// commands whenever the player is the sole doer, plus participants' current jobs) and
+    /// info.FurnitureInteractions (flat command-keyed entries whose PossibleJobSources list every
+    /// room furniture job offering the command, so identical commands from multiple furnitures
+    /// merge into one entry).
     /// </summary>
     public static void CollectCOMInfo(LLM_WorldState.PossibleInteractions info)
     {
@@ -1302,21 +1351,22 @@ public static class LLMUtils
         {
             var job = receiverSingle.InteractionJob;
             if (job != null) validateSingle(job, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck, masterRef, true);
-
-            if (playerCOM != null)
-            {   // check npc's acceptance of playercom
-                validateSingle(playerCOM, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck);
-            }
-        } 
-        else
+        }
+        else if (info.Receivers.Count > 0)
         {
-            collection.Add($"cannot query for individual interaction job nor player special command on [{String.Join(" ", info.ReceiverRefs)}], doer count must be 1 (currently {info.Doers.Count}) and receiver count must be 1 (currently {info.Receivers.Count})", new Dictionary<string, SerializedAP>());
+            collection.Add($"cannot query for individual interaction job on [{String.Join(" ", info.ReceiverRefs)}], doer count must be 1 (currently {info.Doers.Count}) and receiver count must be 1 (currently {info.Receivers.Count})", new Dictionary<string, SerializedAP>());
+        }
+
+        // -- Player special commands: player as the sole doer, with any receivers (none = solo) -- //
+        if (playerCOM != null)
+        {   // with receivers this also checks the npcs' acceptance of the playercom
+            validateSingle(playerCOM, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck);
         }
         // -- foreach tracked Jobs
         if (trackedJobsLocked.Count != 0)
         {
             // then locked only
-            foreach(var curr in trackedJobsLocked) validateSingle(curr, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck, masterRef);
+            foreach(var curr in trackedJobsLocked) validateSingle(curr, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck, masterRef, true);
 
             info.FurnitureInteractions.Add("cannot interact with room furniture due to participant locked in special jobs", new SerializedAP() { AcceptanceRate = "cannot interact with room furniture due to participant locked in special jobs" });
         }

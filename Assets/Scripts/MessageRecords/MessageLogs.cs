@@ -262,16 +262,21 @@ public class Message_Text : MessageLog
         if (messages != null) this.Messages = messages;
         this.tooltip = tooltip;
     }
-    public Message_Text(Character_Trainable chara, I_hasPortrait handler, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , handler, time, parentEvent)
+    /// <param name="addLiveTags">Append chara's current activity tags on top of the handler's. Pass false
+    /// for handlers whose tags describe a past moment (LLM final-response blocks, built after the run
+    /// settled) - live tags there would be the end-of-run state, not the narrated one.</param>
+    public Message_Text(Character_Trainable chara, I_hasPortrait handler, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null, bool addLiveTags = true) : base(new List<Character_Trainable>() { chara} , handler, time, parentEvent)
     {
         this.Display.SelfTags = handler == null ? new List<string>() : new List<string>( handler.SelfPortraitTag);
         // add contextual tags
-        if (chara != null) this.Display.SelfTags.AddRange(chara.PortraitManager.GetOwnerActionTagsByPriority());
+        if (addLiveTags && chara != null) this.Display.SelfTags.AddRange(chara.PortraitManager.GetOwnerActionTagsByPriority());
         Utility.DistinctInPlace(this.Display.SelfTags);
 
-        this.Display.TargetTags = handler == null ? new List<string>() : handler.TargetPortraitTag;
+        // copy, never alias: the handler's list may be its own cached storage (eg. MessageParagraph's
+        // _portraitTags_Target), which the AddRange below would otherwise grow on every rebuild
+        this.Display.TargetTags = handler == null ? new List<string>() : new List<string>(handler.TargetPortraitTag);
         //if (Display.SelfTags != null && Display.SelfTags.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", Display.SelfTags)}");
-        if (chara != null) this.Display.TargetTags.AddRange(chara.PortraitManager.GetOwnerActionTargetTagsByPriority());
+        if (addLiveTags && chara != null) this.Display.TargetTags.AddRange(chara.PortraitManager.GetOwnerActionTargetTagsByPriority());
         Utility.DistinctInPlace(this.Display.TargetTags);
 
         AddMessage(messages, rA);

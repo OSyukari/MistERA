@@ -124,6 +124,59 @@ public class MessageCollect
     }
 
     /// <summary>
+    /// Unions the display tags every message in this collect (and its APs' own attached messages)
+    /// would have drawn its portrait with, keyed by portrait refID: DescriptionCollector entries
+    /// contribute displayTagsOverride_Self/_Target to each of their PortraitRefs, KojoCollector
+    /// entries contribute selfPortraitTag/targetPortraitTag per node (walking collect/nexts). These
+    /// are the tags the live log path hands to PortraitManager - kojo emotion tags, the kol's
+    /// action tags, and the useActiveTags lookup frozen at the moment the line fired - so reading
+    /// them back gives an execution-accurate portrait long after the world has moved on.
+    /// Recorded-data only - no actor needs to be a live instance. Duplicates are left for the caller
+    /// to remove once all sources are merged.
+    /// </summary>
+    public void CollectPortraitTags(Dictionary<int, List<string>> selfTags, Dictionary<int, List<string>> targetTags)
+    {
+        void Scan(List<I_Records> list)
+        {
+            foreach (var m in list)
+            {
+                if (m is DescriptionCollector dc)
+                {
+                    foreach (var r in dc.PortraitRefs)
+                    {
+                        AddPortraitTags(selfTags, r, dc.displayTagsOverride_Self);
+                        AddPortraitTags(targetTags, r, dc.displayTagsOverride_Target);
+                    }
+                }
+            }
+        }
+
+        Scan(messages_checks);
+        Scan(messages_before);
+        Scan(messages_exp);
+        Scan(messages_after);
+
+        foreach (var k in messages_kojo) k.CollectPortraitTags(selfTags, targetTags);
+        foreach (var k in messages_kojo_after) k.CollectPortraitTags(selfTags, targetTags);
+
+        foreach (var ap in this.apRecords)
+        {
+            if (ap.mcol != null) ap.mcol.CollectPortraitTags(selfTags, targetTags);
+        }
+    }
+
+    public static void AddPortraitTags(Dictionary<int, List<string>> table, int refID, List<string> tags)
+    {
+        if (refID == -1 || tags == null || tags.Count < 1) return;
+        if (!table.TryGetValue(refID, out var list))
+        {
+            list = new List<string>();
+            table.Add(refID, list);
+        }
+        list.AddRange(tags);
+    }
+
+    /// <summary>
     /// message loadactor and ap loadactor behaves differently, beware!
     /// </summary>
     /// <param name="recTable"></param>
@@ -615,6 +668,20 @@ public class MessageCollect_KojoEntry
             refs.Add(this.PortraitRefID);
         }
         foreach (var next in this.nexts) next.CollectPortraitRefs(refs, requireOverride);
+    }
+
+    /// <summary>
+    /// Recursively unions this node's (and its nexts') selfPortraitTag/targetPortraitTag into the
+    /// per-refID tag tables, keyed by PortraitRefID - see MessageCollect.CollectPortraitTags.
+    /// </summary>
+    public void CollectPortraitTags(Dictionary<int, List<string>> selfTags, Dictionary<int, List<string>> targetTags)
+    {
+        if (this.PortraitRefID != -1)
+        {
+            MessageCollect.AddPortraitTags(selfTags, this.PortraitRefID, selfPortraitTag);
+            MessageCollect.AddPortraitTags(targetTags, this.PortraitRefID, targetPortraitTag);
+        }
+        foreach (var next in this.nexts) next.CollectPortraitTags(selfTags, targetTags);
     }
 
     public void AddRelevantActors(List<Character_Trainable> cs)

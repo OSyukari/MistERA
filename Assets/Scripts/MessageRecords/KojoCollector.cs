@@ -517,6 +517,12 @@ public class KojoCollector : I_ResultStorage, I_Records
         if (collect != null) collect.CollectPortraitRefs(refs, requireOverride);
     }
 
+    /// <summary>See MessageCollect.CollectPortraitTags.</summary>
+    public void CollectPortraitTags(Dictionary<int, List<string>> selfTags, Dictionary<int, List<string>> targetTags)
+    {
+        if (collect != null) collect.CollectPortraitTags(selfTags, targetTags);
+    }
+
     public void ReadActorRecord(Dictionary<string, ActorRecord> recTable)
     {
         //foreach (var actorref in relevantActorRefs) LoadActorSingle(actorref, recTable);

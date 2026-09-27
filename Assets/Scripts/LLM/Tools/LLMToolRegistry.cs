@@ -25,8 +25,9 @@ public static class LLMToolRegistry
     {
         Register(new Tool_GetCharacterDetail());
         Register(new Tool_GetRoomDetail());
-        Register(new Tool_GetFactionMap());
-        Register(new Tool_GetQuestProgress());
+        Register(new Tool_GetPossibleInteractions());
+        Register(new Tool_GetFactionDetail());
+        Register(new Tool_GetPossibleInteractions());
         Register(new Tool_ExecuteAP());
     }
 
