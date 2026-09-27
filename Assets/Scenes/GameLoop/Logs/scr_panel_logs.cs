@@ -1541,6 +1541,15 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
                 parent.ExecuteSingleShotResponse();
             }
 
+            // Recording counterpart of Confirm (see RecordConfirmedResponse) - runs before
+            // ClearHistory drops the entry (and its agent session) holding the confirmed response
+            // and the run's accumulated AP records.
+            parent.RecordConfirmedResponse(entry);
+
+            // Memory counterpart of Confirm (see RegisterConfirmedMemory) - agent runs only;
+            // single-shot registers at its wrapper's execution end (which only ever starts here).
+            parent.RegisterConfirmedMemory(entry);
+
             // Ending the whole comparison - ClearHistory (LLMSessionStore.Clear) prunes every agent
             // entry's checkpoint files, empties the chain, and resets the LLM display via
             // Observer_Cleared/ResetLLMDisplay (the migrated blocks above already left
@@ -1551,6 +1560,99 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
 
             scr_UpdateHandler.current.NotifyLogsSingleUpdate(true);
         }
+    }
+
+    /// <summary>
+    /// Recording counterpart of Confirm (Button_Confirm.OnClickButton): the confirmed final
+    /// response never passes through the normal message pipeline - agent runs already executed
+    /// for real during the run (Confirm only migrates the preview blocks), and single-shot
+    /// execution merely gets deferred from here - so the room recording is written at Confirm
+    /// time, after the run's update/checkpoint churn has settled. Content: the FULL confirmed
+    /// response - every content block merged into ONE big message (the short summary is only a
+    /// fallback when no blocks parsed) - with every AP of the run registered inside it via
+    /// apRecords:
+    /// - agent run: session.executedRecords, the real ActionPackageRecords accumulated by
+    ///   ActionPackage_LLM.RecordOutcome as each inner AP settled (their own messages are
+    ///   suppressed via suppressRoomRecording);
+    /// - single-shot: records built from the response's packages - execution only starts after
+    ///   Confirm returns, so EP-level response fields are pre-execution defaults (single-shot
+    ///   force-accepts every package anyway).
+    /// Playback duration comes from KojoRecording's timestamp-gap computation - the entry lands
+    /// in the settled post-run bucket, so its gap spans the run's full time.
+    /// </summary>
+    void RecordConfirmedResponse(LLMHistoryEntry entry)
+    {
+        if (entry == null) return;
+        var json = CurrentResponse?.JSON ?? entry.response?.JSON;
+        var room = scr_System_CampaignManager.current.CurrentRoom;
+        if (json == null || room == null || !room.HasRecording) return;
+
+        var rec = new MessageCollect(false, false);
+
+        // FULL response, not the short interaction summary: merge every content block (the
+        // narrative the player clicked through) into one message; summary is only a fallback
+        // when the response has no parseable block list at all.
+        string narrative = null;
+        var parts = new List<string>();
+        foreach (var b in json.content_blocks)
+        {
+            if (string.IsNullOrEmpty(b.content_text)) continue;
+            parts.Add(b.content_text);
+        }
+        if (parts.Count > 0) narrative = String.Join("\n", parts);
+        else narrative = json.summary;
+
+        List<ActionPackageRecords> apRecords;
+        if (entry.isAgentRun && entry.session != null)
+        {
+            apRecords = entry.session.executedRecords;
+        }
+        else
+        {
+            apRecords = new List<ActionPackageRecords>();
+            foreach (var ap in json.GetActionPackages(out _)) apRecords.Add(new ActionPackageRecords(ap));
+        }
+
+        var actors = new List<int>(json.relevantActorRefs);
+        foreach (var apr in apRecords)
+        {
+            foreach (var a in apr.Doers) if (a != null && a.refID >= 0) actors.Add(a.refID);
+            foreach (var a in apr.Receivers) if (a != null && a.refID >= 0) actors.Add(a.refID);
+        }
+        actors.RemoveAll(x => x < 0);
+        Utility.DistinctInPlace(actors);
+
+        if (!string.IsNullOrEmpty(narrative))
+        {
+            var desc = new DescriptionCollector(narrative);
+            desc.message_excludeRelated = narrative;
+            desc.LoadActors(actors);
+            rec.AddMessage_Before(desc, true, null, false);
+        }
+
+        rec.apRecords.AddRange(apRecords);
+
+        room.RecordLLMEntry(rec);
+    }
+
+    /// <summary>
+    /// Memory counterpart of Confirm for agent runs: registers the consolidated LLM memory from
+    /// the session's accumulated interactions (captured by ActionPackage_LLM.CaptureMemory as
+    /// each inner AP settled; their own per-EP memory logging was suppressed via
+    /// suppressMemoryLogging). One wrapper entry per relevant actor (summary as description,
+    /// see MemoryManager.AddLLMEntry) with one interaction instance per executed AP the actor
+    /// participated in - relevant non-participants get the wrapper only. Deferred
+    /// first-experience records replay here. Single-shot never passes through here: its wrapper
+    /// registers at execution end, which only ever starts from Button_Confirm.
+    /// </summary>
+    void RegisterConfirmedMemory(LLMHistoryEntry entry)
+    {
+        if (entry == null || !entry.isAgentRun) return;
+        var session = entry.session;
+        var json = CurrentResponse?.JSON ?? entry.response?.JSON;
+        if (session == null || json == null) return;
+
+        ActionPackage_LLM.RegisterConsolidatedMemory(json.summary, session.memoryInteractions, session.memoryFirstExps, json.relevantActorRefs, session.memoryDuration);
     }
 
     public class Button_Discard : ButtonValidator, I_ButtonClickable
