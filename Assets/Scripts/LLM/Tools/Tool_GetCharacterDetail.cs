@@ -15,14 +15,14 @@ public class Tool_GetCharacterDetail : ILLMTool
     class Args
     {
         public int characterRef = -1;
-        public bool fullDetail = true;
+        public bool fullDetail = false;
     }
 
     public LLMToolDefinition GetDefinition()
     {
         var schema = new LLMFormatSchema();
         schema.properties["characterRef"] = new LLMFormatSchema.Type_Simple("integer", "RefID of the character to inspect. If this doesn't match any character directly, it's also tried as a job RefID (e.g. SourceJobID seen elsewhere in world info can look like a character RefID) and that job's owning character is returned instead/as well.");
-        schema.properties["fullDetail"] = new LLMFormatSchema.Type_Simple("boolean", "If true, include relationships, memories, equipment, status effects, and the character card. If false, only name/description/current activity/location.");
+        schema.properties["fullDetail"] = new LLMFormatSchema.Type_Simple("boolean", "If true, include full relationships, memories, equipment, and the character card. If false, only name/description/current activity/location.");
         return new LLMToolDefinition(Name, "Fetch detailed information about a character by RefID. Returns every distinct character that matches, in case characterRef is ambiguous between a character RefID and a job RefID.", schema);
     }
 
@@ -39,7 +39,7 @@ public class Tool_GetCharacterDetail : ILLMTool
         var byCharacterRef = mgr.FindInstanceByID(args.characterRef);
         if (byCharacterRef != null && seenRefs.Add(byCharacterRef.RefID))
         {
-            matches.Add(new LLM_WorldState.CharaStorage(byCharacterRef, null, args.fullDetail));
+            matches.Add(new LLM_WorldState.CharaStorage(byCharacterRef, args.fullDetail));
         }
 
         // The model sometimes confuses a character's interaction-job RefID (e.g. the SourceJobID shown
@@ -49,7 +49,7 @@ public class Tool_GetCharacterDetail : ILLMTool
         var byJobRef = job?.Owner;
         if (byJobRef != null && seenRefs.Add(byJobRef.RefID))
         {
-            matches.Add(new LLM_WorldState.CharaStorage(byJobRef, null, args.fullDetail));
+            matches.Add(new LLM_WorldState.CharaStorage(byJobRef, args.fullDetail));
         }
 
         if (matches.Count == 0)

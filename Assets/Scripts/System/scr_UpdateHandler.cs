@@ -239,12 +239,26 @@ public class scr_UpdateHandler : MonoBehaviour
             var player = scr_System_CampaignManager.current.Player;
             payload.ReplaceString("<user>", player.FirstName);
             payload.ReplaceString("$firstname_and_refid$", $"{player.FullName} (RefID: {player.RefID})");
-            var playerInfo = new LLM_WorldState.CharaStorage(player, null, true);
+            var playerInfo = new LLM_WorldState.CharaStorage(player, true);
             payload.ReplaceString("%%playerInfo%%", JsonConvert.SerializeObject(playerInfo, Formatting.Indented, UtilityEX.SerializerSettings));
-            var worldinfo = new LLM_WorldState();
+            var worldinfo = new LLM_WorldState(true);
+
+            worldinfo.LoadInteractionData(player, receiver:null, null);
+
+            var allActors = new List<Character_Trainable>();
+            foreach(var actor in player.CurrentRoom.RoomChara)
+            {
+                if (actor == player) continue;
+                worldinfo.LoadInteractionData(player, actor);
+                allActors.Add(actor);
+            }
+
+            Utility.DistinctInPlace(allActors);
+            if (allActors.Count > 0) worldinfo.LoadInteractionData(player, allActors);
+
+            //worldinfo.load
+
             var worldinfostring = JsonConvert.SerializeObject(worldinfo, Formatting.Indented, UtilityEX.SerializerSettings);
-
-
 
             payload.ReplaceString("%%worldInfo%%", worldinfostring);
             payload.ReplaceString("%%currentRoundInput%%", s);
@@ -521,14 +535,40 @@ public class scr_UpdateHandler : MonoBehaviour
             var player = scr_System_CampaignManager.current.Player;
             baseTemplate.ReplaceString("<user>", player.FirstName);
             baseTemplate.ReplaceString("$firstname_and_refid$", $"{player.FullName} (RefID: {player.RefID})");
-            var playerInfo = new LLM_WorldState.CharaStorage(player, null, true);
+            var playerInfo = new LLM_WorldState.CharaStorage(player, true);
             baseTemplate.ReplaceString("%%playerInfo%%", JsonConvert.SerializeObject(playerInfo, Formatting.Indented, UtilityEX.SerializerSettings));
-            var worldinfo = new LLM_WorldState();
+            var worldinfo = new LLM_WorldState(true);
+
+            worldinfo.LoadInteractionData(player, receiver: null, null);
+
+            var allActors = new List<Character_Trainable>();
+            foreach (var actor in player.CurrentRoom.RoomChara)
+            {
+                if (actor == player) continue;
+                if (allActors.Count < 1) worldinfo.LoadInteractionData(player, actor);
+                allActors.Add(actor);
+            }
+
+            Utility.DistinctInPlace(allActors);
+            if (allActors.Count > 0) worldinfo.LoadInteractionData(player, allActors);
+
             var worldinfostring = JsonConvert.SerializeObject(worldinfo, Formatting.Indented, UtilityEX.SerializerSettings);
+
             baseTemplate.ReplaceString("%%worldInfo%%", worldinfostring);
             baseTemplate.ReplaceString("%%currentRoundInput%%", userInput);
             baseTemplate.ReplaceString("%%currentLanguage%%", LocalizeDictionary.Instance.Index.cachedLang);
             baseTemplate.currentString = userInput;
+
+            // -- Debug -- //
+            string collectionPath = Application.persistentDataPath + "/worldStateInfo.json";
+
+            var s2 = JsonConvert.SerializeObject(worldinfo, formatting: Formatting.Indented, UtilityEX.SerializerSettingsLLM);
+            if (File.Exists(collectionPath)) File.Delete(collectionPath);
+
+            FileInfo untransDict = new System.IO.FileInfo(collectionPath);
+            untransDict.Directory.Create();
+            File.WriteAllText(untransDict.FullName, s2);
+            Debug.Log($"creating/updating agentic worldstateinfo collection in {collectionPath}");
         }
         else
         {
@@ -709,6 +749,8 @@ public class scr_UpdateHandler : MonoBehaviour
                 // would otherwise silently skip a hallucinated/invalid AP and just move on. Instead, feed
                 // the exact validation failure back to the model so it can fix its mistake and resubmit.
                 var invalidReasons = new List<string>();
+                // agent plan steps execute for real: an unset command_result means "let the game roll"
+                if (response.JSON != null) response.JSON.gameRollsUnsetResults = true;
                 var packages = response.JSON?.GetActionPackages(out _) ?? new List<ActionPackage>();
                 foreach (var ap in packages)
                 {
@@ -799,7 +841,8 @@ public class scr_UpdateHandler : MonoBehaviour
                 {
                     executedActions = executedActions,
                     messages = resultMessages,
-                    remainingActions = deferred,
+                    // told to continue via execute_actions, so hand them over in that tool's argument shape
+                    remainingActions = Tool_ExecuteAP.ToResubmittable(deferred),
                     currentWorldState = new LLM_WorldState(),
                     nextStep = deferred.Count > 0
                         ? AgentText("agent_nextStep_partial",

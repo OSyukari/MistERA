@@ -113,6 +113,23 @@ public static class Utility
         if (!canWork) tooltip += "\n" + WrapTextColor(haltReason, scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
         text.SetExternalTooltip(tooltip);
     }
+
+    public static string GetFactionDetail(Manageable faction, Character_Trainable c)
+    {
+        bool shouldWork = c.ShouldWorkFor(faction, out string strikeReason);
+        bool canWork = c.CanWorkFor(faction, out string haltReason);
+
+        string tooltip = $"{faction.GetCharaSocialStandingName(c)}\n{faction.GetCharaSocialStandingTooltip(c)}";
+        var member = faction.GetMemberType(c);
+        if (member != null && member.workModule != null) tooltip += $"\nwork days per week: {faction.GetWorkDaysPerWeekString(c, false)}";
+        var source = c.FactionManager.GetWorkFactionSourceOrDefault(faction.ID);
+        if (source != null && source != faction) tooltip += $"\n{LocalizeDictionary.QueryThenParse("management_faction_work_assignedBy_tooltip").Replace("$factionname$", source.FactionDisplayName)}";
+        if (!shouldWork) tooltip += $"\n{strikeReason}";
+        if (!canWork) tooltip += $"\n{haltReason}";
+
+        return tooltip;
+    }
+
     public static string GetEnumString(System.Type type, object value)
     {
         return System.Enum.GetName(type, value);

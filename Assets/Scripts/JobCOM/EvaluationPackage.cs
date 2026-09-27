@@ -709,9 +709,9 @@ public partial class EvaluationPackage : I_ResultStorage
 
         if (response == Memory_Response.None || response == Memory_Response.Refuse)
         {// doer unwilling
-            Doer.Memory.AddEntry(this);
+            if (!Package.suppressMemoryLogging) Doer.Memory.AddEntry(this);
             //(DoerSelfTag, ReceiverTargetTag, p.Master != null ? p.masterRef : (Receiver != null ? Receiver.RefID : Doer.RefID), targetCOM, VariantID, true, null, attitude_doer, Memory_Response.Refuse, Doer.Stats.MemoryLength, p.masterRef);
-            if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
+            if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored") && !Package.suppressMemoryLogging) Receiver.Memory.AddEntry(this);
         }
         /*
         else if (response == Memory_Response.Refuse)
@@ -734,8 +734,8 @@ public partial class EvaluationPackage : I_ResultStorage
                 //Debug.Log($"rollresult");
                 // this function no longer rolls, it instead read parent injected result and see if success check
 
-                Doer.Memory.AddEntry(this);
-                if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
+                if (!Package.suppressMemoryLogging) Doer.Memory.AddEntry(this);
+                if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored") && !Package.suppressMemoryLogging) Receiver.Memory.AddEntry(this);
                 /*
                 Doer.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, Memory_Response.Accept, attitude_doer, Doer.Stats.MemoryLength, p.masterRef);
                 if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, Memory_Response.Accept, attitude_receiver, Receiver.Stats.MemoryLength, p.masterRef);
@@ -752,6 +752,26 @@ public partial class EvaluationPackage : I_ResultStorage
             bool comSuccess = response == Memory_Response.Accept || response >= Memory_Response.Success;
             if (Doer != null) targetCOM.ApplyResults(job, p, this, attitude_doer, Doer, m.exp, comSuccess);
             if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver, m.exp, comSuccess);
+        }
+
+        if (Package.suppressMemoryLogging)
+        {
+            // LLM inner package: defer the first-experience application - replayed by the LLM
+            // wrapper's consolidated registration (ActionPackage_LLM.RegisterConsolidatedMemory),
+            // so the confirmed memory entry is what triggers first experience, never the
+            // suppressed inner execution. Attitude is computed here with the exact formula the
+            // apply loop below uses (it depends only on EP state, not on NotifySexExperience).
+            if (Package.suppressedFirstExp == null) Package.suppressedFirstExp = new List<DelayedFirstExperience>();
+            foreach(var entry in logExps)
+            {
+                var att = isReceiver(entry.body.Owner) ? attitude_receiver : attitude_doer;
+                if (hasPermission) att = (Memory_Attitude)Math.Min((int)(att+1), (int)Memory_Attitude.Love);
+                else att = (Memory_Attitude)Math.Max((int)(att - 1), (int)Memory_Attitude.Hate);
+
+                Package.suppressedFirstExp.Add(new DelayedFirstExperience() { exp = entry, attitude = att, hasPermission = hasPermission });
+            }
+            logExps.Clear();
+            return;
         }
 
         foreach(var entry in logExps)
@@ -848,7 +868,8 @@ public partial class EvaluationPackage : I_ResultStorage
     /// <summary>
     /// Returns the auto-success/auto-failure/forced-success/forced-failure display text when the outcome
     /// is guaranteed (either the rate is at an extreme, a PersonalityAcceptanceMod forced the response,
-    /// or the caller passed an explicit forceSuccess override e.g. via ForceRespond()/强行要求),
+    /// or the caller passed an explicit forceSuccess override e.g. via ForceRespond()/强行要求 or an
+    /// LLM-injected epjson.command_result),
     /// or null when the normal dice-roll text should be shown instead.
     /// </summary>
     private string DiceRollAutoText(int rate, Memory_Response forcedResponse, Memory_Response forceSuccess = Memory_Response.None)
@@ -873,8 +894,15 @@ public partial class EvaluationPackage : I_ResultStorage
 
         if (this.Doer.isTemporaryActor) forceSuccess = Memory_Response.Accept;
 
+        // A Doer acting on their own (no Master, or Master == Doer) at rate 100 ignores an injected Refuse. A
+        // Master-ordered Doer at rate 100 (restrained/cannotRefuse/...) must still honor it, so it falls
+        // through to the epjson branch below.
+        bool masterOrdered = p.Master != null && p.Master != Doer;
+        bool injectedRefuse = epjson != null && epjson.command_result != Memory_Response.None && epjson.command_result < Memory_Response.Accept;
+        bool injectOverridesMax = masterOrdered && injectedRefuse;
+
         if (requestRate <= 0) returnVal = false;
-        else if (requestRate >= 100) returnVal = true;
+        else if (requestRate >= 100 && !injectOverridesMax) returnVal = true;
         else
         {
             if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = requestRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 20 : 1;
@@ -896,7 +924,10 @@ public partial class EvaluationPackage : I_ResultStorage
         else response = Memory_Response.Refuse;
 
         List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
-        var autoDoer = DiceRollAutoText(requestRate, forcedResponse_doer, forceSuccess);
+        // an LLM-injected result outranks forceSuccess above, but only takes effect inside the rate extremes
+        // (plus the Master-ordered Refuse-at-100 case)
+        var injectedDoer = (epjson != null && requestRate > 0 && (requestRate < 100 || injectOverridesMax)) ? epjson.command_result : Memory_Response.None;
+        var autoDoer = DiceRollAutoText(requestRate, forcedResponse_doer, injectedDoer != Memory_Response.None ? injectedDoer : forceSuccess);
         //if (forceSuccess != Memory_Response.None) Debug.LogError("forceSuccess");
         checkResults_doer = $"{Doer.FirstName}: D20{(mods.Count > 0 ? " + "+ String.Join(" + ", mods) : "")} = {(autoDoer ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}" )}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_doer})";
         checkResults_doer_short = $"({Doer.FirstName}) {targetCOM.DisplayName(VariantID)}: {(autoDoer ?? $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
@@ -933,7 +964,7 @@ public partial class EvaluationPackage : I_ResultStorage
             
             int reverseRate = 20 - (int)(responseRate / 5);
 
-            if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = true;
+            if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = epjson.command_result >= Memory_Response.Accept;
             else if (forceSuccess >= Memory_Response.Accept) returnVal = true;
             else if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) returnVal = false;
             else if (forcedResponse_receiver != Memory_Response.None) returnVal = forcedResponse_receiver >= Memory_Response.Accept;
@@ -951,7 +982,8 @@ public partial class EvaluationPackage : I_ResultStorage
 
 
 
-            var autoReceiver = DiceRollAutoText(responseRate, forcedResponse_receiver, forceSuccess);
+            var injectedReceiver = epjson != null ? epjson.command_result : Memory_Response.None;
+            var autoReceiver = DiceRollAutoText(responseRate, forcedResponse_receiver, injectedReceiver != Memory_Response.None ? injectedReceiver : forceSuccess);
             checkResults_receiver = $"{Receiver.FirstName}: D20{(mods.Count > 0 ? " + "+String.Join(" + ", mods) : "")} = {(autoReceiver ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}")}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_receiver})";
             checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(autoReceiver ?? $"({responseRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
@@ -1716,8 +1748,8 @@ public partial class EvaluationPackage : I_ResultStorage
         //DoerAttitude = fucker == Doer ? fucker_att : fucked_att;
         //ReceiverAttitude = internal_fucked.Owner == Receiver ? fucked_att : fucker_att;
 
-        if (DoerAttitude != Memory_Attitude.None) Doer.Memory.AddEntry(this);
-        if (ReceiverAttitude != Memory_Attitude.None && Receiver != null && Receiver != Doer) Receiver.Memory.AddEntry(this);
+        if (DoerAttitude != Memory_Attitude.None && !Package.suppressMemoryLogging) Doer.Memory.AddEntry(this);
+        if (ReceiverAttitude != Memory_Attitude.None && Receiver != null && Receiver != Doer && !Package.suppressMemoryLogging) Receiver.Memory.AddEntry(this);
 
         //if (fucked_att != Memory_Attitude.None && logMessage) internal_fucked.Owner.Memory.AddEntry(this);
         //internal_fucked.Owner.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, fucker.RefID, com, VariantID, false, null, internal_fucked.Owner.canAct ? Memory_Response.Success : Memory_Response.Accept, fucked_att, internal_fucked.Owner.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
@@ -2022,6 +2054,21 @@ public partial class EvaluationPackage : I_ResultStorage
 
 
     [JsonIgnore] public List<DelayedExpLogging> logExps = new List<DelayedExpLogging>();
+
+    /// <summary>
+    /// One deferred first-experience application, stashed by Execute onto
+    /// Package.suppressedFirstExp when the AP runs with suppressMemoryLogging (LLM inner
+    /// packages) - replayed by the LLM wrapper's consolidated registration instead of firing
+    /// from the suppressed inner execution. Attitude is pre-computed with the apply loop's exact
+    /// formula so the replay needs nothing but this record.
+    /// </summary>
+    public class DelayedFirstExperience
+    {
+        public DelayedExpLogging exp;
+        public Memory_Attitude attitude;
+        public bool hasPermission;
+    }
+
     public class DelayedExpLogging
     {
         public BodyInternal_Instance body;

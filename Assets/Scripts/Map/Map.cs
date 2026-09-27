@@ -1117,7 +1117,10 @@ public class Map_Instance
         }
     }
 
-
+    public bool FindPathFromRoom(Room_Instance roomRef, Room_Instance targetRoom, out IEnumerable<TaggedEdge<int, Door_Instance>> path)
+    {
+        return Findpath(roomRef, targetRoom, false, out path);
+    }
 
     /// <summary>
     /// is imprisoned changed to isrestrained. allow prisoners to move freely

@@ -264,9 +264,15 @@ public class Message_Text : MessageLog
     }
     public Message_Text(Character_Trainable chara, I_hasPortrait handler, string messages, bool rA, string tooltip = "", DateTime time = default, EventInstance parentEvent = null) : base(new List<Character_Trainable>() { chara} , handler, time, parentEvent)
     {
-        this.Display.SelfTags = handler == null ? new List<string>() : handler.SelfPortraitTag;
+        this.Display.SelfTags = handler == null ? new List<string>() : new List<string>( handler.SelfPortraitTag);
+        // add contextual tags
+        if (chara != null) this.Display.SelfTags.AddRange(chara.PortraitManager.GetOwnerActionTagsByPriority());
+        Utility.DistinctInPlace(this.Display.SelfTags);
+
         this.Display.TargetTags = handler == null ? new List<string>() : handler.TargetPortraitTag;
-        if (Display.SelfTags != null && Display.SelfTags.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", Display.SelfTags)}");
+        //if (Display.SelfTags != null && Display.SelfTags.Count > 0) Debug.LogError($"making messagelog with tagsOverride {String.Join(" ", Display.SelfTags)}");
+        if (chara != null) this.Display.TargetTags.AddRange(chara.PortraitManager.GetOwnerActionTargetTagsByPriority());
+        Utility.DistinctInPlace(this.Display.TargetTags);
 
         AddMessage(messages, rA);
         this.tooltip = tooltip;
@@ -489,6 +495,11 @@ public abstract class MessageLog : I_hasPortrait
     public MessageLog(PortraitManager portraitRef, DateTime time = default, EventInstance parentEvent = null)
     {
         this.Display.PortraitRef = portraitRef;
+        if (portraitRef != null)
+        {
+            this.Display.SelfTags = portraitRef.GetOwnerActionTagsByPriority();
+            this.Display.TargetTags = portraitRef.GetOwnerActionTargetTagsByPriority();
+        }
         this.parentEvent = parentEvent;
         if (time != default) this.time = time;
         else this.time = scr_System_Time.current.getCurrentTime();

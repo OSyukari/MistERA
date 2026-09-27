@@ -1,11 +1,8 @@
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using static UnityEngine.GraphicsBuffer;
 
 public enum PrideLevel
 {
@@ -1109,6 +1106,12 @@ public class RelationshipManager
         string attitudeTooltip = attitude == null ? "" : LocalizeDictionary.QueryThenParse($"{attitude.ID}_tooltip");
         string obedienceLine = rel == null ? "currentObedience —, maxObedience —" : $"currentObedience {(attitude == null ? 0 : attitude.GetObedienceMod(rel))}, maxObedience {(attitude == null ? 0 : attitude.obedienceMod_Max)}";
         box.SetExternalTooltip($"{(attitudeTooltip.Length > 0 ? attitudeTooltip + "\n" : "")}{obedienceLine}{(rel == null ? "" : $"\n{String.Join("\n", rel.CurrentAttitudeTooltip)}")}");
+    }
+
+    public string GetAttitudeString()
+    {
+        var attitude = Owner.GetCurrentAttitude();
+        return LocalizeDictionary.QueryThenParse("relationship_attitude_uiEntry").Replace("$content$", attitude == null ? " - " : attitude.DisplayName);
     }
 
     public static void Draw(Character_Relationship rel, scr_box_relationship box, bool reverseScore = false)

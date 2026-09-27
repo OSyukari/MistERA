@@ -1159,11 +1159,6 @@ public class Job : IDisposable, I_Disposable
         Debug.LogError("BaseFunction NotifyRefusal Unimplemented");
     }
 
-    public virtual ActionPackage MakePackage(COM targetCOM, Character_Trainable doer, Character_Trainable receiver)
-    {
-        return null;
-    }
-
     /// <summary>
     /// Exclude Self
     /// </summary>

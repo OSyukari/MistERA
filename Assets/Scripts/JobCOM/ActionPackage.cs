@@ -91,9 +91,18 @@ public abstract class ActionPackage
 
         foreach (var ep2 in epjson)
         {
-            if ((ep.command_result >= Memory_Response.Accept) != (ep2.command_result >= Memory_Response.Accept))
+            // None = game-rolled (agent mode); never merge it with a forced result, including a forced Refuse
+            if ((ep.command_result >= Memory_Response.Accept) != (ep2.command_result >= Memory_Response.Accept)
+                || (ep.command_result == Memory_Response.None) != (ep2.command_result == Memory_Response.None))
             {
                 error = "command_result acceptance mismatch";
+                return false;
+            }
+            // the AP gets one DC outcome - two different forced DC outcomes can't share it (Accept = no DC opinion)
+            if (ep.command_result >= Memory_Response.CriticalFailure && ep2.command_result >= Memory_Response.CriticalFailure
+                && ep.command_result != ep2.command_result)
+            {
+                error = "command_result DC outcome mismatch";
                 return false;
             }
         }
@@ -644,7 +653,7 @@ public abstract class ActionPackage
             var list = interruptedActors[actor].Distinct().ToList();
             foreach(var ep in list)
             {
-                actor.Memory.AddEntry(ep, -1, false, true);
+                if (!ep.Package.suppressMemoryLogging) actor.Memory.AddEntry(ep, -1, false, true);
             }
 
         }
@@ -730,7 +739,7 @@ public abstract class ActionPackage
 
     public void CaptureRecording()
     {
-        if (this.Room != null) Room.CaptureAPSnapshot(this);
+        if (this.RecordingRoom != null) RecordingRoom.CaptureAPSnapshot(this);
 
         mcol.Clear();
         packageStateChanged = false;
@@ -1654,7 +1663,7 @@ public abstract class ActionPackage
 
         //desc.message_excludeRelated = desc.message;
         //desc.LoadPortraits(this.actorRefs, true);
-        m.AddMessage_Checks(desc, logging ? Room : null);
+        m.AddMessage_Checks(desc, logging ? RecordingRoom : null);
         if (!logging) packageStateChanged = true;
     }
 
@@ -1700,7 +1709,7 @@ public abstract class ActionPackage
         // kills the whole message (AddLog falls back to the never-populated message_excludeRelated).
         desc.LoadActors(this.actorRefs);
         desc.LoadActors(this.job.GetLogRelevantActors(this));
-        m.AddMessage_Checks(desc, logging? Room : null);//
+        m.AddMessage_Checks(desc, logging? RecordingRoom : null);//
         if (!logging) packageStateChanged = true;
 
        // Debug.Log($"logAcceptance {desc.message} related {String.Join(" ", desc.relevantActors)} m null? {m == null} statechange {this.packageStateChanged}");
@@ -1914,13 +1923,17 @@ public abstract class ActionPackage
                 {
                     List<string> mods = dcMods == null ? new List<string>() : dcMods.GetAllModifiers();
 
-                    if (epjson.Count > 0)
+                    // one DC roll per AP: skip it only when every merged entry is forced (JoinAP never mixes
+                    // forced with None) - agent mode leaves command_result None to roll for real
+                    if (epjson.Count > 0 && epjson.TrueForAll(x => x.command_result != Memory_Response.None))
                     {
-                        int count = 0;
-                        foreach (var i in epjson) count += (int)i.command_result;
-                        injectResult = (Memory_Response)(int)(count / epjson.Count);
+                        // Accept carries no DC opinion, so a forced DC outcome wins; JoinAP guarantees at most one
+                        // distinct DC outcome per AP. Otherwise every entry shares an acceptance class - use it as-is.
+                        var dcForced = epjson.Find(x => x.command_result >= Memory_Response.CriticalFailure);
+                        injectResult = dcForced != null ? dcForced.command_result : epjson[0].command_result;
 
-                        checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20{(mods.Count > 0 ? $" + {bonus}" : "")} {(injectResult >= Memory_Response.Success ? ">=" : "<")} {baseDC}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                        // no die was rolled - label the outcome as forced rather than faking a comparison
+                        checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20{(mods.Count > 0 ? $" + {bonus}" : "")} >=? {baseDC} = {LocalizeDictionary.QueryThenParse(injectResult >= Memory_Response.Success || injectResult == Memory_Response.Accept ? "ui_diceroll_forcedsuccess" : "ui_diceroll_forcedfailure")}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
                         checkResults_tooltips = String.Join("\n", mods);
                         checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
                     }
@@ -2567,7 +2580,7 @@ public abstract class ActionPackage
             {
                 m.AddKojo(kol);
                 if (!logging) packageStateChanged = true;
-                else if (Room != null && Room.HasRecording) Room.NotifyKojoCollect(kol);
+                else if (RecordingRoom != null && RecordingRoom.HasRecording) RecordingRoom.NotifyKojoCollect(kol);
             }
             if (single && !ep.isPlayerEP) break;
         }
@@ -2607,9 +2620,9 @@ public abstract class ActionPackage
                 // {
                 kol.tooltip = tooltip;
                 kol.LoadRelevantActors(this.job.GetLogRelevantActors(this));
-                m.AddMessage_Before(kol, true, logging ? Room : null, false);
+                m.AddMessage_Before(kol, true, logging ? RecordingRoom : null, false);
                 if (!logging) packageStateChanged = true;
-                else if (Room != null && Room.HasRecording) Room.NotifyDescCollect(kol);
+                else if (RecordingRoom != null && RecordingRoom.HasRecording) RecordingRoom.NotifyDescCollect(kol);
             }
             if (logged) return true;
         }
@@ -2617,6 +2630,40 @@ public abstract class ActionPackage
     }
 
     public MessageCollect mcol = new MessageCollect();
+
+    /// <summary>
+    /// Set on inner APs driven by an ActionPackage_LLM wrapper: their individual execution
+    /// messages (begin/ongoing/after/kojo/...) and AP snapshots must NOT be recorded into the
+    /// room recording - the confirmed final response is instead recorded as ONE consolidated
+    /// entry at Confirm time (scr_panel_logs.Button_Confirm -> RecordConfirmedResponse), with
+    /// the executed APs registered inside it via session.executedRecords.
+    /// </summary>
+    [JsonIgnore] public bool suppressRoomRecording = false;
+
+    /// <summary>
+    /// Room to send recording messages to - null when suppressRoomRecording is set, so every
+    /// LogMessage_* recording path (which all consult this instead of Room) silently skips the
+    /// room notify for LLM inner packages.
+    /// </summary>
+    [JsonIgnore] protected Room_Instance RecordingRoom { get { return suppressRoomRecording ? null : Room; } }
+
+    /// <summary>
+    /// Set alongside suppressRoomRecording on LLM wrapper inner APs: their per-EP memory entries
+    /// (and first-experience triggers) must NOT be registered as they execute - the confirmed
+    /// response is instead registered as ONE consolidated wrapper entry per actor (see
+    /// ActionPackage_LLM.RegisterConsolidatedMemory). Everything else the EP does (experience
+    /// gains, relationship deltas, stat costs, body state) is untouched.
+    /// </summary>
+    [JsonIgnore] public bool suppressMemoryLogging = false;
+
+    /// <summary>
+    /// First-experience records deferred by EvaluationPackage.Execute when suppressMemoryLogging
+    /// is set - drained by the LLM wrapper and replayed at consolidated registration time
+    /// (Button_Confirm for agent runs, wrapper execution end for single-shot), so the LLM
+    /// interaction triggers first experience from its confirmed memory entry instead of the
+    /// suppressed inner executions.
+    /// </summary>
+    [JsonIgnore] public List<EvaluationPackage.DelayedFirstExperience> suppressedFirstExp = null;
 
     /// <summary>
     /// When true, Job.CollectLogs copies mcol into capturedLog immediately before merging it into
@@ -2706,7 +2753,7 @@ public abstract class ActionPackage
             desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message_excludeRelated = desc.message;
             //desc.LoadPortraits(this.actorRefs, true);
-            m.AddMessage_Before(desc, true, logging ? Room : null);
+            m.AddMessage_Before(desc, true, logging ? RecordingRoom : null);
             if (!logging) packageStateChanged = true;
         }
     }
@@ -2734,7 +2781,7 @@ public abstract class ActionPackage
             var desc = new DescriptionCollector(response);
             desc.LoadActors(this.job.GetLogRelevantActors(this));
             desc.message_excludeRelated = response;
-            m.AddMessage_Before(desc, true, logging ? Room : null);
+            m.AddMessage_Before(desc, true, logging ? RecordingRoom : null);
             if (!logging) packageStateChanged = true;
         }
     }
@@ -2798,7 +2845,7 @@ public abstract class ActionPackage
             // target is the player here (see Job.CollectLogs) - if the player's current job can't be
             // interrupted, don't let this ambient ongoing line switch the currently-displayed portrait
             if (target != null && target.CurrentJob != null && !target.CurrentJob.CanBeInterrupted) desc.SuppressPortraits();
-            m.AddMessage_After(desc, logging ? Room : null);
+            m.AddMessage_After(desc, logging ? RecordingRoom : null);
         }
     }
 
@@ -2819,7 +2866,7 @@ public abstract class ActionPackage
             {
                 m.AddKojo(kol);
                 if (!logging) packageStateChanged = true;
-                else if (Room != null && Room.HasRecording) Room.NotifyKojoCollect(kol);
+                else if (RecordingRoom != null && RecordingRoom.HasRecording) RecordingRoom.NotifyKojoCollect(kol);
             }
         }
 
@@ -2843,7 +2890,7 @@ public abstract class ActionPackage
                 var desc = new DescriptionCollector(responses);
                 desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.message_excludeRelated = responses;
-                m.AddMessage_Before(desc, true, logging ? Room : null);
+                m.AddMessage_Before(desc, true, logging ? RecordingRoom : null);
                 if (!logging) packageStateChanged = true;
             }
         }
@@ -2868,7 +2915,7 @@ public abstract class ActionPackage
                 var desc = new DescriptionCollector(responses);
                 desc.LoadActors(this.job.GetLogRelevantActors(this));
                 desc.message_excludeRelated = responses;
-                m.AddMessage_Before(desc, true, logging ? Room : null);
+                m.AddMessage_Before(desc, true, logging ? RecordingRoom : null);
                 if (!logging) packageStateChanged = true;
 
                 //if (visible) m.messages_before.Add(rightAlign ? $"<align=\"right\">{responses}</align>" : responses);
@@ -2968,7 +3015,7 @@ public abstract class ActionPackage
 
             //desc.LoadPortraits(this.actorRefs, true);
             //Debug.Log($"logmessageafter!\n{desc.message}\n{desc.message_excludeRelated}");
-            m.AddMessage_After(desc, logging ? Room : null);
+            m.AddMessage_After(desc, logging ? RecordingRoom : null);
             if (!logging) packageStateChanged = true;
         }
 

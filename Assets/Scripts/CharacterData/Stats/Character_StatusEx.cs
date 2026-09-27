@@ -190,6 +190,24 @@ public class StatusEx_Instance : I_CacheValues
         text.SetExternalTooltip(tooltip);
     }
 
+    public string ModTooltip
+    {
+        get
+        {
+            var tooltip = String.Join("\n", ModString);
+            if (BaseRef.DeferredTooltipStatusEXID != "")
+            {
+                var deferred = owner.GetStatusEXByStringMatch(BaseRef.DeferredTooltipStatusEXID);
+                if (deferred != null)
+                {
+                    tooltip += $"\n\n{deferred.SeverityDisplayName}({deferred.Severity.ToString(deferred.BaseRef.stringFormat)})\n{String.Join("\n", deferred.ModString)}";
+                }
+            }
+
+            return tooltip;
+        }
+    }
+
     int _cacheVersion = -1;
     /// <summary>
     /// Lazily drop the cached compute when the owner's modifier universe changed since it ran.

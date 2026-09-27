@@ -394,7 +394,7 @@ public class Memory_Entry
         targets = null;
         tagsCache = null;
         targetTags.Clear();
-        memInstanceDescriptionCache = new List<string>();
+        memInstanceDescriptionCache = new List<string>(memInstanceDescription);
         float scoreMod_Mood = 0, scoreMod_Stress = 0, scoreMod_Lust = 0;
         cache_score = 0; cache_acceptCount = 0; cache_refuseCount = 0;
         int maxLust = 0, minLust = 0, maxMood = 0, minMood = 0, maxStress = 0, minStress = 0;
@@ -747,6 +747,7 @@ public class Memory_Entry
     private string dictionaryKeyword = "ui_entry_memory_description";
 
 
+    public List<string> memInstanceDescription = new List<string>();
     private List<string> memInstanceDescriptionCache = null;
     [JsonIgnore] public List<string> MemInstanceDescriptions
     {
@@ -754,6 +755,16 @@ public class Memory_Entry
         {
             return memInstanceDescriptionCache;
         }
+    }
+
+    /// <summary>
+    /// Rebuilds the display/stat caches after directly editing memInstanceDescription (or any
+    /// other field normally only refreshed through the merge paths) - InternalUpdate itself is
+    /// protected, so external assemblers (e.g. MemoryManager.AddLLMEntry) go through this.
+    /// </summary>
+    public void RefreshCache()
+    {
+        InternalUpdate();
     }
 
     public void Draw(scr_memoryBox box, bool shortenTime = false)

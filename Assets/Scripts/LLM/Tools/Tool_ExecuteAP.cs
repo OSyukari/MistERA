@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,13 +31,37 @@ public class Tool_ExecuteAP : ILLMTool
 {
     public string Name => "execute_actions";
 
-    class Arg
+    public class Arg
     {
         public string commandID;
         public int sourceJobID;
         public int doerRefID = -1;
         public int receiverRefID = -1;
         public int repeatCount = 1;
+        [JsonConverter(typeof(StringEnumConverter))] public Memory_Response commandResult = Memory_Response.None;
+    }
+
+    /// <summary>
+    /// Deferred APJSONs converted back to this tool's own argument shape, so the model can resubmit
+    /// remainingActions verbatim - raw APJSON field names (doer_RefID, command_result, numeric enum)
+    /// don't bind to Arg and would silently drop the actors and any forced result.
+    /// </summary>
+    public static List<Arg> ToResubmittable(List<APJSON> deferred)
+    {
+        var list = new List<Arg>();
+        foreach (var ep in deferred)
+        {
+            list.Add(new Arg
+            {
+                commandID = ep.CommandID,
+                sourceJobID = ep.SourceJobID,
+                doerRefID = ep.doer_RefID,
+                receiverRefID = ep.receiver_RefID,
+                repeatCount = ep.repeatCount,
+                commandResult = ep.command_result
+            });
+        }
+        return list;
     }
 
     class Args
@@ -63,7 +88,7 @@ public class Tool_ExecuteAP : ILLMTool
         public List<string> messages = new List<string>();
         /// <summary>APs from this call that did NOT execute this round (conflict-deferred by the
         /// strict JoinAP batching) - resubmit them, adjusted if the results warrant it.</summary>
-        public List<APJSON> remainingActions = new List<APJSON>();
+        public List<Arg> remainingActions = new List<Arg>();
         /// <summary>What to do next, per the agent preset's agent_nextStep_* strings.</summary>
         public string nextStep;
     }
@@ -76,7 +101,9 @@ public class Tool_ExecuteAP : ILLMTool
             { "sourceJobID", new LLMFormatSchema.Type_Simple("integer", "RefID of the job this command runs against (see get_room_detail's possibleCommands).") },
             { "doerRefID", new LLMFormatSchema.Type_Simple("integer", "RefID of the character performing the action, or -1 if none.") },
             { "receiverRefID", new LLMFormatSchema.Type_Simple("integer", "RefID of the character receiving the action, or -1 if none.") },
-            { "repeatCount", new LLMFormatSchema.Type_Simple("integer", "How many times to repeat the action. Defaults to 1.") }
+            { "repeatCount", new LLMFormatSchema.Type_Simple("integer", "How many times to repeat the action. Defaults to 1.") },
+            { "commandResult", new LLMFormatSchema.Type_Enum(new List<string> { "None", "Refuse", "Accept", "CriticalFailure", "Failure", "Success", "CriticalSuccess" },
+                "Outcome override. None (default) = the game performs the real acceptance and DifficultyCheck rolls - use this unless you deliberately intend to force the outcome. Refuse = force the action to be refused. Accept = force acceptance and skip the DifficultyCheck roll. CriticalFailure/Failure/Success/CriticalSuccess = force acceptance AND force that DifficultyCheck outcome.") }
         }, "One action to execute.");
         var schema = new LLMFormatSchema();
         schema.properties["actions"] = new LLMFormatSchema.Type_Array(itemSchema,
@@ -96,7 +123,7 @@ public class Tool_ExecuteAP : ILLMTool
             yield break;
         }
 
-        var json = new MessageJSON();
+        var json = new MessageJSON { gameRollsUnsetResults = true };
         for (int i = 0; i < args.actions.Count; i++)
         {
             json.UpdateVariable.Add(new APJSON
@@ -105,7 +132,8 @@ public class Tool_ExecuteAP : ILLMTool
                 SourceJobID = args.actions[i].sourceJobID,
                 doer_RefID = args.actions[i].doerRefID,
                 receiver_RefID = args.actions[i].receiverRefID,
-                repeatCount = Math.Max(1, args.actions[i].repeatCount)
+                repeatCount = Math.Max(1, args.actions[i].repeatCount),
+                command_result = args.actions[i].commandResult
             });
         }
 
@@ -192,9 +220,9 @@ public class Tool_ExecuteAP : ILLMTool
             if (ambient.Count > 0) result.messages.AddRange(ambient);
         }
 
-        // Conflict-deferred APs go back to the model verbatim (raw APJSONs, resubmittable as-is),
-        // with the same nextStep guidance the submit_response plan-batch report uses.
-        result.remainingActions = deferred;
+        // Conflict-deferred APs go back to the model in this tool's own argument shape (resubmittable
+        // as-is), with the same nextStep guidance the submit_response plan-batch report uses.
+        result.remainingActions = ToResubmittable(deferred);
         result.nextStep = deferred.Count > 0
             ? scr_UpdateHandler.AgentText("agent_nextStep_partial",
                 "Partial execution complete - $count$ action(s) remain. Continue them with the execute_actions tool, then submit your final narrative via submit_response.")

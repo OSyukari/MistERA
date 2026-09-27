@@ -477,6 +477,64 @@ public class MemoryManager
         }
     }
 
+    /// <summary>
+    /// Registers one consolidated LLM memory: a single wrapper entry holding every interaction
+    /// instance of the run the owner participated in - the same wrapper-plus-interactions shape
+    /// normal merged memories take (see TryMergeWith), but assembled in one shot instead of per-EP
+    /// AddEntry calls, which are suppressed for LLM inner packages (ActionPackage.suppressMemoryLogging).
+    /// All instances are built at the same game-time tick so they merge into the wrapper
+    /// unconditionally. Display: the wrapper line is short ("LLM interaction with ...", other
+    /// participants via TargetNames, loc key ui_memory_llm_wrapper) with the room name shown,
+    /// while the full LLM summary goes into memInstanceDescription (the entry's tooltip list) -
+    /// too long for the memory list itself.
+    /// </summary>
+    public Memory_Entry AddLLMEntry(string summary, List<MemInstance> instances, int roomRef, int duration)
+    {
+        if (instances == null || instances.Count < 1) return null;
+
+        var mergeTags = new List<string>() { "forbidMerge" };
+
+        Memory_Entry Build(MemInstance mem)
+        {
+            var e = new Memory_Entry(Owner, null, roomRef, mergeTags, mem, summary, duration);
+            e.memInstanceDescription.Add(summary);
+            return e;
+        }
+
+        var wrapper = Build(instances[0]);
+        for (int i = 1; i < instances.Count; i++)
+        {
+            // same-tick CanMergeWith is unconditional, so each further instance folds into the
+            // wrapper as its own distinct interaction (or stacks via MemInstance.TryMergeWith)
+            wrapper.TryMergeWith(Build(instances[i]));
+        }
+
+        // short wrapper line naming the other participants (existing TargetNames resolution -
+        // the wrapper's own interaction targets, owner excluded, unregistered names included)
+        var names = wrapper.TargetNames;
+        wrapper.entryDescription = LocalizeDictionary.QueryThenParse("ui_memory_llm_wrapper", "LLM interaction with $names$")
+            .Replace("$names$", names.Count > 0 ? String.Join(", ", names) : "-");
+
+        // entryDescription/memInstanceDescription were edited after the last InternalUpdate -
+        // rebuild so the tooltip cache picks the summary line up
+        wrapper.RefreshCache();
+
+        if (this.Last == null || !this.Last.TryMergeWith(wrapper))
+        {
+            this.entries.Add(wrapper.EndTime.Ticks, wrapper);
+            if (lastRef < wrapper.EndTime.Ticks) lastRef = wrapper.EndTime.Ticks;
+            var room = scr_System_CampaignManager.current.GetCharaRoomInstance(Owner.RefID);
+            if (room != null && room.isNameDynamic) wrapper.roomNameOverride = room.DisplayName;
+            ClearCache();
+            return wrapper;
+        }
+        else
+        {
+            ClearCache();
+            return this.Last;
+        }
+    }
+
     public void NotifyCharaUnregister(Character_Trainable c)
     {
         bool changed = false;

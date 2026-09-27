@@ -97,6 +97,25 @@ public class AgentExecutedRecord
     public string line;
 }
 
+/// <summary>
+/// One captured (AP x actor) interaction for the consolidated LLM memory - the data
+/// MemoryManager.AddEntry(ep) would have used to register a per-EP memory, captured by
+/// ActionPackage_LLM.CaptureMemory instead of registered (inner APs run with
+/// suppressMemoryLogging), later assembled into MemInstances at registration time.
+/// </summary>
+public class LLMMemoryInteraction
+{
+    public int ownerRef;
+    public bool isDoer;
+    public int masterRef = -1;
+    public string comID = "";
+    public Memory_Response response = Memory_Response.Accept;
+    public Memory_Attitude attitude = Memory_Attitude.Neutral;
+    public string description = "";
+    public List<int> targets = new List<int>();
+    public List<string> tags = new List<string>();
+}
+
 public class LLMAgentSession
 {
     public string sessionId;
@@ -129,6 +148,37 @@ public class LLMAgentSession
     /// ActionPackage_LLM as it settles - kept as display strings (names/time resolved on the spot) so
     /// they stay valid after checkpoint reloads.</summary>
     public List<AgentExecutedRecord> executedLog = new List<AgentExecutedRecord>();
+
+    /// <summary>
+    /// Full ActionPackageRecords of every inner AP that actually ran (success/refused/aborted -
+    /// validate-failed 'none' outcomes register nothing) across every batch of this run, collected
+    /// by ActionPackage_LLM.RecordOutcome next to executedLog. Inner APs execute with
+    /// suppressRoomRecording, so they never record anything on their own; scr_panel_logs's Confirm
+    /// consumes this list to record the confirmed final response as ONE big recording entry with
+    /// every executed AP registered inside it (Room.RecordLLMEntry). Snapshot records (names/refs
+    /// resolved on the spot) so they stay valid across the checkpoint reloads of run review.
+    /// </summary>
+    public List<ActionPackageRecords> executedRecords = new List<ActionPackageRecords>();
+
+    /// <summary>
+    /// Consolidated-memory accumulation for this run (see ActionPackage_LLM.CaptureMemory /
+    /// RegisterConsolidatedMemory): one entry per (executed AP x participating actor), mirroring
+    /// MemoryManager.AddEntry(ep)'s role/tag/attitude/description resolution but captured instead
+    /// of registered - inner APs run with suppressMemoryLogging. Consumed by Confirm to build ONE
+    /// wrapper memory entry per actor (summary as description) with one interaction instance per
+    /// AP the actor participated in.
+    /// </summary>
+    public List<LLMMemoryInteraction> memoryInteractions = new List<LLMMemoryInteraction>();
+
+    /// <summary>
+    /// First-experience records deferred by the suppressed inner executions (see
+    /// EvaluationPackage.DelayedFirstExperience) - replayed by the consolidated registration at
+    /// Confirm, so the LLM interaction triggers first experience from its confirmed memory entry.
+    /// </summary>
+    public List<EvaluationPackage.DelayedFirstExperience> memoryFirstExps = new List<EvaluationPackage.DelayedFirstExperience>();
+
+    /// <summary>Total run duration in minutes (sum of every batch's timeCost) for the consolidated memory entry.</summary>
+    public int memoryDuration = 0;
 
     /// <summary>Token usage and model time over every request of this run (AgentLoop_Routine).</summary>
     public LLMUsageStats usageStats = new LLMUsageStats();

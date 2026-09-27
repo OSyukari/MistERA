@@ -365,7 +365,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
     Message_Text BuildFinalResponseBlock(MessageParagraph s)
     {
         var c = scr_System_CampaignManager.current.FindInstanceByID(s.portraitRefID);
-        if (s.portraitTags.Count < 1 && scr_System_CampaignManager.current.Player == c) c = null;
+        //if (s.portraitTags.Count < 1 && scr_System_CampaignManager.current.Player == c) c = null;
         return new Message_Text(c, s, s.content_text, false);
     }
 

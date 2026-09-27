@@ -1029,6 +1029,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
 
         var batchJson = new MessageJSON();
+        batchJson.gameRollsUnsetResults = source.gameRollsUnsetResults;
         batchJson.summary = source.summary;
         batchJson.relevantActorRefs = new List<int>(source.relevantActorRefs);
         batchJson.timeCost = anchor.targetCOM != null ? anchor.targetCOM.TimeScale : 1;

@@ -322,10 +322,7 @@ public class PortraitManager
             foreach(var variant in portrait.Variants)
             {
                 s.AddRange(variant.tagsMatch);
-                // tagsMatch is only ever checked against selfTags (see GetValidPortrait), but the same tag can
-                // legitimately show up as a targetTag at runtime (eg. act/role tags shared between doer and
-                // receiver), so it's a valid hint for s2 too.
-                s2.AddRange(variant.tagsMatch);
+                // s2.AddRange(variant.tagsMatch);
             }
         }
         Utility.DistinctInPlace(s);

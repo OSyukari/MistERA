@@ -2,12 +2,10 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static LLMUtils;
 
 public class LLM_Setting
 {
@@ -567,6 +565,8 @@ public class MessageParagraph : I_hasPortrait
     public List<string> portraitTags = new List<string>();
     public string CommandID;
 
+    List<string> _portraitTags_Self = null;
+    List<string> _portraitTags_Target = null;
     /// <summary>
     /// In-game clock time ("HH:mm") this block's content takes place, LLM-provided per the schema.
     /// Copied by the model from its context's time anchors (worldInfo current time, the [HH:mm]
@@ -577,10 +577,38 @@ public class MessageParagraph : I_hasPortrait
     /// </summary>
     public string time = null;
 
+
     [JsonIgnore]
-    public List<string> SelfPortraitTag { get { return portraitTags; } }
+    public List<string> SelfPortraitTag { 
+        get {
+            if (portraitRefID == -1) return portraitTags;
+            if (_portraitTags_Self == null)
+            {
+                _portraitTags_Self = new List<string>(portraitTags);
+                var c = scr_System_CampaignManager.current.FindInstanceByID(portraitRefID);
+                if (c != null && c.PortraitManager != null)
+                {
+                    _portraitTags_Self.AddRange( c.PortraitManager.GetOwnerActionTagsByPriority());
+                }
+            }
+            return _portraitTags_Self;
+        } }
     [JsonIgnore]
-    public List<string> TargetPortraitTag { get { return new List<string>(); } }
+    public List<string> TargetPortraitTag { 
+        get
+        {
+            if (portraitRefID == -1) return new List<string>();
+            if (_portraitTags_Target == null)
+            {
+                _portraitTags_Target = new List<string>();
+                var c = scr_System_CampaignManager.current.FindInstanceByID(portraitRefID);
+                if (c != null && c.PortraitManager != null)
+                {
+                    _portraitTags_Target.AddRange(c.PortraitManager.GetOwnerActionTargetTagsByPriority());
+                }
+            }
+            return _portraitTags_Target;
+        } }
 }
 public class MessageJSON
 {
@@ -610,6 +638,15 @@ public class MessageJSON
     protected List<string> tooltips = new List<string>();
     public string disclaimer;
 
+    /// <summary>
+    /// Agent mode sets this: a None command_result stays None so the game performs the real
+    /// acceptance/DC rolls. Single-shot mode leaves it false - the model narrated the outcome up
+    /// front, so an unset result is defaulted to Accept. Must be set before the first
+    /// GetActionPackages call (parsing mutates the APJSONs in place), and carried over by
+    /// scr_System_CampaignManager.BuildAPBatch.
+    /// </summary>
+    [JsonIgnore] public bool gameRollsUnsetResults = false;
+
     public List<ActionPackage> GetActionPackages(out List<string> tooltip)
     {
         tooltip = tooltips;
@@ -623,7 +660,7 @@ public class MessageJSON
             {
                 if (tempAP.innerCOM == null) continue;
 
-                if (tempAP.command_result == Memory_Response.None) tempAP.command_result = Memory_Response.Accept;
+                if (!gameRollsUnsetResults && tempAP.command_result == Memory_Response.None) tempAP.command_result = Memory_Response.Accept;
 
                 var job = scr_System_CampaignManager.current.FindJobInstanceByID(tempAP.SourceJobID);
                 if (job == null) continue;
@@ -831,309 +868,6 @@ public class LLMResponse
 }
 
 
-public class LLM_WorldState
-{
-    public class CharaStorage
-    {
-        public string FirstName;
-        public int RefID;
-        public string Description;
-        public List<string> Status = null;
-        public List<MemoryStorage> Memories = null;
-        public string CurrentlyDoing;
-        public string CurrentLocation;
-        public string NextHourPlan;
-        public Dictionary<string, RelationshipStorage> Relationships = null;
-        public List<string> equipments = null;
-        //public Dictionary<string, string> schedule = null;
-        public string LorebookEntry = null;
-        public List<string> ValidPortraitTags = new List<string>();
-        public List<string> ValidPortraitTags_target = new List<string>();
-
-        public class RelationshipStorage
-        {
-            public Dictionary<string, int> Scores = new Dictionary<string, int>();
-            public string CurrentRelationships = "";
-            public string CurrentAttitude = "";
-
-            public RelationshipStorage()
-            {
-
-            }
-            public RelationshipStorage(Character_Relationship rel, bool isgeneric = false)
-            {
-                Scores.Add("Trust", (int)rel.Trust);
-                Scores.Add("Goodwill", (int)rel.Goodwill);
-                Scores.Add("Badwill", (int)rel.Badwill);
-                Scores.Add("Fear", (int)rel.Fear);
-                Scores.Add("Desire", (int)rel.Desire);
-
-                if (!isgeneric)
-                {
-                    List<string> relName = new List<string>();
-                    if (rel.Relationship_Bio != null)
-                    {
-                        var name = rel.Relationship_Bio.GetDisplayName(rel.Owner, !rel.isA_Bio);
-                        if (name.Length > 0)
-                        {
-                            relName.Add($"{name}");
-                        }
-                    }
-                    foreach (var key in rel.Relationship_Social_Keys)
-                    {
-                        if (rel.tryGetSocialFaction(key, out var rel2, out var isA))
-                        {
-                            var name = rel2.GetDisplayName(rel.Owner, !isA);
-                            if (name.Length > 0)
-                            {
-                                relName.Add($"{name}");
-                            }
-                        }
-                    }
-                    if (rel.Relationship_Personal != null)
-                    {
-                        var name = rel.Relationship_Personal.GetDisplayName(rel.Owner, !rel.isA_Personal);
-                        if (name.Length > 0)
-                        {
-                            relName.Add(name);
-                        }
-                    }
-
-                    CurrentAttitude = $"{rel.Owner.GetCurrentAttitude()?.DisplayName ?? ""}";
-
-                    CurrentRelationships = rel.relationText.Replace("$name$", $"{rel.TargetName}" + (rel.Target.isTemporaryActor && rel.Target.Title.Length > 0 ? $"({rel.Target.Title})" : "")).Replace("$relation$", relName.Count > 0 ? String.Join(",", relName) : "no relation");
-                }
-            }
-        }
-
-        public class MemoryStorage
-        {
-            public string timestamp;
-            public string summary;
-            public List<string> details = new List<string>();
-            public string memoryEffects;
-
-            public MemoryStorage()
-            {
-
-            }
-            public MemoryStorage(Memory_Entry mem)
-            {
-                timestamp = $"{mem.FinalEndTime.ToString("MM/dd")}, {mem.PrintShortTimeStartToEnd}";
-                summary = mem.ToString();
-                details = new List<string>(mem.MemInstanceDescriptions);
-                memoryEffects = $"Statmod: Acceptance check{mem.CachedScore.ToString("+0;-#")} Mood{mem.MoodSum} Stress{mem.StressSum} Lust{mem.LustSum}";
-            }
-        }
-
-        public CharaStorage()
-        {
-
-        }
-        public CharaStorage(Character_Trainable c, I_IsJobGiver faction, bool fullLoad = false)
-        {
-            FirstName = c.FirstName;
-
-            int nextHour = scr_System_Time.current.getCurrentTime().Hour + 1;
-            if (nextHour >= 24) nextHour -= 24;
-            var nextHourJob = c.FactionManager.CurrentJobPost(nextHour);
-            var nextHourFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour);
-
-            RefID = c.RefID;
-            bool isPlayer = scr_System_CampaignManager.current.IsPlayer(c);
-            // Player can hold standing in multiple factions at once (home + work factions), unlike
-            // NPCs whose sandbox behavior only ever depends on their single CurrentlyActiveFaction -
-            // list all of them so the LLM knows about roles the player isn't currently active in.
-            string factionStatus = isPlayer
-                ? String.Join(", ", c.FactionManager.Factions.Where(f => f != null).Select(f => $"{f.FactionDisplayName}: {f.GetCharaSocialStandingName(c.RefID)}"))
-                : c.FactionManager.CurrentlyActiveFactionStatus;
-            Description = $"{c.Race.DisplayName} {c.RaceTemplate.DisplayName} {factionStatus}";
-            if (isPlayer) Description += ", IS PLAYER CHARACTER";
-            CurrentlyDoing = c.GetJobDescription();
-            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
-            if (room != null) CurrentLocation = $"{(room.parentFloor != null ? $"{room.parentFloor.displayName}, " : "" )}{room.DisplayName}";
-            NextHourPlan = ((nextHourJob == null || nextHourJob.Name == "") ? LocalizeDictionary.QueryThenParse("chara_currentjob_free") : nextHourJob.Name + (nextHourFaction != null ? $"({nextHourFaction.FactionDisplayName})" : ""));
-
-            if (fullLoad)
-            {
-                LorebookEntry = c.CharacterCard;
-                Relationships = new Dictionary<string, RelationshipStorage>();
-                equipments = new List<string>();
-                //schedule = new Dictionary<string, string>();
-                Status = new List<string>();
-                Memories = new List<MemoryStorage>();
-
-                if (c.Memory.Entries != null)
-                {
-                    foreach (var i in c.Memory.Entries)
-                    {
-                        var newmm = new MemoryStorage(i);
-                        Memories.Add(newmm);
-                    }
-                }
-                foreach (var i in c.Relationships.Relationships) Relationships.Add($"attitude toward {i.Target.FirstName}", new RelationshipStorage(i));
-                foreach (var i in c.Relationships.GenericRelationship) Relationships.Add($"attitude towards {LocalizeDictionary.QueryThenParse( i.Key)}", new RelationshipStorage(i.Value, true));
-            
-                if (c.Stats != null)
-                {
-                    if (c.Stats.Mood != null) Status.Add(c.Stats.Mood.SeverityDisplayName);
-                    if (c.Stats.Stress != null) Status.Add(c.Stats.Stress.SeverityDisplayName);
-                    if (c.Stats.Lust != null) Status.Add(c.Stats.Lust.SeverityDisplayName);
-                    foreach(var status in c.Stats.statusInstancesEx)
-                    {
-                        if (status.BaseRef.noDisplay) continue;
-                        if (!status.Displayable) continue;
-                        Status.Add(status.SeverityDisplayName);
-                    }
-                    foreach (var status in c.Stats.StatusInstances)
-                    {
-                        if (status.BaseRef.noDisplay) continue;
-                        if (!status.Displayable) continue; 
-                        Status.Add(status.SeverityDisplayName);
-                    }
-                }
-
-                foreach(var equipref in c.Body.EquippedItemRefs)
-                {
-                    var equip = scr_System_CampaignManager.current.FindItemInstanceByID(equipref);
-                    var equiptooltip = equip.Base.Tooltip == "no_tooltip" ? "" : $": {equip.Base.Tooltip}";
-                    equipments.Add($"{equip.DisplayName}{equiptooltip}");
-                }
-                foreach(var kwd in c.Body.BodyDescription)
-                {
-                    equipments.Add(kwd);
-                }
-
-                /*
-                for(int i = 0; i < 24; i++)
-                {
-                    var name = c.GetJobPost(i).Name;
-                    if(name != "") schedule.Add($"{i}H", name);
-                }*/
-
-                if (c.PortraitManager != null)
-                {
-                    c.PortraitManager.CollectAllTags(ValidPortraitTags, ValidPortraitTags_target);
-                }
-            
-            }
-        }
-    }
-
-    public Dictionary<string, List<string>> FloorDescriptions = new Dictionary<string, List<string>>();// <floorName, <roomRefID, roomDescription>> with each room name and present chara;
-    public string CurrentRoomInfo = null;
-    public Dictionary<string, string> Lorebook = new Dictionary<string, string>();
-    public Dictionary<string, CharaStorage> Characters = new Dictionary<string, CharaStorage>(); // <refID, description>
-    public Dictionary<string, Dictionary<string, Dictionary<string, SerializedAP>>> PossibleInteractions = new Dictionary<string, Dictionary<string, Dictionary<string, SerializedAP>>>(); // <targetName, <commandID, tooltips>>
-
-    public LLM_WorldState()
-    {
-        //bool isdebug = scr_System_CampaignManager.current.DebugMode;
-        //if (isdebug) scr_System_CampaignManager.current.DebugMode = false;
-
-        var currentRoom = scr_System_CampaignManager.current.CurrentRoom;
-        var faction = currentRoom == null ? null : currentRoom.FactionOwner;
-
-        if (faction != null)
-        {
-            foreach(var floor in faction.ManagedFloors)
-            {
-                var dic = new List<string>();
-                foreach(var room in floor.rooms)
-                {
-                    if (!dic.Contains(room.DisplayName)) dic.Add(room.DisplayName);
-
-                    if (room == currentRoom)
-                    {
-                        var names = new List<string>();
-                        foreach (var i in room.RoomChara) names.Add(i.FirstName);
-
-                        List<string> aps = new List<string>();
-                        foreach (var ap in scr_System_CampaignManager.current.GetRegisteredAPByRoom(room.RefID, false))
-                        {
-                            if (ap.job.isPlayerRelatedJob) continue;
-                            if (ap.isTemporaryAP) continue;
-                            aps.Add(ap.DescriptionText());
-                        }
-                        CurrentRoomInfo = $"[{room.DisplayName}]\nRoomInfo:[{room.DisplayableFurnitureNames}]\nRoom Cleanliness: {room.RoomCleanliness()}\nRoom Items:{(room.Inventory.Contents.Count > 0 ? $"[\n{room.Inventory.PrintContent()}]" : "no item")}\nChara in room:[{String.Join(", ", names)}]\nOngoing command in room:[{(aps.Count > 0 ? String.Join("\n", aps) : "no ongoing")}]";
-
-                        if (room.parentFloor != null && room.parentFloor.MapTemplate != null)
-                        {
-                            foreach (var kvp in room.parentFloor.MapTemplate.Lorebooks)
-                            {
-                                Lorebook.Add(kvp.Key, kvp.Value);
-                            }
-                        }
-                    }
-                }
-                FloorDescriptions.Add(floor.displayName, dic);
-            }
-
-
-            foreach(var c in faction.ManagedChara)
-            {
-
-               if (currentRoom.RoomChara.Contains(c))
-                {// more detailed desc
-                    Characters.Add(c.FullName, new CharaStorage(c, faction, true));
-                }
-                else
-                {
-                    Characters.Add(c.FullName, new CharaStorage(c, faction, false));
-                }
-
-            }
-        }
-
-        // A character can be physically present in the current room without being a managed member of
-        // its owning faction (e.g. an unaffiliated guest/visitor NPC) - the loop above only covers
-        // faction.ManagedChara, so anyone else in the room was otherwise visible only by first name in
-        // CurrentRoomInfo's "Chara in room" list, with no RefID anywhere in world info at all. Serialize
-        // everyone physically in the room regardless of faction ownership. Indexer assignment since
-        // faction.ManagedChara may already have added some of them above.
-        if (currentRoom != null)
-        {
-            foreach (var c in currentRoom.RoomChara)
-            {
-                if (!Characters.ContainsKey(c.FullName)) Characters[c.FullName] = new CharaStorage(c, faction, true);
-            }
-        }
-
-        // collect world info
-        if (scr_System_CampaignManager.current.CurrentCampaign != null)
-        {
-            Lorebook.Add($"Current Campaign: [{scr_System_CampaignManager.current.CurrentCampaign.DisplayName}]",$"\nCampaign Info:[\n {scr_System_CampaignManager.current.CurrentCampaign.Tooltip}\n]");
-
-            foreach (var kvp in scr_System_CampaignManager.current.CurrentCampaign.Lorebooks)
-            {
-                Lorebook.Add(kvp.Key, kvp.Value);
-            }
-        }
-
-        //List<string> relationshipTypes = new List<string>();
-        //foreach(var i in scr_System_Serializer.current.MasterList.RelationshipTypes.list_personal)
-        //{
-        //    relationshipTypes.Add($"{i.DisplayName}: {i.Tooltip}");
-        //}
-        //Lorebook.Add($"All personal relationship types",$"[{String.Join("\n", relationshipTypes)}]");
-
-        var currentTime = scr_System_Time.current.getCurrentTime();
-        string dayofWeek = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_" + currentTime.DayOfWeek);
-        Lorebook.Add("Current World Time Hour", $"{currentTime.ToShortDateString()}, {currentTime.ToShortTimeString()}, {dayofWeek}");
-
-
-        var startTime = scr_System_Time.current.getStartTime();
-        var dayCount = currentTime - startTime;
-        Lorebook.Add("Time Since Campaign Start", $"{currentTime.Year - startTime.Year} year, {dayCount.Days + 1} days");
-        Lorebook.Add("isTimeStopped", $"{scr_System_Time.current.TimeStop}");
-
-        LLMUtils.CollectCOMInfo(PossibleInteractions, currentRoom);
-
-      //  if (isdebug) scr_System_CampaignManager.current.DebugMode = true;
-    }
-
-}
-
 
 public static class LLMUtils
 {
@@ -1173,15 +907,26 @@ public static class LLMUtils
 
     static void AddChild(ActionPackage ap, SerializedAP child, Dictionary<string, SerializedAP> tooltips)
     {
+        if (ap.targetCOM == null || ap.targetCOM.ParentCOM == null) return;
+        AddChild(ap.targetCOM.ParentCOM.DisplayName(), child, tooltips);
+    }
+
+    /// <summary>
+    /// Attaches a validated child AP as a variant under its parent entry's key (the parent COM's
+    /// display name). Keyed overload also serves generator COMs whose per-item packages keep the
+    /// generator COM itself as targetCOM (ParentCOM == null) - see validateJob.
+    /// </summary>
+    static void AddChild(string parentKey, SerializedAP child, Dictionary<string, SerializedAP> tooltips)
+    {
         if (child == null) return;
         child.SourceJobID = null;
-        child.Summary = null;
+        //child.Summary = null;
         child.TimeCost = null;
         if (child.AcceptanceRate != null) child.AcceptanceCheck = null;
         child.Doers = null;
         child.Receivers = null;
 
-        if (tooltips.TryGetValue(ap.targetCOM.ParentCOM.DisplayName(), out var parentAP))
+        if (tooltips.TryGetValue(parentKey, out var parentAP))
         {
             parentAP.CommandID = null;
             parentAP.AcceptanceRate = null;
@@ -1191,7 +936,7 @@ public static class LLMUtils
         }
     }
 
-    static void validateSingle(Job job, List<int> doer, List<int> receiver, HashSet<Job> verified, Dictionary<string, Dictionary<string, SerializedAP>> collection, HashSet<string> repeat )
+    static void validateSingle(Job job, List<int> doer, List<int> receiver, HashSet<Job> verified, Dictionary<string, Dictionary<string, SerializedAP>> collection, HashSet<string> repeat, int masterRef = -1, bool showInvalidAP = false)
     {
         if (verified != null)
         {
@@ -1213,64 +958,117 @@ public static class LLMUtils
             repeat.Add(job.DisplayName);
         }
 
+        var tooltips = validateJob(job, doer, receiver, masterRef, showInvalidAP);
+        if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
+    }
+
+    /// <summary>
+    /// The shared validateSingle/validateFurniture body: enumerates a job's ActionPackages and
+    /// validates each against the doer/receiver/master combo, keyed by command description text.
+    /// Folder-parent COMs (childCOMs or a GenerateAP/GenerateCOM item generator) get one entry
+    /// keyed by display name with their children attached as variants, enumerated per parent via
+    /// MakePackages(chara, false, true, true, parentCOM) - the same recipe as the UI's
+    /// LoadChildCOMPanel - so static childCOMs, runtime item-generated child COMs and per-instance
+    /// GenerateAP packages all show up, invalid ones included (with their reason in AcceptanceRate).
+    /// </summary>
+    static Dictionary<string, SerializedAP> validateJob(Job job, List<int> doer, List<int> receiver, int masterRef, bool showInvalidAP = false)
+    {
         var chara = scr_System_CampaignManager.current.FindInstanceByID(doer[0]);
         Dictionary<string, SerializedAP> tooltips = new Dictionary<string, SerializedAP>();
-
-        /*
-        foreach (var ap in (job is Job_Furniture ? job.MakePackages(chara, true, false, true) : job.CachedPackages))
-        { 
-            var app = validateAP(ap, doer, receiver);
-            if (app != null) tooltips.Add(app.CommandID, app);
-        }*/
+        List<COM> parentCOMs = new List<COM>();
 
         if (job is Job_Furniture)
         {
             foreach (var ap in job.MakePackages(chara, true, false, true))
             {
-                var app = validateAP(ap, doer, receiver);
+                var app = validateAP(ap, doer, receiver, masterRef, showInvalidAP);
                 if (app != null)
                 {
-                    if (ap.targetCOM.childCOMs.Count > 0)
+                    if (ap.targetCOM.childCOMs.Count > 0 || ap.targetCOM.GenerateAP != null)
                     {
-                        tooltips.Add(ap.targetCOM.DisplayName(), app);
-                        app.CommandName = null;
+                        if (tooltips.TryAdd(ap.targetCOM.DisplayName(), app))
+                        {
+                            app.CommandName = null;
+                            parentCOMs.Add(ap.targetCOM);
+                        }
                     }
-                    else tooltips.Add(ap.DescriptionText(chara.RefID, false), app);
+                    else tooltips.Add(ap.DisplayName, app);
                 }
-            }
-
-            foreach (var ap in job.MakePackages(chara, false, true, true))
-            {
-                if (ap.targetCOM.ParentCOM == null) continue;
-                var app = validateAP(ap, doer, receiver);
-                AddChild(ap, app, tooltips);
             }
         }
         else
         {
             foreach (var ap in job.CachedPackages)
             {
-                if (ap.targetCOM != null && ap.targetCOM.ParentCOM != null) continue;
-                var app = validateAP(ap, doer, receiver);
+                if (ap.targetCOM == null || ap.targetCOM.ParentCOM != null) continue;
+                var app = validateAP(ap, doer, receiver, masterRef, showInvalidAP);
                 if (app != null)
                 {
-                    if (ap.targetCOM.childCOMs.Count > 0)
+                    if (ap.targetCOM.childCOMs.Count > 0 || ap.targetCOM.GenerateAP != null)
                     {
-                        if (tooltips.TryAdd(ap.targetCOM.DisplayName(), app)) app.CommandName = null;
+                        if (tooltips.TryAdd(ap.targetCOM.DisplayName(), app))
+                        {
+                            app.CommandName = null;
+                            parentCOMs.Add(ap.targetCOM);
+                        }
                     }
-                    else tooltips.TryAdd(ap.DescriptionText(chara.RefID, false), app);
+                    else tooltips.TryAdd(ap.DisplayName, app);
                 }
-            }
-            foreach (var ap in job.CachedPackages)
-            {
-                if (ap.targetCOM == null || ap.targetCOM.ParentCOM == null) continue;
-                var app = validateAP(ap, doer, receiver);
-                AddChild(ap, app, tooltips);
             }
         }
 
-        if (tooltips.Count > 0) collection.Add($"{job.DisplayName}", tooltips);
-       // else collection.Add($"{job.DisplayName}, no valid aps", new List<SerializedAP>());
+        // children per parent, LoadChildCOMPanel style: the filter keeps the parent's static
+        // childCOMs plus the parent itself (whose GenerateAP branch spawns one package per matching
+        // inventory item); allowInvalid keeps currently-invalid children visible with their reason.
+        // validateAP's ResetRequest re-injects the collector's doer/receiver/master into each child,
+        // replacing the UI's manual receiver re-injection.
+        foreach (var parentCOM in parentCOMs)
+        {
+            foreach (var ap in job.MakePackages(chara, false, true, true, parentCOM))
+            {
+                var app = validateAP(ap, doer, receiver, masterRef, showInvalidAP);
+                AddChild(parentCOM.DisplayName(), app, tooltips);
+            }
+        }
+
+        return tooltips;
+    }
+
+    /// <summary>
+    /// Furniture variant of validateSingle that merges into a flat command-keyed dictionary instead
+    /// of a per-furniture nested one: identical commands offered by multiple furnitures in the room
+    /// collapse into a single entry whose PossibleJobSources lists every furniture job offering it
+    /// (SourceJobID is dropped from the merged entry).
+    /// </summary>
+    static void validateFurniture(Job job, List<int> doer, List<int> receiver, int masterRef, Dictionary<string, SerializedAP> merged, HashSet<Job> verified, HashSet<string> repeat, bool showInvalidAP = false)
+    {
+        if (verified != null)
+        {
+            if (verified.Contains(job)) return;
+            verified.Add(job);
+        }
+
+        if (job is Job_Furniture)
+        {
+            if (repeat.Contains(job.DisplayName)) return;
+            repeat.Add(job.DisplayName);
+        }
+
+        var tooltips = validateJob(job, doer, receiver, masterRef, showInvalidAP);
+        foreach (var kvp in tooltips)
+        {
+            if (merged.TryGetValue(kvp.Key, out var existing))
+            {
+                existing.PossibleJobSources.Add(new SerializedAP.JobSource(job));
+            }
+            else
+            {
+                var app = kvp.Value;
+                app.SourceJobID = null;
+                app.PossibleJobSources = new List<SerializedAP.JobSource>() { new SerializedAP.JobSource(job) };
+                merged.Add(kvp.Key, app);
+            }
+        }
     }
 
     static void validateExisting(Job_Furniture job, Dictionary<string, Dictionary<string, SerializedAP>> collection)
@@ -1287,7 +1085,10 @@ public static class LLMUtils
     }
 
 
-    static SerializedAP validateAP(ActionPackage ap, List<int> doer, List<int> receiver)
+    /// <summary>
+    /// masterRef &lt; 0 keeps the original behavior of defaulting the master to the first doer.
+    /// </summary>
+    static SerializedAP validateAP(ActionPackage ap, List<int> doer, List<int> receiver, int masterRef = -1, bool showInvalid = false)
     {
         if (ap.targetCOM == null) return null;
 
@@ -1301,25 +1102,30 @@ public static class LLMUtils
         if (!ap.targetCOM.ValidateJob(ap.job, out var msg))
         {
             // add message
-            app.Summary = ap.GetTooltips($"validatejob fail: {msg}");
+            app.AcceptanceRate = ap.GetTooltips($"validatejob fail: {msg}");
            // tooltips.Add();
             return app;
         }
 
 
-        if (doer != null && receiver != null) ap.ResetRequest(doer, receiver, doer.Count > 0 ? doer[0] : -1, true);
+        if (doer != null && receiver != null) ap.ResetRequest(doer, receiver, masterRef >= 0 ? masterRef : (doer.Count > 0 ? doer[0] : -1), true);
         if (!ap.Validate())
         {
             if (ap.COMVariantID < -1) return null;
-            // validation failure
+            if (!showInvalid) return null;
+            if (ap.targetCOM != null && ap.targetCOM.HideWhenInvalid) return null;
+            // validation failure - keep the command visible instead of hiding it: parent categories
+            // with variants (e.g. service commands requiring undress) must not vanish wholesale.
+            // The reason goes into AcceptanceRate because AddChild strips Summary from variants.
             ap.tooltip.RemoveAll(x => x == "" || x.Length < 1);
-            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip));
-            return null;
-
+            //app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", String.Join("\n", ap.tooltip));
+            var invalidReason = RegexStrip(String.Join("; ", ap.tooltip));
+            app.AcceptanceRate = invalidReason.Length > 0 ? $"invalid: {invalidReason}" : "invalid";
+            return app;
         }
         else if (ap.ComTags.Contains("sleep") && !scr_System_CampaignManager.current.Player.shouldSleep && !scr_System_CampaignManager.current.DebugMode)
         {
-            app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
+            //app.Summary = ap.GetTooltips(LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_comInvalid")).Replace("$tooltips$", LocalizeDictionary.QueryThenParse("ui_ap_onHoverTooltip_cannotSleep"));
         }
         else
         {
@@ -1369,11 +1175,49 @@ public static class LLMUtils
     }
 
     public class SerializedAP
-    { 
+    {
+        public class JobSource
+        {
+            public string SourceJobName;
+            public int SourceJobRefID;
+            //public string notes;
+
+            public JobSource()
+            {
+
+            }
+            public JobSource(Job j)
+            {
+                this.SourceJobRefID = j.RefID;
+                this.SourceJobName = j.DisplayName;
+            }
+        }
+
+        public void AddJobSource(Job j)
+        {
+            if (PossibleJobSources != null)
+            {
+                PossibleJobSources.Add(new JobSource(j));
+            }
+            else if (SourceJobID != null && SourceJobID.Value != -1)
+            {
+                PossibleJobSources = new List<JobSource>();
+                PossibleJobSources.Add(new JobSource( j));
+                PossibleJobSources.Add(new JobSource(scr_System_CampaignManager.current.FindJobInstanceByID(SourceJobID.Value)));
+                SourceJobID = null;
+            }
+            else
+            {
+                SourceJobID = j.RefID;
+            }
+        }
+
+        public List<JobSource> PossibleJobSources = null;
+
         public string CommandName;
         public string CommandID;
         public int? SourceJobID;
-        public string Summary;
+        //public string Summary;
         public int? TimeCost;
         public string AcceptanceCheck;
         public string AcceptanceRate;
@@ -1383,6 +1227,117 @@ public static class LLMUtils
         public string Receivers;
 
         public List<SerializedAP> variants = null;
+
+    }
+
+    /// <summary>
+    /// Collects the possible commands for one specific PossibleInteractions context (strictly
+    /// one-way doer -&gt; receiver, under info.Master's order). All participants must share one room.
+    /// Fills info.possibleInteractions (job-name-keyed: the 1:1 receiver InteractionJob + playerCOM
+    /// commands, plus participants' current jobs) and info.FurnitureInteractions (flat
+    /// command-keyed entries whose PossibleJobSources list every room furniture job offering the
+    /// command, so identical commands from multiple furnitures merge into one entry).
+    /// </summary>
+    public static void CollectCOMInfo(LLM_WorldState.PossibleInteractions info)
+    {
+        var mgr = scr_System_CampaignManager.current;
+        if (mgr == null || info == null || info.Doers == null || info.Doers.Count == 0) return;
+
+        var player = mgr.Player;
+        var masterRef = info.Master != null ? info.Master.RefID : -1;
+
+        var receivers = new List<int>();
+        if (info.Receivers != null)
+        {
+            foreach (var r in info.Receivers)
+            {
+                if (r != null) receivers.Add(r.RefID);
+            }
+        }
+
+        Dictionary<string, Dictionary<string, SerializedAP>> collection = new Dictionary<string, Dictionary<string, SerializedAP>>();
+
+        var trackedJobs = new HashSet<Job>();
+        var trackedJobsLocked = new HashSet<Job>();
+        HashSet<string> duplicateCheck = new HashSet<string>();
+
+        // shared job-identity dedup across all validateSingle calls below - validateSingle ends with
+        // collection.Add(job.DisplayName), so validating the same job twice (e.g. the receiver's
+        // InteractionJob also being a participant's CurrentJob) would throw on a duplicate key
+        var verifiedJobs = new HashSet<Job>();
+
+        foreach (var i in info.Doers) if (i.CurrentJob != null) (i.CurrentJob.CanBeInterrupted ? trackedJobs : trackedJobsLocked).Add(i.CurrentJob);
+        foreach (var i in info.Receivers) if (i.CurrentJob != null) (i.CurrentJob.CanBeInterrupted ? trackedJobs : trackedJobsLocked).Add(i.CurrentJob);
+
+        Room_Instance room = null;
+        bool roomError = false;
+        List<string> roomLocs = new List<string>();
+
+        foreach (var i in info.Doers)
+        {
+            roomLocs.Add($"{i.FirstName} is in {i.CurrentRoom?.DisplayName}");
+            if (room == null) room = i.CurrentRoom;
+            else if (room != i.CurrentRoom) roomError = true;
+        }
+        foreach (var i in info.Receivers)
+        {
+            roomLocs.Add($"{i.FirstName} is in {i.CurrentRoom?.DisplayName}");
+            if (room == null) room = i.CurrentRoom;
+            else if (room != i.CurrentRoom) roomError = true;
+        }
+
+        if (roomError || room == null)
+        {
+            info.possibleInteractions.Add($"no valid interactions. Either room {room?.DisplayName} is null, actors are empty, or actors not in same room:\n{String.Join("\n", roomLocs)}", new Dictionary<string, SerializedAP>());
+            return;
+        }
+
+        var receiverSingle = info.Receivers != null && info.Receivers.Count == 1 ? info.Receivers[0] : null;
+        var doerSingle = info.Doers != null && info.Doers.Count == 1 ? info.Doers[0] : null;
+        // player com only exists for the player doer
+        var playerCOM = doerSingle != null && doerSingle == player ? mgr.FindJobInstanceByID(mgr.jobRef_playerCOM) : null;
+
+        // -- Interaction Job, 1:1 only -- //
+        if (doerSingle != null && receiverSingle != null)
+        {
+            var job = receiverSingle.InteractionJob;
+            if (job != null) validateSingle(job, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck, masterRef, true);
+
+            if (playerCOM != null)
+            {   // check npc's acceptance of playercom
+                validateSingle(playerCOM, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck);
+            }
+        } 
+        else
+        {
+            collection.Add($"cannot query for individual interaction job nor player special command on [{String.Join(" ", info.ReceiverRefs)}], doer count must be 1 (currently {info.Doers.Count}) and receiver count must be 1 (currently {info.Receivers.Count})", new Dictionary<string, SerializedAP>());
+        }
+        // -- foreach tracked Jobs
+        if (trackedJobsLocked.Count != 0)
+        {
+            // then locked only
+            foreach(var curr in trackedJobsLocked) validateSingle(curr, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck, masterRef);
+
+            info.FurnitureInteractions.Add("cannot interact with room furniture due to participant locked in special jobs", new SerializedAP() { AcceptanceRate = "cannot interact with room furniture due to participant locked in special jobs" });
+        }
+        else
+        {
+            // not locked
+            foreach (var curr in trackedJobs) validateSingle(curr, info.DoerRefs, info.ReceiverRefs, verifiedJobs, collection, duplicateCheck, masterRef);
+
+            if (room != null && room.Jobs != null)
+            {
+                foreach (var j in room.Jobs)
+                {
+                    validateFurniture(j, info.DoerRefs, info.ReceiverRefs, masterRef, info.FurnitureInteractions, verifiedJobs, duplicateCheck);
+                }
+            }
+        }
+
+        foreach (var kvp in collection)
+        {
+            info.possibleInteractions.TryAdd(kvp.Key, kvp.Value);
+        }
 
     }
 

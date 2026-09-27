@@ -78,7 +78,22 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
         return String.Join(" ", names);
     }
-
+    /// <summary>
+    /// Prints all 7 weekdays in short form (Mon Tue ...), graying out days not in activeDays via
+    /// TextColor_disabled - an empty activeDays means unrestricted (7/7), so every day prints active.
+    /// </summary>
+    public static string FormatActiveDaysSimple(List<int> activeDays)
+    {
+        var names = new List<string>();
+        for (int i = 0; i < WeekdayNames.Length; i++)
+        {
+            var name = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_" + WeekdayNames[i] + "_short");
+            bool active = activeDays.Count < 1 || (i < activeDays.Count && activeDays[i] == 1);
+            if (!active) continue;
+            names.Add(name);
+        }
+        return String.Join(" ", names);
+    }
     /// <summary>Empty activeDays means unrestricted (7/7) - see MapPlan.WorkModuleInit.activeDays.</summary>
     public static int CountActiveDays(List<int> activeDays)
     {
@@ -139,11 +154,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
         return $"{h}{(hour24 < 12 ? "AM" : "PM")}";
     }
 
-    public string GetWorkDaysPerWeekString(Character_Trainable c)
+    public string GetWorkDaysPerWeekString(Character_Trainable c, bool format = true)
     {
         var member = GetMemberType(c);
         var activeDays = member != null && member.workModule != null ? member.workModule.activeDays : new List<int>();
-        return FormatActiveDays(activeDays);
+        if (format) return FormatActiveDays(activeDays);
+        else return FormatActiveDaysSimple(activeDays);
     }
 
     public int GetWorkDayCountPerWeek(Character_Trainable c)
@@ -508,7 +524,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (c == null) return "";
         var memberType = GetMemberType(c);
         if (memberType == null || memberType.ID == "") return "";
-        return LocalizeDictionary.QueryThenParse($"{memberType.ID}_tooltip");
+        return LocalizeDictionary.QueryThenParse($"{memberType.ID}_tooltip", " ");
     }
     public string GetCharaSocialStandingTooltip(int charaRef)
     {

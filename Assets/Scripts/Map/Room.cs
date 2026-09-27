@@ -387,6 +387,21 @@ public class Room_Instance: IDisposable, I_Disposable
         }
     }
 
+    /// <summary>
+    /// Records an externally-built MessageCollect into this room's recording - the whole-entry
+    /// counterpart of the per-message NotifyDescCollect/NotifyKojoCollect and per-AP
+    /// CaptureAPSnapshot paths. Used by scr_panel_logs's Confirm (RecordConfirmedResponse): LLM
+    /// inner APs run with suppressRoomRecording so their individual messages never reach the
+    /// recording, and the confirmed final response is submitted here as ONE consolidated entry
+    /// (the narrative as a single message, with every executed AP registered in its apRecords).
+    /// </summary>
+    public void RecordLLMEntry(MessageCollect mc)
+    {
+        if (recorders.Count < 1 || mc == null) return;
+        kols.Merge(mc, false);
+        hasStoredRecord = true;
+    }
+
     [JsonIgnore]
     public bool HasRecording { get
         {
