@@ -22,6 +22,21 @@ public class initscript_roomEdit : MonoBehaviour
     public Manageable CurrentFaction { get { return currentFaction; } }
 
     public Image picture;
+    public Image bgpicture;
+
+    public CanvasGroup CG_floorplan;
+    public CanvasGroup CG_bgImage;
+
+    void LoadFloorImage(bool isFloorPlan)
+    {
+        CG_floorplan.alpha = isFloorPlan ? 1 : 0;
+        CG_floorplan.blocksRaycasts = isFloorPlan;
+        CG_floorplan.interactable = isFloorPlan;
+
+        CG_bgImage.alpha = isFloorPlan ? 0 : 1;
+        CG_bgImage.blocksRaycasts = !isFloorPlan;
+        CG_bgImage.interactable = !isFloorPlan;
+    }
 
     public scr_inputFieldLink input_name;
 
@@ -138,22 +153,30 @@ public class initscript_roomEdit : MonoBehaviour
         parent.UnloadButton(roomButtonHashes);
         roomButtonHashes.Clear();
 
+        // mirrors canvas_RoomDisplay.LoadFloorTex: floor plan on `picture` (sized to the plan, room buttons on
+        // it), straight background image on `bgpicture` at its fixed size
+        bool isFloorPlan = floor.FloorBase.isFloorPlan;
+        LoadFloorImage(isFloorPlan);
+        Image target = isFloorPlan ? picture : bgpicture;
+
         if (scr_System_CentralControl.current.GetSprite(floor.FloorBase.imagePath, out var sprite))
         {
-            picture.sprite = sprite;
+            target.sprite = sprite;
         }
         else
         {
             Texture2D texture = null;
             yield return AssetsLoader.LoadTextureCoroutine(floor.FloorBase.imagePath, tex => texture = tex);
-            picture.sprite = scr_System_CentralControl.current.MakeSprite(floor.FloorBase.imagePath, texture);
+            target.sprite = scr_System_CentralControl.current.MakeSprite(floor.FloorBase.imagePath, texture);
         }
 
-        picture.rectTransform.sizeDelta = new Vector2(floor.FloorBase.floorWidth, floor.FloorBase.floorHeight) * floor.FloorBase.resize;
+        // straight image sits in bgpicture's fixed rect, so keep its aspect instead of stretching it
+        if (!isFloorPlan) bgpicture.preserveAspect = true;
+        else picture.rectTransform.sizeDelta = new Vector2(floor.FloorBase.floorWidth, floor.FloorBase.floorHeight) * floor.FloorBase.resize;
 
         foreach (Room_Instance ri in floor.rooms)
         {
-            AddRoomButton(ri, picture.rectTransform, false);
+            if (!ri.Base.hideOnMap) AddRoomButton(ri, picture.rectTransform, false);
             AddRoomButton(ri, roomsList, true);
         }
 

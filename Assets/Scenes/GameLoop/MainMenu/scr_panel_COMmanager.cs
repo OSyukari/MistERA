@@ -1092,6 +1092,11 @@ public class scr_panel_COMmanager : scr_Menu
 
     protected bool ValidateCOMByTags(COM com, out int index)
     {
+        if (com.comTags.Contains("debugOnly") && !scr_System_CampaignManager.current.DebugMode)
+        {
+            index = 11;
+            return false;
+        }
         if (com.comTags.Contains("initSex") || com.comTags.Contains("endSex"))
         {
             index = 1;

@@ -583,7 +583,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
     string _cachedDisplayName = string.Empty;
-    [JsonIgnore] public string FactionDisplayName { get
+    [JsonIgnore] public virtual string FactionDisplayName { get
         {
             if (displayNameOverride != "") return displayNameOverride;
             else if (_cachedDisplayName == string.Empty)
@@ -650,6 +650,76 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonProperty] protected Dictionary<int, Job_Schedule> charaSchedules;
     [JsonProperty] protected Dictionary<int, string> charaGuestStatus = new Dictionary<int, string>();
 
+    /// <summary>
+    /// Members this faction currently forbids from working at their work factions - only consulted
+    /// while this faction is the member's priority home faction (see AllowWorkFaction and
+    /// Character_Factions.CurrentJobScheduleFaction). Seeded from MemberType.initiallyForbidWork in
+    /// AddToFaction, mutable afterwards via SetAllowWork, cleared on RemoveFromFaction.
+    /// </summary>
+    [JsonProperty] protected HashSet<int> forbidWorkRefs = new HashSet<int>();
+
+    /// <summary>
+    /// member RefID -> RefID of the member they are linked to in this faction (e.g. visitor -> the patient they
+    /// visit). Set by SetMemberLink; when the link target leaves this faction, every member linked to them
+    /// leaves too (see RemoveFromFaction).
+    /// </summary>
+    [JsonProperty] protected Dictionary<int, int> memberLinks = new Dictionary<int, int>();
+
+    public void SetMemberLink(Character_Trainable member, Character_Trainable target)
+    {
+        if (member == null || target == null || member == target) return;
+        if (!isManagedChara(member.RefID) || !isManagedChara(target.RefID)) return;
+        if (memberLinks == null) memberLinks = new Dictionary<int, int>();
+        memberLinks[member.RefID] = target.RefID;
+    }
+
+    /// <summary>The member c is linked to in this faction, or null.</summary>
+    public Character_Trainable GetMemberLinkTarget(Character_Trainable c)
+    {
+        if (c == null || memberLinks == null || !memberLinks.TryGetValue(c.RefID, out var targetRef)) return null;
+        return scr_System_CampaignManager.current.FindInstanceByID(targetRef);
+    }
+
+    /// <summary>Every member of this faction linked to target (e.g. a patient's visitors).</summary>
+    public List<Character_Trainable> GetLinkedMembers(Character_Trainable target)
+    {
+        var result = new List<Character_Trainable>();
+        if (target == null || memberLinks == null) return result;
+        foreach (var kvp in memberLinks)
+        {
+            if (kvp.Value != target.RefID) continue;
+            var c = scr_System_CampaignManager.current.FindInstanceByID(kvp.Key);
+            if (c != null) result.Add(c);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Whether c may work at their work factions while this faction is their priority home faction.
+    /// True unless c is in forbidWorkRefs.
+    /// </summary>
+    public bool AllowWorkFaction(Character_Trainable c)
+    {
+        if (c == null || forbidWorkRefs == null) return true;
+        return !forbidWorkRefs.Contains(c.RefID);
+    }
+
+    /// <summary>
+    /// Lifts (allow = true) or restores (allow = false) c's forbid-work entry, then recomputes c's
+    /// schedule so the change takes effect immediately. Only applies to current members.
+    /// </summary>
+    public void SetAllowWork(Character_Trainable c, bool allow)
+    {
+        if (c == null || !charaGuestStatus.ContainsKey(c.RefID)) return;
+        if (forbidWorkRefs == null) forbidWorkRefs = new HashSet<int>();
+
+        bool changed = allow ? forbidWorkRefs.Remove(c.RefID) : forbidWorkRefs.Add(c.RefID);
+        if (!changed) return;
+
+        var s = new List<string>();
+        c.FactionManager.UpdateSchedule(ref s);
+    }
+
 
     [JsonIgnore] public List<int> ManagedRefs{get{ if (charaSchedules == null) return new List<int>();
     return charaSchedules.Keys.ToList();}}
@@ -666,6 +736,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
     
     protected void OnHourUpdate(TimeSpan t)
     {
+        FallbackWorkerManager.UpdateStaffing(this);
+
         int currentHour = (scr_System_Time.current.getCurrentTime().Hour + 24 - 1) % 24;
         foreach(var c in ManagedChara)
         {
@@ -1389,6 +1461,62 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
     }
+    /// <summary>
+    /// Search the job-tagged furniture posts (jobPosts) by COM ID and/or tag, independent of chara's schedule.
+    /// GetValidJobs_Heuristics only reaches jobPosts through the schedule's random COM, so behavior nodes that
+    /// pick job commands themselves (e.g. TryFindNurseJobNode) use this instead. No implicit private-room rule:
+    /// filter.skipPrivateRoom applies as usual, and postFilter (job, matched COM) can reject anything else.
+    /// </summary>
+    public List<Job_Furniture> GetValidJobPosts_Heuristics(
+        Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic,
+        int maxCount,
+        Character_Trainable chara,
+        PathingRoomFilter filter,
+        string comID = "",
+        string comTag = "",
+        Func<Job_Furniture, COM, bool> postFilter = null,
+        List<string> s = null)
+    {
+        var possibleJobs = new List<Job_Furniture>();
+        string ss = $" ({ID}) jobPosts search id[{comID}] tag[{comTag}]";
+        if (comID == "" && comTag == "") return possibleJobs;
+        if (scr_System_CentralControl.current.isSafeMode && scr_System_Serializer.current.nsfwKeywords.Contains(comTag)) return possibleJobs;
+
+        foreach (var kvp in jobPosts)
+        {
+            var com = kvp.Key;
+            if (comID != "" && com.ID != comID) continue;
+            if (comTag != "" && !com.comTags.Contains(comTag)) continue;
+
+            foreach (var post in kvp.Value)
+            {
+                if (post == null || post.ParentRoom == null || possibleJobs.Contains(post)) continue;
+                if (!FactionUtility.IsPostRoomActiveNow(post)) continue;
+                if (filter.skipPrivateRoom && post.ParentRoom.isRoomPrivate) continue;
+                if (filter.excludePrisonRooms && post.ParentRoom.isRoomPrison) continue;
+                if (filter.checkBlacklist && chara.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMs)) continue;
+                if (chara.isRestrained && chara.Jail.ownerJob != post) continue;
+                if (!post.ValidateActor(chara, com)) continue;
+                if (postFilter != null && !postFilter(post, com)) continue;
+                possibleJobs.Add(post);
+            }
+        }
+
+        if (possibleJobs.Count == 0)
+        {
+            if (s != null) s.Add(ss + $" found no valid post for chara[{chara.FirstName}]");
+            return possibleJobs;
+        }
+
+        if (FactionUtility.GetValidPathsWithHeuristic(ref possibleJobs, chara, heuristic, maxCount, ref ss))
+        {
+            if (s != null) s.Add(ss);
+            return possibleJobs;
+        }
+        if (s != null) s.Add(ss);
+        return new List<Job_Furniture>();
+    }
+
     [JsonIgnore]
     public bool isMealHour { get { return this.mealHours.Contains(scr_System_Time.current.getCurrentTime().Hour); } }
 
@@ -1692,10 +1820,17 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (c.RefID == 0) hiddenOnWorldMap = false;
 
         bool isNewMember = !charaGuestStatus.ContainsKey(c.RefID);
+        bool wasForbidWorkType = !isNewMember && FactionUtility.GetMemberType(charaGuestStatus[c.RefID])?.initiallyForbidWork == true;
 
         //c.AddToFaction(this);
         if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus.ID);
         else charaGuestStatus[c.RefID] = guestStatus.ID;
+
+        // seed on entering a forbid-work status, clear on leaving it; re-adding with the same kind of
+        // status leaves any SetAllowWork change untouched
+        if (forbidWorkRefs == null) forbidWorkRefs = new HashSet<int>();
+        if (guestStatus.initiallyForbidWork && !wasForbidWorkType) forbidWorkRefs.Add(c.RefID);
+        else if (!guestStatus.initiallyForbidWork) forbidWorkRefs.Remove(c.RefID);
 
         if (!ManagedRefs.Contains(c.RefID)) charaSchedules.Add(c.RefID, new Job_Schedule());
         managedChara = null;
@@ -1738,6 +1873,24 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else Debug.LogError($"charaSchedules null when RemoveFromFaction {c.FirstName}");
         if (charaGuestStatus != null) charaGuestStatus.Remove(c.RefID);
         else Debug.LogError($"charaGuestStatus null when RemoveFromFaction {c.FirstName}");
+        forbidWorkRefs?.Remove(c.RefID);
+
+        // drop c's own link, then everyone linked to c (e.g. a discharged patient's visitors) - through their
+        // own Character_Factions so their home/work lists stay consistent; links are removed first so the
+        // resulting RemoveFromFaction calls never cascade back here
+        if (memberLinks != null)
+        {
+            memberLinks.Remove(c.RefID);
+            var linkedRefs = memberLinks.Where(x => x.Value == c.RefID).Select(x => x.Key).ToList();
+            foreach (var linkedRef in linkedRefs) memberLinks.Remove(linkedRef);
+            foreach (var linkedRef in linkedRefs)
+            {
+                var linked = scr_System_CampaignManager.current.FindInstanceByID(linkedRef);
+                if (linked == null) continue;
+                if (linked.FactionManager.WorkFactions.Contains(this)) linked.FactionManager.RemoveWorkFaction(this.ID);
+                else if (linked.FactionManager.Faction_Home_Temporary == this) linked.FactionManager.SetTempHomeFaction("", null);
+            }
+        }
         managedChara = null;
         _managerRefs = null;
 
@@ -2246,7 +2399,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
     [JsonIgnore]
-    public Manageable FactionOwnerRoot
+    public virtual Manageable FactionOwnerRoot
     {
         get
         {

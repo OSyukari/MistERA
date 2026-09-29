@@ -225,42 +225,40 @@ public class BodyInternal_Instance
     {
         if (!this.canContain) return;
 
+        // TotalMinutes, not Minutes: the Minutes component is 0 for whole-hour spans (EndDormantState catch-up)
+        int totalMinutes = (int)t.TotalMinutes;
         List<Item_Instance> delete = new List<Item_Instance>();
         foreach (var content in Contains)
         {
             var comp = content.GetComp_Ingestible();
             var methods = comp == null ? new List<ItemComponentTemplate_Ingestible.Ingestible_IngestMethod>() : comp.ingestMethod.FindAll(x => this.hasTag(x.bodyTags));
 
-            TimeSpan? updatetime = null;
-
             if (methods.Count > 0)
             {
                 float amount = methods[0].digestSpeed;
+                int digestMinutes = totalMinutes;
                 if (ContainedRefs_Delays.TryGetValue(content.RefID, out var value) && value > 0)
                 {
-                    int timeTick = Math.Min((int)t.Minutes, ContainedRefs_Delays[content.RefID]);
+                    int timeTick = Math.Min(totalMinutes, value);
                     ContainedRefs_Delays[content.RefID] -= timeTick;
-                    if (timeTick < t.Minutes)
-                    {
-                        updatetime = t - TimeSpan.FromMinutes(t.Minutes - timeTick);
-                    }
-                }
-                else
-                {
-                    updatetime = t;
+                    // only the part of t left after the delay ran out is spent digesting
+                    digestMinutes = totalMinutes - timeTick;
                 }
 
-                if (updatetime != null)
+                // never digest past what's left, so a long span can't over-apply digestion statuses
+                if (amount < 0 && comp.amount > 0) digestMinutes = Math.Min(digestMinutes, (int)Math.Ceiling(comp.amount / -amount));
+
+                if (digestMinutes > 0)
                 {
-                    comp.amount += amount * t.Minutes;
+                    comp.amount += amount * digestMinutes;
 
                     foreach (var method in methods)
                     {
-                        Digest(method, t, amount);
+                        Digest(method, digestMinutes, amount);
                     }
-
-                    if (comp.amount <= 0) delete.Add(content);
                 }
+
+                if (comp.amount <= 0 && (!ContainedRefs_Delays.TryGetValue(content.RefID, out var remaining) || remaining <= 0)) delete.Add(content);
             }
 
         }
@@ -276,9 +274,9 @@ public class BodyInternal_Instance
         delete.Clear();
     }
 
-    private void Digest(ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method, TimeSpan t, float amount)
+    private void Digest(ItemComponentTemplate_Ingestible.Ingestible_IngestMethod method, int minutes, float amount)
     {
-        if (method.giveStatus != null && method.giveStatus.Length > 0) this.owner.Stats.AddOrModStatus(method.giveStatus, -amount * method.amountMod * t.Minutes);
+        if (method.giveStatus != null && method.giveStatus.Length > 0) this.owner.Stats.AddOrModStatus(method.giveStatus, -amount * method.amountMod * minutes);
     }
 
     public string baseID = "";

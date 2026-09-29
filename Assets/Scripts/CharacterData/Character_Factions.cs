@@ -102,6 +102,7 @@ public class Character_Factions
                 if (Owner == null) Debug.LogError($"Error SetHomeFaction Owner Null on [{ownerRefID}]");
             }
             this.FactionID_Home = homeFactionID;
+            this.Faction_Home_Cache = null;   // else Faction_Home below still returns the old faction
         }
         //Debug.Log("SetHomeFaction called on " + Owner.FirstName + " with arguments homeFactionID["+ homeFactionID+ "] isManager["+isManager+"]");
         if (this.Faction_Home != null)
@@ -124,10 +125,11 @@ public class Character_Factions
         {
             if (Faction_Home_Temporary != null) Faction_Home_Temporary.RemoveFromFaction(Owner);
             this.Faction_Home_Temporary_FactionID = tempFactionID;
+            this.Faction_Home_Temporary_Cache = null;   // else Faction_Home_Temporary below still returns the old faction
         }
 
-        if (Faction_Home_Temporary != null)
-        { 
+        if (Faction_Home_Temporary != null && status != null)
+        {
             Faction_Home_Temporary.AddToFaction(Owner, status, sendEvent);
             if (this.Owner.isTemporaryActor && Faction_Home_Temporary.isPlayerRelatedFaction) this.Owner.isTemporaryActor = false;
         }
@@ -707,19 +709,28 @@ public class Character_Factions
 
     /// <summary>
     /// return value of Null include case where chara has private schedule!!!!
+    /// <br/>Only the priority home faction (HomeFactions[0] - temp home if set, else home) is ever
+    /// considered; lower-priority home factions' schedules are ignored. Work factions are skipped
+    /// entirely while the priority home faction forbids work (Manageable.AllowWorkFaction).
     /// </summary>
     /// <param name="hour"></param>
     /// <returns></returns>
     public Manageable CurrentJobScheduleFaction(int hour = -1, int daysLookahead = 0)
     {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
-        foreach (var faction in Factions)
+        var priorityHome = HomeFactions.Count > 0 ? HomeFactions[0] : null;
+
+        if (priorityHome == null || priorityHome.AllowWorkFaction(Owner))
         {
-            if (faction.HasScheduleFor(this.Owner, hour, daysLookahead))
+            foreach (var faction in WorkFactions)
             {
-                if (HomeFactions.Contains(faction) || (Owner.CanWorkFor(faction) && Owner.ShouldWorkFor(faction))) return faction;
+                if (faction == null || !faction.HasScheduleFor(this.Owner, hour, daysLookahead)) continue;
+                // a work faction that is also the priority home keeps its work-order slot, with home semantics
+                if (faction == priorityHome || (Owner.CanWorkFor(faction) && Owner.ShouldWorkFor(faction))) return faction;
             }
         }
+
+        if (priorityHome != null && priorityHome.HasScheduleFor(this.Owner, hour, daysLookahead)) return priorityHome;
         return null;
     }
 

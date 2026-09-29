@@ -1,0 +1,51 @@
+{
+    "_doc": "Post-birth recovery statuses. Flat severity (no decay); the caller (AddStatus event command) rolls the duration: postpartum 1-2 days (PregnancyEnd_Birth), post-op 3-4 days (C-section, later). While active: requireBedRest (Character_Trainable.requireBedRest) - NPCs seek bed rest via TryFindBedRestNode and com_furniture_rest_required; not enforced on the player. allowNaturalRemoval so they are removed when the duration runs out, which fires the instance's onRemoveEventID if one was attached (e.g. Hospital_AutoDischarge).",
+    "Status": {
+        "list": [
+            {
+                "statusID": "chara_status_postpartum_recovery",
+                "allowNaturalRemoval": true,
+                "variationMode": { },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    {
+                        "displayName": "chara_status_postpartum_recovery_active",
+                        "threshold": 9999,
+                        "tags": [ "requireBedRest" ],
+                        "stat_modifiers": [
+                            { "statID": "chara_status_mood", "modKey": "chara_status_postpartum_recovery", "type": "setBase", "valueType": "number", "valueString": "-1" }
+                        ]
+                    }
+                ]
+            },
+            {
+                "statusID": "chara_status_postop_recovery",
+                "allowNaturalRemoval": true,
+                "variationMode": { },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    {
+                        "displayName": "chara_status_postop_recovery_active",
+                        "threshold": 9999,
+                        "tags": [ "requireBedRest" ],
+                        "stat_modifiers": [
+                            { "statID": "chara_status_mood", "modKey": "chara_status_postop_recovery", "type": "setBase", "valueType": "number", "valueString": "-2" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "chara_status_postpartum_recovery_active": "产后恢复",
+                "chara_status_postop_recovery_active": "术后恢复"
+            },
+            "en-us": {
+                "chara_status_postpartum_recovery_active": "Postpartum Recovery",
+                "chara_status_postop_recovery_active": "Post-op Recovery"
+            }
+        }
+    }
+}

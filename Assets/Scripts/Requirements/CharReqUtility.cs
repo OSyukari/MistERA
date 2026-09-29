@@ -227,6 +227,12 @@ public static class CharaReqUtility
                                 .Replace("$stat$", c.Stats.HP.DisplayName));
             return false;
         }
+        if (q.requireBedRest && !c.requireBedRest)
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireBedRest")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
         if (q.requireFollowing && !scr_System_CampaignManager.current.party.HasMember(c.RefID))
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireFollowing")

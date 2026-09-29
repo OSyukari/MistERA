@@ -281,6 +281,40 @@
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_takingLongBreak_description_onComplete_1"]}] }
             },
             {
+                "ID": "com_furniture_rest_required",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_rest_required_displayName_1",
+                "timeScale": 120,
+                "comTags": [
+                    "furniture",
+                    "bed",
+                    "rest_required"
+                ],
+                "_comments": "Bed rest compelled by an abnormal condition (labor, post-birth / post-op recovery). Only valid while the doer requireBedRest. Pure time advance, no stat results. Natural birth only happens while the mother is executing a rest_required or rest COM (ReproductionUtility.CanBirthNow). Tags match beds' comTags [furniture, bed]; other furniture lists it by comID.",
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers":{ "requireBedRest":true }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_rest_required_displayName_1"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 10
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin":{ "Entries":[{"texts":["com_furniture_rest_required_description_begin_1"]}], "keepLooking":false },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_rest_required_description_ongoing_1"]}], "keepLooking":false }
+            },
+            {
                 "ID": "com_furniture_playVideoGames",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "displayName": "com_furniture_playVideoGames_displayName_1",
@@ -1186,6 +1220,10 @@
                 "com_furniture_takingLongBreak": "缓解角色压力的同时，还会回复HP，代价是耗时翻倍",
                 "com_furniture_takingLongBreak_displayName_1": "长休",
                 "com_furniture_takingLongBreak_displayName_2": "一起长休",
+                "com_furniture_rest_required": "因分娩、产后或术后等状况，必须卧床静养时才能执行",
+                "com_furniture_rest_required_displayName_1": "卧床静养",
+                "com_furniture_rest_required_description_begin_1": "$doer.firstname$躺下静养",
+                "com_furniture_rest_required_description_ongoing_1": "$doer.firstname$正在卧床静养",
                 
                 "com_furniture_playVideoGames_displayName_1": "打游戏",
                 "com_furniture_playVideoGames_displayName_2": "一起打游戏",
@@ -1294,6 +1332,10 @@
                 "com_furniture_takingBreak_displayName_2": "Take a Break",
                 "com_furniture_takingLongBreak_displayName_1": "Take a longer break",
                 "com_furniture_takingLongBreak_displayName_2": "Take a longer break",
+                "com_furniture_rest_required": "Only available when the character must stay on bed rest (labor, postpartum or post-op recovery)",
+                "com_furniture_rest_required_displayName_1": "Bed Rest",
+                "com_furniture_rest_required_description_begin_1": "$doer.firstname$ lies down to rest",
+                "com_furniture_rest_required_description_ongoing_1": "$doer.firstname$ is resting in bed",
                 "com_furniture_playVideoGames_displayName_1": "Play video games",
                 "com_furniture_playVideoGames_displayName_2": "Play video games",
                 "com_furniture_playVideoGames_displayName_3": "Play video games",

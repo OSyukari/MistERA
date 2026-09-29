@@ -84,22 +84,14 @@ public class ExpInitializer_Collection : ExperienceInitializer
 
     public void PurgeNonExisting()
     {
-        var list_one = selectOne.Keys.ToList();
-        var list_each = selectEach.Keys.ToList();
-
-        foreach(var one in list_one)
+        var index = scr_System_Serializer.current.index_Experiences;
+        foreach (var one in selectOne.Keys.ToList())
         {
-            if (scr_System_Serializer.current.index_Experiences.GetInitializerByID(one) == null)
-            {
-                list_one.Remove(one);
-            }
+            if (!index.HasInitializer(one)) selectOne.Remove(one);
         }
-        foreach (var each in list_each)
+        foreach (var each in selectEach.Keys.ToList())
         {
-            if (scr_System_Serializer.current.index_Experiences.GetInitializerByID(each) == null)
-            {
-                list_one.Remove(each);
-            }
+            if (!index.HasInitializer(each)) selectEach.Remove(each);
         }
     }
 }

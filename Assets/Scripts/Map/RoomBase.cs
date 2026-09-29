@@ -8,6 +8,19 @@ public class Room_Base
     public string displayName = "";
     public float offsetX = 0f;
     public float offsetY = 0f;
+    /// <summary>
+    /// If true, this room has no placement on its floor's image - offsetX/offsetY are ignored and no map
+    /// button/path line point is drawn for it (canvas_RoomDisplay, initscript_roomEdit). Purely visual: the room
+    /// still appears in the room list and is fully connected/pathable via connects like any other room.
+    /// </summary>
+    public bool hideOnMap = false;
+    /// <summary>
+    /// If true, only characters belonging to this room's owning faction in any way (home, temporary home or
+    /// work - see Character_Factions.Factions; no active-faction requirement) can path into it - see
+    /// Room_Instance.CanBeAccessedBy, enforced by Map.Findpath(chara, room) and Map.FilterValidPathsOptimized.
+    /// Only restricts rooms as a destination; a path may still pass through.
+    /// </summary>
+    public bool requireFactionMembership = false;
     public List<Door_Base> connects = new List<Door_Base>();
     public List<string> furnitureIDs = new List<string>();
     public bool noCleaning = false;

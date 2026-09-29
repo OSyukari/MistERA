@@ -248,6 +248,24 @@
                 "isDisplayableInFactionUI": true,
                 "participatesInCombat": true
             }
+            ,{
+                "_comment": "Home status of every fallback worker in their establishment's Manageable_WorkerPool (see MapPlan.fallbackWorkers / FallbackWorkerManager). initiallyForbidWork keeps them off their shift until the establishment's hourly staffing check lifts it for workers it actually needs.",
+                "ID": "membertype_fallback_worker",
+                "displayNameKey": "membertype_fallback_worker_displayName",
+                "socialStandingKey": "management_faction_socialStatus_member",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": false,
+                "participatesInCombat": true,
+                "initiallyForbidWork": true
+            }
         ],
         "memberRelations": [
             { "memberTypeA": "membertype_family_member", "memberTypeB": "membertype_family_member", "relationshipID": "relationship_family" },

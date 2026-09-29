@@ -1,0 +1,148 @@
+{
+    "_doc": "Hospital staff uniforms. Handed out by the jp_hospital_doctor / jp_hospital_nurse generators (inventoryOverride in JP_World/Characters/templates.json).",
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_jp_hospital_scrubs_top",
+            "displayName":"Scrub Top",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_hospital_scrubs_pants",
+            "displayName":"Scrub Pants",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_hospital_surgical_gown",
+            "displayName":"Surgical Gown",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Outer",
+                        "coverSlot":["Arm","Arm","Lower"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_hospital_surgical_mask",
+            "displayName":"Surgical Mask",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Face"],
+                        "equipLayer":"Outer"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_hospital_sterile_gloves",
+            "displayName":"Sterile Gloves",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Hand"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Hand"],
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_hospital_nurse_dress",
+            "displayName":"Nurse Dress",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_hospital_nurse_cap",
+            "displayName":"Nurse Cap",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Hair"],
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_hospital_nurse_shoes",
+            "displayName":"Nurse Shoes",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Feet"],
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "clothing_jp_hospital_scrubs_top":"手术服上衣",
+                "clothing_jp_hospital_scrubs_pants":"手术服裤子",
+                "clothing_jp_hospital_surgical_gown":"蓝色手术袍",
+                "clothing_jp_hospital_surgical_mask":"外科口罩",
+                "clothing_jp_hospital_sterile_gloves":"无菌手套",
+                "clothing_jp_hospital_nurse_dress":"白色护士服",
+                "clothing_jp_hospital_nurse_cap":"护士帽",
+                "clothing_jp_hospital_nurse_shoes":"护士鞋"
+            },
+            "en-us":
+            {
+                "clothing_jp_hospital_scrubs_top":"Scrub Top",
+                "clothing_jp_hospital_scrubs_pants":"Scrub Pants",
+                "clothing_jp_hospital_surgical_gown":"Blue Surgical Gown",
+                "clothing_jp_hospital_surgical_mask":"Surgical Mask",
+                "clothing_jp_hospital_sterile_gloves":"Sterile Gloves",
+                "clothing_jp_hospital_nurse_dress":"White Nurse Dress",
+                "clothing_jp_hospital_nurse_cap":"Nurse Cap",
+                "clothing_jp_hospital_nurse_shoes":"Nurse Shoes"
+            }
+        }
+    }
+}

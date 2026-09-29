@@ -31,6 +31,14 @@ public class Status_Instance
     [DefaultValue(-1)]
     public int duration = -1;
 
+    /// <summary>
+    /// Optional event started on the status owner when this instance is removed (expiry or manual removal) -
+    /// see Character_StatsManager.RemoveStatusByStringMatch/RemoveStatusByExactID. Set per instance (e.g. by
+    /// the AddStatus event command), so the same status can fire different events for different characters.
+    /// </summary>
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+    [DefaultValue("")]
+    public string onRemoveEventID = "";
 
     [JsonProperty] protected float severity;
 

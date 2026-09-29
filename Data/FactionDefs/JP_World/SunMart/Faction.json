@@ -44,6 +44,12 @@
                     "membertype_jp_convenience_store_clerk_afternoon",
                     "membertype_jp_convenience_store_clerk_midnight"
                 ],
+                "_comment_fallbackWorkers": "Per-shift staffing: headcount = total wanted on shift, maxFallback = most fallback workers used. templateID = CharaTemplateGenerator from JP_World/Characters/templates.json.",
+                "fallbackWorkers": [
+                    { "memberTypeID": "membertype_jp_convenience_store_clerk_morning", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+                    { "memberTypeID": "membertype_jp_convenience_store_clerk_afternoon", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+                    { "memberTypeID": "membertype_jp_convenience_store_clerk_midnight", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+                ],
                 "workHours":[],
                 "workAssignment":[]
 
@@ -159,7 +165,8 @@
                 "comTags":["job","furniture","workModules","!!!!extrajobcomtag!!!!","social"],
                 "requirements": {
                     "requirement": {
-                        "treatReceiverAsDoer": true
+                        "treatReceiverAsDoer": true,
+                        "requireSameActiveFaction": true
                     }
                 },
                 "variants": [

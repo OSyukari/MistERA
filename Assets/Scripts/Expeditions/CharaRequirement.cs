@@ -34,6 +34,7 @@ public class CharaReq
     public bool requireCombat = false;
     public bool requireFullHP = false;
     public bool requireMissingHP = false;
+    public bool requireBedRest = false;
     //public bool requireAroused = false;
 
     public bool requireMale = false;
@@ -88,6 +89,7 @@ public class CharaReq
         this.requireCombat = this.requireCombat || req.requireCombat;
         this.requireFullHP = this.requireFullHP || req.requireFullHP;
         this.requireMissingHP = this.requireMissingHP || req.requireMissingHP;
+        this.requireBedRest = this.requireBedRest || req.requireBedRest;
 
     }
 }

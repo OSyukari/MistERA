@@ -193,7 +193,8 @@
                 "comTags":["job","furniture","social","education"],
                 "requirements": {
                     "requirement": {
-                        "treatReceiverAsDoer": true
+                        "treatReceiverAsDoer": true,
+                        "requireSameActiveFaction": true
                     }
                 },
                 "variants": [
@@ -260,7 +261,8 @@
                 "comTags":["job","furniture","social","education"],
                 "requirements": {
                     "requirement": {
-                        "treatReceiverAsDoer": true
+                        "treatReceiverAsDoer": true,
+                        "requireSameActiveFaction": true
                     }
                 },
                 "variants": [

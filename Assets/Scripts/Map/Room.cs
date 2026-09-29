@@ -697,6 +697,19 @@ public class Room_Instance: IDisposable, I_Disposable
 
 
 
+    /// <summary>
+    /// False only for a Room_Base.requireFactionMembership room whose owning faction c does not belong to
+    /// (home, temporary home or work). Unowned rooms and rooms without the flag are open to everyone.
+    /// </summary>
+    public bool CanBeAccessedBy(Character_Trainable c)
+    {
+        if (c == null || Base == null || !Base.requireFactionMembership) return true;
+        if (c == scr_System_CampaignManager.current.Player && scr_System_CampaignManager.current.DebugMode) return true;
+        var owner = FactionOwner?.Faction;
+        if (owner == null) return true;
+        return c.FactionManager.Factions.Contains(owner);
+    }
+
     bool _isRoomPrivate = false;
     bool _isRoomPrivate_cached = false;
     [JsonIgnore] public bool isRoomPrivate{ get {

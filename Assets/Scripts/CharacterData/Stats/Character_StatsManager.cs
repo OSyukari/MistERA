@@ -884,13 +884,13 @@ public class StatsManager : I_StatsManager
 
     [JsonIgnore] public int pauseLLMTicks = 0;
 
-    public void PreUpdateTimeTick()
+    public void PreUpdateTimeTick(int minutes = 1)
     {
         bool timestopped = Owner.isTimeStopped;
         if (timestopped) return;
         for (int i = StatusInstances.Count - 1; i >= 0; i--)
         {
-            if (!StatusInstances[i].BaseRef.constant) StatusInstances[i].elapsedTime += 1;
+            if (!StatusInstances[i].BaseRef.constant) StatusInstances[i].elapsedTime += minutes;
         }
     }
 
@@ -915,7 +915,8 @@ public class StatsManager : I_StatsManager
         var keys = _statusInstances.Keys.ToArray();
         foreach (var key in keys)
         {
-            int time = Owner.isTimeStopped ? t.Minutes : t_real.Minutes;
+            // TotalMinutes, not Minutes: the Minutes component is 0 for whole-hour spans (EndDormantState catch-up)
+            int time = (int)(Owner.isTimeStopped ? t.TotalMinutes : t_real.TotalMinutes);
             var curr = _statusInstances[key];
 
             // Sex-type statuses have their decay and duration paused while either timer is active:
@@ -998,7 +999,7 @@ public class StatsManager : I_StatsManager
                 }
             }
         }
-        if (pauseLLMTicks > 0) pauseLLMTicks = Math.Max(pauseLLMTicks - t.Minutes, 0);
+        if (pauseLLMTicks > 0) pauseLLMTicks = Math.Max(pauseLLMTicks - (int)t.TotalMinutes, 0);
         //else pauseXMinAfterMod = Math.Max(pauseXMinAfterMod - t.Minutes, 0);
         if (!hasSexualStimulation) consecutiveClimaxCount = 0;
 
@@ -1173,11 +1174,18 @@ public class StatsManager : I_StatsManager
     public void RemoveStatusByStringMatch(string s)
     {
         bool update = false;
+        List<string> removalEvents = null;
         var keys = _statusInstances.Keys.ToArray();
         foreach(var k in keys)
         {
             if (k.Contains(s))
             {
+                var removed = this._statusInstances[k];
+                if (removed != null && !string.IsNullOrEmpty(removed.onRemoveEventID))
+                {
+                    if (removalEvents == null) removalEvents = new List<string>();
+                    removalEvents.Add(removed.onRemoveEventID);
+                }
                 this._statusInstances.Remove(k);
                 ClearStatusInstanceCache();
                 update = true;
@@ -1185,14 +1193,24 @@ public class StatsManager : I_StatsManager
         }
 
         if (update) UpdateStatus();
-
+        if (removalEvents != null) foreach (var eventID in removalEvents) FireStatusRemovalEvent(eventID);
     }
 
     public void RemoveStatusByExactID(string statusID)
     {
-        if (!this._statusInstances.Remove(statusID)) return;
+        if (!this._statusInstances.TryGetValue(statusID, out var removed)) return;
+        this._statusInstances.Remove(statusID);
         ClearStatusInstanceCache();
         UpdateStatus();
+        if (removed != null && !string.IsNullOrEmpty(removed.onRemoveEventID)) FireStatusRemovalEvent(removed.onRemoveEventID);
+    }
+
+    /// <summary>Starts a status instance's onRemoveEventID on its owner (after the status is already gone).</summary>
+    void FireStatusRemovalEvent(string eventID)
+    {
+        if (Owner == null || scr_UpdateHandler.current == null) return;
+        var ev = new EventInstance(Owner, eventID, "");
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
 
     /// <summary>

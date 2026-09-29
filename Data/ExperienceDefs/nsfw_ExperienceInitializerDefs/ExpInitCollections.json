@@ -5,8 +5,12 @@
             {
                 "$type":"ExpInitializer_Collection, Assembly-CSharp",
                 "baseID": "exp_collection_girl_hetero",
-                "_comment": "collections of generic settings for girls",
-                "randActor":[],
+                "_comment": "collections of generic settings for girls. randActor gives first-experience text a (male) partner name - every tier here is with men.",
+                "randActor":[
+                    "expinit_target_boyfriend_male_1","expinit_target_boyfriend_male_2","expinit_target_boyfriend_male_3",
+                    "expinit_target_classmate_male_1","expinit_target_classmate_male_2","expinit_target_classmate_male_3",
+                    "expinit_target_pickup_male_1","expinit_target_pickup_male_2","expinit_target_pickup_male_3"
+                ],
                 "selectOne":{
                     "basic_exp_virgin_pure":1,
                     "basic_exp_virgin_sheltered":1,

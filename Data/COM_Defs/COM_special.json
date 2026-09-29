@@ -9,7 +9,8 @@
     "_baseAcceptanceValue": "actor will always accept when their own AI decide to go to sleep, so this value is only checked if they were invited by someone else to sleep. Currently they'll lose consciousness when touching bed, but in the future i would like to extend this command into masturbation sex command or straight up sex. Instead of making them unable to act for the whole duration, make it so they'll prefer to stay in bed but nothing stops them from having sex or toilet or wander into someone else's room. or make it so their sleep consciousness mod fluctuate",
     "comTags": [
         "furniture",
-        "retailTrade"
+        "retailTrade",
+        "debugOnly"
     ],
     "requirements": {
         "requirement": {

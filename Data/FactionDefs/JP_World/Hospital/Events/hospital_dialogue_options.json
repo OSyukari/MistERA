@@ -1,0 +1,228 @@
+{
+    "_doc": "Dialogue options offered by ON-SHIFT hospital doctors/nurses (target must be active at jp_hospital AND carry the jp_hospital_staff actor tag, which only comes from the staff MemberTypes' portraitTags while that MemberType is their active one). PHASE 1: validation only - every event is a placeholder line with no Results yet. Phase 2 adds execution (SetHomeFaction temp + AssignRoom for admission, SetWorkFaction + SetMemberLink for visiting, RemoveFromFaction for discharge/end visit).",
+    "Events": {
+        "list": [
+            {
+                "ID": "jp_hospital_Opt_Admit",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] },
+                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_patient", "false" ] },
+                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_visitor", "false" ] },
+                        { "parameters": [ "hasTempHomeFaction", "false" ] },
+                        { "parameters": [ "hasUnownedRoom", "jp_hospital", "hospital_patient_room_" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "jp_hospital_staff" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Admit_placeholder",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_hospital_Opt_Visit",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] },
+                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_patient", "false" ] },
+                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_visitor", "false" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "jp_hospital_staff" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "patients" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_hospital", "membertype_jp_hospital_patient" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hospital_Opt_Visit_question",
+                        "options": [
+                            {
+                                "option": "jp_hospital_Opt_Visit_patientOption",
+                                "forEachTargetKey": "patients",
+                                "bindTargetKey": "patient",
+                                "_comment_Results": "Player + everyone following them become visitors (overwriteExisting false: anyone already part of the hospital - staff, a patient, an existing visitor - keeps their MemberType), then every visitor among them is linked to the picked patient. The link drops them from the hospital when that patient leaves.",
+                                "Results": [
+                                    { "Type": "SetWorkFaction", "arguments": [ "selfAndFollowers", "jp_hospital", "membertype_jp_hospital_visitor", "false", "false" ] },
+                                    { "Type": "SetMemberLink", "arguments": [ "selfAndFollowers", "patient", "jp_hospital", "membertype_jp_hospital_visitor" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "visit_confirm" ] }
+                                ]
+                            },
+                            {
+                                "option": "jp_hospital_Opt_Visit_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "visit_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "visit_confirm",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Visit_placeholder",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "visit_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Visit_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_hospital_Opt_Discharge",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] },
+                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_patient", "true" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "jp_hospital_staff" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Discharge_placeholder",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_hospital_Opt_EndVisit",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] },
+                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_visitor", "true" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "jp_hospital_staff" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_EndVisit_placeholder",
+                        "_comment_Results": "Player + followers who are hospital visitors stop visiting (anyone holding another hospital MemberType is untouched).",
+                        "Results": [
+                            { "Type": "RemoveFromFaction", "arguments": [ "selfAndFollowers", "jp_hospital", "membertype_jp_hospital_visitor" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_hospital_Opt_Admit": "办理住院",
+                "jp_hospital_Opt_Admit_placeholder": "「好的，我这就为您办理住院手续。」",
+                "jp_hospital_Opt_Visit": "探视病人",
+                "jp_hospital_Opt_Visit_question": "「请问您要探视哪一位？」",
+                "jp_hospital_Opt_Visit_patientOption": "$name$",
+                "jp_hospital_Opt_Visit_cancel": "算了",
+                "jp_hospital_Opt_Visit_placeholder": "「好的，这就为您登记探视$patient.name$。」",
+                "jp_hospital_Opt_Visit_cancelLine": "「有需要请随时告诉我。」",
+                "jp_hospital_Opt_Discharge": "申请出院",
+                "jp_hospital_Opt_Discharge_placeholder": "「好的，我这就为您办理出院手续。」",
+                "jp_hospital_Opt_EndVisit": "结束探视",
+                "jp_hospital_Opt_EndVisit_placeholder": "「好的，探视登记已经取消。」"
+            },
+            "en-us": {
+                "jp_hospital_Opt_Admit": "Get admitted",
+                "jp_hospital_Opt_Admit_placeholder": "\"Certainly, I'll get your admission started.\"",
+                "jp_hospital_Opt_Visit": "Visit a patient",
+                "jp_hospital_Opt_Visit_question": "\"Who are you here to visit?\"",
+                "jp_hospital_Opt_Visit_patientOption": "$name$",
+                "jp_hospital_Opt_Visit_cancel": "Never mind",
+                "jp_hospital_Opt_Visit_placeholder": "\"Alright, I'll register your visit to $patient.name$.\"",
+                "jp_hospital_Opt_Visit_cancelLine": "\"Let me know if you need anything.\"",
+                "jp_hospital_Opt_Discharge": "Request discharge",
+                "jp_hospital_Opt_Discharge_placeholder": "\"Alright, I'll process your discharge.\"",
+                "jp_hospital_Opt_EndVisit": "End visit",
+                "jp_hospital_Opt_EndVisit_placeholder": "\"Alright, your visit registration is cancelled.\""
+            }
+        }
+    }
+}

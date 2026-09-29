@@ -124,12 +124,18 @@ public class RelationshipManager
     }
     public void RefreshMinute1()
     {
+        RefreshMinutes(1);
+    }
+    /// <summary>Tick behavior cooldowns down by several minutes at once (see Character_Trainable.EndDormantState).</summary>
+    public void RefreshMinutes(int minutes)
+    {
+        if (minutes <= 0) return;
         int value = 0;
         foreach (var key in behaviorCooldown.Keys.ToList())
         {
             if (behaviorCooldown.TryGetValue(key, out value) && value > 0)
             {
-                behaviorCooldown[key] = (value - 1);
+                behaviorCooldown[key] = Math.Max(0, value - minutes);
                 //Debug.Log($"{Owner.FirstName} tick behaviorCooldown {key} {value} -> {behaviorCooldown[key]}");
             }
         }

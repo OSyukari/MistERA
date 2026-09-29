@@ -252,22 +252,77 @@ public class TryFindJobByIDNode : FindJobNode
             return true;
         }
         var faction = FindInJobFaction ? currentJobFaction : currentLocaleFaction;
-        if (faction != null)
-        {
-            List<Job_Furniture> possibleJobs = faction.GetValidJobs_Heuristics(
-                Heuristic,
-                1,
-                c,
-                currentHour, filter, comIDOverride: targetID, s: s);
+        return TryAssignFromFaction(c, faction, currentHour, s);
+    }
 
-            if (possibleJobs != null && possibleJobs.Count > 0)
-            {
-                Job job = possibleJobs[0];
-                if (s != null) s.Add($"Changing job to {targetID} " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]"));
-                c.ChangeCurrentJob(job, targetID);
-                return true;
-            }
+    /// <summary>Search faction for the best targetID furniture job and switch the character to it.</summary>
+    protected bool TryAssignFromFaction(Character_Trainable c, I_IsJobGiver faction, int currentHour, List<string> s)
+    {
+        if (faction == null) return false;
+        List<Job_Furniture> possibleJobs = faction.GetValidJobs_Heuristics(
+            Heuristic,
+            1,
+            c,
+            currentHour, filter, comIDOverride: targetID, s: s);
+
+        if (possibleJobs != null && possibleJobs.Count > 0)
+        {
+            Job job = possibleJobs[0];
+            if (s != null) s.Add($"Changing job to {targetID} " + (job == null ? "NULL" : String.Join(",", job.allusableCOMStrings) + $"|{(job == null ? "null" : job.RefID)}| in room [" + job.ParentRoom.DisplayName + "]"));
+            c.ChangeCurrentJob(job, targetID);
+            return true;
         }
+        return false;
+    }
+}
+
+/// <summary>
+/// Sends a character who requireBedRest (labor, post-birth / post-op recovery) to com_furniture_rest_required.
+/// Search order: priority home faction (temp home if set, e.g. hospital patients) if connected to the current
+/// locale, then the current locale faction. Scored by ReproductionUtility.Heuristic_LaborCandidate
+/// (own bed > unowned > private room, beds with sleep preferred).
+/// Sits at the top of the behavior tree (beats locale changes / work) but yields while shouldSleep so the sleep path still runs.
+/// Nothing found -> character keeps normal behavior; natural birth waits until she is resting (ReproductionUtility.CanBirthNow).
+/// </summary>
+public class TryFindBedRestNode : TryFindJobByIDNode
+{
+    public TryFindBedRestNode() : base("com_furniture_rest_required")
+    {
+
+    }
+
+    [JsonIgnore]
+    public override Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> Heuristic
+    {
+        get { return ReproductionUtility.Heuristic_LaborCandidate; }
+    }
+
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        if (!c.requireBedRest) return false;
+        if (c.shouldSleep) return false;
+        if (!initialized)
+        {
+            internalShutdown = scr_System_Serializer.current.MasterList.COMs.GetByID(targetID) == null;
+            initialized = true;
+        }
+        if (internalShutdown) return false;
+        if (c.CurrentJob != null && !resetJob && (c.CurrentJob.hasActivePackge(c.RefID, targetID) || c.CurrentJob.allusableCOM_Contains(targetID) && c.CurrentJob.hasActivePathing(c.RefID)))
+        {
+            return true;
+        }
+
+        var map = scr_System_CampaignManager.current.Map;
+        var currentRoom = map.FindRoomByChara(c.RefID);
+        var home = c.FactionManager.HomeFactions.Count > 0 ? c.FactionManager.HomeFactions[0] : null;
+        if (home != null && home != currentLocaleFaction && currentRoom != null && currentRoom.FactionOwner != null
+            && map.isConnectedFaction(currentRoom.FactionOwner.FactionOwnerRoot, home.FactionOwnerRoot))
+        {
+            if (TryAssignFromFaction(c, home, currentHour, s)) return true;
+        }
+
+        if (TryAssignFromFaction(c, currentLocaleFaction, currentHour, s)) return true;
+        if (s != null) s.Add($"TryFindBedRestNode: {c.FirstName} requires bed rest but found no {targetID}");
         return false;
     }
 }
@@ -378,6 +433,87 @@ public class TryFindNonJobByTagNode : FindJobNode
 
         }
         return false;
+    }
+}
+
+/// <summary>
+/// behavior_job override for hospital nurses (see membertype_jp_hospital_nurse_* in JP_World/Hospital/faction.json).
+/// Replaces the schedule's random workCommand with, in order:
+/// <br/>1. any valid cleaningCOMID job anywhere in the work faction (not just the current / owned rooms);
+/// <br/>2. any valid job-tagged command carrying `tag`, skipping private rooms nobody is assigned to (empty patient rooms).
+/// <br/>Both search the work faction's job posts directly (Manageable.GetValidJobPosts_Heuristics), so the
+/// commands don't need to be in the workModule's workCommands.
+/// </summary>
+public class TryFindNurseJobNode : FindJobNode
+{
+    public string tag = "";
+    public string cleaningCOMID = "com_job_cleaning";
+    public PathfindHeuristic cleaningHeuristic = PathfindHeuristic.closest;
+    public bool excludeUnassignedPrivateRooms = true;
+
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        if (tag == "") tag = filter.matchCOMTag;
+        if (tag == "" && cleaningCOMID == "") return false;
+
+        if (c.CurrentJob != null && !resetJob)
+        {
+            // still doing (or walking to) one of this node's commands - the job may offer other COMs too, so match per COM
+            bool pathing = c.CurrentJob.hasActivePathing(c.RefID);
+            foreach (var com in c.CurrentJob.allusableCOMs)
+            {
+                if (!((cleaningCOMID != "" && com.ID == cleaningCOMID) || (tag != "" && com.comTags.Contains(tag)))) continue;
+                if (pathing || c.CurrentJob.hasActivePackge(c.RefID, com.ID)) return true;
+            }
+        }
+
+        var faction = currentJobFaction as Manageable;
+        if (faction == null) return false;
+
+        if (!c.CanWorkFor(faction, out var reason))
+        {
+            if (s != null) s.Add($"|TryFindNurseJobNode: cannot benefit from {faction.FactionDisplayName} - {reason}|");
+            return false;
+        }
+        if (!c.ShouldWorkFor(faction, out var reason2))
+        {
+            if (s != null) s.Add($"|TryFindNurseJobNode: on strike against {faction.FactionDisplayName} - {reason2}|");
+            return false;
+        }
+
+        if (cleaningCOMID != "")
+        {
+            var cleaning = faction.GetValidJobPosts_Heuristics(FactionUtility.GetHeuristic(cleaningHeuristic), 1, c, filter, comID: cleaningCOMID, s: s);
+            if (cleaning.Count > 0)
+            {
+                var job = cleaning[0];
+                if (s != null) s.Add($"TryFindNurseJobNode: Changing job to [{cleaningCOMID}] |{job.RefID}| in room [{job.ParentRoom.DisplayName}]");
+                c.ChangeCurrentJob(job, cleaningCOMID);
+                return true;
+            }
+        }
+
+        if (tag != "")
+        {
+            var duties = faction.GetValidJobPosts_Heuristics(Heuristic, 1, c, filter, comTag: tag, postFilter: IsAllowedDutyRoom, s: s);
+            if (duties.Count > 0)
+            {
+                var job = duties[0];
+                if (s != null) s.Add($"TryFindNurseJobNode: Changing job to tag [{tag}] " + String.Join(",", job.allusableCOMStrings) + $"|{job.RefID}| in room [{job.ParentRoom.DisplayName}]");
+                c.ChangeCurrentJob(job, "", tag);
+                return true;
+            }
+        }
+
+        if (s != null) s.Add($"TryFindNurseJobNode: {c.FirstName} found no cleaning or [{tag}] job at {faction.FactionDisplayName}");
+        return false;
+    }
+
+    bool IsAllowedDutyRoom(Job_Furniture post, COM com)
+    {
+        if (!excludeUnassignedPrivateRooms || !post.ParentRoom.isRoomPrivate) return true;
+        var roomFaction = post.ParentRoom.FactionOwner as Manageable;
+        return roomFaction != null && roomFaction.RoomOwners(post.ParentRoom.RefID).Count > 0;
     }
 }
 

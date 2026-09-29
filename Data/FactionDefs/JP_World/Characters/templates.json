@@ -1,0 +1,193 @@
+{
+    "_doc_futureBases": "PLANNED: a dozen+ fixed-gender human bases, each with its own portrait handler. When they exist, for jp_generic_adult_male/female: (1) set targetBaseIDs to that gender's base list (one is picked at random; repeat an ID to weight it), (2) REMOVE Appearance, setHeight and setWeight - with Appearance unset the generator keeps each base's own gender, genital sizes, sensitivities and height/weight (setting it would reset them to gender defaults), while heightVariation/weightVariation still apply on top of the base's own size, (3) drop jp_generic_adult_base. Portraits need no generator work: the generated copy carries its base's Portrait, and BaseID stays the picked base (only baseTemplateID becomes the generator), so PortraitManager.ResetPortraits still resolves the right base. Role generators need no change. PARTIAL: female hospital staff already use this pattern via jp_hospital_doctor_female/jp_hospital_nurse_female (role-specific, so a doctor never gets a nurse portrait).",
+    "_doc": "Generic modern-Japan NPC generators. jp_generic_adult_male/female randomize name (Japanese, family name first), stats and size, and roll sexual history (collections live in the nsfw file next to this one - in safe mode they are simply not found and skipped). Role generators (doctor/nurse/clerk) omit Appearance so they keep the gender of whichever generic generator they pick; the gender ratio is set by repeating IDs in targetBaseIDs. Roles are classified by the generator (title/baseTemplateID) only - no profession experience yet.",
+
+    "Character_Bases":
+    {
+        "generators":[
+            {
+                "ID": "jp_generic_adult_male",
+                "targetBaseIDs": ["jp_generic_adult_base"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 172,
+                "setWeight": 66,
+                "heightVariation": 7,
+                "weightVariation": 8,
+                "basicExperienceOverride": ["exp_collection_boy_hetero"]
+            },
+            {
+                "ID": "jp_generic_adult_female",
+                "targetBaseIDs": ["jp_generic_adult_base"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Female",
+                "setHeight": 158,
+                "setWeight": 52,
+                "heightVariation": 6,
+                "weightVariation": 6,
+                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+            },
+            {
+                "ID": "jp_hospital_doctor_female",
+                "_comment": "Same randomization as jp_generic_adult_female, but picks a portrait base from Hospital/Characters. No Appearance/setHeight/setWeight - the bases carry their own.",
+                "targetBaseIDs": ["jp_hospital_doctor_02", "jp_hospital_doctor_14", "jp_hospital_doctor_16", "jp_hospital_doctor_18", "jp_hospital_doctor_20",
+                                  "jp_hospital_doctor_22", "jp_hospital_doctor_24", "jp_hospital_doctor_26", "jp_hospital_doctor_28", "jp_hospital_doctor_30",
+                                  "jp_hospital_doctor_32", "jp_hospital_doctor_34", "jp_hospital_doctor_36", "jp_hospital_doctor_38", "jp_hospital_doctor_40",
+                                  "jp_hospital_doctor_42", "jp_hospital_doctor_44", "jp_hospital_doctor_48", "jp_hospital_doctor_54", "jp_hospital_doctor_56"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "heightVariation": 6,
+                "weightVariation": 6,
+                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+            },
+            {
+                "ID": "jp_hospital_nurse_female",
+                "_comment": "Same randomization as jp_generic_adult_female, but picks a portrait base from Hospital/Characters. No Appearance/setHeight/setWeight - the bases carry their own.",
+                "targetBaseIDs": ["jp_hospital_nurse_54", "jp_hospital_nurse_56", "jp_hospital_nurse_58", "jp_hospital_nurse_60", "jp_hospital_nurse_62",
+                                  "jp_hospital_nurse_64", "jp_hospital_nurse_66", "jp_hospital_nurse_68", "jp_hospital_nurse_70", "jp_hospital_nurse_72",
+                                  "jp_hospital_nurse_74", "jp_hospital_nurse_76", "jp_hospital_nurse_82", "jp_hospital_nurse_84", "jp_hospital_nurse_86",
+                                  "jp_hospital_nurse_88", "jp_hospital_nurse_90", "jp_hospital_nurse_92", "jp_hospital_nurse_94", "jp_hospital_nurse_96",
+                                  "jp_hospital_nurse_98", "jp_hospital_nurse_100", "jp_hospital_nurse_102", "jp_hospital_nurse_104"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "heightVariation": 6,
+                "weightVariation": 6,
+                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+            },
+            {
+                "ID": "jp_hospital_doctor",
+                "_comment": "TEMP 100% female until male portrait bases exist. Intended 3:1 male:female (Japan ~23% female doctors): add jp_generic_adult_male x3 back.",
+                "title": "jp_hospital_doctor_title",
+                "targetBaseIDs": ["jp_hospital_doctor_female"],
+                "_comment_inventory": "Surgery outfit (items in JP_World/Hospital/items.json). Only the outermost generator's inventoryOverride survives, so uniforms live here, not on the *_female generators. Underwear is nsfw-only and is skipped in safe mode.",
+                "inventoryOverride": [
+                    { "ID": "clothing_skin_bra" },
+                    { "ID": "clothing_skin_panty" },
+                    { "ID": "clothing_skin_socks" },
+                    { "ID": "clothing_jp_hospital_scrubs_top" },
+                    { "ID": "clothing_jp_hospital_scrubs_pants" },
+                    { "ID": "clothing_jp_hospital_surgical_gown" },
+                    { "ID": "clothing_jp_hospital_surgical_mask" },
+                    { "ID": "clothing_jp_hospital_sterile_gloves" },
+                    { "ID": "clothing_inner_shoes" }
+                ],
+                "experienceOverride": ["exp_collection_jp_hobbies"]
+            },
+            {
+                "ID": "jp_hospital_nurse",
+                "_comment": "TEMP 100% female until male portrait bases exist. Intended 1:9 male:female (Japan ~92% female nurses): add jp_generic_adult_male x1 and repeat jp_hospital_nurse_female x9.",
+                "title": "jp_hospital_nurse_title",
+                "targetBaseIDs": ["jp_hospital_nurse_female"],
+                "_comment_inventory": "Nurse uniform (items in JP_World/Hospital/items.json). Underwear and stockings are nsfw-only and are skipped in safe mode.",
+                "inventoryOverride": [
+                    { "ID": "clothing_skin_bra" },
+                    { "ID": "clothing_skin_panty" },
+                    { "ID": "clothing_skin_stocking" },
+                    { "ID": "clothing_jp_hospital_nurse_dress" },
+                    { "ID": "clothing_jp_hospital_nurse_cap" },
+                    { "ID": "clothing_jp_hospital_nurse_shoes" }
+                ],
+                "experienceOverride": ["exp_collection_jp_hobbies"]
+            },
+            {
+                "ID": "jp_store_clerk_female",
+                "_comment": "Same randomization as jp_generic_adult_female, but picks a portrait base from ShoppingStreet/Characters. No Appearance/setHeight/setWeight - the bases carry their own.",
+                "targetBaseIDs": ["jp_store_clerk_02", "jp_store_clerk_06", "jp_store_clerk_10", "jp_store_clerk_14",
+                                  "jp_store_clerk_28", "jp_store_clerk_34", "jp_store_clerk_36", "jp_store_clerk_44",
+                                  "jp_store_clerk_52", "jp_store_clerk_64", "jp_store_clerk_68", "jp_store_clerk_70",
+                                  "jp_store_clerk_72", "jp_store_clerk_73", "jp_store_clerk_76", "jp_store_clerk_77",
+                                  "jp_store_clerk_79"],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "heightVariation": 6,
+                "weightVariation": 6,
+                "basicExperienceOverride": ["exp_collection_girl_hetero"]
+            },
+            {
+                "ID": "jp_store_clerk",
+                "_comment": "General shop clerk for any store (SunMart, mall shops etc.). TEMP 100% female until male portrait bases exist. Intended 1:1 male:female: add jp_generic_adult_male back.",
+                "title": "jp_store_clerk_title",
+                "targetBaseIDs": ["jp_store_clerk_female"],
+                "_comment_inventory": "Striped short-sleeve store uniform (item in JP_World/ShoppingStreet/items.json) over a plain skirt; portraits vary between skirts and shorts. Underwear is nsfw-only and is skipped in safe mode.",
+                "inventoryOverride": [
+                    { "ID": "clothing_skin_bra" },
+                    { "ID": "clothing_skin_panty" },
+                    { "ID": "clothing_skin_socks" },
+                    { "ID": "clothing_jp_store_uniform" },
+                    { "ID": "clothing_inner_skirt" },
+                    { "ID": "clothing_inner_shoes" }
+                ],
+                "experienceOverride": ["exp_collection_jp_hobbies"]
+            }
+        ]
+    },
+
+    "Experiences": {
+        "exp_initializers": [
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_jp_hobbies",
+                "_comment": "Everyday hobbies, each rolled independently (selectEach = percent chance). SFW, existing experiences only.",
+                "randActor": [],
+                "selectOne": {},
+                "selectEach": {
+                    "specific_exp_hobby_cooking": 35,
+                    "specific_exp_hobby_gaming": 35,
+                    "specific_exp_hobby_socializing": 40,
+                    "specific_exp_hobby_gardening": 15
+                }
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "specific_exp_hobby_cooking",
+                "_comment": "Cooks at home.",
+                "experienceEntries": [ { "experienceID": "experience_cooking", "minAmount": 10, "maxAmount": 30 } ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "specific_exp_hobby_gaming",
+                "_comment": "Plays video games / drives (operating covers driving, remote control, gaming).",
+                "experienceEntries": [ { "experienceID": "experience_operating", "minAmount": 10, "maxAmount": 30 } ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "specific_exp_hobby_socializing",
+                "_comment": "Goes out with friends often.",
+                "experienceEntries": [ { "experienceID": "experience_social", "minAmount": 10, "maxAmount": 30 } ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "specific_exp_hobby_gardening",
+                "_comment": "Keeps a small balcony/home garden.",
+                "experienceEntries": [ { "experienceID": "experience_farming", "minAmount": 10, "maxAmount": 30 } ],
+                "firstExperienceEntries": []
+            }
+        ],
+        "exp_initializers_actor": []
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_hospital_doctor_title": "医生",
+                "jp_hospital_nurse_title": "护士",
+                "jp_store_clerk_title": "店员"
+            },
+            "en-us": {
+                "jp_hospital_doctor_title": "Doctor",
+                "jp_hospital_nurse_title": "Nurse",
+                "jp_store_clerk_title": "Store Clerk"
+            }
+        }
+    }
+}

@@ -522,6 +522,17 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (logging) tooltip.Add(tooltipsInv);
             return -1;
         }
+        if (requirements.requirement.HasActorFactionReq)
+        {
+            foreach (var actor in requirements.TreatReceiverAsDoer ? doerRefIDs.Concat(receiverRefIDs) : doerRefIDs)
+            {
+                if (!requirements.requirement.ValidateActorFaction(sourceJob, actor, out var tooltipsFaction))
+                {
+                    if (logging) tooltip.Add(tooltipsFaction);
+                    return -1;
+                }
+            }
+        }
         if (!requirements.requireExisting.ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
         {
             return -2;

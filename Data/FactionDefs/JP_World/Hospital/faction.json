@@ -1,0 +1,906 @@
+{
+    "_doc": "Modern Japanese general hospital. No floor plan is provided: every room is hideOnMap with no offsetX/offsetY, so the building only exists as the room list + the connects graph below. Room-to-room travel is abstracted as a hub-and-spoke layout with approximate walking minutes as door cost (Door_Instance cost = ticks spent on that hop, see ActionPackage_PathTo). Abstract layout: 1F outpatient lobby (reception + waiting, also the world-map exit) with triage and the pharmacy counter just off it; the inpatient ward is upstairs, reached by elevator into the ward's visitor lounge, which fronts the patient-room corridor. Patient rooms are numbered 301/302/303/305 - Japanese hospitals conventionally skip 4 (shi = death).",
+    "_doc_sandboxing": "Staff sandbox by workModule.workCommands: each finished command picks a new random one, and each command is only offered by furniture in one room type, so staff drift between rooms (convenience store / high school pattern). Every hospital command carries a role tag (jp_hospital_doctor / _nurse / _pharmacy / _frontdesk / _visitor / _patient) for tag-matching behavior nodes. Pharmacy and front desk staff have a single workCommand each, so they stay in their room all shift; nurses do not sandbox by workCommands at all - their behavior_job override (TryFindNurseJobNode) picks hospital-wide cleaning first, then any jp_hospital_nurse command outside empty patient rooms. Patient/visitor commands are non-job (no 'job' tag) so their behavior_job override (TryFindNonJobByTagNode) can find them by tag. Hospital commands deliberately avoid the generic 'bed'/'rest'/'recreation' tags so they are never picked up by other furniture's comTags givers or the generic rest/recreation searches.",
+    "_doc_pay": "Hourly pay approximates 2025 MHLW wage census averages (nurse ~5.25M JPY/yr over ~1920h, salaried doctor ~15.12M JPY/yr over ~2520h), plus the 25% legal late-night premium for 22:00-05:00, 35% holiday premium for weekend doctors, and JNA 2024 3-shift night allowances (evening 4567 / overnight 5715 JPY per shift) spread over 8h.",
+
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "jp_hospital",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_hospital",
+                "setPrivateRoomOwner": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "hospital owns its own building outright",
+                "mainExit": { "roomID": "hospital_1F_entrance", "exitCost": 5 },
+                "floors": [
+                    { "ID": "floor_jp_hospital", "nameOverwrite": "jp_hospital" }
+                ],
+                "_comment_meals": "Non-player faction: mealHours stay fixed (only player factions clear them daily and rebuild them via com_furniture_mealPrep, see Manageable.OnDayUpdate_0 / ActionPackage beginMealPrep). Taking an item from a non-player faction's inventory hands out a fresh copy without depleting stock (Inventory.RemoveItem), so a single meal item is enough. Meals are served by furniture_marker_getmeal in the patient rooms.",
+                "mealHours": [7, 12, 18],
+                "initializers": [
+                    {
+                        "initClass": "campaign_init_factionInventory",
+                        "initArguments": ["jp_hospital", "consumable_jp_hospital_meal", "", "1"]
+                    }
+                ],
+                "salesCurrency": "currency_JPY",
+                "_comment_salesInventory": "sold over the pharmacy counter (furniture_marker_jp_hospital_pharmacy_counter in hospital_pharmacy)",
+                "salesInventory": [
+                    {
+                        "matchByTags": [
+                            "medicine",
+                            "rarity_common"
+                        ]
+                    },
+                    {
+                        "matchByID": "consumable_drug_sleepingpill",
+                        "nameOverwrite": "jp_hospital_sleepingpills_14pack",
+                        "itemCount": 14,
+                        "countOverride": true
+                    }
+                ],
+                "workModules": [],
+                "managerBaseIDs": [""],
+                "assignableMemberTypes": [
+                    "membertype_jp_hospital_doctor_day",
+                    "membertype_jp_hospital_doctor_weekend",
+                    "membertype_jp_hospital_doctor_evening",
+                    "membertype_jp_hospital_doctor_night",
+                    "membertype_jp_hospital_nurse_day",
+                    "membertype_jp_hospital_nurse_evening",
+                    "membertype_jp_hospital_nurse_night",
+                    "membertype_jp_hospital_pharmacy_day",
+                    "membertype_jp_hospital_pharmacy_evening",
+                    "membertype_jp_hospital_pharmacy_night",
+                    "membertype_jp_hospital_frontdesk_day",
+                    "membertype_jp_hospital_frontdesk_evening",
+                    "membertype_jp_hospital_frontdesk_night"
+                ],
+                "_comment_fallbackWorkers": "Per-shift staffing: headcount = total wanted on shift, maxFallback = most fallback workers used. templateIDs = CharaTemplateGenerators from JP_World/Characters/templates.json. Each fallback worker is generated for exactly one of these memberTypeIDs and stays pinned to it (Manageable_WorkerPool.assignedMemberTypes). Pharmacy/front desk reuse the nurse template until dedicated clerk portrait bases exist.",
+                "fallbackWorkers": [
+                    { "memberTypeID": "membertype_jp_hospital_doctor_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_doctor_weekend", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_doctor_evening", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_doctor_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
+                    { "memberTypeID": "membertype_jp_hospital_nurse_day", "headcount": 2, "maxFallback": 2, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_nurse_evening", "headcount": 2, "maxFallback": 2, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_nurse_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_pharmacy_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_pharmacy_evening", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_pharmacy_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_frontdesk_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_frontdesk_evening", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_frontdesk_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" }
+                ],
+                "workHours": [],
+                "workAssignment": []
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_hospital",
+                "_comment_imagePath": "PLACEHOLDER - Floor_Base.OnAfterDeserialize marks a floor invalid when imagePath is empty, so this must stay non-empty. Point it at the hospital exterior image once it exists. No room is drawn on it (all hideOnMap). All room images below are also placeholders borrowed from BA_Utnapishtim/Media_UI_Scenario_Background, to be replaced with generated assets.",
+                "imagePath": "Media_UI_Scenario_Background/BG_Infirmary.jpg",
+                "_comment_isFloorPlan": "false = imagePath is a straight background image (canvas_RoomDisplay.bgpicture), not a floor plan, so no room coordinates are needed.",
+                "isFloorPlan": false,
+                "floorWidth": 400.0,
+                "floorHeight": 400.0,
+                "resize": 1.0,
+                "mapExit": "hospital_1F_entrance",
+                "_comment_wholeBuildingRent": "hospital owns the building (isRentingFloor:false), so only maintenanceFee applies; NPC faction, never actually charged in practice",
+                "wholeBuildingRent": {
+                    "maintenanceFee": { "itemID": "currency_JPY", "itemCount": 500000 },
+                    "rentFee": { "itemID": "currency_JPY", "itemCount": 2000000 },
+                    "cadence": "Monthly"
+                },
+                "_comment_travel": "Approximate walking minutes per hop. lobby->triage 1, lobby->pharmacy 1, lobby->ward lounge 3 (walk to elevator + ride + walk out), triage->ward lounge 3 (staff/bed elevator used when admitting), lounge->301/302 1, lounge->303/305 2 (further down the corridor), neighbouring patient rooms 1. Worst case entrance->305 = 5 min, well under the 99 total-path-cost cap.",
+                "_comment_patientRooms": "furniture_bed_hospital's ID contains 'furniture_bed', which makes each patient room private (Room_Instance.isRoomPrivate). Staff commands offered there set allowInPrivateRoom so staff still reach them.",
+                "rooms": [
+                    {
+                        "ID": "hospital_1F_entrance",
+                        "displayName": "jp_hospital_reception",
+                        "hideOnMap": true,
+                        "connects": [],
+                        "furnitureIDs": ["furniture_jp_hospital_reception_counter", "furniture_jp_hospital_waiting_bench"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_ReceptionRoom.jpg"
+                    },
+                    {
+                        "ID": "hospital_triage",
+                        "displayName": "jp_hospital_triage",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "hospital_1F_entrance", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": ["furniture_jp_hospital_exam_desk"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_Infirmary.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Infirmary_Night.jpg"
+                    },
+                    {
+                        "ID": "hospital_pharmacy",
+                        "displayName": "jp_hospital_pharmacy",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "hospital_1F_entrance", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": ["furniture_marker_jp_hospital_pharmacy_counter"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_Shop.jpg"
+                    },
+                    {
+                        "ID": "hospital_visitor_waiting",
+                        "displayName": "jp_hospital_visitor_waiting",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "hospital_1F_entrance", "cost": 3.0 },
+                            { "ID": "hospital_triage", "cost": 3.0 }
+                        ],
+                        "furnitureIDs": ["furniture_jp_hospital_waiting_bench", "furniture_jp_hospital_waiting_bench"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_RestingLounge.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RestingLounge_Night.jpg"
+                    },
+                    {
+                        "ID": "hospital_patient_room_301",
+                        "displayName": "jp_hospital_patient_room_301",
+                        "requireFactionMembership": true,
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "hospital_visitor_waiting", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
+                    },
+                    {
+                        "ID": "hospital_patient_room_302",
+                        "displayName": "jp_hospital_patient_room_302",
+                        "requireFactionMembership": true,
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "hospital_visitor_waiting", "cost": 1.0 },
+                            { "ID": "hospital_patient_room_301", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
+                    },
+                    {
+                        "ID": "hospital_patient_room_303",
+                        "displayName": "jp_hospital_patient_room_303",
+                        "requireFactionMembership": true,
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "hospital_visitor_waiting", "cost": 2.0 },
+                            { "ID": "hospital_patient_room_302", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
+                    },
+                    {
+                        "ID": "hospital_patient_room_305",
+                        "displayName": "jp_hospital_patient_room_305",
+                        "requireFactionMembership": true,
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "hospital_visitor_waiting", "cost": 2.0 },
+                            { "ID": "hospital_patient_room_303", "cost": 1.0 }
+                        ],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
+                    }
+                ]
+            }
+        ],
+        "memberTypes": [
+            {
+                "ID": "membertype_jp_hospital_doctor_day",
+                "socialStandingKey": "membertype_jp_hospital_doctor_day",
+                "portraitTags": ["jp_hospital_staff", "doctor"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "_comment_behaviorOverrides": "behavior_job override to be authored later; until then the default TryFindScheduledJobNode dispatches workCommands.",
+                "workModule": {
+                    "jobPostID": "jp_hospital_doctor_day",
+                    "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15],
+                    "activeDays": [1, 1, 1, 1, 1, 0, 0],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 6000 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_doctor_weekend",
+                "socialStandingKey": "membertype_jp_hospital_doctor_weekend",
+                "portraitTags": ["jp_hospital_staff", "doctor"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_doctor_weekend",
+                    "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15],
+                    "activeDays": [0, 0, 0, 0, 0, 1, 1],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 8100 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_doctor_evening",
+                "socialStandingKey": "membertype_jp_hospital_doctor_evening",
+                "portraitTags": ["jp_hospital_staff", "doctor"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_doctor_evening",
+                    "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                    "activeHours": [16, 17, 18, 19, 20, 21, 22, 23],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 6400 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_doctor_night",
+                "socialStandingKey": "membertype_jp_hospital_doctor_night",
+                "portraitTags": ["jp_hospital_staff", "doctor"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_doctor_night",
+                    "workCommands": ["jp_hospital_triage_exam", "jp_hospital_ward_round"],
+                    "activeHours": [0, 1, 2, 3, 4, 5, 6, 7],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 6900 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_nurse_day",
+                "socialStandingKey": "membertype_jp_hospital_nurse_day",
+                "portraitTags": ["jp_hospital_staff", "nurse"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "_comment_behaviorOverrides": "TryFindNurseJobNode replaces the schedule's random workCommand: first any cleaning job anywhere in the hospital, then any job-tagged jp_hospital_nurse command, skipping private rooms with no assigned owner (empty patient rooms). workCommands stay listed for documentation / the shift schedule only.",
+                "behaviorOverrides": {
+                    "behavior_job": {
+                        "$type": "TryFindNurseJobNode, Assembly-CSharp",
+                        "tag": "jp_hospital_nurse",
+                        "cleaningCOMID": "com_job_cleaning",
+                        "cleaningHeuristic": "closest",
+                        "excludeUnassignedPrivateRooms": true,
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": true,
+                            "searchNonJobList": false,
+                            "excludePrisonRooms": true
+                        }
+                    }
+                },
+                "workModule": {
+                    "jobPostID": "jp_hospital_nurse_day",
+                    "workCommands": ["jp_hospital_triage_assist", "jp_hospital_patient_care"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 2500 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_nurse_evening",
+                "socialStandingKey": "membertype_jp_hospital_nurse_evening",
+                "portraitTags": ["jp_hospital_staff", "nurse"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "_comment_behaviorOverrides": "TryFindNurseJobNode replaces the schedule's random workCommand: first any cleaning job anywhere in the hospital, then any job-tagged jp_hospital_nurse command, skipping private rooms with no assigned owner (empty patient rooms). workCommands stay listed for documentation / the shift schedule only.",
+                "behaviorOverrides": {
+                    "behavior_job": {
+                        "$type": "TryFindNurseJobNode, Assembly-CSharp",
+                        "tag": "jp_hospital_nurse",
+                        "cleaningCOMID": "com_job_cleaning",
+                        "cleaningHeuristic": "closest",
+                        "excludeUnassignedPrivateRooms": true,
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": true,
+                            "searchNonJobList": false,
+                            "excludePrisonRooms": true
+                        }
+                    }
+                },
+                "workModule": {
+                    "jobPostID": "jp_hospital_nurse_evening",
+                    "workCommands": ["jp_hospital_triage_assist", "jp_hospital_patient_care"],
+                    "activeHours": [16, 17, 18, 19, 20, 21, 22, 23],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 3200 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_nurse_night",
+                "socialStandingKey": "membertype_jp_hospital_nurse_night",
+                "portraitTags": ["jp_hospital_staff", "nurse"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "_comment_behaviorOverrides": "TryFindNurseJobNode replaces the schedule's random workCommand: first any cleaning job anywhere in the hospital, then any job-tagged jp_hospital_nurse command, skipping private rooms with no assigned owner (empty patient rooms). workCommands stay listed for documentation / the shift schedule only.",
+                "behaviorOverrides": {
+                    "behavior_job": {
+                        "$type": "TryFindNurseJobNode, Assembly-CSharp",
+                        "tag": "jp_hospital_nurse",
+                        "cleaningCOMID": "com_job_cleaning",
+                        "cleaningHeuristic": "closest",
+                        "excludeUnassignedPrivateRooms": true,
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": true,
+                            "searchNonJobList": false,
+                            "excludePrisonRooms": true
+                        }
+                    }
+                },
+                "workModule": {
+                    "jobPostID": "jp_hospital_nurse_night",
+                    "workCommands": ["jp_hospital_triage_assist", "jp_hospital_patient_care"],
+                    "activeHours": [0, 1, 2, 3, 4, 5, 6, 7],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 3600 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_pharmacy_day",
+                "socialStandingKey": "membertype_jp_hospital_pharmacy_day",
+                "portraitTags": ["jp_hospital_staff", "pharmacy_clerk"],
+                "_comment": "Pharmacy clerk: single workCommand, so they never leave the pharmacy counter during their shift.",
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_pharmacy_day",
+                    "workCommands": ["jp_hospital_pharmacy_dispense"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_pharmacy_evening",
+                "socialStandingKey": "membertype_jp_hospital_pharmacy_evening",
+                "portraitTags": ["jp_hospital_staff", "pharmacy_clerk"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_pharmacy_evening",
+                    "workCommands": ["jp_hospital_pharmacy_dispense"],
+                    "activeHours": [16, 17, 18, 19, 20, 21, 22, 23],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1400 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_pharmacy_night",
+                "socialStandingKey": "membertype_jp_hospital_pharmacy_night",
+                "portraitTags": ["jp_hospital_staff", "pharmacy_clerk"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_pharmacy_night",
+                    "workCommands": ["jp_hospital_pharmacy_dispense"],
+                    "activeHours": [0, 1, 2, 3, 4, 5, 6, 7],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1625 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_frontdesk_day",
+                "socialStandingKey": "membertype_jp_hospital_frontdesk_day",
+                "portraitTags": ["jp_hospital_staff", "receptionist"],
+                "_comment": "Front desk: single workCommand, so they never leave reception during their shift.",
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_frontdesk_day",
+                    "workCommands": ["jp_hospital_reception_duty"],
+                    "activeHours": [8, 9, 10, 11, 12, 13, 14, 15],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_frontdesk_evening",
+                "socialStandingKey": "membertype_jp_hospital_frontdesk_evening",
+                "portraitTags": ["jp_hospital_staff", "receptionist"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_frontdesk_evening",
+                    "workCommands": ["jp_hospital_reception_duty"],
+                    "activeHours": [16, 17, 18, 19, 20, 21, 22, 23],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1400 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_frontdesk_night",
+                "socialStandingKey": "membertype_jp_hospital_frontdesk_night",
+                "portraitTags": ["jp_hospital_staff", "receptionist"],
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "workModule": {
+                    "jobPostID": "jp_hospital_frontdesk_night",
+                    "workCommands": ["jp_hospital_reception_duty"],
+                    "activeHours": [0, 1, 2, 3, 4, 5, 6, 7],
+                    "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1625 } ],
+                    "paymentCadence": "Monthly"
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_patient",
+                "socialStandingKey": "membertype_jp_hospital_patient",
+                "portraitTags": ["hospital_patient"],
+                "_comment": "Assigned as a TEMP home faction on admission. initiallyForbidWork keeps the patient from leaving for their work factions while the hospital is their priority home. No workModule: the hospital is their active faction by being their priority home.",
+                "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": false,
+                "initiallyForbidWork": true,
+                "behaviorOverrides": {
+                    "behavior_job": {
+                        "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "tag": "jp_hospital_patient",
+                        "evaluationHeuristic": "ownership_Medium",
+                        "filter": {
+                            "matchCOMTag": "jp_hospital_patient",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true,
+                            "excludePrisonRooms": true
+                        }
+                    }
+                }
+            },
+            {
+                "ID": "membertype_jp_hospital_visitor",
+                "socialStandingKey": "membertype_jp_hospital_visitor",
+                "_comment": "Assigned as a WORK faction. The command-less workModule makes the hospital the visitor's active faction during visiting hours (brings them here via TryChangeLocaleNode); behavior_job then waits on a bench.",
+                "isMember": false, "isPrisoner": false, "isManager": false, "isHidden": false,
+                "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
+                "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": false,
+                "workModule": {
+                    "jobPostID": "jp_hospital_visiting",
+                    "workCommands": [],
+                    "activeHours": [13, 14, 15, 16, 17, 18, 19]
+                },
+                "behaviorOverrides": {
+                    "behavior_job": {
+                        "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
+                        "tag": "jp_hospital_visitor",
+                        "evaluationHeuristic": "random",
+                        "filter": {
+                            "matchCOMTag": "jp_hospital_visitor",
+                            "checkBlacklist": true,
+                            "skipPrivateRoom": true,
+                            "searchJobList": false,
+                            "searchNonJobList": true,
+                            "excludePrisonRooms": true
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "Furnitures":
+    {
+        "list":
+        [
+            {
+                "ID":"furniture_marker_jp_hospital_pharmacy_counter",
+                "displayName":"jp_hospital_pharmacy_counter",
+                "recipe":[],
+                "furnitureSize":2,
+                "value":50000,
+                "Tags":[],
+                "givesJob": [ { "comID":["jp_hospital_pharmacy_dispense"] },
+                              { "comTags":["furniture","retailTrade"] } ]
+            },
+            {
+                "ID":"furniture_jp_hospital_reception_counter",
+                "displayName":"jp_hospital_reception_counter",
+                "recipe":[],
+                "furnitureSize":2,
+                "value":60000,
+                "Tags":[],
+                "givesJob": [ { "comID":["jp_hospital_reception_duty"] } ]
+            },
+            {
+                "ID":"furniture_jp_hospital_waiting_bench",
+                "displayName":"jp_hospital_waiting_bench",
+                "recipe":[],
+                "furnitureSize":3,
+                "value":30000,
+                "Tags":[],
+                "givesJob": [ { "comID":["jp_hospital_visitor_wait"] } ]
+            },
+            {
+                "ID":"furniture_jp_hospital_exam_desk",
+                "displayName":"jp_hospital_exam_desk",
+                "recipe":[],
+                "furnitureSize":2,
+                "value":150000,
+                "Tags":[],
+                "givesJob": [ { "comID":["jp_hospital_triage_exam", "jp_hospital_triage_assist"] } ]
+            },
+            {
+                "ID":"furniture_bed_hospital",
+                "_comment":"ID must contain 'furniture_bed' so the room counts as private. Offers the generic sleep command, the patient-only bed rest, and the generic com_furniture_rest_required (labor / recovery) - deliberately NOT the generic comTags [furniture, bed] set.",
+                "displayName":"jp_hospital_bed",
+                "recipe":[],
+                "furnitureSize":2,
+                "value":300000,
+                "Tags":[],
+                "givesJob": [ { "comID":["com_furniture_sleep", "jp_hospital_bed_rest", "com_furniture_rest_required"] } ]
+            },
+            {
+                "ID":"furniture_jp_hospital_bedside_cart",
+                "displayName":"jp_hospital_bedside_cart",
+                "recipe":[],
+                "furnitureSize":1,
+                "value":80000,
+                "Tags":[],
+                "givesJob": [ { "comID":["jp_hospital_ward_round", "jp_hospital_patient_care"] } ]
+            }
+        ]
+    },
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"jp_hospital_reception_duty",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_reception_duty_displayName",
+                "timeScale":60,
+                "comTags":["job","furniture","jp_hospital","jp_hospital_frontdesk"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } },
+                        "displayName": "jp_hospital_reception_duty_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$在挂号处开始接待"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在挂号处接待患者"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$离开了挂号处"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了挂号处的工作"] } ] }
+            },
+            {
+                "ID":"jp_hospital_triage_exam",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_triage_exam_displayName",
+                "timeScale":45,
+                "comTags":["job","furniture","jp_hospital","jp_hospital_doctor"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 8 } } },
+                        "displayName": "jp_hospital_triage_exam_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始在分诊室诊察"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在分诊室诊察患者"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了诊察"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了诊察"] } ] }
+            },
+            {
+                "ID":"jp_hospital_triage_assist",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_triage_assist_displayName",
+                "timeScale":45,
+                "comTags":["job","furniture","jp_hospital","jp_hospital_nurse"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } },
+                        "displayName": "jp_hospital_triage_assist_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始在分诊室协助"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在分诊室为患者测量体征"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了分诊协助"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了分诊协助"] } ] }
+            },
+            {
+                "ID":"jp_hospital_pharmacy_dispense",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_pharmacy_dispense_displayName",
+                "timeScale":60,
+                "comTags":["job","furniture","jp_hospital","jp_hospital_pharmacy"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 6 } } },
+                        "displayName": "jp_hospital_pharmacy_dispense_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始在药房配药"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在药房配药"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了配药"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了配药"] } ] }
+            },
+            {
+                "ID":"jp_hospital_ward_round",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_ward_round_displayName",
+                "timeScale":30,
+                "allowInPrivateRoom": true,
+                "comTags":["job","furniture","jp_hospital","jp_hospital_doctor"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } },
+                        "displayName": "jp_hospital_ward_round_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始查房"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在查房"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$中断了查房"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$查房结束"] } ] }
+            },
+            {
+                "ID":"jp_hospital_patient_care",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_patient_care_displayName",
+                "timeScale":45,
+                "allowInPrivateRoom": true,
+                "comTags":["job","furniture","jp_hospital","jp_hospital_nurse"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 6 } } },
+                        "displayName": "jp_hospital_patient_care_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始护理病房"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在病房护理"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了护理"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了病房护理"] } ] }
+            },
+            {
+                "ID":"jp_hospital_visitor_wait",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_visitor_wait_displayName",
+                "_comment":"One command = 2 hours of waiting. Non-job so the visitor's behavior_job override (TryFindNonJobByTagNode) finds it by the jp_hospital_visitor tag.",
+                "timeScale":120,
+                "comTags":["furniture","jp_hospital","jp_hospital_visitor"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "jp_hospital_visitor_wait_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$在长椅上坐下等候"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在等候"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$起身不再等候"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了等候"] } ] }
+            },
+            {
+                "ID":"jp_hospital_bed_rest",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_hospital_bed_rest_displayName",
+                "_comment":"One command = 2 hours of bed rest, modeled on com_furniture_takingLongBreak. requireHomeFaction limits it to characters whose priority home is the hospital (patients). No generic 'bed'/'rest' tags on purpose.",
+                "timeScale":120,
+                "comTags":["furniture","jp_hospital","jp_hospital_patient"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireHomeFaction": true } },
+                "results_EP": {
+                    "results_character": [
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } },
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_EN", "value": "15" } },
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_HP", "value": "1" } }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "jp_hospital_bed_rest_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$躺在病床上静养"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在病床上静养"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$从病床上起身"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了静养"] } ] }
+            }
+        ]
+    },
+
+    "Items":
+    {
+        "list": [
+            {
+                "id": "consumable_jp_hospital_meal",
+                "displayName": "Hospital Meal",
+                "tooltip": "hospital meal",
+                "_comment": "Hospital meal tray. Deliberately no ItemComponent_Degradable (so it never spoils out of the hospital's one-item stock) and no 'industrial' tag (so shops matching industrial consumables don't sell it).",
+                "Tags": ["food_meal", "consumable", "rarity_common", "do_not_sell"],
+                "value": 400,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "ingestMethod": [
+                                {
+                                    "bodyTags": "stomach",
+                                    "digestSpeed": -1,
+                                    "digestDelay": 30,
+                                    "digestDelayVariation": 10,
+                                    "amountMod": 8
+                                }
+                            ],
+                            "amount": 5,
+                            "OnUseEffects": [
+                                { "effectID": "ModStatValuePercent", "arguments": ["stats_derived_extended_energy", "0.3"] },
+                                { "effectID": "ModStatValuePercent", "arguments": ["stats_derived_extended_stamina", "0.2"] }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_hospital":"医院",
+
+                "consumable_jp_hospital_meal": "病号餐",
+                "consumable_jp_hospital_meal_tooltip": "医院配给的营养均衡的餐食",
+                "jp_hospital_reception": "医院挂号处·候诊大厅",
+                "jp_hospital_triage": "分诊室",
+                "jp_hospital_pharmacy": "药房",
+                "jp_hospital_pharmacy_counter": "药房柜台",
+                "jp_hospital_visitor_waiting": "探视等候室",
+                "jp_hospital_patient_room_301": "301病房",
+                "jp_hospital_patient_room_302": "302病房",
+                "jp_hospital_patient_room_303": "303病房",
+                "jp_hospital_patient_room_305": "305病房",
+                "jp_hospital_sleepingpills_14pack": "处方安眠药(14片装)",
+
+                "jp_hospital_reception_counter": "挂号柜台",
+                "jp_hospital_waiting_bench": "候诊长椅",
+                "jp_hospital_exam_desk": "诊察台",
+                "jp_hospital_bed": "病床",
+                "jp_hospital_bedside_cart": "床边医疗推车",
+
+                "jp_hospital_reception_duty_displayName": "挂号接待",
+                "jp_hospital_triage_exam_displayName": "分诊诊察",
+                "jp_hospital_triage_assist_displayName": "分诊协助",
+                "jp_hospital_pharmacy_dispense_displayName": "配药",
+                "jp_hospital_ward_round_displayName": "查房",
+                "jp_hospital_patient_care_displayName": "病房护理",
+                "jp_hospital_visitor_wait_displayName": "等候探视",
+                "jp_hospital_bed_rest_displayName": "卧床静养",
+
+                "membertype_jp_hospital_doctor_day": "日班医生",
+                "membertype_jp_hospital_doctor_weekend": "周末值班医生",
+                "membertype_jp_hospital_doctor_evening": "晚班医生",
+                "membertype_jp_hospital_doctor_night": "夜班医生",
+                "membertype_jp_hospital_nurse_day": "日班护士",
+                "membertype_jp_hospital_nurse_evening": "准夜班护士",
+                "membertype_jp_hospital_nurse_night": "深夜班护士",
+                "membertype_jp_hospital_pharmacy_day": "日班药房职员",
+                "membertype_jp_hospital_pharmacy_evening": "准夜班药房职员",
+                "membertype_jp_hospital_pharmacy_night": "深夜班药房职员",
+                "membertype_jp_hospital_frontdesk_day": "日班挂号员",
+                "membertype_jp_hospital_frontdesk_evening": "准夜班挂号员",
+                "membertype_jp_hospital_frontdesk_night": "深夜班挂号员",
+                "membertype_jp_hospital_patient": "住院患者",
+                "membertype_jp_hospital_visitor": "探视者",
+
+                "jp_hospital_doctor_day": "日班诊疗",
+                "jp_hospital_doctor_weekend": "周末值班",
+                "jp_hospital_doctor_evening": "晚班诊疗",
+                "jp_hospital_doctor_night": "夜班诊疗",
+                "jp_hospital_nurse_day": "日班护理",
+                "jp_hospital_nurse_evening": "准夜班护理",
+                "jp_hospital_nurse_night": "深夜班护理",
+                "jp_hospital_pharmacy_day": "日班药房",
+                "jp_hospital_pharmacy_evening": "准夜班药房",
+                "jp_hospital_pharmacy_night": "深夜班药房",
+                "jp_hospital_frontdesk_day": "日班挂号",
+                "jp_hospital_frontdesk_evening": "准夜班挂号",
+                "jp_hospital_frontdesk_night": "深夜班挂号",
+                "jp_hospital_visiting": "探视"
+            },
+            "en-us": {
+                "consumable_jp_hospital_meal": "Hospital Meal",
+                "consumable_jp_hospital_meal_tooltip": "A nutritionally balanced meal served by the hospital",
+                "jp_hospital_reception": "Hospital Reception & Waiting Room",
+                "jp_hospital_triage": "Triage Room",
+                "jp_hospital_pharmacy": "Pharmacy",
+                "jp_hospital_pharmacy_counter": "Pharmacy Counter",
+                "jp_hospital_visitor_waiting": "Visitor Waiting Room",
+                "jp_hospital_patient_room_301": "Patient Room 301",
+                "jp_hospital_patient_room_302": "Patient Room 302",
+                "jp_hospital_patient_room_303": "Patient Room 303",
+                "jp_hospital_patient_room_305": "Patient Room 305",
+                "jp_hospital_sleepingpills_14pack": "Prescription Sleeping Pills (14-pack)",
+
+                "jp_hospital_reception_counter": "Reception Counter",
+                "jp_hospital_waiting_bench": "Waiting Bench",
+                "jp_hospital_exam_desk": "Examination Desk",
+                "jp_hospital_bed": "Hospital Bed",
+                "jp_hospital_bedside_cart": "Bedside Cart",
+
+                "jp_hospital_reception_duty_displayName": "Reception Duty",
+                "jp_hospital_triage_exam_displayName": "Triage Examination",
+                "jp_hospital_triage_assist_displayName": "Triage Assistance",
+                "jp_hospital_pharmacy_dispense_displayName": "Dispense Medication",
+                "jp_hospital_ward_round_displayName": "Ward Round",
+                "jp_hospital_patient_care_displayName": "Patient Care",
+                "jp_hospital_visitor_wait_displayName": "Wait for Visit",
+                "jp_hospital_bed_rest_displayName": "Bed Rest",
+
+                "membertype_jp_hospital_doctor_day": "Day Doctor",
+                "membertype_jp_hospital_doctor_weekend": "Weekend Duty Doctor",
+                "membertype_jp_hospital_doctor_evening": "Evening Doctor",
+                "membertype_jp_hospital_doctor_night": "Night Doctor",
+                "membertype_jp_hospital_nurse_day": "Day Nurse",
+                "membertype_jp_hospital_nurse_evening": "Evening Nurse",
+                "membertype_jp_hospital_nurse_night": "Night Nurse",
+                "membertype_jp_hospital_pharmacy_day": "Day Pharmacy Clerk",
+                "membertype_jp_hospital_pharmacy_evening": "Evening Pharmacy Clerk",
+                "membertype_jp_hospital_pharmacy_night": "Night Pharmacy Clerk",
+                "membertype_jp_hospital_frontdesk_day": "Day Receptionist",
+                "membertype_jp_hospital_frontdesk_evening": "Evening Receptionist",
+                "membertype_jp_hospital_frontdesk_night": "Night Receptionist",
+                "membertype_jp_hospital_patient": "Inpatient",
+                "membertype_jp_hospital_visitor": "Visitor",
+
+                "jp_hospital_doctor_day": "Day Shift",
+                "jp_hospital_doctor_weekend": "Weekend Duty",
+                "jp_hospital_doctor_evening": "Evening Shift",
+                "jp_hospital_doctor_night": "Night Shift",
+                "jp_hospital_nurse_day": "Day Shift",
+                "jp_hospital_nurse_evening": "Evening Shift",
+                "jp_hospital_nurse_night": "Night Shift",
+                "jp_hospital_pharmacy_day": "Day Shift",
+                "jp_hospital_pharmacy_evening": "Evening Shift",
+                "jp_hospital_pharmacy_night": "Night Shift",
+                "jp_hospital_frontdesk_day": "Day Shift",
+                "jp_hospital_frontdesk_evening": "Evening Shift",
+                "jp_hospital_frontdesk_night": "Night Shift",
+                "jp_hospital_visiting": "Visiting"
+            }
+        }
+    }
+}

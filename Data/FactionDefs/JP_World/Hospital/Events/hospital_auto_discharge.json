@@ -1,0 +1,52 @@
+{
+    "_doc": "Hospital_AutoDischarge: attached (via AddStatus onRemoveEventID) to a hospital patient's recovery status by PregnancyEnd_Birth (and later the C-section). Fires on the patient when the status is removed and discharges them from their temporary home (the hospital). Generic: works for any hospital whose patient MemberType carries the hospital_patient portraitTag. Placeholder line.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Hospital_AutoDischarge",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_still_patient",
+                                "self_chara_conditions": [ { "parameters": [ "hasActorTag", "hospital_patient" ] } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "discharge" ] } ]
+                            },
+                            {
+                                "option": "_not_patient",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "not_patient" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "discharge",
+                        "line": "Hospital_AutoDischarge_placeholder",
+                        "Results": [
+                            { "Type": "RemoveFromFaction", "arguments": [ "self", "@tempHome" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "not_patient",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Hospital_AutoDischarge_placeholder": "$self.name$已康复出院。"
+            },
+            "en-us": {
+                "Hospital_AutoDischarge_placeholder": "$self.name$ has recovered and been discharged."
+            }
+        }
+    }
+}

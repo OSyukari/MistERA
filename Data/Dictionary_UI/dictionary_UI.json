@@ -269,7 +269,7 @@
 
 
 "ui_debug": "<link=\"ui_debug_tooltip\">DEBUG</link>",
-"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n5. 囚犯无法拒绝任何指令\n6. 对话必定会选择聊天话题\n7. 大地图会显示本该隐藏的地点\n%%ui_debug_tooltip2%%",
+"ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n5. 囚犯无法拒绝任何指令\n6. 对话必定会选择聊天话题\n7. 大地图会显示本该隐藏的地点\n8. 显示调试用指令（如【浏览商品】）\n%%ui_debug_tooltip2%%",
 
 "ui_quicksave": "快速保存",
 "ui_quicksave_tooltip": "将当前的游戏数据保存到本地存取",
@@ -938,6 +938,7 @@
 "ui_ap_CharaReqUtility_requireCombat":"需要$name$能够战斗",
 "ui_ap_CharaReqUtility_requireStatFull":"需要$name$的$stat$为满",
 "ui_ap_CharaReqUtility_requireStatNotFull":"需要$name$的$stat$不满",
+"ui_ap_CharaReqUtility_requireBedRest":"需要$name$处于需卧床静养的状态",
 "ui_ap_CharaReqUtility_requireNotFollowing":"需要$name$当前没有跟随玩家",
 "ui_ap_CharaReqUtility_requireFollowing":"需要$name$当前正跟随玩家",
 "ui_ap_CharaReqUtility_requireTimestopped":"需要$name$当前被时停",
@@ -955,6 +956,10 @@
 "ui_COM_Requirements_doerCountInvalid":"执行者数量过多：当前执行者数[$count$]，该指令上限[$req$]",
 "ui_COM_Requirements_requireReceiver":"该指令需要对象",
 "ui_COM_Requirements_requireNoReceiver":"该指令无法在有对象时执行",
+"ui_COM_Requirements_requireSameFaction":"需要是[$faction$]的成员",
+"ui_COM_Requirements_requireSameActiveFaction":"需要当前在[$faction$]活动中（上班、探视等）",
+"ui_COM_Requirements_requireHomeFaction":"需要以[$faction$]为当前住所",
+"ui_room_requireFactionMembership":"仅限[$faction$]相关人员进入",
 "ui_COM_Requirements_toomanyReceiver":"该指令无法对这么多对象执行：当前对象数$target$，最多允许$count$",
 
 
@@ -1647,6 +1652,7 @@
 "ui_ap_CharaReqUtility_requireCombat":"Requires $name$ to be able to fight",
 "ui_ap_CharaReqUtility_requireStatFull":"Requires $name$'s $stat$ to be full",
 "ui_ap_CharaReqUtility_requireStatNotFull":"Requires $name$'s $stat$ not to be full",
+"ui_ap_CharaReqUtility_requireBedRest":"Requires $name$ to need bed rest",
 "ui_ap_CharaReqUtility_requireFollowing": "Requires $name$ to be currently following the player",
 "ui_ap_CharaReqUtility_requireNotFollowing": "Requires $name$ to not be following the player",
 "ui_ap_CharaReqUtility_requireTimestopped": "Requires $name$ to be currently time-stopped",
@@ -1665,6 +1671,10 @@
 "ui_COM_Requirements_doerCountInvalid":"Too many performers: Current [$count$], Limit for this command [$req$]",
 "ui_COM_Requirements_requireReceiver":"This command requires a target",
 "ui_COM_Requirements_requireNoReceiver":"This command cannot be executed with a target",
+"ui_COM_Requirements_requireSameFaction":"Requires being a member of [$faction$]",
+"ui_COM_Requirements_requireSameActiveFaction":"Requires currently being active at [$faction$] (on shift, visiting, etc.)",
+"ui_COM_Requirements_requireHomeFaction":"Requires [$faction$] as current residence",
+"ui_room_requireFactionMembership":"Restricted to people connected with [$faction$]",
 "ui_COM_Requirements_toomanyReceiver":"This command cannot be executed on so many targets: Current $target$, Max allowed $count$",
 
 

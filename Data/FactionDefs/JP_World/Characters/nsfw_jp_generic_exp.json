@@ -1,0 +1,129 @@
+{
+    "_doc": "Sexual-history experience initializers for generic modern-Japan men (used by jp_generic_adult_male via basicExperienceOverride). Consensual only. Mirrors the tier structure/amount scale of the female basic_exp_* set in ExperienceDefs/nsfw_ExperienceInitializerDefs. Female partner actors give first-experience text a partner name.",
+
+    "Experiences": {
+        "exp_initializers": [
+            {
+                "$type": "ExpInitializer_Collection, Assembly-CSharp",
+                "baseID": "exp_collection_boy_hetero",
+                "_comment": "Generic sexual history for heterosexual men. Weighted pick of one tier.",
+                "randActor": [
+                    "expinit_target_girlfriend_female",
+                    "expinit_target_classmate_female",
+                    "expinit_target_coworker_female",
+                    "expinit_target_pickup_female"
+                ],
+                "selectOne": {
+                    "basic_exp_male_virgin": 2,
+                    "basic_exp_male_self_aware": 2,
+                    "basic_exp_male_first_timer": 2,
+                    "basic_exp_male_relationship": 2,
+                    "basic_exp_male_active": 1
+                },
+                "selectEach": {}
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "basic_exp_male_virgin",
+                "_comment": "Tier 1 - No experience.",
+                "experienceEntries": [],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "basic_exp_male_self_aware",
+                "_comment": "Tier 2 - Self-pleasure only. No partner experience.",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 20, "maxAmount": 60 },
+                    { "experienceID": "experience_sex_C", "minAmount": 60, "maxAmount": 180 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 15, "maxAmount": 50 }
+                ],
+                "firstExperienceEntries": []
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "basic_exp_male_first_timer",
+                "_comment": "Tier 3 - One or a few consensual encounters with a woman.",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 2, "maxAmount": 6 },
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 15, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_C", "minAmount": 60, "maxAmount": 150 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 10, "maxAmount": 30 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "basic_exp_male_relationship",
+                "_comment": "Tier 3 - Steady consensual relationship with a woman.",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 15, "maxAmount": 40 },
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_C", "minAmount": 150, "maxAmount": 350 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 30, "maxAmount": 80 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            },
+            {
+                "$type": "ExpInitializer_Single, Assembly-CSharp",
+                "baseID": "basic_exp_male_active",
+                "_comment": "Tier 4 - Sexually active with several consensual partners over the years.",
+                "experienceEntries": [
+                    { "experienceID": "experience_sex_female", "minAmount": 40, "maxAmount": 100 },
+                    { "experienceID": "experience_sex_masturbate", "minAmount": 10, "maxAmount": 30 },
+                    { "experienceID": "experience_sex_C", "minAmount": 300, "maxAmount": 700 },
+                    { "experienceID": "experience_sex_C_climax", "minAmount": 80, "maxAmount": 200 }
+                ],
+                "firstExperienceEntries": [
+                    {
+                        "bodyPartTags": ["penis"],
+                        "interactionTags": ["sex", "penetration", "position_face", "position_equal", "missionary"],
+                        "description": "",
+                        "actionName": "com_sex_P_missionary_displayName_1",
+                        "isConsensual": true
+                    }
+                ]
+            }
+        ],
+
+        "exp_initializers_actor": [
+            { "ID": "expinit_target_girlfriend_female", "displayName": "expinit_target_girlfriend_female", "insertionName": "" },
+            { "ID": "expinit_target_classmate_female", "displayName": "expinit_target_classmate_female", "insertionName": "" },
+            { "ID": "expinit_target_coworker_female", "displayName": "expinit_target_coworker_female", "insertionName": "" },
+            { "ID": "expinit_target_pickup_female", "displayName": "expinit_target_pickup_female", "insertionName": "" }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "expinit_target_girlfriend_female": "女友",
+                "expinit_target_classmate_female": "女同学",
+                "expinit_target_coworker_female": "女同事",
+                "expinit_target_pickup_female": "搭讪认识的女性"
+            },
+            "en-us": {
+                "expinit_target_girlfriend_female": "Girlfriend",
+                "expinit_target_classmate_female": "Female Classmate",
+                "expinit_target_coworker_female": "Female Coworker",
+                "expinit_target_pickup_female": "Woman He Picked Up"
+            }
+        }
+    }
+}

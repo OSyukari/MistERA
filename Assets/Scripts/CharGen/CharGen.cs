@@ -138,11 +138,13 @@ public class CharaTemplateGenerator : I_CharaGen
         // template.BaseID = ID;
         if (title != "") template.Title = title;
         template.Template.overrideInventory = inventoryOverride;
+        // Appearance left unset keeps whatever gender the picked base/child generator already has,
+        // so a generator can mix male and female children without overwriting them.
+        if (Appearance.HasValue) template.Template.SetGender(Appearance.Value);
         if (useNameGen)
         {
-            scr_System_Serializer.current.MasterList.Character_Bases.GenerateNamesFor(template, Appearance, nameGen_firstName, nameGen_middleName, nameGen_lastName, nameDisplayFormat);
+            scr_System_Serializer.current.MasterList.Character_Bases.GenerateNamesFor(template, template.Template.Appearance, nameGen_firstName, nameGen_middleName, nameGen_lastName, nameDisplayFormat);
         }
-        template.Template.SetGender(Appearance);
         template.Template.stat_STR = (int)Utility.RandVariation(str_base == 0 ? template.Template.stat_STR : str_base, str_var);
         template.Template.stat_CON = (int)Utility.RandVariation(con_base == 0 ? template.Template.stat_CON : con_base, con_var);
         template.Template.stat_PSY = (int)Utility.RandVariation(psy_base == 0 ? template.Template.stat_PSY : psy_base, psy_var);
@@ -193,7 +195,8 @@ public class CharaTemplateGenerator : I_CharaGen
     public bool allowInTraining = true;
 
     public int str_base = 0, str_var = 0, con_base = 0, con_var = 0, psy_base = 0, psy_var = 0, wil_base = 0, wil_var = 0;
-    public Humanoid_GenderAppearance Appearance = Humanoid_GenderAppearance.Female;
+    /// <summary>Forced gender for generated characters; null (omitted in JSON) keeps the base/child's own.</summary>
+    public Humanoid_GenderAppearance? Appearance = null;
     public List<presetInventory> inventoryOverride = new List<presetInventory>();
     public List<string> basicExperienceOverride = new List<string>();
     public List<string> experienceOverride = new List<string>();

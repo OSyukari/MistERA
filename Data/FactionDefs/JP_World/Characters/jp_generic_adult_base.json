@@ -1,0 +1,40 @@
+{
+    "baseID": "jp_generic_adult_base",
+    "_comment": "Generic modern-Japan adult. Gender-neutral base: only spawn it through jp_generic_adult_male/female (JP_World/Characters/templates.json), whose Appearance resets gender, genital sizes and sensitivities (CharaTrainableTemplate.GenderAppearance_Set) and whose setHeight/setWeight give the gendered body size. No portrait yet (falls back to transparent).",
+    "Portrait": { "portraitPriorityList": [] },
+    "Template": {
+        "Appearance": "Male",
+        "BodyType": "Default",
+        "stat_STR": 10,
+        "stat_CON": 10,
+        "stat_PSY": 10,
+        "stat_WIL": 10,
+        "personalityID": "personality_default",
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_AAA",
+        "size_P": "trait_Size_P_average",
+        "size_V": "trait_Size_V_none",
+        "size_A": "trait_Size_A_1",
+        "Height": 165,
+        "Weight": 60,
+        "traits": [ "trait_GenderPreference_hetero" ],
+        "initialInventory": [
+            { "ID": "clothing_inner_shirt" },
+            { "ID": "clothing_inner_pants" },
+            { "ID": "clothing_inner_boots" }
+        ],
+        "Skills": null
+    },
+    "firstName": "",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

@@ -48,6 +48,12 @@ public class Index_Experiences : I_IndexMergeable, I_IndexHasID, I_RemoveElemByT
         }
         return result;
     }
+    /// <summary>Silent existence check (GetInitializerByID logs an error on every miss).</summary>
+    public bool HasInitializer(string id)
+    {
+        return _exp_initializers != null && id != null && _exp_initializers.ContainsKey(id);
+    }
+
     public ExperienceActor GetByID_Actor(string id)
     {
         if (_exp_initializers_actor == null) return null;

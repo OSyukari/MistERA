@@ -108,7 +108,12 @@ public enum TargetScope
     AllCharaInSelfRoom_ExcludeSelf,
     AllCharaInSelfRoom_AllowParty,
     ScopeWithinRef,
-    ScopeInRoomExceptRef
+    ScopeInRoomExceptRef,
+    /// <summary>
+    /// Every member of faction extraScopeArguments[0] currently holding MemberType extraScopeArguments[1]
+    /// in that faction (e.g. a hospital's current patients), filtered by chara_conditions.
+    /// </summary>
+    FactionMembersWithMemberType
 }
 
 public class EventScope_Target
@@ -415,6 +420,24 @@ public class Event : I_SerializationCallbackReceiver
             public bool isDefaultCancel = false;
             public bool isDefaultAccept = false;
 
+            /// <summary>
+            /// If set, this option is shown once per character in the event's Targets[forEachTargetKey]
+            /// instead of once (see EventUtility.ExpandOptions); "$name$" in the option text becomes that
+            /// character's name. When picked, the character is bound as Targets[bindTargetKey] before the
+            /// option's Results run, so results can refer to "whoever was picked".
+            /// </summary>
+            public string forEachTargetKey = "";
+            public string bindTargetKey = "";
+            /// <summary>Runtime only: the character this expanded copy stands for.</summary>
+            [JsonIgnore] public Character_Trainable boundTarget = null;
+
+            public Options CloneForTarget(Character_Trainable target)
+            {
+                var copy = (Options)MemberwiseClone();
+                copy.boundTarget = target;
+                return copy;
+            }
+
 
 
 
@@ -675,6 +698,8 @@ public class Event : I_SerializationCallbackReceiver
             /// work faction list; otherwise a new entry is appended and an existing one keeps its position.
             /// overwriteExisting is optional (default false): if false, a character already managed by the target
             /// faction keeps their current member type (only the ordering, per highPriority, is still applied).
+            /// scopeKey may also be "selfAndFollowers": owner.Self plus everyone following them (the player's party
+            /// members, when owner.Self is the player).
             /// </summary>
             SetWorkFaction,
 
@@ -717,7 +742,50 @@ public class Event : I_SerializationCallbackReceiver
             /// (side-effecting) Results, so the branch always falls through to its next option regardless of
             /// whether those earlier Results actually succeeded.
             /// </summary>
-            AlwaysFalse
+            AlwaysFalse,
+
+            /// <summary>
+            /// [string sourceScopeKey, string targetScopeKey, string factionID, optional string requiredSourceMemberTypeID] <br/>
+            /// Links every resolved source character to the (first) resolved target character inside factionID
+            /// (Manageable.SetMemberLink) - e.g. visitor -> the patient they visit. Both must be members of the
+            /// faction; if requiredSourceMemberTypeID is given, sources holding any other MemberType there are
+            /// skipped. Scope keys resolve like SetWorkFaction ("self", "selfAndFollowers" or an owner.Targets key).
+            /// </summary>
+            SetMemberLink,
+
+            /// <summary>
+            /// [string scopeKey, string factionID, optional string requiredMemberTypeID] <br/>
+            /// Removes every resolved character from factionID through their own Character_Factions (work faction
+            /// or temporary home; a permanent home faction is never removed by this). If requiredMemberTypeID is
+            /// given, characters holding any other MemberType there are left untouched. Removing a character also
+            /// drops everyone linked to them in that faction (see Manageable.RemoveFromFaction).
+            /// factionID may be "@tempHome": each character's own temporary home faction.
+            /// </summary>
+            RemoveFromFaction,
+
+            /// <summary>
+            /// [string scopeKey, string statusID, float severity, int minDurationMinutes, int maxDurationMinutes, optional string onRemoveEventID] <br/>
+            /// Adds (or adds onto) statusID on every resolved character with the given severity and a duration rolled
+            /// in [min, max] minutes (-1/-1 = no duration). If onRemoveEventID is given, that event is started on the
+            /// character when the status is later removed (see Status_Instance.onRemoveEventID).
+            /// </summary>
+            AddStatus,
+
+            /// <summary>
+            /// [string traderKey, string sellerKey] <br/>
+            /// Opens the retail trade menu (scr_System_CampaignManager.StartRetailExchange) for the first resolved trader
+            /// (keys resolve via EventUtility.TryResolveExecTargets), buying from the first resolved seller's CurrentlyActiveFaction.
+            /// Default paying faction is the trader's HomeFactions[0], same as com_special_retailTrade's doer_home.
+            /// </summary>
+            StartRetailTrade,
+
+            /// <summary>
+            /// [string traderKey, string sellerKey] <br/>
+            /// Same as StartRetailTrade, but the menu opening is queued via scr_UpdateHandler.AddEventCallback instead of
+            /// run immediately, so it happens after the owning entry's line (itself queued the same way) is displayed.
+            /// Trader, seller faction and payer are still resolved at execution time.
+            /// </summary>
+            StartRetailTradeCallback
 
         }
     }

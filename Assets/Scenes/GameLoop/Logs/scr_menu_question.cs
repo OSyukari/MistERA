@@ -51,12 +51,12 @@ public class scr_menu_question : scr_Menu
         SetCanvas(mainCanvas, true);
         this.Text.SetText(UtilityEX.ParseEventEntry(instance, query.question));
         SelfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
-        foreach (var option in query.options)
+        foreach (var option in EventUtility.ExpandOptions(instance, query.options))
         {
             var button = Instantiate(prefab_text_linkbutton).GetComponent<scr_SelectableText>();
             RegisterButton(option.GetHashCode(), button, new Button_OptionBtn(this, button, instance, option));
             preferredLen = Math.Max(preferredLen, button.GetComponent<TMP_Text>().preferredWidth);
-            button.SetText(UtilityEX.ParseEventEntry(instance, option.option));
+            button.SetText(EventUtility.GetOptionText(instance, option));
             if (option.isDefaultCancel && defaultCancel == null) defaultCancel = button.Validator as Button_OptionBtn;
 
             this.options.Add(button.Validator as Button_OptionBtn);

@@ -1323,7 +1323,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
             foreach(var chara in list)
             {
-                if (chara.RefID > 0 && DoFullUpdate(chara.RefID))
+                if (chara.RefID > 0 && !chara.IsDormant && DoFullUpdate(chara.RefID))
                 {
                     List<string> sss = s == null ? null : new List<string>();
                     chara.TryGetJob(currentHour, sss);
@@ -2899,6 +2899,18 @@ public class scr_System_CampaignManager : MonoBehaviour
         var newFaction = new Manageable_World(worldInit);
         organizations.Add(worldID, newFaction);
         return newFaction;
+    }
+
+    /// <summary>
+    /// Registers an already-constructed faction (e.g. a Manageable_WorkerPool) under its own ID. Returns the
+    /// existing entry instead if that ID is already taken.
+    /// </summary>
+    public Manageable AddFaction(Manageable faction)
+    {
+        if (faction == null) return null;
+        if (organizations.TryGetValue(faction.ID, out var existing)) return existing;
+        organizations.Add(faction.ID, faction);
+        return faction;
     }
 
     public Manageable FindorAddSubfactionByID(string id, Manageable prevOwner)

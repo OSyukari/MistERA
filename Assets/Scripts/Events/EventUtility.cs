@@ -407,10 +407,72 @@ public static class EventUtility
                 return !c.FactionManager.HasPlayerFaction;
             case "isPartyPrisoner":
                 return c.FactionManager.CurrentActiveParty != null && c.FactionManager.CurrentActiveParty.GetMemberType(c).isPrisoner;
+            case "hasActorTag":
+            {
+                // hasActorTag [tag] -- actor tag set incl. the ACTIVE faction/party MemberType's portraitTags
+                if (r.parameters.Count < 2) return false;
+                var actorTags = new List<string>();
+                UtilityEX.GetActorTag(ref actorTags, c);
+                return actorTags.Contains(r.parameters[1]);
+            }
+            case "hasMemberType":
+            {
+                // hasMemberType [factionID] [memberTypeID] [optional true|false, default true]
+                if (r.parameters.Count < 3) return false;
+                bool expected = r.parameters.Count < 4 || !bool.TryParse(r.parameters[3], out var exp) || exp;
+                var mtFaction = scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
+                bool has = mtFaction != null && mtFaction.isManagedChara(c.RefID) && mtFaction.GetMemberType(c)?.ID == r.parameters[2];
+                return has == expected;
+            }
+            case "hasTempHomeFaction":
+            {
+                // hasTempHomeFaction [optional true|false, default true]
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                return (c.FactionManager.Faction_Home_Temporary != null) == expected;
+            }
+            case "hasUnownedRoom":
+            {
+                // hasUnownedRoom [factionID] [optional room Base ID prefix] -- c is unused (only required to exist)
+                if (r.parameters.Count < 2) return false;
+                var roomFaction = scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
+                if (roomFaction == null || roomFaction.ManagedRooms == null) return false;
+                string prefix = r.parameters.Count >= 3 ? r.parameters[2] : "";
+                foreach (var kvp in roomFaction.ManagedRooms)
+                {
+                    var managedRoom = kvp.Value;
+                    if (managedRoom == null) continue;
+                    if (prefix != "" && (managedRoom.Base == null || !managedRoom.Base.ID.StartsWith(prefix))) continue;
+                    if (roomFaction.RoomOwners(managedRoom.RefID).Count == 0) return true;
+                }
+                return false;
+            }
             case "isActiveFaction":
                 if (r.parameters.Count < 2) return false;
                 I_IsJobGiver active = c.FactionManager.CurrentActiveParty != null ? (I_IsJobGiver)c.FactionManager.CurrentActiveParty : c.FactionManager.CurrentlyActiveFaction;
                 return active != null && active.FactionOwnerRoot != null && active.FactionOwnerRoot.ID == r.parameters[1];
+            case "canRetailTrade":
+            {
+                // canRetailTrade -- c is working for (not in a party) a non-player faction that has salesInventory stock, under a
+                // MemberType with an actual work shift (workModule with workCommands). Excludes patients (no workModule) and
+                // visitors (command-less workModule). Off shift, CurrentlyActiveFaction falls back to home, so this also gates on-shift.
+                if (c.FactionManager.CurrentActiveParty != null) return false;
+                var shop = c.FactionManager.CurrentlyActiveFaction;
+                if (shop == null || shop.isPlayerFaction || shop.salesInventory == null || shop.salesInventory.Inventory.Count < 1) return false;
+                var shopMemberType = shop.GetMemberType(c);
+                return shopMemberType != null && shopMemberType.workModule != null && shopMemberType.workModule.workCommands.Count > 0;
+            }
+            case "roomHasValidCOM":
+            {
+                // roomHasValidCOM [comTag] -- c's room has a furniture COM tagged comTag that Job_Furniture.ValidateActor accepts for c
+                if (r.parameters.Count < 2 || room == null) return false;
+                foreach (var f in room.Furnitures)
+                {
+                    var jg = f.JobGiver;
+                    if (jg == null) continue;
+                    if (jg.ValidCOMs.Exists(com => com.comTags.Contains(r.parameters[1]) && jg.ValidateActor(c, com))) return true;
+                }
+                return false;
+            }
             case "hasFactionItemCount":
                 // hasFactionItemCount [factionID] [itemID] [minCount] -- c is unused (only required to exist), the check is against the named faction's inventory
                 if (r.parameters.Count < 4 || !int.TryParse(r.parameters[3], out var minItemCount)) return false;
@@ -475,6 +537,22 @@ public static class EventUtility
                         bool isvalid = true;
                         foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, currentTarget)) isvalid = false;
                         if (isvalid && !list.Contains(currentTarget)) list.Add(currentTarget);
+                    }
+                    break;
+                case TargetScope.FactionMembersWithMemberType:
+                    if (scope.extraScopeArguments.Count >= 2)
+                    {
+                        var memberFaction = scr_System_CampaignManager.current.FindFactionByID(scope.extraScopeArguments[0]);
+                        if (memberFaction != null)
+                        {
+                            foreach (var chara in memberFaction.ManagedChara)
+                            {
+                                if (chara == null || memberFaction.GetMemberType(chara)?.ID != scope.extraScopeArguments[1]) continue;
+                                bool isvalid = true;
+                                foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
+                                if (isvalid && !list.Contains(chara)) list.Add(chara);
+                            }
+                        }
                     }
                     break;
                 case TargetScope.BaseID_Unrestricted:
@@ -761,8 +839,65 @@ public static class EventUtility
         else owner.Notify(EventStatus.reset);
     }
 
+    /// <summary>
+    /// Resolves an executor scope key: "self" = owner.Self; "selfAndFollowers" = owner.Self plus the player's
+    /// party members (only when owner.Self is the player - nobody else has followers); anything else =
+    /// owner.Targets[key]. Returns false if the key is not resolvable.
+    /// </summary>
+    public static bool TryResolveExecTargets(EventInstance owner, string key, out List<Character_Trainable> result)
+    {
+        result = null;
+        if (key == "self")
+        {
+            result = new List<Character_Trainable>() { owner.Self };
+            return true;
+        }
+        if (key == "selfAndFollowers")
+        {
+            result = new List<Character_Trainable>() { owner.Self };
+            var cm = scr_System_CampaignManager.current;
+            if (owner.Self != null && owner.Self == cm.Player)
+            {
+                foreach (var refID in cm.PlayerPartyMembers)
+                {
+                    var follower = cm.FindInstanceByID(refID);
+                    if (follower != null && !result.Contains(follower)) result.Add(follower);
+                }
+            }
+            return true;
+        }
+        return owner.Targets.TryGetValue(key, out result);
+    }
+
+    /// <summary>
+    /// Expands options with forEachTargetKey into one copy per character in owner.Targets[key] (see
+    /// Options.forEachTargetKey); other options pass through unchanged, in order.
+    /// </summary>
+    public static List<Event.EventEntry.Options> ExpandOptions(EventInstance owner, List<Event.EventEntry.Options> options)
+    {
+        var result = new List<Event.EventEntry.Options>();
+        foreach (var op in options)
+        {
+            if (string.IsNullOrEmpty(op.forEachTargetKey)) { result.Add(op); continue; }
+            if (owner == null || !owner.Targets.TryGetValue(op.forEachTargetKey, out var charas)) continue;
+            foreach (var chara in charas) if (chara != null) result.Add(op.CloneForTarget(chara));
+        }
+        return result;
+    }
+
+    /// <summary>Display text of an option, with "$name$" resolved for per-target copies.</summary>
+    public static string GetOptionText(EventInstance owner, Event.EventEntry.Options op)
+    {
+        var text = UtilityEX.ParseEventEntry(owner, op.option);
+        if (op.boundTarget != null) text = text.Replace("$name$", op.boundTarget.FullName);
+        return text;
+    }
+
     public static bool Execute(EventInstance owner, Event.EventEntry.Options ops, bool sendNotify = false)
     {
+        if (ops.boundTarget != null && !string.IsNullOrEmpty(ops.bindTargetKey))
+            owner.Targets[ops.bindTargetKey] = new List<Character_Trainable>() { ops.boundTarget };
+
         if (owner.isVisible && ops.line != "")
         {
             bool rA = !owner.isPlayerRelated;
@@ -1216,6 +1351,70 @@ public static class EventUtility
                 return false;
             case Event.EventEntry.ExecutionType.AlwaysFalse:
                 return false;
+            case Event.EventEntry.ExecutionType.SetMemberLink:
+            {
+                if (exec.arguments.Count < 3) return false;
+                var linkFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[2]);
+                if (linkFaction == null) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var linkSources) || !TryResolveExecTargets(owner, exec.arguments[1], out var linkTargets))
+                {
+                    Debug.LogError($"SetMemberLink missing target scopeKey {exec.arguments[0]} or {exec.arguments[1]}");
+                    return false;
+                }
+                var linkTarget = linkTargets.Find(x => x != null);
+                if (linkTarget == null) return false;
+                string requiredType = exec.arguments.Count >= 4 ? exec.arguments[3] : "";
+                foreach (var c in linkSources)
+                {
+                    if (c == null || c == linkTarget) continue;
+                    if (requiredType != "" && linkFaction.GetMemberType(c)?.ID != requiredType) continue;
+                    linkFaction.SetMemberLink(c, linkTarget);
+                }
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.AddStatus:
+            {
+                if (exec.arguments.Count < 5 || !float.TryParse(exec.arguments[2], out var statusSeverity)
+                    || !int.TryParse(exec.arguments[3], out var minDuration) || !int.TryParse(exec.arguments[4], out var maxDuration)) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var statusTargets))
+                {
+                    Debug.LogError($"AddStatus missing target scopeKey {exec.arguments[0]}");
+                    return false;
+                }
+                string removalEvent = exec.arguments.Count >= 6 ? exec.arguments[5] : "";
+                foreach (var c in statusTargets)
+                {
+                    if (c == null) continue;
+                    int duration = maxDuration < 0 ? -1 : UnityEngine.Random.Range(Math.Min(minDuration, maxDuration), maxDuration + 1);
+                    c.Stats.AddOrModStatus(exec.arguments[1], statusSeverity, duration);
+                    var added = c.Stats.FindStatusByExactID(exec.arguments[1]);
+                    if (added != null && removalEvent != "") added.onRemoveEventID = removalEvent;
+                }
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.RemoveFromFaction:
+            {
+                if (exec.arguments.Count < 2) return false;
+                bool leaveTempHome = exec.arguments[1] == "@tempHome";
+                var namedFaction = leaveTempHome ? null : scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
+                if (!leaveTempHome && namedFaction == null) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var leavers))
+                {
+                    Debug.LogError($"RemoveFromFaction missing target scopeKey {exec.arguments[0]}");
+                    return false;
+                }
+                string requiredType = exec.arguments.Count >= 3 ? exec.arguments[2] : "";
+                foreach (var c in leavers)
+                {
+                    if (c == null) continue;
+                    var leaveFaction = leaveTempHome ? c.FactionManager.Faction_Home_Temporary : namedFaction;
+                    if (leaveFaction == null || !leaveFaction.isManagedChara(c.RefID)) continue;
+                    if (requiredType != "" && leaveFaction.GetMemberType(c)?.ID != requiredType) continue;
+                    if (c.FactionManager.WorkFactions.Contains(leaveFaction)) c.FactionManager.RemoveWorkFaction(leaveFaction.ID);
+                    else if (c.FactionManager.Faction_Home_Temporary == leaveFaction) c.FactionManager.SetTempHomeFaction("", null);
+                }
+                return true;
+            }
             case Event.EventEntry.ExecutionType.CheckRelationship:
                 if (exec.arguments.Count >= 2 && exec.arguments[0] != exec.arguments[1])
                 {
@@ -1474,9 +1673,7 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.SetWorkFaction:
                 if (exec.arguments.Count >= 3 && exec.arguments[1] != "" && exec.arguments[2] != "")
                 {
-                    List<Character_Trainable> workTargets;
-                    if (exec.arguments[0] == "self") workTargets = new List<Character_Trainable>() { owner.Self };
-                    else if (!owner.Targets.TryGetValue(exec.arguments[0], out workTargets))
+                    if (!TryResolveExecTargets(owner, exec.arguments[0], out var workTargets))
                     {
                         Debug.LogError($"SetWorkFaction missing target scopeKey {exec.arguments[0]}");
                         return false;
@@ -2243,6 +2440,28 @@ public static class EventUtility
                     return true;
                 }
                 else return false;
+            case Event.EventEntry.ExecutionType.StartRetailTrade:
+            case Event.EventEntry.ExecutionType.StartRetailTradeCallback:
+            {
+                if (exec.arguments.Count < 2) return false;
+
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var traders) || traders.Count < 1 || traders[0] == null) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[1], out var sellers) || sellers.Count < 1 || sellers[0] == null) return false;
+                var trader = traders[0];
+                var seller = sellers[0];
+
+                var shop = seller.FactionManager.CurrentlyActiveFaction;
+                if (shop == null) return false;
+
+                var payer = trader.FactionManager.HomeFactions.Count > 0 ? trader.FactionManager.HomeFactions[0] : null;
+                // resolved now so the parties match the event's state; only opening the menu is deferred, queued behind the
+                // AddLog_Line callbacks already enqueued by this and earlier entries so the menu opens after the line displays
+                if (exec.Type == Event.EventEntry.ExecutionType.StartRetailTradeCallback)
+                    scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.StartRetailExchange(trader, payer, shop));
+                else
+                    scr_System_CampaignManager.current.StartRetailExchange(trader, payer, shop);
+                return true;
+            }
             case Event.EventEntry.ExecutionType.StartEvent:
                 if (exec.arguments.Count >= 4)
                 {

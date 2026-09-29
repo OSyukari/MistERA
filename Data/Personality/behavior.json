@@ -5,9 +5,14 @@
                 "ID": "behavior_default",
                 "nodes": [
                     {
-                        "$type": "TryFindBirthLocation, Assembly-CSharp",
-                        "Tags": [ "nsfw" ],
-                        "_comment":"hardcoded job search behavior"
+                        "$type": "TryFindBedRestNode, Assembly-CSharp",
+                        "_comment":"requireBedRest (labor / recovery) -> com_furniture_rest_required; top so it beats locale changes / work; yields while shouldSleep so the sleep path still runs",
+                        "filter": {
+                            "checkBlacklist": false,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true
+                        }
                     },
                     {
                         "$type": "TryFindRedressNode, Assembly-CSharp",

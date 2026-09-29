@@ -262,6 +262,16 @@ public class MemberType
     public bool allowCustomOverride = true;
 
     /// <summary>
+    /// If true, a character entering this status in a faction is added to that faction's mutable
+    /// forbid-work list (Manageable.forbidWorkRefs) - see Manageable.AddToFaction. While that faction
+    /// is the character's priority home faction (HomeFactions[0]), all of their work factions are
+    /// skipped when resolving schedules (Character_Factions.CurrentJobScheduleFaction), e.g. a
+    /// hospitalized patient who shouldn't leave for their usual job. Only seeds the list: the faction
+    /// can later lift/restore it per character via Manageable.SetAllowWork. Default false.
+    /// </summary>
+    public bool initiallyForbidWork = false;
+
+    /// <summary>
     /// Optional tags contributed by this member status (e.g. "prisoner", "clergy"), merged into the
     /// actor's tag set (Utility.GetActorTag) when this is the character's current MemberType in their
     /// active faction or active party. Empty by default.

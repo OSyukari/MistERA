@@ -266,7 +266,7 @@
         "floorPlans": [
             {
                 "ID": "floor_jp_shopping_street",
-                "imagePath": "JP_ShoppingStreet/mall_directory.jpg",
+                "imagePath": "ShoppingStreet/mall_directory.jpg",
                 "floorWidth": 1390,
                 "floorHeight": 729,
                 "AnchorType": "TopLeft",

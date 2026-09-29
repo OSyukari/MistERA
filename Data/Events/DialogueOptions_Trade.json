@@ -1,0 +1,90 @@
+{
+    "_doc": "Generic 'Browse goods' dialogue option. Offered when the current target is on shift at a non-player faction that sells something (canRetailTrade: working MemberType with workCommands, active faction has salesInventory) AND is standing in a room whose furniture offers a retailTrade-tagged COM valid for them (roomHasValidCOM), i.e. at the sales counter. The seller asks first; the retail menu (same as com_special_retailTrade, kept as a debug fallback) only opens once the player picks yes, so it can never open ahead of the displayed dialogue.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Opt_RetailTrade",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "seller" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "canRetailTrade" ] },
+                            { "parameters": [ "roomHasValidCOM", "retailTrade" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "seller", "selfTags": [ "focused" ] },
+                        "question": "Opt_RetailTrade_question",
+                        "options": [
+                            {
+                                "option": "Opt_RetailTrade_yes",
+                                "isDefaultAccept": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "trade_start" ] } ]
+                            },
+                            {
+                                "option": "Opt_RetailTrade_no",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "trade_abort" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "trade_start",
+                        "UISpec": { "portraitRefKey": "seller", "selfTags": [ "relaxed" ] },
+                        "line": "Opt_RetailTrade_farewell",
+                        "Results": [
+                            { "Type": "StartRetailTradeCallback", "arguments": [ "self", "seller" ] },
+                            { "Type": "EventEnd" }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "trade_abort",
+                        "UISpec": { "portraitRefKey": "seller", "selfTags": [ "relaxed" ] },
+                        "line": "Opt_RetailTrade_farewell",
+                        "Results": [
+                            { "Type": "EventEnd" }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Opt_RetailTrade": "浏览商品",
+                "Opt_RetailTrade_question": "「欢迎光临，要看看商品吗？」",
+                "Opt_RetailTrade_yes": "看看商品",
+                "Opt_RetailTrade_no": "不用了",
+                "Opt_RetailTrade_farewell": "「欢迎下次光临。」"
+            },
+            "en-us": {
+                "Opt_RetailTrade": "Browse goods",
+                "Opt_RetailTrade_question": "\"Welcome! Would you like to take a look?\"",
+                "Opt_RetailTrade_yes": "Take a look",
+                "Opt_RetailTrade_no": "Not now",
+                "Opt_RetailTrade_farewell": "\"See you next time.\""
+            }
+        }
+    }
+}

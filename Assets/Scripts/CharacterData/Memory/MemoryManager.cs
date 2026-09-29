@@ -133,9 +133,10 @@ public class MemoryManager
         ReEstablishParent(c);
     }
 
-    public void Tick()
+    public void Tick(int minutes = 1)
     {
-        var t = 1;
+        if (minutes <= 0) return;
+        var t = minutes;
         // ClearCache();
         bool clearcache = false;
         if (Owner.Stats.isConsciousnessUnconscious) t *= 2;

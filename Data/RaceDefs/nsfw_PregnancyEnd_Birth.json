@@ -15,7 +15,29 @@
                 ],
                 "events":[
 {
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+    "_comment": "Every birth leaves the mother on bed rest for 1-2 days (chara_status_postpartum_recovery: requireBedRest). Hospital patients (hospital_patient actor tag, from their patient MemberType) additionally get Hospital_AutoDischarge fired when it wears off.",
+    "options": [
+        {
+            "option": "_hospital_patient",
+            "self_chara_conditions": [ { "parameters": [ "hasActorTag", "hospital_patient" ] } ],
+            "Results": [
+                { "Type": "AddStatus", "arguments": [ "self", "chara_status_postpartum_recovery", "100", "1440", "2880", "Hospital_AutoDischarge" ] },
+                { "Type": "JumpToLabel", "arguments": [ "", "birth_main" ] }
+            ]
+        },
+        {
+            "option": "_fallback",
+            "Results": [
+                { "Type": "AddStatus", "arguments": [ "self", "chara_status_postpartum_recovery", "100", "1440", "2880" ] },
+                { "Type": "JumpToLabel", "arguments": [ "", "birth_main" ] }
+            ]
+        }
+    ]
+},
+{
     "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+    "label": "birth_main",
     "line": "PregnancyEnd_Birth_EV01",
     "Results":[
         { "Type":"InterruptAP", "arguments":["self", "false", ""]  }

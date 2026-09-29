@@ -201,7 +201,8 @@ public static class Utility
         foreach(var kvp in dict)
         {
             current = kvp.Key;
-            if (randW <= kvp.Value) return kvp.Key;
+            // randW is in [0, total) - strict < gives each key exactly its own weight
+            if (randW < kvp.Value) return kvp.Key;
             else randW -= kvp.Value;
         }
         return current;

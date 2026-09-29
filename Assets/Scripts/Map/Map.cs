@@ -880,6 +880,7 @@ public class Map_Instance
         var roomRef = FindRoomByChara(charaRefID); //charaRoomRef[charaRefID];
         if( roomRefID == -1) roomRefID = roomRef.RefID;
         var targetRoom = GetRoomByRef(toRoomRefID);
+        if (targetRoom != null && targetRoom != roomRef && !targetRoom.CanBeAccessedBy(chara)) return null;
 
         Findpath(roomRef, targetRoom, chara.isRestrained, out var path);
         return path;
@@ -1195,6 +1196,7 @@ public class Map_Instance
         {
             var tr = GetRoomByRef(tid);
             if (tr == null) continue;
+            if (tr != roomRef && !tr.CanBeAccessedBy(charaInstance)) continue;
 
             var tf = GetFloorByRoomRefID(tid);
             if (tf == startFloorRef)

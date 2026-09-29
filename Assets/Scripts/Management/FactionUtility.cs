@@ -376,6 +376,22 @@ public static class FactionUtility
     }
 
 
+    /// <summary>
+    /// Room ActivityState check for a furniture post (DayOnly rooms only during their faction's active hours,
+    /// NightOnly only outside them) - same rule TryFindValidJobInstances/TryFindValidNonJobInstances apply inline.
+    /// </summary>
+    public static bool IsPostRoomActiveNow(Job_Furniture post)
+    {
+        var room = post.ParentRoom;
+        if (room == null || room.ActivityState == RoomActivityState.AlwaysActive) return true;
+        var faction = room.FactionOwner as Manageable;
+        if (faction == null) return true;
+        bool isactive = faction.IsActiveHour(scr_System_Time.current.getCurrentTime().Hour);
+        if (room.ActivityState == RoomActivityState.DayOnly) return isactive;
+        if (room.ActivityState == RoomActivityState.NightOnly) return !isactive;
+        return false;
+    }
+
     public static PathingRoomFilter JobFilter = new PathingRoomFilter()
     {
         checkBlacklist = true,

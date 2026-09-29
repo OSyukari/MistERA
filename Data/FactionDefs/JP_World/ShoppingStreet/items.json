@@ -1,0 +1,34 @@
+{
+    "_doc": "Store staff uniform (any shop). Handed out by the jp_store_clerk generator (inventoryOverride in JP_World/Characters/templates.json).",
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_jp_store_uniform",
+            "displayName":"Store Uniform",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner"
+                    }
+                }
+            ]
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "clothing_jp_store_uniform":"店员制服"
+            },
+            "en-us":
+            {
+                "clothing_jp_store_uniform":"Store Uniform"
+            }
+        }
+    }
+}

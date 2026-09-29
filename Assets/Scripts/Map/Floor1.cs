@@ -15,6 +15,14 @@ public class Floor_Base
     public string imagePath = "";
     public string displayName = "";
 
+    /// <summary>
+    /// True (default): imagePath is a floor plan - canvas_RoomDisplay draws it on `picture` at
+    /// floorWidth x floorHeight * resize and places room/exit buttons on it at their offsetX/offsetY.
+    /// False: imagePath is a straight background image drawn on `bgpicture` at its fixed size (the floor-plan
+    /// layer is hidden via LoadFloorImage), so floorWidth/floorHeight are not required.
+    /// </summary>
+    public bool isFloorPlan = true;
+
     public float floorWidth = 0f;
     public float floorHeight = 0f;
 
@@ -62,7 +70,7 @@ public class Floor_Base
             Debug.LogError("FloorPlan [" + ID + "] failed to Deserialize: missing ID");
             return;
         }
-        if (floorWidth == 0f || floorHeight == 0f)
+        if (isFloorPlan && (floorWidth == 0f || floorHeight == 0f))
         {
             valid = false;
             Debug.LogError("FloorPlan [" + ID + "] failed to Deserialize: floor WIDTH or HEIGHT is 0f");
@@ -86,6 +94,11 @@ public class Floor_Base
         public string connectedRoom = "";
         public float offsetX = 0f;
         public float offsetY = 0f;
+        /// <summary>
+        /// If true, no exit button/path line point is drawn for this exit on the floor image. Purely visual: the
+        /// floor connection still exists and is pathable; the target floor stays reachable via the floor list.
+        /// </summary>
+        public bool hideOnMap = false;
     }
 
     public Room_Base GetRoom(string ID)

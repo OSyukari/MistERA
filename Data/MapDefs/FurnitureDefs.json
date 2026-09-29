@@ -57,7 +57,7 @@
             "furnitureSize":4,
             "value":50000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
         },
         {
             "ID":"furniture_sofa_1",
@@ -66,7 +66,7 @@
             "value":25000,
             "Tags":["rarity_common"],
             "givesJob":
-            [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
+            [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
         },
         {
             "ID":"furniture_TV_flatscreen",
@@ -169,7 +169,7 @@
             "furnitureSize":1,
             "value":15000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
         },
         {
             "ID":"furniture_dining_table_10",
@@ -178,7 +178,7 @@
             "furnitureSize":10,
             "value":150000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
         },
         {
             "ID":"furniture_cafe_table_2",
@@ -187,7 +187,7 @@
             "furnitureSize":2,
             "value":20000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
         },
         {
             "ID":"furniture_round_table_4",
@@ -196,7 +196,7 @@
             "furnitureSize":4,
             "value":35000,
             "Tags":["rarity_common"],
-            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak"] } ]
+            "givesJob": [ { "comID":["com_furniture_takingBreak","com_furniture_takingLongBreak","com_furniture_rest_required"] } ]
         },
         {
             "ID":"furniture_piano",

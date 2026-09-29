@@ -80,6 +80,16 @@ public class COM_Requirements
         [JsonIgnore] public List<string> doerBodyTags { get { return req_Doers.BodyTags; } }
         [JsonIgnore] public List<string> receiverBodyTags { get { return req_Receivers.BodyTags; } }
 
+        // -- actor-vs-job-owner faction checks, see ValidateActorFaction -- //
+        /// <summary>Actor must belong to the job owner's faction in any way (home, temp home or work).</summary>
+        public bool requireSameFaction = false;
+        /// <summary>Job owner's faction must be the actor's currently active faction (on shift, visiting, etc).</summary>
+        public bool requireSameActiveFaction = false;
+        /// <summary>Job owner's faction must be the actor's priority home faction (HomeFactions[0]).</summary>
+        public bool requireHomeFaction = false;
+
+        [JsonIgnore] public bool HasActorFactionReq { get { return requireSameFaction || requireSameActiveFaction || requireHomeFaction; } }
+
         public void Read(Requirement req)
         {
             if (this.doerCount == -1 && req.doerCount != -1) this.doerCount = req.doerCount;
@@ -88,6 +98,45 @@ public class COM_Requirements
             req_Receivers.Read(req.req_Receivers);
             treatDoerAsReceiver = treatDoerAsReceiver || req.treatDoerAsReceiver;
             treatReceiverAsDoer = treatReceiverAsDoer || req.treatReceiverAsDoer;
+            requireSameFaction = requireSameFaction || req.requireSameFaction;
+            requireSameActiveFaction = requireSameActiveFaction || req.requireSameActiveFaction;
+            requireHomeFaction = requireHomeFaction || req.requireHomeFaction;
+        }
+
+        /// <summary>
+        /// Checks c against the faction owning sourceJob (e.g. the furniture's room owner) for the
+        /// requireSameFaction/requireSameActiveFaction/requireHomeFaction flags. Always true when none
+        /// is set; false when one is set but sourceJob has no owning faction.
+        /// </summary>
+        public bool ValidateActorFaction(Job sourceJob, Character_Trainable c, out string tooltip)
+        {
+            tooltip = "";
+            if (!HasActorFactionReq) return true;
+            if (c == null) return false;
+
+            var owner = sourceJob?.FactionOwner?.Faction;
+            var factions = c.FactionManager;
+            if (owner == null)
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireSameFaction").Replace("$faction$", "-");
+                return false;
+            }
+            if (requireSameFaction && !factions.Factions.Contains(owner))
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireSameFaction").Replace("$faction$", owner.FactionDisplayName);
+                return false;
+            }
+            if (requireSameActiveFaction && factions.CurrentlyActiveFaction != owner)
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireSameActiveFaction").Replace("$faction$", owner.FactionDisplayName);
+                return false;
+            }
+            if (requireHomeFaction && (factions.HomeFactions.Count < 1 || factions.HomeFactions[0] != owner))
+            {
+                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireHomeFaction").Replace("$faction$", owner.FactionDisplayName);
+                return false;
+            }
+            return true;
         }
         public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, out bool hardlock, Requirement extraCondition = null)
         {

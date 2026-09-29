@@ -288,6 +288,28 @@ public class MapPlan
     /// resolves these and filters to non-manager types carrying a paid workModule.
     /// </summary>
     public List<string> assignableMemberTypes = new List<string>();
+
+    /// <summary>
+    /// Per-shift staffing targets for this (non-player) faction, one entry per shift MemberType. Each hour
+    /// FallbackWorkerManager.UpdateStaffing counts the real members covering that shift and wakes up to
+    /// maxFallback pooled fallback workers to fill the gap, generating new ones from templateID as needed.
+    /// See Manageable_WorkerPool.
+    /// </summary>
+    public List<FallbackWorkerInit> fallbackWorkers = new List<FallbackWorkerInit>();
+
+    public class FallbackWorkerInit
+    {
+        public string memberTypeID = "";
+        /// <summary>Total workers wanted on this shift, real NPCs and fallback workers combined.</summary>
+        public int headcount = 1;
+        /// <summary>Most fallback workers this shift may ever use (also caps the pool size for it). Negative = headcount.</summary>
+        public int maxFallback = -1;
+        /// <summary>CharaTemplateGenerator ID or base character ID fallback workers are generated from.</summary>
+        public string templateID = "";
+
+        [JsonIgnore] public int MaxFallback { get { return maxFallback < 0 ? headcount : maxFallback; } }
+    }
+
     public List<string> explorationKeywords = new List<string>();
 
     /// <summary>

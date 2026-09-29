@@ -44,15 +44,23 @@ public static class ReproductionUtility
     }
 
 
-    public static PathingRoomFilter LaborCandidateFilter = new PathingRoomFilter()
-    {
-        checkBlacklist = false,
-        skipPrivateRoom = false,
-        searchJobList = false,
-        searchNonJobList = true,
-        matchCOMTag = "bed"
-    };
     public static string sleepKeyword = "sleep";
+    public static string restRequiredTag = "rest_required";
+    public static string restTag = "rest";
+
+    /// <summary>
+    /// A natural birth may only happen while the mother is awake, not unconscious, and executing a rest_required
+    /// (com_furniture_rest_required) or rest (takingBreak etc.) COM. "Unconscious" only - severe labor pain reduces
+    /// consciousness by design. Labor keeps progressing meanwhile. Forced births (Character_Trainable.TickWomb forcebirth) ignore this.
+    /// </summary>
+    public static bool CanBirthNow(Character_Trainable c)
+    {
+        if (c == null) return false;
+        if (c.isSleeping) return false;
+        if (c.Stats.isConsciousnessUnconscious) return false;
+        if (c.CurrentJob == null) return false;
+        return c.CurrentJob.hasActivePackgeWithTag(c.RefID, restRequiredTag) || c.CurrentJob.hasActivePackgeWithTag(c.RefID, restTag);
+    }
     public static float Heuristic_LaborCandidate(Job_Furniture j, Character_Trainable c, Dictionary<int, float> cache)
     {
         int roomId = j.ParentRoom.RefID;

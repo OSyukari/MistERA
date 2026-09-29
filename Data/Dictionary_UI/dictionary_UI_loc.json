@@ -33,7 +33,7 @@
                 "ui_management_overview_dailyProduction": "Production resource change ($count$)",
                 "ui_management_overview_external": "$name$ is currently at $location$",
 
-                "ui_debug_tooltip": "When this option is enabled,\n1. Additional data that shouldn't normally be shown is displayed (for debugging convenience)\n2. The player can sleep at any time\n3. Player-executed commands don't consume Stamina or Energy\n4. Combat can be ended instantly with a chosen outcome\n5. Prisoners cannot refuse any command\n6. Conversations will always pick a chat topic\n%%ui_debug_tooltip2%%",
+                "ui_debug_tooltip": "When this option is enabled,\n1. Additional data that shouldn't normally be shown is displayed (for debugging convenience)\n2. The player can sleep at any time\n3. Player-executed commands don't consume Stamina or Energy\n4. Combat can be ended instantly with a chosen outcome\n5. Prisoners cannot refuse any command\n6. Conversations will always pick a chat topic\n7. The world map shows locations that would normally be hidden\n8. Debug-only commands (e.g. Browse Goods) are shown\n%%ui_debug_tooltip2%%",
                 "ui_entry_traits_tooltip": "Character traits. Significantly affects the character's %%ui_entry_derivedStats%%.",
                 "ui_map_floor_cancel": "Cancel Movement",
 

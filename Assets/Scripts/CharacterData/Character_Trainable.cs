@@ -25,6 +25,68 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 {
     public bool isTemporaryActor = false;
 
+    /// <summary>
+    /// ID of the Manageable_WorkerPool this character is a fallback worker of, or empty for ordinary
+    /// characters. Cleared automatically once they stop being a member of that pool (e.g. recruited).
+    /// </summary>
+    public string fallbackPoolID = "";
+
+    /// <summary>
+    /// Dormant characters get no per-minute ticks and UpdateAllCharaJob skips them; hour/day ticks keep
+    /// running. The skipped per-minute state (statuses, cooldowns, digestion, memories) is caught up in one
+    /// go by EndDormantState on waking. Only used for fallback workers parked in their pool room - see
+    /// SetDormant and FallbackWorkerManager.
+    /// </summary>
+    [JsonProperty] protected bool isDormant = false;
+    [JsonIgnore] public bool IsDormant { get { return isDormant; } }
+
+    /// <summary>Game time SetDormant(true) was called; default (old saves) = no catch-up on waking.</summary>
+    [JsonProperty] protected DateTime dormantSince = default;
+
+    public void SetDormant(bool dormant)
+    {
+        if (isDormant == dormant) return;
+        if (dormant)
+        {
+            ChangeCurrentJob(null);
+            // flush this round's buffers now - PreUpdateTime/PostUpdateTime won't run again until waking
+            Relationships.FinalizeAttitudeRound();
+            Relationships.ClearLastInteractedRelationships();
+            Relationships.ClearEPCache();
+            Body.ClearLastInteractedRefs();
+            Skills.FinalizeExperience();
+            RemoveObservers_Minute();
+            dormantSince = scr_System_Time.current.getCurrentTime();
+            isDormant = true;
+        }
+        else
+        {
+            isDormant = false;
+            int minutes = dormantSince == default ? 0 : (int)(scr_System_Time.current.getCurrentTime() - dormantSince).TotalMinutes;
+            dormantSince = default;
+            EndDormantState(minutes);
+            ReEstablishObservers_Minute();
+            // they didn't eat or sleep while parked - come back rested/fed
+            RestoreAll();
+        }
+    }
+
+    /// <summary>
+    /// Catch up, in one go, the per-minute updates a dormant character skipped - mainly so time-limited data
+    /// (statuses, cooldowns, stomach contents, memories) expires as if they had been ticking all along.
+    /// </summary>
+    protected void EndDormantState(int minutes)
+    {
+        if (minutes <= 0) return;
+        Stats.PreUpdateTimeTick(minutes);
+        var span = TimeSpan.FromMinutes(minutes);
+        Stats.UpdateTimeMinute(span, span);
+        Relationships.RefreshMinutes(minutes);
+        Body.UpdateTimeMinute(span);
+        Memory.Tick(minutes);
+        Memory.DailyClear();
+    }
+
 
     [JsonProperty]
     protected int furnitureLockJobRef = -1;
@@ -142,7 +204,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return false;
         }
     }
-    [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned && !Stats.hasStatusEXTag(StatsUtility.Stat_Tag_Immobilized); } }
+    [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned && !Stats.hasStatusEXTag(StatsUtility.Stat_Tag_Immobilized) && !Stats.hasStatusTag(StatsUtility.Stat_Tag_Immobilized); } }
     [JsonIgnore] public bool canLeave { get { return canMove && (CurrentJob == null || CurrentJob.CanBeInterrupted); } }
     [JsonIgnore] public Manageable.HourlySchedule currentHourSchedule { get {
             return GetJobPost(scr_System_Time.current.getCurrentTime().Hour);
@@ -461,6 +523,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
             // Recover chara based on sleep efficiency ?
         }
+        else if (isDormant)
+        {
+            // parked fallback worker - living off-screen, so no sleep deprivation builds up
+            timeSinceLastSleep = 0;
+        }
         /*
         else if (party != null && party.isActive && party.SleepHours.Contains(currentHour))
         {
@@ -535,6 +602,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     public void TickWomb(bool forcebirth = false, bool forbidBirth = false)
     {
         if (this.wombs == null || this.wombs.Count < 1) return;
+        // natural birth only while awake and resting (labor keeps progressing; birth happens once she rests)
+        if (!forcebirth && !ReproductionUtility.CanBirthNow(this)) forbidBirth = true;
         bool birth = false;
         foreach (var wb in wombs)
         {
@@ -1306,6 +1375,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (CurrentJob != null && CurrentJob.hasActorCompletedJob(0)) ChangeCurrentJob(null);
             return;
         }
+        if (fallbackPoolID != "" && FallbackWorkerManager.TryEnterDormancy(this))
+        {
+            if (s != null) s.Add(FirstName + ": fallback worker back in pool, going dormant");
+            return;
+        }
         bool log = s != null;
         bool debugLog = isRestrained;
 
@@ -1784,6 +1858,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             if (this.Stats.GetStatusSeverityByStringMatch("chara_status_sleep_deprived") > 0) return true;
             if (this.Stats.Fatigued) return true;
+            if (HasForceSleepTag) return true;
             return (hasSleepNeed && Stats.SleepHours > 0 && timeSinceLastSleep > Stats.SleepHours / 2);
         }
     }
@@ -1801,9 +1876,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (this.Stats.isConsciousnessUnconscious) return true;
             var induced = this.Stats.FindStatusByExactID("chara_status_inducedSleep");
             if (induced != null && induced.SeverityDisplayable) return true;
+            if (HasForceSleepTag) return true;
             return false;
         }
     }
+
+    /// <summary>Any active status (regular or EX) whose current variant carries the forceSleep tag.</summary>
+    bool HasForceSleepTag { get { return Stats.hasStatusTag(StatsUtility.Stat_Tag_ForceSleep) || Stats.hasStatusEXTag(StatsUtility.Stat_Tag_ForceSleep); } }
 
     [JsonIgnore] public bool shouldSleep { get
         {
@@ -1849,6 +1928,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             if (Stats.Energy != null && Stats.Energy.ValuePercentile < 0.5) return true;
             if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_ConsReduced)) return true;
             if (Stats.hasStatusTag(StatsUtility.Stat_Tag_NeedRest)) return true;
+            return false;
+        } }
+
+    /// <summary>
+    /// Abnormal condition compelling the character onto bed rest (labor, or a status tagged requireBedRest such as
+    /// post-birth recovery). Drives TryFindBedRestNode and gates com_furniture_rest_required. Not enforced on the player.
+    /// </summary>
+    [JsonIgnore] public bool requireBedRest { get
+        {
+            if (UtilityEX.IsInLabor(this)) return true;
+            if (Stats.hasStatusTag(StatsUtility.Stat_Tag_RequireBedRest)) return true;
+            if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_RequireBedRest)) return true;
             return false;
         } }
 
@@ -2450,6 +2541,20 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             sleepHour = windowMinutes > 0 ? Math.Min(personalNeedMinutes, windowMinutes) : personalNeedMinutes;
         }
+
+        // Player only: while a forceSleep status (e.g. postpartum/post-op recovery) is active, sleep straight
+        // through its remaining duration instead of being capped at the usual sleep need. NPCs don't need
+        // this - their sleep node keeps re-sleeping them while shouldSleep stays true.
+        if (scr_System_CampaignManager.current.Player == this)
+        {
+            int forceSleepMinutes = 0;
+            foreach (var status in Stats.StatusInstances)
+            {
+                if (status.duration > 0 && status.Tags.Contains(StatsUtility.Stat_Tag_ForceSleep))
+                    forceSleepMinutes = Math.Max(forceSleepMinutes, status.duration);
+            }
+            sleepHour = Math.Max(sleepHour, forceSleepMinutes);
+        }
         ScheduledSleepMissingMinutes = Math.Max(0, personalNeedMinutes - sleepHour);
 
         Stats.AddOrModStatus("chara_status_sleeping", Stats.SleepDepth, sleepHour);
@@ -2657,19 +2762,33 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
         //if (value) Debug.Log(s);
         //else Debug.LogError(s);
-        ReEstablishObservers();
+        ReEstablishObservers_HourDay();
+        if (!isDormant) ReEstablishObservers_Minute();
     }
 
     protected void ReEstablishObservers()
+    {
+        ReEstablishObservers_HourDay();
+        ReEstablishObservers_Minute();
+    }
+
+    /// <summary>Hour/day ticks - kept subscribed while dormant.</summary>
+    protected void ReEstablishObservers_HourDay()
+    {
+        if (this.RefID == -1) return;
+
+        scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
+        scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
+        scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_0;
+    }
+
+    /// <summary>Per-minute ticks - dropped while dormant, caught up in one go by EndDormantState.</summary>
+    protected void ReEstablishObservers_Minute()
     {
         if (this.RefID == -1) return;
 
         scr_System_Time.current.Observer_globalTime += Observer_GlobalMinute;
         scr_System_Time.current.Observer_globalTime_5min += Observer_GlobalMinute5;
-        scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
-        scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
-        scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_0;
-
 
         scr_UpdateHandler.current.Observer_PreUpdateTime += PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 += PostUpdateTime2;
@@ -2684,13 +2803,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     protected void RemoveObservers()
     {
+        RemoveObservers_HourDay();
+        RemoveObservers_Minute();
+    }
+
+    protected void RemoveObservers_HourDay()
+    {
+        if (this.RefID == -1) return;
+
+        scr_System_Time.current.Observer_globalTime_Hours -= Observer_GlobalHour;
+        scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay;
+        scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_0;
+    }
+
+    protected void RemoveObservers_Minute()
+    {
         if (this.RefID == -1) return;
 
         scr_System_Time.current.Observer_globalTime -= Observer_GlobalMinute;
         scr_System_Time.current.Observer_globalTime_5min -= Observer_GlobalMinute5;
-        scr_System_Time.current.Observer_globalTime_Hours -= Observer_GlobalHour;
-        scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay;
-        scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_0;
 
         scr_UpdateHandler.current.Observer_PreUpdateTime -= PreUpdateTime;
         scr_UpdateHandler.current.Observer_PostUpdateTime_2 -= PostUpdateTime2;

@@ -1,0 +1,50 @@
+{
+    "baseID": "jp_hospital_nurse_92",
+    "_comment": "Generic female nurse, single portrait.",
+    "Portrait": {
+        "portraitPriorityList": [
+            {
+                "$type": "PortraitManager+CharaPortrait_Image, Assembly-CSharp",
+                "portrait_offset_x": 0,
+                "portrait_offset_y": -175,
+                "portrait_offset_size": 1,
+                "icon_offset_x": 0,
+                "icon_offset_y": -205,
+                "icon_offset_size": 0.5,
+                "portrait_path": "Hospital/Assets_Nurses/_92.webp",
+                "icon_path": "Hospital/Assets_Nurses/_92.webp"
+            }
+        ]
+    },
+    "Template": {
+        "Appearance": "Female",
+        "BodyType": "Default",
+        "stat_STR": 10,
+        "stat_CON": 10,
+        "stat_PSY": 10,
+        "stat_WIL": 10,
+        "personalityID": "personality_default",
+        "sensitivity_B": "trait_Sensitivity_B_default",
+        "sensitivity_M": "trait_Sensitivity_M_default",
+        "sensitivity_C": "trait_Sensitivity_C_default",
+        "sensitivity_V": "trait_Sensitivity_V_default",
+        "sensitivity_A": "trait_Sensitivity_A_default",
+        "size_B": "trait_Size_B_B",
+        "size_P": "trait_Size_P_none",
+        "size_V": "trait_Size_V_1",
+        "size_A": "trait_Size_A_1",
+        "Height": 158,
+        "Weight": 52,
+        "traits": [ "trait_GenderPreference_hetero" ],
+        "initialInventory": [],
+        "Skills": null
+    },
+    "firstName": "",
+    "middleName": "",
+    "lastName": "",
+    "nameDisplayFormat": "chara_fullname_lastToFirst",
+    "origin": "charOrigin_none",
+    "race": "humanRace_human",
+    "raceTemplate": "humanRaceAddon_standard",
+    "startingGift": "charOriginGift_none"
+}

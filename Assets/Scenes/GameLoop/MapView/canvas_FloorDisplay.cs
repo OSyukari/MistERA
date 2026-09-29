@@ -19,6 +19,21 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     public int pathCost = 0;
 
     public Image picture;
+    public Image bgpicture;
+
+    public CanvasGroup CG_floorplan;
+    public CanvasGroup CG_bgImage;
+
+    void LoadFloorImage(bool isFloorPlan)
+    {
+        CG_floorplan.alpha = isFloorPlan ? 1 : 0;
+        CG_floorplan.blocksRaycasts = isFloorPlan;
+        CG_floorplan.interactable = isFloorPlan;
+
+        CG_bgImage.alpha = isFloorPlan ? 0 : 1;
+        CG_bgImage.blocksRaycasts = !isFloorPlan;
+        CG_bgImage.interactable = !isFloorPlan;
+    }
 
     Floor_Instance floor = null;
 
@@ -42,7 +57,6 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     //scr_Panel_Map parent;
 
     protected List<int> currentFloorIDs = new List<int>();
-
 
     /// ANCHOR CONVERSION ///
     /// <summary>
@@ -467,28 +481,42 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         ClearDisplay();
 
+        // a floor plan goes on `picture` (sized to the plan, room buttons on it); a straight background image
+        // goes on `bgpicture` at its fixed display size, with no map buttons drawn over it
+        bool isFloorPlan = floor.FloorBase.isFloorPlan;
+        LoadFloorImage(isFloorPlan);
+        Image target = isFloorPlan ? picture : bgpicture;
+        if (isFloorPlan) target.rectTransform.localScale = Vector3.one;
+
         if (scr_System_CentralControl.current.GetSprite(floor.FloorBase.imagePath, out var sprite))
         {
-            picture.sprite = sprite;
+            target.sprite = sprite;
         }
         else
         {
             Texture2D texture = null;
             yield return AssetsLoader.LoadTextureCoroutine(floor.FloorBase.imagePath, tex => texture = tex);
-            picture.sprite = scr_System_CentralControl.current.MakeSprite(floor.FloorBase.imagePath, texture);
+            target.sprite = scr_System_CentralControl.current.MakeSprite(floor.FloorBase.imagePath, texture);
         }
 
-        var scale = floor.FloorBase.resize;
-        // resize the picture's own rect instead of its transform scale, so child buttons (room/exit buttons
-        // parented to picture.rectTransform) don't inherit the zoom - only their ConvertOffset position does.
-        picture.rectTransform.sizeDelta = new Vector2(floor.FloorBase.floorWidth, floor.FloorBase.floorHeight) * scale;
+        // straight image sits in bgpicture's fixed rect, so keep its aspect instead of stretching it
+        if (!isFloorPlan) bgpicture.preserveAspect = true;
+        else
+        {
+            var scale = floor.FloorBase.resize;
+            // resize the picture's own rect instead of its transform scale, so child buttons (room/exit buttons
+            // parented to picture.rectTransform) don't inherit the zoom - only their ConvertOffset position does.
+            picture.rectTransform.sizeDelta = new Vector2(floor.FloorBase.floorWidth, floor.FloorBase.floorHeight) * scale;
+        }
         floorName.text = floor.displayName;
 
         foreach (Room_Instance ri in floor.rooms)
         {
-            if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2))
+            // keyed on the room-list button (always drawn) rather than the map button, which is skipped for a
+            // room with Room_Base.hideOnMap
+            if (!buttonsByID.ContainsKey((floor.GetHashCode() + ri.GetHashCode()) * 2 + 1))
             {
-                addBtn(prefab_roomButton, picture.rectTransform, ri, false, false, false);
+                if (!ri.Base.hideOnMap) addBtn(prefab_roomButton, picture.rectTransform, ri, false, false, false);
                 addBtn(prefab_roomButton, roomList, ri, true, true, true);
 
             }
@@ -503,7 +531,7 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 int i = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
                 Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
                 var j = scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(i);
-                addExit(prefab_roomButton, picture.rectTransform, exit, j);
+                if (exit == null || !exit.hideOnMap) addExit(prefab_roomButton, picture.rectTransform, exit, j);
             }
         }
 
@@ -516,13 +544,14 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         foreach (var ri in floor.rooms)
         {
             /// ANCHOR CONVERSION ///
-            connectionPosLookup[ri.RefID] = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
+            // hideOnMap rooms/exits get no lookup entry, so DrawConnections leaves a gap in the path line there
+            if (!ri.Base.hideOnMap) connectionPosLookup[ri.RefID] = ConvertOffset(ri.Base.offsetX, ri.Base.offsetY);
 
             if (scr_System_CampaignManager.current.Map.floorDoorQuickSearch.ContainsKey(ri.RefID))
             {
                 int connectedRef = scr_System_CampaignManager.current.Map.floorDoorQuickSearch[ri.RefID];
                 Floor_Base.FloorPlan_Exit exit = floor.FloorBase.exits.Find(x => x.connectedRoom == ri.Base.ID);
-                if (exit != null) connectionPosLookup[connectedRef] = ConvertOffset(exit.offsetX, exit.offsetY);
+                if (exit != null && !exit.hideOnMap) connectionPosLookup[connectedRef] = ConvertOffset(exit.offsetX, exit.offsetY);
             }
             /// ANCHOR CONVERSION ///
         }
@@ -721,15 +750,36 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
     /// </summary>
     public WorldPlan.DoorConnection FindPlayerOriginDoor(WorldPlan world)
     {
-        var faction = scr_System_CampaignManager.current.CurrentRoom.FactionOwner?.FactionOwnerRoot;
-        if (faction == null) return null;
+        var ownerID = ResolvePlayerDoorFactionID(world);
+        return ownerID == null ? null : world.doors.Find(d => d.factionID == ownerID);
+    }
 
-        // a subfaction (e.g. a mall shop) has no door of its own on the world map - its MainExit resolves to
-        // its parent's room, so use whichever faction actually owns that room instead of the subfaction's own ID.
-        var ownerID = faction.MainExit != null && faction.MainExit.FactionOwner != null
-            ? faction.MainExit.FactionOwner.FactionOwnerRoot.ID : faction.ID;
+    /// <summary>
+    /// ID of the faction whose door on the given world map stands in for the player's current location. A
+    /// subfaction (e.g. a mall shop) has no door of its own - its MainExit resolves to its parent's room, so
+    /// that room's owner is used. A faction with no door on this map at all (e.g. an annex like
+    /// ErAV_KiryuGumi_Filmstudio, only door-connected to ErAV_KiryuGumi_Office) is walked out through
+    /// factionConnection, nearest first, until a faction that does have a door here is found.
+    /// </summary>
+    public static string ResolvePlayerDoorFactionID(WorldPlan world)
+    {
+        var faction = scr_System_CampaignManager.current.CurrentRoom?.FactionOwner?.FactionOwnerRoot;
+        if (faction == null || world == null) return null;
 
-        return world.doors.Find(d => d.factionID == ownerID);
+        if (faction.MainExit != null && faction.MainExit.FactionOwner != null)
+            faction = faction.MainExit.FactionOwner.FactionOwnerRoot;
+
+        var queue = new Queue<Manageable>();
+        var seen = new HashSet<Manageable> { faction };
+        queue.Enqueue(faction);
+        while (queue.Count > 0)
+        {
+            var f = queue.Dequeue();
+            if (world.doors.Exists(d => d.factionID == f.ID)) return f.ID;
+            foreach (var connected in f.factionConnection)
+                if (seen.Add(connected)) queue.Enqueue(connected);
+        }
+        return null;
     }
 
     /// <summary>
@@ -812,6 +862,8 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
         floor = null;
 
         ClearDisplay();
+        // the world map always uses the floor-plan picture (door pins are placed on it by offset)
+        LoadFloorImage(true);
 
         if (scr_System_CentralControl.current.GetSprite(worldView.mapImagePath, out var sprite))
         {
@@ -1011,6 +1063,13 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
                 this.text.Toggle(true, true);
                 return true;
             }
+            else if (!room.CanBeAccessedBy(scr_System_CampaignManager.current.Player))
+            {
+                this.text.Toggle(true, false);
+                this.tooltip = ttip.Replace("$time$", "-") + "\n" + LocalizeDictionary.QueryThenParse("ui_room_requireFactionMembership")
+                    .Replace("$faction$", room.FactionOwner?.Faction?.FactionDisplayName ?? "-");
+                return false;
+            }
             else if (parent.path != null && parent.path.ToList().Find(x => x.Source == room.RefID || x.Target == room.RefID) != null)
             {
                 this.text.Toggle(true, false);
@@ -1083,14 +1142,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
 
         public override bool IsButtonValid()
         {
-            if (parent.floor == floor)
-            {
-                text.Toggle(true, true);
-            }
-            else
-            {
-                text.Toggle(true, false);
-            }
+            // only the player's own floor lights up in the floor list - an annex/sub floor is listed in its
+            // host's block itself, so there's nothing to forward to (the world-map pin handles that case, see
+            // ButtonValidator_SelectWorldDoor)
+            text.Toggle(true, scr_System_CampaignManager.current.PlayerFloor == floor);
             return true;
         }
 
@@ -1156,14 +1211,10 @@ public class canvas_RoomDisplay : scr_Menu, IPointerClickHandler
             var faction = scr_System_CampaignManager.current.FindFactionByID(door.factionID);
             var timeString = canvas_RoomDisplay.TravelTimeMinutesString(world, parent.FindPlayerOriginDoor(world), door);
 
-            var current = scr_System_CampaignManager.current.CurrentRoom;
-   
-            if (current != null && faction != null && current.FactionOwner.getLocaleFaction == faction.getLocaleFaction)
-            {
-                text.Toggle(true, true);
-            }
-            else text.Toggle(true, false);
-            
+            // same resolution as the travel-time origin, so a player inside an annex/sub floor with no pin of its
+            // own (e.g. 摄影工作室 -> 桐生组事务所) lights up the pin they'd actually leave from
+            text.Toggle(true, faction != null && door.factionID == canvas_RoomDisplay.ResolvePlayerDoorFactionID(world));
+
 
             Floor_Instance targetFloor = faction != null && faction.ManagedFloors.Count > 0 ? faction.ManagedFloors[0] : null;
             this.tooltip = targetFloor != null && targetFloor.rooms.Count == 1
