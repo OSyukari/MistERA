@@ -34,6 +34,7 @@
                 "OvumState_Third_trimester": "Third Trimester",
                 "OvumState_Implanted": "Implanted",
                 "OvumState_Final": "Labor",
+                "OvumState_Final_RequireHelp": "Labor Complications",
 
                 "ovum_itemName": "$race$ Foetus",
                 "ovum_itemTooltip": "$mother$ ($motherRace$) and $father$ ($fatherRace$)'s $race$ baby",

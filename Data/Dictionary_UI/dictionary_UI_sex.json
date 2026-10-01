@@ -97,6 +97,7 @@
 "OvumState_Second_trimester":"中期",
 "OvumState_Third_trimester":"晚期",
 "OvumState_Final":"临产",
+"OvumState_Final_RequireHelp": "难产",
 
 "chara_currentjob_labor":"临产中",
 "chara_currentjob_labor_assist":"辅助临产中",

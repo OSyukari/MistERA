@@ -1,5 +1,5 @@
 {
-    "_doc": "Modern Japanese general hospital. No floor plan is provided: every room is hideOnMap with no offsetX/offsetY, so the building only exists as the room list + the connects graph below. Room-to-room travel is abstracted as a hub-and-spoke layout with approximate walking minutes as door cost (Door_Instance cost = ticks spent on that hop, see ActionPackage_PathTo). Abstract layout: 1F outpatient lobby (reception + waiting, also the world-map exit) with triage and the pharmacy counter just off it; the inpatient ward is upstairs, reached by elevator into the ward's visitor lounge, which fronts the patient-room corridor. Patient rooms are numbered 301/302/303/305 - Japanese hospitals conventionally skip 4 (shi = death).",
+    "_doc": "Modern Japanese general hospital. No floor plan is provided: every room is hideOnMap with no offsetX/offsetY, so the building only exists as the room list + the connects graph below. Room-to-room travel is abstracted as a hub-and-spoke layout with approximate walking minutes as door cost (Door_Instance cost = ticks spent on that hop, see ActionPackage_PathTo). Abstract layout: 1F outpatient lobby (reception + waiting, also the world-map exit) with triage and the pharmacy counter just off it; the inpatient ward is upstairs, reached by elevator into the ward corridor that the patient rooms open onto. Patient rooms are numbered 301/302/303/305 - Japanese hospitals conventionally skip 4 (shi = death).",
     "_doc_sandboxing": "Staff sandbox by workModule.workCommands: each finished command picks a new random one, and each command is only offered by furniture in one room type, so staff drift between rooms (convenience store / high school pattern). Every hospital command carries a role tag (jp_hospital_doctor / _nurse / _pharmacy / _frontdesk / _visitor / _patient) for tag-matching behavior nodes. Pharmacy and front desk staff have a single workCommand each, so they stay in their room all shift; nurses do not sandbox by workCommands at all - their behavior_job override (TryFindNurseJobNode) picks hospital-wide cleaning first, then any jp_hospital_nurse command outside empty patient rooms. Patient/visitor commands are non-job (no 'job' tag) so their behavior_job override (TryFindNonJobByTagNode) can find them by tag. Hospital commands deliberately avoid the generic 'bed'/'rest'/'recreation' tags so they are never picked up by other furniture's comTags givers or the generic rest/recreation searches.",
     "_doc_pay": "Hourly pay approximates 2025 MHLW wage census averages (nurse ~5.25M JPY/yr over ~1920h, salaried doctor ~15.12M JPY/yr over ~2520h), plus the 25% legal late-night premium for 22:00-05:00, 35% holiday premium for weekend doctors, and JNA 2024 3-shift night allowances (evening 4567 / overnight 5715 JPY per shift) spread over 8h.",
 
@@ -68,10 +68,15 @@
                     { "memberTypeID": "membertype_jp_hospital_nurse_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
                     { "memberTypeID": "membertype_jp_hospital_pharmacy_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
                     { "memberTypeID": "membertype_jp_hospital_pharmacy_evening", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
-                    { "memberTypeID": "membertype_jp_hospital_pharmacy_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
+                    { "memberTypeID": "membertype_jp_hospital_pharmacy_night", "headcount": 1, "maxFallback": 0, "templateID": "jp_hospital_nurse" },
                     { "memberTypeID": "membertype_jp_hospital_frontdesk_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
                     { "memberTypeID": "membertype_jp_hospital_frontdesk_evening", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" },
                     { "memberTypeID": "membertype_jp_hospital_frontdesk_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_nurse" }
+                ],
+                "_comment_hourlyEvents": "Started every hour on the hospital's own patients (Manageable.StartHourlyEvents) - staff dispatch, see Events/hospital_medical_dispatch.json.",
+                "hourlyEvents": [
+                    { "eventID": "Hospital_Dispatch_IntensiveCare", "memberTypeID": "membertype_jp_hospital_patient" },
+                    { "eventID": "Hospital_Dispatch_CSection", "memberTypeID": "membertype_jp_hospital_patient" }
                 ],
                 "workHours": [],
                 "workAssignment": []
@@ -81,7 +86,7 @@
             {
                 "ID": "floor_jp_hospital",
                 "_comment_imagePath": "PLACEHOLDER - Floor_Base.OnAfterDeserialize marks a floor invalid when imagePath is empty, so this must stay non-empty. Point it at the hospital exterior image once it exists. No room is drawn on it (all hideOnMap). All room images below are also placeholders borrowed from BA_Utnapishtim/Media_UI_Scenario_Background, to be replaced with generated assets.",
-                "imagePath": "Media_UI_Scenario_Background/BG_Infirmary.jpg",
+                "imagePath": "Hospital/BG/hospital_exterior_01.webp",
                 "_comment_isFloorPlan": "false = imagePath is a straight background image (canvas_RoomDisplay.bgpicture), not a floor plan, so no room coordinates are needed.",
                 "isFloorPlan": false,
                 "floorWidth": 400.0,
@@ -94,7 +99,7 @@
                     "rentFee": { "itemID": "currency_JPY", "itemCount": 2000000 },
                     "cadence": "Monthly"
                 },
-                "_comment_travel": "Approximate walking minutes per hop. lobby->triage 1, lobby->pharmacy 1, lobby->ward lounge 3 (walk to elevator + ride + walk out), triage->ward lounge 3 (staff/bed elevator used when admitting), lounge->301/302 1, lounge->303/305 2 (further down the corridor), neighbouring patient rooms 1. Worst case entrance->305 = 5 min, well under the 99 total-path-cost cap.",
+                "_comment_travel": "Approximate walking minutes per hop. lobby->triage 1, lobby->pharmacy 1, lobby->ward corridor 3 (walk to elevator + ride + walk out), triage->ward corridor 3 (staff/bed elevator used when admitting), corridor->301/302 1, corridor->303/305 2 (further down the corridor), neighbouring patient rooms 1. Worst case entrance->305 = 5 min, well under the 99 total-path-cost cap.",
                 "_comment_patientRooms": "furniture_bed_hospital's ID contains 'furniture_bed', which makes each patient room private (Room_Instance.isRoomPrivate). Staff commands offered there set allowInPrivateRoom so staff still reach them.",
                 "rooms": [
                     {
@@ -103,7 +108,7 @@
                         "hideOnMap": true,
                         "connects": [],
                         "furnitureIDs": ["furniture_jp_hospital_reception_counter", "furniture_jp_hospital_waiting_bench"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_ReceptionRoom.jpg"
+                        "roomImagePath": "Hospital/BG/hospital_lobby.webp"
                     },
                     {
                         "ID": "hospital_triage",
@@ -113,8 +118,7 @@
                             { "ID": "hospital_1F_entrance", "cost": 1.0 }
                         ],
                         "furnitureIDs": ["furniture_jp_hospital_exam_desk"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_Infirmary.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Infirmary_Night.jpg"
+                        "roomImagePath": "Hospital/BG/hospital_triage.webp"
                     },
                     {
                         "ID": "hospital_pharmacy",
@@ -124,19 +128,19 @@
                             { "ID": "hospital_1F_entrance", "cost": 1.0 }
                         ],
                         "furnitureIDs": ["furniture_marker_jp_hospital_pharmacy_counter"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_Shop.jpg"
+                        "roomImagePath": "Hospital/BG/hospital_pharmacy.webp"
                     },
                     {
-                        "ID": "hospital_visitor_waiting",
-                        "displayName": "jp_hospital_visitor_waiting",
+                        "ID": "hospital_ward_corridor",
+                        "displayName": "jp_hospital_ward_corridor",
                         "hideOnMap": true,
                         "connects": [
                             { "ID": "hospital_1F_entrance", "cost": 3.0 },
                             { "ID": "hospital_triage", "cost": 3.0 }
                         ],
-                        "furnitureIDs": ["furniture_jp_hospital_waiting_bench", "furniture_jp_hospital_waiting_bench"],
-                        "roomImagePath": "Media_UI_Scenario_Background/BG_RestingLounge.jpg",
-                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RestingLounge_Night.jpg"
+                        "furnitureIDs": [],
+                        "_comment_roomImagePath": "PLACEHOLDER - reuses the lobby image until a corridor image exists",
+                        "roomImagePath": "Hospital/BG/hospital_lobby.webp"
                     },
                     {
                         "ID": "hospital_patient_room_301",
@@ -144,9 +148,9 @@
                         "requireFactionMembership": true,
                         "hideOnMap": true,
                         "connects": [
-                            { "ID": "hospital_visitor_waiting", "cost": 1.0 }
+                            { "ID": "hospital_ward_corridor", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal", "furniture_jp_hospital_waiting_bench"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
                     },
@@ -156,10 +160,10 @@
                         "requireFactionMembership": true,
                         "hideOnMap": true,
                         "connects": [
-                            { "ID": "hospital_visitor_waiting", "cost": 1.0 },
+                            { "ID": "hospital_ward_corridor", "cost": 1.0 },
                             { "ID": "hospital_patient_room_301", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal", "furniture_jp_hospital_waiting_bench"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
                     },
@@ -169,10 +173,10 @@
                         "requireFactionMembership": true,
                         "hideOnMap": true,
                         "connects": [
-                            { "ID": "hospital_visitor_waiting", "cost": 2.0 },
+                            { "ID": "hospital_ward_corridor", "cost": 2.0 },
                             { "ID": "hospital_patient_room_302", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal", "furniture_jp_hospital_waiting_bench"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
                     },
@@ -182,10 +186,10 @@
                         "requireFactionMembership": true,
                         "hideOnMap": true,
                         "connects": [
-                            { "ID": "hospital_visitor_waiting", "cost": 2.0 },
+                            { "ID": "hospital_ward_corridor", "cost": 2.0 },
                             { "ID": "hospital_patient_room_303", "cost": 1.0 }
                         ],
-                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal"],
+                        "furnitureIDs": ["furniture_bed_hospital", "furniture_jp_hospital_bedside_cart", "furniture_marker_getmeal", "furniture_jp_hospital_waiting_bench"],
                         "roomImagePath": "Media_UI_Scenario_Background/BG_Ward.jpg",
                         "roomImagePath_Night": "Media_UI_Scenario_Background/BG_Ward_Night.jpg"
                     }
@@ -456,6 +460,18 @@
                 "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
                 "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": false,
                 "initiallyForbidWork": true,
+                "_comment_joinHandler": "Builds the admission options (JoinActiveFaction Result in jp_hospital_Opt_Admit) - logic lives in JoinHandler_HospitalPatient.",
+                "joinHandler": {
+                    "$type": "JoinHandler_HospitalPatient, Assembly-CSharp",
+                    "optionTextKey": "jp_hospital_Opt_Admit_patientOption",
+                    "bindTargetKey": "patient"
+                },
+                "_comment_leaveHandler": "Builds the discharge options (LeaveActiveFaction Result in jp_hospital_Opt_Discharge) - logic lives in LeaveHandler_HospitalPatient.",
+                "leaveHandler": {
+                    "$type": "LeaveHandler_HospitalPatient, Assembly-CSharp",
+                    "optionTextKey": "jp_hospital_Opt_Discharge_patientOption",
+                    "bindTargetKey": "patient"
+                },
                 "behaviorOverrides": {
                     "behavior_job": {
                         "$type": "TryFindNonJobByTagNode, Assembly-CSharp",
@@ -476,6 +492,19 @@
                 "ID": "membertype_jp_hospital_visitor",
                 "socialStandingKey": "membertype_jp_hospital_visitor",
                 "_comment": "Assigned as a WORK faction. The command-less workModule makes the hospital the visitor's active faction during visiting hours (brings them here via TryChangeLocaleNode); behavior_job then waits on a bench.",
+                "_comment_joinHandler": "Builds one visit option per patient (JoinActiveFaction Result in jp_hospital_Opt_Visit) - logic lives in JoinHandler_HospitalVisitor.",
+                "joinHandler": {
+                    "$type": "JoinHandler_HospitalVisitor, Assembly-CSharp",
+                    "optionTextKey": "jp_hospital_Opt_Visit_patientOption",
+                    "bindTargetKey": "patient",
+                    "patientMemberTypeID": "membertype_jp_hospital_patient"
+                },
+                "_comment_leaveHandler": "Builds the end-visit options (LeaveActiveFaction Result in jp_hospital_Opt_EndVisit) - logic lives in LeaveHandler_HospitalVisitor.",
+                "leaveHandler": {
+                    "$type": "LeaveHandler_HospitalVisitor, Assembly-CSharp",
+                    "optionTextKey": "jp_hospital_Opt_EndVisit_visitorOption",
+                    "bindTargetKey": "visitor"
+                },
                 "isMember": false, "isPrisoner": false, "isManager": false, "isHidden": false,
                 "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
                 "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": false,
@@ -529,10 +558,11 @@
                 "ID":"furniture_jp_hospital_waiting_bench",
                 "displayName":"jp_hospital_waiting_bench",
                 "recipe":[],
-                "furnitureSize":3,
+                "_comment":"The sole provider of 'wait'-tagged commands. furnitureSize 0 = no actor cap (Job_Furniture.CanCOMAcceptMoreActor / ActionPackage_Interaction.AllowJoining).",
+                "furnitureSize":0,
                 "value":30000,
-                "Tags":[],
-                "givesJob": [ { "comID":["jp_hospital_visitor_wait"] } ]
+                "Tags":["rarity_uncommon"],
+                "givesJob": [ { "comTags":["furniture","wait"] } ]
             },
             {
                 "ID":"furniture_jp_hospital_exam_desk",
@@ -586,7 +616,7 @@
                 "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$在挂号处开始接待"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在挂号处接待患者"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$离开了挂号处"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了挂号处的工作"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$结束了挂号处的工作"] } ] }
             },
             {
                 "ID":"jp_hospital_triage_exam",
@@ -606,7 +636,7 @@
                 "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始在分诊室诊察"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在分诊室诊察患者"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了诊察"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了诊察"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$结束了诊察"] } ] }
             },
             {
                 "ID":"jp_hospital_triage_assist",
@@ -626,7 +656,7 @@
                 "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始在分诊室协助"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在分诊室为患者测量体征"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了分诊协助"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了分诊协助"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$结束了分诊协助"] } ] }
             },
             {
                 "ID":"jp_hospital_pharmacy_dispense",
@@ -646,7 +676,7 @@
                 "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始在药房配药"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在药房配药"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了配药"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了配药"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$结束了配药"] } ] }
             },
             {
                 "ID":"jp_hospital_ward_round",
@@ -667,7 +697,7 @@
                 "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始查房"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在查房"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$中断了查房"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$查房结束"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$查房结束"] } ] }
             },
             {
                 "ID":"jp_hospital_patient_care",
@@ -688,16 +718,16 @@
                 "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始护理病房"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在病房护理"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$停下了护理"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了病房护理"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$结束了病房护理"] } ] }
             },
             {
                 "ID":"jp_hospital_visitor_wait",
                 "ActionPackageClass":"ActionPackage_Interaction",
                 "displayName":"jp_hospital_visitor_wait_displayName",
-                "_comment":"One command = 2 hours of waiting. Non-job so the visitor's behavior_job override (TryFindNonJobByTagNode) finds it by the jp_hospital_visitor tag.",
+                "_comment":"One command = 2 hours of waiting. Non-job so the visitor's behavior_job override (TryFindNonJobByTagNode) finds it by the jp_hospital_visitor tag. No faction restriction; offered only by furniture_jp_hospital_waiting_bench via the 'wait' tag.",
                 "timeScale":120,
-                "comTags":["furniture","jp_hospital","jp_hospital_visitor"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "comTags":["furniture","jp_hospital","jp_hospital_visitor","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1 } },
@@ -706,18 +736,18 @@
                 ],
                 "AcceptanceCheck": { "baseAcceptanceValue": 10 },
                 "DifficultyCheck":{ "baseD20Check":0 },
-                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$在长椅上坐下等候"] } ] },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$开始等候"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在等候"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$起身不再等候"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了等候"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$结束了等候"] } ] }
             },
             {
                 "ID":"jp_hospital_bed_rest",
                 "ActionPackageClass":"ActionPackage_Interaction",
                 "displayName":"jp_hospital_bed_rest_displayName",
-                "_comment":"One command = 2 hours of bed rest, modeled on com_furniture_takingLongBreak. requireHomeFaction limits it to characters whose priority home is the hospital (patients). No generic 'bed'/'rest' tags on purpose.",
+                "_comment":"One command = 2 hours of bed rest, modeled on com_furniture_takingLongBreak. requireHomeFaction limits it to characters whose priority home is the hospital (patients). No generic 'bed'/'rest' tags on purpose. 'rest_required' marks it as bed rest for labor (ReproductionUtility.CanBirthNow) - without it a patient resting here never entered active labor.",
                 "timeScale":120,
-                "comTags":["furniture","jp_hospital","jp_hospital_patient"],
+                "comTags":["furniture","jp_hospital","jp_hospital_patient","rest_required"],
                 "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireHomeFaction": true } },
                 "results_EP": {
                     "results_character": [
@@ -737,7 +767,7 @@
                 "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$躺在病床上静养"] } ] },
                 "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$正在病床上静养"] } ] },
                 "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$从病床上起身"] } ] },
-                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$receiver.firstname$结束了静养"] } ] }
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["$doer.firstname$结束了静养"] } ] }
             }
         ]
     },
@@ -788,7 +818,7 @@
                 "jp_hospital_triage": "分诊室",
                 "jp_hospital_pharmacy": "药房",
                 "jp_hospital_pharmacy_counter": "药房柜台",
-                "jp_hospital_visitor_waiting": "探视等候室",
+                "jp_hospital_ward_corridor": "走廊",
                 "jp_hospital_patient_room_301": "301病房",
                 "jp_hospital_patient_room_302": "302病房",
                 "jp_hospital_patient_room_303": "303病房",
@@ -807,7 +837,7 @@
                 "jp_hospital_pharmacy_dispense_displayName": "配药",
                 "jp_hospital_ward_round_displayName": "查房",
                 "jp_hospital_patient_care_displayName": "病房护理",
-                "jp_hospital_visitor_wait_displayName": "等候探视",
+                "jp_hospital_visitor_wait_displayName": "等候...",
                 "jp_hospital_bed_rest_displayName": "卧床静养",
 
                 "membertype_jp_hospital_doctor_day": "日班医生",
@@ -848,7 +878,7 @@
                 "jp_hospital_triage": "Triage Room",
                 "jp_hospital_pharmacy": "Pharmacy",
                 "jp_hospital_pharmacy_counter": "Pharmacy Counter",
-                "jp_hospital_visitor_waiting": "Visitor Waiting Room",
+                "jp_hospital_ward_corridor": "Corridor",
                 "jp_hospital_patient_room_301": "Patient Room 301",
                 "jp_hospital_patient_room_302": "Patient Room 302",
                 "jp_hospital_patient_room_303": "Patient Room 303",
@@ -867,7 +897,7 @@
                 "jp_hospital_pharmacy_dispense_displayName": "Dispense Medication",
                 "jp_hospital_ward_round_displayName": "Ward Round",
                 "jp_hospital_patient_care_displayName": "Patient Care",
-                "jp_hospital_visitor_wait_displayName": "Wait for Visit",
+                "jp_hospital_visitor_wait_displayName": "Wait...",
                 "jp_hospital_bed_rest_displayName": "Bed Rest",
 
                 "membertype_jp_hospital_doctor_day": "Day Doctor",

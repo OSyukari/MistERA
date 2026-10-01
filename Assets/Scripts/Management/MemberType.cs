@@ -272,6 +272,20 @@ public class MemberType
     public bool initiallyForbidWork = false;
 
     /// <summary>
+    /// Optional data-authored join logic ("$type" object, e.g. JoinHandler_TempHomeWithRoom) consulted by
+    /// Manageable.BuildJoinOptions (event Result JoinActiveFaction): builds the ready-made options of joining as this
+    /// type, each with its own join callback. Null = nothing offered (every existing type).
+    /// </summary>
+    public MemberJoinHandler joinHandler = null;
+
+    /// <summary>
+    /// Optional data-authored leave logic ("$type" object, e.g. LeaveHandler_HospitalPatient) consulted by
+    /// Manageable.BuildLeaveOptions (event Result LeaveActiveFaction): builds the ready-made options of leaving a faction
+    /// held as this type, each with its own leave callback. Null = nothing offered.
+    /// </summary>
+    public MemberLeaveHandler leaveHandler = null;
+
+    /// <summary>
     /// Optional tags contributed by this member status (e.g. "prisoner", "clergy"), merged into the
     /// actor's tag set (Utility.GetActorTag) when this is the character's current MemberType in their
     /// active faction or active party. Empty by default.

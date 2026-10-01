@@ -44,14 +44,179 @@ public static class ReproductionUtility
     }
 
 
+    // ── Labor ─────────────────────────────────────────────────────────────
+    // Early labor (Final) -> [unsafe: Final_RequireHelp, waits for a C-section] or [resting: one baby enters IntenseLabor]
+    // (Character_Trainable.TickLabor). Everything after that is events: the hourly Labor_IntenseStart starts the "labor"
+    // event chain; its Labor_Contraction rolls the birth - GiveBirth - while she rests and schedules itself again.
+    // Following siblings get a short intense stage; Labor_Contraction ends the chain once nobody is in intense labor.
+    public static string status_labor_intense = "chara_status_labor_intense";
+    /// <summary>Display-only: this labor cannot be delivered naturally and ends in a C-section.</summary>
+    public static string status_labor_obstructed = "chara_status_labor_obstructed";
+
+    public static void SetLaborObstructed(Character_Trainable c, bool obstructed)
+    {
+        if (c == null) return;
+        bool has = c.Stats.FindStatusByExactID(status_labor_obstructed) != null;
+        if (obstructed && !has) c.Stats.AddOrModStatus(status_labor_obstructed, 100);
+        else if (!obstructed && has) c.Stats.RemoveStatusByExactID(status_labor_obstructed);
+    }
+    // Realistic limits on labor lengths (minutes), whatever the race or how badly the baby fits: early labor at most 2 days,
+    // active labor at most 4 hours, a following sibling at most 1 hour. CanDeliverSafely still judges safety on the
+    // unclamped length; only the time spent is limited.
+    public const int EarlyLaborMin = 30, EarlyLaborMax = 2880;
+    public const int ActiveLaborMin = 10, ActiveLaborMax = 240;
+    public const int SiblingLaborMin = 5, SiblingLaborMax = 60;
+
+    public static int ClampEarlyLabor(int minutes) { return Mathf.Clamp(minutes, EarlyLaborMin, EarlyLaborMax); }
+    public static int ClampActiveLabor(int minutes, bool sibling)
+    {
+        return sibling ? Mathf.Clamp(minutes, SiblingLaborMin, SiblingLaborMax) : Mathf.Clamp(minutes, ActiveLaborMin, ActiveLaborMax);
+    }
+
+    /// <summary>Applies the limits to labors already running (e.g. from older saves, or set before the limits existed).</summary>
+    public static void ClampRunningLabor(Character_Trainable c)
+    {
+        foreach (var egg in AllOvums(c))
+        {
+            if (egg.State == OvumState.Final || egg.State == OvumState.Final_RequireHelp)
+                egg.totalLifespan = ClampEarlyLabor(egg.totalLifespan);
+            else if (egg.State == OvumState.IntenseLabor && egg.intenseDuration > ActiveLaborMax)
+                egg.intenseDuration = ActiveLaborMax;
+        }
+    }
+
+    /// <summary>Early labor progress: severity = % of early labor elapsed (0-100), duration = minutes left (-1 once it has run its length).</summary>
+    public static string status_labor = "chara_status_labor";
+
+    /// <summary>
+    /// Sets status_labor from the most advanced baby in early labor (Final); removes it when nobody is in early labor or
+    /// a baby is in intense labor (status_labor_intense labels that stage instead). Also removes status_labor_intense
+    /// when nobody is in intense labor, and status_labor_obstructed when no baby is in any labor stage - so every labor
+    /// status is gone once the labor ends, however it ended (birth, C-section, debug birth, lost pregnancy). Called
+    /// whenever labor progresses or changes stage (Character_Trainable.TickWomb, after births, stage switches).
+    /// </summary>
+    public static void UpdateLaborStatus(Character_Trainable c)
+    {
+        if (c == null) return;
+        bool anyLabor = false;
+        foreach (var egg in AllOvums(c)) if (IsLaborState(egg.State)) { anyLabor = true; break; }
+        if (!IsInIntenseLabor(c) && c.Stats.FindStatusByExactID(status_labor_intense) != null) c.Stats.RemoveStatusByExactID(status_labor_intense);
+        if (!anyLabor) SetLaborObstructed(c, false);
+
+        Ovum most = null;
+        float best = -1f;
+        if (!IsInIntenseLabor(c))
+        {
+            foreach (var egg in AllOvums(c))
+            {
+                if (egg.State != OvumState.Final) continue;
+                float ratio = egg.totalLifespan <= 0 ? 1f : (float)egg.lifespan / egg.totalLifespan;
+                if (ratio > best) { best = ratio; most = egg; }
+            }
+        }
+        if (most == null)
+        {
+            if (c.Stats.FindStatusByExactID(status_labor) != null) c.Stats.RemoveStatusByExactID(status_labor);
+            return;
+        }
+        c.Stats.SetStatusSeverity(status_labor, Mathf.Clamp01(best) * 100f);
+        var status = c.Stats.FindStatusByExactID(status_labor);
+        if (status == null) return;
+        int remaining = most.totalLifespan - most.lifespan;
+        // no duration once early labor has run its length (she waits to rest) - a 0 duration would expire the status
+        status.duration = remaining > 0 ? remaining : -1;
+    }
+
+    public static string event_birth = "PregnancyEnd_Birth";
+    /// <summary>Fired when labor begins (Character_Trainable.NotifyLaborStart); offers going to a hospital.</summary>
+    public static string event_laborStart = "Labor_Start";
+    /// <summary>
+    /// Labor_Start is shown to the player wherever they are (EventInstance.displayOverride) when the character's home or
+    /// temporary home faction is managed by the player.
+    /// </summary>
+    public static bool IsLaborVisibleToPlayer(Character_Trainable c)
+    {
+        if (c == null) return false;
+        var home = c.FactionManager.Faction_Home;
+        var tempHome = c.FactionManager.Faction_Home_Temporary;
+        return (home != null && home.isPlayerFaction) || (tempHome != null && tempHome.isPlayerFaction);
+    }
+    /// <summary>StoredOptions key of Labor_Start's hospital admission options.</summary>
+    public static string laborStart_optionsKey = "hospitalOptions";
+    /// <summary>Hospital patient MemberType offered on labor start (its joinHandler decides which factions admit).</summary>
+    public static string memberType_hospitalPatient = "membertype_jp_hospital_patient";
+
+    public static bool IsLaborState(OvumState s)
+    {
+        return s == OvumState.Final || s == OvumState.Final_RequireHelp || s == OvumState.IntenseLabor;
+    }
+
+    public static IEnumerable<Ovum> AllOvums(Character_Trainable c)
+    {
+        if (c == null || c.wombs == null) yield break;
+        foreach (var w in c.wombs)
+        {
+            if (w == null || w.eggs == null) continue;
+            foreach (var egg in w.eggs) if (egg != null) yield return egg;
+        }
+    }
+
+    public static Ovum FindOvum(Character_Trainable c, OvumState state)
+    {
+        foreach (var egg in AllOvums(c)) if (egg.State == state) return egg;
+        return null;
+    }
+
+    /// <summary>A baby is in its intense (birth) stage.</summary>
+    public static bool IsInIntenseLabor(Character_Trainable c) { return FindOvum(c, OvumState.IntenseLabor) != null; }
+
+    /// <summary>The labor was found unsafe to deliver naturally; waits for a C-section.</summary>
+    public static bool RequiresCSection(Character_Trainable c) { return FindOvum(c, OvumState.Final_RequireHelp) != null; }
+
+    /// <summary>
+    /// Whether c can get a C-section at all: she is already a hospital patient (temporary home held as the patient
+    /// MemberType), or some revealed, reachable faction would admit her as one (FactionJoinUtility - also empty when she is
+    /// imprisoned or held by another temporary home). Without it an unsafe labor goes ahead as a natural birth, so nobody
+    /// waits for a C-section that cannot come.
+    /// </summary>
+    public static bool IsCSectionAvailable(Character_Trainable c)
+    {
+        if (c == null) return false;
+        var tempHome = c.FactionManager.Faction_Home_Temporary;
+        if (tempHome != null && tempHome.GetMemberType(c)?.ID == memberType_hospitalPatient) return true;
+        return FactionJoinUtility.BuildReachableJoinOptions(c, memberType_hospitalPatient).Count > 0;
+    }
+
+    /// <summary>
+    /// Birth roll for the baby in intense labor. The hourly chance follows GetBirthChancePerHour(progress) and is
+    /// converted to the real minutes since this baby's previous roll (Ovum.lastBirthRollTime), so roll frequency does not
+    /// change the odds; guaranteed once progress reaches 1. With the default curve most births land in the last ~30% of
+    /// the intense stage.
+    /// </summary>
+    public static bool RollLaborBirth(Character_Trainable c)
+    {
+        var egg = FindOvum(c, OvumState.IntenseLabor);
+        if (egg == null) return false;
+        var now = scr_System_Time.current.getCurrentTime();
+        float minutes = (float)(now - egg.lastBirthRollTime).TotalMinutes;
+        egg.lastBirthRollTime = now;
+        float progress = egg.IntenseProgress;
+        if (progress >= 1f) return true;
+        if (minutes <= 0f) return false;
+        float hourly = GetBirthChancePerHour(progress);
+        float chance = 1f - Mathf.Pow(1f - hourly, minutes / 60f);
+        return Utility.NextFloat() < chance;
+    }
+
     public static string sleepKeyword = "sleep";
     public static string restRequiredTag = "rest_required";
     public static string restTag = "rest";
 
     /// <summary>
-    /// A natural birth may only happen while the mother is awake, not unconscious, and executing a rest_required
+    /// Resting gate of natural birth: the mother is awake, not unconscious, and executing a rest_required
     /// (com_furniture_rest_required) or rest (takingBreak etc.) COM. "Unconscious" only - severe labor pain reduces
-    /// consciousness by design. Labor keeps progressing meanwhile. Forced births (Character_Trainable.TickWomb forcebirth) ignore this.
+    /// consciousness by design. Checked to enter intense labor, and again by every contraction and birth roll (a failed
+    /// check just requeues). Forced births (Character_Trainable.TickWomb forcebirth) and C-sections ignore this.
     /// </summary>
     public static bool CanBirthNow(Character_Trainable c)
     {

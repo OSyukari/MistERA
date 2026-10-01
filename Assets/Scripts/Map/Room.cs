@@ -722,6 +722,12 @@ public class Room_Instance: IDisposable, I_Disposable
             return _isRoomPrivate; } }
 
     /// <summary>
+    /// A hospital patient room (admission claims one - JoinHandler_HospitalPatient). For now: Base ID starts with
+    /// "hospital_patient_room_"; may be widened later.
+    /// </summary>
+    [JsonIgnore] public bool isRoomHospital { get { return Base != null && Base.ID.StartsWith("hospital_patient_room_"); } }
+
+    /// <summary>
     /// isRoomPrison/isRoomPrivate are cached off the furniture list - must be invalidated whenever
     /// that list changes or they'll keep returning a stale verdict for the rest of the room's life.
     /// DisplayName/DisplayNameShort branch on those same flags (prison/private/plain), so a furniture

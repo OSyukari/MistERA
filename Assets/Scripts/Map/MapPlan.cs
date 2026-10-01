@@ -310,6 +310,19 @@ public class MapPlan
         [JsonIgnore] public int MaxFallback { get { return maxFallback < 0 ? headcount : maxFallback; } }
     }
 
+    /// <summary>
+    /// Events this faction starts every hour on its own members (Manageable.OnHourUpdate) - e.g. a hospital dispatching
+    /// staff to its patients. These events should have no trigger of their own, so they never run anywhere else.
+    /// </summary>
+    public List<HourlyEventInit> hourlyEvents = new List<HourlyEventInit>();
+
+    public class HourlyEventInit
+    {
+        public string eventID = "";
+        /// <summary>Only members holding this MemberType here; "" = every member.</summary>
+        public string memberTypeID = "";
+    }
+
     public List<string> explorationKeywords = new List<string>();
 
     /// <summary>

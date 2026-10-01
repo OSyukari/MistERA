@@ -1,0 +1,57 @@
+{
+    "_doc": "Labor status, managed by code (Character_Trainable.StartIntenseLabor / EndIntenseLaborState). chara_status_labor_intense: shown while a baby is in intense labor (bed rest comes from labor itself, UtilityEX.IsInLabor). Flat severity 100, no decay.",
+    "Status": {
+        "list": [
+            {
+                "statusID": "chara_status_labor",
+                "_comment": "Early labor progress, set by code (ReproductionUtility.UpdateLaborStatus) whenever labor progresses: severity = % of early labor elapsed (0-100), duration = minutes left (-1 once early labor has run its length and she waits to rest). Removed when active labor starts (chara_status_labor_intense labels that stage) or labor ends. Display only.",
+                "allowNaturalRemoval": true,
+                "stringFormat": "N0",
+                "variationMode": { },
+                "_comment_variants": "two variants only to give severity its 0-100 range (Status_Instance.SeveritySet clamps between the first and last variant thresholds); both show the same label",
+                "variants": [
+                    { "displayName": "chara_status_labor_active", "threshold": 0 },
+                    { "displayName": "chara_status_labor_active", "threshold": 100 }
+                ]
+            },
+            {
+                "statusID": "chara_status_labor_obstructed",
+                "_comment": "Shown for the whole labor when a baby cannot be delivered naturally (ReproductionUtility.CanDeliverSafely failed) - the labor ends in a C-section. Display only; managed by code (ReproductionUtility.SetLaborObstructed).",
+                "allowNaturalRemoval": true,
+                "variationMode": { },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    { "displayName": "chara_status_labor_obstructed_active", "threshold": 9999 }
+                ]
+            },
+            {
+                "statusID": "chara_status_labor_intense",
+                "allowNaturalRemoval": true,
+                "variationMode": { },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    { "displayName": "chara_status_labor_intense_active", "threshold": 9999 }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "chara_status_labor_active": "临产",
+                "chara_status_labor_tooltip": "临产会随时间推进\n临产结束后，只有在清醒并卧床静养（或其他休息指令）时才会进入分娩",
+                "chara_status_labor_intense_active": "分娩中",
+                "chara_status_labor_intense_tooltip": "只有在清醒并卧床静养（或其他休息指令）时，分娩才会推进",
+                "chara_status_labor_obstructed_active": "难产",
+                "chara_status_labor_obstructed_active_tooltip": "无法自然生产，需要进医院才可完成生产\n若当前世界中没有该角色可以抵达的医院，则会强制自然生产"
+            },
+            "en-us": {
+                "chara_status_labor_active": "In Labor",
+                "chara_status_labor_tooltip": "Early labor advances over time.\nOnce it has run its course, active labor only begins while awake and resting (Bed Rest or another rest command).",
+                "chara_status_labor_intense_active": "In Active Labor",
+                "chara_status_labor_intense_tooltip": "Labor only progresses toward birth while awake and resting (Bed Rest or another rest command).",
+                "chara_status_labor_obstructed_active": "Obstructed Labor (cannot deliver naturally)"
+            }
+        }
+    }
+}

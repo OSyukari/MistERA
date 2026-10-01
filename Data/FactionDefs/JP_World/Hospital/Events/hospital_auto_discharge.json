@@ -1,14 +1,22 @@
 {
-    "_doc": "Hospital_AutoDischarge: attached (via AddStatus onRemoveEventID) to a hospital patient's recovery status by PregnancyEnd_Birth (and later the C-section). Fires on the patient when the status is removed and discharges them from their temporary home (the hospital). Generic: works for any hospital whose patient MemberType carries the hospital_patient portraitTag. Placeholder line.",
+    "_doc": "Hospital_AutoDischarge: attached (via AddStatus onRemoveEventID) to a hospital patient's recovery status by PregnancyEnd_Birth / PregnancyEnd_CSection. Fires on the patient when the status is removed and discharges them from their temporary home (the hospital). Generic: works for any hospital whose patient MemberType carries the hospital_patient portraitTag. Hospital_Discharged: fired by the patient MemberType's leaveHandler (LeaveHandler_HospitalPatient.OnMemberLeft) after ANY discharge (this event, the front desk, ...), self = the patient; its text ($dischargeText$: who was discharged + every visitor who left with them) is built in code.",
     "Events": {
         "list": [
             {
                 "ID": "Hospital_AutoDischarge",
-                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options": [
+                            {
+                                "option": "_still_needs_care",
+                                "_comment": "Re-checked at discharge time (this status is already gone): a patient the patient MemberType's joinHandler would still admit - e.g. another baby still in labor or waiting for a C-section, or another recovery status - stays.",
+                                "self_chara_conditions": [
+                                    { "parameters": [ "hasActorTag", "hospital_patient" ] },
+                                    { "parameters": [ "shouldRemainMember", "@tempHome" ] }
+                                ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "not_patient" ] } ]
+                            },
                             {
                                 "option": "_still_patient",
                                 "self_chara_conditions": [ { "parameters": [ "hasActorTag", "hospital_patient" ] } ],
@@ -23,7 +31,8 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "discharge",
-                        "line": "Hospital_AutoDischarge_placeholder",
+                        "_comment": "the discharge itself is announced by Hospital_Discharged",
+                        "line": "Hospital_AutoDischarge_recovered",
                         "Results": [
                             { "Type": "RemoveFromFaction", "arguments": [ "self", "@tempHome" ] }
                         ],
@@ -36,16 +45,28 @@
                         "isLast": true
                     }
                 ]
+            },
+            {
+                "ID": "Hospital_Discharged",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "$dischargeText$",
+                        "isLast": true
+                    }
+                ]
             }
         ]
     },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "Hospital_AutoDischarge_placeholder": "$self.name$已康复出院。"
+                "Hospital_AutoDischarge_recovered": "$self.name$已经康复了。",
+                "jp_hospital_discharged": "$name$从$faction$出院了。"
             },
             "en-us": {
-                "Hospital_AutoDischarge_placeholder": "$self.name$ has recovered and been discharged."
+                "Hospital_AutoDischarge_recovered": "$self.name$ has recovered.",
+                "jp_hospital_discharged": "$name$ has been discharged from $faction$."
             }
         }
     }

@@ -380,29 +380,15 @@ public abstract class BodyInternal_Womb
             }
             egg.HourTick(this);
 
-            if (egg.State == OvumState.Final && !forbidBirth)
+            if (ReproductionUtility.IsLaborState(egg.State))
             {
-                if (forceBirth)
+                // natural births come only from Labor_Contraction events (Character_Trainable.GiveBirth);
+                // here only the debug force birth delivers, from any labor stage
+                if (forceBirth && !forbidBirth)
                 {
                     Debug.Log("force birth");
                     birthEV.Add(egg);
                 }
-                else if (egg.totalLifespan == 0)
-                {
-                    Debug.LogError("error egg totalLifespan 0 force birth");
-                    birthEV.Add(egg);
-                }
-                else 
-                {
-                    var chance = ReproductionUtility.GetBirthChancePerHour(egg.lifespan / egg.totalLifespan);
-                    var roll = Utility.NextFloat();
-                    Debug.LogError($"birth chance check {egg.lifespan} / {egg.totalLifespan} = {chance} , {roll} <= {chance} ? {roll <= chance}");
-                    if (roll <= chance) birthEV.Add(egg);
-                }
-            }
-            else if (egg.State == OvumState.Final_RequireHelp)
-            {
-
             }
             else if (egg.State == OvumState.Aborted)
             {

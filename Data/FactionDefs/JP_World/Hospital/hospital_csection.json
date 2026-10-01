@@ -1,0 +1,149 @@
+{
+    "_doc": "C-section (Job_CSection, launched by Hospital_Dispatch_CSection in Events/hospital_medical_dispatch.json). jp_hospital_csection_operation: the staff's operation command in that job; an NPC patient is its receiver from the start, a player patient joins the waiting package through the join button (joinAlone - the player only) to begin the operation; its timeScale is the operation length. chara_status_anesthesia: given at the start of the operation (forceSleep - lets the player sleep through it, NPCs sleep it off afterwards). When the operation is done the job runs Hospital_CSection_Complete, which delivers every waiting baby (GiveBirth all) and follows up with PregnancyEnd_CSection: post-op recovery 3-4 days (+ Hospital_AutoDischarge for hospital patients).",
+    "COMs": {
+        "list": [
+            {
+                "ID": "jp_hospital_csection_operation",
+                "_comment": "Staff (doctor + optional nurse) as doers; the patient is the receiver (no treatReceiverAsDoer - it would list the patient among $doer$ and leave $receiver$ unresolved in the logs). Variant 0 = preparing (no receiver yet - a player patient joins it through the join button, alone: joinAlone), variant 1 = operating. doerCount/receiverCount are upper limits; they also make the package joinable (MaxActorCount).",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_hospital_csection_operation_displayName",
+                "timeScale": 60,
+                "comTags": [ "jp_hospital", "csection" ],
+                "requirements": {
+                    "requirement": {
+                        "joinAlone": true,
+                        "req_Receivers": { "requireConscious": false, "requireAction": false }
+                    }
+                },
+                "_comment_descriptions": "Each variant has its own begin/ongoing text (useBaseDescription false): the preparing one has no receiver, so it must not use the operating text's $receiver$.",
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 2, "receiverCount": 0 } },
+                        "displayName": "jp_hospital_csection_operation_displayName_prep",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "jp_hospital_csection_operation_prep_begin_1" ] } ] },
+                        "description_ongoing": { "Entries": [ { "texts": [ "jp_hospital_csection_operation_prep_ongoing_1" ] } ], "keepLooking": false }
+                    },
+                    {
+                        "requirements": { "requirement": { "doerCount": 2, "receiverCount": 1 } },
+                        "displayName": "jp_hospital_csection_operation_displayName",
+                        "useBaseDescription": false,
+                        "description_begin": { "Entries": [ { "keepLooking": true, "texts": [ "jp_hospital_csection_operation_begin_1" ] } ] },
+                        "description_ongoing": { "Entries": [ { "texts": [ "jp_hospital_csection_operation_ongoing_1" ] } ], "keepLooking": false }
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 0 },
+                "DifficultyCheck": { "baseD20Check": -1 }
+            }
+        ]
+    },
+    "Status": {
+        "list": [
+            {
+                "statusID": "chara_status_anesthesia",
+                "allowNaturalRemoval": true,
+                "variationMode": { },
+                "variants": [
+                    { "displayable": false, "threshold": 0 },
+                    { "displayName": "chara_status_anesthesia_active", "threshold": 9999, "tags": [ "forceSleep" ] }
+                ]
+            }
+        ]
+    },
+    "Events": {
+        "list": [
+            {
+                "ID": "Hospital_CSection_Complete",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Hospital_CSection_Complete_EV01",
+                        "Results": [
+                            { "Type": "GiveBirth", "arguments": [ "self", "all", "PregnancyEnd_CSection" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "PregnancyEnd_CSection",
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "witness" ],
+                        "minTargetCount": 0,
+                        "baseScope": "AllCharaInSelfRoom_ExcludeSelf"
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_hospital_patient",
+                                "self_chara_conditions": [ { "parameters": [ "hasActorTag", "hospital_patient" ] } ],
+                                "Results": [
+                                    { "Type": "AddStatus", "arguments": [ "self", "chara_status_postop_recovery", "100", "4320", "5760", "Hospital_AutoDischarge" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "birth_main" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "AddStatus", "arguments": [ "self", "chara_status_postop_recovery", "100", "4320", "5760" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "birth_main" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "birth_main",
+                        "line": "PregnancyEnd_CSection_EV01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "$outcome$",
+                        "Results": [
+                            { "Type": "FlushMessageExpAll" }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_hospital_csection_operation_displayName": "剖腹产手术",
+                "jp_hospital_csection_operation_displayName_prep": "准备剖腹产手术",
+                "jp_hospital_csection_operation_begin_1": "$doer.firstname$开始为$receiver.firstname$进行剖腹产手术",
+                "jp_hospital_csection_operation_ongoing_1": "$doer.firstname$正在为$receiver.firstname$进行手术",
+                "jp_hospital_csection_operation_prep_begin_1": "$doer.firstname$开始准备剖腹产手术",
+                "jp_hospital_csection_operation_prep_ongoing_1": "$doer.firstname$正在准备剖腹产手术",
+                "chara_status_anesthesia_active": "麻醉",
+                "chara_currentjob_medical_csection_staff_prep": "为$patient$准备剖腹产手术",
+                "chara_currentjob_medical_csection_staff_operating": "正在为$patient$进行剖腹产手术",
+                "chara_currentjob_medical_csection_patient_prep": "等待剖腹产手术",
+                "chara_currentjob_medical_csection_patient_operating": "正在接受剖腹产手术",
+                "Hospital_CSection_Complete_EV01": "$self.name$的剖腹产手术结束了。",
+                "PregnancyEnd_CSection_EV01": "$self.name$经剖腹产诞下了$count$胎：$babyname$"
+            },
+            "en-us": {
+                "jp_hospital_csection_operation_displayName": "C-section",
+                "jp_hospital_csection_operation_displayName_prep": "Preparing a C-section",
+                "jp_hospital_csection_operation_begin_1": "$doer.firstname$ begins $receiver.firstname$'s C-section",
+                "jp_hospital_csection_operation_ongoing_1": "$doer.firstname$ is operating on $receiver.firstname$",
+                "jp_hospital_csection_operation_prep_begin_1": "$doer.firstname$ begins preparing a C-section",
+                "jp_hospital_csection_operation_prep_ongoing_1": "$doer.firstname$ is preparing a C-section",
+                "chara_status_anesthesia_active": "Anesthetized",
+                "chara_currentjob_medical_csection_staff_prep": "Preparing $patient$'s C-section",
+                "chara_currentjob_medical_csection_staff_operating": "Performing $patient$'s C-section",
+                "chara_currentjob_medical_csection_patient_prep": "Waiting for a C-section",
+                "chara_currentjob_medical_csection_patient_operating": "Undergoing a C-section",
+                "Hospital_CSection_Complete_EV01": "$self.name$'s C-section is over.",
+                "PregnancyEnd_CSection_EV01": "$self.name$ delivered $count$ babies by C-section: $babyname$"
+            }
+        }
+    }
+}

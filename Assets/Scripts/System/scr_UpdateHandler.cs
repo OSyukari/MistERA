@@ -1166,7 +1166,11 @@ public class scr_UpdateHandler : MonoBehaviour
     {
         var time = scr_System_Time.current.getCurrentTime();
         Observer_PreUpdateTime?.Invoke();
-        if (tickCooldown) this.EventHandler.TickCooldown();
+        if (tickCooldown)
+        {
+            this.EventHandler.TickCooldown();
+            this.EventHandler.TickEventChains();
+        }
         if (time.Minute == 0) Observer_PreUpdateTime_Hourly?.Invoke();
     }
 

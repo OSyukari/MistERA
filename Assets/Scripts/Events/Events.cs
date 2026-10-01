@@ -21,6 +21,7 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
 {
     public List<Event> list = new List<Event>();
     public List<MissionTracker> quests = new List<MissionTracker>();
+    public List<EventChain> chains = new List<EventChain>();
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -30,10 +31,12 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
         {
             if (l.list != null) this.list.AddRange(l.list);
             if (l.quests != null) this.quests.AddRange(l.quests);
+            if (l.chains != null) this.chains.AddRange(l.chains);
         }
     }
 
     Dictionary<string, Event> ID_Dictionary = new Dictionary<string, Event>();
+    Dictionary<string, EventChain> Chain_ID_Dictionary = new Dictionary<string, EventChain>();
     Dictionary<string, MissionTracker> Quest_ID_Dictionary = new Dictionary<string, MissionTracker>();
 
     public void OnAfterDeserialize()
@@ -56,10 +59,20 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
             if (string.IsNullOrEmpty(q.questID)) continue;
             if (!Quest_ID_Dictionary.TryAdd(q.questID, q)) Debug.Log($"failed to add Index_Events quest id [{q.questID}] due to duplicate");
         }
+
+        s.Add($"Index_Events : registering chainIDs with list length [{chains.Count}]");
+        foreach (var c in chains)
+        {
+            if (string.IsNullOrEmpty(c.chainID)) continue;
+            if (!Chain_ID_Dictionary.TryAdd(c.chainID, c)) Debug.Log($"failed to add Index_Events chain id [{c.chainID}] due to duplicate");
+        }
     }
 
     public Event GetByID(string ID)
     { return ID_Dictionary.ContainsKey(ID) ? ID_Dictionary[ID] : null; }
+
+    public EventChain GetChainByID(string ID)
+    { return ID != null && Chain_ID_Dictionary.TryGetValue(ID, out var c) ? c : null; }
 
     [JsonIgnore] public Dictionary<string, MissionTracker> AllQuests
     {
@@ -68,6 +81,18 @@ public class Index_Events : I_IndexMergeable, I_IndexHasID, I_SerializationCallb
 
     public MissionTracker GetQuestByID(string ID)
     { return Quest_ID_Dictionary.ContainsKey(ID) ? Quest_ID_Dictionary[ID] : null; }
+}
+
+/// <summary>
+/// An event chain: started on one character by a low-frequency event (StartEventChain Result) with its first event and
+/// timer; each chain event then decides what comes next (SetChainNext) or ends it (EndEventChain). One chain per
+/// (chainID, self) at a time - see EventManager.ActiveEventChain. events lists the event IDs that belong to the chain
+/// (only those can be scheduled in it); they should use trigger None so no regular trigger runs them.
+/// </summary>
+public class EventChain
+{
+    public string chainID = "";
+    public List<string> events = new List<string>();
 }
 
 public enum EventTrigger
@@ -80,7 +105,12 @@ public enum EventTrigger
     OnEnterRoom,
     OnDialogue,
     OnDialogue_Options,
-    OnDailyUpdate
+    OnDailyUpdate,
+    /// <summary>
+    /// Every in-game hour on every character, after its womb/labor tick (Character_Trainable.Observer_GlobalHour).
+    /// Keep self conditions cheap - this is checked for every character each hour.
+    /// </summary>
+    OnHourlyUpdate
 }
 /// <summary>
 /// Ordered, 3 first are considered member of faction, and the rest is not (temp visitor / prisoner)
@@ -113,7 +143,13 @@ public enum TargetScope
     /// Every member of faction extraScopeArguments[0] currently holding MemberType extraScopeArguments[1]
     /// in that faction (e.g. a hospital's current patients), filtered by chara_conditions.
     /// </summary>
-    FactionMembersWithMemberType
+    FactionMembersWithMemberType,
+    /// <summary>
+    /// Every member of a faction, filtered by chara_conditions (e.g. on-shift doctors by staff tag, across all their
+    /// shift MemberTypes). extraScopeArguments[0] = factionID, or "@selfTempHome" (self's temporary home faction, e.g.
+    /// the hospital a patient is admitted to) / "@selfActiveFaction" (self's currently active faction).
+    /// </summary>
+    FactionMembers
 }
 
 public class EventScope_Target
@@ -354,7 +390,21 @@ public class Event : I_SerializationCallbackReceiver
         {
             public override string Name { get { return question; } }
             public string question = "";
+            /// <summary>
+            /// Optional: key into EventInstance.StoredOptions (e.g. filled by the JoinActiveFaction Result). Those options are
+            /// shown first, followed by this question's own options.
+            /// </summary>
+            public string loadOptionsKey = "";
+            /// <summary>Optional: Results appended to every option loaded through loadOptionsKey (run after its onSelect),
+            /// e.g. a JumpToLabel to the confirmation line.</summary>
+            public List<Executor> loadOptionsResults = new List<Executor>();
             public List<Options> options = new List<Options>();
+            /// <summary>
+            /// When the event's self is not the player, this question is never shown - the NPC decides on its own
+            /// (EventUtility.NpcDecide): a random isDefaultAccept option (loaded ones included), else the isDefaultCancel
+            /// option, else the event is terminated with an error log.
+            /// </summary>
+            public bool npcDecides = false;
 
             [JsonIgnore]
             public Options Default
@@ -431,6 +481,13 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>Runtime only: the character this expanded copy stands for.</summary>
             [JsonIgnore] public Character_Trainable boundTarget = null;
 
+            /// <summary>Runtime only: custom logic run when this option is picked, before its Results (e.g. set on options
+            /// built by a MemberJoinHandler and loaded through EventEntry_Question.loadOptionsKey).</summary>
+            [JsonIgnore] public System.Action<EventInstance> onSelect = null;
+            /// <summary>Runtime only: when set, the option is invalid (drawn disabled) and this localization key is
+            /// appended to its tooltip as the reason.</summary>
+            [JsonIgnore] public string disabledReasonKey = "";
+
             public Options CloneForTarget(Character_Trainable target)
             {
                 var copy = (Options)MemberwiseClone();
@@ -467,6 +524,8 @@ public class Event : I_SerializationCallbackReceiver
             public List<Condition> conditions = new List<Condition>();
             public ExecutionType Type = ExecutionType.None;
             public List<string> arguments = new List<string>();
+            /// <summary>LaunchJob only: typed job ("$type") copied for every launch - must implement I_EventLaunchedJob.</summary>
+            public Job jobTemplate = null;
 
             public bool isValid()
             {
@@ -749,7 +808,7 @@ public class Event : I_SerializationCallbackReceiver
             /// Links every resolved source character to the (first) resolved target character inside factionID
             /// (Manageable.SetMemberLink) - e.g. visitor -> the patient they visit. Both must be members of the
             /// faction; if requiredSourceMemberTypeID is given, sources holding any other MemberType there are
-            /// skipped. Scope keys resolve like SetWorkFaction ("self", "selfAndFollowers" or an owner.Targets key).
+            /// skipped. Each link is typed with the source's current MemberType there. Scope keys resolve like SetWorkFaction ("self", "selfAndFollowers" or an owner.Targets key).
             /// </summary>
             SetMemberLink,
 
@@ -785,7 +844,75 @@ public class Event : I_SerializationCallbackReceiver
             /// run immediately, so it happens after the owning entry's line (itself queued the same way) is displayed.
             /// Trader, seller faction and payer are still resolved at execution time.
             /// </summary>
-            StartRetailTradeCallback
+            StartRetailTradeCallback,
+
+            /// <summary>
+            /// [string storeKey, string candidatesKey, string factionRefKey, string memberTypeID, optional string errorStringKey] <br/>
+            /// Asks memberTypeID's MemberJoinHandler (Manageable.BuildJoinOptions) for the options of joining the active root
+            /// faction of the first character resolved from factionRefKey (e.g. the staff member being talked to), offered to
+            /// the characters resolved from candidatesKey (TryResolveExecTargets: "self", "selfAndFollowers" or a target key).
+            /// The ready-made options are stored in EventInstance.StoredOptions[storeKey] (loaded by a question's
+            /// loadOptionsKey). If none are returned and the handler gave a reason, its localized text is stored in
+            /// AppendStrings[errorStringKey] (shown via $errorStringKey$). Always returns true.
+            /// </summary>
+            JoinActiveFaction,
+
+            /// <summary>
+            /// [string storeKey] - true if EventInstance.StoredOptions[storeKey] holds at least one option (branch check).
+            /// </summary>
+            ExistStoredOptions,
+
+            /// <summary>
+            /// Same arguments and storage as JoinActiveFaction, but asks memberTypeID's MemberLeaveHandler
+            /// (Manageable.BuildLeaveOptions) for the options of leaving that faction.
+            /// </summary>
+            LeaveActiveFaction,
+
+            /// <summary>
+            /// [string scopeKey, string mode, optional string followupEventID] <br/>
+            /// Delivers babies of every resolved character (Character_Trainable.GiveBirth) - mode "intense": the baby in
+            /// intense labor (natural birth, e.g. from Labor_Contraction); mode "all": every baby in any labor stage
+            /// (C-section). followupEventID (default PregnancyEnd_Birth) is run on the mother. A following sibling then
+            /// gets a short intense stage. True if anyone was delivered.
+            /// </summary>
+            GiveBirth,
+
+            /// <summary>
+            /// [string chainID, string eventID, int delayMinMinutes, int delayMaxMinutes] <br/>
+            /// Starts event chain chainID (Index_Events.chains) on owner.Self: eventID (one of the chain's events) runs
+            /// after a delay rolled in [min, max]. False if the chain/event is unknown or the chain is already active on self.
+            /// </summary>
+            StartEventChain,
+
+            /// <summary>
+            /// [string chainID] - ends event chain chainID on owner.Self. Always true.
+            /// </summary>
+            EndEventChain,
+
+            /// <summary>
+            /// [string chainID, string eventID, int delayMinMinutes, int delayMaxMinutes] <br/>
+            /// From an event run by chain chainID only: schedules the chain's next event (one of its events) after a delay
+            /// rolled in [min, max]. A chain event that finishes without SetChainNext or EndEventChain ends the chain.
+            /// Always true (a refused request is only logged), so it never makes a branch option fall through.
+            /// </summary>
+            SetChainNext,
+
+            /// <summary>
+            /// [string role=scopeKey, ...] + jobTemplate <br/>
+            /// Copies the executor's jobTemplate, binds each role to the characters resolved from its scope key
+            /// (TryResolveExecTargets: "self", "selfAndFollowers" or a target key; e.g. "patient=self", "doctor=doctor")
+            /// through I_EventLaunchedJob.BindRoles, then registers the job. A key that does not resolve (e.g. an optional
+            /// target nobody matched) gives an empty role. False if the template is missing or the job refuses the binding.
+            /// </summary>
+            LaunchJob,
+
+            /// <summary>
+            /// [string scopeKey, optional string jobTypeName] <br/>
+            /// Terminates every job that opts in (I_EventTerminableJob) and involves a resolved character - their current
+            /// job, or a specially tracked job matching them (I_RequireSpecialTracker, e.g. a patient who is not an actor).
+            /// jobTypeName (class name, e.g. "Job_CSection") limits it to that job type. True if any job was terminated.
+            /// </summary>
+            TerminateJob
 
         }
     }

@@ -144,6 +144,53 @@ public class TryFindSleepNode_Prisoner : TryFindSleepNode
 }
 
 /// <summary>
+/// Prisoner-restricted alternative to TryFindBedRestNode (behaviorOverrideID "behavior_bedrest"). A prisoner needing bed
+/// rest may only take it in the room they are in (e.g. a hospital room they were brought to - they stay there) or a
+/// prison room (PrisonerJobRestriction) - they never leave to look elsewhere. Searches the locale faction and the current
+/// room's owner. The base node is left untouched; this is an additive alternative.
+/// </summary>
+public class TryFindBedRestNode_Prisoner : TryFindBedRestNode
+{
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        if (!c.requireBedRest) return false;
+        if (c.shouldSleep) return false;
+        if (!initialized)
+        {
+            internalShutdown = scr_System_Serializer.current.MasterList.COMs.GetByID(targetID) == null;
+            initialized = true;
+        }
+        if (internalShutdown) return false;
+        if (c.CurrentJob != null && !resetJob && (c.CurrentJob.hasActivePackge(c.RefID, targetID) || c.CurrentJob.allusableCOM_Contains(targetID) && c.CurrentJob.hasActivePathing(c.RefID)))
+        {
+            return true;
+        }
+
+        var currentRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID);
+        var allowedRooms = PrisonerJobRestriction.GetAllowedRoomRefs(c, currentLocaleFaction);
+        if (currentRoom != null && !allowedRooms.Contains(currentRoom.RefID)) allowedRooms.Add(currentRoom.RefID);
+        if (allowedRooms.Count == 0) return false;
+
+        var factions = new List<I_IsJobGiver>();
+        if (currentLocaleFaction != null) factions.Add(currentLocaleFaction);
+        I_IsJobGiver roomOwner = currentRoom?.FactionOwner;
+        if (roomOwner != null && !factions.Contains(roomOwner)) factions.Add(roomOwner);
+
+        foreach (var faction in factions)
+        {
+            var possibleJobs = faction.GetValidJobs_Heuristics(Heuristic, 1, c, currentHour, filter, comIDOverride: targetID, s: s, restrictRoomList: allowedRooms);
+            if (possibleJobs == null || possibleJobs.Count < 1) continue;
+            Job job = possibleJobs[0];
+            if (s != null) s.Add($"Changing job to {targetID} (prisoner-restricted) " + String.Join(",", job.allusableCOMStrings) + $"|{job.RefID}| in room [" + job.ParentRoom.DisplayName + "]");
+            c.ChangeCurrentJob(job, targetID);
+            return true;
+        }
+        if (s != null) s.Add($"TryFindBedRestNode_Prisoner: {c.FirstName} requires bed rest but found no {targetID} in the current room or a prison room");
+        return false;
+    }
+}
+
+/// <summary>
 /// Prisoner-restricted alternative to TryFindPrivateRoomCleaning (behaviorOverrideID "behavior_cleaning").
 /// The base node restricts its search to the character's current room and self-owned rooms - both
 /// checked for dirtiness - which for a prisoner (who never owns rooms) collapses to "current room

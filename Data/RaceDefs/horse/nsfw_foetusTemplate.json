@@ -19,7 +19,10 @@
         "size_third": 20000.0,
         "size_end": 50000.0,
         "duration_randVariation": 0.05,
-        "duration_labor": 40,
+        "duration_labor": 120,
+        "duration_labor_intense": 20,
+        "duration_birth_interval": 20,
+        "_note_labor_stages": "real-world: stage 1 1-4 h, delivery 10-30 min (over 30 min is an emergency)",
         "average_mother_HWMult": 69750,
         "_note_avg": "69750 = ~155 cm × 450 kg typical mare. Verify against actual creature character template H×W.",
         "images":[

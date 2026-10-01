@@ -1,0 +1,250 @@
+{
+    "_doc": "Intense labor. Character_Trainable.TickLabor moves one baby into intense labor (resting gate). Labor_IntenseStart (hourly) starts the 'labor' event chain with Labor_Contraction - it doubles as the safety net, restarting a lost chain the next hour. Labor_Contraction holds all the logic and schedules itself (SetChainNext) or ends the chain: nobody in intense labor -> end; not resting -> silently next check; birth roll -> GiveBirth, then continue for the next sibling (already in its short intense stage) or end; otherwise a contraction.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Labor_IntenseStart",
+                "trigger": "OnHourlyUpdate",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "isInIntenseLabor" ] },
+                        { "parameters": [ "hasEventChain", "labor", "false" ] }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Labor_IntenseStart_EV01",
+                        "Results": [
+                            { "Type": "StartEventChain", "arguments": [ "labor", "Labor_Contraction", "5", "15" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "Labor_Contraction",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_labor_over",
+                                "self_chara_conditions": [ { "parameters": [ "isInIntenseLabor", "false" ] } ],
+                                "Results": [
+                                    { "Type": "EndEventChain", "arguments": [ "labor" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "silent_end" ] }
+                                ]
+                            },
+                            {
+                                "option": "_not_resting",
+                                "self_chara_conditions": [ { "parameters": [ "canBirthNow", "false" ] } ],
+                                "Results": [
+                                    { "Type": "SetChainNext", "arguments": [ "labor", "Labor_Contraction", "5", "15" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "silent_end" ] }
+                                ]
+                            },
+                            {
+                                "option": "_birth",
+                                "self_chara_conditions": [ { "parameters": [ "rollLaborBirth" ] } ],
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "birth" ] }
+                                ]
+                            },
+                            {
+                                "option": "_contraction",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "contraction" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "contraction",
+                        "line": "Labor_Contraction_EV01",
+                        "Results": [
+                            { "Type": "AddStatus", "arguments": [ "self", "chara_status_pain_birth", "2", "-1", "-1" ] },
+                            { "Type": "ModStatEXValue", "arguments": [ "self", "stats_derived_extended_stamina", "-3" ] },
+                            { "Type": "ModStatEXValue", "arguments": [ "self", "stats_derived_extended_energy", "-2" ] },
+                            { "Type": "SetChainNext", "arguments": [ "labor", "Labor_Contraction", "5", "15" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "birth",
+                        "line": "Labor_Birth_EV01",
+                        "Results": [
+                            { "Type": "GiveBirth", "arguments": [ "self", "intense" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "_comment": "after a birth only the scheduling happens here - the 'not over' / 'finished' lines are printed at the end of PregnancyEnd_Birth, which runs after this event and its birth messages",
+                                "option": "_next_sibling",
+                                "self_chara_conditions": [ { "parameters": [ "isInIntenseLabor" ] } ],
+                                "Results": [
+                                    { "Type": "SetChainNext", "arguments": [ "labor", "Labor_Contraction", "5", "15" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "silent_end" ] }
+                                ]
+                            },
+                            {
+                                "option": "_last_baby",
+                                "Results": [
+                                    { "Type": "EndEventChain", "arguments": [ "labor" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "silent_end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "silent_end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "Labor_Start",
+                "_comment": "Fired from code when labor begins (Character_Trainable.NotifyLaborStart), no trigger. Target 'mother' = the woman in labor; self = the player when the player decides (her own labor, or the mother shares the player's permanent home faction), else the mother herself. The hospital admission options are built by code (FactionJoinUtility.InsertJoinOptions) into StoredOptions 'hospitalOptions' - this event only loads them, same pattern as jp_hospital_Opt_Admit. Player: the question waits for the player. NPC: npcDecides - a random default-accept hospital, else 'do not go'.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Labor_Start_EV01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_already_housed",
+                                "target_chara_conditions": { "mother": [ { "parameters": [ "hasTempHomeFaction" ] } ] },
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            },
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "hospitalOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "decide" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "no_hospital" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "options": [
+                            {
+                                "option": "_player",
+                                "self_chara_conditions": [ { "parameters": [ "isPlayer" ] } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_player" ] } ]
+                            },
+                            {
+                                "option": "_npc",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ask_npc" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_player",
+                        "question": "Labor_Start_Question",
+                        "loadOptionsKey": "hospitalOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "admitted" ] } ],
+                        "options": [
+                            {
+                                "option": "Labor_Start_DontGo",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask_npc",
+                        "question": "Labor_Start_Question",
+                        "npcDecides": true,
+                        "loadOptionsKey": "hospitalOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "admitted" ] } ],
+                        "options": [
+                            {
+                                "option": "Labor_Start_DontGo",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "admitted",
+                        "line": "Labor_Start_Admitted"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "no_hospital",
+                        "line": "Labor_Start_NoHospital",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ],
+        "chains": [
+            {
+                "chainID": "labor",
+                "events": [ "Labor_Contraction" ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Labor_IntenseStart_EV01": "$self.name$的阵痛变得剧烈起来，分娩开始了。",
+                "Labor_Contraction_EV01": "$self.name$的宫缩又一次袭来。",
+                "Labor_Birth_EV01": "$self.name$用尽力气，孩子终于出生了。",
+                "Labor_NotOver_EV01": "但$self.name$的分娩还没有结束，阵痛再次袭来。",
+                "Labor_Finished_EV01": "$self.name$的分娩结束了。",
+                "memory_entry_labor_active": "开始分娩",
+                "memory_entry_labor_csection": "接受了由$doctor$主刀的剖腹产手术",
+                "Labor_Start_EV01": "$mother.name$开始临产了。",
+                "Labor_Start_Question": "要让$mother.name$去医院吗？",
+                "Labor_Start_DontGo": "不去医院",
+                "Labor_Start_Admitted": "$mother.name$将前往医院。",
+                "Labor_Start_NoHospital": "附近没有$mother.name$能去的医院。",
+                "event_joinOption_atFaction": "$faction$"
+            },
+            "en-us": {
+                "Labor_IntenseStart_EV01": "$self.name$'s contractions grow intense - the birth has begun.",
+                "Labor_Contraction_EV01": "Another contraction grips $self.name$.",
+                "Labor_Birth_EV01": "With one last push, $self.name$'s baby is born.",
+                "Labor_NotOver_EV01": "But $self.name$'s labor is not over yet - the contractions return.",
+                "Labor_Finished_EV01": "$self.name$'s labor is over.",
+                "memory_entry_labor_active": "Went into active labor",
+                "memory_entry_labor_csection": "Had a C-section performed by $doctor$",
+                "Labor_Start_EV01": "$mother.name$ is entering labor.",
+                "Labor_Start_Question": "Should $mother.name$ go to a hospital?",
+                "Labor_Start_DontGo": "Do not go to a hospital",
+                "Labor_Start_Admitted": "$mother.name$ will go to the hospital.",
+                "Labor_Start_NoHospital": "There is no hospital $mother.name$ can reach.",
+                "event_joinOption_atFaction": "$faction$"
+            }
+        }
+    }
+}

@@ -16,8 +16,15 @@
                 "events":[
 {
     "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-    "_comment": "Every birth leaves the mother on bed rest for 1-2 days (chara_status_postpartum_recovery: requireBedRest). Hospital patients (hospital_patient actor tag, from their patient MemberType) additionally get Hospital_AutoDischarge fired when it wears off.",
+    "_comment": "Every birth leaves the mother on bed rest for 1-2 days (chara_status_postpartum_recovery: requireBedRest) - only after the LAST baby (hasPendingBirth: a sibling still in labor or waiting for a C-section skips it). Hospital patients (hospital_patient actor tag, from their patient MemberType) additionally get Hospital_AutoDischarge fired when it wears off.",
     "options": [
+        {
+            "option": "_more_babies",
+            "self_chara_conditions": [ { "parameters": [ "hasPendingBirth" ] } ],
+            "Results": [
+                { "Type": "JumpToLabel", "arguments": [ "", "birth_main" ] }
+            ]
+        },
         {
             "option": "_hospital_patient",
             "self_chara_conditions": [ { "parameters": [ "hasActorTag", "hospital_patient" ] } ],
@@ -48,7 +55,44 @@
     "line": "$outcome$",
     "Results":[
         { "Type":"FlushMessageExpAll" }
-    ],
+    ]
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+    "_comment": "Labor follow-up, after the birth messages (this event runs only after Labor_Contraction, which queued it, has finished - so the line must be printed here, not there). Next baby already in active labor -> not over; no baby left in any labor stage -> finished; remaining babies waiting for a C-section -> no line.",
+    "options": [
+        {
+            "option": "_not_over",
+            "self_chara_conditions": [ { "parameters": [ "isInIntenseLabor" ] } ],
+            "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "labor_not_over" ] } ]
+        },
+        {
+            "option": "_finished",
+            "self_chara_conditions": [ { "parameters": [ "hasPendingBirth", "false" ] } ],
+            "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "labor_finished" ] } ]
+        },
+        {
+            "option": "_waiting_csection",
+            "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "labor_end" ] } ]
+        }
+    ]
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+    "label": "labor_not_over",
+    "line": "Labor_NotOver_EV01",
+    "isLast": true
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+    "label": "labor_finished",
+    "line": "Labor_Finished_EV01",
+    "isLast": true
+},
+{
+    "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+    "label": "labor_end",
+    "line": "",
     "isLast": true
 }
                 ]
@@ -63,6 +107,7 @@
             {
                 "location_unknown":"某处",
                 "memory_entry_givebirth":"诞下了$count$胎",
+                "memory_entry_givebirth_laborEnd":"诞下了$count$胎，结束了分娩",
                 "faction_report_givebirth":"$name$在$room$诞下了$count$胎",
                 "PregnancyEnd_Birth_EV01":"$self.name$在$roomname$诞下了$count$胎：$babyname$\n$witness.name$目击了全过程"
             }

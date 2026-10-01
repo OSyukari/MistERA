@@ -545,6 +545,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         this.Body.UpdateTimeHour(t);
         this.TickWomb();
+        this.TickLabor();
+        scr_UpdateHandler.current.EventHandler.Trigger(this, EventTrigger.OnHourlyUpdate);
         timeSinceLastEat = Math.Min(24, timeSinceLastEat + 1);
         this.Relationships.HourlyRefresh();
         //Debug.Log($"{FirstName} Observer_GlobalHour: conscious? {Stats.isConsciousnessUnconscious} sleep? {hasStatKeyword("sleep")} lastSleep {timeSinceLastSleep}, lastEat {timeSinceLastEat}");
@@ -599,11 +601,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     public ReproductionCycle ReproCycle = null;
 
+    /// <summary>
+    /// Advances every womb by one hour. Only a forced (debug) birth delivers here - natural births come from the
+    /// "labor" event chain (Labor_Contraction -> GiveBirth), labor stage changes from TickLabor.
+    /// </summary>
     public void TickWomb(bool forcebirth = false, bool forbidBirth = false)
     {
         if (this.wombs == null || this.wombs.Count < 1) return;
-        // natural birth only while awake and resting (labor keeps progressing; birth happens once she rests)
-        if (!forcebirth && !ReproductionUtility.CanBirthNow(this)) forbidBirth = true;
         bool birth = false;
         foreach (var wb in wombs)
         {
@@ -611,11 +615,183 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             wb.HourTick(forcebirth, forbidBirth);
             if (wb.birthEV.Count > 0) birth = true;
         }
-        if (birth) NotifyBirth();
+        if (birth)
+        {
+            NotifyBirth();
+            ContinueLaborAfterBirth();
+        }
+
+        ReproductionUtility.UpdateLaborStatus(this);
+
+        // a baby that entered early labor during this tick (FoetusTemplates.AdvStage_End resets lifespan to 0; the
+        // next tick adds 60) - once per mother, however many babies started together
+        foreach (var egg in ReproductionUtility.AllOvums(this))
+        {
+            if (egg.State != OvumState.Final || egg.lifespan != 0) continue;
+            NotifyLaborStart();
+            break;
+        }
+    }
+
+    /// <summary>
+    /// Labor_Start: the mother may be admitted to a hospital. The player decides - self = player, the mother injected
+    /// as "mother" - for the player's own labor and for anyone sharing the player's permanent home faction; any other
+    /// mother decides herself (self = mother; shown even out of view when her home or temp home is player-managed -
+    /// ReproductionUtility.IsLaborVisibleToPlayer). The admission options are built here (FactionJoinUtility) and only
+    /// loaded by the event.
+    /// </summary>
+    void NotifyLaborStart()
+    {
+        var player = scr_System_CampaignManager.current.Player;
+        var playerHome = player.FactionManager.Faction_Home;
+        bool playerDecides = RefID == player.RefID || (playerHome != null && FactionManager.Faction_Home == playerHome);
+
+        var ev = new EventInstance(playerDecides ? player : this, ReproductionUtility.event_laborStart, "");
+        ev.Targets["mother"] = new List<Character_Trainable>() { this };
+        if (!playerDecides && ReproductionUtility.IsLaborVisibleToPlayer(this)) ev.displayOverride = true;
+        FactionJoinUtility.InsertJoinOptions(ev, ReproductionUtility.laborStart_optionsKey, this, ReproductionUtility.memberType_hospitalPatient);
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+    }
+
+    /// <summary>
+    /// Hourly labor stage changes. Called from Observer_GlobalHour only - not from the day loop in TickMenstruation,
+    /// which bulk-ticks the womb 24 times at once.
+    /// Early labor over: the whole labor waits for a C-section if any baby in labor cannot be delivered naturally;
+    /// otherwise one baby enters intense labor once the mother is resting (she stays in early labor until then).
+    /// The birth itself is events: the hourly Labor_IntenseStart starts the "labor" event chain.
+    /// </summary>
+    public void TickLabor()
+    {
+        if (this.wombs == null || this.wombs.Count < 1) return;
+        ReproductionUtility.ClampRunningLabor(this);
+        if (ReproductionUtility.IsInIntenseLabor(this)) return;
+        if (ReproductionUtility.RequiresCSection(this))
+        {
+            // waiting for a C-section that can no longer come (no hospital available, none running): back to natural birth
+            bool operating = scr_System_CampaignManager.current.GetSpecialTrackedJobs(this, j => j is Job_CSection).Count > 0;
+            if (operating || ReproductionUtility.IsCSectionAvailable(this)) return;
+            foreach (var egg in ReproductionUtility.AllOvums(this))
+            {
+                if (egg.State == OvumState.Final_RequireHelp) egg.State = OvumState.Final;
+            }
+            ReproductionUtility.UpdateLaborStatus(this);
+        }
+
+        Ovum ready = null;
+        foreach (var egg in ReproductionUtility.AllOvums(this))
+        {
+            if (!egg.isEarlyLaborOver) continue;
+            ready = egg;
+            break;
+        }
+        if (ready == null) return;
+
+        if (TrySendLaborToCSection()) return;
+        if (!ReproductionUtility.CanBirthNow(this)) return;
+        StartIntenseLabor(ready, ReproductionUtility.ClampActiveLabor(ready.foetus == null ? 210 : ready.foetus.duration_labor_intense, false));
+        // first baby only - following siblings continue the same active labor
+        AddLaborMemory(memory_laborActive, true);
+    }
+
+    /// <summary>
+    /// If any baby in early labor cannot be delivered naturally and a C-section is available at all
+    /// (ReproductionUtility.IsCSectionAvailable), the whole labor (every baby in early labor) waits for it
+    /// (Final_RequireHelp). Returns true if it did; otherwise the labor goes on as a natural birth.
+    /// </summary>
+    bool TrySendLaborToCSection()
+    {
+        bool unsafeLabor = false;
+        foreach (var egg in ReproductionUtility.AllOvums(this))
+        {
+            if (egg.State != OvumState.Final) continue;
+            if (ReproductionUtility.CanDeliverSafely(egg.womb, egg, out _, out _)) continue;
+            unsafeLabor = true;
+            break;
+        }
+        if (!unsafeLabor) return false;
+        if (!ReproductionUtility.IsCSectionAvailable(this)) return false;
+
+        foreach (var egg in ReproductionUtility.AllOvums(this))
+        {
+            if (egg.State == OvumState.Final) egg.State = OvumState.Final_RequireHelp;
+        }
+        EndIntenseLaborState();
+        ReproductionUtility.SetLaborObstructed(this, true);
+        ReproductionUtility.UpdateLaborStatus(this);
+        return true;
+    }
+
+    /// <summary>
+    /// One baby enters its intense stage (duration minutes). State only - the "labor" event chain (started by the
+    /// hourly Labor_IntenseStart, or continued by the previous sibling's birth) rolls the birth.
+    /// </summary>
+    void StartIntenseLabor(Ovum egg, int duration)
+    {
+        egg.State = OvumState.IntenseLabor;
+        egg.intenseStartTime = scr_System_Time.current.getCurrentTime();
+        egg.lastBirthRollTime = egg.intenseStartTime;
+        egg.intenseDuration = Math.Max(1, duration);
+        // active labor: a pure label replaces the early-labor progress status
+        if (Stats.FindStatusByExactID(ReproductionUtility.status_labor_intense) == null) Stats.AddOrModStatus(ReproductionUtility.status_labor_intense, 100);
+        ReproductionUtility.UpdateLaborStatus(this);
+    }
+
+    /// <summary>No baby in intense labor any more; the labor chain's next Labor_Contraction sees it and ends the chain.</summary>
+    void EndIntenseLaborState()
+    {
+        Stats.RemoveStatusByExactID(ReproductionUtility.status_labor_intense);
+    }
+
+    /// <summary>
+    /// Delivers babies now: allWaiting = every baby in any labor stage (C-section), else the baby in intense labor.
+    /// followupEventID (default PregnancyEnd_Birth) runs through NotifyBirth. Afterwards the next sibling in labor gets
+    /// a short intense stage (duration_birth_interval), unless the labor goes to a C-section. False if nobody was delivered.
+    /// </summary>
+    public bool GiveBirth(bool allWaiting, string followupEventID = "")
+    {
+        if (this.wombs == null || this.wombs.Count < 1) return false;
+        bool any = false;
+        foreach (var wb in wombs)
+        {
+            wb.birthEV.Clear();
+            foreach (var egg in wb.eggs)
+            {
+                if (egg == null) continue;
+                if (allWaiting ? !ReproductionUtility.IsLaborState(egg.State) : egg.State != OvumState.IntenseLabor) continue;
+                wb.birthEV.Add(egg);
+                any = true;
+            }
+        }
+        if (!any) return false;
+        NotifyBirth(followupEventID);
+        ContinueLaborAfterBirth();
+        return true;
+    }
+
+    /// <summary>
+    /// After a birth: the next baby in early labor gets a short intense stage (multiple birth) - or, if any remaining
+    /// baby cannot be delivered naturally, the rest wait for a C-section. With no birth left, intense labor state ends.
+    /// </summary>
+    void ContinueLaborAfterBirth()
+    {
+        if (ReproductionUtility.IsInIntenseLabor(this)) return;
+        var next = ReproductionUtility.FindOvum(this, OvumState.Final);
+        if (next != null && !TrySendLaborToCSection())
+        {
+            StartIntenseLabor(next, ReproductionUtility.ClampActiveLabor(next.foetus == null ? 20 : next.foetus.duration_birth_interval, true));
+            return;
+        }
+        EndIntenseLaborState();
+        // no baby left in any labor stage: removes every labor status
+        ReproductionUtility.UpdateLaborStatus(this);
     }
 
 
-    public void TickMenstruation(int year = 0, int month = 0, int day = 1, bool log = false)
+    /// <summary>
+    /// Advances the reproduction cycle by whole days. tickWomb also bulk-advances the wombs 24 hours per day - only for
+    /// skipping time (debug advance); the daily update must not, since Observer_GlobalHour already ticks the womb hourly.
+    /// </summary>
+    public void TickMenstruation(int year = 0, int month = 0, int day = 1, bool log = false, bool tickWomb = false)
     {
         if (ReproCycle == null) return;
         if (ReproTemplate == null) return;
@@ -643,7 +819,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             {
                 // leave this blank for now, I'll add this in the future
             }*/
-            for (int j = 0; j < 24; j++) TickWomb(false, log);
+            if (tickWomb) for (int j = 0; j < 24; j++) TickWomb(false, log);
             
 
             var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
@@ -750,8 +926,34 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
 
 
-    public void NotifyBirth()
+    public static string memory_laborActive = "memory_entry_labor_active";
+    public static string memory_csection = "memory_entry_labor_csection";
+
+    /// <summary>
+    /// Adds a permanent (important) labor memory with the localized text textKey ($doctor$ = doctor's name, if given).
+    /// floorName: the memory names the floor she is on (e.g. 在医院开始分娩) instead of the room.
+    /// </summary>
+    public void AddLaborMemory(string textKey, bool floorName, Character_Trainable doctor = null)
     {
+        var desc = LocalizeDictionary.QueryThenParse(textKey);
+        if (doctor != null) desc = desc.Replace("$doctor$", doctor.FullName);
+        var memInst = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, desc);
+        var entry = Memory.AddEntry(memInst, new List<string>() { "forbidMerge", "important" });
+        if (entry == null) return;
+        entry.entryDescription = desc;
+        entry.disableRoomName = false;
+        if (floorName)
+        {
+            var room = scr_System_CampaignManager.current.Map.FindRoomByChara(RefID);
+            var floor = room == null ? null : scr_System_CampaignManager.current.Map.GetFloorByRoomRefID(room.RefID);
+            if (floor != null && !string.IsNullOrEmpty(floor.displayName)) entry.roomNameOverride = floor.displayName;
+        }
+    }
+
+    /// <summary>Delivers every womb's birthEV and runs eventID (default PregnancyEnd_Birth) on the mother.</summary>
+    public void NotifyBirth(string eventID = "")
+    {
+        if (string.IsNullOrEmpty(eventID)) eventID = ReproductionUtility.event_birth;
         Manageable targetf = null;
         List<string> names = new List<string>();
 
@@ -768,7 +970,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             targetf = FactionManager.Faction_Home;
         }
 
-        var ev = new EventInstance(this, "PregnancyEnd_Birth", "");
+        var ev = new EventInstance(this, eventID, "");
+
+        foreach (var i in this.FactionManager.HomeFactions) ev.displayOverride = ev.displayOverride || i.isPlayerRelatedFaction;
         ev.AppendStrings.Add("babyname", new List<string>());
         List<Action> birth = new List<Action>();
 
@@ -806,11 +1010,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         ev.AppendStrings.Add("count", new List<string>() { $"{names.Count}" });
 
-        // add memory entry
-        var mem_desc = LocalizeDictionary.QueryThenParse("memory_entry_givebirth")
+        // add memory entry - two versions: labor still going (another baby in labor or waiting for a C-section; the
+        // delivered babies are already out of the womb here), or this birth ended the labor
+        bool laborLeft = false;
+        foreach (var egg in ReproductionUtility.AllOvums(this)) if (ReproductionUtility.IsLaborState(egg.State)) { laborLeft = true; break; }
+        var mem_desc = LocalizeDictionary.QueryThenParse(laborLeft ? "memory_entry_givebirth" : "memory_entry_givebirth_laborEnd")
             .Replace("$count$", $"{names.Count}");
         var memInst_2 = new MemInstance(new List<int>(), new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, String.Join("\n", names));
-        var memEntry_2 = Memory.AddEntry(memInst_2, new List<string>() { "forbidMerge" });
+        // important: a birth is never forgotten (no expiry, see Memory_Entry's duration)
+        var memEntry_2 = Memory.AddEntry(memInst_2, new List<string>() { "forbidMerge", "important" });
         memEntry_2.entryDescription = mem_desc;
         memEntry_2.disableRoomName = false;
 
@@ -1932,12 +2140,17 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         } }
 
     /// <summary>
-    /// Abnormal condition compelling the character onto bed rest (labor, or a status tagged requireBedRest such as
-    /// post-birth recovery). Drives TryFindBedRestNode and gates com_furniture_rest_required. Not enforced on the player.
+    /// Abnormal condition compelling the character onto bed rest (any labor stage, including waiting for a C-section, or
+    /// a status tagged requireBedRest such as post-birth recovery). Drives TryFindBedRestNode and gates
+    /// com_furniture_rest_required and hospital admission. Not enforced on the player.
     /// </summary>
     [JsonIgnore] public bool requireBedRest { get
         {
-            if (UtilityEX.IsInLabor(this)) return true;
+            // not UtilityEX.IsInLabor: it skips Final_RequireHelp, which made a mother waiting for a C-section stop
+            // needing bed rest - lost her hospital admission option, and TickLabor flipped her labor between waiting and
+            // natural every hour without ever progressing
+            if (!scr_System_CentralControl.current.isSafeMode)
+                foreach (var egg in ReproductionUtility.AllOvums(this)) if (ReproductionUtility.IsLaborState(egg.State)) return true;
             if (Stats.hasStatusTag(StatsUtility.Stat_Tag_RequireBedRest)) return true;
             if (Stats.hasStatusEXTag(StatsUtility.Stat_Tag_RequireBedRest)) return true;
             return false;

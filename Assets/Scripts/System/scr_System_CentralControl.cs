@@ -80,6 +80,13 @@ public class scr_System_CentralControl : MonoBehaviour
         set { _debug_refuse_salary_payment = value; }
     }
 
+    /// <summary>
+    /// Debug override (console debug_force_joinFaction_Agree, not saved): every MemberJoinHandler treats the player and the
+    /// player's party members as eligible, skipping its own checks (see MemberJoinHandler.DebugForceJoin).
+    /// </summary>
+    [JsonIgnore]
+    public bool debug_force_joinFaction_Agree = false;
+
     LLM_Setting _llmSetting = null;
     public LLM_Setting LLMSetting
     {
@@ -1137,6 +1144,7 @@ public class SaveFile
     public scr_System_Time_Serializable Time;
     public scr_System_CampaignManager_Serializable Campaign;
     public Dictionary<string, EventManager.EventCooldown> EventCooldowns;
+    public List<EventManager.ActiveEventChain> EventChains;
 
     public SaveFile() { }
     public SaveFile(bool createNew)
@@ -1147,6 +1155,7 @@ public class SaveFile
         this.Time = scr_System_Time.current.GetSerializable();
         this.Campaign = scr_System_CampaignManager.current.GetSerializable();
         this.EventCooldowns = scr_UpdateHandler.current.EventHandler.eventCooldowns;
+        this.EventChains = scr_UpdateHandler.current.EventHandler.activeChains;
         this.Version = Application.version;
         this.Language = LocalizeDictionary.Instance.Index.cachedLang;
         this.SaveDescription = LocalizeDictionary.QueryThenParse("ui_load_fileDescription")
@@ -1165,6 +1174,8 @@ public class SaveFile
         scr_System_CampaignManager.current.LoadSerializable(Campaign);
         scr_UpdateHandler.current.EventHandler.eventCooldowns =
             EventCooldowns ?? new Dictionary<string, EventManager.EventCooldown>();
+        scr_UpdateHandler.current.EventHandler.activeChains =
+            EventChains ?? new List<EventManager.ActiveEventChain>();
     }
 
 }

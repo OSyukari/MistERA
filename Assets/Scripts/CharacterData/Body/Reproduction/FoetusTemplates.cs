@@ -64,7 +64,12 @@ public class FoetusTemplates
     public float size_third = 10;
     public float size_end = 10;
     public float duration_randVariation = 0.1f;
+    /// <summary>Early labor, minutes (scaled by baby/mother size in CanDeliverSafely). Mother needs bed rest meanwhile.</summary>
     public int duration_labor = 720;
+    /// <summary>Intense labor of the first baby, minutes: Labor_Contraction events roll the birth over this span.</summary>
+    public int duration_labor_intense = 210;
+    /// <summary>Intense labor of each following sibling (multiple birth), minutes.</summary>
+    public int duration_birth_interval = 20;
     public int average_mother_HWMult = 0;
 
     public float GetSizePerState(OvumState state)
@@ -72,6 +77,8 @@ public class FoetusTemplates
         switch (state)
         {
             case OvumState.Final: return size_end;
+            case OvumState.Final_RequireHelp: return size_end;
+            case OvumState.IntenseLabor: return size_end;
             case OvumState.Third_trimester: return size_end;
             case OvumState.Second_trimester: return size_third;
             case OvumState.First_trimester: return size_second;
@@ -88,6 +95,8 @@ public class FoetusTemplates
         this.duration_first = f.duration_first;
         this.duration_implanted = f.duration_implanted;
         this.duration_labor = f.duration_labor;
+        this.duration_labor_intense = f.duration_labor_intense;
+        this.duration_birth_interval = f.duration_birth_interval;
         this.duration_randVariation = f.duration_randVariation;
         this.duration_second = f.duration_second;
         this.duration_third = f.duration_third;
@@ -225,22 +234,15 @@ public class FoetusTemplates
     }
     public virtual void AdvStage_End(Ovum ovum)
     {
-
-        if (ReproductionUtility.CanDeliverSafely(ovum.womb, ovum, out var totalLifespan, out var painLevel))
-        {
-            // set normal delivery and
-            ovum.State = OvumState.Final;
-            ovum.lifespan = 0;
-            ovum.totalLifespan = totalLifespan;
-            if (painLevel > 0) ovum.Owner?.Stats.AddOrModStatus("chara_status_pain_birth", painLevel);
-        }
-        else
-        {
-            ovum.State = OvumState.Final_RequireHelp;
-            ovum.lifespan = 0;
-            ovum.totalLifespan = totalLifespan;
-            // block delivery?
-        }
+        // every pregnancy enters normal early labor; whether it can be delivered naturally is decided when early
+        // labor ends (Character_Trainable.TickLabor) - unsafe ones then wait for a C-section
+        bool safe = ReproductionUtility.CanDeliverSafely(ovum.womb, ovum, out var totalLifespan, out var painLevel);
+        ovum.State = OvumState.Final;
+        ovum.lifespan = 0;
+        ovum.totalLifespan = ReproductionUtility.ClampEarlyLabor(totalLifespan);
+        if (painLevel > 0) ovum.Owner?.Stats.AddOrModStatus("chara_status_pain_birth", painLevel);
+        // shown from the start of labor; the switch to Final_RequireHelp itself still happens when early labor ends
+        if (!safe) ReproductionUtility.SetLaborObstructed(ovum.Owner, true);
     }
 }
 public class Foetus_Foetus : FoetusTemplates

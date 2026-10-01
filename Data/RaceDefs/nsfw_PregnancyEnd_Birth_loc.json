@@ -8,6 +8,7 @@
                 "location_unknown": "Somewhere",
                 "PregnancyEnd_Birth_EV01": "$self.name$ gave birth to $count$ babies in $roomname$: $babyname$\n$witness.name$ witnessed the whole thing",
                 "memory_entry_givebirth": "Gave birth to $count$ babies",
+                "memory_entry_givebirth_laborEnd": "Gave birth to $count$ babies, ending the labor",
                 "faction_report_givebirth": "$name$ gave birth to $count$ babies in $room$"
             }
         }

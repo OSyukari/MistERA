@@ -157,7 +157,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
     string[] editorConsoleCommands = new string[]
     {
-        "debug_refuse_salary_payment"
+        "debug_refuse_salary_payment",
+        "debug_force_joinFaction_Agree"
     };
 
     protected void ActivateUI()

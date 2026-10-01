@@ -1,0 +1,129 @@
+{
+    "_doc": "Hospital staff dispatch, started every hour by the hospital itself on its patients (faction.json hourlyEvents) - no trigger of its own. Picks one on-shift, available doctor (required) and nurse (optional) and launches a medical job (LaunchJob) at the patient's bed. The job refuses to launch if the patient is not in their bed's room or the bed is already held by another medical job.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Hospital_Dispatch_IntensiveCare",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "isInIntenseLabor" ] },
+                        { "parameters": [ "hasTrackedJob", "Job_IntensiveCare", "false" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "doctor" ],
+                        "baseScope": "FactionMembers",
+                        "extraScopeArguments": [ "@selfTempHome" ],
+                        "chara_conditions": [
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "canInterruptJob" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "doctor" ] }
+                        ],
+                        "minTargetCount": 1,
+                        "maxTargetCount": 1,
+                        "pickAmongValidTargets": true
+                    },
+                    {
+                        "refkeys": [ "nurse" ],
+                        "baseScope": "FactionMembers",
+                        "extraScopeArguments": [ "@selfTempHome" ],
+                        "chara_conditions": [
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "canInterruptJob" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "nurse" ] }
+                        ],
+                        "minTargetCount": 0,
+                        "maxTargetCount": 1,
+                        "pickAmongValidTargets": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "",
+                        "Results": [
+                            {
+                                "Type": "LaunchJob",
+                                "arguments": [ "patient=self", "doctor=doctor", "nurse=nurse" ],
+                                "jobTemplate": { "$type": "Job_IntensiveCare, Assembly-CSharp", "maxDurationMinutes": 360 }
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "Hospital_Dispatch_CSection",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "requiresCSection" ] },
+                        { "parameters": [ "hasTrackedJob", "Job_CSection", "false" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "doctor" ],
+                        "baseScope": "FactionMembers",
+                        "extraScopeArguments": [ "@selfTempHome" ],
+                        "chara_conditions": [
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "canInterruptJob" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "doctor" ] }
+                        ],
+                        "minTargetCount": 1,
+                        "maxTargetCount": 1,
+                        "pickAmongValidTargets": true
+                    },
+                    {
+                        "refkeys": [ "nurse" ],
+                        "baseScope": "FactionMembers",
+                        "extraScopeArguments": [ "@selfTempHome" ],
+                        "chara_conditions": [
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "canInterruptJob" ] },
+                            { "parameters": [ "isActiveFaction", "jp_hospital" ] },
+                            { "parameters": [ "hasActorTag", "nurse" ] }
+                        ],
+                        "minTargetCount": 0,
+                        "maxTargetCount": 1,
+                        "pickAmongValidTargets": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "",
+                        "Results": [
+                            {
+                                "Type": "LaunchJob",
+                                "arguments": [ "patient=self", "doctor=doctor", "nurse=nurse" ],
+                                "jobTemplate": { "$type": "Job_CSection, Assembly-CSharp", "maxDurationMinutes": 360 }
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "chara_currentjob_medical_intensiveCare_staff": "守在$patient$床边照看分娩",
+                "chara_currentjob_medical_intensiveCare_patient": "在医护人员的照看下分娩"
+            },
+            "en-us": {
+                "chara_currentjob_medical_intensiveCare_staff": "Attending $patient$'s delivery",
+                "chara_currentjob_medical_intensiveCare_patient": "In labor under medical care"
+            }
+        }
+    }
+}

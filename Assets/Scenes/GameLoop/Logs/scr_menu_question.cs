@@ -51,7 +51,7 @@ public class scr_menu_question : scr_Menu
         SetCanvas(mainCanvas, true);
         this.Text.SetText(UtilityEX.ParseEventEntry(instance, query.question));
         SelfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
-        foreach (var option in EventUtility.ExpandOptions(instance, query.options))
+        foreach (var option in EventUtility.ExpandOptions(instance, query.options, query.loadOptionsKey, query.loadOptionsResults))
         {
             var button = Instantiate(prefab_text_linkbutton).GetComponent<scr_SelectableText>();
             RegisterButton(option.GetHashCode(), button, new Button_OptionBtn(this, button, instance, option));
@@ -249,6 +249,7 @@ public class scr_menu_question : scr_Menu
             }
 
             if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + LocalizeDictionary.QueryThenParse("event_isDefaultCancel_tooltip");
+            if (!string.IsNullOrEmpty(option.disabledReasonKey)) this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(option.disabledReasonKey);
             this.tooltip = UtilityEX.ParseEventEntry(instance, this.tooltip);
         }
 

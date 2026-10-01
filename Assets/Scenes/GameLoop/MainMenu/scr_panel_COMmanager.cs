@@ -774,6 +774,16 @@ public class scr_panel_COMmanager : scr_Menu
             tempList.Add(scr_System_CampaignManager.current.Player.CurrentJob.RefID);
         }
 
+        // jobs offering the player to join one of their packages without the player being their actor
+        // (e.g. a C-section waiting for the player patient) - their joinable APs are shown below
+        var joiningPlayer = scr_System_CampaignManager.current.Player;
+        foreach (var pj in scr_System_CampaignManager.current.GetSpecialTrackedJobs(joiningPlayer, j => j is I_PlayerJoinableJob pjj && pjj.OffersJoinTo(joiningPlayer)))
+        {
+            if (tempList.Contains(pj.RefID)) continue;
+            s3 += "\nTracking player joinable job " + pj.RefID;
+            tempList.Add(pj.RefID);
+        }
+
 
         var currentTarget = scr_System_CampaignManager.current.CurrentTarget;
         if (currentTarget != null && currentTarget.InteractionJob != null)
@@ -985,6 +995,13 @@ public class scr_panel_COMmanager : scr_Menu
                             joinableAPTracker.Add( MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true));
 
                         }*/
+                    }
+                }
+                else if (j is I_PlayerJoinableJob)
+                {
+                    foreach (var ap in j.JoinablePackages(0))
+                    {
+                        joinableAPTracker.Add(MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, ap, true, true));
                     }
                 }
             }
@@ -1418,9 +1435,11 @@ public class scr_panel_COMmanager : scr_Menu
                         var doers = new List<int>(package.DoerRefs);
                         var receivers = new List<int>(package.ReceiverRefs);
                         List<int> targets = new List<int>();
+                        // joinAlone: the player joins by themselves (see OnClickButton)
+                        bool joinAlone = package.targetCOM != null && package.targetCOM.requirements.requirement.joinAlone;
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
-                        if (currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
-                        if (package.targetCOM == null || !package.targetCOM.requirements.requirement.forbidTeammateJoin) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
+                        if (!joinAlone && currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);
+                        if (!joinAlone && (package.targetCOM == null || !package.targetCOM.requirements.requirement.forbidTeammateJoin)) targets.AddRange(scr_System_CampaignManager.current.PlayerPartyMembers);
                         targets = targets.Distinct().ToList();
                         targets.Remove(0);
                         targets.RemoveAll(x => doers.Contains(x) || receivers.Contains(x));
@@ -1541,8 +1560,11 @@ public class scr_panel_COMmanager : scr_Menu
 
             List<Character_Trainable> actors = new List<Character_Trainable>();
             actors.Add(scr_System_CampaignManager.current.Player);
-            actors.AddRange(scr_System_CampaignManager.current.party.Members);
-            actors.Add(scr_System_CampaignManager.current.CurrentTarget);
+            if (cachedAP.targetCOM == null || !cachedAP.targetCOM.requirements.requirement.joinAlone)
+            {
+                actors.AddRange(scr_System_CampaignManager.current.party.Members);
+                actors.Add(scr_System_CampaignManager.current.CurrentTarget);
+            }
             actors.Remove(null);
             actors = actors.Distinct().ToList();
 

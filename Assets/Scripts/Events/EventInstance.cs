@@ -136,6 +136,11 @@ public class EventInstance
 
     public Dictionary<string, List<Action>> FunctionCalls = new Dictionary<string, List<Action>>();
     public Dictionary<string, List<Character_Trainable>> Targets = new Dictionary<string, List<Character_Trainable>>();
+    /// <summary>
+    /// Runtime only: ready-made question options stored under a key (e.g. by the JoinActiveFaction Result), loaded by an
+    /// EventEntry_Question with loadOptionsKey. Options may carry an onSelect callback and a disabledReasonKey.
+    /// </summary>
+    public Dictionary<string, List<Event.EventEntry.Options>> StoredOptions = new Dictionary<string, List<Event.EventEntry.Options>>();
     public Dictionary<string, double> Parameters = new Dictionary<string, double>();
     /// <summary>
     /// Can be used to store strings (flush with dict key)
@@ -342,6 +347,13 @@ public class EventInstance
         }
     }
 
+    /// <summary>Forcefully ends this event with an error log (e.g. an npcDecides question with nothing to pick).</summary>
+    public void Terminate(string errorMsg)
+    {
+        Debug.LogError($"Event {Name} terminated: {errorMsg}");
+        Clear();
+    }
+
     protected void Clear(string errorMsg = "")
     {
         isValid = false;
@@ -389,7 +401,7 @@ public class EventInstance
             case EventStatus.waiting:
                 updateHandler.ResumeUpdate();
                 break;
-            default: 
+            default:
                 break;
         }
     }

@@ -1,20 +1,17 @@
 {
-    "_doc": "Dialogue options offered by ON-SHIFT hospital doctors/nurses (target must be active at jp_hospital AND carry the jp_hospital_staff actor tag, which only comes from the staff MemberTypes' portraitTags while that MemberType is their active one). PHASE 1: validation only - every event is a placeholder line with no Results yet. Phase 2 adds execution (SetHomeFaction temp + AssignRoom for admission, SetWorkFaction + SetMemberLink for visiting, RemoveFromFaction for discharge/end visit).",
+    "_doc": "Dialogue options offered by ON-SHIFT hospital doctors/nurses (target must be active at jp_hospital AND carry the jp_hospital_staff actor tag, which only comes from the staff MemberTypes' portraitTags while that MemberType is their active one). Admit: done by the patient MemberType's joinHandler callback. Discharge / End visit: done by the patient / visitor MemberType's leaveHandler callbacks, for the player's own people.",
     "Events": {
         "list": [
             {
                 "ID": "jp_hospital_Opt_Admit",
+                "_comment": "The greeting's JoinActiveFaction asks the patient MemberType's joinHandler for the admission options (one per player/follower, disabled with a reason when they can't be admitted; none when every room is taken). Options found -> question (picking one admits them via its callback, then jumps to admit_done); none -> the handler's reason from $admitError$.",
                 "allowDuplicate": false,
                 "trigger": "OnDialogue_Options",
-                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "UISpec": { "displayMode": "AVG" },
                 "SelfValidator": {
                     "chara_conditions": [
                         { "parameters": [ "exists" ] },
-                        { "parameters": [ "isPlayer" ] },
-                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_patient", "false" ] },
-                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_visitor", "false" ] },
-                        { "parameters": [ "hasTempHomeFaction", "false" ] },
-                        { "parameters": [ "hasUnownedRoom", "jp_hospital", "hospital_patient_room_" ] }
+                        { "parameters": [ "isPlayer" ] }
                     ]
                 },
                 "TargetValidators": [
@@ -35,22 +32,81 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
-                        "line": "jp_hospital_Opt_Admit_placeholder",
+                        "line": "jp_hospital_Opt_Admit_greeting",
+                        "Results": [
+                            { "Type": "JoinActiveFaction", "arguments": [ "admitOptions", "selfAndFollowers", "staff", "membertype_jp_hospital_patient", "admitError" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "admitOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "admit_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "admit_error" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "admit_error",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "$admitError$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "admit_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hospital_Opt_Admit_question",
+                        "loadOptionsKey": "admitOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "admit_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_hospital_Opt_Admit_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "admit_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "admit_done",
+                        "_comment": "Reached by picking a loaded admission option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Admit_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what, who stopped following).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "admit_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Visit_cancelLine",
                         "isLast": true
                     }
                 ]
             },
             {
                 "ID": "jp_hospital_Opt_Visit",
+                "_comment": "JoinActiveFaction asks the visitor MemberType's joinHandler for the visit options (one per current patient; picking one makes the player + followers visitors (joining if not part of the hospital; existing visitors keep their other patients) linked to that patient). None -> the handler's reason from $visitError$ (already part of the hospital / no patients).",
                 "allowDuplicate": false,
                 "trigger": "OnDialogue_Options",
                 "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
                 "SelfValidator": {
                     "chara_conditions": [
                         { "parameters": [ "exists" ] },
-                        { "parameters": [ "isPlayer" ] },
-                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_patient", "false" ] },
-                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_visitor", "false" ] }
+                        { "parameters": [ "isPlayer" ] }
                     ]
                 },
                 "TargetValidators": [
@@ -65,35 +121,41 @@
                             { "parameters": [ "hasActorTag", "jp_hospital_staff" ] }
                         ],
                         "minTargetCount": 1
-                    },
-                    {
-                        "refkeys": [ "patients" ],
-                        "baseScope": "FactionMembersWithMemberType",
-                        "extraScopeArguments": [ "jp_hospital", "membertype_jp_hospital_patient" ],
-                        "chara_conditions": [
-                            { "parameters": [ "exists" ] },
-                            { "parameters": [ "excludePlayer" ] }
-                        ],
-                        "minTargetCount": 1
                     }
                 ],
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
-                        "question": "jp_hospital_Opt_Visit_question",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "options": [
                             {
-                                "option": "jp_hospital_Opt_Visit_patientOption",
-                                "forEachTargetKey": "patients",
-                                "bindTargetKey": "patient",
-                                "_comment_Results": "Player + everyone following them become visitors (overwriteExisting false: anyone already part of the hospital - staff, a patient, an existing visitor - keeps their MemberType), then every visitor among them is linked to the picked patient. The link drops them from the hospital when that patient leaves.",
+                                "option": "_has_options",
                                 "Results": [
-                                    { "Type": "SetWorkFaction", "arguments": [ "selfAndFollowers", "jp_hospital", "membertype_jp_hospital_visitor", "false", "false" ] },
-                                    { "Type": "SetMemberLink", "arguments": [ "selfAndFollowers", "patient", "jp_hospital", "membertype_jp_hospital_visitor" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "visit_confirm" ] }
+                                    { "Type": "JoinActiveFaction", "arguments": [ "visitOptions", "selfAndFollowers", "staff", "membertype_jp_hospital_visitor", "visitError" ] },
+                                    { "Type": "ExistStoredOptions", "arguments": [ "visitOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "visit_ask" ] }
                                 ]
                             },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "visit_error" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "visit_error",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "$visitError$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "visit_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_hospital_Opt_Visit_question",
+                        "loadOptionsKey": "visitOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "visit_confirm" ] } ],
+                        "options": [
                             {
                                 "option": "jp_hospital_Opt_Visit_cancel",
                                 "isDefaultCancel": true,
@@ -104,8 +166,14 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "visit_confirm",
+                        "_comment": "Reached by picking a loaded visit option (the question's loadOptionsResults jump here).",
                         "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
-                        "line": "jp_hospital_Opt_Visit_placeholder",
+                        "line": "jp_hospital_Opt_Visit_placeholder"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what, who stopped following).",
+                        "line": "$factionChangeString$",
                         "isLast": true
                     },
                     {
@@ -119,14 +187,14 @@
             },
             {
                 "ID": "jp_hospital_Opt_Discharge",
+                "_comment": "Shown when a hospital patient shares the player's permanent home faction (the player or one of the player's own people). LeaveActiveFaction asks the patient MemberType's leaveHandler for one discharge option per such patient; picking one discharges them.",
                 "allowDuplicate": false,
                 "trigger": "OnDialogue_Options",
                 "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
                 "SelfValidator": {
                     "chara_conditions": [
                         { "parameters": [ "exists" ] },
-                        { "parameters": [ "isPlayer" ] },
-                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_patient", "true" ] }
+                        { "parameters": [ "isPlayer" ] }
                     ]
                 },
                 "TargetValidators": [
@@ -141,27 +209,73 @@
                             { "parameters": [ "hasActorTag", "jp_hospital_staff" ] }
                         ],
                         "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "leavers" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_hospital", "membertype_jp_hospital_patient" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "sharesHomeFaction" ] }
+                        ],
+                        "minTargetCount": 1
                     }
                 ],
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build_options",
+                                "Results": [
+                                    { "Type": "LeaveActiveFaction", "arguments": [ "dischargeOptions", "leavers", "staff", "membertype_jp_hospital_patient" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "discharge_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "discharge_ask",
                         "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
-                        "line": "jp_hospital_Opt_Discharge_placeholder",
+                        "question": "jp_hospital_Opt_Discharge_question",
+                        "loadOptionsKey": "dischargeOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "discharge_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_hospital_Opt_Visit_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "discharge_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "discharge_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here). Who left (patient + visitors) is announced right after by Hospital_Discharged (fired by the patient MemberType's leaveHandler).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Discharge_done",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "discharge_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Visit_cancelLine",
                         "isLast": true
                     }
                 ]
             },
             {
                 "ID": "jp_hospital_Opt_EndVisit",
+                "_comment": "Shown when a hospital visitor shares the player's permanent home faction (the player or one of the player's own people). LeaveActiveFaction asks the visitor MemberType's leaveHandler for one end-visit option per such visitor; picking one ends their visit.",
                 "allowDuplicate": false,
                 "trigger": "OnDialogue_Options",
-                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "UISpec": { "displayMode": "AVG" },
                 "SelfValidator": {
                     "chara_conditions": [
                         { "parameters": [ "exists" ] },
-                        { "parameters": [ "isPlayer" ] },
-                        { "parameters": [ "hasMemberType", "jp_hospital", "membertype_jp_hospital_visitor", "true" ] }
+                        { "parameters": [ "isPlayer" ] }
                     ]
                 },
                 "TargetValidators": [
@@ -176,17 +290,64 @@
                             { "parameters": [ "hasActorTag", "jp_hospital_staff" ] }
                         ],
                         "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "leavers" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_hospital", "membertype_jp_hospital_visitor" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "sharesHomeFaction" ] }
+                        ],
+                        "minTargetCount": 1
                     }
                 ],
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build_options",
+                                "Results": [
+                                    { "Type": "LeaveActiveFaction", "arguments": [ "endVisitOptions", "leavers", "staff", "membertype_jp_hospital_visitor" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "endvisit_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "endvisit_ask",
                         "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
-                        "line": "jp_hospital_Opt_EndVisit_placeholder",
-                        "_comment_Results": "Player + followers who are hospital visitors stop visiting (anyone holding another hospital MemberType is untouched).",
-                        "Results": [
-                            { "Type": "RemoveFromFaction", "arguments": [ "selfAndFollowers", "jp_hospital", "membertype_jp_hospital_visitor" ] }
-                        ],
+                        "question": "jp_hospital_Opt_EndVisit_question",
+                        "loadOptionsKey": "endVisitOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "endvisit_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_hospital_Opt_Visit_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "endvisit_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "endvisit_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_EndVisit_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's leave callback changed (AppendFactionLeave: who is no longer what).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "endvisit_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_hospital_Opt_Visit_cancelLine",
                         "isLast": true
                     }
                 ]
@@ -197,31 +358,61 @@
         "Entries": {
             "zh-cn": {
                 "jp_hospital_Opt_Admit": "办理住院",
-                "jp_hospital_Opt_Admit_placeholder": "「好的，我这就为您办理住院手续。」",
+                "jp_hospital_Opt_Admit_greeting": "「您好，是需要办理住院吗？」",
+                "jp_hospital_patient_full": "「非常抱歉，目前病房已经住满了。」",
+                "jp_hospital_patient_err_member": "已经在本院登记（患者、探视者或职员）。",
+                "jp_hospital_patient_err_tempHome": "目前暂住于其他地方，无法办理住院。",
+                "jp_hospital_patient_err_noNeed": "没有需要住院卧床的状况。",
+                "jp_hospital_Opt_Admit_question": "「请问是哪一位需要住院？」",
+                "jp_hospital_Opt_Admit_patientOption": "为$name$办理住院",
+                "jp_hospital_Opt_Admit_cancel": "算了",
+                "jp_hospital_Opt_Admit_done": "「好的，$patient.name$的住院手续已经办好了，请到病房休息。」",
                 "jp_hospital_Opt_Visit": "探视病人",
                 "jp_hospital_Opt_Visit_question": "「请问您要探视哪一位？」",
                 "jp_hospital_Opt_Visit_patientOption": "$name$",
                 "jp_hospital_Opt_Visit_cancel": "算了",
                 "jp_hospital_Opt_Visit_placeholder": "「好的，这就为您登记探视$patient.name$。」",
                 "jp_hospital_Opt_Visit_cancelLine": "「有需要请随时告诉我。」",
-                "jp_hospital_Opt_Discharge": "申请出院",
-                "jp_hospital_Opt_Discharge_placeholder": "「好的，我这就为您办理出院手续。」",
-                "jp_hospital_Opt_EndVisit": "结束探视",
-                "jp_hospital_Opt_EndVisit_placeholder": "「好的，探视登记已经取消。」"
+                "jp_hospital_visitor_err_member": "「您已经在本院登记过了。」",
+                "jp_hospital_visitor_err_noPatient": "「目前没有可以探视的住院患者。」",
+                "jp_hospital_visitor_err_alreadyVisiting": "已经在探视这位患者。",
+                "jp_hospital_Opt_Discharge": "办理出院",
+                "jp_hospital_Opt_Discharge_question": "「请问是哪一位要办理出院？」",
+                "jp_hospital_Opt_Discharge_patientOption": "为$name$办理出院",
+                "jp_hospital_Opt_Discharge_done": "「好的，$patient.name$的出院手续已经办好了。」",
+                "jp_hospital_Opt_EndVisit": "中止探访",
+                "jp_hospital_Opt_EndVisit_question": "「请问是哪一位要结束探视？」",
+                "jp_hospital_Opt_EndVisit_visitorOption": "中止$name$的探访",
+                "jp_hospital_Opt_EndVisit_done": "「好的，$visitor.name$的探视登记已经取消。」"
             },
             "en-us": {
                 "jp_hospital_Opt_Admit": "Get admitted",
-                "jp_hospital_Opt_Admit_placeholder": "\"Certainly, I'll get your admission started.\"",
+                "jp_hospital_Opt_Admit_greeting": "\"Hello. Are you here to be admitted?\"",
+                "jp_hospital_patient_full": "\"I'm very sorry, all our wards are full at the moment.\"",
+                "jp_hospital_patient_err_member": "Already registered at this hospital (patient, visitor or staff).",
+                "jp_hospital_patient_err_tempHome": "Currently staying elsewhere and can't be admitted.",
+                "jp_hospital_patient_err_noNeed": "Doesn't need hospital bed rest.",
+                "jp_hospital_Opt_Admit_question": "\"Who will be staying with us?\"",
+                "jp_hospital_Opt_Admit_patientOption": "Admit $name$ as a patient",
+                "jp_hospital_Opt_Admit_cancel": "Never mind",
+                "jp_hospital_Opt_Admit_done": "\"Alright, $patient.name$ is admitted. Please head to the ward and rest.\"",
                 "jp_hospital_Opt_Visit": "Visit a patient",
                 "jp_hospital_Opt_Visit_question": "\"Who are you here to visit?\"",
                 "jp_hospital_Opt_Visit_patientOption": "$name$",
                 "jp_hospital_Opt_Visit_cancel": "Never mind",
                 "jp_hospital_Opt_Visit_placeholder": "\"Alright, I'll register your visit to $patient.name$.\"",
                 "jp_hospital_Opt_Visit_cancelLine": "\"Let me know if you need anything.\"",
-                "jp_hospital_Opt_Discharge": "Request discharge",
-                "jp_hospital_Opt_Discharge_placeholder": "\"Alright, I'll process your discharge.\"",
-                "jp_hospital_Opt_EndVisit": "End visit",
-                "jp_hospital_Opt_EndVisit_placeholder": "\"Alright, your visit registration is cancelled.\""
+                "jp_hospital_visitor_err_member": "\"You're already registered here.\"",
+                "jp_hospital_visitor_err_noPatient": "\"There are no inpatients to visit right now.\"",
+                "jp_hospital_visitor_err_alreadyVisiting": "Already visiting this patient.",
+                "jp_hospital_Opt_Discharge": "Discharge",
+                "jp_hospital_Opt_Discharge_question": "\"Who is being discharged?\"",
+                "jp_hospital_Opt_Discharge_patientOption": "Discharge $name$",
+                "jp_hospital_Opt_Discharge_done": "\"Alright, $patient.name$ has been discharged.\"",
+                "jp_hospital_Opt_EndVisit": "End a visit",
+                "jp_hospital_Opt_EndVisit_question": "\"Whose visit is ending?\"",
+                "jp_hospital_Opt_EndVisit_visitorOption": "End $name$'s visit",
+                "jp_hospital_Opt_EndVisit_done": "\"Alright, $visitor.name$'s visit registration is cancelled.\""
             }
         }
     }

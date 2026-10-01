@@ -242,9 +242,9 @@ public class Ovum
                 foetus.Advance(this);
             }
         }
-        else if (State == OvumState.Final_RequireHelp)
+        else if (State == OvumState.Final_RequireHelp || State == OvumState.IntenseLabor)
         {
-            // stuck, require help
+            // waits for a C-section / progress is measured by clock (intenseStartTime)
         }
         else if (State == OvumState.Final)
         {
@@ -339,6 +339,28 @@ public class Ovum
     }
 
     public OvumState State = OvumState.Default;
+
+    /// <summary>IntenseLabor only: when this baby's intense stage started, and how long it lasts (minutes).</summary>
+    public DateTime intenseStartTime;
+    public int intenseDuration = 0;
+    /// <summary>IntenseLabor only: time of the previous birth roll (ReproductionUtility.RollLaborBirth).</summary>
+    public DateTime lastBirthRollTime;
+
+    /// <summary>
+    /// IntenseLabor only: elapsed share of intenseDuration, by clock (keeps advancing while the mother is not resting).
+    /// Not clamped - above 1 once the stage has run its length.
+    /// </summary>
+    [JsonIgnore] public float IntenseProgress
+    {
+        get
+        {
+            if (State != OvumState.IntenseLabor) return 0f;
+            if (intenseDuration <= 0) return 1f;
+            return (float)(scr_System_Time.current.getCurrentTime() - intenseStartTime).TotalMinutes / intenseDuration;
+        }
+    }
+
+    [JsonIgnore] public bool isEarlyLaborOver { get { return State == OvumState.Final && lifespan >= totalLifespan; } }
     [JsonIgnore]
     public int FertilizedStage
     {
@@ -375,7 +397,10 @@ public enum OvumState
     First_trimester,
     Second_trimester,
     Third_trimester,
-    // giving birth
+    // early labor (lifespan counts minutes up to totalLifespan)
     Final,
-    Final_RequireHelp
+    // unsafe delivery found when early labor ended - waits for a C-section (whole labor)
+    Final_RequireHelp,
+    // this baby is being born: Labor_Contraction events roll the birth (appended - OvumState is saved as int)
+    IntenseLabor
 }

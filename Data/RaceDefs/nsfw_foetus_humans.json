@@ -21,8 +21,10 @@
         "size_end": 3300.0,
         "duration_randVariation": 0.10,
         "duration_labor": 720,
+        "duration_labor_intense": 210,
+        "duration_birth_interval": 20,
         "average_mother_HWMult": 9500,
-        "_note_labor": "720 min = ~12 h average first-birth labor (WHO data). average_mother_HWMult 9500 = ~165 cm × 58 kg typical adult human female. Fantasy races without their own foetusTemplate inherit this; their actual H×W in-game may differ, skewing canal_ratio. Suggested labor overrides when added: elf ×10 ageMultiplier → 7200 min; angel ×1 → 720 min; demon ×0.5 → 360 min; dragon egg-laying → 120 min; beastkin_cat → 360 min; doggirl → 480 min; foxgirl → 240 min; rabbitgirl → 90 min.",
+        "_note_labor": "duration_labor = EARLY labor only (intense stage and sibling gap are separate fields). 720 min = ~12 h, first-birth early labor; plus 210 min intense = typical first-birth total. average_mother_HWMult 9500 = ~165 cm × 58 kg typical adult human female. Fantasy races without their own foetusTemplate inherit this; their actual H×W in-game may differ, skewing canal_ratio. Suggested labor overrides when added: elf ×10 ageMultiplier → 7200 min; angel ×1 → 720 min; demon ×0.5 → 360 min; dragon egg-laying → 120 min; beastkin_cat → 360 min; doggirl → 480 min; foxgirl → 240 min; rabbitgirl → 90 min.",
         "images":[
             "RJW - Womb/preg_human/Fetus_Early00.png",
             "RJW - Womb/preg_human/Fetus_Default00.png",
@@ -63,6 +65,8 @@
         "size_end": 3300.0,
         "duration_randVariation": 0.10,
         "duration_labor": 7200,
+        "duration_labor_intense": 2100,
+        "duration_birth_interval": 200,
         "average_mother_HWMult": 8064,
         "_note_average_mother_HWMult": "8064 = ~168 cm × 48 kg typical adult elf female.",
         "images":[
@@ -105,6 +109,8 @@
         "size_end": 3300.0,
         "duration_randVariation": 0.10,
         "duration_labor": 720,
+        "duration_labor_intense": 210,
+        "duration_birth_interval": 20,
         "average_mother_HWMult": 8692,
         "_note_average_mother_HWMult": "8692 = ~164 cm × 53 kg typical adult angel female.",
         "images":[
@@ -147,6 +153,8 @@
         "size_end": 3300.0,
         "duration_randVariation": 0.12,
         "duration_labor": 360,
+        "duration_labor_intense": 105,
+        "duration_birth_interval": 10,
         "average_mother_HWMult": 8216,
         "_note_average_mother_HWMult": "8216 = ~158 cm × 52 kg typical adult demon female.",
         "images":[
@@ -189,6 +197,8 @@
         "size_end": 10000.0,
         "duration_randVariation": 0.05,
         "duration_labor": 120,
+        "duration_labor_intense": 60,
+        "duration_birth_interval": 30,
         "average_mother_HWMult": 12460,
         "_note_average_mother_HWMult": "12460 = ~178 cm × 70 kg typical adult female dragonkin.",
         "images":[
@@ -222,6 +232,8 @@
         "size_end": 150.0,
         "duration_randVariation": 0.10,
         "duration_labor": 360,
+        "duration_labor_intense": 120,
+        "duration_birth_interval": 30,
         "average_mother_HWMult": 7110,
         "_note_average_mother_HWMult": "7110 = ~158 cm × 45 kg typical adult female catkin.",
         "images":[

@@ -84,6 +84,16 @@
                 "participatesInCombat": false,
                 "_comment_behaviorOverrides": "Narrows sleep/meal/cleaning/recreation/rest search to prison rooms upfront (via each node's own PrisonerJobRestriction.GetAllowedRoomRefs restrictRoomList) instead of relying on a blanket guestStatus-based check. Each override's filter mirrors its corresponding node's filter in Data/Personality/behavior.json, for otherwise-identical behavior (PathingRoomFilter.excludePrisonRooms defaults to false, so prison rooms are searched like any other room and no special flag is needed here - only nodes that want to actively exclude prison rooms would set excludePrisonRooms:true). Keys must match the behaviorOverrideID tagged on the corresponding node in Data/Personality/behavior.json. Deliberately NOT overridden: behavior_job (TryFindScheduledJobNode), the com_furniture_restroom TryFindJobByIDNode, and TryFindRestNode - prisoners aren't meant to be restricted for those (the latter two don't even have a behaviorOverrideID). Not yet consumed anywhere (the FindJobNodeRoot lookup that reads this dictionary isn't wired up yet) - this is staged ahead of that.",
                 "behaviorOverrides": {
+                    "behavior_bedrest": {
+                        "$type": "TryFindBedRestNode_Prisoner, Assembly-CSharp",
+                        "_comment": "bed rest (labor / recovery) only in the current room or a prison room - a prisoner brought to e.g. a hospital room stays there",
+                        "filter": {
+                            "checkBlacklist": false,
+                            "skipPrivateRoom": false,
+                            "searchJobList": false,
+                            "searchNonJobList": true
+                        }
+                    },
                     "behavior_sleep": {
                         "$type": "TryFindSleepNode_Prisoner, Assembly-CSharp",
                         "evaluationHeuristic": "ownership_Medium",

@@ -6,6 +6,7 @@
                 "nodes": [
                     {
                         "$type": "TryFindBedRestNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_bedrest",
                         "_comment":"requireBedRest (labor / recovery) -> com_furniture_rest_required; top so it beats locale changes / work; yields while shouldSleep so the sleep path still runs",
                         "filter": {
                             "checkBlacklist": false,

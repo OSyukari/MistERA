@@ -125,6 +125,116 @@ public class EventManager
     public List<EventInstance> activeEvents = new List<EventInstance>();
     public Dictionary<string, EventCooldown> eventCooldowns = new Dictionary<string, EventCooldown>();
 
+    // ── Event chains (see EventChain) ─────────────────────────────────────
+
+    /// <summary>
+    /// One active chain on one character: the next event to run and the minutes until it runs. nextEventID is "" while
+    /// the chain's current event runs - the event itself sets the next one (SetChainNext) or ends the chain; finishing
+    /// without either ends it. Saved (SaveFile.EventChains); the running event is runtime only.
+    /// </summary>
+    public class ActiveEventChain
+    {
+        public string chainID = "";
+        public int selfRef = -1;
+        public string nextEventID = "";
+        public int minutesUntilNext = 0;
+        [Newtonsoft.Json.JsonIgnore] public EventInstance running = null;
+    }
+
+    public List<ActiveEventChain> activeChains = new List<ActiveEventChain>();
+
+    public ActiveEventChain FindChain(string chainID, Character_Trainable self)
+    {
+        if (self == null) return null;
+        return activeChains.Find(x => x.chainID == chainID && x.selfRef == self.RefID);
+    }
+
+    public bool HasChain(string chainID, Character_Trainable self) { return FindChain(chainID, self) != null; }
+
+    bool IsChainEvent(string chainID, string eventID)
+    {
+        var def = scr_System_Serializer.current.MasterList.Events.GetChainByID(chainID);
+        if (def == null || !def.events.Contains(eventID))
+        {
+            Debug.LogError($"event chain [{chainID}] unknown, or [{eventID}] is not one of its events");
+            return false;
+        }
+        return true;
+    }
+
+    /// <summary>Starts chainID on self with eventID running after delay minutes. False if unknown or already active on self.</summary>
+    public bool StartChain(string chainID, Character_Trainable self, string eventID, int delay)
+    {
+        if (self == null || !IsChainEvent(chainID, eventID)) return false;
+        if (HasChain(chainID, self)) return false;
+        activeChains.Add(new ActiveEventChain() { chainID = chainID, selfRef = self.RefID, nextEventID = eventID, minutesUntilNext = Mathf.Max(1, delay) });
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event chain [{chainID}] started on {self.FirstName}, next [{eventID}] in {delay} min");
+        return true;
+    }
+
+    /// <summary>
+    /// Schedules the next event of the chain. Only the chain's own running event (requester) may do this - false otherwise.
+    /// </summary>
+    public bool SetChainNext(string chainID, Character_Trainable self, string eventID, int delay, EventInstance requester)
+    {
+        var ac = FindChain(chainID, self);
+        if (ac == null || requester == null || ac.running != requester) return false;
+        if (!IsChainEvent(chainID, eventID)) return false;
+        ac.nextEventID = eventID;
+        ac.minutesUntilNext = Mathf.Max(1, delay);
+        return true;
+    }
+
+    public void EndChain(string chainID, Character_Trainable self)
+    {
+        if (self == null) return;
+        activeChains.RemoveAll(x => x.chainID == chainID && x.selfRef == self.RefID);
+    }
+
+    /// <summary>
+    /// Once per simulated minute (scr_UpdateHandler.PreUpdate, next to TickCooldown). Per chain: gone self ends it; while
+    /// its event runs it waits; a finished event that set no next event ends it; otherwise the timer counts down and
+    /// then nextEventID starts on self (failing to start ends the chain).
+    /// </summary>
+    public void TickEventChains()
+    {
+        if (activeChains.Count < 1) return;
+        // copy: a chain event started (and run) here may start/end chains
+        foreach (var ac in activeChains.ToArray())
+        {
+            if (!activeChains.Contains(ac)) continue;
+            var self = scr_System_CampaignManager.current.FindInstanceByID(ac.selfRef);
+            if (self == null)
+            {
+                activeChains.Remove(ac);
+                continue;
+            }
+            if (ac.running != null)
+            {
+                if (activeEvents.Contains(ac.running)) continue;
+                ac.running = null;
+            }
+            if (ac.nextEventID == "")
+            {
+                activeChains.Remove(ac);
+                continue;
+            }
+            ac.minutesUntilNext -= 1;
+            if (ac.minutesUntilNext > 0) continue;
+
+            var ev = new EventInstance(self, ac.nextEventID, "");
+            string startedID = ac.nextEventID;
+            ac.nextEventID = "";
+            // set before starting: outside an update the event runs inside StartEvent and may already call SetChainNext
+            ac.running = ev;
+            if (!ev.isValid || !StartEvent(ev, false))
+            {
+                Debug.LogWarning($"event chain [{ac.chainID}] on {self.FirstName}: event [{startedID}] could not start, chain ended");
+                activeChains.Remove(ac);
+            }
+        }
+    }
+
 
     protected scr_UpdateHandler _updateHandler = null;
     public scr_UpdateHandler updateHandler { get
@@ -240,12 +350,13 @@ public class EventManager
         
     }
 
-    public void StartEvent(EventInstance ev, bool startImmediate)
+    /// <summary>Returns false if the event was rejected (cooldown / duplicate).</summary>
+    public bool StartEvent(EventInstance ev, bool startImmediate)
     {
         startImmediate = startImmediate || scr_UpdateHandler.current.Updating;
         ev.RelevantActors = null;
         // check if allow duplicate
-        if (CheckConflict(ev)) return;
+        if (CheckConflict(ev)) return false;
 
         this.activeEvents.Add(ev);
         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"startevent {ev.Name} on {(ev.Self == null ? "null" : ev.Self.FirstName)}, isValid? {ev.isValid} isVisible? {ev.isVisible}");
@@ -253,6 +364,7 @@ public class EventManager
         {
             Run();
         }
+        return true;
     }
 
     public void StartEventAuto(EventInstance ev)

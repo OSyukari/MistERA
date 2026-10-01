@@ -59,6 +59,11 @@ public class COM_Requirements
         public CharaReq req_Receivers = new CharaReq();
 
         public bool forbidTeammateJoin = false;
+        /// <summary>
+        /// Joining an ongoing package of this command from the command panel (joinable AP button) brings in the player
+        /// alone - no party members, no current target.
+        /// </summary>
+        public bool joinAlone = false;
 
         /// <summary>
         /// indicates that this command has no receiver. </br>
@@ -101,6 +106,7 @@ public class COM_Requirements
             requireSameFaction = requireSameFaction || req.requireSameFaction;
             requireSameActiveFaction = requireSameActiveFaction || req.requireSameActiveFaction;
             requireHomeFaction = requireHomeFaction || req.requireHomeFaction;
+            joinAlone = joinAlone || req.joinAlone;
         }
 
         /// <summary>

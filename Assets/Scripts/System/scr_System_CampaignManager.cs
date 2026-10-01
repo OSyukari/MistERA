@@ -1762,6 +1762,21 @@ public class scr_System_CampaignManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>Every specially tracked job matching c (I_RequireSpecialTracker.MatchTracker) that passes validator.</summary>
+    public List<Job> GetSpecialTrackedJobs(Character_Trainable c, Func<Job, bool> validator)
+    {
+        var result = new List<Job>();
+        foreach (var i in specialUpdateJobs)
+        {
+            if (!Index_JobReferenceID.TryGetValue(i, out var job)) continue;
+            var jj = job as I_RequireSpecialTracker;
+            if (jj == null || !jj.MatchTracker(c)) continue;
+            if (validator != null && !validator(job)) continue;
+            result.Add(job);
+        }
+        return result;
+    }
+
     Dictionary<int, ExpeditionInstance> Index_ExpeditionInstances = new Dictionary<int, ExpeditionInstance>();
 
     public void Unregister(ExpeditionInstance i)

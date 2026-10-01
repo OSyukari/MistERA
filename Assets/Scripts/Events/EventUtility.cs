@@ -403,6 +403,24 @@ public static class EventUtility
                     else Debug.Log($"{c.CallName} does NOT HasActorKeyword [{r.parameters[1]}], keywords [{String.Join(" ", c.ActorKeywords)}]");
                 }
                 return false;
+            case "shouldRemainMember":
+            {
+                // shouldRemainMember [factionID | "@tempHome"] -- c holds a MemberType in that faction whose joinHandler says c
+                // would still be admitted as it on their own merits (MemberJoinHandler.ShouldRemain), e.g. a patient who still
+                // needs care when a recovery status runs out
+                if (r.parameters.Count < 2) return false;
+                var remainFaction = r.parameters[1] == "@tempHome" ? c.FactionManager.Faction_Home_Temporary : scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
+                if (remainFaction == null || !remainFaction.isManagedChara(c.RefID)) return false;
+                var remainType = remainFaction.GetMemberType(c);
+                return remainType?.joinHandler != null && remainType.joinHandler.ShouldRemain(remainFaction, remainType, c);
+            }
+            case "sharesHomeFaction":
+            {
+                // sharesHomeFaction -- c's permanent home faction is the event self's permanent home faction (e.g. the
+                // player's own people, even while a temporary home such as a hospital outranks it)
+                var selfHome = ev?.Self?.FactionManager.Faction_Home;
+                return selfHome != null && c.FactionManager.Faction_Home == selfHome;
+            }
             case "NonPlayerFactionChara":
                 return !c.FactionManager.HasPlayerFaction;
             case "isPartyPrisoner":
@@ -424,6 +442,63 @@ public static class EventUtility
                 bool has = mtFaction != null && mtFaction.isManagedChara(c.RefID) && mtFaction.GetMemberType(c)?.ID == r.parameters[2];
                 return has == expected;
             }
+            case "isInLabor":
+            {
+                // isInLabor [optional true|false, default true] -- early or intense labor (not waiting for a C-section)
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                return UtilityEX.IsInLabor(c) == expected;
+            }
+            case "isInIntenseLabor":
+            {
+                // isInIntenseLabor [optional true|false, default true]
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                return ReproductionUtility.IsInIntenseLabor(c) == expected;
+            }
+            case "requiresCSection":
+            {
+                // requiresCSection [optional true|false, default true] -- labor found unsafe, waiting for a C-section
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                return ReproductionUtility.RequiresCSection(c) == expected;
+            }
+            case "canBirthNow":
+            {
+                // canBirthNow [optional true|false, default true] -- resting gate of natural birth (ReproductionUtility.CanBirthNow)
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                return ReproductionUtility.CanBirthNow(c) == expected;
+            }
+            case "rollLaborBirth":
+                // rollLaborBirth -- birth roll of the baby in intense labor (ReproductionUtility.RollLaborBirth)
+                return ReproductionUtility.RollLaborBirth(c);
+            case "randomChance":
+            {
+                // randomChance [chance 0-1]
+                if (r.parameters.Count < 2 || !float.TryParse(r.parameters[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var chance)) return false;
+                return Utility.NextFloat() < chance;
+            }
+            case "hasTrackedJob":
+            {
+                // hasTrackedJob [optional job class name, "" = any] [optional true|false, default true]
+                // -- c is part of a specially tracked job (e.g. a medical job, as patient or staff)
+                string jobType = r.parameters.Count >= 2 ? r.parameters[1] : "";
+                bool expected = r.parameters.Count < 3 || !bool.TryParse(r.parameters[2], out var exp) || exp;
+                bool has = scr_System_CampaignManager.current.GetSpecialTrackedJobs(c, j => jobType == "" || j.GetType().Name == jobType).Count > 0;
+                return has == expected;
+            }
+            case "hasEventChain":
+            {
+                // hasEventChain [chainID] [optional true|false, default true]
+                if (r.parameters.Count < 2) return false;
+                bool expected = r.parameters.Count < 3 || !bool.TryParse(r.parameters[2], out var exp) || exp;
+                return scr_UpdateHandler.current.EventHandler.HasChain(r.parameters[1], c) == expected;
+            }
+            case "hasPendingBirth":
+            {
+                // hasPendingBirth [optional true|false, default true] -- any baby in any labor stage (e.g. not the last of a multiple birth)
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                bool pending = false;
+                foreach (var egg in ReproductionUtility.AllOvums(c)) if (ReproductionUtility.IsLaborState(egg.State)) { pending = true; break; }
+                return pending == expected;
+            }
             case "hasTempHomeFaction":
             {
                 // hasTempHomeFaction [optional true|false, default true]
@@ -435,16 +510,7 @@ public static class EventUtility
                 // hasUnownedRoom [factionID] [optional room Base ID prefix] -- c is unused (only required to exist)
                 if (r.parameters.Count < 2) return false;
                 var roomFaction = scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
-                if (roomFaction == null || roomFaction.ManagedRooms == null) return false;
-                string prefix = r.parameters.Count >= 3 ? r.parameters[2] : "";
-                foreach (var kvp in roomFaction.ManagedRooms)
-                {
-                    var managedRoom = kvp.Value;
-                    if (managedRoom == null) continue;
-                    if (prefix != "" && (managedRoom.Base == null || !managedRoom.Base.ID.StartsWith(prefix))) continue;
-                    if (roomFaction.RoomOwners(managedRoom.RefID).Count == 0) return true;
-                }
-                return false;
+                return roomFaction != null && roomFaction.FindUnownedRoom(r.parameters.Count >= 3 ? r.parameters[2] : "") != null;
             }
             case "isActiveFaction":
                 if (r.parameters.Count < 2) return false;
@@ -548,6 +614,25 @@ public static class EventUtility
                             foreach (var chara in memberFaction.ManagedChara)
                             {
                                 if (chara == null || memberFaction.GetMemberType(chara)?.ID != scope.extraScopeArguments[1]) continue;
+                                bool isvalid = true;
+                                foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
+                                if (isvalid && !list.Contains(chara)) list.Add(chara);
+                            }
+                        }
+                    }
+                    break;
+                case TargetScope.FactionMembers:
+                    if (scope.extraScopeArguments.Count >= 1)
+                    {
+                        var factionArg = scope.extraScopeArguments[0];
+                        Manageable membersOf = factionArg == "@selfTempHome" ? self?.FactionManager.Faction_Home_Temporary
+                            : factionArg == "@selfActiveFaction" ? self?.FactionManager.CurrentlyActiveFaction
+                            : scr_System_CampaignManager.current.FindFactionByID(factionArg);
+                        if (membersOf != null)
+                        {
+                            foreach (var chara in membersOf.ManagedChara)
+                            {
+                                if (chara == null) continue;
                                 bool isvalid = true;
                                 foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
                                 if (isvalid && !list.Contains(chara)) list.Add(chara);
@@ -701,6 +786,7 @@ public static class EventUtility
 
     public static bool isValid(Event.EventEntry.Options op, EventInstance owner)
     {
+        if (!string.IsNullOrEmpty(op.disabledReasonKey)) return false;
         foreach (var c in op.conditions) if (!c.isValid()) return false;
         foreach (var cond in op.self_chara_conditions) if (!isValid(cond, owner, owner.Self)) return false;
         foreach (var kvp in op.target_chara_conditions)
@@ -764,6 +850,12 @@ public static class EventUtility
         if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"Executing entry {block.question} isVisible {owner.isVisible}");
 #endif
 
+        if (block.npcDecides && owner.Self != null && owner.Self != scr_System_CampaignManager.current.Player)
+        {
+            NpcDecide(owner, block);
+            return;
+        }
+
         if (owner.isVisible)
         {
             var snap = owner.CurrentUISpec.Overwrite(block.UISpec);
@@ -783,6 +875,23 @@ public static class EventUtility
         // load next but allow to be overwritten
         //scr_UpdateHandler.current.LoadEvent(false, nextEventID, nextEntryLabel);
     }
+    /// <summary>
+    /// EventEntry_Question.npcDecides: the NPC self picks a random enabled isDefaultAccept option (loaded options
+    /// included), else the isDefaultCancel option; with neither, the event is terminated with an error log.
+    /// </summary>
+    static void NpcDecide(EventInstance owner, Event.EventEntry.EventEntry_Question block)
+    {
+        var all = ExpandOptions(owner, block.options, block.loadOptionsKey, block.loadOptionsResults);
+        var accepts = all.FindAll(x => x.isDefaultAccept && string.IsNullOrEmpty(x.disabledReasonKey));
+        var pick = accepts.Count > 0 ? Utility.GetRandomElement(accepts) : all.Find(x => x.isDefaultCancel);
+        if (pick == null)
+        {
+            owner.Terminate($"npcDecides question {block.Name}: no default accept or default cancel option");
+            return;
+        }
+        Execute(owner, pick, true);
+    }
+
     public static void Execute(EventInstance owner, Event.EventEntry.EventEntry_InputField block)
     {
 
@@ -854,28 +963,48 @@ public static class EventUtility
         }
         if (key == "selfAndFollowers")
         {
-            result = new List<Character_Trainable>() { owner.Self };
-            var cm = scr_System_CampaignManager.current;
-            if (owner.Self != null && owner.Self == cm.Player)
-            {
-                foreach (var refID in cm.PlayerPartyMembers)
-                {
-                    var follower = cm.FindInstanceByID(refID);
-                    if (follower != null && !result.Contains(follower)) result.Add(follower);
-                }
-            }
+            result = ResolveSelfAndFollowers(owner.Self);
             return true;
         }
         return owner.Targets.TryGetValue(key, out result);
     }
 
+    /// <summary>self plus the player's party members (only when self is the player - nobody else has followers).</summary>
+    public static List<Character_Trainable> ResolveSelfAndFollowers(Character_Trainable self)
+    {
+        var result = new List<Character_Trainable>() { self };
+        var cm = scr_System_CampaignManager.current;
+        if (self != null && self == cm.Player)
+        {
+            foreach (var refID in cm.PlayerPartyMembers)
+            {
+                var follower = cm.FindInstanceByID(refID);
+                if (follower != null && !result.Contains(follower)) result.Add(follower);
+            }
+        }
+        return result;
+    }
+
     /// <summary>
     /// Expands options with forEachTargetKey into one copy per character in owner.Targets[key] (see
-    /// Options.forEachTargetKey); other options pass through unchanged, in order.
+    /// Options.forEachTargetKey); other options pass through unchanged, in order. If loadOptionsKey is given, the options
+    /// stored under it (EventInstance.StoredOptions) come first, each with the question's loadOptionsResults appended.
     /// </summary>
-    public static List<Event.EventEntry.Options> ExpandOptions(EventInstance owner, List<Event.EventEntry.Options> options)
+    public static List<Event.EventEntry.Options> ExpandOptions(EventInstance owner, List<Event.EventEntry.Options> options, string loadOptionsKey = "", List<Event.EventEntry.Executor> loadOptionsResults = null)
     {
         var result = new List<Event.EventEntry.Options>();
+        if (owner != null && !string.IsNullOrEmpty(loadOptionsKey) && owner.StoredOptions.TryGetValue(loadOptionsKey, out var stored))
+        {
+            foreach (var op in stored)
+            {
+                if (op == null) continue;
+                if (loadOptionsResults == null || loadOptionsResults.Count == 0) { result.Add(op); continue; }
+                var copy = op.CloneForTarget(op.boundTarget);
+                copy.Results = new List<Event.EventEntry.Executor>(op.Results);
+                copy.Results.AddRange(loadOptionsResults);
+                result.Add(copy);
+            }
+        }
         foreach (var op in options)
         {
             if (string.IsNullOrEmpty(op.forEachTargetKey)) { result.Add(op); continue; }
@@ -897,6 +1026,8 @@ public static class EventUtility
     {
         if (ops.boundTarget != null && !string.IsNullOrEmpty(ops.bindTargetKey))
             owner.Targets[ops.bindTargetKey] = new List<Character_Trainable>() { ops.boundTarget };
+
+        ops.onSelect?.Invoke(owner);
 
         if (owner.isVisible && ops.line != "")
         {
@@ -1368,7 +1499,7 @@ public static class EventUtility
                 {
                     if (c == null || c == linkTarget) continue;
                     if (requiredType != "" && linkFaction.GetMemberType(c)?.ID != requiredType) continue;
-                    linkFaction.SetMemberLink(c, linkTarget);
+                    linkFaction.SetMemberLink(c, linkTarget, linkFaction.GetMemberType(c));
                 }
                 return true;
             }
@@ -1392,6 +1523,91 @@ public static class EventUtility
                 }
                 return true;
             }
+            case Event.EventEntry.ExecutionType.GiveBirth:
+            {
+                if (exec.arguments.Count < 2) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var mothers))
+                {
+                    Debug.LogError($"GiveBirth missing target scopeKey {exec.arguments[0]}");
+                    return false;
+                }
+                bool allWaiting = exec.arguments[1] == "all";
+                string followup = exec.arguments.Count >= 3 ? exec.arguments[2] : "";
+                bool delivered = false;
+                foreach (var c in mothers)
+                {
+                    if (c != null && c.GiveBirth(allWaiting, followup)) delivered = true;
+                }
+                return delivered;
+            }
+            case Event.EventEntry.ExecutionType.StartEventChain:
+            case Event.EventEntry.ExecutionType.SetChainNext:
+            {
+                if (exec.arguments.Count < 4 || !int.TryParse(exec.arguments[2], out var delayMin) || !int.TryParse(exec.arguments[3], out var delayMax)) return false;
+                int delay = UnityEngine.Random.Range(Math.Min(delayMin, delayMax), Math.Max(delayMin, delayMax) + 1);
+                var chains = scr_UpdateHandler.current.EventHandler;
+                if (exec.Type == Event.EventEntry.ExecutionType.StartEventChain) return chains.StartChain(exec.arguments[0], owner.Self, exec.arguments[1], delay);
+                // always true: a refused request must not make a branch option fall through to the next option
+                if (!chains.SetChainNext(exec.arguments[0], owner.Self, exec.arguments[1], delay, owner))
+                    Debug.LogWarning($"SetChainNext refused: chain [{exec.arguments[0]}] not active on {owner.Self?.FirstName} or not run by this event");
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.LaunchJob:
+            {
+                if (exec.jobTemplate == null || !(exec.jobTemplate is I_EventLaunchedJob))
+                {
+                    Debug.LogError($"LaunchJob: missing jobTemplate, or it does not implement I_EventLaunchedJob");
+                    return false;
+                }
+                var roles = new Dictionary<string, List<Character_Trainable>>();
+                foreach (var arg in exec.arguments)
+                {
+                    int split = arg.IndexOf('=');
+                    if (split < 1)
+                    {
+                        Debug.LogError($"LaunchJob: argument [{arg}] is not role=scopeKey");
+                        return false;
+                    }
+                    // an unresolvable key (e.g. an optional target scope that found nobody) is an empty role - the job decides
+                    roles[arg.Substring(0, split)] = TryResolveExecTargets(owner, arg.Substring(split + 1), out var roleCharas)
+                        ? roleCharas.FindAll(x => x != null) : new List<Character_Trainable>();
+                }
+                // fresh copy per launch; characters are stored as refs by the serializer's converter
+                // declared type typeof(Job) makes TypeNameHandling.Auto write the root $type, so the concrete subclass survives the copy
+                var job = Newtonsoft.Json.JsonConvert.DeserializeObject<Job>(Newtonsoft.Json.JsonConvert.SerializeObject(exec.jobTemplate, typeof(Job), UtilityEX.SerializerSettings), UtilityEX.SerializerSettings);
+                if (!(job is I_EventLaunchedJob launched))
+                {
+                    Debug.LogError($"LaunchJob: copy of {exec.jobTemplate.GetType().Name} lost its type");
+                    return false;
+                }
+                if (!launched.BindRoles(roles, owner)) return false;
+                scr_System_CampaignManager.current.Register(job);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.TerminateJob:
+            {
+                if (exec.arguments.Count < 1) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var jobCharas))
+                {
+                    Debug.LogError($"TerminateJob missing target scopeKey {exec.arguments[0]}");
+                    return false;
+                }
+                string jobType = exec.arguments.Count >= 2 ? exec.arguments[1] : "";
+                Func<Job, bool> terminable = j => j is I_EventTerminableJob && (jobType == "" || j.GetType().Name == jobType);
+                var jobs = new List<Job>();
+                foreach (var c in jobCharas)
+                {
+                    if (c == null) continue;
+                    if (c.CurrentJob != null && terminable(c.CurrentJob) && !jobs.Contains(c.CurrentJob)) jobs.Add(c.CurrentJob);
+                    foreach (var j in scr_System_CampaignManager.current.GetSpecialTrackedJobs(c, terminable)) if (!jobs.Contains(j)) jobs.Add(j);
+                }
+                foreach (var j in jobs) (j as I_EventTerminableJob).TerminateByEvent();
+                return jobs.Count > 0;
+            }
+            case Event.EventEntry.ExecutionType.EndEventChain:
+                if (exec.arguments.Count < 1) return false;
+                scr_UpdateHandler.current.EventHandler.EndChain(exec.arguments[0], owner.Self);
+                return true;
             case Event.EventEntry.ExecutionType.RemoveFromFaction:
             {
                 if (exec.arguments.Count < 2) return false;
@@ -1809,7 +2025,8 @@ public static class EventUtility
                     }
                     else
                     {
-                        Debug.LogError($"cannot find ExistAppendStrings {appendStrID} in {owner.Name}");
+                        // a missing key is the normal "false" outcome of this branch check, not an error
+                        if (debug) Debug.Log($"cannot find ExistAppendStrings {appendStrID} in {owner.Name}");
                         return false;
                     }
                 }
@@ -2440,6 +2657,32 @@ public static class EventUtility
                     return true;
                 }
                 else return false;
+            case Event.EventEntry.ExecutionType.JoinActiveFaction:
+            case Event.EventEntry.ExecutionType.LeaveActiveFaction:
+            {
+                if (exec.arguments.Count < 4) return false;
+                var joinOptions = new List<Event.EventEntry.Options>();
+                owner.StoredOptions[exec.arguments[0]] = joinOptions;
+                if (!TryResolveExecTargets(owner, exec.arguments[1], out var joinCandidates) || !TryResolveExecTargets(owner, exec.arguments[2], out var joinFactionRefs))
+                {
+                    Debug.LogError($"JoinActiveFaction missing target scopeKey {exec.arguments[1]} or {exec.arguments[2]}");
+                    return true;
+                }
+                var joinFactionRef = joinFactionRefs.Find(x => x != null);
+                I_IsJobGiver joinActive = joinFactionRef == null ? null
+                    : joinFactionRef.FactionManager.CurrentActiveParty != null ? (I_IsJobGiver)joinFactionRef.FactionManager.CurrentActiveParty : joinFactionRef.FactionManager.CurrentlyActiveFaction;
+                var joinFaction = joinActive?.FactionOwnerRoot;
+                if (joinFaction == null || !FactionUtility.TryGetMemberType(exec.arguments[3], out var joinType)) return true;
+
+                string joinErrorKey;
+                if (exec.Type == Event.EventEntry.ExecutionType.LeaveActiveFaction) joinOptions.AddRange(joinFaction.BuildLeaveOptions(joinType, joinCandidates, out joinErrorKey));
+                else joinOptions.AddRange(joinFaction.BuildJoinOptions(joinType, joinCandidates, out joinErrorKey));
+                if (joinOptions.Count == 0 && exec.arguments.Count >= 5 && exec.arguments[4] != "" && !string.IsNullOrEmpty(joinErrorKey))
+                    owner.AppendStrings[exec.arguments[4]] = new List<string>() { LocalizeDictionary.QueryThenParse(joinErrorKey) };
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.ExistStoredOptions:
+                return exec.arguments.Count >= 1 && owner.StoredOptions.TryGetValue(exec.arguments[0], out var existingOptions) && existingOptions.Count > 0;
             case Event.EventEntry.ExecutionType.StartRetailTrade:
             case Event.EventEntry.ExecutionType.StartRetailTradeCallback:
             {

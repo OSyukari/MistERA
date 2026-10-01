@@ -17,7 +17,8 @@
 "console_furnitureUnpack_tooltip":"furnitureUnpack\ninitiate furniture packing/unpacking in current room",
 "console_forceConscious_tooltip":"forceConscious [int targetRefID] [bool true/false]\nfalse: use game's system\ntrue: target is always treated as conscious",
 "console_advanceTime_tooltip":"advanceTime [int days]\nAdvance the current clock by the given number of days",
-"console_debug_refuse_salary_payment_tooltip":"debug_refuse_salary_payment [optional bool true/false]\nDebug: when on, non-player factions always fail salary payments (default: off when omitted, toggles)"
+"console_debug_refuse_salary_payment_tooltip":"debug_refuse_salary_payment [optional bool true/false]\nDebug: when on, non-player factions always fail salary payments (default: off when omitted, toggles)",
+"console_debug_force_joinFaction_Agree_tooltip":"debug_force_joinFaction_Agree [optional bool true/false]\nDebug: when on, the player and party members pass every MemberJoinHandler check (e.g. hospital admission), even with no free room (toggles when omitted, not saved)"
 
 
             }

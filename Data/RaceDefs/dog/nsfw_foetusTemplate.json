@@ -19,7 +19,10 @@
         "size_third": 80.0,
         "size_end": 450.0,
         "duration_randVariation": 0.06,
-        "duration_labor": 300,
+        "duration_labor": 600,
+        "duration_labor_intense": 45,
+        "duration_birth_interval": 45,
+        "_note_labor_stages": "real-world: stage 1 6-12 h, one pup every 30-60 min",
         "average_mother_HWMult": 1800,
         "_note_avg": "1800 = ~60 cm x 30 kg typical female large-breed dog. Verify against actual creature character template H×W.",
         "images":[

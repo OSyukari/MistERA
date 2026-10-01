@@ -173,10 +173,53 @@ public class Job_Furniture : Job
         _validCOMs_cached = false;
     }
 
+    /// <summary>RefID of the job (I_FurnitureReserver) currently reserving this furniture, -1 = none.</summary>
+    [JsonProperty] protected int reservedByJobRef = -1;
+
+    [JsonIgnore] public int ReservedByJobRef { get { return reservedByJobRef; } }
+
+    /// <summary>Reserves this furniture for job (must implement I_FurnitureReserver).</summary>
+    public void ReserveFor(Job job) { reservedByJobRef = job == null ? -1 : job.RefID; }
+
+    public void ReleaseReservation(Job job)
+    {
+        if (job != null && reservedByJobRef == job.RefID) reservedByJobRef = -1;
+    }
+
+    /// <summary>Reserved by a job that still exists (a stale reservation is dropped).</summary>
+    [JsonIgnore] public bool IsReserved
+    {
+        get
+        {
+            if (reservedByJobRef < 0) return false;
+            if (scr_System_CampaignManager.current.FindJobInstanceByID(reservedByJobRef) is I_FurnitureReserver) return true;
+            reservedByJobRef = -1;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// True if a reserving job blocks c from this furniture. The player is never blocked; a reservation whose job no
+    /// longer exists is dropped here.
+    /// </summary>
+    public bool IsReservedAgainst(Character_Trainable c)
+    {
+        if (reservedByJobRef < 0 || c == null) return false;
+        var reserver = scr_System_CampaignManager.current.FindJobInstanceByID(reservedByJobRef) as I_FurnitureReserver;
+        if (reserver == null)
+        {
+            reservedByJobRef = -1;
+            return false;
+        }
+        if (c.RefID == scr_System_CampaignManager.current.Player.RefID) return false;
+        return !reserver.AllowsFurnitureUse(c);
+    }
+
     public bool ValidateActor(Character_Trainable c, COM com = null)
     {
         //bool validJob = true;
         //bool validNonJob = true;
+        if (IsReservedAgainst(c)) return false;
         if (com != null && !this.ValidCOMs.Contains(com)) return false;
         if (com != null) return com.requirements.requirement.ValidateActorFaction(this, c, out _) && com.GetValidVariant(c) >= 0;
         foreach (COM com2 in this.ValidCOMs)

@@ -479,6 +479,54 @@ public class Manageable : I_Disposable, I_IsJobGiver
         return charaGuestStatus.ContainsKey(chararef);
     }
 
+    /// <summary>
+    /// Asks type's MemberJoinHandler for the options of joining this faction as type, offered to candidates (each option
+    /// ready-made, with its own onSelect join callback - see MemberJoinHandler). Empty when type has no joinHandler or
+    /// nothing can be offered; errorKey is then the handler's reason key. Not enforced by AddToFaction - callers that
+    /// offer joining (e.g. the JoinActiveFaction event Result) ask first.
+    /// </summary>
+    public List<Event.EventEntry.Options> BuildJoinOptions(MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        if (type == null || type.joinHandler == null || candidates == null) return new List<Event.EventEntry.Options>();
+        return type.joinHandler.BuildOptions(this, type, candidates, out errorKey);
+    }
+
+    /// <summary>Leave counterpart of BuildJoinOptions, through type's MemberLeaveHandler (LeaveActiveFaction event Result).</summary>
+    public List<Event.EventEntry.Options> BuildLeaveOptions(MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        if (type == null || type.leaveHandler == null || candidates == null) return new List<Event.EventEntry.Options>();
+        return type.leaveHandler.BuildOptions(this, type, candidates, out errorKey);
+    }
+
+    /// <summary>First managed room whose Base ID starts with roomIDPrefix (empty = any) and that has no owner, or null.</summary>
+    public Room_Instance FindUnownedRoom(string roomIDPrefix)
+    {
+        if (ManagedRooms == null) return null;
+        foreach (var kvp in ManagedRooms)
+        {
+            var room = kvp.Value;
+            if (room == null) continue;
+            if (!string.IsNullOrEmpty(roomIDPrefix) && (room.Base == null || !room.Base.ID.StartsWith(roomIDPrefix))) continue;
+            if (RoomOwners(room.RefID).Count == 0) return room;
+        }
+        return null;
+    }
+
+    /// <summary>First managed room matching roomFilter (e.g. Room_Instance.isRoomHospital) that has no owner, or null.</summary>
+    public Room_Instance FindUnownedRoom(Func<Room_Instance, bool> roomFilter)
+    {
+        if (ManagedRooms == null) return null;
+        foreach (var kvp in ManagedRooms)
+        {
+            var room = kvp.Value;
+            if (room == null || !roomFilter(room)) continue;
+            if (RoomOwners(room.RefID).Count == 0) return room;
+        }
+        return null;
+    }
+
 
     public void RemoveManagedRoom(int roomRefID)
     {
@@ -659,35 +707,73 @@ public class Manageable : I_Disposable, I_IsJobGiver
     [JsonProperty] protected HashSet<int> forbidWorkRefs = new HashSet<int>();
 
     /// <summary>
-    /// member RefID -> RefID of the member they are linked to in this faction (e.g. visitor -> the patient they
-    /// visit). Set by SetMemberLink; when the link target leaves this faction, every member linked to them
-    /// leaves too (see RemoveFromFaction).
+    /// Legacy save data (single untyped link per member), only read: moved into memberLinkSets on first access
+    /// (MemberLinkSets), typed with the member's MemberType at that time.
     /// </summary>
-    [JsonProperty] protected Dictionary<int, int> memberLinks = new Dictionary<int, int>();
-
-    public void SetMemberLink(Character_Trainable member, Character_Trainable target)
+    [JsonProperty] protected Dictionary<int, int> memberLinks = null;
+    /// <summary>
+    /// member RefID -> their links in this faction, each to one target and typed with the MemberType the member holds
+    /// the link as (e.g. visitor -> every patient they visit, as membertype_jp_hospital_visitor). Set by SetMemberLink.
+    /// When a target leaves, only the links to that target are dropped; a member then leaves too only if they hold no
+    /// other link of that MemberType AND still hold that MemberType here (see RemoveFromFaction).
+    /// </summary>
+    [JsonProperty] protected Dictionary<int, List<MemberLink>> memberLinkSets = new Dictionary<int, List<MemberLink>>();
+    public class MemberLink
     {
-        if (member == null || target == null || member == target) return;
-        if (!isManagedChara(member.RefID) || !isManagedChara(target.RefID)) return;
-        if (memberLinks == null) memberLinks = new Dictionary<int, int>();
-        memberLinks[member.RefID] = target.RefID;
+        public int targetRef = -1;
+        public string memberTypeID = "";
+    }
+    [JsonIgnore] Dictionary<int, List<MemberLink>> MemberLinkSets
+    {
+        get
+        {
+            if (memberLinkSets == null) memberLinkSets = new Dictionary<int, List<MemberLink>>();
+            if (memberLinks != null)
+            {
+                var legacy = memberLinks;
+                memberLinks = null;
+                foreach (var kvp in legacy)
+                {
+                    var type = GetMemberType(kvp.Key);
+                    if (type == null || type == FactionUtility.MemberType_None) continue;
+                    AddMemberLink(kvp.Key, kvp.Value, type.ID);
+                }
+            }
+            return memberLinkSets;
+        }
     }
 
-    /// <summary>The member c is linked to in this faction, or null.</summary>
-    public Character_Trainable GetMemberLinkTarget(Character_Trainable c)
+    void AddMemberLink(int memberRef, int targetRef, string memberTypeID)
     {
-        if (c == null || memberLinks == null || !memberLinks.TryGetValue(c.RefID, out var targetRef)) return null;
-        return scr_System_CampaignManager.current.FindInstanceByID(targetRef);
+        if (!memberLinkSets.TryGetValue(memberRef, out var links)) memberLinkSets[memberRef] = links = new List<MemberLink>();
+        if (!links.Exists(x => x.targetRef == targetRef && x.memberTypeID == memberTypeID))
+            links.Add(new MemberLink() { targetRef = targetRef, memberTypeID = memberTypeID });
     }
 
-    /// <summary>Every member of this faction linked to target (e.g. a patient's visitors).</summary>
-    public List<Character_Trainable> GetLinkedMembers(Character_Trainable target)
+    /// <summary>Links member to target as linkType (a member may hold several links). Both must be members; member must hold linkType.</summary>
+    public void SetMemberLink(Character_Trainable member, Character_Trainable target, MemberType linkType)
+    {
+        if (member == null || target == null || linkType == null || member == target) return;
+        if (!isManagedChara(member.RefID) || !isManagedChara(target.RefID) || GetMemberType(member) != linkType) return;
+        _ = MemberLinkSets;     // migrates legacy links first
+        AddMemberLink(member.RefID, target.RefID, linkType.ID);
+    }
+
+    /// <summary>Whether member is linked to target (as memberTypeID, or as anything when it is empty).</summary>
+    public bool IsMemberLinked(Character_Trainable member, Character_Trainable target, string memberTypeID = "")
+    {
+        return member != null && target != null && MemberLinkSets.TryGetValue(member.RefID, out var links)
+            && links.Exists(x => x.targetRef == target.RefID && (memberTypeID == "" || x.memberTypeID == memberTypeID));
+    }
+
+    /// <summary>Every member of this faction linked to target (as memberTypeID, or as anything when it is empty), e.g. a patient's visitors.</summary>
+    public List<Character_Trainable> GetLinkedMembers(Character_Trainable target, string memberTypeID = "")
     {
         var result = new List<Character_Trainable>();
-        if (target == null || memberLinks == null) return result;
-        foreach (var kvp in memberLinks)
+        if (target == null) return result;
+        foreach (var kvp in MemberLinkSets)
         {
-            if (kvp.Value != target.RefID) continue;
+            if (!kvp.Value.Exists(x => x.targetRef == target.RefID && (memberTypeID == "" || x.memberTypeID == memberTypeID))) continue;
             var c = scr_System_CampaignManager.current.FindInstanceByID(kvp.Key);
             if (c != null) result.Add(c);
         }
@@ -726,6 +812,27 @@ public class Manageable : I_Disposable, I_IsJobGiver
     //protected List<Job> availableJobs;
 
 
+    /// <summary>
+    /// MapPlan.hourlyEvents: starts each listed event on every member holding its MemberType (all members if none given).
+    /// </summary>
+    void StartHourlyEvents()
+    {
+        if (string.IsNullOrEmpty(mapPlanID)) return;
+        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+        if (plan == null || plan.hourlyEvents == null || plan.hourlyEvents.Count == 0) return;
+        foreach (var entry in plan.hourlyEvents)
+        {
+            foreach (var c in ManagedChara.ToList())
+            {
+                if (c == null) continue;
+                if (entry.memberTypeID != "" && GetMemberType(c)?.ID != entry.memberTypeID) continue;
+                var ev = new EventInstance(c, entry.eventID, "");
+                if (!ev.isValid) continue;
+                scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+            }
+        }
+    }
+
     protected void OnTimeUpdate5(TimeSpan t)
     {
         
@@ -737,6 +844,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     protected void OnHourUpdate(TimeSpan t)
     {
         FallbackWorkerManager.UpdateStaffing(this);
+        StartHourlyEvents();
 
         int currentHour = (scr_System_Time.current.getCurrentTime().Hour + 24 - 1) % 24;
         foreach(var c in ManagedChara)
@@ -1869,32 +1977,49 @@ public class Manageable : I_Disposable, I_IsJobGiver
             Debug.LogError("Error RemoveFromFaction null");
             return;
         }
+        // read before anything is removed: the leaving MemberType's leaveHandler is told afterwards (OnMemberLeft)
+        var leftType = GetMemberType(c);
+        var leaveHandler = leftType?.leaveHandler;
+        string leftStanding = leaveHandler != null ? GetCharaSocialStandingName(c) : "";
+        var departedLinked = new List<KeyValuePair<Character_Trainable, string>>();
+
         if (charaSchedules != null) charaSchedules.Remove(c.RefID);
         else Debug.LogError($"charaSchedules null when RemoveFromFaction {c.FirstName}");
         if (charaGuestStatus != null) charaGuestStatus.Remove(c.RefID);
         else Debug.LogError($"charaGuestStatus null when RemoveFromFaction {c.FirstName}");
         forbidWorkRefs?.Remove(c.RefID);
 
-        // drop c's own link, then everyone linked to c (e.g. a discharged patient's visitors) - through their
-        // own Character_Factions so their home/work lists stay consistent; links are removed first so the
-        // resulting RemoveFromFaction calls never cascade back here
-        if (memberLinks != null)
+        // drop c's own links (c is leaving), and the links other members hold to c. A member whose link to c was held as
+        // MemberType T leaves too only if they hold no other link as T AND still hold T here (e.g. a discharged patient's
+        // visitor who visits nobody else - but not one who has since become a patient). They leave through their own
+        // Character_Factions so their home/work lists stay consistent; links are updated first so the resulting
+        // RemoveFromFaction calls find nothing linked to c
+        var linkSets = MemberLinkSets;
+        linkSets.Remove(c.RefID);
+        var unlinkedRefs = new List<int>();
+        foreach (var kvp in linkSets)
         {
-            memberLinks.Remove(c.RefID);
-            var linkedRefs = memberLinks.Where(x => x.Value == c.RefID).Select(x => x.Key).ToList();
-            foreach (var linkedRef in linkedRefs) memberLinks.Remove(linkedRef);
-            foreach (var linkedRef in linkedRefs)
-            {
-                var linked = scr_System_CampaignManager.current.FindInstanceByID(linkedRef);
-                if (linked == null) continue;
-                if (linked.FactionManager.WorkFactions.Contains(this)) linked.FactionManager.RemoveWorkFaction(this.ID);
-                else if (linked.FactionManager.Faction_Home_Temporary == this) linked.FactionManager.SetTempHomeFaction("", null);
-            }
+            var droppedTypes = kvp.Value.FindAll(x => x.targetRef == c.RefID).ConvertAll(x => x.memberTypeID);
+            if (droppedTypes.Count == 0) continue;
+            kvp.Value.RemoveAll(x => x.targetRef == c.RefID);
+            var currentType = GetMemberType(kvp.Key)?.ID;
+            if (droppedTypes.Contains(currentType) && !kvp.Value.Exists(x => x.memberTypeID == currentType)) unlinkedRefs.Add(kvp.Key);
+        }
+        foreach (var key in linkSets.Where(x => x.Value.Count == 0).Select(x => x.Key).ToList()) linkSets.Remove(key);
+        foreach (var linkedRef in unlinkedRefs)
+        {
+            var linked = scr_System_CampaignManager.current.FindInstanceByID(linkedRef);
+            if (linked == null) continue;
+            string linkedStanding = leaveHandler != null ? GetCharaSocialStandingName(linked) : "";
+            if (linked.FactionManager.WorkFactions.Contains(this)) linked.FactionManager.RemoveWorkFaction(this.ID);
+            else if (linked.FactionManager.Faction_Home_Temporary == this) linked.FactionManager.SetTempHomeFaction("", null);
+            if (!isManagedChara(linked.RefID)) departedLinked.Add(new KeyValuePair<Character_Trainable, string>(linked, linkedStanding));
         }
         managedChara = null;
         _managerRefs = null;
 
         foreach (var i in managedRoomRefs) i.Value.Remove(c.RefID);
+        managedRoomOwnersRefs = null;
         var newlist = new List<Manageable_Party>(SubFactions);
         foreach (var i in newlist)
         {
@@ -1903,6 +2028,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
 
         NotifyFactionMemberChange();
+        leaveHandler?.OnMemberLeft(this, c, leftStanding, departedLinked);
     }
 
     public void RemoveSubfaction(Manageable_Party p)

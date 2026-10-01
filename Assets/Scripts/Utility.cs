@@ -111,6 +111,10 @@ public static class UtilityEX
         };
 
 
+    /// <summary>
+    /// Early or intense labor (drives requireBedRest). Not Final_RequireHelp: a labor waiting for a C-section leaves the
+    /// mother's sandbox free (ReproductionUtility.RequiresCSection).
+    /// </summary>
     public static bool IsInLabor(Character_Trainable c)
     {
         if (scr_System_CentralControl.current.isSafeMode) return false;
@@ -123,8 +127,7 @@ public static class UtilityEX
             if (w.eggs == null || w.eggs.Count < 1) continue;
             foreach (var egg in w.eggs)
             {
-                if (egg.State != OvumState.Final) continue;
-                return true;
+                if (egg.State == OvumState.Final || egg.State == OvumState.IntenseLabor) return true;
             }
         }
         return false;
@@ -1500,6 +1503,18 @@ public static class UtilityEX
                 Debug.Log($"debug_refuse_salary_payment = {scr_System_CentralControl.current.debug_refuse_salary_payment}");
                 parsedSuccessful = true;
                 break;
+            case "debug_force_joinFaction_Agree":
+                if (parsed.Count() >= 2 && bool.TryParse(parsed[1], out bool forceJoinValue))
+                {
+                    scr_System_CentralControl.current.debug_force_joinFaction_Agree = forceJoinValue;
+                }
+                else
+                {
+                    scr_System_CentralControl.current.debug_force_joinFaction_Agree = !scr_System_CentralControl.current.debug_force_joinFaction_Agree;
+                }
+                Debug.Log($"debug_force_joinFaction_Agree = {scr_System_CentralControl.current.debug_force_joinFaction_Agree}");
+                parsedSuccessful = true;
+                break;
             case "inspectjob":
                 if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int targetjobref))
                 {
@@ -1573,7 +1588,7 @@ public static class UtilityEX
                             break;
                         }
 
-                        target.TickMenstruation(adv_year, adv_month, adv_day, true);
+                        target.TickMenstruation(adv_year, adv_month, adv_day, true, true);
                     }
                 }
                 break;
