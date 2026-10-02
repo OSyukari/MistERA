@@ -99,6 +99,26 @@
             ]
         },
         {
+            "ID":"furniture_marker_gender_male",
+            "displayName":"男性房间marker",
+            "_comment":"social gender preference marker - room prefers male (Room_Instance.GenderPreference). both gender markers present -> dont care",
+            "noDisplay":true,
+            "recipe":[],
+            "furnitureSize":0,
+            "value":0,
+            "Tags":["room_gender_male"]
+        },
+        {
+            "ID":"furniture_marker_gender_female",
+            "displayName":"女性房间marker",
+            "_comment":"social gender preference marker - room prefers female (Room_Instance.GenderPreference). both gender markers present -> dont care",
+            "noDisplay":true,
+            "recipe":[],
+            "furnitureSize":0,
+            "value":0,
+            "Tags":["room_gender_female"]
+        },
+        {
             "ID":"furniture_galley",
             "displayName":"厨房",
             "recipe":[],
@@ -347,6 +367,8 @@
 "furniture_TV_flatscreen":"平面电视",
 "furniture_marker_cleaning":"扫除marker",
 "furniture_marker_getmeal":"用餐marker",
+"furniture_marker_gender_male":"男性房间marker",
+"furniture_marker_gender_female":"女性房间marker",
 "furniture_galley":"现代厨房",
 "furniture_stove":"电炉灶",
 "furniture_shower":"淋浴",
@@ -388,6 +410,8 @@
 "furniture_TV_flatscreen": "Flat Screen TV",
 "furniture_marker_cleaning": "Cleaning Marker",
 "furniture_marker_getmeal": "Dining Marker",
+"furniture_marker_gender_male": "Male Room Marker",
+"furniture_marker_gender_female": "Female Room Marker",
 "furniture_galley": "Modern Galley",
 "furniture_stove": "Electric Stove",
 "furniture_shower": "Shower",

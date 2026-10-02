@@ -136,20 +136,27 @@
                         "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_Gym_Night.jpg"
                     },
                     {
-                        "ID":"medbay_changing_room",
-                        "displayName":"Changing Room",
-                        "offsetX":334,
-                        "offsetY":-85,
+                        "ID":"medbay_changing_room_male",
+                        "offsetX":353,
+                        "offsetY":-52,
                         "connects":
                         [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
-                        "furnitureIDs":["furniture_bathroom_set","furniture_shower"
-                                    ,"furniture_bathroom_set","furniture_shower" ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_shower","furniture_marker_gender_male" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
+                    },
+                    {
+                        "ID":"medbay_changing_room_female",
+                        "offsetX":275,
+                        "offsetY":-98.5,
+                        "connects":
+                        [ { "ID":"medbay_hallway_4", "cost":1.0  } ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_shower","furniture_marker_gender_female" ],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
                         "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
                     },
                     {
                         "ID":"medbay_life_support",
-                        "displayName":"Life Support",
                         "offsetY":350,
                         "connects":
                         [ { "ID":"medbay_hallway_1", "cost":1.0  },
@@ -158,7 +165,6 @@
                     },
                     {
                         "ID":"medbay_lab",
-                        "displayName":"Laboratory",
                         "offsetX":-328,
                         "offsetY":329,
                         "connects":
@@ -269,7 +275,8 @@
 "medbay_cryo":"冷冻休眠",
 "medbay_shooting_range":"靶场",
 "medbay_dojo_arena":"道场",
-"medbay_changing_room":"更衣室",
+"medbay_changing_room_male":"男更衣室",
+"medbay_changing_room_female":"女更衣室",
 "medbay_life_support":"维生系统",
 "medbay_lab":"实验室",
 "medbay_security_office":"警卫室",
@@ -289,7 +296,8 @@
 "medbay_cryo": "Cryo Sleep",
 "medbay_shooting_range": "Shooting Range",
 "medbay_dojo_arena": "Dojo",
-"medbay_changing_room": "Changing Room",
+"medbay_changing_room_male": "Men's Changing Room",
+"medbay_changing_room_female": "Women's Changing Room",
 "medbay_life_support": "Life Support",
 "medbay_lab": "Laboratory",
 "medbay_security_office": "Security Office",

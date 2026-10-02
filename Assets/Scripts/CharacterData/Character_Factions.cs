@@ -134,6 +134,9 @@ public class Character_Factions
             if (this.Owner.isTemporaryActor && Faction_Home_Temporary.isPlayerRelatedFaction) this.Owner.isTemporaryActor = false;
         }
         UpdateFactionPriorityList();
+
+        // the permanent home is told its member was taken by / returned from a temp home (e.g. a fallback worker pool wakes them)
+        Faction_Home?.OnMemberTempHomeChanged(Owner);
     }
 
     /// <summary>

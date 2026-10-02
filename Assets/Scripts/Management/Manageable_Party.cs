@@ -89,6 +89,12 @@ public class Manageable_Party : I_IsJobGiver
                 possibleJobs.RemoveAt(i);
                 continue;
             }
+            if (filter.respectRoomGender && j.ParentRoom.IsOppositeSex(chara))
+            {
+                ss += $"\n{j.DisplayName} removed due to room {j.ParentRoom.RefID} gender preference {j.ParentRoom.GenderPreference} and filter.respectRoomGender true";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
             if (restrictRoomList != null && (j.ParentRoom == null || !restrictRoomList.Contains(j.ParentRoom.RefID)))
             {
                 ss += $"\n{j.DisplayName} removed due to room {(j.ParentRoom == null ? "null" : j.ParentRoom.RefID)} match with restrictRoomList {String.Join(" ", restrictRoomList)}";

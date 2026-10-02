@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 
 public enum RoomActivityState { AlwaysActive, DayOnly, NightOnly }
+public enum RoomGenderPreference { DontCare, Male, Female }
 
 public class Room_Base
 {

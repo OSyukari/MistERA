@@ -643,8 +643,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     void NotifyLaborStart()
     {
         var player = scr_System_CampaignManager.current.Player;
-        var playerHome = player.FactionManager.Faction_Home;
-        bool playerDecides = RefID == player.RefID || (playerHome != null && FactionManager.Faction_Home == playerHome);
+        bool playerDecides = ReproductionUtility.IsLaborPlayerDecided(this);
 
         var ev = new EventInstance(playerDecides ? player : this, ReproductionUtility.event_laborStart, "");
         ev.Targets["mother"] = new List<Character_Trainable>() { this };
@@ -988,7 +987,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         else
         {
             ev.AppendStrings.Add("outcome", new List<string>() { $"the baby taken by {targetf.FactionDisplayName}" });
-            targetf = null;
+            // fallback workers' babies are kept by their pool (handled later); other non-player factions keep none
+            if (!(targetf is Manageable_WorkerPool)) targetf = null;
         }
 
         ev.AppendStrings.Add("roomname", new List<string>() { (CurrentRoom == null ? "somewhere" : CurrentRoom.DisplayName) });
@@ -2095,8 +2095,10 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     [JsonIgnore] public bool shouldSleep { get
         {
             if (forceSleep) return true;
+            // active labor: stay on bed rest instead of leaving for scheduled sleep (forced sleep above still applies)
+            if (ReproductionUtility.IsInIntenseLabor(this)) return false;
             if (!canSleep) return false;
-            
+
             // check schedule
             //var returnval = hasSleepNeed && sleephours > 0 && timeSinceLastSleep > sleephours;
             //if (!returnval && RefID > 0) Debug.LogError($"{FirstName} cannot sleep! hasSleepNeed {hasSleepNeed}, sleephours > 0 {sleephours > 0}, timeSinceLastSleep {timeSinceLastSleep} > sleephours {sleephours} = {timeSinceLastSleep > sleephours}");

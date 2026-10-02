@@ -34,6 +34,13 @@ public class PathingRoomFilter
     /// </summary>
     public bool excludePrisonRooms = false;
 
+    /// <summary>
+    /// If true, furniture inside a room whose GenderPreference is the opposite sex of the searching
+    /// character (Room_Instance.IsOppositeSex) is excluded. Default false - opt-in per query
+    /// (e.g. restroom / redress), so work searches like cleaning are unaffected.
+    /// </summary>
+    public bool respectRoomGender = false;
+
 }
 
 public enum PathfindHeuristic

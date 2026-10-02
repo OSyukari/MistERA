@@ -231,7 +231,7 @@ public static class EventUtility
             case "isRoomPrivate":
                 return room.isRoomPrivate;
             case "hasExit":
-                return room.FactionOwner.MainExit != null && scr_System_CampaignManager.current.Map.Findpath(c.RefID, room.FactionOwner.MainExit.RefID, room.RefID) != null;
+                return room.FactionOwner != null && room.FactionOwner.MainExit != null && scr_System_CampaignManager.current.Map.Findpath(c.RefID, room.FactionOwner.MainExit.RefID, room.RefID) != null;
             default:
                 return true;
         }
@@ -336,7 +336,14 @@ public static class EventUtility
             case "isRoomOwner":
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isRoomOwner))
                 {
-                    return room != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
+                    return room != null && room.FactionOwner != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
+                }
+                else return false;
+            case "isOppositeSexForRoom":
+                // [bool] - Room_Instance.IsOppositeSex against c's current room gender preference
+                if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isOppositeSex))
+                {
+                    return room != null && room.IsOppositeSex(c) == isOppositeSex;
                 }
                 else return false;
             case "canMove":

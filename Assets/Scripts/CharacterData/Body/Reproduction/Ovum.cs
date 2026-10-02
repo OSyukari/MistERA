@@ -249,7 +249,9 @@ public class Ovum
         else if (State == OvumState.Final)
         {
             // foetus no longer advance
-            lifespan += 60; // was reset to 0 when state change
+            // early labor pauses while the mother is dormant (parked fallback worker) - resumes once she wakes
+            var mother = wb?.source?.Owner;
+            if (mother == null || !mother.IsDormant) lifespan += 60; // was reset to 0 when state change
         }
         else if (State > OvumState.Fertilized)
         {

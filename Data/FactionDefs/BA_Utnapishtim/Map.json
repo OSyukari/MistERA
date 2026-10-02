@@ -78,19 +78,29 @@
                         "roomImagePath":"Media_UI_Scenario_Background/BG_HQ2.jpg"
                     },
                     {
-                        "ID":"bridge_toilet",
-                        "displayName":"Toilet",
-                        "offsetX":103.0,
-                        "offsetY":-333.0,
+                        "ID":"bridge_toilet_male",
+                        "offsetX":101.6,
+                        "offsetY":-335.0,
                         "connects":
                         [ { "ID":"bridge_lounge", "cost":1.0  } ],
                         "furnitureIDs":
                         [   "furniture_bathroom_set",
                             "furniture_bathroom_set",
                             "furniture_bathroom_set",
+                            "furniture_marker_gender_male" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_ShowerRoom.jpg"
+                    },
+                    {
+                        "ID":"bridge_toilet_female",
+                        "offsetX":101.6,
+                        "offsetY":-292.5,
+                        "connects":
+                        [ { "ID":"bridge_lounge", "cost":1.0  } ],
+                        "furnitureIDs":
+                        [   "furniture_bathroom_set",
                             "furniture_bathroom_set",
                             "furniture_bathroom_set",
-                            "furniture_bathroom_set" ],
+                            "furniture_marker_gender_female" ],
                         "roomImagePath":"Media_UI_Scenario_Background/BG_ShowerRoom.jpg"
                     },
                     {
@@ -618,7 +628,8 @@
         "bridge_lounge":"休息室",
         "bridge_captainsoffice":"舰长办公室",
         "bridge_captainsroom":"舰长卧室？",
-        "bridge_toilet":"厕所",
+        "bridge_toilet_male":"男厕所",
+        "bridge_toilet_female":"女厕所",
 
         "lounge2_dining":"餐厅",
         "lounge2_multiuseroom":"多媒体室",
@@ -644,7 +655,8 @@
         "bridge_lounge": "Lounge",
         "bridge_captainsoffice": "Captain's Office",
         "bridge_captainsroom": "Captain's Room?",
-        "bridge_toilet": "Toilet",
+        "bridge_toilet_male": "Men's Toilet",
+        "bridge_toilet_female": "Women's Toilet",
 
         "lounge2_dining": "Dining Room",
         "lounge2_multiuseroom": "Multimedia Room",

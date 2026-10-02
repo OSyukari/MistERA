@@ -521,6 +521,11 @@
 "room_type_mainExit":"<link=room_type_mainExit_tooltip>出口</link>",
 "room_type_mainExit_tooltip":"此处与外界连接",
 
+"room_type_gender_male":"<link=room_type_gender_male_tooltip>男性专用</link>",
+"room_type_gender_male_tooltip":"女性角色不会主动前往该房间使用部分设施（如厕所）",
+"room_type_gender_female":"<link=room_type_gender_female_tooltip>女性专用</link>",
+"room_type_gender_female_tooltip":"男性角色不会主动前往该房间使用部分设施（如厕所）",
+
 "ui_management_factionName":"阵营名称",
 "ui_management_linkStatus":"链接状态",
 

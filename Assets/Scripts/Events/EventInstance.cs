@@ -33,7 +33,13 @@ public class EventInstance
 
     public bool ConflictWith (EventInstance ev)
     {
-        if (this.currentEvent != ev.currentEvent) return false;
+        // compare event definitions with nextEvent fallback (same as CurrentEventID): a not-yet-started instance
+        // only has nextEvent, so comparing currentEvent alone made every pending instance match every other one
+        // regardless of event ID. A cleared instance (both null, e.g. failed validation but still queued) never conflicts.
+        var thisEvent = this.currentEvent ?? this.nextEvent;
+        var evEvent = ev.currentEvent ?? ev.nextEvent;
+        if (thisEvent == null || evEvent == null) return false;
+        if (thisEvent != evEvent) return false;
         if (!this.allowDuplicate) return true;
 
         if (CooldownRestrictSelf && this.Self != null && this.Self == ev.Self) return true;

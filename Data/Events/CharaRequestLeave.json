@@ -3,11 +3,7 @@
         "list": [
             {
                 "ID": "RequestLeave_PrivateAction",
-                "cooldownTime": 30,
-                "cooldownRestrictSelf": true,
-                "cooldownRestrictTarget": true,
-                "cooldownRestrictAND": true,
-                "manualCooldown": true,
+                "_comment": "launched by the personality Interrupt reaction (selfTags privacy); per-leaver cooldown lives on CharaLeaveRoom",
                 "SelfValidator": {
                     "chara_conditions": [
                         {
@@ -82,7 +78,123 @@
                 ]
             },
             {
+                "ID": "OnEnterRoom_RequestLeave",
+                "_comment": "dispatcher: whoever entered and everyone already in the room are each tried as a requester for every RequestLeave_* rule; rules failing their validators are dropped by EventManager.Run",
+                "trigger": "OnEnterRoom",
+                "TargetValidators": [
+                    {
+                        "refkeys": [
+                            "occupants"
+                        ],
+                        "baseScope": "AllCharaInSelfRoom_ExcludeSelf",
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [
+                                    { "Type": "StartEvent", "arguments": [ "self", "RequestLeave_PrivateRoom", "", "" ] },
+                                    { "Type": "StartEvent", "arguments": [ "self", "RequestLeave_GenderedRoom", "", "" ] },
+                                    { "Type": "StartEvent", "arguments": [ "occupants", "RequestLeave_PrivateRoom", "", "" ] },
+                                    { "Type": "StartEvent", "arguments": [ "occupants", "RequestLeave_GenderedRoom", "", "" ] }
+                                ]
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "RequestLeave_PrivateRoom",
+                "_comment": "self = requester (room owner); targets = non-owners in the room",
+                "cooldownRestrictTarget": false,
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "excludePlayer" ] },
+                        { "parameters": [ "isConscious" ] },
+                        { "parameters": [ "canMove", "true" ] },
+                        { "parameters": [ "isRoomOwner", "true" ] }
+                    ],
+                    "room_conditions": [
+                        { "parameters": [ "isRoomPrivate" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [
+                            "targets"
+                        ],
+                        "baseScope": "AllCharaInSelfRoom_ExcludeSelf",
+                        "minTargetCount": 1,
+                        "chara_conditions": [
+                            { "parameters": [ "isRoomOwner", "false" ] }
+                        ]
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [
+                                    { "Type": "StartEvent", "arguments": [ "targets", "CharaLeaveRoom", "", "requestFrom" ] }
+                                ]
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "RequestLeave_GenderedRoom",
+                "_comment": "self = requester (fits the room's gender preference); targets = opposite sex in the room (Room_Instance.IsOppositeSex)",
+                "cooldownRestrictTarget": false,
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "excludePlayer" ] },
+                        { "parameters": [ "isConscious" ] },
+                        { "parameters": [ "canMove", "true" ] },
+                        { "parameters": [ "isOppositeSexForRoom", "false" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [
+                            "targets"
+                        ],
+                        "baseScope": "AllCharaInSelfRoom_ExcludeSelf",
+                        "minTargetCount": 1,
+                        "chara_conditions": [
+                            { "parameters": [ "isOppositeSexForRoom", "true" ] }
+                        ]
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "silent branch event, this shouldnt be displayed",
+                                "Results": [
+                                    { "Type": "StartEvent", "arguments": [ "targets", "CharaLeaveRoom", "", "requestFrom" ] }
+                                ]
+                            }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
                 "ID": "CharaLeaveRoom",
+                "_comment": "unified response for every RequestLeave_* source. self = chara asked to leave, requestFrom = requester. Cooldown is per leaver and registered on start, so multiple sources/requesters on the same tick produce one request",
+                "cooldownTime": 30,
+                "cooldownRestrictSelf": true,
+                "cooldownRestrictTarget": false,
                 "SelfValidator": {
                     "room_conditions": [
                         {
@@ -94,7 +206,50 @@
                 },
                 "events": [
                     {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "self_chara_conditions": [
+                                    { "parameters": [ "excludePlayer" ] },
+                                    { "parameters": [ "isWorkingOnJob", "true" ] }
+                                ],
+                                "option": "silent branch: NPC on a work job stays without being asked, no refusal penalty",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "busy"
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "option": "silent branch: ask",
+                                "Results": [
+                                    {
+                                        "Type": "JumpToLabel",
+                                        "arguments": [
+                                            "",
+                                            "ask"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "busy",
+                        "UISpec": {
+                            "portraitRefKey": "requestFrom"
+                        },
+                        "isLast": true,
+                        "line": "event_CharaLeaveRoom_ev05"
+                    },
+                    {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
                         "question": "event_CharaLeaveRoom_ev01",
                         "UISpec": {
                             "portraitRefKey": "requestFrom",
@@ -120,14 +275,6 @@
                             {
                                 "option": "event_CharaLeaveRoom_ev01_op2",
                                 "Results": [
-                                    {
-                                        "Type": "AddCooldown",
-                                        "arguments": [
-                                            "RequestLeave_PrivateAction",
-                                            "requestFrom",
-                                            "self"
-                                        ]
-                                    },
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
@@ -243,7 +390,8 @@
                 "event_CharaLeaveRoom_ev01_op2": "Refuse",
                 "event_CharaLeaveRoom_ev03": "$self.name$ left $self.room_name$",
                 "event_CharaLeaveRoom_ev02": "$self.name$ refuses to leave",
-                "event_CharaLeaveRoom_ev04": "$self.name$ was unable to leave $self.room_name$ due to current job cannot be interrupted."
+                "event_CharaLeaveRoom_ev04": "$self.name$ was unable to leave $self.room_name$ due to current job cannot be interrupted.",
+                "event_CharaLeaveRoom_ev05": "$requestFrom.name$ asks $self.name$ to leave $self.room_name$, but $self.name$ is working and stays."
             },
             "zh-cn": {
                 "event_CharaLeaveRoom_ev01": "$requestFrom.name$请求$self.name$离开$self.room_name$",
@@ -251,7 +399,8 @@
                 "event_CharaLeaveRoom_ev01_op2": "拒绝",
                 "event_CharaLeaveRoom_ev03": "$self.name$离开了$self.room_name$",
                 "event_CharaLeaveRoom_ev02": "$self.name$拒绝离开",
-                "event_CharaLeaveRoom_ev04": "由于当前的工作不可被中断，$self.name$没能离开$self.room_name$"
+                "event_CharaLeaveRoom_ev04": "由于当前的工作不可被中断，$self.name$没能离开$self.room_name$",
+                "event_CharaLeaveRoom_ev05": "$requestFrom.name$请求$self.name$离开$self.room_name$，但$self.name$正在工作，留了下来"
             }
         }
     }

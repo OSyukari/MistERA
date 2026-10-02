@@ -2367,8 +2367,6 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         UpdateScene();
         scr_System_Time.current.UpdateTime(0, 0, 0, 0, true);
-
-
     }
 
     protected IEnumerator CachePortraitCoroutine()
@@ -2437,8 +2435,10 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             ChangeCurrentViewMode(ViewMode.View_Logs);
             scr_UpdateHandler.current.EventHandler.Run();
-            Observer_UpdateNotice?.Invoke(false);
         }
+        // always notify after load completes (mirrors InitializeLoadSave) - UI ValidateAll calls made
+        // during the loading screen are skipped, so listeners like scr_Panel_BottomBar need this pass.
+        Observer_UpdateNotice?.Invoke(false);
     }
 
     private IEnumerator InitializeLoadSave(SaveFileHolder saveHolder)

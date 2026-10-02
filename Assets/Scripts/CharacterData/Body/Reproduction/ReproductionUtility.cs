@@ -173,17 +173,37 @@ public static class ReproductionUtility
     /// <summary>The labor was found unsafe to deliver naturally; waits for a C-section.</summary>
     public static bool RequiresCSection(Character_Trainable c) { return FindOvum(c, OvumState.Final_RequireHelp) != null; }
 
+    /// <summary>c's temporary home holds her as the hospital patient MemberType.</summary>
+    public static bool IsHospitalPatient(Character_Trainable c)
+    {
+        if (c == null) return false;
+        var tempHome = c.FactionManager.Faction_Home_Temporary;
+        return tempHome != null && tempHome.GetMemberType(c)?.ID == memberType_hospitalPatient;
+    }
+
     /// <summary>
-    /// Whether c can get a C-section at all: she is already a hospital patient (temporary home held as the patient
-    /// MemberType), or some revealed, reachable faction would admit her as one (FactionJoinUtility - also empty when she is
-    /// imprisoned or held by another temporary home). Without it an unsafe labor goes ahead as a natural birth, so nobody
-    /// waits for a C-section that cannot come.
+    /// The player decides c's labor (Labor_Start asks the player): c is the player, or shares the player's permanent home
+    /// faction. Any other mother decides herself.
+    /// </summary>
+    public static bool IsLaborPlayerDecided(Character_Trainable c)
+    {
+        if (c == null) return false;
+        var player = scr_System_CampaignManager.current.Player;
+        var playerHome = player.FactionManager.Faction_Home;
+        return c.RefID == player.RefID || (playerHome != null && c.FactionManager.Faction_Home == playerHome);
+    }
+
+    /// <summary>
+    /// Whether c's unsafe labor waits for a C-section: she is a hospital patient, or - player-decided labor only
+    /// (IsLaborPlayerDecided) - some revealed, reachable faction would admit her as one (FactionJoinUtility - also empty
+    /// when she is imprisoned or held by another temporary home), so the player can still bring her in. An NPC not admitted
+    /// (hospital full / none, or discharged while waiting) goes ahead with a natural birth instead.
     /// </summary>
     public static bool IsCSectionAvailable(Character_Trainable c)
     {
         if (c == null) return false;
-        var tempHome = c.FactionManager.Faction_Home_Temporary;
-        if (tempHome != null && tempHome.GetMemberType(c)?.ID == memberType_hospitalPatient) return true;
+        if (IsHospitalPatient(c)) return true;
+        if (!IsLaborPlayerDecided(c)) return false;
         return FactionJoinUtility.BuildReachableJoinOptions(c, memberType_hospitalPatient).Count > 0;
     }
 

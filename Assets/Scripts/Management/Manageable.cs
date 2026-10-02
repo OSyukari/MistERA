@@ -806,6 +806,51 @@ public class Manageable : I_Disposable, I_IsJobGiver
         c.FactionManager.UpdateSchedule(ref s);
     }
 
+    /// <summary>
+    /// Called on c's permanent home faction (Faction_Home) whenever c's temporary home is set or cleared
+    /// (Character_Factions.SetTempHomeFaction) - e.g. a fallback worker pool hands c over to the temp home.
+    /// Default: nothing (see Manageable_WorkerPool).
+    /// </summary>
+    public virtual void OnMemberTempHomeChanged(Character_Trainable c) { }
+
+    /// <summary>
+    /// A work post a member held here before another MemberType replaced it (staff or visitor admitted as a patient -
+    /// JoinHandler_HospitalPatient), with the links they held as it. Restored by the replacing MemberType's leave
+    /// handler (LeaveHandler_HospitalPatient). Not membership: RemoveFromFaction leaves it alone.
+    /// </summary>
+    public class SuspendedPost
+    {
+        public string memberTypeID = "";
+        public List<MemberLink> links = new List<MemberLink>();
+    }
+
+    /// <summary>member RefID -> the work post they held here before it was suspended (see SuspendedPost).</summary>
+    [JsonProperty] protected Dictionary<int, SuspendedPost> suspendedPosts = new Dictionary<int, SuspendedPost>();
+
+    public void SetSuspendedPost(Character_Trainable c, SuspendedPost post)
+    {
+        if (c == null || post == null) return;
+        if (suspendedPosts == null) suspendedPosts = new Dictionary<int, SuspendedPost>();
+        suspendedPosts[c.RefID] = post;
+    }
+
+    /// <summary>Removes and returns c's suspended post here, or null if none.</summary>
+    public SuspendedPost TakeSuspendedPost(Character_Trainable c)
+    {
+        if (c == null || suspendedPosts == null || !suspendedPosts.TryGetValue(c.RefID, out var post)) return null;
+        suspendedPosts.Remove(c.RefID);
+        return post;
+    }
+
+    /// <summary>Copies of every link member holds in this faction (see SetMemberLink).</summary>
+    public List<MemberLink> GetMemberLinks(Character_Trainable member)
+    {
+        var result = new List<MemberLink>();
+        if (member == null || !MemberLinkSets.TryGetValue(member.RefID, out var links)) return result;
+        foreach (var l in links) result.Add(new MemberLink() { targetRef = l.targetRef, memberTypeID = l.memberTypeID });
+        return result;
+    }
+
 
     [JsonIgnore] public List<int> ManagedRefs{get{ if (charaSchedules == null) return new List<int>();
     return charaSchedules.Keys.ToList();}}
@@ -1538,6 +1583,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 possibleJobs.RemoveAt(i);
                 continue;
             }
+            if (filter.respectRoomGender && j.ParentRoom.IsOppositeSex(chara))
+            {
+                if (detailog) ss += $"\n{j.DisplayName} removed due to room {j.ParentRoom.RefID} gender preference {j.ParentRoom.GenderPreference} and filter.respectRoomGender true";
+                possibleJobs.RemoveAt(i);
+                continue;
+            }
             if (restrictRoomList != null && (j.ParentRoom == null || !restrictRoomList.Contains(j.ParentRoom.RefID)))
             {
                 if (detailog) ss += $"\n{j.DisplayName} removed due to room {(j.ParentRoom == null ? "null" : j.ParentRoom.RefID)} match with restrictRoomList {String.Join(" ", restrictRoomList)}";
@@ -1602,6 +1653,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                 if (!FactionUtility.IsPostRoomActiveNow(post)) continue;
                 if (filter.skipPrivateRoom && post.ParentRoom.isRoomPrivate) continue;
                 if (filter.excludePrisonRooms && post.ParentRoom.isRoomPrison) continue;
+                if (filter.respectRoomGender && post.ParentRoom.IsOppositeSex(chara)) continue;
                 if (filter.checkBlacklist && chara.Memory.MatchBlacklist(post.ParentRoom.RefID, post.allusableCOMs)) continue;
                 if (chara.isRestrained && chara.Jail.ownerJob != post) continue;
                 if (!post.ValidateActor(chara, com)) continue;
@@ -2164,7 +2216,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
         get
         {
             var list = new List<Floor_Instance>();
-            foreach(var room in ManagedRooms.Values) if (!list.Contains(room.parentFloor)) list.Add(room.parentFloor);
+            // floorless standalone rooms (e.g. Manageable_WorkerPool's pool room) have no parentFloor - skip them
+            foreach(var room in ManagedRooms.Values)
+            {
+                if (room == null || room.parentFloor == null)
+                {
+                    //Debug.LogError("ManagedFloors: faction [" + ID + "] manages " + (room == null ? "a null room" : "room [" + room.RefID + "] with no parentFloor") + ", skipping");
+                    continue;
+                }
+                if (!list.Contains(room.parentFloor)) list.Add(room.parentFloor);
+            }
             return list;
         }
     }

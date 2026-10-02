@@ -118,7 +118,8 @@
                             "skipPrivateRoom":false,
                             "searchJobList":false,
                             "searchNonJobList":true,
-                            "excludePrisonRooms":false
+                            "excludePrisonRooms":false,
+                            "respectRoomGender":true
                         }
                     },
                     "behavior_shower":{
@@ -133,7 +134,8 @@
                             "skipPrivateRoom":false,
                             "searchJobList":false,
                             "searchNonJobList":true,
-                            "excludePrisonRooms":false
+                            "excludePrisonRooms":false,
+                            "respectRoomGender":true
                         }
                     },
                     "behavior_meal": {
@@ -155,7 +157,8 @@
                             "skipPrivateRoom":false,
                             "searchJobList":false,
                             "searchNonJobList":true,
-                            "excludePrisonRooms":false
+                            "excludePrisonRooms":false,
+                            "respectRoomGender":true
                         }
                     },
                     "behavior_cleaning_private": {

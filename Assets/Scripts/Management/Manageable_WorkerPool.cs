@@ -89,6 +89,18 @@ public class Manageable_WorkerPool : Manageable
         return c != null && c.fallbackPoolID == ID && isManagedChara(c.RefID);
     }
 
+    /// <summary>
+    /// A pooled worker taken by a temp home (hospital admission, party, kidnapping...) is handed over to it: woken so
+    /// the temp home runs their sandboxing. FallbackWorkerManager.UpdateStaffing leaves them out (a replacement is
+    /// generated) until the temp home is cleared, then takes them back on its next hourly pass.
+    /// </summary>
+    public override void OnMemberTempHomeChanged(Character_Trainable c)
+    {
+        if (!IsPooledWorker(c) || c.FactionManager.Faction_Home_Temporary == null) return;
+        strayHours?.Remove(c.RefID);
+        c.SetDormant(false);
+    }
+
     public void SetAssignedMemberType(Character_Trainable c, string memberTypeID)
     {
         if (assignedMemberTypes == null) assignedMemberTypes = new Dictionary<int, string>();
@@ -164,6 +176,8 @@ public static class FallbackWorkerManager
         foreach (var w in pool.ManagedChara)
         {
             if (!pool.IsPooledWorker(w)) continue;
+            // taken by a temp home (e.g. admitted as a hospital patient): not staffed, not sent home - its shift gets a replacement
+            if (w.FactionManager.Faction_Home_Temporary != null) continue;
             var typeID = pool.GetAssignedMemberType(w);
             if (string.IsNullOrEmpty(typeID)) continue;
             if (!workersByType.TryGetValue(typeID, out var list)) workersByType[typeID] = list = new List<Character_Trainable>();
@@ -281,6 +295,8 @@ public static class FallbackWorkerManager
             return false;
         }
         if (pool.AllowWorkFaction(c)) return false;
+        // taken by a temp home - its sandboxing, not the pool's (see Manageable_WorkerPool.OnMemberTempHomeChanged)
+        if (c.FactionManager.Faction_Home_Temporary != null) return false;
         if (scr_System_CampaignManager.current.Map.FindRoomByChara(c.RefID) != pool.Room) return false;
         if (c.CurrentJob != null && !(c.CurrentJob is Job_MoveLocation && c.CurrentJob.FactionOwner == pool)) return false;
         if (c.InteractionJob != null && c.InteractionJob.isActive) return false;

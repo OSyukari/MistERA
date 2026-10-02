@@ -48,6 +48,8 @@ public class Room_Instance: IDisposable, I_Disposable
             if (isRoomPrison) _typetags.Add("room_type_prison");
             if (isRoomPrivate) _typetags.Add("room_type_privateRoom");
             if (factionOwner != null && factionOwner.MainExit == this) _typetags.Add("room_type_mainExit");
+            if (GenderPreference == RoomGenderPreference.Male) _typetags.Add("room_type_gender_male");
+            else if (GenderPreference == RoomGenderPreference.Female) _typetags.Add("room_type_gender_female");
 
             if (Furnitures.Find(x => x.JobGiver != null && x.JobGiver.HasAvailableCOMwithCOMTags("cooking")) != null)
             {
@@ -721,6 +723,40 @@ public class Room_Instance: IDisposable, I_Disposable
             }
             return _isRoomPrivate; } }
 
+    public const string FurnitureTag_GenderMale = "room_gender_male";
+    public const string FurnitureTag_GenderFemale = "room_gender_female";
+
+    RoomGenderPreference _genderPreference = RoomGenderPreference.DontCare;
+    bool _genderPreference_cached = false;
+    /// <summary>
+    /// Social gender preference of the room, from furniture tagged room_gender_male / room_gender_female
+    /// (e.g. furniture_marker_gender_male). Both or neither present -> DontCare.
+    /// </summary>
+    [JsonIgnore] public RoomGenderPreference GenderPreference { get {
+            if (!_genderPreference_cached)
+            {
+                _genderPreference_cached = true;
+                bool male = Furnitures.Find(x => x.FurnitureBase.Tags.Contains(FurnitureTag_GenderMale)) != null;
+                bool female = Furnitures.Find(x => x.FurnitureBase.Tags.Contains(FurnitureTag_GenderFemale)) != null;
+                _genderPreference = male == female ? RoomGenderPreference.DontCare : (male ? RoomGenderPreference.Male : RoomGenderPreference.Female);
+            }
+            return _genderPreference; } }
+
+    /// <summary>
+    /// True only if c is strictly the opposite sex of this room's GenderPreference.
+    /// Characters that are both or neither (ambiguous gender) are never opposite sex.
+    /// </summary>
+    public bool IsOppositeSex(Character_Trainable c)
+    {
+        if (c == null) return false;
+        switch (GenderPreference)
+        {
+            case RoomGenderPreference.Male: return c.isFemale && !c.isMale;
+            case RoomGenderPreference.Female: return c.isMale && !c.isFemale;
+            default: return false;
+        }
+    }
+
     /// <summary>
     /// A hospital patient room (admission claims one - JoinHandler_HospitalPatient). For now: Base ID starts with
     /// "hospital_patient_room_"; may be widened later.
@@ -738,6 +774,7 @@ public class Room_Instance: IDisposable, I_Disposable
     {
         _isRoomPrison_cached = false;
         _isRoomPrivate_cached = false;
+        _genderPreference_cached = false;
         _displayNameCache = "";
         _displayNameShortCache = "";
     }

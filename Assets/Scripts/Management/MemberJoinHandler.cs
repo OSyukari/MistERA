@@ -164,13 +164,16 @@ public class LeaveHandler_HospitalPatient : MemberLeaveHandler
     public string dischargedTextKey = "jp_hospital_discharged";
 
     /// <summary>
-    /// Any discharge (front desk, Hospital_AutoDischarge, ...): fires dischargedEventID on the patient with "(patient) has
+    /// Any discharge (front desk, Hospital_AutoDischarge, ...) first gives back a work post suspended on admission
+    /// (RestoreSuspendedPost), then fires dischargedEventID on the patient with "(patient) has
     /// been discharged" plus "(visitor) is no longer (standing)" for every visitor who left with them. Shown wherever the
     /// player is when the patient is the player or belongs to the player's permanent home faction.
     /// </summary>
     public override void OnMemberLeft(Manageable hospital, Character_Trainable patient, string standing, List<KeyValuePair<Character_Trainable, string>> departedLinked)
     {
-        if (patient == null || string.IsNullOrEmpty(dischargedEventID)) return;
+        if (patient == null) return;
+        RestoreSuspendedPost(hospital, patient);
+        if (string.IsNullOrEmpty(dischargedEventID)) return;
         var lines = new List<string>() { LocalizeDictionary.QueryThenParse(dischargedTextKey).Replace("$name$", patient.FullName).Replace("$faction$", hospital.FactionDisplayName) };
         foreach (var kvp in departedLinked)
         {
@@ -182,6 +185,37 @@ public class LeaveHandler_HospitalPatient : MemberLeaveHandler
         foreach (var i in patient.FactionManager.HomeFactions) ev.displayOverride = ev.displayOverride || i.isPlayerRelatedFaction;
         ev.AppendStrings["dischargeText"] = new List<string>() { string.Join("\n", lines) };
         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+    }
+
+    /// <summary>
+    /// Gives a leaving patient back the work post suspended on admission (JoinHandler_HospitalPatient.SuspendWorkPost),
+    /// however the stay ended. A post held without links (staff) comes back as is; one held with links (visitor) only if
+    /// someone it linked to is still a member here - with just those links.
+    /// </summary>
+    static void RestoreSuspendedPost(Manageable hospital, Character_Trainable patient)
+    {
+        var post = hospital.TakeSuspendedPost(patient);
+        if (post == null) return;
+        if (!FactionUtility.TryGetMemberType(post.memberTypeID, out var type))
+        {
+            Debug.LogError($"LeaveHandler_HospitalPatient: unknown suspended member type [{post.memberTypeID}] for {patient.FullName}");
+            return;
+        }
+
+        var links = post.links ?? new List<Manageable.MemberLink>();
+        var targets = new List<Character_Trainable>();
+        foreach (var link in links)
+        {
+            if (link == null || link.memberTypeID != type.ID) continue;
+            var target = scr_System_CampaignManager.current.FindInstanceByID(link.targetRef);
+            if (target == null || target == patient || !hospital.isManagedChara(target.RefID)) continue;
+            targets.Add(target);
+        }
+        // a visitor whose every patient has left meanwhile has nothing to come back to
+        if (links.Count > 0 && targets.Count == 0) return;
+
+        patient.FactionManager.AddWorkFaction(hospital.ID, type, false);
+        foreach (var target in targets) hospital.SetMemberLink(patient, target, type);
     }
 }
 
@@ -200,12 +234,14 @@ public class LeaveHandler_HospitalVisitor : MemberLeaveHandler
 
 /// <summary>
 /// Hospital patient admission (dedicated logic - edit here to change who a hospital admits and how).
-/// One option per candidate. Disabled (with reason): already part of the hospital in any role, already has another
-/// temporary home (parties/kidnapping share that slot), or needs neither bed rest (Character_Trainable.requireBedRest:
-/// labor or a requireBedRest status) nor a C-section (ReproductionUtility.RequiresCSection). No options at all (errorKey = fullErrorKey) when every patient room
+/// One option per candidate. Disabled (with reason): already part of the hospital other than through a work post (staff
+/// and visitors may be admitted), already has another temporary home (parties/kidnapping share that slot), or needs
+/// neither bed rest (Character_Trainable.requireBedRest: labor or a requireBedRest status) nor a C-section
+/// (ReproductionUtility.RequiresCSection). No options at all (errorKey = fullErrorKey) when every patient room
 /// (Room_Instance.isRoomHospital) is owned. Debug force join only skips the character checks - a free room is still required.
-/// On select: leaves the player's party (a follower otherwise stays on the follow job), the hospital becomes the
-/// temporary home as this MemberType, and the patient takes a free room (released by Manageable.RemoveFromFaction).
+/// On select: leaves the player's party (a follower otherwise stays on the follow job), suspends a staff/visitor work post
+/// here (SuspendWorkPost), the hospital becomes the temporary home as this MemberType, and the patient takes a free room
+/// (released by Manageable.RemoveFromFaction).
 /// Nobody is moved - the patient walks to the room on their own.
 /// </summary>
 public class JoinHandler_HospitalPatient : MemberJoinHandler
@@ -234,7 +270,8 @@ public class JoinHandler_HospitalPatient : MemberJoinHandler
 
     string GetRefusal(Manageable hospital, Character_Trainable c)
     {
-        if (hospital.isManagedChara(c.RefID)) return alreadyMemberErrorKey;
+        // staff and visitors (held through a work post) may be admitted - Admit suspends the post
+        if (hospital.isManagedChara(c.RefID) && !c.FactionManager.WorkFactions.Contains(hospital)) return alreadyMemberErrorKey;
         if (c.FactionManager.Faction_Home_Temporary != null) return otherTempHomeErrorKey;
         if (!NeedsCare(c)) return noNeedErrorKey;
         return "";
@@ -260,10 +297,26 @@ public class JoinHandler_HospitalPatient : MemberJoinHandler
         var party = scr_System_CampaignManager.current.party;
         bool leftParty = c.RefID != 0 && party.MemberRefIDs.Contains(c.RefID);
         if (leftParty) party.RemoveFromParty(c);
+        SuspendWorkPost(hospital, c);
         c.FactionManager.SetTempHomeFaction(hospital.ID, patientType);
         if (hospital.isManagedChara(c.RefID)) hospital.AddRoomOwnership(c.RefID, room.RefID);
         AppendFactionChange(ev, c, hospital, leftParty);
         AddFamilyVisitors(ev, hospital, c);
+    }
+
+    /// <summary>
+    /// A staff member or visitor being admitted holds one MemberType here, so their work post has to go first: it is
+    /// saved with their links (Manageable.SetSuspendedPost) and given back when they leave as a patient
+    /// (LeaveHandler_HospitalPatient.RestoreSuspendedPost). Their shift is covered meanwhile - a pooled fallback worker is
+    /// replaced (FallbackWorkerManager skips anyone with a temp home), others by the establishment's fallback headcount.
+    /// </summary>
+    static void SuspendWorkPost(Manageable hospital, Character_Trainable c)
+    {
+        if (!c.FactionManager.WorkFactions.Contains(hospital)) return;
+        var type = hospital.GetMemberType(c);
+        if (type != null && type.ID != FactionUtility.MemberTypeID_None)
+            hospital.SetSuspendedPost(c, new Manageable.SuspendedPost() { memberTypeID = type.ID, links = hospital.GetMemberLinks(c) });
+        c.FactionManager.RemoveWorkFaction(hospital.ID);
     }
 
     /// <summary>Visitor MemberType the patient's family is registered as on admission (see AddFamilyVisitors).</summary>
@@ -278,7 +331,8 @@ public class JoinHandler_HospitalPatient : MemberJoinHandler
     void AddFamilyVisitors(EventInstance ev, Manageable hospital, Character_Trainable patient)
     {
         var family = patient.FactionManager.Faction_Home;
-        if (family == null || !hospital.isManagedChara(patient.RefID)) return;
+        // a fallback worker pool is no family - its other workers are just coworkers
+        if (family == null || family is Manageable_WorkerPool || !hospital.isManagedChara(patient.RefID)) return;
         if (!FactionUtility.TryGetMemberType(familyVisitorMemberTypeID, out var visitorType))
         {
             Debug.LogError($"JoinHandler_HospitalPatient: unknown visitor member type [{familyVisitorMemberTypeID}]");

@@ -57,7 +57,8 @@
                             "skipPrivateRoom":false,
                             "searchJobList":false,
                             "searchNonJobList":true,
-                            "excludePrisonRooms":true
+                            "excludePrisonRooms":true,
+                            "respectRoomGender":true
                         }
                     },
                     {
@@ -76,7 +77,8 @@
                             "skipPrivateRoom":false,
                             "searchJobList":false,
                             "searchNonJobList":true,
-                            "excludePrisonRooms":true
+                            "excludePrisonRooms":true,
+                            "respectRoomGender":true
                         }
                     },
                     {
