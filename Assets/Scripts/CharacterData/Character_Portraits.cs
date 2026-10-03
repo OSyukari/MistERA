@@ -522,7 +522,7 @@ public class PortraitManager
     {
         if (box != null && box.currentlyRunning == null)
         {
-            // Debug.Log("clicked!");
+             Debug.Log("clicked!");
             DrawActivityPortrait(box, null, false, true);
            // _cache_ActivityPortrait.Click();
         }

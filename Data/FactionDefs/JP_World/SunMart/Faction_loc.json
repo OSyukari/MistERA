@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Faction.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "membertype_jp_convenience_store_clerk_afternoon": "Afternoon Shift Clerk",
+                "membertype_jp_convenience_store_clerk_midnight": "Night Shift Clerk",
+                "membertype_jp_convenience_store_clerk_morning": "Morning Shift Clerk"
+            }
+        }
+    }
+}

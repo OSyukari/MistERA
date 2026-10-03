@@ -9,7 +9,6 @@ public class scr_panel_wombdata : MonoBehaviour
 {
 
     public Image selfImage;
-    scr_Menu_CharaDetail parent;
     public RectTransform selfRect;
     protected void Awake()
     {
@@ -17,9 +16,8 @@ public class scr_panel_wombdata : MonoBehaviour
     }
     BodyInternal_Womb womb;
     List<string> images = null;
-    public void InitializeWithArgument(scr_Menu_CharaDetail parent, BodyInternal_Womb womb)
+    public void InitializeWithArgument(BodyInternal_Womb womb)
     {
-        this.parent = parent;
         this.womb = womb;
 
         images = womb.GetImages;

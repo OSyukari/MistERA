@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Faction.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_mall_furniture": "Furniture Store"
+            }
+        }
+    }
+}

@@ -152,7 +152,6 @@
                 "OnRentPaid_both": "$factionName$ paid $sourceName$'s rent and maintenance to $counterpartName$ ($amount$).",
                 "OnRentPaid_generic": "$factionName$ paid off an outstanding rent balance ($amount$).",
                 "OnRentPaid_resumed": "Service, previously interrupted by the missed payment, has resumed.",
-                "rent_trust_change": "The members' trust toward $managers.name$ $trustChange$.",
 
                 "OnRentPaid_rent_payee": "$factionName$ collected $sourceName$'s rent from $counterpartName$ ($amount$).",
                 "OnRentPaid_maintenance_payee": "$factionName$ collected $sourceName$'s maintenance fee from $counterpartName$ ($amount$).",
@@ -168,8 +167,7 @@
                 "OnRentFailed_rent_payee": "$factionName$ did not receive $sourceName$'s rent from $counterpartName$ this cycle: $amount$ was due, but they only have $available$.",
                 "OnRentFailed_maintenance_payee": "$factionName$ did not receive $sourceName$'s maintenance fee from $counterpartName$ this cycle: $amount$ was due, but they only have $available$.",
                 "OnRentFailed_both_payee": "$factionName$ did not receive $sourceName$'s rent and maintenance from $counterpartName$ this cycle: $amount$ was due, but they only have $available$.",
-                "OnRentFailed_generic_payee": "$factionName$ did not receive the outstanding rent balance from $counterpartName$: $amount$ was due, but they only have $available$.",
-                "OnRentFailed_interrupted": "Because $payerName$ failed to pay $payeeName$, service has been interrupted."
+                "OnRentFailed_generic_payee": "$factionName$ did not receive the outstanding rent balance from $counterpartName$: $amount$ was due, but they only have $available$."
             }
         }
     }

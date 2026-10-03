@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for faction.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_high_school_board_duty": "School Board Duties",
+                "jp_high_school_student_class": "Attend School",
+                "jp_high_school_student_lesson_displayName": "Attend Class",
+                "jp_high_school_teacher_class": "Teach",
+                "jp_high_school_teachers_lesson_displayName": "Teach Class",
+                "membertype_jp_high_school_board": "School Board Member",
+                "membertype_jp_high_school_student": "Student",
+                "membertype_jp_high_school_teacher": "Teacher",
+                "school_frontGate": "XX Private High School"
+            }
+        }
+    }
+}

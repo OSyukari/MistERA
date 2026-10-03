@@ -24,11 +24,9 @@ public class scr_Panel_BodyDetail : MonoBehaviour
     {
         selfImage.color = scr_System_CentralControl.current.DisplaySetting.BackgroundColor_Transparent.Color;
     }
-    public void InitializeWithArgument(scr_Menu_CharaDetail parent, int referenceIndex)
+    public void InitializeWithArgument(BodyInternal_Instance inst)
     {
-        this.parent = parent;
-
-        this.instance = parent.GetInternalwithIndex(referenceIndex);
+        this.instance = inst;
 
         //boxName.text = "Body Part: "+instance.DisplayName;
         boxName.text = instance.DisplayName;
@@ -161,15 +159,6 @@ public class scr_Panel_BodyDetail : MonoBehaviour
             image.sprite = scr_System_CentralControl.current.MakeSprite(a, loaded);
         }
     }
-
-
-    /*
-    private void LoadImage()
-    {
-        if (instance.hasTag("vagina")) LoadSprite(XraySprite.widget_vag1);
-        else if (instance.hasTag("anus")) LoadSprite(XraySprite.widget_ass1);
-        else if (instance.hasTag("mouth")) LoadSprite(XraySprite.widget_oral1);
-    }*/
 
     public RectTransform imageAnchor;
     public Image image;

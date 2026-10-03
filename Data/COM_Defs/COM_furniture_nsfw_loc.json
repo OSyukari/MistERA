@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for COM_furniture_nsfw.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_furniture_restroom": "The character goes to the restroom to use the toilet and puts their lower garments back on when the command ends\nExpels any expellable contents (such as semen) from the character's anus",
+                "com_furniture_takeShower": "The character takes a shower, restoring Stamina and Energy\nExpels any expellable contents (such as semen) from the character's mouth, womb and vagina"
+            }
+        }
+    }
+}

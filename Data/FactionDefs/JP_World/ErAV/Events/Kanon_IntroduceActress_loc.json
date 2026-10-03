@@ -1,0 +1,35 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanon_IntroduceActress.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanon_IntroduceActress": "Ask to be introduced to AV actors",
+                "Kanon_IntroduceActress_Cancel": "\"Not to your liking? Then look at someone else.\"",
+                "Kanon_IntroduceActress_CancelSelect": "Not right now",
+                "Kanon_IntroduceActress_End": "\"Come back once you've made up your mind. The list won't change.\"",
+                "Kanon_IntroduceActress_Select": "Recruit actor",
+                "Kanon_IntroduceActress_Select_tooltip": "The introduction fee will be deducted from %%ErAV_miyama_Household%%",
+                "kia_L01": "\"I do have a few candidates. Want to see?\"\nKanon takes the list out of a drawer and spreads it on the desk.",
+                "kia_Q01_op2": "Never mind",
+
+                "Kanon_IntroduceActress_Graves": "The %%TCoAaL_Graves_lastname%% siblings",
+                "Kanon_IntroduceActress_Graves_Advice": "As $self.name$ is about to leave, $kanon.name$ calls out once more.\n\"One last thing. Those two will do as they're told, as long as you don't push them to the limit. What happens if you do, nobody can say.\"",
+                "Kanon_IntroduceActress_Graves_Andrew_SelfIntro": "$andrew.name$ doesn't look at anyone; his eyes stay on the desk.\n\"I get the situation. We can't run, and there's no point trying.\"\nHis tone is flat, as if he's talking about something that has nothing to do with him.\n\"But let me make one thing clear. Pile whatever work you can onto me. Her—\" he glances to the side, \"—keep her out of it as much as you can. I can take it.\"\nHe pauses, a note of weary sarcasm in his voice: \"Not that I can stop you if you don't listen. Just don't say I didn't warn you when something goes wrong.\"",
+                "Kanon_IntroduceActress_Graves_Ashley_SelfIntro": "\"...Tch.\"\n$ashley.name$ folds her arms and glares back.\n\"Don't look at me like that. What does that woman's debt have to do with me? I can't run, so I'm not gonna waste my breath.\"\nShe shifts her gaze to the side, her voice dropping.\n\"Let me get this out of the way. Whatever you make us do, he stays with me. Try sending him off alone, and it doesn't matter who you are.\"\nShe shrugs. \"As for the rest, do whatever you want.\"",
+                "Kanon_IntroduceActress_Graves_Choice": "Candidates: $ashley.name$ & $andrew.name$ (siblings)\nIntroduction fee: 20,000 yen",
+                "Kanon_IntroduceActress_Graves_Comment": "$kanon.name$ takes the two photos back into the list.\n\"Strictly speaking, those two already belong to the gumi. Their mother handed them over to settle a debt; they're not a service anyone paid for, so there really shouldn't be a referral fee.\"\n\"Still, I'll take something, as is customary. Twenty thousand in total. It's not much.\"\nShe closes the list. \"Real siblings performing together... there's never a shortage of buyers for that. You'll earn this back quickly.\"",
+                "Kanon_IntroduceActress_Graves_Intro": "Clipped to the last page of the list are two photos stapled together. Their features are somewhat alike: $andrew.name$ and $ashley.name$, the Graves siblings.\nThe note is short: foreigners. Their mother, Renee, owed the gumi a debt she could never repay, and a few days ago she sent the two of them over to settle it.\nAt the bottom of the file is a red stamp: \"Gumi Property.\"",
+                "Kanon_IntroduceActress_Graves_Select": "$kanon.name$ checks off both names on the list.\n\"Fine. I'll handle the paperwork. From now on they're under your command; how you use them is your call.\"",
+
+                "Kanon_IntroduceActress_Jitaku_Sayaka": "%%Jitaku_Katsuragi_lastname%% %%Jitaku_Sayaka_firstname%%",
+                "Kanon_IntroduceActress_JitakuSayaka_Choice": "(4th, choice screen summarize actress info and required payment)",
+                "Kanon_IntroduceActress_JitakuSayaka_Comment": "(3rd, a short comment from Kanon, in-character, on Jitaku_Sayaka)",
+                "Kanon_IntroduceActress_JitakuSayaka_Intro": "(first, an objective introduction of Jitaku_Sayaka that MC reads on the document)",
+                "Kanon_IntroduceActress_JitakuSayaka_Select": "(Kanon respond that she'll make the preparations)",
+                "Kanon_IntroduceActress_JitakuSayaka_SelfIntro": "(second, an intro from Jitaku_Sayaka's own pov. must be in-character)"
+            }
+        }
+    }
+}

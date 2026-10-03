@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for sharedDictionary.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "skill_addiction": "Addiction Skills",
+                "skill_addiction_tooltip": "Increases the owner's Acceptance-Check result; only applies while receiving (when ordered by a Master, also applies while acting)"
+            }
+        }
+    }
+}

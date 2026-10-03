@@ -1,0 +1,18 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for campaign.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "campaign_erav_custom": "Custom Protagonist",
+                "campaign_erav_custom_noreplace": "Custom Protagonist (Keep Surname)",
+                "campaign_erav_custom_noreplace_tooltip": "Start the game with a customizable protagonist",
+                "campaign_erav_custom_tooltip": "Start the game with a customizable protagonist (surname fixed to \"Miyama\")",
+                "ErAV_Kiryu_Household": "Kiryu Household",
+                "ErAV_miyama_Household": "Miyama Household",
+                "ErAV_roomNameOverride_parents": "Parents' Room"
+            }
+        }
+    }
+}

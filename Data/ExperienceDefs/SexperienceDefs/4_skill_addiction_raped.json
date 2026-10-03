@@ -168,8 +168,7 @@
             },
             "en-us":
             {
-                "skill_addiction_raped": "Raped Addiction",
-                "skill_addiction_raped_tooltip": "Increases the skill owner's Acceptance-Check result - only while receiving (when ordered by a Master, also applies while acting). Applies to: all interaction while being \"Raped\""
+                "skill_addiction_raped": "Raped Addiction"
             }
         }
     }

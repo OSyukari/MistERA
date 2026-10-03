@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanon_Opt_ExplainDebt.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanon_Opt_ExplainDebt": "Ask about the debt",
+                "Kanon_Opt_ExplainDebt_begin": "Kanon pushes a document toward $self.name$. \"Want to know how much you owe?\"",
+                "Kanon_Opt_ExplainDebt_cleared": "Kanon checks the records. \"You've already paid that off.\"\n\"Go live your life in peace.\"",
+                "Kanon_Opt_ExplainDebt_detail": "\"The remaining principal is $debt_value$ yen.\"",
+                "Kanon_Opt_ExplainDebt_detail_2": "\"The interest is fixed at 450,000 a month and must be settled before the end of the month. That's not negotiable. As long as the principal isn't cleared, not a single yen of that 450,000 goes away.\"\n\"There's no deadline on this debt. How much of the principal you repay, and when, is up to you. But if you don't put in extra to pay down the principal, you might be paying that 450,000 for the rest of your life.\"\n\"If you want to be rid of it sooner, find a way to scrape together some spare money and chip away at the principal bit by bit. We won't reduce it for you.\""
+            }
+        }
+    }
+}

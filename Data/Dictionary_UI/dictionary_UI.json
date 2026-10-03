@@ -271,6 +271,8 @@
 "comManager_bottom_room": "当前房间",
 "comManager_bottom_map": "移动",
 
+"sidePanel_title_equipments":"装备",
+"sidePanel_title_logs":"记录",
 
 "ui_debug": "<link=\"ui_debug_tooltip\">DEBUG</link>",
 "ui_debug_tooltip": "开启该选项后，\n1. 追加显示一些本不应显示的数据（方便debug）\n2. 允许玩家随时睡觉\n3. 玩家执行指令不消耗耐力和精力\n4. 战斗中可以一键结束战斗并选择结果\n5. 囚犯无法拒绝任何指令\n6. 对话必定会选择聊天话题\n7. 大地图会显示本该隐藏的地点\n8. 显示调试用指令（如【浏览商品】）\n%%ui_debug_tooltip2%%",
@@ -1127,7 +1129,6 @@
       "ui_comPanel_LLM_previous": " < ",
       "ui_comPanel_LLM_reasoning_fold": "Hide Reasoning",
       "ui_comPanel_LLM_reasoning_unfold": "Show Reasoning",
-      "ui_llm_agentmode_toggle_tooltip": "Toggle AI multi-step agent mode (can call in-game tools to look up info or execute actions) instead of a single structured reply",
       "ui_llm_blockHeader": "-- Segment $index$ | $time$ --",
       "ui_llm_endHeader": "-- End | $time$ --",
       "ui_llm_agentNote_reasoning": "[Reasoning]",
@@ -1170,12 +1171,6 @@
       "ui_prefs_button_llmSetting_tooltip": "Configure LLM Interface and API",
 
       "ui_prefs_llm_apisetting": "API Settings",
-      "LLM_Provider_custom": "Custom Interface Key",
-      "LLM_Provider_google": "Google AI Studio API Key",
-      "LLM_Provider_anthropic": "Claude API Key",
-      "LLM_Provider_openai": "OpenAI API Key",
-      "LLM_Provider_zai": "Z.AI Coding Plan API Key",
-      "LLM_Provider_deepseek": "DeepSeek API Key",
       "ui_prefs_llm_apisetting_completion_api_type": "API Source",
       "ui_prefs_llm_apisetting_completion_customurl": "Custom Interface URL",
       "ui_prefs_llm_apisetting_completion_dropdown_0": "Custom Interface (OpenAI Compatible)",
@@ -1185,9 +1180,7 @@
       "ui_prefs_llm_apisetting_completion_dropdown_4": "Z.AI Coding Plan",
       "ui_prefs_llm_apisetting_completion_dropdown_5": "DeepSeek",
       "ui_prefs_llm_apisetting_completion_models": "Select Model",
-      "ui_prefs_llm_apisetting_completion_title": "Chat Completion Model",
       "ui_prefs_llm_apisetting_descriptions": "All API related settings (including Keys) will be stored in Application.persistentDataPath (Under Windows: Appdata\\LocalLow\\Silent Forest\\Mist Era\\\nWhen using a custom port, please use localhost instead of 127.0.0.1",
-      "ui_prefs_llm_apisetting_disabled": "LLM needs to be enabled first",
       "ui_prefs_llm_apisetting_toggle": "Toggle visibility of LLM output box",
       "ui_prefs_llm_llmSetting_on": "Enable",
 
@@ -1201,7 +1194,6 @@
 "ui_load_tooltip_cannotLoadduringUpdate": "Cannot load during game update",
 "ui_bottomBar_tooltip_llmMode": "Confirm or discard the AI response first",
 "ui_load_savefileLoc": "Save data can be found in /game_root_directory/Save/ ",
-"ui_load_fileDescription": "$filename$\nDay $days$, $hours$:$minutes$, $playerName$, $floor$, in $room$",
 "charaDetail_btn_basicInfo": "Basic Info",
 "charaDetail_btn_healthStatus": "Health",
 "charaDetail_btn_equip": "Equipment",
@@ -1229,7 +1221,6 @@
 "comLogs_causes_timestopped": "<link=\"\">Teimestopped</link>",
 
 
-"ui_calendar_dayCount": "Year $yearCount$, Day $dayOfYear$",
 "ui_calendar_month": "$dayOfWeek$ $monthName$, $seasons$",
 "ui_calendar_dateTooltip": "$month$/$day$/$year$",
 "ui_management_topbar_population": "Population: $population$",
@@ -1325,7 +1316,6 @@
 "management_faction_home_temporary": "<link=management_faction_home_temporary_tooltip>Temporary Home Faction</link>",
 "management_faction_home_temporary_tooltip": "Same as Home Faction, but with higher priority. Used to handle cases where character leaves home faction for an extended amount of time.",
 "management_faction_work": "<link=management_faction_work_tooltip>Work Faction</link>",
-"management_faction_work_tooltip": "(not yet implemented)",
  "management_faction_work_assignedBy_tooltip": "This job was assigned by $factionname$",
  "management_faction_work_strike_tooltip": "Refusing to work: unpaid wages of $item$",
  "management_faction_work_feeUnpaid_tooltip": "Cannot work here: $name$ unpaid ($item$)",
@@ -1361,7 +1351,6 @@
 "ui_management_production_missingResource": "Currently owned $itemname$ count below order's requirement!",
 
 
-"ui_management_trade_order_typeChange": "Change the executition type of this order.\n%%craftCount%%: Purchase a fixed amount of Item\n%%craftUntilCount%%: Keep purchasing until reaching the specified amount of item in inventory",
 "ui_management_production_order_typeChange": "Change the execution type of this order.\n%%craftCount%%: Craft a fixed amount of item\n%%craftUntilCount%%: Keep crafting until reaching the specified amount of item in inventory",
 "craftCount": "Order Count",
 "craftUntilCount": "Order Until",
@@ -1377,7 +1366,6 @@
 "ui_management_production_PO_TITLE": "Production Orders",
 "ui_management_production_Trade_TITLE": "Trade Orders",
 "ui_management_production_Trade_target": "Trading With",
-"ui_management_production_Trade_pricing": "Pricing",
 "ui_management_production_orderName": "Order Content",
 "ui_management_production_currentlyOwn": "Currently Owns",
 "ui_management_production_jobkeyword": "Work Type",
@@ -1447,8 +1435,6 @@
 "management_setschedule_jobpost":"",
 "management_setschedule_jobpost_ext":"",
 
-"management_modCount_add":"Click +1\nwhen holding CTRL +10\nwhen holding SHIFT +100",
-"management_modCount_sub":"Click -1\nwhen holding CTRL -10\nwhen holding SHIFT -100",
 
 "msg_manageSuccess":"No error in resource expenditures",
 "msg_manageFailure":"Missing required resources",
@@ -1627,7 +1613,6 @@
 "ui_management_expeditionConfig_recurring_tooltip": "If enabled, the team will repeat this expedition at the next departure time after returning.\n\nYou can define the cooldown days for the team's repeat execution below.",
 "ui_management_expeditionConfig_recurringCooldown": "Repeat Cooldown Days: $count$",
 "ui_management_expeditionConfig_prioritizeResting": "<link=ui_management_expeditionConfig_prioritizeResting_tooltip>Prioritize Resting</link>",
-"ui_management_expeditionConfig_prioritizeResting_tooltip": "If enabled, team members will prioritize resting when HP is not full.\nIf disabled, members will prioritize exploration until ST/EN is below 50% or HP is less than 1.",
 
 "ui_management_expeditionConfig": "Team Settings: $settings$",
 
@@ -1647,7 +1632,6 @@
 "ui_ap_CharaReqUtility_missingBodypart":"$name$ lacks the required body part type [$bodytags$] for this command",
 "ui_ap_CharaReqUtility_missingExtremeInflate":"Requires $name$'s [$bodytags$] body part to be filled to the limit",
 "ui_ap_CharaReqUtility_missingInflate":"Requires $name$'s [$bodytags$] body part to be filled",
-"ui_ap_CharaReqUtility_missingRevealing":"Requires $name$'s [$bodytags$] specific body exposure <= [$requirement$] (Current $amount$)",
 "ui_ap_CharaReqUtility_notAllowPlayer":"This command does not allow player participation",
 "ui_ap_CharaReqUtility_notAllowNPC":"This command does not allow NPC ($name$) participation",
 "ui_ap_CharaReqUtility_requireConscious":"$name$ has lost consciousness",

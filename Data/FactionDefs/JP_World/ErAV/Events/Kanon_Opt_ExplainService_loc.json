@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanon_Opt_ExplainService.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanon_Opt_ExplainService": "Ask about the business",
+                "kes_L01": "\"Asking about the business? Fine.\"\n\"Bring the films to me and you won't have to worry about sales. The Kiryu-gumi has regular buyers. Long-time clients take a fixed amount every month, and the rest goes through a few shops we've worked with for years. As long as your films are on the shelves, money comes in every week.\"",
+                "kes_L02": "\"Once you've shot enough films, you'll naturally see how the market reacts to different genres: what sells well, what people ask for by name. Stick with it long enough and regulars will start placing orders for specific content, at prices far above wholesale. I'll pass those orders down to you as I see fit. If you can handle them, the money comes in faster.\"",
+                "kes_L03": "\"One more thing. You can lend your actresses out to outside studios for shoots. They pay, the Kiryu-gumi takes a cut, and the rest is yours. The actress is gone for two or three days, then comes back.\"\n\"But let me be upfront: if something happens to them out there, I can't always clean up after you.\"",
+                "kes_L04": "\"Once you've built a name for yourself, better-paying commissions will come looking for you. But for now, focus on making something worthwhile out of what you have.\""
+            }
+        }
+    }
+}

@@ -255,6 +255,44 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     public delegate void Initializer();
 
     private bool initialized_equip = false;
+
+    public RectTransform instantiateGear()
+    {
+        var rect = Instantiate(prefab_BodyInstanceGear);
+        rect.SetParent(tab_equip_equipmentsList, false);
+        return rect;
+    }
+    public RectTransform instantiateEquip(RectTransform parent)
+    {
+        var rect = Instantiate(tab_equip_prefab_equipment);
+        rect.SetParent(parent, false);
+        return rect;
+    }
+
+    public bool instantiateBox_Text(RectTransform parent, string content, bool dimColor = false)
+    {
+        TextMeshProUGUI text = Instantiate(textBox);
+        text.text = content;
+        text.GetComponent<RectTransform>().SetParent(parent, false);
+        if (dimColor)
+        {
+            text.color = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;
+        }
+        return true;
+    }
+
+    public bool instantiateBox_Button(RectTransform parent, string content, bool dimColor = false)
+    {
+        TextMeshProUGUI text = Instantiate(buttonBox);
+        text.text = content;
+        text.GetComponent<RectTransform>().SetParent(parent, false);
+        if (dimColor)
+        {
+            text.color = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;
+        }
+        return true;
+    }
+
     private void InitializeEquipment()
     {
         if (initialized_equip) return;
@@ -262,6 +300,9 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
         initScript_Equip.InitializeData(chara);
 
+        SideRectUtility.LoadEquipmentData(chara, instantiateGear, instantiateEquip, instantiateBox_Text, instantiateBox_Button);
+
+        /*
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
 
         foreach (BodyPart_Instance b in chara.Body.Body)
@@ -301,11 +342,6 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                 if (        b.TryGetEquip(out outer, BodyEquipLayer.Outer, slot)) AddBox(buttonBox, box, outer.DisplayName);
                 else if (   b.TryGetCover(out outer, BodyEquipLayer.Outer, slot)) AddBox(buttonBox, box, outer.DisplayName, true);
                 else AddBox(textBox, box, " - ");
-
-
-                /*int l = b.GetEquip(BodyEquipLayer.Shell, slot);
-                if (l > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(l).DisplayName);
-                else AddBox(textBox, box, " - ");*/
 
             }
 
@@ -369,7 +405,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                     if (!hasEquip) box.gameObject.SetActive(false);
                 }
             }
-        }
+        }*/
     }
 
     public initScript_Relations initScript_relations;
@@ -397,6 +433,21 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
     public initScript_Records initSexRecords;
     bool initialized_sexRecords = false;
+
+    public scr_Panel_BodyDetail AddBodyDetail()
+    {
+        var box = Instantiate(initSexRecords.prefab_panel_internal);
+        box.selfRect.SetParent(initSexRecords.HealthTab_Contents, false);
+        return box;
+    }
+
+    public scr_panel_wombdata AddWombDetail()
+    {
+        var box = Instantiate(initSexRecords.prefab_panel_womb);
+        box.selfRect.SetParent(initSexRecords.HealthTab_Pregnancy, false);
+        return box;
+    }
+
     private void InitializeSexRecords()
     {
         if (initialized_sexRecords) return;
@@ -408,6 +459,8 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         //each panel need to know what part from who its monitoring
         //internalDictionary = new Dictionary<BodyInternal_Instance, scr_Panel_BodyDetail>();
 
+        SideRectUtility.LoadBodyInternalData(chara, AddBodyDetail, AddWombDetail);
+        /*
         foreach (BodyPart_Instance b in chara.Body.Body)
         {
             foreach (BodyInternal_Instance i in b.internals)
@@ -427,7 +480,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
             var box = Instantiate(initSexRecords.prefab_panel_internal);
             box.selfRect.SetParent(initSexRecords.HealthTab_Contents, false);
-            box.InitializeWithArgument(this, j);
+            box.InitializeWithArgument(i);
 
             j++;
         }
@@ -436,8 +489,10 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         {
             var box = Instantiate(initSexRecords.prefab_panel_womb);
             box.selfRect.SetParent(initSexRecords.HealthTab_Pregnancy, false);
-            box.InitializeWithArgument(this, womb);
+            box.InitializeWithArgument(womb);
         }
+        */
+
 
         if (initSexRecords != null) initSexRecords.Initialize(chara);
         
@@ -529,7 +584,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
     }
 
 
-    private void AddBox(TextMeshProUGUI box_prefab, RectTransform parent, string content, bool dimColor = false)
+    private bool AddBox(TextMeshProUGUI box_prefab, RectTransform parent, string content, bool dimColor = false)
     {
         TextMeshProUGUI text = Instantiate(box_prefab);
         text.text = content;
@@ -538,6 +593,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         {
             text.color = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;
         }
+        return true;
     }
 
     protected override void OnDestroy()

@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for 4_skill_addiction_cum.json. The stale en-us tooltip (which inlined the shared text) was removed from the source; zh-cn now references %%skill_addiction_tooltip%%."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "skill_addiction_cum_tooltip": "%%skill_addiction_tooltip%%\nApplies to: all interactions involving a penis (penetration, oral service, etc.)"
+            }
+        }
+    }
+}

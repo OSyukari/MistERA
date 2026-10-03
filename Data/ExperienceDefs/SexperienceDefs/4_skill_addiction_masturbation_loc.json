@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for 4_skill_addiction_masturbation.json. The stale en-us tooltip (which inlined the shared text) was removed from the source; zh-cn now references %%skill_addiction_tooltip%%."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "skill_addiction_masturbation_tooltip": "%%skill_addiction_tooltip%%\nApplies to: all actions tagged \"Masturbation\""
+            }
+        }
+    }
+}

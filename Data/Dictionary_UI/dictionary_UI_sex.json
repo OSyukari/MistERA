@@ -76,6 +76,9 @@
 "charaDetail_panel_bodyexp_cycle_none_tooltip": "此角色没有怀孕能力",
 "charaDetail_panel_bodyexp_cycle": "经期：$cycle$",
 
+"sidePanel_title_sexcom": "调教",
+"sidePanel_title_body":"身体",
+
 "charaDetail_panel_cycle_total": "总周期时长 $total$天",
 "charaDetail_panel_cycle_single": "$name$ $count$天",
 "charaDetail_panel_cycle_current": "当前经期预计持续 $count$天",

@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Obligation_Salary.json. Stale en-us removed from source and re-translated here to match the current zh-cn tokens."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "OnSalaryFailed_interrupted": "Because of unpaid wages, $target.name$ has temporarily stopped working at $payerName$."
+            }
+        }
+    }
+}

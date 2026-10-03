@@ -1,0 +1,17 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanon_Opt_AcceptOffer.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanon_Opt_AcceptOffer": "About that offer",
+                "Kanon_Opt_AcceptOffer_NotInOffice": "\"This isn't the place to talk business. We'll discuss that matter at the office.\"",
+                "Kanon_Opt_AcceptOffer_Option1": "Kanon sets down the documents in her hand and looks up at $self.name$.\n\"What, changed your mind?\"\n\"You shoot the films, we sell them, and that money pays off the debt. The terms from that night haven't changed. Tell me once you've decided.\"",
+                "Kanon_Opt_AcceptOffer_Option1_op1": "Accept the offer",
+                "Kanon_Opt_AcceptOffer_Option1_op2": "Not decided yet",
+                "Kanon_Opt_AcceptOffer_Refuse": "\"Suit yourself. If you change your mind, just come by anytime.\""
+            }
+        }
+    }
+}

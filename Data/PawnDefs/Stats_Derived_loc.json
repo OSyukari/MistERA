@@ -13,7 +13,8 @@
                 "stats_derived_cleanlinessSensitivity": "Mess Tolerance",
                 "stats_derived_cleanlinessSensitivity_tooltip": "This value (a multiplier) determines how much mess a character can tolerate in a room - the higher it is, the less tolerant.\nDefault 1.0",
                 "stats_derived_wakeupOffset": "Sleep Schedule",
-                "stats_derived_wakeupOffset_tooltip": "Whether the character wakes up on time or stays up late, default 0 (on time).\nWhen this value is above 0, the character goes to bed and wakes up early; below 0, they go to bed and wake up late."
+                "stats_derived_wakeupOffset_tooltip": "Whether the character wakes up on time or stays up late, default 0 (on time).\nWhen this value is above 0, the character goes to bed and wakes up early; below 0, they go to bed and wake up late.",
+                "stats_derived_painSensitivity_tooltip": "This value (multiplier) determines how easily the character feels pain; lower means more intense pain\nDefault 1.0\nAt 0, the character feels no pain at all\nAlso affects %%experience_pain%% gain during training"
             }
         }
     }

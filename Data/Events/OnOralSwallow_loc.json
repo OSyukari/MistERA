@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnOralSwallow.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_sex_oral_swallow_doer_line_1": "The cock in $doer.firstname$'s mouth forces them to swallow the semen.",
+                "com_sex_oral_swallow_receiver_line_1": "The cock in $receiver.firstname$'s mouth forces them to swallow the semen."
+            }
+        }
+    }
+}

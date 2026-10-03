@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ErAV_KiryuGumi_Filmstudio.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "erav_filmstudio_actor_partyinvite_accept_reason": "Accompanying the director",
+                "erav_kiryu_film_studio": "Film Studio",
+                "ErAV_KiryuGumi_Filmstudio": "Miyama Pictures",
+                "membertype_erav_kiryu_filmstudio_actor": "Actor",
+                "membertype_erav_kiryu_filmstudio_director": "Director"
+            }
+        }
+    }
+}

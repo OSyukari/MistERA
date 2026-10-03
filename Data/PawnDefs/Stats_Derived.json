@@ -424,8 +424,7 @@
                 "stats_derived_memoryLength": "Memory Duration",
                 "stats_derived_alcoholSensitivity":"Alcohol Tolerance",
                 "stats_derived_alcoholSensitivity_tooltip": "This value (multiplier) determines how easily the character gets drunk; lower means easier to get drunk\nDefault 1.0",
-                "stats_derived_painSensitivity":"Pain Tolerance",
-                "stats_derived_painSensitivity_tooltip": "This value (multiplier) determines how easily the character feels pain; lower means more intense pain\nDefault 1.0\nAlso affects %%experience_pain%% gain during training"
+                "stats_derived_painSensitivity":"Pain Tolerance"
 
             }
         }

@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnRestroomDeflate.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_furniture_restroom_deflate_start": "$self.name$ stays in the restroom a little longer than usual."
+            }
+        }
+    }
+}

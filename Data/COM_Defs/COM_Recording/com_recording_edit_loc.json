@@ -28,7 +28,15 @@
                 "recording_edit_canvas_actor_filterMSG": "Delete Message Records",
                 "recording_edit_canvas_actor_nameOverwrite": "<link=\"recording_edit_canvas_actor_nameOverwrite_tooltip\">Playing As:</link>",
                 "recording_edit_canvas_actor_nameOverwrite_tooltip": "Lets you change the character's displayed name",
-                "recording_edit_canvas_actor_originalName": "Actor: $name$"
+                "recording_edit_canvas_actor_originalName": "Actor: $name$",
+                "recording_edit_canvas_actor_changeType": "<link=\"recording_edit_canvas_actor_changeType_tooltip\">Actor Type:</link>",
+                "recording_edit_canvas_actor_changeType_tooltip": "Change this character's casting status\nAffects the character's",
+                "recording_edit_canvas_genre_title": "Target Product Type",
+                "recording_edit_canvas_nameSelect": "Random Title:",
+                "recording_edit_canvas_removeNonActors": "Delete messages from non-actors:",
+                "recording_edit_canvas_removeNonActors_Any": "...containing any non-actor",
+                "recording_edit_canvas_removeNonActors_Only": "...containing only non-actors",
+                "recording_edit_canvas_requirement": "Target Requirements"
             }
         }
     }

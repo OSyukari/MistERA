@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ArmorDefs.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "clothing_inner_longdress": "Long Evening Gown"
+            }
+        }
+    }
+}

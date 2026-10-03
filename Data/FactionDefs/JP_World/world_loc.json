@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for world.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "world_erav_modern_jp": "Japan"
+            }
+        }
+    }
+}

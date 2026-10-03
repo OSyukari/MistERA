@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for templates.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "BD2_emma_title": "Hard-to-Handle Problem Student"
+            }
+        }
+    }
+}

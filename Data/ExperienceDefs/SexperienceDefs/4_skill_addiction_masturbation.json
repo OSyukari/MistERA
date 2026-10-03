@@ -167,8 +167,7 @@
             },
             "en-us":
             {
-                "skill_addiction_masturbation": "Masturbation Addiction",
-                "skill_addiction_masturbation_tooltip": "Increases the skill owner's Acceptance-Check result - only while receiving (when ordered by a Master, also applies while acting). Applies to: all masturbation-tagged actions"
+                "skill_addiction_masturbation": "Masturbation Addiction"
             }
         }
     }

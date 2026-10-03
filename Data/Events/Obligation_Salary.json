@@ -128,8 +128,7 @@
 
                 "OnSalaryFailed": "Salary Event - Unpaid",
                 "OnSalaryFailed_failed": "$factionName$ failed to pay $target.name$'s wages for $sourceName$: $amount$ due.",
-                "OnSalaryFailed_failed_payee": "$factionName$ did not receive $target.name$'s wages for $sourceName$ this cycle: $amount$ was due.",
-                "OnSalaryFailed_interrupted": "Because $payerName$ failed to pay $payeeName$, $target.name$ will no longer come to work."
+                "OnSalaryFailed_failed_payee": "$factionName$ did not receive $target.name$'s wages for $sourceName$ this cycle: $amount$ was due."
             }
         }
     }

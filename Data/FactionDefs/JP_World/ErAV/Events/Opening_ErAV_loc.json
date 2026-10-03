@@ -1,0 +1,62 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Opening_ErAV.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "event_OpeningErAV_L01": "The funeral for both parents ended in a steady drizzle.\nAs the hearse pulled away, $self.name$ led their younger sister $kanade.name$ by the hand back to a house where no one would ever welcome them home again.",
+                "event_OpeningErAV_L03": "When they push the door open, the house is so cold and empty it feels coated in frost. A thin wisp of incense smoke still rises before the memorial portraits.\n$kanade.name$ is only fifteen. The black mourning band pinned to her school uniform makes her face look even paler. She has cried herself out, yet she still won't let go of $self.name$'s sleeve.",
+                "event_OpeningErAV_L05": "\"...$self.name$, from now on, it's just the two of us.\"",
+                "event_OpeningErAV_L06": "\"Yeah... but I'm still here. Don't be scared.\"\n$self.name$ pulls their sister into a hug, but can't find a single word of comfort; inside, they feel just as hollow.",
+                "event_OpeningErAV_L08": "Just then, a curt knock sounds at the door.\nThe moment $self.name$ opens it, three shaven-headed men in black suits are already standing on the porch.",
+                "event_OpeningErAV_L10": "In the middle of them stands a girl in a gorgeous kimono, holding a paper umbrella and surveying the room. Raindrops slide down the umbrella's ribs.\n\"Forgive the intrusion at this late hour.\"\n$self.name$ knows this face. Kiryu Kanon, the student council president at school. But the student council president has another identity as well: she runs the yakuza organization behind this neighborhood. The two sides of her life have always been kept apart and should never have crossed. Yet here she is with her men, barging into their home on the night of their parents' funeral.",
+                "event_OpeningErAV_L13": "\"I've come tonight for one reason only: the debt your father left behind.\"",
+                "event_OpeningErAV_L14": "\"...Debt?\"",
+                "event_OpeningErAV_L15": "\"In short: a joint guarantee. Your father, Miyama Kenzo, stood as guarantor for someone.\"\n\"The principal debtor has since vanished without a trace, so under the contract, the debt falls to the guarantor.\"\n\"Your father and mother have both passed away. As their heirs, the debt naturally passes to you and your sister.\"",
+                "event_OpeningErAV_L18": "\"A joint guarantee... Father... how could he...\"",
+                "event_OpeningErAV_L19": "\"The principal is thirty million.\"\n\"Interest is calculated monthly, and it only goes up. The interest alone comes to 450,000 a month.\"",
+                "event_OpeningErAV_L21": "\"Don't even think about skipping out. A joint-guarantee debt can't be wiped out even by bankruptcy. The Kiryu-gumi has plenty of ways: seize the house, freeze your accounts, cut off every means you have of making a living.\"",
+                "event_OpeningErAV_L22": "\"Thirty million... 450,000...\"\n$self.name$'s head is ringing. Their father never spoke about money while he was alive; who knew he'd buried such an enormous time bomb.",
+                "event_OpeningErAV_L24": "After $kanon.name$ names those figures, the room falls so silent that only the rain can be heard. $kanade.name$ clutches $self.name$'s sleeve and doesn't let go.",
+                "event_OpeningErAV_L25": "\"$self.name$... thirty million... can we really pay that back?\"",
+                "event_OpeningErAV_L26": "\"Crying won't help. Let me do the math for you: that interest alone, converted into part-time work, is over four hundred hours.\"\n\"Even if you worked yourself into the ground, you couldn't squeeze out that many hours a month, never mind the thirty million in principal.\"\n\"With an honest job, you could give it your whole life and still never fill that hole.\"",
+                "event_OpeningErAV_Q01": "\"So? Do you want my help with this?\"\n$kanon.name$ takes a business card from her sleeve, sets it on the table, and looks up at $self.name$.",
+                "event_OpeningErAV_Q01_op1": "Accept",
+                "event_OpeningErAV_Q01_op2": "Refuse",
+                "event_OpeningErAV_A01": "\"Wise.\"\n\"Tomorrow after school, come to the office. The address is on the card.\"\n\"I'll have everything arranged. Just show up.\"",
+                "event_OpeningErAV_A04": "With that, $kanon.name$ straightens the collar of her kimono and turns toward the door.\nThe men in black file out after her one by one. At the threshold, she suddenly stops, her back to the room.",
+                "event_OpeningErAV_A06": "\"...I'm sorry about your parents.\"",
+                "event_OpeningErAV_A07": "The moment the door closes, all that's left in the room is the sound of rain and the faint crackle of incense burning out.",
+                "event_OpeningErAV_A08": "\"$self.name$...\"",
+                "event_OpeningErAV_A08_F": "\"Sis...\"",
+                "event_OpeningErAV_A08_M": "\"Big brother...\"",
+                "event_OpeningErAV_A09": "$kanade.name$ looks up at $self.name$ with red, swollen eyes, and only after a long moment speaks in a small voice.",
+                "event_OpeningErAV_AQ": "$kanade.name$ clutches the hem of her skirt and looks up at $self.name$, waiting for an answer.",
+                "event_OpeningErAV_AQ_op1": "Agree to bring her along",
+                "event_OpeningErAV_AQ_op2": "Refuse",
+                "event_OpeningErAV_AC01": "\"...Okay. We'll go together tomorrow.\"",
+                "event_OpeningErAV_AC02": "\"Mm.\" $kanade.name$ nods firmly.",
+                "event_OpeningErAV_AC03": "$self.name$ gently ruffles their sister's hair. Outside the window, the rain is easing.",
+                "event_OpeningErAV_AC04": "That night, neither of them slept a wink, but their hearts felt a little steadier. By the time pale morning light crept through the window lattice, the rain had stopped.\nDawn had come. Ahead lay a thirty-million-yen debt. But at least tomorrow there was somewhere to go, and $kanade.name$ was still by their side.",
+                "event_OpeningErAV_R01": "\"Oh? You'd rather carry it yourself?\"",
+                "event_OpeningErAV_R02": "\"Suit yourself. Just remember: before the end of the month, the 450,000 in interest, down to the last yen.\"\n\"If you can't pay when it's due, the Kiryu-gumi has its own ways of collecting. When that time comes, don't blame me for being heartless.\"",
+                "event_OpeningErAV_R04": "\"If you change your mind, come find me at the office.\"",
+                "event_OpeningErAV_R05": "With that, $kanon.name$ straightens the collar of her kimono and turns toward the door.\nThe men in black file out after her one by one. At the threshold, she suddenly stops, her back to the room.",
+                "event_OpeningErAV_R07": "\"...I'm sorry about your parents.\"",
+                "event_OpeningErAV_R08": "The moment the door closes, all that's left in the room is the sound of rain and the faint crackle of incense burning out.",
+                "event_OpeningErAV_R09": "\"$self.name$...\"",
+                "event_OpeningErAV_R09_F": "\"Sis...\"",
+                "event_OpeningErAV_R09_M": "\"Big brother...\"",
+                "event_OpeningErAV_R10": "$kanade.name$'s lips tremble, and it takes her a long moment to force out a few words.\n\"450,000... before the end of the month... wh-where are we supposed to get that much money?\"\n\"Part-time jobs... even if we never slept or rested, we... we still couldn't cover that debt...\"",
+                "event_OpeningErAV_R13": "\"...Leave it to me. I'll think of something.\"",
+                "event_OpeningErAV_R14": "$self.name$ pulls their sister into a hug. Outside, the rain is easing, but both of them know the road ahead is perilous.",
+                "event_OpeningErAV_R15": "That night, neither of them slept a wink. By the time pale morning light crept through the window lattice, the rain had stopped.\nDawn had come. Before $self.name$ lay a thirty-million-yen debt, and a burden they would have to carry alone.",
+                "event_OpeningErAV_RC01": "\"...I'll go by myself tomorrow. You wait at home.\"",
+                "event_OpeningErAV_RC02": "\"But... $self.name$...\"",
+                "event_OpeningErAV_RC03": "$kanade.name$'s eyes redden again. She opens her mouth, but in the end doesn't insist, silently clutching the hem of her clothes.\n$self.name$ pulls their sister into a hug. Outside, the rain is easing, yet what weighs on their heart isn't only the debt.",
+                "event_OpeningErAV_RC05": "That night, neither of them slept a wink. By the time pale morning light crept through the window lattice, the rain had stopped.\nDawn had come. Tomorrow, they would still have to go see that woman. This was a road $self.name$ would have to walk alone. Ahead lay thirty million yen and a burden that had to be carried."
+            }
+        }
+    }
+}

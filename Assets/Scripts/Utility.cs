@@ -1400,8 +1400,10 @@ public static class UtilityEX
             case "advanceTime":
                 if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int advanceDays))
                 {
+                    scr_UpdateHandler.current.ResetLogsFirstLine();
                     scr_System_Time.current.UpdateTime(advanceDays, 0, 0);
                     scr_System_CampaignManager.current.NotifyUpdate();
+                    SwitchToLogsIfPrinting();
                     parsedSuccessful = true;
                 }
                 else
@@ -1587,8 +1589,10 @@ public static class UtilityEX
                             Debug.LogError("error target has no mens cycle");
                             break;
                         }
+                        scr_UpdateHandler.current.ResetLogsFirstLine();
 
                         target.TickMenstruation(adv_year, adv_month, adv_day, true, true);
+                        SwitchToLogsIfPrinting();
                     }
                 }
                 break;
@@ -1723,6 +1727,22 @@ public static class UtilityEX
         }
 
         if (parsedSuccessful) Debug.Log(s);
+    }
+
+    /// <summary>
+    /// For console commands that only sometimes print messages (e.g. events triggered while ticking time):
+    /// queued logs set UpdateHandler.Animating, which blocks every view change except to logs, so switch there
+    /// ourselves instead of leaving the player stuck on the current panel.
+    /// </summary>
+    static void SwitchToLogsIfPrinting()
+    {
+        var handler = scr_UpdateHandler.current;
+        if (handler == null) return;
+        if (handler.Animating || handler.EventHandler.Active)
+        {
+            scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs, handler.EventHandler.Active);
+            scr_UpdateHandler.current.NotifyLogsSingleUpdate(true);
+        }
     }
 
     static void LogQuestStages(List<QuestStageResult> results, int depth, List<string> resultss)

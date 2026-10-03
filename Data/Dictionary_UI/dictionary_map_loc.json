@@ -1,0 +1,17 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for dictionary_map.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "map_bedroom": "Bedroom",
+                "map_cafeteria": "Cafeteria",
+                "map_dressing": "Dressing Room",
+                "map_lounge": "Lounge",
+                "map_office": "Office",
+                "map_restroom": "Restroom"
+            }
+        }
+    }
+}

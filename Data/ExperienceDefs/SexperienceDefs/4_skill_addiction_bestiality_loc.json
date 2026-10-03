@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for 4_skill_addiction_bestiality.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "skill_addiction_bestiality_tooltip": "%%skill_addiction_tooltip%%\nApplies to: interactions with animals"
+            }
+        }
+    }
+}

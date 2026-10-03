@@ -1388,6 +1388,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
 
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
 
+        scr_UpdateHandler.current.Observer_ResetLogsFirstLine += OnResetLogsFirstLine;
+
         scr_System_CampaignManager.current.Observer_MessageLogs += OnLogAdd;
         scr_UpdateHandler.current.Observer_LogsSingleStepUpdate += SingleUpdate;
         scr_UpdateHandler.current.Observer_EventStatus += OnEvent;
@@ -1435,6 +1437,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnEvent {status}, waiting? {(status == EventStatus.waiting)} firstline {firstLine}");
 #endif
         if (forceLogging) this.firstLine = true;
+    }
+    protected void OnResetLogsFirstLine(bool forceLogging)
+    {
+        this.firstLine = true;
     }
 
     public Action<PointerEventData> Observer_OnClick;

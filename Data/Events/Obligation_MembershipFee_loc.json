@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Obligation_MembershipFee.json. Stale en-us removed from source and re-translated here to match the current zh-cn tokens."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "OnMembershipFeeFailed_interrupted": "Because the $feeName$ is overdue, $target.name$ temporarily can't use $payeeName$'s services."
+            }
+        }
+    }
+}

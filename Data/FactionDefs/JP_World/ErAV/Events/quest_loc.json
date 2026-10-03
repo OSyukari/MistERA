@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for quest.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "erav_debt_tracker": "Repay the Debt",
+                "erav_debt_tracker_01": "Find a way to repay the 30M yen debt. Remaining principal: $debt_value$. Payments made: $debt_pay_count$",
+                "erav_debt_tracker_01_00": "Refused Kanon's offer. You'll have to find another way to repay the debt.",
+                "erav_debt_tracker_01_01": "After school, go to %%ErAV_KiryuGumi_Office%% and [Talk] with Kanon",
+                "erav_debt_tracker_01_01_kanade": "Promised to bring Kanade along to see Kanon",
+                "erav_debt_tracker_01_01_late": "$late_count$ day(s) late",
+                "erav_debt_tracker_01_02": "Accepted Kanon's offer. Time to make money shooting films",
+                "erav_debt_tracker_01_02_kanade": "Went to see Kanon alone, without Kanade",
+                "erav_debt_tracker_02": "The debt has been repaid."
+            }
+        }
+    }
+}

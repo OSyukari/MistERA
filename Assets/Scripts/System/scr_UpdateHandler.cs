@@ -1154,6 +1154,12 @@ public class scr_UpdateHandler : MonoBehaviour
     //public event Action Observer_PostUpdateTime_4;
     public event Action<bool> Observer_LogsSingleStepUpdate;
     public event Action<EventStatus, bool> Observer_EventStatus;
+    public event Action<bool> Observer_ResetLogsFirstLine;
+
+    public void ResetLogsFirstLine()
+    {
+        Observer_ResetLogsFirstLine?.Invoke(false);
+    }
 
     /// <summary>
     /// tickCooldown should stay true for every call representing an actual simulated minute (the

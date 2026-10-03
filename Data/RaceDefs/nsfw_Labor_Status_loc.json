@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_Labor_Status.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "chara_status_labor_obstructed_active_tooltip": "Cannot deliver naturally; the birth can only be completed at a hospital\nIf there is no hospital this character can reach in the current world, a natural delivery will be forced"
+            }
+        }
+    }
+}

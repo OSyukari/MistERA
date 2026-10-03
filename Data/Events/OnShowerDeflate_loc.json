@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for OnShowerDeflate.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_furniture_takeShower_deflate_start": "$self.name$ washes more thoroughly than usual."
+            }
+        }
+    }
+}

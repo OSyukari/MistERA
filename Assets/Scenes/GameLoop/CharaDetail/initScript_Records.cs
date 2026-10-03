@@ -66,6 +66,8 @@ public class initScript_Records : MonoBehaviour
         unlabeled_skills.Clear();
         unlabeled_derivedStats.Clear();
 
+        SideRectUtility.LoadCycleData(c, cycleRect, cycle_total, cycle_current, cycle_ovum, cycle_fertility);
+        /*
         if (c.ReproTemplate != null && c.ReproCycle != null)
         {
             // cycle type
@@ -95,7 +97,7 @@ public class initScript_Records : MonoBehaviour
         {
             cycleRect.gameObject.SetActive(false);
         }
-
+        */
         // each cycle duration
         // total cycle duration
         // current cycle remaining time

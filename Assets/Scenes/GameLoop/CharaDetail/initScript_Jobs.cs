@@ -18,6 +18,19 @@ public class initScript_Relations : MonoBehaviour
 
     public scr_HoverableText prefab_work;
     string worktooltip = "management_faction_work_tooltip";
+
+
+    public scr_memoryDaySplit AddDaySplit()
+    {
+        var rect = Instantiate(prefab_DaySplit);
+        return rect;
+    }
+    public scr_memoryBox AddMemoryEntry()
+    {
+        scr_memoryBox line = Instantiate(prefab_MemoryEntry);
+        return line;
+    }
+
     public void InitializeData(Character_Trainable c, scr_Menu_CharaDetail parent)
     {
         if (c == null) return;
@@ -56,12 +69,6 @@ public class initScript_Relations : MonoBehaviour
         if (c.Template != null) charaComment.SetText(LocalizeDictionary.QueryThenParse( c.Template.characterComment));
         else charaComment.SetText("");
 
-        DateTime current = scr_System_Time.current.getCurrentTime();
-        DateTime lastTime = scr_System_Time.current.getCurrentTime();
-        bool first = true;
-        bool shorten = false;
-        string lastString = Utility.GetRelativeDayString(current, lastTime);
-
         List<string> _hidden = new List<string>();
         foreach(var i in c.Relationships.GenericRelationship)
         {
@@ -70,6 +77,15 @@ public class initScript_Relations : MonoBehaviour
         if (_hidden.Count > 0) viewHidden.SetExternalTooltip(String.Join("\n", _hidden));
         else viewHidden.SetExternalTooltip("none");
 
+        SideRectUtility.LoadHistoryLogsData(c, parent.boxMemoriesList, AddDaySplit, AddMemoryEntry);
+        /*
+        
+        DateTime current = scr_System_Time.current.getCurrentTime();
+        DateTime lastTime = scr_System_Time.current.getCurrentTime();
+
+        string lastString = Utility.GetRelativeDayString(current, lastTime);
+        bool first = true;
+        bool shorten = false;
 
         for (int i = c.Memory.Entries.Count - 1; i >= 0; i--)// Memory_Entry mem in chara.MemoryManager.entries)
         {
@@ -97,7 +113,7 @@ public class initScript_Relations : MonoBehaviour
             //line.SetText(chara.MemoryManager.entries[i]);
 
             //if (entry.Tags.Count > 0) prefab_MemoryEntry.GetComponent<scr_HoverableText>().SetExternalTooltip("Relevant Tags: " + String.Join(" ", entry.Tags));
-        }
+        }*/
     }
 
     protected void OnDestroy()

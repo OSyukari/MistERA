@@ -8,8 +8,18 @@ using System;
 
 public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    public RectTransform child;
-    public bool inside = false;
+    public enum SubPanel { None, SexCom, Equipment, History, Internals }
+    public enum InternalsTab { Internals, Wombs }
+
+    private const int ID_ToggleSexCom = -3;
+    private const int ID_ToggleEquipment = -4;
+    private const int ID_ToggleHistory = -5;
+    private const int ID_ToggleInternals = -6;
+    private const int ID_TabInternals = -7;
+    private const int ID_TabWombs = -8;
+    private const int ID_Hide = -9;
+
+    public RectTransform child;     // SexCom content root
     private Image image_bg;
 
     //private float update;
@@ -17,6 +27,31 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     private Dictionary<ActionPackage_Sex, RectTransform> indexSexRelations;
     private List<ActionPackage_Sex> markforDelete;
     private Dictionary<int, RectTransform> indexActorRef;
+
+    // side panels (current target data)
+    public RectTransform topBar;
+    public RectTransform panel_Equipment, panel_History, panel_Internals;
+    public RectTransform content_Equipment, content_History, content_Internals, content_Wombs;
+    public RectTransform prefab_BodyInstanceGear, prefab_Equipment;
+    public TextMeshProUGUI prefab_TextBox, prefab_ButtonBox;
+    public scr_memoryDaySplit prefab_DaySplit;
+    public scr_memoryBox prefab_MemoryEntry;
+    public scr_Panel_BodyDetail prefab_PanelInternal;
+    public scr_panel_wombdata prefab_PanelWomb;
+
+    private bool hovered = false;
+    private bool forceShown = false;    // post-update reminder, sex only
+    private bool userHidden = false;    // hide button override, cleared on toggle / pointer exit / update
+    private SubPanel activePanel = SubPanel.None;
+    private InternalsTab internalsTab = InternalsTab.Internals;
+
+    // target refID each data panel was last built for, -1 = stale. Rebuild is lazy: only when shown.
+    private Dictionary<SubPanel, int> builtForRef = new Dictionary<SubPanel, int>()
+    {
+        { SubPanel.Equipment, -1 },
+        { SubPanel.History, -1 },
+        { SubPanel.Internals, -1 },
+    };
 
     protected override void Awake()
     {
@@ -31,38 +66,64 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         scr_System_CampaignManager.current.Observer_CurrentViewMode += OnViewModeChange;
         //scr_UpdateHandler.current.Observer_PostUpdateTime_4 += InternalUpdate;
         scr_System_CampaignManager.current.Observer_UpdateNotice += OnCentralUpdate;
+        scr_System_CampaignManager.current.Observer_CurrentTarget += OnCurrentTargetChange;
 
-        turnOff();
+        ApplyVisibility();
     }
 
     protected override void Start()
     {
         if(!initialized) Initialize();
-        turnOff();
+        ApplyVisibility();
     }
 
     private void OnViewModeChange(ViewMode vm, bool lockView)
     {
-        if (vm != ViewMode.View_Room)
+        if (vm == ViewMode.View_Room)
         {
-            //image_bg.raycastTarget = false;
-            turnOff();
+            // back in room = update completed: reset hide override, reload data, sex reminder
+            userHidden = false;
+            InvalidateDataPanels();
+            RefreshSexState();
+            if (sexJob != null)
+            {
+                activePanel = SubPanel.SexCom;
+                forceShown = true;
+            }
         }
-        else if (vm == ViewMode.View_Room && sexJob != null)
-        {
-            //image_bg.raycastTarget = true;
-            turnOn(sexJob);
-        }
+        ApplyVisibility();
     }
 
-    private void InternalUpdate()
+    /// <summary>
+    /// Re-read player sex job. Tears down sex rows when sex ended, and prunes departed actors from COM doer/receiver.
+    /// </summary>
+    private void RefreshSexState()
     {
+        bool wasInSex = sexJob != null;
         sexJob = scr_System_CampaignManager.current.Player.CurrentJob as Job_Sex_Group;
         if (sexJob == null)
         {
-            //image_bg.raycastTarget = false;
-            turnOff();
+            forceShown = false;
+            TearDownSexRows();
+        }
+        else
+        {
+            if (!wasInSex)
+            {
+                activePanel = SubPanel.SexCom;
+                forceShown = true;
+            }
 
+            // rows only sync while visible, so keep the pending selection valid even when the panel is hidden
+            COMmanager.SexComDoers.RemoveAll(r => !sexJob.actorRefID.Contains(r));
+            COMmanager.SexComReceivers.RemoveAll(r => !sexJob.actorRefID.Contains(r));
+        }
+    }
+
+    private void TearDownSexRows()
+    {
+        if (indexActorRef.Count > 0 || indexSexRelations.Count > 0)
+        {
             List<int> ints = new List<int>();
             foreach (var refID in indexActorRef.Keys)
             {
@@ -90,18 +151,14 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
             indexSexRelations.Clear();
 
         }
-        else
-        {
-            //image_bg.raycastTarget = true;
-            turnOn(sexJob);
-            ValidateAll();
-        }
     }
 
     private void OnCentralUpdate(bool b)
     {
         if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Room) return;
-        InternalUpdate();
+        RefreshSexState();
+        InvalidateDataPanels();
+        ApplyVisibility();
     }
 
     private Job_Sex_Group sexJob = null;
@@ -112,7 +169,190 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
 
         if (scr_System_CampaignManager.current.CurrentViewMode != ViewMode.View_Room) return;
         if (!this.gameObject.activeInHierarchy) return;
-        InternalUpdate();
+        RefreshSexState();
+        ApplyVisibility();
+    }
+
+    private void OnCurrentTargetChange(int refID, bool forceUpdate)
+    {
+        // data panels detect stale target themselves, only the visible one rebuilds
+        ApplyVisibility();
+    }
+
+    private void InvalidateDataPanels()
+    {
+        builtForRef[SubPanel.Equipment] = -1;
+        builtForRef[SubPanel.History] = -1;
+        builtForRef[SubPanel.Internals] = -1;
+    }
+
+    private static void SetActive(Component c, bool value)
+    {
+        if (c != null && c.gameObject.activeSelf != value) c.gameObject.SetActive(value);
+    }
+
+    /// <summary>
+    /// Single place deciding what is shown. Every state change calls this.
+    /// </summary>
+    private void ApplyVisibility()
+    {
+        bool roomView = scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room
+            && !(scr_UpdateHandler.current != null && scr_UpdateHandler.current.Updating);
+        bool inSex = sexJob != null;
+        if (!inSex && activePanel == SubPanel.SexCom) activePanel = SubPanel.None;
+        if (activePanel == SubPanel.None) lastCenteredPanel = SubPanel.None;
+
+        bool barVisible = roomView && (hovered || (inSex && forceShown));
+        bool contentVisible = barVisible && !userHidden;
+
+        SetActive(topBar, barVisible);
+        SetActive(child, contentVisible && activePanel == SubPanel.SexCom);
+        SetActive(panel_Equipment, contentVisible && activePanel == SubPanel.Equipment);
+        SetActive(panel_History, contentVisible && activePanel == SubPanel.History);
+        SetActive(panel_Internals, contentVisible && activePanel == SubPanel.Internals);
+        SetActive(content_Internals, internalsTab == InternalsTab.Internals);
+        SetActive(content_Wombs, internalsTab == InternalsTab.Wombs);
+
+        if (contentVisible)
+        {
+            if (activePanel == SubPanel.SexCom) SyncSexRows();
+            else if (activePanel != SubPanel.None) RebuildIfStale(activePanel);
+        }
+
+        ValidateAll();
+    }
+
+    public void TogglePanel(SubPanel p)
+    {
+        activePanel = activePanel == p ? SubPanel.None : p;
+        userHidden = false;
+        ApplyVisibility();
+    }
+
+    public void SetInternalsTab(InternalsTab tab)
+    {
+        internalsTab = tab;
+        ApplyVisibility();
+    }
+
+    public void ToggleHide()
+    {
+        userHidden = !userHidden;
+        ApplyVisibility();
+    }
+
+
+    public RectTransform cycleRect;
+    public scr_HoverableText cycle_total, cycle_current, cycle_ovum, cycle_fertility;
+
+    private void RebuildIfStale(SubPanel p)
+    {
+        Character_Trainable c = scr_System_CampaignManager.current.CurrentTarget;
+        if (c == null || builtForRef[p] == c.RefID) return;
+        builtForRef[p] = c.RefID;
+
+        switch (p)
+        {
+            case SubPanel.Equipment:
+                Utility.DestroyAllChildrenFrom(content_Equipment);
+                SideRectUtility.LoadEquipmentData(c, InstantiateGear, InstantiateEquip, InstantiateBox_Text, InstantiateBox_Button);
+                break;
+            case SubPanel.History:
+                Utility.DestroyAllChildrenFrom(content_History);
+                SideRectUtility.LoadHistoryLogsData(c, content_History, AddDaySplit, AddMemoryEntry);
+                break;
+            case SubPanel.Internals:
+                Utility.DestroyAllChildrenFrom(content_Internals);
+                Utility.DestroyAllChildrenFrom(content_Wombs, 1);
+                SideRectUtility.LoadCycleData(c, cycleRect, cycle_total, cycle_current, cycle_ovum, cycle_fertility);
+                SideRectUtility.LoadBodyInternalData(c, AddBodyDetail, AddWombDetail);
+                break;
+        }
+    }
+
+    private RectTransform InstantiateGear()
+    {
+        var rect = Instantiate(prefab_BodyInstanceGear);
+        rect.SetParent(content_Equipment, false);
+        return rect;
+    }
+
+    private RectTransform InstantiateEquip(RectTransform parent)
+    {
+        var rect = Instantiate(prefab_Equipment);
+        rect.SetParent(parent, false);
+        return rect;
+    }
+
+    private bool InstantiateBox_Text(RectTransform parent, string content, bool dimColor = false)
+    {
+        return InstantiateBox(prefab_TextBox, parent, content, dimColor);
+    }
+
+    private bool InstantiateBox_Button(RectTransform parent, string content, bool dimColor = false)
+    {
+        return InstantiateBox(prefab_ButtonBox, parent, content, dimColor);
+    }
+
+    private bool InstantiateBox(TextMeshProUGUI prefab, RectTransform parent, string content, bool dimColor)
+    {
+        TextMeshProUGUI text = Instantiate(prefab);
+        text.text = content;
+        text.GetComponent<RectTransform>().SetParent(parent, false);
+        if (dimColor)
+        {
+            text.color = scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color;
+        }
+        return true;
+    }
+
+    private scr_memoryDaySplit AddDaySplit()
+    {
+        return Instantiate(prefab_DaySplit);
+    }
+
+    public Scrollbar horizontal;
+    public RectTransform horizontalViewRect;    // RectTransform of the scrollview holding the panel toggle buttons, size only
+    private SubPanel lastCenteredPanel = SubPanel.None;
+
+    /// <summary>
+    /// Set the toggle bar scrollbar value so the active panel's button is centered. Only on active panel change.
+    /// Content width is derived from scrollbar size (= view / content).
+    /// </summary>
+    private void CenterTabButton(SubPanel panel, RectTransform button)
+    {
+        if (panel == SubPanel.None || panel == lastCenteredPanel) return;
+        if (horizontal == null || horizontalViewRect == null || !button.gameObject.activeInHierarchy) return;   // retry on next validate
+        if (horizontal.size >= 1f) return;  // nothing to scroll (or scrollbar not yet updated), retry on next validate
+        lastCenteredPanel = panel;
+
+        float viewWidth = horizontalViewRect.rect.width;
+        float scrollable = viewWidth / horizontal.size - viewWidth;
+        if (scrollable <= 0) return;
+
+        // button center relative to view's left edge, then shift by current scroll offset to get its position in content
+        float buttonInView = horizontalViewRect.InverseTransformPoint(button.TransformPoint(button.rect.center)).x - horizontalViewRect.rect.xMin;
+        float buttonInContent = buttonInView + horizontal.value * scrollable;
+
+        horizontal.value = Mathf.Clamp01((buttonInContent - viewWidth / 2) / scrollable);
+    }
+    private scr_memoryBox AddMemoryEntry()
+    {
+        return Instantiate(prefab_MemoryEntry);
+    }
+
+    private scr_Panel_BodyDetail AddBodyDetail()
+    {
+        var box = Instantiate(prefab_PanelInternal);
+        box.selfRect.SetParent(content_Internals, false);
+        return box;
+    }
+
+    private scr_panel_wombdata AddWombDetail()
+    {
+        var box = Instantiate(prefab_PanelWomb);
+        box.selfRect.SetParent(content_Wombs, false);
+        return box;
     }
 
     private void DestroyActor(int refID)
@@ -147,36 +387,43 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (scr_System_CampaignManager.current.CurrentViewMode == ViewMode.View_Room && sexJob != null && !inside)
-        {
-            turnOn(sexJob);
-            ValidateAll();
-        }
+        if (hovered) return;    // re-entering self from a child
+        hovered = true;
+        if (sexJob != null) activePanel = SubPanel.SexCom;
+        ApplyVisibility();
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (child.gameObject.activeInHierarchy && scr_System_CampaignManager.current.CurrentTarget != null)
+        if ((activePanel == SubPanel.None || userHidden) && scr_System_CampaignManager.current.CurrentTarget != null)
         {
             scr_System_CampaignManager.current.NotifyCurrentTargetClick();//.PortraitManager.ActivityClick();
         }
+        /*
+        if (activePanel == SubPanel.SexCom && child.gameObject.activeInHierarchy && scr_System_CampaignManager.current.CurrentTarget != null)
+        {
+            scr_System_CampaignManager.current.NotifyCurrentTargetClick();//.PortraitManager.ActivityClick();
+        }*/
     }
     public void removeAP()
     {
-        turnOn(sexJob);
+        SyncSexRows();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (sexJob != null && inside) turnOff();
+        if (!eventData.fullyExited) return;     // moved onto a child
+        hovered = false;
+        forceShown = false;
+        userHidden = false;
+        ApplyVisibility();
     }
 
-    private void turnOn(Job sexJob)
+    /// <summary>
+    /// Sync sex relation / actor rows with the current sex job. Only called while SexCom content is shown.
+    /// </summary>
+    private void SyncSexRows()
     {
-        inside = true;
-        //this.gameObject.SetActive(true);
-        child.gameObject.SetActive(true);
-
-        Job_Sex_Group jSexDebug = sexJob as Job_Sex_Group;
+        Job_Sex_Group jSexDebug = sexJob;
 
         if (child.gameObject.activeInHierarchy && jSexDebug != null)
         {
@@ -288,9 +535,6 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
 
         }
 
-        ValidateAll();
-        
-
     }
 
     public RectTransform swapButtonBox;
@@ -323,16 +567,6 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         if (receivers == "") namebox_receivers.text = "no one";
         else namebox_receivers.text = receivers;
     }
-
-    private void turnOff()
-    {
-
-        inside = false;
-        child.gameObject.SetActive(false);
-        //this.gameObject.SetActive(false);
-
-    }
-
 
 
     public override void Notify(int optionID)
@@ -367,6 +601,32 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
                     button.Initialize(this, new ButtonValidator_swapCOMactors(this, COMmanager, button));
                     break;
                 case -1: break;
+                case ID_ToggleSexCom:
+                    if (scr_System_CentralControl.current.isSafeMode) button.SelfRect.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_TogglePanel(this, SubPanel.SexCom, button));
+                    break;
+                case ID_ToggleEquipment:
+                    if (scr_System_CentralControl.current.isSafeMode) button.SelfRect.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_TogglePanel(this, SubPanel.Equipment, button));
+                    break;
+                case ID_ToggleHistory:
+                    button.Initialize(this, new ButtonValidator_TogglePanel(this, SubPanel.History, button));
+                    break;
+                case ID_ToggleInternals:
+                    if (scr_System_CentralControl.current.isSafeMode) button.SelfRect.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_TogglePanel(this, SubPanel.Internals, button));
+                    break;
+                case ID_TabInternals:
+                    if (scr_System_CentralControl.current.isSafeMode) button.SelfRect.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_InternalsTab(this, InternalsTab.Internals, button));
+                    break;
+                case ID_TabWombs:
+                    if (scr_System_CentralControl.current.isSafeMode) button.SelfRect.gameObject.SetActive(false);
+                    else button.Initialize(this, new ButtonValidator_InternalsTab(this, InternalsTab.Wombs, button));
+                    break;
+                case ID_Hide:
+                    button.Initialize(this, new ButtonValidator_HidePanel(this, button));
+                    break;
                 default:
                     button.Initialize(this, button_alwaysValid);
                     break;
@@ -542,6 +802,91 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
             temp = null;
 
             COMmanager.notifyActorsChange();
+        }
+    }
+
+    public class ButtonValidator_TogglePanel : ButtonValidator, I_ButtonClickable
+    {
+        SubPanel panel;
+        scr_SelectableText button;
+        new scr_Panel_SexComTarget parent;
+
+        public ButtonValidator_TogglePanel(scr_Menu parent, SubPanel panel, scr_SelectableText button) : base(parent)
+        {
+            this.panel = panel;
+            this.button = button;
+            this.parent = parent as scr_Panel_SexComTarget;
+            button.isButtonToggle = true;
+        }
+
+        public override bool IsButtonValid()
+        {
+            button.Toggle(true, parent.activePanel == panel);
+            if (parent.activePanel == panel) parent.CenterTabButton(panel, button.SelfRect);
+            if (panel == SubPanel.SexCom && parent.sexJob == null)
+            {
+                state = ButtonValidator_States.Invalid;
+                return false;
+            }
+            state = ButtonValidator_States.Valid;
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.TogglePanel(panel);
+        }
+    }
+
+    public class ButtonValidator_InternalsTab : ButtonValidator, I_ButtonClickable
+    {
+        InternalsTab tab;
+        scr_SelectableText button;
+        new scr_Panel_SexComTarget parent;
+
+        public ButtonValidator_InternalsTab(scr_Menu parent, InternalsTab tab, scr_SelectableText button) : base(parent)
+        {
+            this.tab = tab;
+            this.button = button;
+            this.parent = parent as scr_Panel_SexComTarget;
+            button.isButtonToggle = true;
+        }
+
+        public override bool IsButtonValid()
+        {
+            button.Toggle(true, parent.internalsTab == tab);
+            state = ButtonValidator_States.Valid;
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.SetInternalsTab(tab);
+        }
+    }
+
+    public class ButtonValidator_HidePanel : ButtonValidator, I_ButtonClickable
+    {
+        scr_SelectableText button;
+        new scr_Panel_SexComTarget parent;
+
+        public ButtonValidator_HidePanel(scr_Menu parent, scr_SelectableText button) : base(parent)
+        {
+            this.button = button;
+            this.parent = parent as scr_Panel_SexComTarget;
+            button.isButtonToggle = true;
+        }
+
+        public override bool IsButtonValid()
+        {
+            button.Toggle(true, parent.userHidden);
+            state = ButtonValidator_States.Valid;
+            return true;
+        }
+
+        public void OnClickButton()
+        {
+            parent.ToggleHide();
         }
     }
 

@@ -86,8 +86,7 @@
 
                 "OnMembershipFeeFailed": "Membership Fee Event - Unpaid",
                 "OnMembershipFeeFailed_failed": "$factionName$ failed to pay $target.name$'s $feeName$ to $counterpartName$: $amount$ needed, but only has $available$.",
-                "OnMembershipFeeFailed_failed_payee": "$factionName$ did not receive $target.name$'s $feeName$ from $counterpartName$: $amount$ was due, but they only have $available$.",
-                "OnMembershipFeeFailed_interrupted": "Because $payerName$ failed to pay $payeeName$ for $target.name$'s $feeName$, service has been interrupted."
+                "OnMembershipFeeFailed_failed_payee": "$factionName$ did not receive $target.name$'s $feeName$ from $counterpartName$: $amount$ was due, but they only have $available$."
             }
         }
     }

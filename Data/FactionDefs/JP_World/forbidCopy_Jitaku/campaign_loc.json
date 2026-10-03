@@ -9,7 +9,9 @@
                 "campaign_jitaku_keibiin": "Home Security Guard",
                 "campaign_jitaku_keibiin_tooltip": "debug",
                 "campaign_jitaku_keibiin_start_default": "Default",
-                "campaign_jitaku_keibiin_start_default_tooltip": "debug debug"
+                "campaign_jitaku_keibiin_start_default_tooltip": "debug debug",
+                "Katsuragi_Household": "Katsuragi Household",
+                "Katsuragi_Household_Home": "Katsuragi Residence"
             }
         }
     }

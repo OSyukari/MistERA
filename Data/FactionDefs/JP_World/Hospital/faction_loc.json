@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for faction.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_hospital": "Hospital"
+            }
+        }
+    }
+}

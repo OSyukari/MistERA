@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ErAV_KiryuGumi_Office.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "membertype_erav_kiryu_office_leader": "Boss"
+            }
+        }
+    }
+}

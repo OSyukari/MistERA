@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Obligation_Rent.json. Stale en-us removed from source and re-translated here to match the current zh-cn tokens."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "OnRentFailed_interrupted": "Because the rent went unpaid, some facilities and furniture at $sourceName$ have stopped working.",
+                "rent_trust_change": "$factionName$ members' trust toward their manager ($managers.name$) $trustChange$."
+            }
+        }
+    }
+}
