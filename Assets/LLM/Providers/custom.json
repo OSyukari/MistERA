@@ -1,0 +1,17 @@
+{
+  "id": "LLM_Provider_custom",
+  "isCustomEntry": true,
+  "defaultEndpoint": "",
+  "defaultModelListEndpoint": "",
+  "authHeaderName": "Authorization",
+  "authHeaderPrefix": "Bearer ",
+  "tokenLimitField": "max_completion_tokens",
+  "top_k": true,
+  "top_p": true,
+  "supportsReasoningEffort": true,
+  "reasoningEffort": "low",
+  "_reasoningEffortOptions": "Depends on whatever backend the custom endpoint proxies to - most OpenAI-compatible APIs use \"low\" | \"medium\" | \"high\" (some add \"minimal\"/\"none\"). Verify against that provider's own docs.",
+  "responseFormatStrategy": "openai",
+  "responseEnvelope": "openai",
+  "preferToolCallArguments": false
+}

@@ -1,0 +1,22 @@
+{
+  "id": "LLM_Provider_anthropic",
+  "defaultEndpoint": "https://api.anthropic.com/v1/messages",
+  "defaultModelListEndpoint": "https://api.anthropic.com/v1/models",
+  "authHeaderName": "x-api-key",
+  "authHeaderPrefix": "",
+  "extraHeaders": { "anthropic-version": "2023-06-01" },
+  "tokenLimitField": "max_tokens",
+  "tokenLimitDefault": 16384,
+  "tokenLimitCap": 16384,
+  "top_k": true,
+  "supportsReasoningEffort": true,
+  "reasoningEffort": "low",
+  "_reasoningEffortOptions": "Not a flat field - Claude's real control is output_config.effort: \"low\" | \"medium\" | \"high\" | \"xhigh\" | \"max\". Availability/defaults vary by model (e.g. Opus 5.5 supports all 5 and defaults to \"medium\"; most other current models default to \"high\" and some don't support \"xhigh\"/\"max\"). ApplyRequestShaping.ApplyClaudeEffort moves LLMRequest.reasoningEffort into output_config.effort instead of sending it as reasoning_effort.",
+  "extractSystemMessage": true,
+  "responseFormatStrategy": "claude",
+  "responseEnvelope": "claude",
+  "supportsStreaming": true,
+  "supportsAgentTools": true,
+  "endpointHints": ["anthropic"],
+  "disableNodeByTag": ["turn_end_assistant"]
+}

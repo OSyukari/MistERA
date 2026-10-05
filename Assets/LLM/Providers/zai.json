@@ -1,0 +1,22 @@
+{
+  "id": "LLM_Provider_zai",
+  "defaultEndpoint": "https://api.z.ai/api/coding/paas/v4/chat/completions",
+  "defaultModelListEndpoint": "https://api.z.ai/api/coding/paas/v4/models",
+  "authHeaderName": "Authorization",
+  "authHeaderPrefix": "Bearer ",
+  "tokenLimitField": "max_tokens",
+  "tokenLimitDefault": 512,
+  "top_p": true,
+  "supportsReasoningEffort": true,
+  "reasoningEffort":"low",
+  "_reasoningEffortOptions": "GLM-5.2 and above only (older GLM models have no tunable effort). GLM-5.3/-FLASH: \"low\" | \"high\" | \"max\" only (default \"max\" - any other value errors). GLM-5.2: also accepts \"none\" | \"minimal\" | \"medium\" | \"xhigh\" (default \"max\"); \"none\"/\"minimal\" stop thinking, \"low\"/\"medium\" collapse to \"high\", \"xhigh\" collapses to \"max\". Requires thinking.type: \"enabled\" - GLM-5.3 can no longer disable thinking at all, so migrate any thinking.type: \"disabled\" callers to reasoningEffort \"low\" first.",
+  "responseFormatStrategy": "toolcall",
+  "toolChoiceMode": "none",
+  "nudgeMessage": "Submit your complete response ONLY by calling the submit_response function with all required fields populated. Do not output JSON in text.",
+  "responseEnvelope": "openai",
+  "preferToolCallArguments": true,
+  "supportsStreaming": true,
+  "supportsAgentTools": true,
+  "endpointHints": ["api.z.ai"],
+  "modelNameHints": ["glm"]
+}

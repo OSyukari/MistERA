@@ -1,0 +1,16 @@
+{
+  "id": "LLM_Provider_google",
+  "defaultEndpoint": "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+  "defaultModelListEndpoint": "https://generativelanguage.googleapis.com/v1beta/openai/models",
+  "authHeaderName": "Authorization",
+  "authHeaderPrefix": "Bearer ",
+  "tokenLimitField": "max_completion_tokens",
+  "top_p": true,
+  "supportsReasoningEffort": true,
+  "reasoningEffort": "low",
+  "_reasoningEffortOptions": "\"low\" | \"medium\" | \"high\" via the OpenAI-compat layer; \"none\"/\"min\" are accepted synonyms for minimal thinking (mapped internally to thinkingConfig/thinkingBudget or thinkingLevel depending on model generation). Not every model can fully disable thinking - some Pro variants reject \"none\".",
+  "responseFormatStrategy": "openai",
+  "responseEnvelope": "openai",
+  "endpointHints": ["generativelanguage.googleapis.com"],
+  "disableNodeByTag": ["turn_end_assistant"]
+}

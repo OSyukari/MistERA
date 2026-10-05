@@ -1,0 +1,18 @@
+{
+  "id": "LLM_Provider_openai",
+  "defaultEndpoint": "https://api.openai.com/v1/chat/completions",
+  "defaultModelListEndpoint": "https://api.openai.com/v1/models",
+  "authHeaderName": "Authorization",
+  "authHeaderPrefix": "Bearer ",
+  "tokenLimitField": "max_completion_tokens",
+  "top_p": true,
+  "supportsReasoningEffort": true,
+  "reasoningEffort": "low",
+  "_reasoningEffortOptions": "Model-dependent - \"low\" | \"medium\" | \"high\" on o-series reasoning models; gpt-5-family adds \"minimal\"; newest models (gpt-5.4+) expand the range toward \"none\"..\"xhigh\"/\"max\", but not every model accepts every value (e.g. gpt-6-astra rejects \"none\", gpt-5-codex rejects \"minimal\"). Non-reasoning models (gpt-4o, etc.) reject this field outright - check the target model's own docs.",
+  "responseFormatStrategy": "openai",
+  "responseEnvelope": "openai",
+  "supportsStreaming": true,
+  "streamIncludeUsage": true,
+  "supportsAgentTools": true,
+  "endpointHints": ["api.openai.com"]
+}
