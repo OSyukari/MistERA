@@ -23,6 +23,7 @@ Assets/*
 !Assets/Scripts
 !Assets/Scenes
 !Assets/Editor
+!Assets/LLM
 
 **/forbidCopy
 **/forbidCopy.*
