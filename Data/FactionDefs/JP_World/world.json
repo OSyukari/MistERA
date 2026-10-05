@@ -6,7 +6,8 @@
         "worldID":"world_erav_modern_jp",
         "mapImagePath":"ErAV/156274_BlogPostFeatureImage21_120617.jpg",
 
-        "clienteleInfo": { "population": 200000 },
+        "_comment_clienteleInfo": "competitorWeight = the rest of the market (K): a studio's market share drifts toward renown / (renown + K)",
+        "clienteleInfo": { "population": 200000, "competitorWeight": 1000 },
 
         "AnchorType":"TopLeft",
         "worldWidth":833,
@@ -258,27 +259,37 @@
 ],
     "clienteleDefs": [
         {
-            "_comment": "wide-reach studio AV - matches the receval_proper_av evaluator tag (see ItemComponent_Records.GetTags/KojoRecording.evaluatorID). High market ceiling, strong popularity swings on release.",
-            "ID": "salesclientele_proper_av",
-            "itemReq": { "requireTags": [ "receval_proper_av" ] },
+            "_comment": "AV buyers - every evaluated recording (item_records + its evaluator tag, see ItemComponent_Records.GetTags). Segments split the audience by genre taste; a tape only sells to segments with affinity for its evaluator.",
+            "ID": "salesclientele_av",
+            "itemReq": { "requireTags": [ "item_records" ] },
             "tags": [ "AV", "nsfw" ],
-            "ratio": 0.02,
+            "_comment_limitedAudience": "each buyer buys a title once: potential buyers per segment = population x ratio x market share x segment weight x affinity x quality; 200000 x 0.15 x 1% = 300 buyers across all segments",
+            "limitedAudience": true,
+            "dailyPurchaseRate": 0.03,
+            "ratio": 0.15,
             "fluctuation": 0.15,
             "popularityInfluence": 5.0,
             "usePopularityCurve": true,
             "curvePeakDay": 5,
             "curveDecayPerDay": 0.1,
-            "curveFloorRatio": 0.3
-        },
-        {
-            "_comment": "amateur/homemade tape - matches the receval_homemade_tape evaluator tag. Small niche market, no release-hype curve.",
-            "ID": "salesclientele_homemade_tape",
-            "itemReq": { "requireTags": [ "receval_homemade_tape" ] },
-            "tags": [ "AV", "nsfw" ],
-            "ratio": 0.005,
-            "fluctuation": 0.5,
-            "popularityInfluence": 0.5,
-            "usePopularityCurve": false
+            "curveFloorRatio": 0.3,
+            "segments": [
+                {
+                    "ID": "seg_proper_av",
+                    "weight": 0.6,
+                    "affinity": { "receval_proper_av": 1.0, "receval_homemade_tape": 0.2, "receval_voyeur": 0.2 }
+                },
+                {
+                    "ID": "seg_amateur",
+                    "weight": 0.15,
+                    "affinity": { "receval_homemade_tape": 1.0, "receval_voyeur": 0.5, "receval_proper_av": 0.2 }
+                },
+                {
+                    "ID": "seg_voyeur",
+                    "weight": 0.25,
+                    "affinity": { "receval_voyeur": 1.0, "receval_homemade_tape": 0.5 }
+                }
+            ]
         }
     ],
     "debtClasses": [

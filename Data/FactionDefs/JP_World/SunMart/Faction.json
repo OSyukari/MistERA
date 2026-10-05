@@ -166,7 +166,8 @@
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true,
-                        "requireSameActiveFaction": true
+                        "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                            "requireMemberType": ["membertype_jp_convenience_store_clerk_morning", "membertype_jp_convenience_store_clerk_afternoon", "membertype_jp_convenience_store_clerk_midnight"] }
                     }
                 },
                 "variants": [

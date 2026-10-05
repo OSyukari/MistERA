@@ -1,0 +1,19 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanon_Opt_RentFilmstudio.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanon_Opt_RentFilmstudio": "About renting that studio",
+                "kor_L01": "$kanon.name$ looks up from her paperwork as if she'd been expecting $self.name$.\n\"Made up your mind?\"\nShe pulls out a contract and slides it across the desk.\n\"Miyama Pictures. Rent plus maintenance, 460,000 a month. To rent it, the first month gets paid now, billed monthly after that. The keys and the place are yours to run.\"\n\"One more thing — once you have a studio of your own, that actress list of mine goes to you as well. Introductions, evaluations — all of that comes once you're properly in the business.\"",
+                "kor_Q01": "\"Signing now?\"",
+                "kor_Q01_op1": "Rent the studio (¥460,000)",
+                "kor_Q01_op1_tooltip": "The first month's rent will be deducted from the Miyama household's funds",
+                "kor_Q01_op2": "Think it over some more",
+                "kor_L_accept": "$kanon.name$ puts away the transfer receipt and sets a keyring down on the desk.\n\"From today, Miyama Pictures is yours to run. Utilities, staff, rent — all your business now.\"\n\"I'll have the list sent over. Do good work — don't tarnish the name.\"\n\n[Rented %%ErAV_KiryuGumi_Filmstudio%%; $self.name$ became its %%membertype_erav_kiryu_filmstudio_director%%]\n[You can now ask Kanon to introduce AV actresses]",
+                "kor_L_decline": "\"No rush. The place stays empty; the keys stay with me.\""
+            }
+        }
+    }
+}

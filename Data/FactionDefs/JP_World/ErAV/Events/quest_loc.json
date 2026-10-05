@@ -11,8 +11,12 @@
                 "erav_debt_tracker_01_01": "After school, go to %%ErAV_KiryuGumi_Office%% and [Talk] with Kanon",
                 "erav_debt_tracker_01_01_kanade": "Promised to bring Kanade along to see Kanon",
                 "erav_debt_tracker_01_01_late": "$late_count$ day(s) late",
-                "erav_debt_tracker_01_02": "Accepted Kanon's offer. Time to make money shooting films",
+                "erav_debt_tracker_01_02": "Accepted Kanon's offer. Shoot films at home with the camera; finished tapes placed in the Miyama household's inventory sell anonymously through the Kiryu-gumi's channel",
                 "erav_debt_tracker_01_02_kanade": "Went to see Kanon alone, without Kanade",
+                "erav_debt_tracker_01_03_rent": "To run a proper studio, go to %%ErAV_KiryuGumi_Office%% and rent the filmstudio from Kanon (¥460,000 for the first month; it can wait)",
+                "erav_debt_tracker_01_04_rented": "Rented %%ErAV_KiryuGumi_Filmstudio%% and became its director. You can now ask Kanon to introduce AV actresses",
+                "erav_debt_tracker_01_05_kanade": "Talk to Kanade about the filming — she might be willing to help",
+                "erav_debt_tracker_01_06_kanade_helping": "Kanade has started helping with the AV work (Miyama household)",
                 "erav_debt_tracker_02": "The debt has been repaid."
             }
         }

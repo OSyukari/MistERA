@@ -347,7 +347,16 @@ public class Memory_Entry
     public bool TryMergeWith(Memory_Entry other)
     {
         if (!CanMergeWith(other)) return false;
+        MergeFrom(other);
+        return true;
+    }
 
+    /// <summary>
+    /// Merges other into this entry without the CanMergeWith rules - used directly by forced merges
+    /// (MemoryManager.MergeLLMSession), through TryMergeWith otherwise.
+    /// </summary>
+    public void MergeFrom(Memory_Entry other)
+    {
         foreach (var j in other.interactions)
         {
             bool merged = false;
@@ -380,7 +389,6 @@ public class Memory_Entry
 
         // update description, stat calculation, etc
         InternalUpdate();
-        return true;
     }
 
     [JsonIgnore] [NonSerialized] public bool isRefuseOnly = false;
@@ -760,7 +768,7 @@ public class Memory_Entry
     /// <summary>
     /// Rebuilds the display/stat caches after directly editing memInstanceDescription (or any
     /// other field normally only refreshed through the merge paths) - InternalUpdate itself is
-    /// protected, so external assemblers (e.g. MemoryManager.AddLLMEntry) go through this.
+    /// protected, so external assemblers (e.g. MemoryManager.ApplyLLMDescription) go through this.
     /// </summary>
     public void RefreshCache()
     {

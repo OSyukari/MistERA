@@ -174,6 +174,9 @@ public class scr_System_Time : MonoBehaviour
 
     private void UpdateSingleDay()
     {
+        // before any day update, so the new-day notice comes first
+        scr_UpdateHandler.current.EventHandler.Trigger(scr_System_CampaignManager.current.Player, EventTrigger.OnDayChange);
+
         // different invoke input calls for hard-coded ordering of update sequences
         Observer_globalTime_Day?.Invoke(0); // all debug reset/update
 

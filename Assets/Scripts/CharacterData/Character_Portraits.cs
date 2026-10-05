@@ -9,10 +9,112 @@ using UnityEngine;
 
 public class PortraitManager
 {
-    public List<CharaPortrait> portraitPriorityList = new List<CharaPortrait>();
+    /// <summary>
+    /// Portrait handlers by priority. If serializedData exists (template data, player-customized portraits, legacy saves) it is returned as-is.
+    /// Otherwise lazily copied from the base character template portraitBaseIDOverride into _portraitCache, so un-customized characters don't save the full list.
+    /// </summary>
+    [JsonIgnore] public List<CharaPortrait> portraitPriorityList
+    {
+        get
+        {
+            if (serializedData != null) return serializedData;
+            if (_portraitCache == null)
+            {
+                _portraitCache = new List<CharaPortrait>();
+                var template = CacheTemplate;
+                if (template != null && template.Portrait != null)
+                {
+                    foreach (var pp in template.Portrait.portraitPriorityList)
+                    {
+                        var copy = pp.Copy();
+                        if (copy == null) continue;
+                        copy.Owner = this;
+                        copy.RebuildInternal();
+                        _portraitCache.Add(copy);
+                    }
+                }
+            }
+            return _portraitCache;
+        }
+    }
+    protected List<CharaPortrait> _portraitCache = null;
+    [JsonProperty("portraitPriorityList")] protected List<CharaPortrait> serializedData = null;
 
-    public CharaPortrait CharaBanner = null;
-    public string CharaBannerBGColor = "";
+    /// <summary>
+    /// Banners are not customizable: resolved from the portraitBaseIDOverride template unless serializedBanner exists (template data, legacy saves)
+    /// </summary>
+    [JsonIgnore] public CharaPortrait CharaBanner
+    {
+        get
+        {
+            if (serializedBanner != null) return serializedBanner;
+            if (!_bannerCacheInit)
+            {
+                _bannerCacheInit = true;
+                var template = CacheTemplate;
+                if (template != null && template.Portrait != null && template.Portrait.CharaBanner != null)
+                {
+                    _bannerCache = template.Portrait.CharaBanner.Copy();
+                    if (_bannerCache != null)
+                    {
+                        _bannerCache.Owner = this;
+                        _bannerCache.RebuildInternal();
+                    }
+                }
+            }
+            return _bannerCache;
+        }
+    }
+    [JsonIgnore] public string CharaBannerBGColor
+    {
+        get
+        {
+            if (serializedBannerBGColor != null) return serializedBannerBGColor;
+            var template = CacheTemplate;
+            if (template != null && template.Portrait != null) return template.Portrait.CharaBannerBGColor;
+            return "";
+        }
+    }
+    protected CharaPortrait _bannerCache = null;
+    protected bool _bannerCacheInit = false;
+    [JsonProperty("CharaBanner")] protected CharaPortrait serializedBanner = null;
+    [JsonProperty("CharaBannerBGColor")] protected string serializedBannerBGColor = null;
+
+    /// <summary>
+    /// Cache source - explicit portraitBaseIDOverride only, no BaseID fallback (does not depend on Owner)
+    /// </summary>
+    protected Character_SerializableBase CacheTemplate
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(portraitBaseIDOverride)) return null;
+            return scr_System_Serializer.current.MasterList.Character_Bases.GetByID(portraitBaseIDOverride);
+        }
+    }
+
+    /// <summary>
+    /// Switch to cache mode: wipe any serialized portrait/banner data and resolve from base character [baseID] instead
+    /// </summary>
+    public void InitFromTemplate(string baseID)
+    {
+        serializedData = null;
+        serializedBanner = null;
+        serializedBannerBGColor = null;
+        _portraitCache = null;
+        _bannerCache = null;
+        _bannerCacheInit = false;
+        colorInit = false;
+        portraitBaseIDOverride = baseID;
+    }
+
+    /// <summary>
+    /// Call before modifying portrait handlers - moves the cached handlers into serializedData so the modification is saved
+    /// </summary>
+    public void MarkCustomized()
+    {
+        if (serializedData != null) return;
+        serializedData = portraitPriorityList;
+    }
 
     Color _CharaBannerBG;
     bool colorInit = false;
@@ -20,10 +122,11 @@ public class PortraitManager
     public void SetBGColor(UnityEngine.UI.Image image)
     {
         if (image == null) return;
-        if (CharaBannerBGColor == "") return;
+        var bgColor = CharaBannerBGColor;
+        if (string.IsNullOrEmpty(bgColor)) return;
         if (!colorInit)
         {
-            _CharaBannerBG = UtilityEX.ColorFromHex(CharaBannerBGColor);
+            _CharaBannerBG = UtilityEX.ColorFromHex(bgColor);
             colorInit = true;
         }
         image.color = _CharaBannerBG;
@@ -38,26 +141,38 @@ public class PortraitManager
     public PortraitManager(Character_Trainable c)
     {
         this._owner = c;
-        if (portraitPriorityList != null) foreach(var i in portraitPriorityList) i.Owner = this;
     }
     protected Character_Trainable _owner = null;
     [JsonIgnore] public Character_Trainable Owner { get { return _owner; } }
 
 
+    /// <summary>
+    /// Rebuilds serialized handlers. Cached (template) handlers are dropped and lazily rebuilt on next access.
+    /// </summary>
     public void RebuildInternal(Character_Trainable c)
     {
         _owner = c;
-        foreach(var i in this.portraitPriorityList)
+        if (serializedData != null)
         {
-            i.RebuildInternal();
-            i.Owner = this;
+            foreach (var i in serializedData)
+            {
+                i.RebuildInternal();
+                i.Owner = this;
+            }
         }
-        if (this.CharaBanner != null) this.CharaBanner.Owner = this;
+        else _portraitCache = null;
+
+        if (serializedBanner != null) serializedBanner.Owner = this;
+        else
+        {
+            _bannerCache = null;
+            _bannerCacheInit = false;
+        }
     }
     public IEnumerator CacheInternal(Character_Trainable c)
     {
         _owner = c;
-        if (portraitPriorityList != null) foreach (var i in portraitPriorityList) i.Owner = this;
+        foreach (var i in portraitPriorityList) i.Owner = this;
 
         foreach (var i in this.portraitPriorityList)
         {
@@ -95,7 +210,10 @@ public class PortraitManager
     /// </summary>
     public void ClearInternal()
     {
-        foreach(var i in portraitPriorityList)
+        // backing fields only - do not populate the cache just to destroy it
+        var list = serializedData ?? _portraitCache;
+        if (list == null) return;
+        foreach(var i in list)
         {
             i.Destroy();
         }
@@ -136,18 +254,9 @@ public class PortraitManager
         ClearInternal();
         ClearHandlerCache();
         var baseTemplate = portraitTemplate;
-        this.portraitPriorityList.Clear();
 
-        if (baseTemplate != null)
-        {
-            foreach (var pp in baseTemplate.Portrait.portraitPriorityList)
-            {
-                this.portraitPriorityList.Add(pp.Copy());
-            }
-            this.CharaBanner = baseTemplate.Portrait.CharaBanner;
-            this.CharaBannerBGColor = baseTemplate.Portrait.CharaBannerBGColor;
-        }
-
+        // back to cache mode: handlers are resolved from the template on next access, nothing saved until customized
+        InitFromTemplate(baseTemplate != null ? baseTemplate.baseID : "");
 
        // Debug.Log($"Portrait reset, preReset count {i} target template count {baseTemplate.Portrait.portraitPriorityList.Count} final count {this.portraitPriorityList.Count}");
         RebuildInternal(this.Owner);
@@ -156,6 +265,7 @@ public class PortraitManager
 
     public void Prepend(CharaPortrait cm)
     {
+        MarkCustomized();
         this.portraitPriorityList.Insert(0,cm);
         cm.Owner = this;
 
@@ -813,6 +923,7 @@ public class PortraitManager
 
         public override void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
         {
+            Owner?.MarkCustomized();
             this.portrait_offset_x = offsetX;
             this.portrait_offset_y = offsetY;
             this.portrait_offset_size = offsetSize;
@@ -1034,6 +1145,7 @@ public class PortraitManager
         public override void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
         {
             //Debug.Log("SetPortraitOffsets [" + offsetX + "] ["+offsetY+"] ["+offsetSize+"]");
+            Owner?.MarkCustomized();
             this.portrait_offset_x = offsetX;
             this.portrait_offset_y = offsetY;
             this.portrait_offset_size = offsetSize;

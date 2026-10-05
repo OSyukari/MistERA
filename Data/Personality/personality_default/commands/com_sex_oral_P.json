@@ -65,6 +65,74 @@
                     "variants": [
                         {
                             "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始口交 睡眠中",
+                            "responses": ["com_sex_oral_P_Begin_FE_Sleep_1", "com_sex_oral_P_Begin_FE_Sleep_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始口交 时停中",
+                            "responses": ["com_sex_oral_P_Begin_FE_Timestop_1", "com_sex_oral_P_Begin_FE_Timestop_2"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_M"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush", "shy", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 开始口交 有允许",
+                                    "responses": ["com_sex_oral_P_Begin_FE_Player_1", "com_sex_oral_P_Begin_FE_Player_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始口交 有允许",
+                                    "responses": ["com_sex_oral_P_Begin_FE_1", "com_sex_oral_P_Begin_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush", "shy", "trembling"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始口交 未允许 好意",
+                                    "responses": ["com_sex_oral_P_Begin_FE_3", "com_sex_oral_P_Begin_FE_4"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "fear", "trembling", "tearful"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始口交 未允许 敌意",
+                            "responses": ["com_sex_oral_P_Begin_FE_5", "com_sex_oral_P_Begin_FE_6"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_M"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "blowjob", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 开始口交（被侍奉的一方）",
+                            "responses": ["com_sex_oral_P_Begin_FE_Partner_1", "com_sex_oral_P_Begin_FE_Partner_2"]
+                        },
+                        {
+                            "requirement": {
                                 "requirePermission": true
                             },
                             "extraSelfPortraitTags": [
@@ -130,6 +198,74 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 睡眠中 口交",
+                            "responses": ["com_sex_oral_P_FE_Sleep_1"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 时停中 口交",
+                            "responses": ["com_sex_oral_P_FE_Timestop_1"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_M"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush", "shy", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 口交 有允许",
+                                    "responses": ["com_sex_oral_P_FE_Player_1"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 口交 有允许（还不熟练）",
+                                    "responses": ["com_sex_oral_P_FE_1", "com_sex_oral_P_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "blowjob", "blush", "shy", "trembling"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 口交 未允许 好意（还不熟练）",
+                                    "responses": ["com_sex_oral_P_FE_3"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "doer", "blowjob", "fear", "trembling", "tearful"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 口交 未允许 敌意",
+                            "responses": ["com_sex_oral_P_FE_4", "com_sex_oral_P_FE_5"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_M"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "blowjob", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 口交（被侍奉的一方）",
+                            "responses": ["com_sex_oral_P_FE_Partner_1"]
+                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -498,7 +634,32 @@
                 "com_sex_oral_P_36": "$self$眼神里原本的惊讶已经变成了屈辱和怨恨，只是机械地配合着。\n\"……恶心。\"",
                 "com_sex_oral_P_31": "$self$的动作慢了下来，微微皱眉。\n\"今天弄得有点太久了……嘴巴有些麻。\"",
                 "com_sex_oral_P_32": "$self$停下动作，捂着嘴咳了几声，眼角渗出泪花。\n\"抱歉……有点太深了，让我缓缓。\"",
-                "com_sex_oral_P_33": "$self$机械地套弄着，眼神开始游移，心思显然已经不在当下。\n\"……还没好吗。\""
+                "com_sex_oral_P_33": "$self$机械地套弄着，眼神开始游移，心思显然已经不在当下。\n\"……还没好吗。\"",
+
+                "com_sex_oral_P_Begin_FE_Sleep_1": "睡梦中的$self$的唇无意识地轻张着，对唇边蹭动的热度只是哼了声，没有醒来。",
+                "com_sex_oral_P_Begin_FE_Sleep_2": "$self$沉在梦乡里，含糊地咂了咂嘴，浑然不知自己的第一次口侍就在唇边。",
+                "com_sex_oral_P_Begin_FE_Timestop_1": "凝固的世界里，$self$微张的唇被顶开，初次的口侍在毫无知觉中进行。",
+                "com_sex_oral_P_Begin_FE_Timestop_2": "$self$保持着垂眸的姿势一动不动，对自己的第一次口交正在发生一无所知。",
+                "com_sex_oral_P_Begin_FE_Player_1": "\"第一次用嘴……不知道你会不会喜欢……\"\n\n$self$紧张地抬眼看着$target$，舌尖都在发抖。",
+                "com_sex_oral_P_Begin_FE_Player_2": "\"你教我……我不知道该怎么做……\"\n\n$self$红着脸捧起那根东西，指尖抖得厉害。",
+                "com_sex_oral_P_Begin_FE_1": "\"我、我是第一次做这个……轻点顶……\"\n\n$self$含糊地说着，紧张得牙关都在打颤。",
+                "com_sex_oral_P_Begin_FE_2": "\"第一次含这种东西……又烫又胀……\"\n\n$self$小心地用唇裹住，腮帮子鼓得紧紧的。",
+                "com_sex_oral_P_Begin_FE_3": "\"只、只有这次哦……别按我的头……\"\n\n$self$颤抖着张开嘴，眼泪已经在眼眶里打转。",
+                "com_sex_oral_P_Begin_FE_4": "\"第一次做这种事……味道好冲……\"\n\n$self$屏着呼吸试探地含了含，眉头皱个不停。",
+                "com_sex_oral_P_Begin_FE_5": "\"不……我是第一次……不要用嘴……！\"\n\n$self$死死闭着嘴，浑身抖个不停。",
+                "com_sex_oral_P_Begin_FE_6": "\"含着这种东西……我一辈子都不会忘记你……\"\n\n$self$含着屈辱张开嘴，眼泪大颗大颗地往下掉。",
+                "com_sex_oral_P_Begin_FE_Partner_1": "\"你……是第一次口交？\"\n\n感觉到青涩又生涩的吞吐，$self$愣了一下。",
+                "com_sex_oral_P_Begin_FE_Partner_2": "\"……小心牙齿。\"\n\n被刮了一下，$self$皱着眉提醒道。",
+
+                "com_sex_oral_P_FE_Sleep_1": "睡梦中的$self$的唇还残留着那股陌生的味道，眉头轻轻皱着。",
+                "com_sex_oral_P_FE_Timestop_1": "初次含过的痕迹还挂在嘴角，定格的$self$没有任何反应。",
+                "com_sex_oral_P_FE_Player_1": "\"我第一次……做得还行吗……？\"\n\n$self$吐出来喘了口气，抬眼紧张地望着$target$。",
+                "com_sex_oral_P_FE_1": "\"唔……我不会用舌头……你别急……\"\n\n$self$手忙脚乱地又舔又含，节奏乱七八糟。",
+                "com_sex_oral_P_FE_2": "\"第一次做……原来这么累……\"\n\n$self$含着喘气，嘴角已经酸得发麻。",
+                "com_sex_oral_P_FE_3": "\"这样……对吗……我完全没经验……\"\n\n$self$又慌又窘，只能笨拙地吞吐着。",
+                "com_sex_oral_P_FE_4": "\"唔……不行了……嘴酸……\"\n\n初次口侍的生涩让$self$的动作又慢又僵，眼泪憋在眼眶里。",
+                "com_sex_oral_P_FE_5": "\"……快点结束。\"\n\n$self$面无表情地含着，只有泛红的眼角泄了底。",
+                "com_sex_oral_P_FE_Partner_1": "\"别急……用嘴唇裹住就行。\"\n\n察觉到对方口中的生涩，$self$放轻了声音。"
             }
         }
     }

@@ -33,7 +33,17 @@ public class RecordingEvaluator
 
     public string description = "";
 
+    /// <summary>
+    /// Flat recording-level score added once, before every package's score is summed in.
+    /// Keep low (or 0) - the bulk of a recording's score should come from its packages.
+    /// </summary>
     public float baseScore = 0f;
+
+    /// <summary>
+    /// Base score of every package that features a selected (main or rival) actor, before that
+    /// package's matched goals add their scoreBonus_flat / packageMultiplier on top.
+    /// </summary>
+    public float packageBaseScore = 0f;
 
     /// <summary>
     /// Output-only conversion factor from score to an estimated value. Not wired into
@@ -70,6 +80,63 @@ public class RecordingEvaluator
     /// without a separate ratio check. 0 = no minimum.
     /// </summary>
     public float minimumScoreRequirement = 0f;
+
+    /// <summary>
+    /// Overlength pressure on quality: qualityScore = totalScore x min(1, (referenceMinutes / minutes) ^
+    /// lengthPenaltyExponent) - no effect up to referenceMinutes, dropping past it. Good work needs pacing.
+    /// referenceMinutes 0 = durationRequirement.maxMinutes. Exponent 0 = no length pressure.
+    /// minimumScoreRequirement still checks the raw totalScore.
+    /// </summary>
+    public float referenceMinutes = 0f;
+    public float lengthPenaltyExponent = 0f;
+
+    /// <summary>
+    /// Fame each copy sold gives every main actor of a recording saved with this evaluator (see
+    /// ItemComponent_Records.OnSold / FameTracker). Empty fameType or 0 = no fame.
+    /// </summary>
+    public string fameType = "";
+    public float famePerBuyer = 0f;
+
+    /// <summary>
+    /// Rank track (Ranks index) whose level pricePremium sets a recording's price premium: at save, the
+    /// highest premium among its main actors' current levels is stored on the recording and stays fixed.
+    /// Empty = no premium.
+    /// </summary>
+    public string rankTrackID = "";
+
+    /// <summary>
+    /// Letter grades, highest first. quality = qualityScore x scoreToValueRatio / basePrice (the same
+    /// number sales read as QualityModifier). The first grade whose minQuality and minOptionalGoals
+    /// (satisfied non-mandatory goals, incl. subcategories) are both met wins.
+    /// </summary>
+    public List<QualityGrade> qualityGrades = new List<QualityGrade>();
+    public class QualityGrade
+    {
+        public string grade = "";
+        public float minQuality = 0f;
+        public int minOptionalGoals = 0;
+        /// <summary>
+        /// Studio renown each sold copy of a recording at this grade gives its seller (see
+        /// ItemComponent_Records.GetSalesRenown / SalesManager.AddRenown).
+        /// </summary>
+        public float renownPerBuyer = 0f;
+    }
+
+    public QualityGrade GetQualityGrade(string grade)
+    {
+        return string.IsNullOrEmpty(grade) ? null : qualityGrades.Find(x => x.grade == grade);
+    }
+
+    /// <summary>
+    /// True if grade ranks at or above minGrade in this evaluator's qualityGrades (listed highest first).
+    /// False if either grade isn't defined here.
+    /// </summary>
+    public bool IsGradeAtLeast(string grade, string minGrade)
+    {
+        int g = qualityGrades.FindIndex(x => x.grade == grade);
+        int min = qualityGrades.FindIndex(x => x.grade == minGrade);
+        return g >= 0 && min >= 0 && g <= min;
+    }
 
 
     /// <summary>
@@ -114,8 +181,9 @@ public class RecordingEvaluator
                 var tags = rec.GetActorTags(baseID);
                 bool ok = Utility.ListContainsLoose(tags, requireTag_Any)
                     && Utility.ListContainsStrict(tags, requireTag_All)
-                    && !Utility.ListContainsLoose(tags, excludeTag_Any)
-                    && !Utility.ListContainsStrict(tags, excludeTag_All);
+                    // ListContainsLoose/Strict treat an empty list as "contains", so only test non-empty exclude lists
+                    && !(excludeTag_Any.Count > 0 && Utility.ListContainsLoose(tags, excludeTag_Any))
+                    && !(excludeTag_All.Count > 0 && Utility.ListContainsStrict(tags, excludeTag_All));
                 if (ok) qualifying++;
             }
 
@@ -131,29 +199,136 @@ public class RecordingEvaluator
         public float scoreBonus_mult = 1f;
     }
 
-    public List<ActorFeatures> actorFeatures = new List<ActorFeatures>();
+    /// <summary>
+    /// featureIDs into Index_ErAV.actorFeatures - definitions are shared across evaluators.
+    /// </summary>
+    [JsonProperty("actorFeatures")] protected List<string> actorFeatureIDs = new List<string>();
 
+    List<ActorFeatures> _actorFeatures = null;
+    [JsonIgnore] public List<ActorFeatures> ActorFeatureList
+    {
+        get
+        {
+            if (_actorFeatures == null)
+            {
+                _actorFeatures = new List<ActorFeatures>();
+                var index = scr_System_Serializer.current.MasterList.ErAV;
+                foreach (var id in actorFeatureIDs)
+                {
+                    var f = index.GetActorFeatureByID(id);
+                    if (f == null) UnityEngine.Debug.Log($"RecordingEvaluator [{this.id}] references unknown actorFeature [{id}]");
+                    else if (!_actorFeatures.Contains(f)) _actorFeatures.Add(f);
+                }
+            }
+            return _actorFeatures;
+        }
+    }
+
+    /// <summary>
+    /// displayName IDs into Index_ErAV.goals - definitions are shared across evaluators, so the
+    /// same goal is the same object everywhere it's referenced.
+    /// </summary>
+    [JsonProperty("optionalGoals")] protected List<string> optionalGoalIDs = new List<string>();
+
+    /// <summary>
+    /// Goals the recording must satisfy (same rules as optional goals), otherwise it is
+    /// disqualified. IDs into Index_ErAV.goals.
+    /// </summary>
+    [JsonProperty("mandatoryGoals")] protected List<string> mandatoryGoalIDs = new List<string>();
 
     List<OptionalGoal> _optionalGoals = null;
+    /// <summary>
+    /// optionalGoals IDs, plus every alwaysActive goal in Index_ErAV.goals - except ones already
+    /// in MandatoryGoals, and ones named in the conflictingGoals of any goal this evaluator uses
+    /// (mandatory, listed optional, or alwaysActive). Conflicts only cancel alwaysActive; a goal
+    /// listed explicitly still applies.
+    /// </summary>
     [JsonIgnore] public List<OptionalGoal> OptionalGoals
     {
         get
         {
             if (_optionalGoals == null)
             {
-                _optionalGoals = new List<OptionalGoal>();
-                _optionalGoals.AddRange(optionalGoals);
-                _optionalGoals.AddRange(scr_System_Serializer.current.MasterList.ErAV.globalOptionalGoals);
-                Utility.DistinctInPlace(_optionalGoals);
+                _optionalGoals = ResolveGoals(optionalGoalIDs);
+
+                var alwaysActive = scr_System_Serializer.current.MasterList.ErAV.goals.Where(g => g.alwaysActive).ToList();
+
+                var suppressed = new HashSet<string>();
+                foreach (var g in MandatoryGoals.Concat(_optionalGoals).Concat(alwaysActive))
+                {
+                    foreach (var id in g.conflictingGoals) suppressed.Add(id);
+                }
+
+                foreach (var g in alwaysActive)
+                {
+                    if (suppressed.Contains(g.displayName) || MandatoryGoals.Contains(g) || _optionalGoals.Contains(g)) continue;
+                    _optionalGoals.Add(g);
+                }
             }
             return _optionalGoals;
         }
     }
 
-    [JsonProperty] protected List<OptionalGoal> optionalGoals = new List<OptionalGoal>();
+    List<OptionalGoal> _mandatoryGoals = null;
+    [JsonIgnore] public List<OptionalGoal> MandatoryGoals
+    {
+        get
+        {
+            if (_mandatoryGoals == null) _mandatoryGoals = ResolveGoals(mandatoryGoalIDs);
+            return _mandatoryGoals;
+        }
+    }
+
+    List<OptionalGoal> ResolveGoals(List<string> ids)
+    {
+        var list = new List<OptionalGoal>();
+        var index = scr_System_Serializer.current.MasterList.ErAV;
+        foreach (var gid in ids)
+        {
+            var g = index.GetGoalByID(gid);
+            if (g == null) UnityEngine.Debug.Log($"RecordingEvaluator [{this.id}] references unknown goal [{gid}]");
+            else if (!list.Contains(g)) list.Add(g);
+        }
+        return list;
+    }
+
+    List<OptionalGoal> _allGoals = null;
     /// <summary>
-    /// Match different genre.
-    /// When satisfied, add or replace nameTemplate
+    /// MandatoryGoals followed by OptionalGoals. A goal listed in both counts once, as mandatory.
+    /// Top-level goals only - subCategories hang off each entry.
+    /// </summary>
+    [JsonIgnore] public List<OptionalGoal> AllGoals
+    {
+        get
+        {
+            if (_allGoals == null)
+            {
+                _allGoals = new List<OptionalGoal>();
+                _allGoals.AddRange(MandatoryGoals);
+                _allGoals.AddRange(OptionalGoals);
+                Utility.DistinctInPlace(_allGoals);
+            }
+            return _allGoals;
+        }
+    }
+
+    /// <summary>
+    /// Which side of a matching EP a main actor (actors_main) must occupy for the EP to count.
+    /// Any = no restriction (the package only needs to feature a main or rival actor).
+    /// </summary>
+    public enum GoalActorRole
+    {
+        Any,
+        Doer,
+        Receiver
+    }
+
+    /// <summary>
+    /// Match different genre. Works on two levels:
+    /// 1. per package - a package matching this goal gets scoreBonus_flat and packageMultiplier.
+    /// 2. per recording - once the matched share of packages reaches requiredRatio (and
+    ///    minOccurrences), scoreMultiplier applies to the whole recording and
+    ///    namingTemplateOverride becomes available.
     /// </summary>
     public class OptionalGoal
     {
@@ -246,24 +421,75 @@ public class RecordingEvaluator
         public List<string> matchTags_ReceiverSelfTag = new List<string>();
         public List<string> matchTags_ReceiverTargetTag = new List<string>();
 
-        public float scoreMultiplier = 1f;  // score mult
+        /// <summary>
+        /// An EP whose DoerTargetTag contains any of these never matches, e.g. excluding "sex" from
+        /// an "unsafe" (intimate contact) goal, since sex COMs carry "unsafe" too.
+        /// </summary>
+        public List<string> excludeTags_DoerTargetTag = new List<string>();
 
         /// <summary>
-        /// Flat points added per matched action for this goal - applies to every match
-        /// regardless of minOccurrences, unlike scoreMultiplier which only kicks in once the
-        /// goal's occurrence threshold is met.
+        /// When true, the matching EP's command must have succeeded: Success / CriticalSuccess, or
+        /// Accept on a completed package (a command without a difficulty check). Failure,
+        /// CriticalFailure, refusals, and snapshots taken before the package finished (still
+        /// Accept, difficulty not yet rolled) don't count.
+        /// </summary>
+        public bool requireSuccess = false;
+
+        /// <summary>
+        /// When not Any, an EP only matches if a main actor is its Doer / Receiver. This is what
+        /// separates e.g. victim (main actor receives) from aggressor (main actor does) when the
+        /// same EP carries both sides' tags.
+        /// </summary>
+        public GoalActorRole mainActorRole = GoalActorRole.Any;
+
+        /// <summary>
+        /// Top-level goals only. When true, every evaluator checks this goal as optional without
+        /// listing it, unless the evaluator lists it as mandatory or a goal it uses names this
+        /// goal in conflictingGoals.
+        /// </summary>
+        public bool alwaysActive = false;
+
+        /// <summary>
+        /// Goal IDs whose alwaysActive is cancelled for any evaluator that uses this goal.
+        /// </summary>
+        public List<string> conflictingGoals = new List<string>();
+
+        /// <summary>
+        /// Recording-level multiplier, applied to the whole score once this goal is satisfied
+        /// (see requiredRatio / minOccurrences).
+        /// </summary>
+        public float scoreMultiplier = 1f;
+
+        /// <summary>
+        /// Flat points added to every matched package's score, regardless of whether the goal
+        /// is satisfied at recording level.
         /// </summary>
         public float scoreBonus_flat = 0f;
+
+        /// <summary>
+        /// Per-package multiplier for every matched package, regardless of recording-level
+        /// satisfaction. Multiple matched goals stack additively: (1 + sum of (mult - 1)).
+        /// </summary>
+        public float packageMultiplier = 1f;
+
+        /// <summary>
+        /// Share of packages that must match for the recording to satisfy this goal. Top-level
+        /// goals compare against every active package featuring a selected actor; subCategories
+        /// compare against their parent goal's matched packages. 0 = no ratio requirement.
+        /// </summary>
+        public float requiredRatio = 0f;
 
         public List<string> namingTemplateOverride = new List<string>();
 
         /// <summary>
-        /// might be obsolete
+        /// Absolute floor on matched packages, checked alongside requiredRatio so a tiny
+        /// recording can't satisfy a goal with a single package. Values below 1 count as 1.
         /// </summary>
         public int minOccurrences = 1;
 
         /// <summary>
-        /// though structurally more nesting is permitted, we will restrict ourselves to not do that by handcoding 1 level depth logic during query
+        /// though structurally more nesting is permitted, we will restrict ourselves to not do that by handcoding 1 level depth logic during query.
+        /// A package can only match a subcategory if it also matches the parent goal.
         /// </summary>
         public List<OptionalGoal> subCategories = new List<OptionalGoal>();
     }

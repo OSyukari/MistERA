@@ -110,7 +110,11 @@ public enum EventTrigger
     /// Every in-game hour on every character, after its womb/labor tick (Character_Trainable.Observer_GlobalHour).
     /// Keep self conditions cheap - this is checked for every character each hour.
     /// </summary>
-    OnHourlyUpdate
+    OnHourlyUpdate,
+    /// <summary>
+    /// Every day change on the player, before any day update runs (scr_System_Time.UpdateSingleDay).
+    /// </summary>
+    OnDayChange
 }
 /// <summary>
 /// Ordered, 3 first are considered member of faction, and the rest is not (temp visitor / prisoner)
@@ -912,7 +916,53 @@ public class Event : I_SerializationCallbackReceiver
             /// job, or a specially tracked job matching them (I_RequireSpecialTracker, e.g. a patient who is not an actor).
             /// jobTypeName (class name, e.g. "Job_CSection") limits it to that job type. True if any job was terminated.
             /// </summary>
-            TerminateJob
+            TerminateJob,
+
+            /// <summary>
+            /// [string targetKey, string rankTrackID, string marketFactionID, string adviceAppendKey, string rankNameAppendKey,
+            /// optional string studioFactionID] <br/>
+            /// Rank evaluation of the first character in targetKey (RankUtility.TryPromote): promotes her to the next level
+            /// of rankTrackID if its requirements are met. Release / earnings requirements read marketFactionID's release
+            /// registry (the clientele provider - every seller counts); studio conditions read studioFactionID.
+            /// AppendStrings[rankNameAppendKey] = her rank name afterwards; AppendStrings[adviceAppendKey] = one line per
+            /// requirement (unmet ones highlighted) when not promoted. True only if promoted - branch on it.
+            /// Faction arguments accept a faction ID, "@selfHome" or "@selfActiveFaction" (EventUtility.ResolveFactionArg).
+            /// </summary>
+            EvaluateRank,
+
+            /// <summary>
+            /// [string studioFactionID, string rankTrackID, string adviceAppendKey, string rankNameAppendKey] <br/>
+            /// Same as EvaluateRank, for the selling faction's own rank (RankUtility.TryPromoteStudio).
+            /// </summary>
+            EvaluateStudioRank,
+
+            /// <summary>
+            /// [string factionID, float delta] <br/>
+            /// Permanently adds (or removes) sales renown of that faction (SalesManager.AddRenown, capped by its rank).
+            /// </summary>
+            ModStudioRenown,
+
+            /// <summary>
+            /// [string factionID, string clienteleID (empty = all), float delta] <br/>
+            /// Temporary market share bump (SalesManager.BumpMarketShare) - fades back toward the renown target daily.
+            /// </summary>
+            ModMarketShare,
+
+            /// <summary>
+            /// [string sellerFaction, string providerFactionID, string clienteleID, optional float commission (0..1),
+            /// optional float startingShare, optional PaymentCadence cadence, optional bool isPublic (default true)] <br/>
+            /// isPublic false = sells privately: no renown, no renown-driven market share, no studio rank from this clientele.<br/>
+            /// Lets sellerFaction sell into one clientele of providerFactionID (SalesManager.GrantAccess); granting again
+            /// updates the link (e.g. a new commission). Sales are recorded in the provider's release registry and the
+            /// provider receives the commission. sellerFaction accepts "@selfHome" / "@selfActiveFaction".
+            /// </summary>
+            GrantClienteleAccess,
+
+            /// <summary>
+            /// [string sellerFaction, string providerFactionID, string clienteleID] <br/>
+            /// Removes a runtime-granted access link (template links stay).
+            /// </summary>
+            RevokeClienteleAccess
 
         }
     }

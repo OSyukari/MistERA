@@ -19,7 +19,11 @@
                 ],
                 "mealHours": [7, 12, 18],
                 "activeHoursStart": 7,
-                "activeHoursEnd": 22
+                "activeHoursEnd": 22,
+                "_comment_salesClientele": "Kiryu-gumi is the provider of the AV market: other factions sell into it through access links (MapPlan.salesClienteleAccess / GrantClienteleAccess), each with its own commission. Sales through it are recorded in this faction's release registry (shared by every seller); renownRankTrackID is the studio rank ladder for every seller in this market.",
+                "salesClientele": [
+                    { "clienteleID": "salesclientele_av", "worldIDs": ["world_erav_modern_jp"], "startingShare": 0.01, "cadence": "Monthly", "renownRankTrackID": "rank_av_studio" }
+                ]
             }
 
         ],

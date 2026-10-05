@@ -1,0 +1,22 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ranks_av_actress.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "rank_av_actress": "AV Actress Rank",
+                "rank_av_actress_0": "Rookie",
+                "rank_av_actress_1": "Regular",
+                "rank_av_actress_2": "Popular Actress",
+                "rank_av_actress_3": "Top Actress",
+
+                "rank_require_one": "Meet one of the following:",
+                "rank_req_fameScore": "Rank score",
+                "rank_req_releases": "Lead releases",
+                "rank_req_earnings": "Sales as lead",
+                "rank_eval_maxed": "She is already at the top rank."
+            }
+        }
+    }
+}

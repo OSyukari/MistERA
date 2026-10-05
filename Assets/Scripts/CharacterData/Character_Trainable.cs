@@ -789,8 +789,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// <summary>
     /// Advances the reproduction cycle by whole days. tickWomb also bulk-advances the wombs 24 hours per day - only for
     /// skipping time (debug advance); the daily update must not, since Observer_GlobalHour already ticks the womb hourly.
+    /// notify: send status notices (NotifyOvulation) - daily update only, not on womb registration or debug advance.
     /// </summary>
-    public void TickMenstruation(int year = 0, int month = 0, int day = 1, bool log = false, bool tickWomb = false)
+    public void TickMenstruation(int year = 0, int month = 0, int day = 1, bool log = false, bool tickWomb = false, bool notify = false)
     {
         if (ReproCycle == null) return;
         if (ReproTemplate == null) return;
@@ -822,6 +823,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             
 
             var ispregnant = wombs != null && wombs.Any(w => w.isPregnant);
+            bool wasOvulating = ReproCycle.CanOvulate;
             ReproCycle.Tick(ReproTemplate, ispregnant, stagesupressed, emergencyActive, forceOvulateActive,  isOvumexhausted);
 
             foreach (var wb in wombs)
@@ -839,6 +841,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 foreach (var wb in wombs) wb.ovulation();
             }
 
+            // menstrual cycle only - an estrus cycle's ovulate-eligible stage is heat, ovulation itself comes on climax
+            if (notify && !wasOvulating && ReproCycle is Cycles_Menstruation && ReproCycle.CanOvulate) NotifyOvulation();
+
             TickCyclePhaseStatus();
             TickPregnancyMoodStatus();
         }
@@ -853,6 +858,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
             Debug.Log(debugmsg);
         }
+    }
+
+    /// <summary>
+    /// Repro_OvulationStart: one-line notice that the cycle entered ovulation. Only sent when the player should know
+    /// (ReproductionUtility.IsReproStatusVisibleToPlayer) and then shown wherever the player is.
+    /// </summary>
+    void NotifyOvulation()
+    {
+        if (!ReproductionUtility.IsReproStatusVisibleToPlayer(this)) return;
+        var ev = new EventInstance(this, ReproductionUtility.event_ovulation, "");
+        ev.displayOverride = true;
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
 
     /// <summary>
@@ -1041,7 +1058,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (updateOrder != 2) return;
         if (HasMenstrualCycle)
         {
-            TickMenstruation();
+            TickMenstruation(notify: true);
 
             foreach (var wb in wombs)
             {
@@ -1144,7 +1161,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 _actorKeywords = new List<string>();
                 if (this.Template != null) _actorKeywords.AddRange(this.Template.actorKeyword);
                 if (this.Race != null) _actorKeywords.AddRange(this.Race.RaceType);
-                //if (this.RaceTemplate != null) _actorKeywords.AddRange(RaceTemplate.)
+                if (this.RaceTemplate != null) _actorKeywords.AddRange(this.RaceTemplate.actorKeyword);
                 Utility.DistinctInPlace(_actorKeywords);
             }
             return _actorKeywords;
@@ -1221,6 +1238,25 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     [JsonIgnore] public StatsManager Stats { get { if (stats == null) stats = new StatsManager();
         return stats; } }
+
+    [JsonProperty]
+    protected FameTracker fame = null;
+
+    /// <summary>
+    /// Fame by source type (see FameTracker) - e.g. ErAV recordings add "av" / "leaked" fame to their main
+    /// actors as copies sell.
+    /// </summary>
+    [JsonIgnore] public FameTracker Fame { get { if (fame == null) fame = new FameTracker();
+        return fame; } }
+
+    [JsonProperty]
+    protected RankTracker ranks = null;
+
+    /// <summary>
+    /// Current level on each rank track (see RankTrack) - only changes through a promotion evaluation.
+    /// </summary>
+    [JsonIgnore] public RankTracker Ranks { get { if (ranks == null) ranks = new RankTracker();
+        return ranks; } }
 
     /// <summary>
     /// Current per-character emotional-reaction state (Angry/Happy/Focused/etc). See RelationshipManager /
@@ -3372,6 +3408,8 @@ public class Character_Base_Index : I_IndexMergeable, I_IndexHasID, I_RemoveNonE
         var str = JsonConvert.SerializeObject(template, UtilityEX.SerializerSettings);
         var chara = JsonConvert.DeserializeObject<Character_Trainable>(str, UtilityEX.SerializerSettings);
         chara.Template = null;
+        // resolve portraits from the template instead of saving a full copy per character
+        if (template.Portrait != null) chara.PortraitManager.InitFromTemplate(id);
         return chara;
     }
 

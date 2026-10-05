@@ -339,6 +339,24 @@ public static class EventUtility
                     return room != null && room.FactionOwner != null && Utility.CompareValue(room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID), LogicalOperand.eq, isRoomOwner);
                 }
                 else return false;
+            case "canRequestLeave":
+                // [targetKey] - c = requester; true if c may ask anyone in targetKey to leave (RequestLeaveUtility.CanRequestLeave)
+                if (r.parameters.Count >= 2 && ev.Targets.TryGetValue(r.parameters[1], out var leaveTargets))
+                {
+                    return leaveTargets.Exists(x => RequestLeaveUtility.CanRequestLeave(c, x, out _));
+                }
+                else return false;
+            case "canBeRequestedToLeave":
+                // [requesterKey] - c = target; requester is self, or the first chara in requesterKey (RequestLeaveUtility.CanRequestLeave)
+                {
+                    var requester = ev.Self;
+                    if (r.parameters.Count >= 2 && r.parameters[1] != "" && r.parameters[1] != "self")
+                    {
+                        if (!ev.Targets.TryGetValue(r.parameters[1], out var requesters) || requesters.Count < 1) return false;
+                        requester = requesters[0];
+                    }
+                    return RequestLeaveUtility.CanRequestLeave(requester, c, out _);
+                }
             case "isOppositeSexForRoom":
                 // [bool] - Room_Instance.IsOppositeSex against c's current room gender preference
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isOppositeSex))
@@ -976,6 +994,18 @@ public static class EventUtility
         return owner.Targets.TryGetValue(key, out result);
     }
 
+    /// <summary>
+    /// Resolves a faction argument: "@selfHome" = the event self's home faction, "@selfActiveFaction" = its currently
+    /// active faction, anything else = a faction ID.
+    /// </summary>
+    public static Manageable ResolveFactionArg(EventInstance owner, string arg)
+    {
+        if (string.IsNullOrEmpty(arg)) return null;
+        if (arg == "@selfHome") return owner?.Self?.FactionManager.Faction_Home;
+        if (arg == "@selfActiveFaction") return owner?.Self == null ? null : UtilityEX.GetActiveFactionFrom(new List<Character_Trainable>() { owner.Self })?.FactionOwnerRoot;
+        return scr_System_CampaignManager.current.FindFactionByID(arg);
+    }
+
     /// <summary>self plus the player's party members (only when self is the player - nobody else has followers).</summary>
     public static List<Character_Trainable> ResolveSelfAndFollowers(Character_Trainable self)
     {
@@ -1589,6 +1619,67 @@ public static class EventUtility
                 }
                 if (!launched.BindRoles(roles, owner)) return false;
                 scr_System_CampaignManager.current.Register(job);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.EvaluateRank:
+            {
+                if (exec.arguments.Count < 5) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var rankCharas) || rankCharas.Count == 0 || rankCharas[0] == null) return false;
+                var rankMarket = ResolveFactionArg(owner, exec.arguments[2]);
+                var rankStudio = exec.arguments.Count >= 6 ? ResolveFactionArg(owner, exec.arguments[5]) : null;
+                var advice = new List<string>();
+                bool promoted = RankUtility.TryPromote(rankCharas[0], exec.arguments[1], rankMarket, rankStudio, out var rankName, advice);
+                owner.AppendStrings[exec.arguments[4]] = new List<string>() { rankName };
+                // one entry joined by newlines - multi-entry AppendStrings render comma-joined
+                if (!promoted) owner.AppendStrings[exec.arguments[3]] = new List<string>() { string.Join("\n", advice) };
+                return promoted;
+            }
+            case Event.EventEntry.ExecutionType.EvaluateStudioRank:
+            {
+                if (exec.arguments.Count < 4) return false;
+                var studio = ResolveFactionArg(owner, exec.arguments[0]);
+                var studioAdvice = new List<string>();
+                bool studioPromoted = RankUtility.TryPromoteStudio(studio, exec.arguments[1], out var studioRankName, studioAdvice);
+                owner.AppendStrings[exec.arguments[3]] = new List<string>() { studioRankName };
+                if (!studioPromoted) owner.AppendStrings[exec.arguments[2]] = new List<string>() { string.Join("\n", studioAdvice) };
+                return studioPromoted;
+            }
+            case Event.EventEntry.ExecutionType.ModStudioRenown:
+            {
+                if (exec.arguments.Count < 2 || !float.TryParse(exec.arguments[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float renownDelta)) return false;
+                var renownFaction = ResolveFactionArg(owner, exec.arguments[0]);
+                if (renownFaction == null || renownFaction.SalesManager == null) return false;
+                renownFaction.SalesManager.AddRenown(renownDelta);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.ModMarketShare:
+            {
+                if (exec.arguments.Count < 3 || !float.TryParse(exec.arguments[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float shareDelta)) return false;
+                var shareFaction = ResolveFactionArg(owner, exec.arguments[0]);
+                if (shareFaction == null || shareFaction.SalesManager == null) return false;
+                shareFaction.SalesManager.BumpMarketShare(exec.arguments[1], shareDelta);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.GrantClienteleAccess:
+            {
+                if (exec.arguments.Count < 3) return false;
+                var accessSeller = ResolveFactionArg(owner, exec.arguments[0]);
+                if (accessSeller == null || accessSeller.SalesManager == null) return false;
+                var access = new SalesManager.ClienteleAccess { providerFactionID = exec.arguments[1], clienteleID = exec.arguments[2] };
+                var inv = System.Globalization.CultureInfo.InvariantCulture;
+                if (exec.arguments.Count >= 4 && exec.arguments[3] != "" && float.TryParse(exec.arguments[3], System.Globalization.NumberStyles.Float, inv, out float commission)) access.commission = commission;
+                if (exec.arguments.Count >= 5 && exec.arguments[4] != "" && float.TryParse(exec.arguments[4], System.Globalization.NumberStyles.Float, inv, out float accessShare)) access.startingShare = accessShare;
+                if (exec.arguments.Count >= 6 && exec.arguments[5] != "" && Enum.TryParse(exec.arguments[5], out PaymentCadence accessCadence)) access.cadence = accessCadence;
+                if (exec.arguments.Count >= 7 && exec.arguments[6] != "" && bool.TryParse(exec.arguments[6], out bool accessPublic)) access.isPublic = accessPublic;
+                accessSeller.SalesManager.GrantAccess(access);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.RevokeClienteleAccess:
+            {
+                if (exec.arguments.Count < 3) return false;
+                var revokeSeller = ResolveFactionArg(owner, exec.arguments[0]);
+                if (revokeSeller == null || revokeSeller.SalesManager == null) return false;
+                revokeSeller.SalesManager.RevokeAccess(exec.arguments[1], exec.arguments[2]);
                 return true;
             }
             case Event.EventEntry.ExecutionType.TerminateJob:

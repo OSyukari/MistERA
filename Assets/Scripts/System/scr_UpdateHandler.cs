@@ -1527,7 +1527,6 @@ public class scr_UpdateHandler : MonoBehaviour
         return this.Message.exp;
     }
 
-
     /// <summary>
     /// executeCallbacks == true will cause infinite loop if flushcollectedlogs is inside callbacks !!
     /// </summary>

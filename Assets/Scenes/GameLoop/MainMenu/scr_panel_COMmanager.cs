@@ -141,7 +141,7 @@ public class scr_panel_COMmanager : scr_Menu
 
                 roomActivityState.SetText(curr.ActivityStateString);
 
-                ongoingCOMs.text = String.Join(", ", aps);
+                ongoingCOMs.text = aps.Count > 0 ? String.Join(", ", aps) : "no action";
                 break;
             case COMTabs.Sex:
                 if (scr_System_CampaignManager.current.displaySex)

@@ -72,6 +72,74 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "kiss", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始接吻 睡眠中",
+                            "responses": ["com_sex_oral_kiss_Begin_FE_Sleep_1", "com_sex_oral_kiss_Begin_FE_Sleep_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "kiss", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始接吻 时停中",
+                            "responses": ["com_sex_oral_kiss_Begin_FE_Timestop_1", "com_sex_oral_kiss_Begin_FE_Timestop_2"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_M"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 开始接吻 有允许",
+                                    "responses": ["com_sex_oral_kiss_Begin_FE_Player_1", "com_sex_oral_kiss_Begin_FE_Player_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始接吻 有允许",
+                                    "responses": ["com_sex_oral_kiss_Begin_FE_1", "com_sex_oral_kiss_Begin_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "trembling"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始接吻 未允许 好意",
+                                    "responses": ["com_sex_oral_kiss_Begin_FE_3", "com_sex_oral_kiss_Begin_FE_4"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "kiss", "fear", "trembling", "tearful"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始接吻 未允许 敌意",
+                            "responses": ["com_sex_oral_kiss_Begin_FE_5", "com_sex_oral_kiss_Begin_FE_6"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_M"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "kiss", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 开始接吻",
+                            "responses": ["com_sex_oral_kiss_Begin_FE_Partner_1", "com_sex_oral_kiss_Begin_FE_Partner_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
                                 "selfTags": [
                                     "timestop"
                                 ]
@@ -197,6 +265,74 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "kiss", "sleeping", "relaxed"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 睡眠中 接吻",
+                            "responses": ["com_sex_oral_kiss_FE_Sleep_1"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_M", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "kiss", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 时停中 接吻",
+                            "responses": ["com_sex_oral_kiss_FE_Timestop_1"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_M"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 接吻 有允许",
+                                    "responses": ["com_sex_oral_kiss_FE_Player_1"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 接吻 有允许（还不熟练）",
+                                    "responses": ["com_sex_oral_kiss_FE_1", "com_sex_oral_kiss_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "kiss", "blush", "shy", "trembling"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 接吻 未允许 好意（还不熟练）",
+                                    "responses": ["com_sex_oral_kiss_FE_3"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "kiss", "angry", "cry", "tearful"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 接吻 未允许 敌意",
+                            "responses": ["com_sex_oral_kiss_FE_4", "com_sex_oral_kiss_FE_5"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_M"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "kiss", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 接吻",
+                            "responses": ["com_sex_oral_kiss_FE_Partner_1"]
+                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -911,7 +1047,32 @@
                 "com_sex_oral_kiss_161": "$self$失笑，抹掉唇上的水。\n\"哈……这是亲嘴还是洗脸，全是口水。\"",
                 "com_sex_oral_kiss_162": "$self$的眼神已经飘走，唇敷衍地贴着。\n\"……差不多得了，我嘴都木了。\"",
                 "com_sex_oral_kiss_Begin_Timestop_1": "$target$捏着她的下巴贴上唇，舌尖撬开齿关探进去搅弄，渡进来的津液满到从$self$的嘴角溢出，也不见她咽。",
-                "com_sex_oral_kiss_Begin_Timestop_2": "$self$的眼睛还睁着，瞳孔停在原来的位置，软舌被含住拽出唇外，垂着不动。"
+                "com_sex_oral_kiss_Begin_Timestop_2": "$self$的眼睛还睁着，瞳孔停在原来的位置，软舌被含住拽出唇外，垂着不动。",
+
+                "com_sex_oral_kiss_Begin_FE_Sleep_1": "睡梦中的$self$睫毛颤了颤，唇上的触感让她无意识地咂了咂嘴，没有醒来。",
+                "com_sex_oral_kiss_Begin_FE_Sleep_2": "$self$的呼吸轻轻乱了半拍，唇被含住时哼出细小的鼻音，还是没醒。",
+                "com_sex_oral_kiss_Begin_FE_Timestop_1": "初吻在凝固的时间里被夺走，$self$的唇保持着微抿的形状，眼神停在原地。",
+                "com_sex_oral_kiss_Begin_FE_Timestop_2": "$self$脸上还停留着时停前的表情，浑然不知自己的初吻正在被品尝。",
+                "com_sex_oral_kiss_Begin_FE_Player_1": "\"初吻……给你了哦，要好好珍惜……\"\n\n唇齿相贴的瞬间，$self$紧张得闭紧了眼。",
+                "com_sex_oral_kiss_Begin_FE_Player_2": "\"我不太会……你、你教我……\"\n\n$self$的脸红透了，搭在$target$胸前的那只手抖个不停。",
+                "com_sex_oral_kiss_Begin_FE_1": "\"等、等下……这是我的初吻……\"\n\n$self$紧张得浑身僵硬，睫毛抖个不停。",
+                "com_sex_oral_kiss_Begin_FE_2": "\"呜……原来接吻……是这种感觉……\"\n\n初吻的触感让$self$脑子一片空白，心跳快得发疼。",
+                "com_sex_oral_kiss_Begin_FE_3": "\"我的初吻……你要负责哦……\"\n\n$self$鼓起勇气凑上去，唇却在发抖。",
+                "com_sex_oral_kiss_Begin_FE_4": "\"轻、轻点……我第一次做这个……\"\n\n$self$紧张得不知道手该往哪放，最后攥住了衣角。",
+                "com_sex_oral_kiss_Begin_FE_5": "\"唔……不要……我的初吻……！\"\n\n$self$拼命想偏头躲开，眼泪涌了出来。",
+                "com_sex_oral_kiss_Begin_FE_6": "\"初吻……就这样毁了……\"\n\n唇被夺走的屈辱让$self$攥紧了拳头，指甲掐进掌心。",
+                "com_sex_oral_kiss_Begin_FE_Partner_1": "\"你……初吻还在？\"\n\n感觉到对方唇上笨拙的生涩，$self$愣了一下。",
+                "com_sex_oral_kiss_Begin_FE_Partner_2": "\"……原来这是你的第一次接吻。\"\n\n$self$放轻了力道，唇上多了分温柔。",
+
+                "com_sex_oral_kiss_FE_Sleep_1": "睡梦中的$self$的唇微微翕动着，像是在回应梦里什么东西。",
+                "com_sex_oral_kiss_FE_Timestop_1": "初吻残留的触感还留在唇上，定格的$self$没有任何表情变化。",
+                "com_sex_oral_kiss_FE_Player_1": "\"我的初吻……味道还好吗……？\"\n\n$self$红着脸看向$target$，紧张得舔了舔唇。",
+                "com_sex_oral_kiss_FE_1": "\"唔……我不会换气……等、等一下……\"\n\n$self$笨拙地追着$target$的唇，完全跟不上节奏。",
+                "com_sex_oral_kiss_FE_2": "\"初吻……原来这么软……\"\n\n$self$晕乎乎地喘着气，脸红得快烧起来。",
+                "com_sex_oral_kiss_FE_3": "\"我不知道……舌头该怎么放……\"\n\n$self$又慌又窘，唇齿间全乱了套。",
+                "com_sex_oral_kiss_FE_4": "\"……够了……放开我。\"\n\n被强夺的初吻只剩屈辱，$self$死死咬着牙。",
+                "com_sex_oral_kiss_FE_5": "\"……别碰我的嘴。\"\n\n$self$抹着唇，眼底的屈辱压都压不住。",
+                "com_sex_oral_kiss_FE_Partner_1": "\"别紧张……跟着我就好。\"\n\n察觉到对方唇上的生涩，$self$放慢了节奏。"
             }
         }
     }

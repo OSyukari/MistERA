@@ -7,23 +7,30 @@ public class Index_ErAV : I_IndexMergeable, I_IndexHasID, I_SerializationCallbac
     public List<RecordingEvaluator> recordingEvaluators = new List<RecordingEvaluator>();
 
     /// <summary>
-    /// Goals shared across every RecordingEvaluator (e.g. content-descriptor goals like
-    /// victim/aggressor/femdom that aren't tied to a specific production tier). Evaluated
-    /// by RecordingEvaluatorInstance identically to a RecordingEvaluator's own local
-    /// optionalGoals - matching, scoring, and naming all follow the same rules. Each
-    /// RecordingEvaluator keeps its own optionalGoals list for goals exclusive to it.
+    /// Every goal definition, keyed by displayName. RecordingEvaluators only reference these by
+    /// ID (mandatoryGoals / optionalGoals), so a goal exists once no matter how many evaluators
+    /// use it. subCategories stay nested inside their parent's definition.
     /// </summary>
-    public List<RecordingEvaluator.OptionalGoal> globalOptionalGoals = new List<RecordingEvaluator.OptionalGoal>();
+    public List<RecordingEvaluator.OptionalGoal> goals = new List<RecordingEvaluator.OptionalGoal>();
+
+    /// <summary>
+    /// Every actor feature definition, keyed by featureID. RecordingEvaluators reference these
+    /// by ID (actorFeatures).
+    /// </summary>
+    public List<RecordingEvaluator.ActorFeatures> actorFeatures = new List<RecordingEvaluator.ActorFeatures>();
 
     public void MergeWith(I_IndexMergeable list)
     {
         var l = list as Index_ErAV;
         if (l == null) return;
         if (l.recordingEvaluators != null) this.recordingEvaluators.AddRange(l.recordingEvaluators);
-        if (l.globalOptionalGoals != null) this.globalOptionalGoals.AddRange(l.globalOptionalGoals);
+        if (l.goals != null) this.goals.AddRange(l.goals);
+        if (l.actorFeatures != null) this.actorFeatures.AddRange(l.actorFeatures);
     }
 
     Dictionary<string, RecordingEvaluator> RecordingEvaluator_ID_Dictionary = new Dictionary<string, RecordingEvaluator>();
+    Dictionary<string, RecordingEvaluator.OptionalGoal> Goal_ID_Dictionary = new Dictionary<string, RecordingEvaluator.OptionalGoal>();
+    Dictionary<string, RecordingEvaluator.ActorFeatures> ActorFeature_ID_Dictionary = new Dictionary<string, RecordingEvaluator.ActorFeatures>();
 
     public void OnAfterDeserialize()
     {
@@ -37,8 +44,28 @@ public class Index_ErAV : I_IndexMergeable, I_IndexHasID, I_SerializationCallbac
             if (string.IsNullOrEmpty(i.id)) continue;
             if (!RecordingEvaluator_ID_Dictionary.TryAdd(i.id, i)) Debug.Log($"failed to add Index_ErAV recordingEvaluator id [{i.id}] due to duplicate");
         }
+
+        s.Add($"Index_ErAV : registering goal IDs with list length [{goals.Count}]");
+        foreach (var i in goals)
+        {
+            if (string.IsNullOrEmpty(i.displayName)) continue;
+            if (!Goal_ID_Dictionary.TryAdd(i.displayName, i)) Debug.Log($"failed to add Index_ErAV goal id [{i.displayName}] due to duplicate");
+        }
+
+        s.Add($"Index_ErAV : registering actorFeature IDs with list length [{actorFeatures.Count}]");
+        foreach (var i in actorFeatures)
+        {
+            if (string.IsNullOrEmpty(i.featureID)) continue;
+            if (!ActorFeature_ID_Dictionary.TryAdd(i.featureID, i)) Debug.Log($"failed to add Index_ErAV actorFeature id [{i.featureID}] due to duplicate");
+        }
     }
 
     public RecordingEvaluator GetRecordingEvaluatorByID(string id)
     { return RecordingEvaluator_ID_Dictionary.ContainsKey(id) ? RecordingEvaluator_ID_Dictionary[id] : null; }
+
+    public RecordingEvaluator.OptionalGoal GetGoalByID(string id)
+    { return Goal_ID_Dictionary.TryGetValue(id, out var v) ? v : null; }
+
+    public RecordingEvaluator.ActorFeatures GetActorFeatureByID(string id)
+    { return ActorFeature_ID_Dictionary.TryGetValue(id, out var v) ? v : null; }
 }

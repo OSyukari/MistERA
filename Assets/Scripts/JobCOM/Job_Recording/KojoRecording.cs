@@ -54,6 +54,49 @@ public class KojoRecording
     public string evaluatorID = "";
 
     /// <summary>
+    /// Letter grade from the evaluator's qualityGrades at save time (see RecordingEvaluatorInstance.grade).
+    /// Fixed once saved. Empty if saved without an evaluator or the evaluator defines no grades.
+    /// </summary>
+    public string grade = "";
+
+    /// <summary>
+    /// Sale price multiplier fixed at save time: the highest RankLevel.pricePremium among the main actors'
+    /// levels on the evaluator's rankTrackID (see canvas_videoEdit.SaveRecording). 1 = no premium.
+    /// </summary>
+    public float pricePremium = 1f;
+
+    /// <summary>
+    /// baseIDs of the main actors credited for this recording (fame, release counts, earnings). Written by
+    /// the video editor at save (its final actors_main); for a recording never saved through the editor,
+    /// resolved once on first access via MainActorIDs and kept. mainActorsResolved distinguishes
+    /// "not resolved yet" from "resolved to nobody".
+    /// </summary>
+    public List<string> mainActorIDs = new List<string>();
+    public bool mainActorsResolved = false;
+
+    [JsonIgnore]
+    public List<string> MainActorIDs
+    {
+        get
+        {
+            if (!mainActorsResolved)
+            {
+                // the main-actor pick reads per-actor participation counts that Initialize fills in
+                if (MessageCountByActor.Count == 0 && ActorSettings.Count > 0) Initialize();
+                var picks = new RecordingEvaluatorInstance(this, false);
+                SetMainActors(picks.actors_main.actors.Select(a => a.baseID));
+            }
+            return mainActorIDs;
+        }
+    }
+
+    public void SetMainActors(IEnumerable<string> baseIDs)
+    {
+        mainActorIDs = baseIDs.Where(id => !string.IsNullOrEmpty(id)).Distinct().ToList();
+        mainActorsResolved = true;
+    }
+
+    /// <summary>
     /// Unique ID that allows comparing whether 2 recording has same source
     /// </summary>
     public string RecordUID = "";

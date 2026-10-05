@@ -2495,6 +2495,25 @@ public class scr_System_CampaignManager : MonoBehaviour
         }
         return null;
     }
+    /// <summary>
+    /// Unique check for character generation: true if a live instance with this baseID exists outside the stasis room
+    /// (stasis houses persistent copies such as combat dummies, which must not block generating the real character).
+    /// </summary>
+    public bool HasNonStasisInstanceWithBaseID(string baseID)
+    {
+        foreach (var kvp in Index_referenceID)
+        {
+            var c = kvp.Value;
+            if (c == null || c.BaseID != baseID) continue;
+            if (statisRoomID != -1)
+            {
+                var room = map.FindRoomByChara(c.RefID);
+                if (room != null && room.RefID == statisRoomID) continue;
+            }
+            return true;
+        }
+        return false;
+    }
     public Character_Trainable FindInstanceByID(int id)
     {
         if (Index_referenceID.ContainsKey(id)) return Index_referenceID[id] as Character_Trainable;
@@ -3046,10 +3065,10 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
 
 
-    protected Character_Trainable GetCharaTemplate(string ID, bool allowDuplicate = false)
+    protected Character_Trainable GetCharaTemplate(string ID)
     {
         var genTemplate = scr_System_Serializer.current.MasterList.Character_Bases.GetGeneratorByID(ID);
-        if (genTemplate != null && genTemplate.TargetBaseID != "")
+        if (genTemplate != null)
         {
             return genTemplate.GenerateChara();
             // operate on template

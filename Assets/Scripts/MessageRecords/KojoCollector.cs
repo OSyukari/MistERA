@@ -255,6 +255,12 @@ public class KojoCollector : I_ResultStorage, I_Records
 
     public bool requireAnimate = true;
 
+    /// <summary>
+    /// Runtime only: experience log of the message collector this kojo is fetched for. Kojo Results register
+    /// their changes here (e.g. modifyRelationship) so they print in the same flush as the kojo.
+    /// </summary>
+    [JsonIgnore] public ExperienceLog expLog = null;
+
     public bool rightAlign = false;
     public bool isDoer = true;
     public bool isPlayerInvolved = false;
@@ -472,6 +478,15 @@ public class KojoCollector : I_ResultStorage, I_Records
         }
 
         IsForced = ep.isForced;
+
+        // first experience happening in this interaction (firstexp_[class] / firstexp_partner_[class]) - added to a copy,
+        // selfTags above is the EP's own cached tag list
+        var firstExpTags = ep.GetFirstExperienceTags(Owner);
+        if (firstExpTags.Count > 0)
+        {
+            this.selfTags = new List<string>(this.selfTags);
+            this.selfTags.AddRange(firstExpTags);
+        }
 
         isPlayerInvolved = isPlayerInvolved || ep.Package.actorRefs.Contains(scr_System_CampaignManager.current.Player.RefID);
         isRequestAccepted = ep.requestAccepted;

@@ -5,7 +5,11 @@ using Newtonsoft.Json;
 
 public static class CharaReqUtility
 {
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, Character_Trainable c, out bool hardlock)
+    /// <summary>
+    /// jobFaction: the faction/party owning the job being validated (Job.FactionOwner). Only COM validation
+    /// passes it; requireJobFaction and the JobFaction membertype scope fail without it.
+    /// </summary>
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, Character_Trainable c, out bool hardlock, I_IsJobGiver jobFaction = null)
     {
         bool logging = _tooltip != null && !scr_UpdateHandler.current.Updating;
         hardlock = false;
@@ -194,18 +198,38 @@ public static class CharaReqUtility
                                 .Replace("$tags$", String.Join(" ", q.requireAbsentJobwithCOMTag)));
             return false;
         }
-        if (q.requireMemberType != "")
+        if (q.requireJobFaction != FactionRelation.None && !ValidateJobFaction(q.requireJobFaction, c, jobFaction))
         {
-            bool has = q.requireMemberTypeCurrentActive
-                ? (c.FactionManager.CurrentActiveMemberType != null && c.FactionManager.CurrentActiveMemberType.ID == q.requireMemberType)
-                : c.FactionManager.HasMemberTypeInAnyFaction(q.requireMemberType);
-            if (!has)
+            if (logging)
             {
-                if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMemberType")
-                                    .Replace("$name$", c.FirstName)
-                                    .Replace("$memberType$", q.requireMemberType));
-                return false;
+                string key = q.requireJobFaction == FactionRelation.CurrentActive ? "ui_COM_Requirements_requireSameActiveFaction"
+                           : q.requireJobFaction == FactionRelation.Home ? "ui_COM_Requirements_requireHomeFaction"
+                           : "ui_COM_Requirements_requireSameFaction";
+                _tooltip.Add(LocalizeDictionary.QueryThenParse(key).Replace("$faction$", jobFaction == null ? "-" : jobFaction.FactionDisplayName));
             }
+            return false;
+        }
+        if (q.requireMemberType.Count > 0 && !ValidateMemberType(q.requireMemberType, q.requireMemberTypeScope, c, jobFaction))
+        {
+            if (logging)
+            {
+                var names = new List<string>(q.requireMemberType.Count);
+                foreach (var id in q.requireMemberType) names.Add(FactionUtility.TryGetMemberType(id, out var mt) && mt != null ? mt.DisplayName : id);
+                _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMemberType")
+                                    .Replace("$name$", c.FirstName)
+                                    .Replace("$memberType$", String.Join("/", names)));
+            }
+            return false;
+        }
+        if (q.requireActorBaseID.Count > 0 && !q.requireActorBaseID.Contains(c.BaseID))
+        {
+            if (logging)
+            {
+                _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireActorBaseID")
+                                    .Replace("$name$", c.FirstName)
+                                    .Replace("$baseID$", String.Join("/", q.requireActorBaseID)));
+            }
+            return false;
         }
         if (q.requireCombat && !c.canFight)
         {
@@ -268,20 +292,63 @@ public static class CharaReqUtility
         return true;
     }
 
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<Character_Trainable> cs, out bool hardlock)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<Character_Trainable> cs, out bool hardlock, I_IsJobGiver jobFaction = null)
     {
         hardlock = false;
-        foreach (var c in cs) if (!Validate(q, ref _tooltip, c, out hardlock)) return false;
+        foreach (var c in cs) if (!Validate(q, ref _tooltip, c, out hardlock, jobFaction)) return false;
         return true;
     }
-    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<int> actorRefIDs, out bool hardlock)
+    public static bool Validate(CharaReq q, ref List<string> _tooltip, List<int> actorRefIDs, out bool hardlock, I_IsJobGiver jobFaction = null)
     {
         var list = new List<Character_Trainable>(actorRefIDs.Count);
         foreach (var i in actorRefIDs)
         {
             list.Add(scr_System_CampaignManager.current.FindInstanceByID(i));
         }
-        return Validate(q,ref _tooltip, list, out hardlock);
+        return Validate(q,ref _tooltip, list, out hardlock, jobFaction);
+    }
+
+    /// <summary>
+    /// Compares job givers by reference, so a party-owned job (camp furniture) is matched against the
+    /// party itself rather than its root faction.
+    /// </summary>
+    public static bool ValidateJobFaction(FactionRelation relation, Character_Trainable c, I_IsJobGiver jobFaction)
+    {
+        if (relation == FactionRelation.None) return true;
+        if (c == null || jobFaction == null) return false;
+        var factions = c.FactionManager;
+        switch (relation)
+        {
+            case FactionRelation.Any: return factions.BelongsToJobGiver(jobFaction);
+            case FactionRelation.CurrentActive: return factions.CurrentActiveJobGiver == jobFaction;
+            case FactionRelation.Home: return factions.HomeFactions.Count > 0 && factions.HomeFactions[0] == jobFaction;
+            default: return true;
+        }
+    }
+
+    public static bool ValidateMemberType(List<string> memberTypeIDs, MemberTypeScope scope, Character_Trainable c, I_IsJobGiver jobFaction)
+    {
+        if (memberTypeIDs == null || memberTypeIDs.Count == 0) return true;
+        if (c == null) return false;
+        var factions = c.FactionManager;
+        switch (scope)
+        {
+            case MemberTypeScope.CurrentActive:
+                return HasMemberType(factions.CurrentActiveMemberType, memberTypeIDs);
+            case MemberTypeScope.Home:
+                return factions.HomeFactions.Count > 0 && HasMemberType(factions.HomeFactions[0].GetMemberType(c), memberTypeIDs);
+            case MemberTypeScope.JobFaction:
+                return jobFaction != null && HasMemberType(jobFaction.GetMemberType(c), memberTypeIDs);
+            case MemberTypeScope.Any:
+            default:
+                foreach (var giver in factions.AllJobGivers) if (HasMemberType(giver.GetMemberType(c), memberTypeIDs)) return true;
+                return false;
+        }
+    }
+
+    static bool HasMemberType(MemberType type, List<string> memberTypeIDs)
+    {
+        return type != null && memberTypeIDs.Contains(type.ID);
     }
 
     public static void ApplyCost(CharaReq q, EvaluationPackage m, Character_Trainable c, COM com, bool isDoer, MessageCollect msg)

@@ -1,15 +1,141 @@
 {
     "ErAV": {
-        "globalOptionalGoals": [
+        "goals": [
+            {
+                "displayName": "goal_sexual_content",
+                "requireSuccess": true,
+                "matchTags_DoerTargetTag": [ "sex" ],
+                "matchTags_DoerSelfTag": [],
+                "matchTags_DoerTag": [],
+                "matchTags_ReceiverTag": [],
+                "matchTags_ReceiverSelfTag": [],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreBonus_flat": 2,
+                "packageMultiplier": 1.0,
+                "requiredRatio": 0.6,
+                "scoreMultiplier": 1.0,
+                "namingTemplateOverride": [],
+                "minOccurrences": 1,
+                "subCategories": []
+            },
+            {
+                "displayName": "goal_penetration",
+                "alwaysActive": true,
+                "matchTags_DoerTargetTag": [ "penetration" ],
+                "matchTags_DoerSelfTag": [],
+                "matchTags_DoerTag": [],
+                "matchTags_ReceiverTag": [],
+                "matchTags_ReceiverSelfTag": [],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreBonus_flat": 0,
+                "packageMultiplier": 1.1,
+                "requiredRatio": 0.4,
+                "scoreMultiplier": 1.0,
+                "namingTemplateOverride": [
+                    "receval_goal_penetration_title_01",
+                    "receval_goal_penetration_title_02",
+                    "receval_goal_penetration_title_03",
+                    "receval_goal_penetration_title_04"
+                ],
+                "minOccurrences": 1,
+                "subCategories": [
+                    {
+                        "displayName": "goal_position_face",
+                        "matchTags_DoerTargetTag": [ "position_face" ],
+                        "matchTags_DoerSelfTag": [],
+                        "matchTags_DoerTag": [],
+                        "matchTags_ReceiverTag": [],
+                        "matchTags_ReceiverSelfTag": [],
+                        "matchTags_ReceiverTargetTag": [],
+                        "packageMultiplier": 1.05,
+                        "requiredRatio": 0.5,
+                        "scoreMultiplier": 1.05,
+                        "namingTemplateOverride": [
+                            "receval_proper_av_goal_position_face_title_01",
+                            "receval_proper_av_goal_position_face_title_02",
+                            "receval_proper_av_goal_position_face_title_03"
+                        ],
+                        "minOccurrences": 2,
+                        "subCategories": []
+                    }
+                ]
+            },
+            {
+                "displayName": "goal_amateur_content",
+                "matchTags_DoerTargetTag": [ "sex" ],
+                "conflictingGoals": ["goal_sexual_content"],
+                "matchTags_DoerSelfTag": [],
+                "matchTags_DoerTag": [],
+                "matchTags_ReceiverTag": [],
+                "matchTags_ReceiverSelfTag": [],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreBonus_flat": 1,
+                "packageMultiplier": 1.0,
+                "requiredRatio": 0.25,
+                "scoreMultiplier": 1.15,
+                "namingTemplateOverride": [
+                    "receval_homemade_tape_goal_amateur_title_01",
+                    "receval_homemade_tape_goal_amateur_title_02",
+                    "receval_homemade_tape_goal_amateur_title_03"
+                ],
+                "minOccurrences": 1,
+                "subCategories": []
+            },
+            {
+                "displayName": "goal_risky_filming",
+                "matchTags_DoerTargetTag": [ "privacy" ],
+                "matchTags_DoerSelfTag": [],
+                "matchTags_DoerTag": [],
+                "matchTags_ReceiverTag": [],
+                "matchTags_ReceiverSelfTag": [],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreBonus_flat": 2,
+                "packageMultiplier": 1.1,
+                "requiredRatio": 0.3,
+                "scoreMultiplier": 1.1,
+                "namingTemplateOverride": [
+                    "receval_homemade_tape_goal_risky_title_01",
+                    "receval_homemade_tape_goal_risky_title_02"
+                ],
+                "minOccurrences": 1,
+                "subCategories": []
+            },
+            {
+                "displayName": "goal_intimate_contact",
+                "alwaysActive": true,
+                "conflictingGoals": [],
+                "matchTags_DoerTargetTag": [ "unsafe" ],
+                "excludeTags_DoerTargetTag": [ "sex", "service", "initSex", "endSex", "privacy" ],
+                "matchTags_DoerSelfTag": [],
+                "matchTags_DoerTag": [],
+                "matchTags_ReceiverTag": [],
+                "matchTags_ReceiverSelfTag": [],
+                "matchTags_ReceiverTargetTag": [],
+                "scoreBonus_flat": 0.5,
+                "packageMultiplier": 1.05,
+                "requiredRatio": 0.1,
+                "scoreMultiplier": 1.05,
+                "namingTemplateOverride": [
+                    "receval_goal_intimate_contact_title_01",
+                    "receval_goal_intimate_contact_title_02"
+                ],
+                "minOccurrences": 2,
+                "subCategories": []
+            },
             {
                 "displayName": "goal_victim",
+                "alwaysActive": true,
+                "conflictingGoals": [],
+                "mainActorRole": "Receiver",
                 "matchTags_DoerTargetTag": [],
                 "matchTags_DoerSelfTag": [],
                 "matchTags_DoerTag": [],
                 "matchTags_ReceiverTag": [],
                 "matchTags_ReceiverSelfTag": [ "raped" ],
                 "matchTags_ReceiverTargetTag": [],
-                "scoreMultiplier": 1.3,
+                "packageMultiplier": 1.3,
+                "requiredRatio": 0.3,
+                "scoreMultiplier": 1.2,
                 "namingTemplateOverride": [
                     "receval_proper_av_goal_victim_title_01",
                     "receval_proper_av_goal_victim_title_02",
@@ -22,13 +148,18 @@
             },
             {
                 "displayName": "goal_aggressor",
+                "alwaysActive": true,
+                "conflictingGoals": [],
+                "mainActorRole": "Doer",
                 "matchTags_DoerTargetTag": [],
                 "matchTags_DoerSelfTag": [ "rape" ],
                 "matchTags_DoerTag": [],
                 "matchTags_ReceiverTag": [],
                 "matchTags_ReceiverSelfTag": [],
                 "matchTags_ReceiverTargetTag": [],
-                "scoreMultiplier": 1.2,
+                "packageMultiplier": 1.2,
+                "requiredRatio": 0.3,
+                "scoreMultiplier": 1.15,
                 "namingTemplateOverride": [
                     "receval_proper_av_goal_aggressor_title_01",
                     "receval_proper_av_goal_aggressor_title_02",
@@ -40,12 +171,17 @@
             },
             {
                 "displayName": "goal_femdom",
+                "alwaysActive": true,
+                "conflictingGoals": [],
+                "mainActorRole": "Doer",
                 "matchTags_DoerTargetTag": [],
                 "matchTags_DoerSelfTag": [],
                 "matchTags_DoerTag": [ "female" ],
                 "matchTags_ReceiverTag": [ "male" ],
                 "matchTags_ReceiverSelfTag": [],
                 "matchTags_ReceiverTargetTag": [],
+                "packageMultiplier": 1.1,
+                "requiredRatio": 0.4,
                 "scoreMultiplier": 1.1,
                 "namingTemplateOverride": [
                     "receval_proper_av_goal_femdom_title_01",
@@ -58,25 +194,207 @@
             }
         ],
 
+        "actorFeatures": [
+            {
+                "featureID": "actorfeature_shoujo",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "young" ],
+                "excludeTag_Any": [ "married" ], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_joshikousei",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "student" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+            },
+            {
+                "featureID": "actorfeature_hitozuma",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "married" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.15
+            },
+            {
+                "featureID": "actorfeature_jukujo",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "mature" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+            },
+            {
+                "featureID": "actorfeature_joukyoushi",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "teacher" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+            },
+            {
+                "featureID": "actorfeature_ol",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "office_worker" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_nurse",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "nurse" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+            },
+            {
+                "featureID": "actorfeature_virgin",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [ "virgin" ], "requireTag_All": [],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.2
+            },
+            {
+                "featureID": "actorfeature_gal",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "gal" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_miko",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "shrine_maiden" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+            },
+            {
+                "featureID": "actorfeature_idol",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "female", "idol" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.2
+            },
+            {
+                "featureID": "actorfeature_bigbreasts",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [ "huge_breasts", "big_breasts" ], "requireTag_All": [],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+            },
+            {
+                "featureID": "actorfeature_danshigakusei",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "male", "student" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_salaryman",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "male", "office_worker" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_jukudan",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "male", "mature" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_dankyoushi",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "male", "teacher" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_ikemen",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [], "requireTag_All": [ "male", "handsome" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
+            },
+            {
+                "featureID": "actorfeature_coser",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [ "cosplay", "NIKKE", "BlueArchive", "WutheringWaves" ], "requireTag_All": [],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+            },
+            {
+                "featureID": "actorfeature_nikke",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [  ], "requireTag_All": ["female", "NIKKE"],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+            },
+            {
+                "featureID": "actorfeature_bluearchive",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [  ], "requireTag_All": ["female", "BlueArchive" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+            },
+            {
+                "featureID": "actorfeature_wutheringwaves",
+                "minCount": 0, "maxCount": 0,
+                "requireTag_Any": [  ], "requireTag_All": ["female", "WutheringWaves" ],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
+            },
+            {
+                "featureID": "actorfeature_girls",
+                "minCount": 2, "maxCount": 0,
+                "requireTag_Any": [ "female" ], "requireTag_All": [],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            },
+            {
+                "featureID": "actorfeature_boys",
+                "minCount": 2, "maxCount": 0,
+                "requireTag_Any": [ "male" ], "requireTag_All": [],
+                "excludeTag_Any": [], "excludeTag_All": [],
+                "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
+            }
+        ],
+
         "recordingEvaluators":
         [
             {
                 "id": "receval_proper_av",
-                "description": "Studio-quality release. Requires real sexual content to clear minimumScoreRequirement; rewards role-specific content and position variety. Score is (baseScore + 1pt per matched sex AP via goal_sexual_content) x actorFeatures bonuses x satisfied-goal multipliers - reference scoreToValueRatio comment for JPY pricing calibration.",
+                "description": "Studio-quality release. Mandatory goal_sexual_content (70% of featured packages must be sex) and goal_penetration (40% must be penetration, x1.1 per penetration package, goal_position_face subcategory); rewards role-specific content. Each featured package scores (packageBaseScore + matched goal flats) x (1 + matched goal packageMultiplier bonuses); recording score is (baseScore + package sum) x actorFeatures bonuses x satisfied-goal scoreMultipliers. A sex package is worth ~3, so ~20 sex packages lands near basePrice via scoreToValueRatio.",
 
-                "baseScore": 100,
+                "baseScore": 0,
 
-                "scoreToValueRatio": 20.0,
+                "packageBaseScore": 0,
+
+                "scoreToValueRatio": 50.0,
 
                 "basePrice": 3000,
 
-                "minimumScoreRequirement": 130,
+                "_comment_fame": "each copy sold gives every main actor famePerBuyer fame of fameType",
+                "fameType": "av",
+                "famePerBuyer": 1.0,
+                "_comment_rankTrackID": "price premium = highest pricePremium among main actors' levels on this rank track, fixed at save",
+                "rankTrackID": "rank_av_actress",
+
+                "minimumScoreRequirement": 30,
+
+                "_comment_quality": "quality = totalScore x min(1, (referenceMinutes / minutes)^lengthPenaltyExponent) x scoreToValueRatio / basePrice. no penalty up to referenceMinutes (0 = durationRequirement.maxMinutes), dropping past it. Grades checked top-down.",
+                "referenceMinutes": 0,
+                "lengthPenaltyExponent": 0.5,
+                "qualityGrades": [
+                    { "grade": "S", "minQuality": 1.5, "minOptionalGoals": 2, "renownPerBuyer": 0.2 },
+                    { "grade": "A", "minQuality": 1.0, "minOptionalGoals": 1, "renownPerBuyer": 0.1 },
+                    { "grade": "B", "minQuality": 0.6, "minOptionalGoals": 0, "renownPerBuyer": 0.05 },
+                    { "grade": "C", "minQuality": 0.0, "minOptionalGoals": 0, "renownPerBuyer": 0 }
+                ],
 
                 "durationRequirement": {
                     "minMinutes": 20,
                     "maxMinutes": 60,
                     "belowMinPenalty": -5000,
-                    "aboveMaxPenaltyPerMinute": -2
+                    "aboveMaxPenaltyPerMinute": -1
                 },
 
                 "namingTemplate": [
@@ -107,210 +425,63 @@
                 ],
 
                 "actorFeatures": [
-                    {
-                        "featureID": "actorfeature_shoujo",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "young" ],
-                        "excludeTag_Any": [ "married" ], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_joshikousei",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "student" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_hitozuma",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "married" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.15
-                    },
-                    {
-                        "featureID": "actorfeature_jukujo",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "mature" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_joukyoushi",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "teacher" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_ol",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "office_worker" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_nurse",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "nurse" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_virgin",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [ "virgin" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.2
-                    },
-                    {
-                        "featureID": "actorfeature_gal",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "gal" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_miko",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "shrine_maiden" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_idol",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "idol" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.2
-                    },
-                    {
-                        "featureID": "actorfeature_bigbreasts",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [ "huge_breasts", "big_breasts" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
-                    },
-                    {
-                        "featureID": "actorfeature_danshigakusei",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "male", "student" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_salaryman",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "male", "office_worker" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_jukudan",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "male", "mature" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_dankyoushi",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "male", "teacher" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_ikemen",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "male", "handsome" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_coser",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [ "cosplay" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
-                    },
-                    {
-                        "featureID": "actorfeature_girls",
-                        "minCount": 2, "maxCount": 0,
-                        "requireTag_Any": [ "female" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_boys",
-                        "minCount": 2, "maxCount": 0,
-                        "requireTag_Any": [ "male" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    }
+                    "actorfeature_shoujo",
+                    "actorfeature_joshikousei",
+                    "actorfeature_hitozuma",
+                    "actorfeature_jukujo",
+                    "actorfeature_joukyoushi",
+                    "actorfeature_ol",
+                    "actorfeature_nurse",
+                    "actorfeature_virgin",
+                    "actorfeature_gal",
+                    "actorfeature_miko",
+                    "actorfeature_idol",
+                    "actorfeature_bigbreasts",
+                    "actorfeature_danshigakusei",
+                    "actorfeature_salaryman",
+                    "actorfeature_jukudan",
+                    "actorfeature_dankyoushi",
+                    "actorfeature_ikemen",
+                    "actorfeature_coser",
+                    "actorfeature_nikke",
+                    "actorfeature_bluearchive",
+                    "actorfeature_girls",
+                    "actorfeature_boys"
                 ],
 
-                "optionalGoals": [
-                    {
-                        "displayName": "goal_sexual_content",
-                        "matchTags_DoerTargetTag": [ "sex" ],
-                        "matchTags_DoerSelfTag": [],
-                        "matchTags_DoerTag": [],
-                        "matchTags_ReceiverTag": [],
-                        "matchTags_ReceiverSelfTag": [],
-                        "matchTags_ReceiverTargetTag": [],
-                        "scoreMultiplier": 1.0,
-                        "scoreBonus_flat": 1,
-                        "namingTemplateOverride": [],
-                        "minOccurrences": 1,
-                        "subCategories": []
-                    },
-                    {
-                        "displayName": "goal_position_variety",
-                        "matchTags_DoerTargetTag": [ "penetration" ],
-                        "matchTags_DoerSelfTag": [],
-                        "matchTags_DoerTag": [],
-                        "matchTags_ReceiverTag": [],
-                        "matchTags_ReceiverSelfTag": [],
-                        "matchTags_ReceiverTargetTag": [],
-                        "scoreMultiplier": 1.1,
-                        "namingTemplateOverride": [
-                            "receval_proper_av_goal_position_variety_title_01",
-                            "receval_proper_av_goal_position_variety_title_02"
-                        ],
-                        "minOccurrences": 3,
-                        "subCategories": [
-                            {
-                                "displayName": "goal_position_face",
-                                "matchTags_DoerTargetTag": [ "position_face" ],
-                                "matchTags_DoerSelfTag": [],
-                                "matchTags_DoerTag": [],
-                                "matchTags_ReceiverTag": [],
-                                "matchTags_ReceiverSelfTag": [],
-                                "matchTags_ReceiverTargetTag": [],
-                                "scoreMultiplier": 1.05,
-                                "namingTemplateOverride": [
-                                    "receval_proper_av_goal_position_face_title_01",
-                                    "receval_proper_av_goal_position_face_title_02",
-                                    "receval_proper_av_goal_position_face_title_03"
-                                ],
-                                "minOccurrences": 2,
-                                "subCategories": []
-                            }
-                        ]
-                    }
-                ]
+                "mandatoryGoals": [
+                    "goal_sexual_content",
+                    "goal_penetration"
+                ],
+
+                "optionalGoals": []
             },
             {
                 "id": "receval_homemade_tape",
-                "description": "Amateur/homemade secret-filming tape. Short, low-effort, tolerant scoring (accepts failed APs and thin content, but needs a handful of matched sex APs via goal_amateur_content to clear minimumScoreRequirement). Much lower price ceiling than a studio release.",
+                "description": "Amateur/homemade secret-filming tape. Short, low-effort, tolerant scoring: mandatory goal_amateur_content only needs a quarter of the featured packages to be sex. A sex package is worth ~2, so ~10 sex packages lands near basePrice via scoreToValueRatio. Much lower price ceiling than a studio release.",
 
-                "baseScore": 10,
+                "baseScore": 0,
 
-                "scoreToValueRatio": 30.0,
+                "packageBaseScore": 0,
+
+                "scoreToValueRatio": 40.0,
 
                 "basePrice": 800,
 
-                "minimumScoreRequirement": 15,
+                "fameType": "av",
+                "famePerBuyer": 0.3,
+                "rankTrackID": "rank_av_actress",
+
+                "minimumScoreRequirement": 10,
+
+                "referenceMinutes": 0,
+                "lengthPenaltyExponent": 0.5,
+                "qualityGrades": [
+                    { "grade": "S", "minQuality": 1.5, "minOptionalGoals": 2, "renownPerBuyer": 0.2 },
+                    { "grade": "A", "minQuality": 1.0, "minOptionalGoals": 1, "renownPerBuyer": 0.1 },
+                    { "grade": "B", "minQuality": 0.6, "minOptionalGoals": 0, "renownPerBuyer": 0.05 },
+                    { "grade": "C", "minQuality": 0.0, "minOptionalGoals": 0, "renownPerBuyer": 0 }
+                ],
 
                 "durationRequirement": {
                     "minMinutes": 5,
@@ -343,107 +514,90 @@
                 ],
 
                 "actorFeatures": [
-                    {
-                        "featureID": "actorfeature_shoujo",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "young" ],
-                        "excludeTag_Any": [ "married" ], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_joshikousei",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "student" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_hitozuma",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "married" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.1
-                    },
-                    {
-                        "featureID": "actorfeature_jukujo",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "mature" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_gal",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "female", "gal" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_bigbreasts",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [ "huge_breasts", "big_breasts" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.05
-                    },
-                    {
-                        "featureID": "actorfeature_danshigakusei",
-                        "minCount": 0, "maxCount": 0,
-                        "requireTag_Any": [], "requireTag_All": [ "male", "student" ],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_girls",
-                        "minCount": 2, "maxCount": 0,
-                        "requireTag_Any": [ "female" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    },
-                    {
-                        "featureID": "actorfeature_boys",
-                        "minCount": 2, "maxCount": 0,
-                        "requireTag_Any": [ "male" ], "requireTag_All": [],
-                        "excludeTag_Any": [], "excludeTag_All": [],
-                        "scoreBonus_flat": 0, "scoreBonus_mult": 1.0
-                    }
+                    "actorfeature_shoujo",
+                    "actorfeature_joshikousei",
+                    "actorfeature_hitozuma",
+                    "actorfeature_jukujo",
+                    "actorfeature_gal",
+                    "actorfeature_bigbreasts",
+                    "actorfeature_danshigakusei",
+                    "actorfeature_coser",
+                    "actorfeature_nikke",
+                    "actorfeature_bluearchive",
+                    "actorfeature_girls",
+                    "actorfeature_boys"
                 ],
 
-                "optionalGoals": [
-                    {
-                        "displayName": "goal_amateur_content",
-                        "matchTags_DoerTargetTag": [ "sex" ],
-                        "matchTags_DoerSelfTag": [],
-                        "matchTags_DoerTag": [],
-                        "matchTags_ReceiverTag": [],
-                        "matchTags_ReceiverSelfTag": [],
-                        "matchTags_ReceiverTargetTag": [],
-                        "scoreMultiplier": 1.15,
-                        "scoreBonus_flat": 1,
-                        "namingTemplateOverride": [
-                            "receval_homemade_tape_goal_amateur_title_01",
-                            "receval_homemade_tape_goal_amateur_title_02",
-                            "receval_homemade_tape_goal_amateur_title_03"
-                        ],
-                        "minOccurrences": 1,
-                        "subCategories": []
-                    },
-                    {
-                        "displayName": "goal_risky_filming",
-                        "matchTags_DoerTargetTag": [ "unsafe" ],
-                        "matchTags_DoerSelfTag": [],
-                        "matchTags_DoerTag": [],
-                        "matchTags_ReceiverTag": [],
-                        "matchTags_ReceiverSelfTag": [],
-                        "matchTags_ReceiverTargetTag": [],
-                        "scoreMultiplier": 1.1,
-                        "namingTemplateOverride": [
-                            "receval_homemade_tape_goal_risky_title_01",
-                            "receval_homemade_tape_goal_risky_title_02"
-                        ],
-                        "minOccurrences": 1,
-                        "subCategories": []
-                    }
-                ]
+                "mandatoryGoals": [ "goal_amateur_content" ],
+
+                "optionalGoals": [ "goal_risky_filming" ]
+            },
+            {
+                "id": "receval_voyeur",
+                "description": "Voyeur (盗撮) footage. No sex or penetration requirement - mandatory goal_risky_filming needs 30% of featured packages to be privacy actions (fixing clothes, sleep, restroom, shower). A privacy package is worth ~3.3; ~6 of them among ~15 packages lands near basePrice via scoreToValueRatio. Sex content still rewards via optional goal_amateur_content and the alwaysActive goals.",
+
+                "baseScore": 0,
+
+                "packageBaseScore": 0,
+
+                "scoreToValueRatio": 50.0,
+
+                "basePrice": 1500,
+
+                "fameType": "leaked",
+                "famePerBuyer": 1.0,
+                "rankTrackID": "rank_av_actress",
+
+                "minimumScoreRequirement": 10,
+
+                "referenceMinutes": 0,
+                "lengthPenaltyExponent": 0.5,
+                "qualityGrades": [
+                    { "grade": "S", "minQuality": 1.5, "minOptionalGoals": 2, "renownPerBuyer": 0.2 },
+                    { "grade": "A", "minQuality": 1.0, "minOptionalGoals": 1, "renownPerBuyer": 0.1 },
+                    { "grade": "B", "minQuality": 0.6, "minOptionalGoals": 0, "renownPerBuyer": 0.05 },
+                    { "grade": "C", "minQuality": 0.0, "minOptionalGoals": 0, "renownPerBuyer": 0 }
+                ],
+
+                "durationRequirement": {
+                    "minMinutes": 5,
+                    "maxMinutes": 30,
+                    "belowMinPenalty": -200,
+                    "aboveMaxPenaltyPerMinute": -1
+                },
+
+                "namingTemplate": [
+                    "receval_voyeur_title_01",
+                    "receval_voyeur_title_02",
+                    "receval_voyeur_title_03",
+                    "receval_voyeur_title_04",
+                    "receval_voyeur_title_05",
+                    "receval_voyeur_title_06",
+                    "receval_voyeur_title_07",
+                    "receval_voyeur_title_08"
+                ],
+
+                "actorFeatures": [
+                    "actorfeature_shoujo",
+                    "actorfeature_joshikousei",
+                    "actorfeature_hitozuma",
+                    "actorfeature_jukujo",
+                    "actorfeature_joukyoushi",
+                    "actorfeature_ol",
+                    "actorfeature_nurse",
+                    "actorfeature_gal",
+                    "actorfeature_bigbreasts",
+                    "actorfeature_danshigakusei",
+                    "actorfeature_coser",
+                    "actorfeature_nikke",
+                    "actorfeature_bluearchive",
+                    "actorfeature_girls",
+                    "actorfeature_boys"
+                ],
+
+                "mandatoryGoals": [ "goal_risky_filming" ],
+
+                "optionalGoals": [ "goal_amateur_content" ]
             }
         ]
     },
@@ -492,8 +646,10 @@
                 "receval_proper_av_goal_femdom_title_03": "$actor$ 立場逆転 ドS痴女",
                 "receval_proper_av_goal_femdom_title_04": "$rivals$を跪かせる$actor$",
 
-                "receval_proper_av_goal_position_variety_title_01": "$actor$ 体位コンプリートSEX",
-                "receval_proper_av_goal_position_variety_title_02": "$actor$ あらゆる体位で乱れる夜",
+                "receval_goal_penetration_title_01": "$actor$ ガチ本番SEX",
+                "receval_goal_penetration_title_02": "$actor$ 本番解禁",
+                "receval_goal_penetration_title_03": "本番あり！ $actor$ 濃厚挿入ドキュメント",
+                "receval_goal_penetration_title_04": "$location$で$actor$とガチ本番",
 
                 "receval_proper_av_goal_position_face_title_01": "$actor$の正常位実録",
                 "receval_proper_av_goal_position_face_title_02": "見つめ合いながら $actor$ と",
@@ -517,6 +673,8 @@
                 "actorfeature_dankyoushi": "男教師",
                 "actorfeature_ikemen": "イケメン",
                 "actorfeature_coser": "COSER",
+                "actorfeature_nikke": "NIKKE",
+                "actorfeature_bluearchive": "ブルアカ",
                 "actorfeature_girls": "ガールズ",
                 "actorfeature_boys": "ボーイズ",
 
@@ -524,7 +682,7 @@
                 "goal_aggressor": "凌辱（加害）",
                 "goal_femdom": "女王様プレイ",
                 "goal_sexual_content": "本番描写",
-                "goal_position_variety": "体位バリエーション",
+                "goal_penetration": "挿入描写",
                 "goal_position_face": "正常位",
 
                 "receval_homemade_tape_title_01": "素人 $actor$ 隠し撮りファイル",
@@ -556,7 +714,24 @@
                 "receval_homemade_tape_goal_risky_title_02": "$actor$ スリル満点 隠し撮り",
 
                 "goal_amateur_content": "生撮り記録",
-                "goal_risky_filming": "盗撮リスク"
+                "goal_risky_filming": "無防備盗撮",
+                "goal_intimate_contact": "スキンシップ",
+
+                "fametype_av": "AV知名度",
+                "fametype_leaked": "流出知名度",
+
+                "receval_goal_intimate_contact_title_01": "$actor$ 密着スキンシップ記録",
+                "receval_goal_intimate_contact_title_02": "$actor$ ドキドキ密着タッチ",
+
+                "receval_voyeur": "盗撮映像",
+                "receval_voyeur_title_01": "盗撮 $actor$ の無防備な素顔",
+                "receval_voyeur_title_02": "$location$ 隠しカメラ映像 $actor$",
+                "receval_voyeur_title_03": "$actor$ 寝顔盗撮ファイル",
+                "receval_voyeur_title_04": "流出 $actor$ のシャワータイム",
+                "receval_voyeur_title_05": "$actor$ 着替え中を覗き見",
+                "receval_voyeur_title_06": "$location$に仕掛けたカメラが捉えた $actor$",
+                "receval_voyeur_title_07": "$actor$ 誰にも見られていないはずの時間",
+                "receval_voyeur_title_08": "盗撮記録 $actor$ の一人きり"
             },
             "zh-cn": {
                 "receval_proper_av": "专业AV",
@@ -602,8 +777,10 @@
                 "receval_proper_av_goal_femdom_title_03": "$actor$ 立场逆转 强势S痴女",
                 "receval_proper_av_goal_femdom_title_04": "让$rivals$下跪的$actor$",
 
-                "receval_proper_av_goal_position_variety_title_01": "$actor$ 体位全收录SEX",
-                "receval_proper_av_goal_position_variety_title_02": "$actor$ 各种体位淫乱的夜晚",
+                "receval_goal_penetration_title_01": "$actor$ 真枪实弹本番SEX",
+                "receval_goal_penetration_title_02": "$actor$ 本番解禁",
+                "receval_goal_penetration_title_03": "有本番！ $actor$ 浓厚插入纪实",
+                "receval_goal_penetration_title_04": "在$location$与$actor$真枪实弹",
 
                 "receval_proper_av_goal_position_face_title_01": "$actor$的正常位实录",
                 "receval_proper_av_goal_position_face_title_02": "与$actor$深情对视",
@@ -627,6 +804,9 @@
                 "actorfeature_dankyoushi": "男教师",
                 "actorfeature_ikemen": "帅哥",
                 "actorfeature_coser": "COSER",
+                "actorfeature_nikke": "妮姬",
+                "actorfeature_bluearchive": "碧蓝档案",
+                "actorfeature_wutheringwaves":"鸣潮",
                 "actorfeature_girls": "女孩们",
                 "actorfeature_boys": "男孩们",
 
@@ -634,7 +814,7 @@
                 "goal_aggressor": "凌辱（加害）",
                 "goal_femdom": "女王様Play",
                 "goal_sexual_content": "性描写",
-                "goal_position_variety": "体位多样性",
+                "goal_penetration": "插入描写",
                 "goal_position_face": "正常位",
 
                 "receval_homemade_tape": "业余偷拍",
@@ -668,7 +848,24 @@
                 "receval_homemade_tape_goal_risky_title_02": "$actor$ 惊险刺激 偷拍实录",
 
                 "goal_amateur_content": "本色实拍",
-                "goal_risky_filming": "偷拍风险"
+                "goal_risky_filming": "毫无防备的偷拍",
+                "goal_intimate_contact": "亲密接触",
+
+                "fametype_av": "AV知名度",
+                "fametype_leaked": "流出知名度",
+
+                "receval_goal_intimate_contact_title_01": "$actor$ 贴身亲密接触记录",
+                "receval_goal_intimate_contact_title_02": "$actor$ 心跳加速的贴身触碰",
+
+                "receval_voyeur": "盗摄实录",
+                "receval_voyeur_title_01": "偷拍 $actor$ 毫无防备的素颜",
+                "receval_voyeur_title_02": "$location$ 隐藏摄像头影像 $actor$",
+                "receval_voyeur_title_03": "$actor$ 睡颜偷拍档案",
+                "receval_voyeur_title_04": "流出 $actor$ 的淋浴时间",
+                "receval_voyeur_title_05": "偷窥 $actor$ 换衣中",
+                "receval_voyeur_title_06": "藏在$location$的摄像头拍下的 $actor$",
+                "receval_voyeur_title_07": "$actor$ 本该无人看见的时光",
+                "receval_voyeur_title_08": "偷拍记录 $actor$ 独处时"
             }
         }
     }

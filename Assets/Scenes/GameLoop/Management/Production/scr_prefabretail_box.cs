@@ -30,7 +30,9 @@ public class scr_prefabretail_box : MonoBehaviour, IPointerEnterHandler, IPointe
         }
 
         float expectedSalesMult = targetFaction != null ? targetFaction.SalesManager.GetExpectedSalesMultiplier(order) : 1f;
-        pricing.SetExternalTooltip($"{_cache_tooltip}\nexpected sales mult x{expectedSalesMult:0.00}");
+        var audience = targetFaction != null ? targetFaction.SalesManager.DescribeAudience(order) : null;
+        string audienceText = audience != null && audience.Count > 0 ? "\n" + string.Join("\n", audience) : "";
+        pricing.SetExternalTooltip($"{_cache_tooltip}\nexpected sales mult x{expectedSalesMult:0.00}{audienceText}");
     }
 
     public void RegisterSO(scr_Canvas_Management canvas, Manageable faction, SalesManager.ItemMatch orderSO)

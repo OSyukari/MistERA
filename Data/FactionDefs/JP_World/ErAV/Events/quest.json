@@ -170,7 +170,7 @@
         },
         {
             "ID":"erav_debt_tracker_01_02",
-            "_comment":"optional: work under kanon to clear your debt\nif prereq exist and not satisfied, stage is hidden.",
+            "_comment":"optional: work under kanon to clear your debt (studio not yet rented - swaps to 01_04 once rented)\nif prereq exist and not satisfied, stage is hidden.",
             "chara_requirement":{
                 "hero":[
                     {
@@ -180,6 +180,96 @@
                                 "isDailyVariable":false,
                                 "operand":"eq",
                                 "value":"2"
+                            },
+                            {
+                                "variableID":"erav_kanon_rental",
+                                "isDailyVariable":false,
+                                "checkExistOnly":true,
+                                "value":0
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_03_rent",
+            "_comment":"optional: guidance for the filmstudio rental. visible while the offer is accepted and the studio is not yet rented.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_offer",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"2"
+                            },
+                            {
+                                "variableID":"erav_kanon_rental",
+                                "isDailyVariable":false,
+                                "checkExistOnly":true,
+                                "value":0
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_04_rented",
+            "_comment":"filmstudio rented: replaces 01_02/01_03. actress introductions/evaluations now open.",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_rental",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"1"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_05_kanade",
+            "_comment":"optional soft hint: talk to Kanade about helping with the AV work (hidden once she agreed).",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanon_offer",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"2"
+                            },
+                            {
+                                "variableID":"erav_kanade_household_actor",
+                                "isDailyVariable":false,
+                                "checkExistOnly":true,
+                                "value":0
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "ID":"erav_debt_tracker_01_06_kanade_helping",
+            "_comment":"Kanade has agreed to help film at home (membertype_erav_miyama_household_actor).",
+            "chara_requirement":{
+                "hero":[
+                    {
+                        "requireKojoVariables":[
+                            {
+                                "variableID":"erav_kanade_household_actor",
+                                "isDailyVariable":false,
+                                "operand":"eq",
+                                "value":"1"
                             }
                         ]
                     }
@@ -222,7 +312,11 @@
 "erav_debt_tracker_01_01_late":"迟到了$late_count$天",
 "erav_debt_tracker_01_01_kanade":"约定了带上奏一起去见歌音",
 "erav_debt_tracker_01_02_kanade":"没有带上奏，单独去见了歌音",
-"erav_debt_tracker_01_02":"接受了歌音的提案，拍片赚钱吧",
+"erav_debt_tracker_01_02":"接受了歌音的提案。用摄像机在家拍片，成片放进宫间家的道具栏，就能通过桐生组的渠道匿名贩售",
+"erav_debt_tracker_01_03_rent":"想正式经营片场的话，去%%ErAV_KiryuGumi_Office%%找歌音租下摄影棚（首月460,000日元，也可以暂不租）",
+"erav_debt_tracker_01_04_rented":"租下了%%ErAV_KiryuGumi_Filmstudio%%，成为了监督。可以找歌音【请求介绍AV演员】了",
+"erav_debt_tracker_01_05_kanade":"和奏谈谈拍片的事，说不定她愿意帮忙",
+"erav_debt_tracker_01_06_kanade_helping":"奏开始协助拍摄AV（宫间家）",
 "erav_debt_tracker_02":"已还请欠债。"
 
             }

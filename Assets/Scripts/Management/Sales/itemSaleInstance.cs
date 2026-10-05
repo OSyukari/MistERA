@@ -41,11 +41,74 @@ public class SalesClienteleDef
     public float curvePeakDay = 3f;
     public float curveDecayPerDay = 0.15f;
     public float curveFloorRatio = 0.2f;
+
+    /// <summary>
+    /// When true, each buyer in this clientele buys a given listing at most once: the listing's potential
+    /// buyers are the clientele's size (population * ratio * market share, per world) scaled by the item's
+    /// QualityModifier, minus the copies already sold to this clientele (ItemMatch.soldByClientele).
+    /// Each day dailyPurchaseRate of the remaining buyers purchase, scaled by popularity, season,
+    /// fluctuation and how many of this faction's listings compete for the same clientele.
+    /// When false (default), the clientele's demand refills every day (repeat purchases, e.g. food).
+    /// </summary>
+    public bool limitedAudience = false;
+
+    /// <summary>
+    /// limitedAudience only: share of the remaining potential buyers that purchase per day at neutral
+    /// popularity (before popularity / season / fluctuation / competition).
+    /// </summary>
+    public float dailyPurchaseRate = 0.05f;
+
+    /// <summary>
+    /// limitedAudience only: sub-groups of this clientele with their own taste. A segment holds weight
+    /// (its share of the clientele's audience) and affinity (item tag -> interest, the best matching tag
+    /// wins; an empty affinity means interested in everything itemReq lets through). Each segment has its
+    /// own potential buyers (audience * weight * affinity * quality) and its own sold count, and splits its
+    /// daily attention across competing listings by affinity. A listing only sells to this clientele if at
+    /// least one segment has affinity > 0 for it. No segments = one implicit segment with weight 1 that
+    /// likes everything.
+    /// </summary>
+    public List<Segment> segments = new List<Segment>();
+
+    public class Segment
+    {
+        public string ID = "";
+        public float weight = 1f;
+        public Dictionary<string, float> affinity = new Dictionary<string, float>();
+
+        public float GetAffinity(List<string> tags)
+        {
+            if (affinity.Count == 0) return 1f;
+            float best = 0f;
+            if (tags == null) return best;
+            foreach (var tag in tags)
+            {
+                if (affinity.TryGetValue(tag, out float a) && a > best) best = a;
+            }
+            return best;
+        }
+    }
+
+    static readonly List<Segment> implicitSegment = new List<Segment> { new Segment() };
+
+    [JsonIgnore] public List<Segment> EffectiveSegments { get { return segments.Count > 0 ? segments : implicitSegment; } }
+
+    public bool AnySegmentInterested(List<string> tags)
+    {
+        foreach (var seg in EffectiveSegments) if (seg.GetAffinity(tags) > 0f) return true;
+        return false;
+    }
 }
 
 public class WorldClienteleInfo
 {
     public int population = 10000;
+
+    /// <summary>
+    /// "Everyone else" in this world's market (K): a faction's market share here drifts toward
+    /// renown / (renown + competitorWeight) (see SalesManager.UpdateMarketShare). 0 = off - shares stay at
+    /// their seeded startingShare / event changes.
+    /// </summary>
+    public float competitorWeight = 0f;
 
     public class ClienteleMod
     {

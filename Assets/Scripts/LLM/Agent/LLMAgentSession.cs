@@ -100,25 +100,6 @@ public class AgentExecutedRecord
 }
 
 /// <summary>
-/// One captured (AP x actor) interaction for the consolidated LLM memory - the data
-/// MemoryManager.AddEntry(ep) would have used to register a per-EP memory, captured by
-/// ActionPackage_LLM.CaptureMemory instead of registered (inner APs run with
-/// suppressMemoryLogging), later assembled into MemInstances at registration time.
-/// </summary>
-public class LLMMemoryInteraction
-{
-    public int ownerRef;
-    public bool isDoer;
-    public int masterRef = -1;
-    public string comID = "";
-    public Memory_Response response = Memory_Response.Accept;
-    public Memory_Attitude attitude = Memory_Attitude.Neutral;
-    public string description = "";
-    public List<int> targets = new List<int>();
-    public List<string> tags = new List<string>();
-}
-
-/// <summary>
 /// One execute_actions execution snapshot, keyed by the execution_callback_id echoed to the model in
 /// that tool's result: per-actor action-tag pairs (the same sources as MessageParagraph's live
 /// fallback, but captured the moment the batch settled) frozen at execution time, so final content
@@ -185,24 +166,14 @@ public class LLMAgentSession
     public List<ActionPackageRecords> executedRecords = new List<ActionPackageRecords>();
 
     /// <summary>
-    /// Consolidated-memory accumulation for this run (see ActionPackage_LLM.CaptureMemory /
-    /// RegisterConsolidatedMemory): one entry per (executed AP x participating actor), mirroring
-    /// MemoryManager.AddEntry(ep)'s role/tag/attitude/description resolution but captured instead
-    /// of registered - inner APs run with suppressMemoryLogging. Consumed by Confirm to build ONE
-    /// wrapper memory entry per actor (summary as description) with one interaction instance per
-    /// AP the actor participated in.
+    /// Actors of every inner AP executed during this run (see ActionPackage_LLM.CaptureActors). Consumed by
+    /// Confirm: everything each of them logged since startTime is merged into ONE LLM memory entry
+    /// (ActionPackage_LLM.RegisterConsolidatedMemory).
     /// </summary>
-    public List<LLMMemoryInteraction> memoryInteractions = new List<LLMMemoryInteraction>();
+    public List<int> memoryActorRefs = new List<int>();
 
-    /// <summary>
-    /// First-experience records deferred by the suppressed inner executions (see
-    /// EvaluationPackage.DelayedFirstExperience) - replayed by the consolidated registration at
-    /// Confirm, so the LLM interaction triggers first experience from its confirmed memory entry.
-    /// </summary>
-    public List<EvaluationPackage.DelayedFirstExperience> memoryFirstExps = new List<EvaluationPackage.DelayedFirstExperience>();
-
-    /// <summary>Total run duration in minutes (sum of every batch's timeCost) for the consolidated memory entry.</summary>
-    public int memoryDuration = 0;
+    /// <summary>Game time the session was created - start of the memory merge range.</summary>
+    public DateTime startTime = DateTime.MinValue;
 
     /// <summary>Token usage and model time over every request of this run (AgentLoop_Routine).</summary>
     public LLMUsageStats usageStats = new LLMUsageStats();
@@ -356,6 +327,7 @@ public class LLMAgentSession
     {
         this.sessionId = sessionId;
         this.baseTemplate = baseTemplate;
+        this.startTime = scr_System_Time.current.getCurrentTime();
     }
 
     public void AppendUserTurn(string text)

@@ -1,0 +1,94 @@
+{
+    "Ranks": {
+        "list": [
+            {
+                "ID": "rank_av_actress",
+                "tags": [ "nsfw" ],
+                "_comment_fameWeights": "rank score = sum of fame by type x weight (an idol or actress debuting in AV starts with score)",
+                "fameWeights": { "av": 1.0, "idol": 0.5, "actress": 0.3, "leaked": 0.3 },
+                "levels": [
+                    {
+                        "DisplayName": "rank_av_actress_0",
+                        "pricePremium": 1.0
+                    },
+                    {
+                        "DisplayName": "rank_av_actress_1",
+                        "pricePremium": 1.15,
+                        "requirements": {
+                            "$type": "RankTrack+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireFameScore": { "operand": "gte", "value": 500 },
+                                    "requireReleases": [ { "minGrade": "B", "operand": "gte", "value": 3 } ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "DisplayName": "rank_av_actress_2",
+                        "pricePremium": 1.3,
+                        "requirements": {
+                            "$type": "RankTrack+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireFameScore": { "operand": "gte", "value": 2000 },
+                                    "requireReleases": [ { "minGrade": "A", "operand": "gte", "value": 2 } ],
+                                    "requireEarnings": { "operand": "gte", "value": 1000000 }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "DisplayName": "rank_av_actress_3",
+                        "pricePremium": 1.6,
+                        "requirements": {
+                            "$type": "RankTrack+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireFameScore": { "operand": "gte", "value": 8000 },
+                                    "requireReleases": [
+                                        { "minGrade": "S", "operand": "gte", "value": 1 },
+                                        { "minGrade": "A", "operand": "gte", "value": 5 }
+                                    ],
+                                    "requireEarnings": { "operand": "gte", "value": 5000000 },
+                                    "requireRank": [ { "trackID": "rank_av_studio", "studio": true, "operand": "gte", "value": 1 } ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "default": {
+                "rank_av_actress": "AV女優ランク",
+                "rank_av_actress_0": "新人",
+                "rank_av_actress_1": "中堅",
+                "rank_av_actress_2": "人気女優",
+                "rank_av_actress_3": "トップ女優",
+
+                "rank_require_one": "以下のいずれかを満たす:",
+                "rank_req_fameScore": "ランクスコア",
+                "rank_req_releases": "主演作品数",
+                "rank_req_earnings": "主演作品の売上",
+                "rank_eval_maxed": "すでに最上位のランクに達している。"
+            },
+            "zh-cn": {
+                "rank_av_actress": "AV女优等级",
+                "rank_av_actress_0": "新人",
+                "rank_av_actress_1": "中坚",
+                "rank_av_actress_2": "人气女优",
+                "rank_av_actress_3": "顶级女优",
+
+                "rank_require_one": "满足以下任意一项：",
+                "rank_req_fameScore": "等级分数",
+                "rank_req_releases": "主演作品数",
+                "rank_req_earnings": "主演作品销售额",
+                "rank_eval_maxed": "她已经是最高等级了。"
+            }
+        }
+    }
+}

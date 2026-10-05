@@ -1,0 +1,185 @@
+{
+    "Events": {
+        "list": [
+            {
+                "_comment": "Kanon_EvaluateActress. OnDialogue_Options on Kanon, same gate as Kanon_IntroduceActress. The player must bring the actress into the room (inviting her needs a good relationship): every signed actress (erav_actress_status == 2) in self's room becomes a candidate button (forEachTargetKey). Picking one binds her as 'actress' and runs EvaluateRank (RankUtility.TryPromote on rank_av_actress, release/earnings stats from the film studio's sales registry): promoted -> ea_success with $rankName$, otherwise -> ea_fail listing every requirement ($rankAdvice$, unmet ones highlighted). Nobody eligible in the room -> ea_none.",
+                "ID": "Kanon_EvaluateActress",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": {
+                    "displayMode": "AVG",
+                    "infoDisplay": "Hide"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_offer",
+                                "operand": "eq",
+                                "value": 2
+                            }
+                        },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_rental",
+                                "operand": "eq",
+                                "value": 1
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] },
+                            { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "candidates" ],
+                        "baseScope": "AllCharaInSelfRoom_ExcludeSelf",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            {
+                                "relationshipTargetKey": "self",
+                                "requireKojoVariable": {
+                                    "variableID": "erav_actress_status",
+                                    "operand": "eq",
+                                    "value": 2
+                                }
+                            }
+                        ],
+                        "minTargetCount": 1,
+                        "allowEventOnMinTargetCountMiss": true
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_has_candidates",
+                                "target_chara_conditions": {
+                                    "candidates": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ea_select" ] } ]
+                            },
+                            {
+                                "option": "_no_candidates",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ea_none" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ea_select",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "question": "kea_Q01",
+                        "options": [
+                            {
+                                "option": "Kanon_EvaluateActress_Candidate",
+                                "forEachTargetKey": "candidates",
+                                "bindTargetKey": "actress",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ea_evaluate" ] } ]
+                            },
+                            {
+                                "option": "kea_Q01_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ea_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ea_evaluate",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "kea_L_evaluate"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_promoted",
+                                "Results": [
+                                    { "Type": "EvaluateRank", "arguments": [ "actress", "rank_av_actress", "ErAV_KiryuGumi_Office", "rankAdvice", "rankName", "ErAV_KiryuGumi_Filmstudio" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ea_success" ] }
+                                ]
+                            },
+                            {
+                                "option": "_not_promoted",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "ea_fail" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ea_success",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kea_L_success",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ea_fail",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "kea_L_fail",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ea_none",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "kea_L_none",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "ea_cancel",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kea_L_cancel",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanon_EvaluateActress": "请求评估演员",
+                "kea_Q01": "「要我看看谁？」\n$kanon.name$靠回椅背，视线扫过$self.name$带来的人。",
+                "Kanon_EvaluateActress_Candidate": "$name$",
+                "kea_Q01_cancel": "改天再说",
+                "kea_L_evaluate": "$kanon.name$从抽屉里取出账本，对照着$actress.name$的出演记录与销售数字，一页一页翻了下去。",
+                "kea_L_success": "「……可以。」\n$kanon.name$合上账本。\n「从今天起，$actress.name$按『$rankName$』的标准算。片子的定价我会跟着调整。」\n「别让她砸了这块招牌。」",
+                "kea_L_fail": "「现在还不行。」\n$kanon.name$把账本转过来，指尖点在几行数字上。\n$rankAdvice$\n「差的地方补上了，再带她来。」",
+                "kea_L_none": "「想让我评估谁，先把人带到这里来。不当面看，我不下判断。」",
+                "kea_L_cancel": "「随时可以来。账本就放在这里。」"
+            }
+        }
+    }
+}

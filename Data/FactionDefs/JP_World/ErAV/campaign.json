@@ -82,7 +82,74 @@
                 "activeHoursStart": 7,
                 "activeHoursEnd": 22
             }
-            
+
+        ],
+        "memberTypes": [
+            {
+                "_comment": "Household AV actress (ErAV: Kanade helping film at home before/without the filmstudio). Same relaxed sex-related acceptance as membertype_erav_kiryu_filmstudio_actor's female block, but scoped to the ErAV_Player protagonist via CharaReq.requireActorBaseID instead of a director membertype check - she is relaxed toward the player, not toward any studio director.",
+                "ID": "membertype_erav_miyama_household_actor",
+                "socialStandingKey": "membertype_erav_miyama_household_actor",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": false,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "workModule": {
+                    "activeHours":[10,11,12,13,14,15,16,17,18,19],
+                    "activeDays":[1,1,1,1,1,1,1]
+                },
+                "portraitTags":[ ],
+                "AcceptanceMods": [
+                    {
+                        "_comment": "家庭女优 · 承受方：被触摸/被侍奉时不会拒绝（对玩家生效，逐步累积好感）",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "service"], "isDoer": false },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason" }
+                    },
+                    {
+                        "_comment": "家庭女优 · 承受方：承受情色/性爱类指令（如被插入）接受度 +10，随好感渐进，不强制",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "unsafe", "sex"], "isDoer": false },
+                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 10 }
+                    },
+                    {
+                        "_comment": "家庭女优 · 施为方：主动施行触摸/侍奉/情色/性爱（如口交、主动爱抚）时更为勉强，接受度 +5，需随好感逐步适应",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
+                        "Requirement_ActionPackage": { "requireComTags_Any": ["touch", "service", "unsafe", "sex"], "isDoer": true },
+                        "Result_EvaluationPackage": { "modifierExplanation": "erav_filmstudio_actor_accept_reason", "modifierValue": 5 }
+                    },
+                    {
+                        "_comment": "家庭女优 · 承受方：玩家（ErAV_Player）发起性行为时，允许开启会话并触发女演员反应口上",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_initiateSex", "isDoer": false },
+                        "TargetReq": { "requireActorBaseID": ["ErAV_Player"] },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_initiateSex_erAV_F" }
+                    },
+                    {
+                        "_comment": "家庭女优 · 承受方：玩家（ErAV_Player）结束性行为时，允许结束并触发女演员反应口上",
+                        "SelfReq": { "requireConscious": true, "requireFemale": true },
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_endOngoingSex", "isDoer": false },
+                        "TargetReq": { "requireActorBaseID": ["ErAV_Player"] },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_endOngoingSex_erAV_F" }
+                    },
+                    {
+                        "_comment": "家庭女优：接受玩家（ErAV_Player）的同行邀请",
+                        "Requirement_ActionPackage": { "targetComID": "com_interaction_partyInvite", "isDoer": false },
+                        "TargetReq": { "requireActorBaseID": ["ErAV_Player"] },
+                        "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_partyinvite_accept_reason" }
+                    }
+                ]
+            }
+        ],
+        "memberRelations": [
+            { "memberTypeA": "membertype_erav_miyama_household_actor", "memberTypeB": "membertype_family_leader", "relationshipID": "relationship_family_guardian" },
+            { "memberTypeA": "membertype_erav_miyama_household_actor", "memberTypeB": "membertype_family_member", "relationshipID": "relationship_family" }
         ]
     },
 
@@ -110,6 +177,8 @@
                 "ErAV_Kanon_charaComment": "黑社会桐生组的掌上明珠，直爽的学生会长，辩论与谈判能力极高。是将主角卷入债务事件的罪魁祸首，也是事务所一切委托的发放者。公私有别：职场完全服从的女优，私下是不肯认输的大小姐。",
 
                 "ErAV_kimono": "和服",
+                "membertype_erav_miyama_household_actor": "家庭女优",
+                "membertype_erav_miyama_household_actor_tooltip": "家庭女优：被玩家触摸/侍奉时不会拒绝；承受情色/性爱类指令接受度 +10；主动施行触摸/侍奉/情色/性爱类指令接受度 +5，需逐步适应；不会拒绝玩家发起/结束的性行为；不会拒绝玩家的同行邀请",
                 "ErAV_personality_Kanade_displayName": "奏",
                 "ErAV_personality_Kanon_displayName": "歌音"
             },
@@ -127,6 +196,8 @@
                 "ErAV_Kanon_charaComment": "The pampered daughter of the Kiryu-gumi syndicate; a blunt student council president with formidable negotiation skills. She is the architect of the protagonist's debt entanglement and the issuer of every agency commission. Strictly separates public and private: an utterly compliant actress on set, a proud, unyielding ojou-sama off it.",
 
                 "ErAV_kimono": "Kimono",
+                "membertype_erav_miyama_household_actor": "Household Actress",
+                "membertype_erav_miyama_household_actor_tooltip": "Household actress: never refuses the player's touch/service; +10 to receiving unsafe/sex commands; +5 when initiating touch/service/unsafe/sex — warms up gradually; force-accepts the player starting or ending a sex scene; always accepts the player's party invites",
                 "ErAV_personality_Kanade_displayName": "Kanade",
                 "ErAV_personality_Kanon_displayName": "Kanon"
             }

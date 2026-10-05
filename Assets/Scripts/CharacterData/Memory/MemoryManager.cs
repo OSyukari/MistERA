@@ -399,9 +399,19 @@ public class MemoryManager
     {
         return entries.ContainsKey(time.Ticks) ? entries[time.Ticks] : null;
     }
+    /// <summary>
+    /// Exact key first; falls back to the entry whose time span contains the tick - stored ticks
+    /// (e.g. body part first/last experience) outlive their key once the entry is merged into another
+    /// (LLM session merge) or extended after insertion.
+    /// </summary>
     public Memory_Entry FindEntryByDateTimeTick(long ticks)
     {
-        return entries.ContainsKey(ticks) ? entries[ticks] : null;
+        if (entries.TryGetValue(ticks, out var exact)) return exact;
+        foreach (var e in entries.Values)
+        {
+            if (e.StartTime.Ticks <= ticks && ticks <= e.EndTime.Ticks) return e;
+        }
+        return null;
     }
     private int ProcessMemoryEntry(EvaluationPackage.Modifiers modifiers, Memory_Entry mem, int targetRef, COM com)
     {
@@ -479,46 +489,60 @@ public class MemoryManager
     }
 
     /// <summary>
-    /// Registers one consolidated LLM memory: a single wrapper entry holding every interaction
-    /// instance of the run the owner participated in - the same wrapper-plus-interactions shape
-    /// normal merged memories take (see TryMergeWith), but assembled in one shot instead of per-EP
-    /// AddEntry calls, which are suppressed for LLM inner packages (ActionPackage.suppressMemoryLogging).
-    /// All instances are built at the same game-time tick so they merge into the wrapper
-    /// unconditionally. Display: the wrapper line is short ("LLM interaction with ...", other
-    /// participants via TargetNames, loc key ui_memory_llm_wrapper) with the room name shown,
-    /// while the full LLM summary goes into memInstanceDescription (the entry's tooltip list) -
-    /// too long for the memory list itself.
+    /// LLM session memory: force-merges every entry created since the session started (keys >= start,
+    /// oldest first) into the earliest one, then applies the LLM description (see ApplyLLMDescription).
+    /// Body part experience ticks pointing at merged-away entries resolve through FindEntryByDateTimeTick's
+    /// time-span fallback. Returns false when nothing was logged since start (caller adds a present entry).
     /// </summary>
-    public Memory_Entry AddLLMEntry(string summary, List<MemInstance> instances, int roomRef, int duration)
+    public bool MergeLLMSession(DateTime start, string summary)
     {
-        if (instances == null || instances.Count < 1) return null;
+        if (entries == null) return false;
+        var keys = new List<long>();
+        foreach (var k in entries.Keys) if (k >= start.Ticks) keys.Add(k);
+        if (keys.Count < 1) return false;
 
-        var mergeTags = new List<string>() { "forbidMerge" };
-
-        Memory_Entry Build(MemInstance mem)
+        var target = entries[keys[0]];
+        var end = target.EndTime;
+        for (int i = 1; i < keys.Count; i++)
         {
-            var e = new Memory_Entry(Owner, null, roomRef, mergeTags, mem, summary, duration);
-            e.memInstanceDescription.Add(summary);
-            return e;
+            var e = entries[keys[i]];
+            if (e.EndTime > end) end = e.EndTime;
+            target.MergeFrom(e);
+            entries.Remove(keys[i]);
         }
+        target.EndTime = end;
+        ApplyLLMDescription(target, summary);
 
-        var wrapper = Build(instances[0]);
-        for (int i = 1; i < instances.Count; i++)
-        {
-            // same-tick CanMergeWith is unconditional, so each further instance folds into the
-            // wrapper as its own distinct interaction (or stacks via MemInstance.TryMergeWith)
-            wrapper.TryMergeWith(Build(instances[i]));
-        }
+        lastRef = long.MinValue;
+        foreach (var part in Owner.Body.Internals) part.ClearExperienceCache();
+        ClearCache();
+        return true;
+    }
 
-        // short wrapper line naming the other participants (existing TargetNames resolution -
-        // the wrapper's own interaction targets, owner excluded, unregistered names included)
-        var names = wrapper.TargetNames;
-        wrapper.entryDescription = LocalizeDictionary.QueryThenParse("ui_memory_llm_wrapper", "LLM interaction with $names$")
+    /// <summary>
+    /// Display of an LLM memory: the wrapper line is short ("LLM interaction with ...", other participants
+    /// via TargetNames, loc key ui_memory_llm_wrapper) with the room name shown, while the full LLM summary
+    /// goes into memInstanceDescription (the entry's tooltip list) - too long for the memory list itself.
+    /// </summary>
+    static void ApplyLLMDescription(Memory_Entry entry, string summary)
+    {
+        entry.memInstanceDescription.Add(summary);
+        var names = entry.TargetNames;
+        entry.entryDescription = LocalizeDictionary.QueryThenParse("ui_memory_llm_wrapper", "LLM interaction with $names$")
             .Replace("$names$", names.Count > 0 ? String.Join(", ", names) : "-");
-
         // entryDescription/memInstanceDescription were edited after the last InternalUpdate -
         // rebuild so the tooltip cache picks the summary line up
-        wrapper.RefreshCache();
+        entry.RefreshCache();
+    }
+
+    /// <summary>
+    /// LLM memory for an actor who logged nothing during the session (relevant but not participating):
+    /// a standalone entry with a "present" instance, merged into the last entry only if the normal rules allow.
+    /// </summary>
+    public Memory_Entry AddLLMPresentEntry(string summary, MemInstance present, int roomRef)
+    {
+        var wrapper = new Memory_Entry(Owner, null, roomRef, new List<string>() { "forbidMerge" }, present, summary, -1);
+        ApplyLLMDescription(wrapper, summary);
 
         if (this.Last == null || !this.Last.TryMergeWith(wrapper))
         {

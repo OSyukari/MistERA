@@ -72,6 +72,74 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "sleeping", "pain"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始骑乘位A 睡眠中",
+                            "responses": ["com_sex_P_cowgirl_A_Begin_FE_Sleep_1", "com_sex_P_cowgirl_A_Begin_FE_Sleep_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始骑乘位A 时停中",
+                            "responses": ["com_sex_P_cowgirl_A_Begin_FE_Timestop_1", "com_sex_P_cowgirl_A_Begin_FE_Timestop_2"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_A"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "blush", "pain", "tearful", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 开始骑乘位A 有允许",
+                                    "responses": ["com_sex_P_cowgirl_A_Begin_FE_Player_1", "com_sex_P_cowgirl_A_Begin_FE_Player_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "blush", "pain", "tearful"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始骑乘位A 有允许",
+                                    "responses": ["com_sex_P_cowgirl_A_Begin_FE_1", "com_sex_P_cowgirl_A_Begin_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "blush", "pain", "tearful", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始骑乘位A 未允许 好意",
+                                    "responses": ["com_sex_P_cowgirl_A_Begin_FE_3", "com_sex_P_cowgirl_A_Begin_FE_4"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "fear", "pain", "tearful", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始骑乘位A 未允许 敌意",
+                            "responses": ["com_sex_P_cowgirl_A_Begin_FE_5", "com_sex_P_cowgirl_A_Begin_FE_6"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_A"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "cowgirl", "anal", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 开始骑乘位A（被骑的一方）",
+                            "responses": ["com_sex_P_cowgirl_A_Begin_FE_Partner_1", "com_sex_P_cowgirl_A_Begin_FE_Partner_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
                                 "selfTags": [
                                     "timestop"
                                 ]
@@ -160,6 +228,74 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "sleeping", "pain"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 睡眠中 骑乘位A",
+                            "responses": ["com_sex_P_cowgirl_A_FE_Sleep_1"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 时停中 骑乘位A",
+                            "responses": ["com_sex_P_cowgirl_A_FE_Timestop_1"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_A"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "blush", "pain", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 骑乘位A 有允许",
+                                    "responses": ["com_sex_P_cowgirl_A_FE_Player_1"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "blush", "pain"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 骑乘位A 有允许（还在适应）",
+                                    "responses": ["com_sex_P_cowgirl_A_FE_1", "com_sex_P_cowgirl_A_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "blush", "pain", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 骑乘位A 未允许 好意（还在适应）",
+                                    "responses": ["com_sex_P_cowgirl_A_FE_3"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "doer", "cowgirl", "anal", "pain", "tearful", "cry"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 骑乘位A 未允许 敌意",
+                            "responses": ["com_sex_P_cowgirl_A_FE_4", "com_sex_P_cowgirl_A_FE_5"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_A"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "cowgirl", "anal"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 骑乘位A（被骑的一方）",
+                            "responses": ["com_sex_P_cowgirl_A_FE_Partner_1"]
+                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -591,7 +727,32 @@
                 "com_sex_P_cowgirl_A_49": "$self$无力地垂下头，身子甚至微微发抖。\n\"还是很疼……后面没感觉……能不能结束了？\"",
                 "com_sex_P_cowgirl_A_50": "$self$始终没回头，声音听起来很压抑。\n\"……后面根本没感觉，只觉得肚子涨得难受。\"",
                 "com_sex_P_cowgirl_A_Begin_Timestop_1": "$self$被摆成骑坐的姿势对准后穴坐下，菊穴含住龟头缓缓吞到根，穴肉不受控地咬紧又松开，她的手还搭在膝上没挪。",
-                "com_sex_P_cowgirl_A_Begin_Timestop_2": "$target$扶着她定格的腰前后摇动，后穴吞吐的腻响成了房间里仅有的声音，$self$的发梢悬在半空没落。"
+                "com_sex_P_cowgirl_A_Begin_Timestop_2": "$target$扶着她定格的腰前后摇动，后穴吞吐的腻响成了房间里仅有的声音，$self$的发梢悬在半空没落。",
+
+                "com_sex_P_cowgirl_A_Begin_FE_Sleep_1": "睡梦中的$self$身子轻轻一抖，难受地哼了声，身下的异物感没能把她弄醒。",
+                "com_sex_P_cowgirl_A_Begin_FE_Sleep_2": "$self$不安地动了动，无意识地撑住了$target$的胸口，呼吸很快又平稳下来。",
+                "com_sex_P_cowgirl_A_Begin_FE_Timestop_1": "紧窄的后穴在凝固的时间里被缓缓撑开，$self$保持着坐下的姿势悬在半途，纹丝不动。",
+                "com_sex_P_cowgirl_A_Begin_FE_Timestop_2": "$self$脸上还停留着时停前的神情，初次被闯入的疼痛在静止的身体里蔓延，她一无所知。",
+                "com_sex_P_cowgirl_A_Begin_FE_Player_1": "\"后面……是第一次……只能给你了……\"\n\n被撑开的那一瞬疼得眼角泛泪，$self$还是对着$target$挤出一个笑。",
+                "com_sex_P_cowgirl_A_Begin_FE_Player_2": "\"别动……让我自己来……\"\n\n$self$疼得整个人一颤，撑着的指尖都掐白了。",
+                "com_sex_P_cowgirl_A_Begin_FE_1": "\"我、我是第一次……你别动，让我自己来……\"\n\n$self$疼得整个人一颤，指甲掐进了$target$的胸膛。",
+                "com_sex_P_cowgirl_A_Begin_FE_2": "\"奇怪……居然真的想做这个……\"\n\n撑开的痛楚让$self$倒吸一口冷气，眼泪一下子涌了出来。",
+                "com_sex_P_cowgirl_A_Begin_FE_3": "\"后面还是第一次……我会、我会小心的……\"\n\n$self$紧张得浑身发僵，搭在$target$身上的手抖个不停。",
+                "com_sex_P_cowgirl_A_Begin_FE_4": "\"疼……原来第一次这么疼……\"\n\n$self$咬着唇，眼眶泛红。",
+                "com_sex_P_cowgirl_A_Begin_FE_5": "\"不……不要后面……求你……\"\n\n$self$疼得发不出声音，身体僵得像块石头。",
+                "com_sex_P_cowgirl_A_Begin_FE_6": "\"……我不会原谅你的。\"\n\n$self$咬破了下唇，初次的疼痛让她浑身发抖。",
+                "com_sex_P_cowgirl_A_Begin_FE_Partner_1": "\"你……后面是第一次？\"\n\n被绞得生疼的地方传来警讯，$self$愣了一下。",
+                "com_sex_P_cowgirl_A_Begin_FE_Partner_2": "\"……那你慢点，别勉强。\"\n\n看着对方疼得发白的脸，$self$皱起了眉。",
+
+                "com_sex_P_cowgirl_A_FE_Sleep_1": "睡梦中的$self$眉头始终没有松开，初次被撑开的后穴还在隐隐作痛。",
+                "com_sex_P_cowgirl_A_FE_Timestop_1": "后穴初次领教的疼痛还残留着，定格的$self$表情没有丝毫变化。",
+                "com_sex_P_cowgirl_A_FE_Player_1": "\"我第一次……做得还好吗……？\"\n\n$self$低下头看向$target$，眉头还因为胀痛微微皱着。",
+                "com_sex_P_cowgirl_A_FE_1": "\"还……还有点疼……但是，好像慢慢适应了……\"\n\n$self$的眉头还皱着，呼吸却渐渐软了下来。",
+                "com_sex_P_cowgirl_A_FE_2": "\"原来后面……是这种感觉……\"\n\n$self$喘着气，脸红到了耳根。",
+                "com_sex_P_cowgirl_A_FE_3": "\"这样……对吗……我完全不知道该怎么动……\"\n\n$self$又疼又慌，腰都不知道往哪使劲。",
+                "com_sex_P_cowgirl_A_FE_4": "\"……疼……够了……\"\n\n初次被撑开的地方火辣辣地疼，$self$的眼泪一直没停。",
+                "com_sex_P_cowgirl_A_FE_5": "\"……快点结束。\"\n\n$self$死死盯着某处，只有发白的嘴唇在抖。",
+                "com_sex_P_cowgirl_A_FE_Partner_1": "\"别勉强……慢慢来。\"\n\n察觉到对方动作的生涩，$self$放轻了声音。"
             }
         }
     }

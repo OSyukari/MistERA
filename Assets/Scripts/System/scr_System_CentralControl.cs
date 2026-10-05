@@ -875,6 +875,7 @@ public class scr_System_CentralControl : MonoBehaviour
 
 
     public List<string> allusedConsoleCommands = new List<string>();
+    [NonSerialized][JsonIgnore] public string storedConsoleCommand = "";
     public InteractionGenderType GetGenderSimple(Character_Trainable c)
     {
         if (scr_System_CentralControl.current.isSafeMode)

@@ -1,0 +1,497 @@
+{
+    "_doc": {
+        "purpose": "First experience AFTERMATH kojo, printed right after the red loss line (+ its relationship changes). One entry per body part sensitivityClassString (OnFirstExperience_[M|V|A|C|W|B]), fired from EvaluationPackage.GetFirstExperienceKojo for both aware and unaware losses. The moment of loss itself is narrated by the command kojo (firstexp_[class] branches), not here.",
+        "selfTags": "firstexp_consent / firstexp_nonconsent, firstexp_unaware (owner sleeping/unconscious/timestopped), firstexp_after_unaware (aware loss of a part that already had an unaware one), plus EP self tags (raped, sleeping, unconscious, timestop, gender...).",
+        "targetTags": "EP target tags (COM tags), partner body part tags (penis, mouth, vagina...), partner personal relationship ID (relationship_couple / relationship_marriage).",
+        "results": "modifyRelationship: owner -> target score change; reverse = target -> owner. Scale: lover/player consensual Goodwill+10 Trust+5 Desire+5 (partner Desire+3); consensual Goodwill+5 Desire+3 (partner Desire+3); nonconsent hostile Badwill+15 Fear+10 Trust-15. Unaware: none. Womb (W): none, it is lost in the same act as V.",
+        "format": "one voice line + one reaction line; unaware variants one narration line only.",
+        "requirement": "every variant (nested ones included) sets requireEPSuccess false (forced acts carry requestAccepted false) and requireTargetAction false (partner may be unconscious); unaware variants also requireSelfAction false."
+    },
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnFirstExperience_V",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "_comment": "unaware - timestop",
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
+                            "extraSelfPortraitTags": ["sex", "timestop"],
+                            "responses": ["OnFirstExperience_V_unawareTS_1"]
+                        },
+                        {
+                            "_comment": "unaware - sleeping/unconscious",
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
+                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
+                            "responses": ["OnFirstExperience_V_unaware_1", "OnFirstExperience_V_unaware_2"]
+                        },
+                        {
+                            "_comment": "no permission",
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "variants": [
+                                {
+                                    "_comment": "no permission but likes the partner - consensual scores",
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["blush", "tearful", "confused"],
+                                    "responses": ["OnFirstExperience_V_nonconsentLike_1", "OnFirstExperience_V_nonconsentLike_2"],
+                                    "results": [{ "modifyRelationship": [
+                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                        { "type": "Desire", "value": 3, "reverse": true }
+                                    ] }]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "tearful", "glare"],
+                            "responses": ["OnFirstExperience_V_nonconsent_1", "OnFirstExperience_V_nonconsent_2", "OnFirstExperience_V_nonconsent_3"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
+                            "extraSelfPortraitTags": ["blush", "love", "smile"],
+                            "responses": ["OnFirstExperience_V_player_1", "OnFirstExperience_V_player_2", "OnFirstExperience_V_player_3"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_after_unaware"] },
+                            "extraSelfPortraitTags": ["blush", "happy"],
+                            "responses": ["OnFirstExperience_V_afterUnaware_1", "OnFirstExperience_V_afterUnaware_2"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
+                            "extraSelfPortraitTags": ["blush", "love", "tearful", "happy"],
+                            "responses": ["OnFirstExperience_V_marriage_1", "OnFirstExperience_V_marriage_2"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
+                            "extraSelfPortraitTags": ["blush", "love", "shy"],
+                            "responses": ["OnFirstExperience_V_couple_1", "OnFirstExperience_V_couple_2"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
+                            "extraSelfPortraitTags": ["blush", "thinking"],
+                            "responses": ["OnFirstExperience_V_generic_1", "OnFirstExperience_V_generic_2", "OnFirstExperience_V_generic_3"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnFirstExperience_A",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
+                            "extraSelfPortraitTags": ["sex", "timestop"],
+                            "responses": ["OnFirstExperience_A_unawareTS_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
+                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
+                            "responses": ["OnFirstExperience_A_unaware_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "variants": [
+                                {
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["blush", "embarrassed"],
+                                    "responses": ["OnFirstExperience_A_nonconsentLike_1"],
+                                    "results": [{ "modifyRelationship": [
+                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                        { "type": "Desire", "value": 3, "reverse": true }
+                                    ] }]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "tearful", "disgust"],
+                            "responses": ["OnFirstExperience_A_nonconsent_1", "OnFirstExperience_A_nonconsent_2"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
+                            "extraSelfPortraitTags": ["blush", "embarrassed", "love"],
+                            "responses": ["OnFirstExperience_A_player_1", "OnFirstExperience_A_player_2"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_after_unaware"] },
+                            "extraSelfPortraitTags": ["blush", "thinking"],
+                            "responses": ["OnFirstExperience_A_afterUnaware_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
+                            "extraSelfPortraitTags": ["blush", "love"],
+                            "responses": ["OnFirstExperience_A_marriage_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
+                            "extraSelfPortraitTags": ["blush", "embarrassed", "love"],
+                            "responses": ["OnFirstExperience_A_couple_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
+                            "extraSelfPortraitTags": ["blush", "embarrassed"],
+                            "responses": ["OnFirstExperience_A_generic_1", "OnFirstExperience_A_generic_2"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnFirstExperience_W",
+                    "tags": ["nsfw"],
+                    "_comment": "no score changes - womb is lost in the same act as V, which already scores it",
+                    "variants": [
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
+                            "extraSelfPortraitTags": ["sex", "timestop"],
+                            "responses": ["OnFirstExperience_W_unawareTS_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
+                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
+                            "responses": ["OnFirstExperience_W_unaware_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "variants": [
+                                {
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["blush", "surprised"],
+                                    "responses": ["OnFirstExperience_W_generic_1"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["scared", "tearful"],
+                            "responses": ["OnFirstExperience_W_nonconsent_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
+                            "extraSelfPortraitTags": ["blush", "love", "ahegao"],
+                            "responses": ["OnFirstExperience_W_player_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
+                            "extraSelfPortraitTags": ["blush", "love"],
+                            "responses": ["OnFirstExperience_W_lover_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
+                            "extraSelfPortraitTags": ["blush", "love"],
+                            "responses": ["OnFirstExperience_W_lover_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
+                            "extraSelfPortraitTags": ["surprised", "blush"],
+                            "responses": ["OnFirstExperience_W_generic_1"]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnFirstExperience_M",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
+                            "extraSelfPortraitTags": ["timestop"],
+                            "responses": ["OnFirstExperience_M_unawareTS_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
+                            "extraSelfPortraitTags": ["sleeping", "closed_eyes"],
+                            "responses": ["OnFirstExperience_M_unaware_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "variants": [
+                                {
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["blush", "surprised"],
+                                    "responses": ["OnFirstExperience_M_nonconsentLike_1"],
+                                    "results": [{ "modifyRelationship": [
+                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                        { "type": "Desire", "value": 3, "reverse": true }
+                                    ] }]
+                                },
+                                {
+                                    "_comment": "stolen first kiss",
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["mouth"] },
+                                    "extraSelfPortraitTags": ["angry", "tearful"],
+                                    "responses": ["OnFirstExperience_M_nonconsentKiss_1"],
+                                    "results": [{ "modifyRelationship": [
+                                        { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
+                                    ] }]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["tearful", "disgust"],
+                            "responses": ["OnFirstExperience_M_nonconsent_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
+                            ] }]
+                        },
+                        {
+                            "_comment": "kiss - partner part is mouth",
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["mouth"] },
+                            "variants": [
+                                {
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
+                                    "extraSelfPortraitTags": ["blush", "shy", "love"],
+                                    "responses": ["OnFirstExperience_M_kissPlayer_1"],
+                                    "results": [{ "modifyRelationship": [
+                                        { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                        { "type": "Desire", "value": 3, "reverse": true }
+                                    ] }]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["blush", "surprised"],
+                            "responses": ["OnFirstExperience_M_kiss_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "_comment": "oral - partner part is penis",
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["penis"] },
+                            "variants": [
+                                {
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
+                                    "extraSelfPortraitTags": ["blush", "embarrassed"],
+                                    "responses": ["OnFirstExperience_M_oralPlayer_1"],
+                                    "results": [{ "modifyRelationship": [
+                                        { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                        { "type": "Desire", "value": 3, "reverse": true }
+                                    ] }]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["blush", "disgust"],
+                            "responses": ["OnFirstExperience_M_oral_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
+                            "extraSelfPortraitTags": ["blush", "embarrassed"],
+                            "responses": ["OnFirstExperience_M_generic_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnFirstExperience_C",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware", "timestop"] },
+                            "extraSelfPortraitTags": ["sex", "timestop"],
+                            "responses": ["OnFirstExperience_C_unawareTS_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false, "selfTags": ["firstexp_unaware"] },
+                            "extraSelfPortraitTags": ["sex", "sleeping", "closed_eyes"],
+                            "responses": ["OnFirstExperience_C_unaware_1"]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_nonconsent"] },
+                            "variants": [
+                                {
+                                    "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAttitudeGTE": "Like" },
+                                    "extraSelfPortraitTags": ["blush", "awkward"],
+                                    "responses": ["OnFirstExperience_C_nonconsentLike_1"],
+                                    "results": [{ "modifyRelationship": [
+                                        { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                        { "type": "Desire", "value": 3, "reverse": true }
+                                    ] }]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["angry", "disgust"],
+                            "responses": ["OnFirstExperience_C_nonconsent_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Badwill", "value": 15 }, { "type": "Fear", "value": 10 }, { "type": "Trust", "value": -15 }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetBaseID": "PLAYER" },
+                            "extraSelfPortraitTags": ["blush", "happy"],
+                            "responses": ["OnFirstExperience_C_player_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "selfTags": ["firstexp_after_unaware"] },
+                            "extraSelfPortraitTags": ["relaxed", "happy"],
+                            "responses": ["OnFirstExperience_C_afterUnaware_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_marriage"] },
+                            "extraSelfPortraitTags": ["blush", "love"],
+                            "responses": ["OnFirstExperience_C_lover_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "targetTags": ["relationship_couple"] },
+                            "extraSelfPortraitTags": ["blush", "love"],
+                            "responses": ["OnFirstExperience_C_lover_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 10 }, { "type": "Trust", "value": 5 }, { "type": "Desire", "value": 5 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        },
+                        {
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false },
+                            "extraSelfPortraitTags": ["blush", "surprised"],
+                            "responses": ["OnFirstExperience_C_generic_1"],
+                            "results": [{ "modifyRelationship": [
+                                { "type": "Goodwill", "value": 5 }, { "type": "Desire", "value": 3 },
+                                { "type": "Desire", "value": 3, "reverse": true }
+                            ] }]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "OnFirstExperience_B",
+                    "tags": ["nsfw"],
+                    "variants": [
+                        {
+                            "_comment": "intentionally empty - breast first experience has no kojo yet",
+                            "requirement": { "requireEPSuccess": false, "requireTargetAction": false, "requireSelfAction": false },
+                            "responses": []
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "OnFirstExperience_V_unawareTS_1": "凝固的时间里，$self$腿间的落红无声地洇开，她对自己已经失去的东西一无所知。",
+                "OnFirstExperience_V_unaware_1": "睡梦中的$self$翻了个身，眉头微微皱着，并不知道自己的第一次已经在梦里被拿走了。",
+                "OnFirstExperience_V_unaware_2": "$self$的呼吸依旧平稳，只有床单上一点暗红，记下了这个她不会记得的夜晚。",
+                "OnFirstExperience_V_nonconsentLike_1": "\"明明……还没说可以的……\"\n\n$self$红着眼圈小声抱怨，却没有真的推开$target$。",
+                "OnFirstExperience_V_nonconsentLike_2": "\"……就这样给出去了啊。\"\n\n$self$愣愣地看着$target$，心里乱成一团，说不清是委屈还是别的什么。",
+                "OnFirstExperience_V_nonconsent_1": "\"……我的第一次……就这样……\"\n\n$self$死死盯着$target$，眼里的恨意怎么也藏不住。",
+                "OnFirstExperience_V_nonconsent_2": "\"我会记住的……今天的事，我一辈子都会记住。\"\n\n$self$的声音在发抖，攥紧的拳头指节发白。",
+                "OnFirstExperience_V_nonconsent_3": "\"……\"\n\n$self$一句话也没说，用力擦掉眼泪，再也不看$target$一眼。",
+                "OnFirstExperience_V_player_1": "\"……我的第一次，是你的了哦。\"\n\n$self$红着脸把额头抵在$target$胸前，声音里带着一点骄傲。",
+                "OnFirstExperience_V_player_2": "\"疼是疼……但是，一点都不后悔。\"\n\n$self$抹掉眼角的泪，对$target$露出了笑容。",
+                "OnFirstExperience_V_player_3": "\"以后……也只给你一个人。\"\n\n$self$小声说完，害羞地别开了脸。",
+                "OnFirstExperience_V_afterUnaware_1": "\"我的第一次……终于给出去了……\"\n\n$self$满足地叹了口气——她并不知道，那早已不是第一次了。",
+                "OnFirstExperience_V_afterUnaware_2": "\"原来第一次是这种感觉啊……\"\n\n$self$若有所思，完全没有察觉其中的违和。",
+                "OnFirstExperience_V_marriage_1": "\"能把第一次留给你……真好。\"\n\n$self$依偎着$target$，眼角还挂着泪，嘴角却是笑着的。",
+                "OnFirstExperience_V_marriage_2": "\"从今以后，我就完完全全是你的人了。\"\n\n$self$握紧了$target$的手，舍不得放开。",
+                "OnFirstExperience_V_couple_1": "\"我们……真的做了呢。\"\n\n$self$害羞地把脸埋起来，耳朵红得发烫。",
+                "OnFirstExperience_V_couple_2": "\"第一次给了喜欢的人……好像也没那么可怕。\"\n\n$self$轻轻蹭了蹭$target$，安心地闭上了眼。",
+                "OnFirstExperience_V_generic_1": "\"……这就是，第一次啊。\"\n\n$self$望着天花板出神，心里空落落的，又好像多了点什么。",
+                "OnFirstExperience_V_generic_2": "\"没想到……会是和你。\"\n\n$self$看了$target$一眼，表情说不清是羞涩还是复杂。",
+                "OnFirstExperience_V_generic_3": "\"……也没什么大不了的嘛。\"\n\n$self$嘴上这么说，声音却有点发虚。",
+
+                "OnFirstExperience_A_unawareTS_1": "凝固的时间里，$self$身后残留着被撑开的痕迹，她对此毫无所觉。",
+                "OnFirstExperience_A_unaware_1": "睡梦中的$self$不舒服地哼了一声，翻了个身，对身后刚刚失去的第一次毫无知觉。",
+                "OnFirstExperience_A_nonconsentLike_1": "\"后面……居然就这样……\"\n\n$self$羞得满脸通红，却也说不出责怪的话。",
+                "OnFirstExperience_A_nonconsent_1": "\"连那种地方……都……\"\n\n$self$咬着牙，屈辱得浑身发抖。",
+                "OnFirstExperience_A_nonconsent_2": "\"……恶心。\"\n\n$self$别过脸，眼泪无声地往下掉。",
+                "OnFirstExperience_A_player_1": "\"连这里的第一次都给你了……要好好负责哦。\"\n\n$self$红着脸小声嘀咕，却没有一点不情愿。",
+                "OnFirstExperience_A_player_2": "\"……感觉好奇怪。但是，是你就好。\"\n\n$self$害羞地把脸埋进$target$怀里。",
+                "OnFirstExperience_A_afterUnaware_1": "\"后面的第一次……原来是这样的。\"\n\n$self$若有所思，并不知道那早已不是第一次。",
+                "OnFirstExperience_A_marriage_1": "\"身体的每一处……都是你的了。\"\n\n$self$红着脸依偎在$target$身边，声音软软的。",
+                "OnFirstExperience_A_couple_1": "\"只、只给你一个人哦……这种地方的第一次。\"\n\n$self$羞得不敢抬头。",
+                "OnFirstExperience_A_generic_1": "\"……后面的第一次，就这样没了。\"\n\n$self$神情复杂，半天没说话。",
+                "OnFirstExperience_A_generic_2": "\"好奇怪的感觉……\"\n\n$self$不自在地动了动，脸一直红到了耳根。",
+
+                "OnFirstExperience_W_unawareTS_1": "最深处被叩开的余韵停留在凝固的时间里，$self$毫无知觉。",
+                "OnFirstExperience_W_unaware_1": "$self$在梦里蜷了蜷身子，小腹深处被撑开过的感觉，并不会留在她的记忆里。",
+                "OnFirstExperience_W_nonconsent_1": "\"连最里面……都被……\"\n\n$self$按着小腹，脸色惨白。",
+                "OnFirstExperience_W_player_1": "\"最里面……也被你占满了……\"\n\n$self$按着小腹，失神地笑了笑。",
+                "OnFirstExperience_W_lover_1": "\"连最深的地方……都只属于你了。\"\n\n$self$把$target$抱得更紧了一些。",
+                "OnFirstExperience_W_generic_1": "\"刚才……碰到了最里面……\"\n\n$self$按着小腹，脸上满是不可思议。",
+
+                "OnFirstExperience_M_unawareTS_1": "凝固的时间里，$self$的唇上还残留着不属于自己的温度。",
+                "OnFirstExperience_M_unaware_1": "睡梦中的$self$咂了咂嘴，并不知道自己的唇已经被人夺走了。",
+                "OnFirstExperience_M_nonconsentLike_1": "\"……嘴巴的第一次，就这么被拿走了。\"\n\n$self$捂着嘴，脸红得发烫，却没有生气。",
+                "OnFirstExperience_M_nonconsentKiss_1": "\"那是我的初吻……你凭什么……！\"\n\n$self$狠狠擦着嘴唇，眼圈都红了。",
+                "OnFirstExperience_M_nonconsent_1": "\"……\"\n\n$self$不停地干呕，眼泪止不住地往下淌。",
+                "OnFirstExperience_M_kissPlayer_1": "\"初吻……给你了。\"\n\n$self$摸着嘴唇，害羞得说不出别的话。",
+                "OnFirstExperience_M_kiss_1": "\"……原来接吻是这种感觉。\"\n\n$self$愣愣地碰了碰嘴唇，心跳得厉害。",
+                "OnFirstExperience_M_oralPlayer_1": "\"嘴巴的第一次……也是你的了。\"\n\n$self$擦了擦嘴角，红着脸不敢看$target$。",
+                "OnFirstExperience_M_oral_1": "\"……好奇怪的味道。\"\n\n$self$皱着眉擦了擦嘴，脸却红透了。",
+                "OnFirstExperience_M_generic_1": "\"嘴巴……第一次做这种事……\"\n\n$self$羞得捂住了脸。",
+
+                "OnFirstExperience_C_unawareTS_1": "凝固的时间里，$self$对自己刚刚失去的第一次一无所知。",
+                "OnFirstExperience_C_unaware_1": "睡梦中的$self$呼吸渐渐平复，对刚才发生的一切毫无记忆。",
+                "OnFirstExperience_C_nonconsentLike_1": "\"……还没准备好的说。\"\n\n$self$红着脸挠了挠头，倒也没有生气。",
+                "OnFirstExperience_C_nonconsent_1": "\"第一次……居然是被这样……\"\n\n$self$咬紧牙关，脸色难看。",
+                "OnFirstExperience_C_player_1": "\"我的第一次……是你，真好。\"\n\n$self$红着脸，傻傻地笑了。",
+                "OnFirstExperience_C_afterUnaware_1": "\"终于……告别第一次了。\"\n\n$self$长出一口气，并不知道那早已不是第一次。",
+                "OnFirstExperience_C_lover_1": "\"一直留着……就是为了你。\"\n\n$self$紧紧抱住了$target$。",
+                "OnFirstExperience_C_generic_1": "\"……这就是，第一次啊。\"\n\n$self$愣了好一会儿，才慢慢回过神来。"
+            }
+        }
+    }
+}

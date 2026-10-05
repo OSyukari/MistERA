@@ -162,15 +162,15 @@ public class ActionPackage_LLM : ActionPackage
         // inner rolls happen once; a later re-request (e.g. retryRequest on wake-up) must not re-roll
         if (requested) return true;
         requested = true;
+        // single-shot memory merge range starts here, before any inner AP logs memory
+        memoryStart = scr_System_Time.current.getCurrentTime();
 
         foreach (var ap in InnerAPs(AP_Status.none))
         {
             // inner execution messages are consolidated into the wrapper's single recorded entry
-            // (RecordConfirmedResponse) instead of being recorded individually; same for memory -
-            // one consolidated wrapper entry per actor is registered post-confirm instead of
-            // per-EP AddEntry calls (see RegisterConsolidatedMemory)
+            // (RecordConfirmedResponse) instead of being recorded individually. Memory is logged
+            // per-EP as usual; the LLM summary entry is added on top (see RegisterConsolidatedMemory)
             ap.suppressRoomRecording = true;
-            ap.suppressMemoryLogging = true;
             if (!ap.Validate())
             {
                 RecordOutcome(ap, AP_Status.none);
@@ -214,7 +214,7 @@ public class ActionPackage_LLM : ActionPackage
             ap.ExecutePackageOutsideUpdate(m);
             job.CollectLogs(ap);
             RecordOutcome(ap, AP_Status.refused);
-            CaptureMemory(ap);
+            CaptureActors(ap);
             ap.DisablePackage();
             scr_System_CampaignManager.current.Unregister(ap);
         }
@@ -261,10 +261,10 @@ public class ActionPackage_LLM : ActionPackage
         if (m == null) m = job.m;
         if (!requested) Request();
 
-        // memory for this run is NOT registered here anymore: inner APs run with
-        // suppressMemoryLogging, and one consolidated wrapper entry per actor is registered at
-        // confirm time instead (agent: Button_Confirm; single-shot: wrapper execution end, since
-        // its execution only ever starts from Button_Confirm) - see RegisterConsolidatedMemory
+        // inner APs log their own per-EP memory (and first experience) as they execute; once the
+        // LLM memory is received, everything logged since the session started is merged into one
+        // entry per actor (agent: Button_Confirm; single-shot: wrapper execution end) - see
+        // RegisterConsolidatedMemory
 
         job.m.displayOverride = true;
 
@@ -289,7 +289,7 @@ public class ActionPackage_LLM : ActionPackage
                 execresult.Add($"{ap.DisplayName} x{count}");
                 job.CollectLogs(ap);
                 RecordOutcome(ap, AP_Status.success);
-                CaptureMemory(ap);
+                CaptureActors(ap);
             }
             else
             {
@@ -320,169 +320,78 @@ public class ActionPackage_LLM : ActionPackage
 
     // ---------------- consolidated memory (see RegisterConsolidatedMemory) ----------------
 
-    /// <summary>Accumulated (AP x actor) interactions captured from executed inner APs - survives
-    /// across the wrapper's first tick (refused APs are captured in PackageBegin) until Execution
-    /// flushes it.</summary>
-    [JsonIgnore] List<LLMMemoryInteraction> pendingMemory = new List<LLMMemoryInteraction>();
-    /// <summary>First-experience records deferred by the suppressed inner executions.</summary>
-    [JsonIgnore] List<EvaluationPackage.DelayedFirstExperience> pendingFirstExp = new List<EvaluationPackage.DelayedFirstExperience>();
+    /// <summary>Game time this wrapper started (set on its first Request) - single-shot memory merge range start.</summary>
+    [JsonIgnore] DateTime memoryStart = DateTime.MinValue;
+    /// <summary>Actors of the inner APs executed by this wrapper - survives across the wrapper's first tick
+    /// (refused APs are captured in PackageBegin) until Execution flushes it.</summary>
+    [JsonIgnore] List<int> pendingActors = new List<int>();
     /// <summary>Whether any inner AP ran as part of an agent round (trackCapture) - decides where
     /// the accumulation goes: agent sessions flush into LLMAgentSession for Button_Confirm to
     /// consume, single-shot registers right here (its execution only ever starts from
     /// Button_Confirm, so wrapper execution end IS post-confirm).</summary>
     [JsonIgnore] bool pendingAgentRun = false;
 
-    /// <summary>
-    /// Mirrors MemoryManager.AddEntry(ep)'s role/tag/attitude resolution, but instead of
-    /// registering a memory entry per EP right away, captures one LLMMemoryInteraction per
-    /// (EP x participating actor) for the consolidated post-confirm registration. Also drains the
-    /// AP's deferred first-experience records (see EvaluationPackage.Execute's suppression path).
-    /// </summary>
-    void CaptureMemory(ActionPackage ap)
+    void CaptureActors(ActionPackage ap)
     {
         pendingAgentRun = pendingAgentRun || ap.IsAgentRun;
-
-        foreach (var ep in ap.ListEP)
-        {
-            foreach (var c in ep.Actors)
-            {
-                List<string> tags;
-                Memory_Attitude attitude;
-                bool isDoer = false;
-                if (ep.Doer == c)
-                {
-                    tags = ep.ReceiverTargetTag;
-                    attitude = ep.DoerAttitude;
-                    isDoer = true;
-                }
-                else if (ep.Receiver == c && !ap.ComTags.Contains("ignored"))
-                {
-                    tags = ep.DoerTargetTag;
-                    attitude = ep.ReceiverAttitude;
-                }
-                else if (ep.Master == c)
-                {
-                    tags = new List<string>();
-                    attitude = Memory_Attitude.Neutral;
-                }
-                else continue;
-
-                var targets = new List<int>();
-                foreach (var t in ep.Actors) if (t != c) targets.Add(t.RefID);
-
-                pendingMemory.Add(new LLMMemoryInteraction()
-                {
-                    ownerRef = c.RefID,
-                    isDoer = isDoer,
-                    masterRef = ep.Master == null ? -1 : ep.Master.RefID,
-                    comID = ep.targetCOM == null ? "" : ep.targetCOM.ID,
-                    response = ep.Response,
-                    attitude = attitude,
-                    description = ap.DescriptionText(c.RefID),
-                    targets = targets,
-                    tags = new List<string>(tags)
-                });
-            }
-        }
-
-        if (ap.suppressedFirstExp != null)
-        {
-            pendingFirstExp.AddRange(ap.suppressedFirstExp);
-            ap.suppressedFirstExp = null;
-        }
+        foreach (var c in ap.Actors) if (!pendingActors.Contains(c.RefID)) pendingActors.Add(c.RefID);
     }
 
     /// <summary>
-    /// End-of-Execution destination of the captured memory data: agent rounds flush into the
-    /// running session (consumed by scr_panel_logs.Button_Confirm once the player accepts the
-    /// run), single-shot registers immediately - ExecuteLLMResponse only ever runs from
-    /// Button_Confirm, so this moment is already post-confirm for it.
+    /// End-of-Execution destination of the captured actors: agent rounds flush into the running
+    /// session (consumed by scr_panel_logs.Button_Confirm once the player accepts the run),
+    /// single-shot registers immediately - ExecuteLLMResponse only ever runs from Button_Confirm,
+    /// so this moment is already post-confirm for it.
     /// </summary>
     void FlushConsolidatedMemory()
     {
-        if (pendingMemory.Count < 1 && pendingFirstExp.Count < 1) return;
+        if (pendingActors.Count < 1) return;
 
         if (pendingAgentRun)
         {
             var session = scr_UpdateHandler.current?.CurrentAgentSession;
             if (session != null)
             {
-                session.memoryInteractions.AddRange(pendingMemory);
-                session.memoryFirstExps.AddRange(pendingFirstExp);
-                session.memoryDuration += innerJSON.timeCost;
+                foreach (var a in pendingActors) if (!session.memoryActorRefs.Contains(a)) session.memoryActorRefs.Add(a);
             }
         }
-        else
+        else if (memoryStart != DateTime.MinValue)
         {
-            RegisterConsolidatedMemory(innerJSON.summary, pendingMemory, pendingFirstExp, innerJSON.relevantActorRefs, innerJSON.timeCost);
+            RegisterConsolidatedMemory(innerJSON.summary, memoryStart, pendingActors, innerJSON.relevantActorRefs);
         }
 
-        pendingMemory.Clear();
-        pendingFirstExp.Clear();
+        pendingActors.Clear();
     }
 
     /// <summary>
-    /// Registers the consolidated LLM memory for a finalized session: for every relevant actor ONE
-    /// wrapper entry (entryDescription = summary) via MemoryManager.AddLLMEntry, holding one
-    /// interaction instance per executed AP the actor participated in; relevant-but-
-    /// non-participating actors get the wrapper with a lightweight "present" instance (no
-    /// witnessing system exists - that instance is the stand-in). Then replays the deferred
-    /// first-experience records so the LLM interaction triggers first experience from here, never
-    /// from the suppressed inner executions. Everything the inner EPs applied as side effects
-    /// (experience gains, relationship deltas, stat costs, body state) is untouched by all this.
+    /// Registers the LLM memory for a finalized session: for every participating or relevant actor,
+    /// everything logged since the session started is merged into ONE entry carrying the LLM
+    /// description (MemoryManager.MergeLLMSession); relevant actors who logged nothing get a standalone
+    /// entry with a lightweight "present" instance (no witnessing system exists - that instance is the
+    /// stand-in).
     /// </summary>
-    public static void RegisterConsolidatedMemory(string summary, List<LLMMemoryInteraction> interactions, List<EvaluationPackage.DelayedFirstExperience> firstExps, List<int> relevantActorRefs, int duration)
+    public static void RegisterConsolidatedMemory(string summary, DateTime sessionStart, List<int> participantRefs, List<int> relevantActorRefs)
     {
-        if (interactions == null || interactions.Count < 1) return;
+        if (participantRefs == null || participantRefs.Count < 1) return;
         if (string.IsNullOrEmpty(summary)) summary = LocalizeDictionary.QueryThenParse("ui_memory_llm_summary_default", "LLM interaction");
-
-        var byOwner = new Dictionary<int, List<MemInstance>>();
-        foreach (var inter in interactions)
-        {
-            var inst = new MemInstance(inter.targets, inter.tags, inter.comID, -1, inter.masterRef, inter.isDoer, inter.response, inter.attitude, inter.description);
-            if (!byOwner.TryGetValue(inter.ownerRef, out var list)) byOwner[inter.ownerRef] = list = new List<MemInstance>();
-            list.Add(inst);
-        }
 
         var roomRef = scr_System_CampaignManager.current.CurrentRoom.RefID;
 
-        var actors = new List<int>(relevantActorRefs);
-        foreach (var ownerRef in byOwner.Keys) if (!actors.Contains(ownerRef)) actors.Add(ownerRef);
+        var actors = new List<int>(participantRefs);
+        if (relevantActorRefs != null) foreach (var r in relevantActorRefs) if (!actors.Contains(r)) actors.Add(r);
 
         foreach (var actorRef in actors)
         {
             var actor = scr_System_CampaignManager.current.FindInstanceByID(actorRef);
             if (actor == null) continue;
+            if (actor.Memory.MergeLLMSession(sessionStart, summary)) continue;
 
-            byOwner.TryGetValue(actorRef, out var instances);
-            if (instances == null)
-            {
-                // wrapper-only registration for relevant non-participants - the present-instance
-                // carries the other run participants as targets so the wrapper line's $names$
-                // (Memory_Entry.TargetNames) resolves for them too
-                var presentTargets = new List<int>(actors);
-                presentTargets.Remove(actorRef);
-                instances = new List<MemInstance>() { new MemInstance(presentTargets, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, LocalizeDictionary.QueryThenParse("ui_memory_llm_present", "was present")) };
-            }
-            actor.Memory.AddLLMEntry(summary, instances, roomRef, duration);
-        }
-
-        if (firstExps == null) return;
-        foreach (var fe in firstExps)
-        {
-            var body = fe.exp.body;
-            if (body == null || body.Owner == null) continue;
-            if (body.NotifySexExperience(fe.hasPermission, fe.exp.targetName, fe.exp.comName, fe.exp.comtags, fe.exp.targetBodytags))
-            {
-                // first experience loss - same message and important memory entry the per-EP
-                // loop in EvaluationPackage.Execute produces, replayed here at confirm time
-                string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", body.DisplayName);
-                UtilityEX.StringReplace(body.Owner, ref s);
-                scr_System_CampaignManager.current.AddLog(-1, s, true);
-
-                var memInst2 = new MemInstance(new List<int>() { fe.exp.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Accept, fe.attitude, body.FirstExperienceDesc);
-                body.Owner.Memory.AddEntry(memInst2, new List<string>() { "important" }, -2, true);
-            }
+            // nothing logged since start - the present-instance carries the other session actors as
+            // targets so the wrapper line's $names$ (Memory_Entry.TargetNames) resolves for them too
+            var presentTargets = new List<int>(actors);
+            presentTargets.Remove(actorRef);
+            var present = new MemInstance(presentTargets, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral, LocalizeDictionary.QueryThenParse("ui_memory_llm_present", "was present"));
+            actor.Memory.AddLLMPresentEntry(summary, present, roomRef);
         }
     }
 

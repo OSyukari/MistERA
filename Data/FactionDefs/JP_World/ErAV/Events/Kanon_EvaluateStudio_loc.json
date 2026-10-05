@@ -1,0 +1,15 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanon_EvaluateStudio.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanon_EvaluateStudio": "Request a studio evaluation",
+                "kes_L_evaluate": "$kanon.name$ opens another ledger. The studio's release records, each title's grade, the payments from the wholesalers - she checks them one by one.",
+                "kes_L_success": "\"...All right.\"\n$kanon.name$ signs the last page of the ledger.\n\"From now on, the studio goes out as '$studioRankName$'. I'll have a word with the wholesalers - they'll open up more shelf space for us.\"\n\"Now that the name's up there, don't let it fall.\"",
+                "kes_L_fail": "\"Not even close.\"\n$kanon.name$ pushes the ledger across to $self.name$.\n$studioRankAdvice$\n\"Come back when the numbers are there. The wholesalers look at nothing else.\""
+            }
+        }
+    }
+}

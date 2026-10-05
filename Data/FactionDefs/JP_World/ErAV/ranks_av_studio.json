@@ -1,0 +1,72 @@
+{
+    "Ranks": {
+        "list": [
+            {
+                "ID": "rank_av_studio",
+                "tags": [ "nsfw" ],
+                "_comment": "Studio rank (MapPlan.renownRankTrackID). renownCap caps the studio's renown at that level; market share drifts toward renown / (renown + K), K = world competitorWeight (1000): renown 50 ~ 4.8%, 200 ~ 16.7%, 600 ~ 37.5%. Starting share floor is 1%.",
+                "levels": [
+                    {
+                        "DisplayName": "rank_av_studio_0",
+                        "renownCap": 50
+                    },
+                    {
+                        "DisplayName": "rank_av_studio_1",
+                        "renownCap": 200,
+                        "requirements": {
+                            "$type": "RankTrack+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireRenown": { "operand": "gte", "value": 50 },
+                                    "requireStudioReleases": [ { "minGrade": "B", "operand": "gte", "value": 5 } ],
+                                    "requireStudioEarnings": { "operand": "gte", "value": 3000000 }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "DisplayName": "rank_av_studio_2",
+                        "renownCap": 600,
+                        "requirements": {
+                            "$type": "RankTrack+RequireAll, Assembly-CSharp",
+                            "entries": [
+                                {
+                                    "requireRenown": { "operand": "gte", "value": 200 },
+                                    "requireStudioReleases": [ { "minGrade": "A", "operand": "gte", "value": 10 } ],
+                                    "requireStudioEarnings": { "operand": "gte", "value": 30000000 }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "default": {
+                "rank_av_studio": "メーカーランク",
+                "rank_av_studio_0": "零細メーカー",
+                "rank_av_studio_1": "中堅メーカー",
+                "rank_av_studio_2": "大手メーカー",
+
+                "rank_req_renown": "メーカーの知名度",
+                "rank_req_studioReleases": "メーカー作品数",
+                "rank_req_studioEarnings": "メーカー総売上",
+                "rank_req_managesFaction": "$faction$を経営している"
+            },
+            "zh-cn": {
+                "rank_av_studio": "片商等级",
+                "rank_av_studio_0": "小作坊",
+                "rank_av_studio_1": "中坚片商",
+                "rank_av_studio_2": "大型片商",
+
+                "rank_req_renown": "片商声望",
+                "rank_req_studioReleases": "片商作品数",
+                "rank_req_studioEarnings": "片商总销售额",
+                "rank_req_managesFaction": "经营$faction$"
+            }
+        }
+    }
+}

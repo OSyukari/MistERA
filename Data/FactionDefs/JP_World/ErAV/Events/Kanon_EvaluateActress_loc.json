@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanon_EvaluateActress.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanon_EvaluateActress": "Request an actress evaluation",
+                "kea_Q01": "\"Who do you want me to look at?\"\n$kanon.name$ leans back in her chair, her gaze passing over the people $self.name$ brought along.",
+                "Kanon_EvaluateActress_Candidate": "$name$",
+                "kea_Q01_cancel": "Another time",
+                "kea_L_evaluate": "$kanon.name$ takes a ledger from the drawer and turns through it page by page, checking $actress.name$'s appearances against the sales figures.",
+                "kea_L_success": "\"...Good enough.\"\n$kanon.name$ closes the ledger.\n\"From today, $actress.name$ is billed as '$rankName$'. I'll adjust the pricing on her titles to match.\"\n\"Don't let her tarnish the name.\"",
+                "kea_L_fail": "\"Not yet.\"\n$kanon.name$ turns the ledger around and taps a few lines of figures.\n$rankAdvice$\n\"Bring her back once those are covered.\"",
+                "kea_L_none": "\"If you want me to evaluate someone, bring her here first. I don't judge anyone I haven't seen in person.\"",
+                "kea_L_cancel": "\"Come by whenever. The ledger isn't going anywhere.\""
+            }
+        }
+    }
+}

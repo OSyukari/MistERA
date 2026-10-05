@@ -1,0 +1,103 @@
+{
+    "Events": {
+        "list": [
+            {
+                "_comment": "Kanon_EvaluateStudio. OnDialogue_Options on Kanon, same gate as Kanon_IntroduceActress. Runs EvaluateStudioRank on the film studio (rank_av_studio, RankUtility.TryPromoteStudio): promoted -> es_success with $studioRankName$ (higher renown cap -> higher market share target), otherwise -> es_fail listing every requirement ($studioRankAdvice$).",
+                "ID": "Kanon_EvaluateStudio",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": {
+                    "displayMode": "AVG",
+                    "infoDisplay": "Hide"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_offer",
+                                "operand": "eq",
+                                "value": 2
+                            }
+                        },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_rental",
+                                "operand": "eq",
+                                "value": 1
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] },
+                            { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "kes_L_evaluate"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_promoted",
+                                "Results": [
+                                    { "Type": "EvaluateStudioRank", "arguments": [ "ErAV_KiryuGumi_Filmstudio", "rank_av_studio", "studioRankAdvice", "studioRankName" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "es_success" ] }
+                                ]
+                            },
+                            {
+                                "option": "_not_promoted",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "es_fail" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "es_success",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kes_L_success",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "es_fail",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "line": "kes_L_fail",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanon_EvaluateStudio": "请求评估片商",
+                "kes_L_evaluate": "$kanon.name$翻开另一本账簿。片场的出片记录、每部作品的评级、批发商那边的回款——她一项一项核对下去。",
+                "kes_L_success": "「……行。」\n$kanon.name$在账簿末页签了字。\n「从现在起，片场按『$studioRankName$』对外。我会跟批发那边打招呼，铺货的渠道会再放宽一些。」\n「招牌挂上去了，就别让它掉下来。」",
+                "kes_L_fail": "「还差得远。」\n$kanon.name$把账簿推到$self.name$面前。\n$studioRankAdvice$\n「数字够了再来找我。批发商只看这些。」"
+            }
+        }
+    }
+}

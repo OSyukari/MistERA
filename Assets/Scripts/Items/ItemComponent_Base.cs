@@ -43,6 +43,33 @@ public abstract class ItemComponent_Base
     /// </summary>
     public virtual string GetRetailID() { return ""; }
 
+    /// <summary>
+    /// Sales lineage this component assigns its owning item (see Item_Instance.SalesLineageID) - items
+    /// sharing a lineage share one pool of limitedAudience buyers, so e.g. every edit of the same
+    /// recording draws from the same remaining buyers. null = this component has no opinion.
+    /// </summary>
+    public virtual string GetSalesLineageID() { return null; }
+
+    /// <summary>
+    /// Lets this component describe its owning item's edition in SalesManager's release registry
+    /// (grade, credited actors, ...). Called whenever the edition is listed or sold. Most components
+    /// add nothing.
+    /// </summary>
+    public virtual void FillSalesEdition(SalesManager.EditionRecord edition) { }
+
+    /// <summary>
+    /// Called by SalesManager each time copies of the owning item are sold (count copies for revenue in
+    /// total), after the sale is recorded - lets a component react to sales (e.g. recordings giving their
+    /// main actors fame). Most components do nothing.
+    /// </summary>
+    public virtual void OnSold(int count, long revenue) { }
+
+    /// <summary>
+    /// Seller renown (SalesManager.Renown) earned when count copies of the owning item are sold. Most
+    /// components give none.
+    /// </summary>
+    public virtual float GetSalesRenown(int count) { return 0f; }
+
     [JsonIgnore] public virtual bool Stackable { get { return true; } }
 
     /// <summary>

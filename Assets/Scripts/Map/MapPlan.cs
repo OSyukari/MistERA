@@ -345,6 +345,18 @@ public class MapPlan
     /// saved directly, so template changes always take effect).
     /// </summary>
     public List<SalesManager.SalesClienteleInstance> salesClientele = new List<SalesManager.SalesClienteleInstance>();
+
+    /// <summary>
+    /// Rank track (Ranks index) of this faction as a seller - its current level's renownCap caps the
+    /// faction's sales renown (see SalesManager.Renown). Empty = no studio rank, renown uncapped.
+    /// </summary>
+    public string renownRankTrackID = "";
+
+    /// <summary>
+    /// Clientele of other factions this faction starts with access to (one entry per clientele, each with its own
+    /// commission) - see SalesManager.ClienteleAccess. Runtime grants (GrantClienteleAccess) add to / override these.
+    /// </summary>
+    public List<SalesManager.ClienteleAccess> salesClienteleAccess = new List<SalesManager.ClienteleAccess>();
     public List<int> mealHours = new List<int>();
     public List<CampaignSettings_Initializer> initializers = new List<CampaignSettings_Initializer>();
     public Dictionary<string, string> Lorebooks = new Dictionary<string, string>();

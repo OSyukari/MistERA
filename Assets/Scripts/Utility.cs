@@ -1126,7 +1126,7 @@ public static class UtilityEX
 
     /// <summary>
     /// Get actor's current status (such as sleeping, timestopped, etc), plus static per-actor keyword tags
-    /// (Character_Trainable.ActorKeywords: template actorKeyword + race RaceType).
+    /// (Character_Trainable.ActorKeywords: template actorKeyword + race RaceType + raceTemplate actorKeyword).
     /// <br/> for current actions, call another function
     /// </summary>
     /// <param name="tags"></param>
@@ -1210,6 +1210,7 @@ public static class UtilityEX
     public static string ResourcesPath { get { return "\\Resources\\"; } }
     public static void ParseConsoleCommand(string s)
     {
+        s = s?.Trim() ?? ""; // console buttons insert "command " with a trailing space
         if (scr_System_CentralControl.current.allusedConsoleCommands.Contains(s)) scr_System_CentralControl.current.allusedConsoleCommands.Remove(s);
         scr_System_CentralControl.current.allusedConsoleCommands.Insert(0,s);
 

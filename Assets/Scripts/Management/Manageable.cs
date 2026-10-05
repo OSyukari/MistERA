@@ -766,6 +766,18 @@ public class Manageable : I_Disposable, I_IsJobGiver
             && links.Exists(x => x.targetRef == target.RefID && (memberTypeID == "" || x.memberTypeID == memberTypeID));
     }
 
+    /// <summary>
+    /// Whether subject's member status here allows asking target's to leave a room (MemberType.cannotRequestLeaveMemberTypes).
+    /// Asked by RequestLeaveUtility.CanRequestLeave for every faction managing both.
+    /// </summary>
+    public bool CanMemberRequestLeave(Character_Trainable subject, Character_Trainable target)
+    {
+        var subjectType = GetMemberType(subject);
+        var targetType = GetMemberType(target);
+        if (subjectType == null || targetType == null) return true;
+        return !subjectType.cannotRequestLeaveMemberTypes.Contains(targetType.ID);
+    }
+
     /// <summary>Every member of this faction linked to target (as memberTypeID, or as anything when it is empty), e.g. a patient's visitors.</summary>
     public List<Character_Trainable> GetLinkedMembers(Character_Trainable target, string memberTypeID = "")
     {

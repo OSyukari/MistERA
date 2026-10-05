@@ -7,7 +7,8 @@
             "en-us": {
                 "Kanon_Opt_AcceptOffer": "About that offer",
                 "Kanon_Opt_AcceptOffer_NotInOffice": "\"This isn't the place to talk business. We'll discuss that matter at the office.\"",
-                "Kanon_Opt_AcceptOffer_Option1": "Kanon sets down the documents in her hand and looks up at $self.name$.\n\"What, changed your mind?\"\n\"You shoot the films, we sell them, and that money pays off the debt. The terms from that night haven't changed. Tell me once you've decided.\"",
+                "Kanon_Opt_AcceptOffer_Open": "Kanon sets down the documents in her hand and looks up at $self.name$.\n\"What, changed your mind? The terms from that night haven't changed — you shoot the films, we sell them, and that money pays off the debt.\"\n\"Sit. First, let me make clear what I'll be asking of you.\"",
+                "Kanon_Opt_AcceptOffer_Option1": "\"That's the whole of it.\"\nKanon's gaze fixes on $self.name$'s face.\n\"So — will you do it, or not?\"",
                 "Kanon_Opt_AcceptOffer_Option1_op1": "Accept the offer",
                 "Kanon_Opt_AcceptOffer_Option1_op2": "Not decided yet",
                 "Kanon_Opt_AcceptOffer_Refuse": "\"Suit yourself. If you change your mind, just come by anytime.\""

@@ -345,6 +345,56 @@ public class Character_Factions
         return false;
     }
 
+    /// <summary>
+    /// Party-aware counterpart of CurrentlyActiveFaction: the active party (see CurrentActiveParty) if any,
+    /// else the currently active faction. Same precedence as CurrentActiveMemberType.
+    /// </summary>
+    [JsonIgnore]
+    public I_IsJobGiver CurrentActiveJobGiver
+    {
+        get
+        {
+            var party = CurrentActiveParty;
+            if (party != null) return party;
+            return CurrentlyActiveFaction;
+        }
+    }
+
+    /// <summary>
+    /// Every job giver this character belongs to: home + work factions, plus every party they are
+    /// rostered in (TrackedPartyRef) and the current/locked party.
+    /// </summary>
+    [JsonIgnore]
+    public List<I_IsJobGiver> AllJobGivers
+    {
+        get
+        {
+            var list = new List<I_IsJobGiver>(Factions.Count + trackedPartyRef.Count + 2);
+            foreach (var f in Factions) if (f != null) list.Add(f);
+            foreach (var jobRef in trackedPartyRef)
+            {
+                var party = (scr_System_CampaignManager.current.FindJobInstanceByID(jobRef) as Job_Expedition)?.FactionOwner_Party;
+                if (party != null && !list.Contains(party)) list.Add(party);
+            }
+            if (CurrentParty != null && !list.Contains(CurrentParty)) list.Add(CurrentParty);
+            if (CurrentLockedParty != null && !list.Contains(CurrentLockedParty)) list.Add(CurrentLockedParty);
+            return list;
+        }
+    }
+
+    /// <summary>
+    /// True if jobGiver (faction or party) is one of AllJobGivers.
+    /// </summary>
+    public bool BelongsToJobGiver(I_IsJobGiver jobGiver)
+    {
+        if (jobGiver == null) return false;
+        if (jobGiver is Manageable m) return Factions.Contains(m);
+        var party = jobGiver as Manageable_Party;
+        if (party == null) return false;
+        if (CurrentParty == party || CurrentLockedParty == party) return true;
+        return party.Job != null && trackedPartyRef.Contains(party.Job.RefID);
+    }
+
     public void AddWorkFaction(string factionID, MemberType status, bool sendEvent = true, Manageable sourceFaction = null)
     {
         Manageable targetFaction = Factions_Work.Find(x => x.ID == factionID);

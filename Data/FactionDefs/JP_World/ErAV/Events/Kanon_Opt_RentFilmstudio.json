@@ -1,0 +1,178 @@
+{
+    "Events": {
+        "list": [
+            {
+                "_comment": "Kanon_Opt_RentFilmstudio. OnDialogue_Options on Kanon, visible once erav_kanon_offer >= 2 (offer accepted) and erav_kanon_rental == 0 (studio not yet rented). Kanon offers the vacant Miyama Pictures studio for rent: one month (rent 400k + maintenance 60k = 460k JPY) paid upfront from ErAV_miyama_Household to ErAV_KiryuGumi_Office; the option is disabled when the household cannot cover it (hasFactionItemCount on the option, same pattern as Kanon_IntroduceActress's Graves fee). Accepting initializes ErAV_KiryuGumi_Filmstudio, sets the player as its director and flips erav_kanon_rental to 1, which un-gates Kanon_IntroduceActress / Kanon_EvaluateActress / Kanon_EvaluateStudio. The pitch explicitly tells the player the actress roster (introductions/evaluations) opens up with the studio.",
+                "ID": "Kanon_Opt_RentFilmstudio",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": {
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_offer",
+                                "operand": "gte",
+                                "value": 2
+                            }
+                        },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_rental",
+                                "operand": "eq",
+                                "value": 0
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanon" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanon" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_in_office",
+                                "target_chara_conditions":{
+                                    "kanon":[
+                                        { "parameters": [ "isActiveFaction", "ErAV_KiryuGumi_Office" ] }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kor_terms" ] }
+                                ]
+                            },
+                            {
+                                "option": "fallback_not inoffice",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "br_not_in_office" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "br_not_in_office",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "focused", "serious" ]
+                        },
+                        "line": "Kanon_Opt_AcceptOffer_NotInOffice",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kor_terms",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kor_L01",
+                        "nextEntryLabel": "kor_question"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "kor_question",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "focused", "serious" ]
+                        },
+                        "question": "kor_Q01",
+                        "options": [
+                            {
+                                "option": "kor_Q01_op1",
+                                "self_chara_conditions": [
+                                    {
+                                        "parameters": [ "hasFactionItemCount", "ErAV_miyama_Household", "currency_JPY", "460000" ]
+                                    }
+                                ],
+                                "Results": [
+                                    {
+                                        "Type": "TransferItemByFactionID",
+                                        "arguments": [
+                                            "ErAV_miyama_Household",
+                                            "ErAV_KiryuGumi_Office",
+                                            "currency_JPY",
+                                            "460000",
+                                            "true"
+                                        ]
+                                    },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kor_accept" ] }
+                                ]
+                            },
+                            {
+                                "option": "kor_Q01_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kor_decline" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kor_accept",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kor_L_accept",
+                        "Results": [
+                            {
+                                "Type": "SetSelfKojoVariable",
+                                "arguments": [ "self", "false", "erav_kanon_rental", "1" ]
+                            },
+                            {
+                                "Type": "InitializeFaction",
+                                "arguments": [ "ErAV_KiryuGumi_Filmstudio" ]
+                            },
+                            {
+                                "Type": "SetWorkFaction",
+                                "arguments": [ "self", "ErAV_KiryuGumi_Filmstudio", "membertype_erav_kiryu_filmstudio_director", "false", "true" ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kor_decline",
+                        "UISpec": {
+                            "portraitRefKey": "kanon",
+                            "selfTags": [ "yakuza", "confident", "relaxed" ]
+                        },
+                        "line": "kor_L_decline",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanon_Opt_RentFilmstudio":"想租下那间摄影棚",
+                "kor_L01": "$kanon.name$从文件堆里抬起头，像是早料到$self.name$会来。\n「想好了？」\n她抽出一份合同推到桌前。\n「宫间映画，场地租金加维护费一个月四十六万。要租的话，头一个月现在付清，往后按月照收。钥匙、场子，都交给你打理。」\n「还有件事——有了自己的片场，我手里那份女优名单也就交给你了。介绍、评估，都是你正式入行之后的事。」",
+                "kor_Q01": "「现在就签？」",
+                "kor_Q01_op1": "租下摄影棚（460,000日元）",
+                "kor_Q01_op1_tooltip": "首月租金将从宫间家的资金中扣除",
+                "kor_Q01_op2": "再想想",
+                "kor_L_accept": "$kanon.name$收起转账凭据，把一串钥匙搁在桌上。\n「从今天起，宫间映画归你打理。水电网、人事、租金，往后都是你的事。」\n「名单我随后让人给你送过去——好好干，别砸了招牌。」\n\n【租下了%%ErAV_KiryuGumi_Filmstudio%%，$self.name$成为了%%membertype_erav_kiryu_filmstudio_director%%】\n【可以找歌音【请求介绍AV演员】了】",
+                "kor_L_decline": "「不急。场子一直空着，钥匙在我这儿。」"
+            },
+            "en-us": {}
+        }
+    }
+}

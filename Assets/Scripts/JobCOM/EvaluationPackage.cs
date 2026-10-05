@@ -694,6 +694,8 @@ public partial class EvaluationPackage : I_ResultStorage
             response = injectResult;
         }
 
+        firstExpRegistered.Clear();
+
         //if (receiver == null || doer == receiver) receiver = doer;
         //_doerInternal = null; _receiverInternal = null;
         targetCOM.ApplyCost(this, this.Package.job.isPlayerRelatedJob || m.displayOverride ? m : null);
@@ -709,9 +711,9 @@ public partial class EvaluationPackage : I_ResultStorage
 
         if (response == Memory_Response.None || response == Memory_Response.Refuse)
         {// doer unwilling
-            if (!Package.suppressMemoryLogging) Doer.Memory.AddEntry(this);
+            Doer.Memory.AddEntry(this);
             //(DoerSelfTag, ReceiverTargetTag, p.Master != null ? p.masterRef : (Receiver != null ? Receiver.RefID : Doer.RefID), targetCOM, VariantID, true, null, attitude_doer, Memory_Response.Refuse, Doer.Stats.MemoryLength, p.masterRef);
-            if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored") && !Package.suppressMemoryLogging) Receiver.Memory.AddEntry(this);
+            if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
         }
         /*
         else if (response == Memory_Response.Refuse)
@@ -734,8 +736,8 @@ public partial class EvaluationPackage : I_ResultStorage
                 //Debug.Log($"rollresult");
                 // this function no longer rolls, it instead read parent injected result and see if success check
 
-                if (!Package.suppressMemoryLogging) Doer.Memory.AddEntry(this);
-                if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored") && !Package.suppressMemoryLogging) Receiver.Memory.AddEntry(this);
+                Doer.Memory.AddEntry(this);
+                if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry(this);
                 /*
                 Doer.Memory.AddEntry_COM(DoerSelfTag, ReceiverTargetTag, Receiver == null ? Doer.RefID : Receiver.RefID, targetCOM, VariantID, true, null, Memory_Response.Accept, attitude_doer, Doer.Stats.MemoryLength, p.masterRef);
                 if (Receiver != null && Doer != Receiver && !Package.ComTags.Contains("ignored")) Receiver.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, Doer.RefID, targetCOM, VariantID, false, null, Memory_Response.Accept, attitude_receiver, Receiver.Stats.MemoryLength, p.masterRef);
@@ -754,41 +756,33 @@ public partial class EvaluationPackage : I_ResultStorage
             if (Receiver != null && Receiver.RefID != Doer.RefID && !Package.ComTags.Contains("ignored")) targetCOM.ApplyResults(job, p, this, attitude_receiver, Receiver, m.exp, comSuccess);
         }
 
-        if (Package.suppressMemoryLogging)
-        {
-            // LLM inner package: defer the first-experience application - replayed by the LLM
-            // wrapper's consolidated registration (ActionPackage_LLM.RegisterConsolidatedMemory),
-            // so the confirmed memory entry is what triggers first experience, never the
-            // suppressed inner execution. Attitude is computed here with the exact formula the
-            // apply loop below uses (it depends only on EP state, not on NotifySexExperience).
-            if (Package.suppressedFirstExp == null) Package.suppressedFirstExp = new List<DelayedFirstExperience>();
-            foreach(var entry in logExps)
-            {
-                var att = isReceiver(entry.body.Owner) ? attitude_receiver : attitude_doer;
-                if (hasPermission) att = (Memory_Attitude)Math.Min((int)(att+1), (int)Memory_Attitude.Love);
-                else att = (Memory_Attitude)Math.Max((int)(att - 1), (int)Memory_Attitude.Hate);
-
-                Package.suppressedFirstExp.Add(new DelayedFirstExperience() { exp = entry, attitude = att, hasPermission = hasPermission });
-            }
-            logExps.Clear();
-            return;
-        }
-
         foreach(var entry in logExps)
         {
-            if (entry.body.NotifySexExperience(hasPermission, entry.targetName, entry.comName, entry.comtags, entry.targetBodytags))
+            var unawareReason = BodyInternal_Instance.GetUnawareReason(entry.body.Owner);
+            if (entry.body.NotifySexExperience(hasPermission, entry, unawareReason))
             {
+                firstExpRegistered.Add(entry);
                 //Debug.LogError($"FirstExperience {entry.body.DisplayNameFull}");
                 // first experience loss
                 string s = LocalizeDictionary.QueryThenParse("messagelog_lose_first_experience").Replace("$bodypart$", entry.body.DisplayName);
                 UtilityEX.StringReplace(entry.body.Owner, ref s);
                  m.exp.AddMessage(entry.body.Owner.RefID, s);
 
+                // kojo_after: printed right after the exp block (the red line above), not after the round's other "after" lines
+                var kol = GetFirstExperienceKojo(entry, this, hasPermission, unawareReason, m.exp);
+                if (kol != null)
+                {
+                    m.AddKojoAfter(kol);
+                    var room = entry.body.Owner.CurrentRoom;
+                    if (room != null && room.HasRecording) room.NotifyKojoCollect(kol, MessageCollect_Type.kojo_after);
+                }
+
                 var att = isReceiver(entry.body.Owner) ? attitude_receiver : attitude_doer;
                 if (hasPermission) att = (Memory_Attitude)Math.Min((int)(att+1), (int)Memory_Attitude.Love);
                 else att = (Memory_Attitude)Math.Max((int)(att - 1), (int)Memory_Attitude.Hate);
 
-                var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Accept, att, entry.body.FirstExperienceDesc);
+                var memInst2 = new MemInstance(new List<int>() { entry.targetRef }, new List<string>() { "important" }, "", -1, -1, false, Memory_Response.Accept, att,
+                    unawareReason != BodyInternal_Instance.UnawareReason.None ? entry.body.UnawareExperienceDesc : entry.body.FirstExperienceDesc);
                 var mem = entry.body.Owner.Memory.AddEntry(memInst2, new List<string>() { "important" }, -2, true);
             }
             else
@@ -1748,8 +1742,8 @@ public partial class EvaluationPackage : I_ResultStorage
         //DoerAttitude = fucker == Doer ? fucker_att : fucked_att;
         //ReceiverAttitude = internal_fucked.Owner == Receiver ? fucked_att : fucker_att;
 
-        if (DoerAttitude != Memory_Attitude.None && !Package.suppressMemoryLogging) Doer.Memory.AddEntry(this);
-        if (ReceiverAttitude != Memory_Attitude.None && Receiver != null && Receiver != Doer && !Package.suppressMemoryLogging) Receiver.Memory.AddEntry(this);
+        if (DoerAttitude != Memory_Attitude.None) Doer.Memory.AddEntry(this);
+        if (ReceiverAttitude != Memory_Attitude.None && Receiver != null && Receiver != Doer) Receiver.Memory.AddEntry(this);
 
         //if (fucked_att != Memory_Attitude.None && logMessage) internal_fucked.Owner.Memory.AddEntry(this);
         //internal_fucked.Owner.Memory.AddEntry_COM(ReceiverSelfTag, DoerTargetTag, fucker.RefID, com, VariantID, false, null, internal_fucked.Owner.canAct ? Memory_Response.Success : Memory_Response.Accept, fucked_att, internal_fucked.Owner.Stats.MemoryLength, Master == null ? -1 : Master.RefID);
@@ -1994,7 +1988,8 @@ public partial class EvaluationPackage : I_ResultStorage
 
         //if (sourceBody != null) tags.AddRange(sourceBody.Base.tags);
         logExps.Add(new DelayedExpLogging( body, source.RefID,  sourceBody == null ? source.FirstName : sourceBody.DisplayNameFull, com.ID, com.DisplayName(variantID), 
-                                targetCOM.comTags, sourceBody == null ? null : sourceBody.Base.tags ));
+                                targetCOM.comTags, sourceBody == null ? null : sourceBody.Base.tags )
+        { targetActorName = source.FirstName, targetPartID = sourceBody == null ? "" : sourceBody.baseID, comVariant = variantID });
 
         body.Stimulate(ref ownerTags, ref pleasureTotal,ref pleasure, ref pain);
 
@@ -2056,17 +2051,79 @@ public partial class EvaluationPackage : I_ResultStorage
     [JsonIgnore] public List<DelayedExpLogging> logExps = new List<DelayedExpLogging>();
 
     /// <summary>
-    /// One deferred first-experience application, stashed by Execute onto
-    /// Package.suppressedFirstExp when the AP runs with suppressMemoryLogging (LLM inner
-    /// packages) - replayed by the LLM wrapper's consolidated registration instead of firing
-    /// from the suppressed inner execution. Attitude is pre-computed with the apply loop's exact
-    /// formula so the replay needs nothing but this record.
+    /// First experiences registered by the current Execute - read by command kojo fetched after Execute (result /
+    /// climax kojo), where the dry run would already fail. Cleared on Execute start and by ActionPackage once
+    /// ExecutePackage is done, so later ongoing kojo don't see it.
     /// </summary>
-    public class DelayedFirstExperience
+    [JsonIgnore] List<DelayedExpLogging> firstExpRegistered = new List<DelayedExpLogging>();
+    public void ClearFirstExperienceRegistry() { firstExpRegistered.Clear(); }
+
+    /// <summary>
+    /// Command kojo self tags for a first experience happening in this interaction:
+    /// firstexp_[class] for the actor losing it, firstexp_partner_[class] for the actor taking it.
+    /// Before Execute: dry run on the parts chosen at acceptance (doerInternal / receiverInternal).
+    /// After Execute: the first experiences it actually registered (incl. parts reached by penetration depth, e.g. womb).
+    /// </summary>
+    public List<string> GetFirstExperienceTags(Character_Trainable actor)
     {
-        public DelayedExpLogging exp;
-        public Memory_Attitude attitude;
-        public bool hasPermission;
+        var tags = new List<string>();
+        if (actor == null) return tags;
+        if (firstExpRegistered.Count > 0)
+        {
+            foreach (var entry in firstExpRegistered)
+            {
+                var cls = entry.body.Base.sensitivityClassString;
+                if (cls == "") continue;
+                if (entry.body.Owner == actor) tags.Add("firstexp_" + cls);
+                else if (entry.targetRef == actor.RefID) tags.Add("firstexp_partner_" + cls);
+            }
+        }
+        else if (targetCOM != null && response >= Memory_Response.Accept)
+        {
+            CheckFirstExperience(actor, doerInternal, receiverInternal, tags);
+            CheckFirstExperience(actor, receiverInternal, doerInternal, tags);
+        }
+        Utility.DistinctInPlace(tags);
+        return tags;
+    }
+
+    void CheckFirstExperience(Character_Trainable actor, BodyInternal_Instance part, BodyInternal_Instance partnerPart, List<string> tags)
+    {
+        if (part == null || part.Owner == null || part.Base.sensitivityClassString == "") return;
+        if (part.Owner != actor && (partnerPart == null || partnerPart.Owner != actor)) return;
+        if (!part.WouldLoseFirstExperience(targetCOM.comTags, partnerPart == null ? null : partnerPart.Base.tags, BodyInternal_Instance.GetUnawareReason(part.Owner))) return;
+        tags.Add((part.Owner == actor ? "firstexp_" : "firstexp_partner_") + part.Base.sensitivityClassString);
+    }
+
+    /// <summary>
+    /// First experience loss kojo, one entry per body part: OnFirstExperience_[sensitivityClassString].
+    /// expLog: exp log of the message collector the kojo is logged into - variant Results (modifyRelationship) register there.
+    /// </summary>
+    public static KojoCollector GetFirstExperienceKojo(DelayedExpLogging exp, EvaluationPackage ep, bool hasPermission, BodyInternal_Instance.UnawareReason unawareReason, ExperienceLog expLog)
+    {
+        var owner = exp.body.Owner;
+        var cls = exp.body.Base.sensitivityClassString;
+        if (owner == null || owner.RefID == 0 || cls == "") return null;
+        var partner = scr_System_CampaignManager.current.FindInstanceByID(exp.targetRef);
+        var rel = partner == null ? null : owner.Relationships.FindRelationshipWith(partner);
+
+        var kol = new KojoCollector(owner, "OnFirstExperience", "_" + cls);
+        kol.LoadEP(ep, partner);
+        // LoadEP shares the EP's own cached tag lists - copy so the tags below don't leak back into the EP
+        kol = kol.Copy();
+
+        kol.SelfTags.Add(hasPermission ? "firstexp_consent" : "firstexp_nonconsent");
+        if (unawareReason != BodyInternal_Instance.UnawareReason.None) kol.SelfTags.Add("firstexp_unaware");
+        else if (exp.body.HasUnawareExperience) kol.SelfTags.Add("firstexp_after_unaware");
+        if (exp.targetBodytags != null) kol.TargetTags.AddRange(exp.targetBodytags);
+        if (rel != null && rel.Relationship_Personal != null) kol.TargetTags.Add(rel.Relationship_Personal.ID);
+        Utility.DistinctInPlace(kol.SelfTags);
+        Utility.DistinctInPlace(kol.TargetTags);
+        kol.expLog = expLog;
+
+        kol = owner.Relationships.GetKOJOMessage_Suffix(kol);
+        if (kol != null) kol.SetVisibleToAll();
+        return kol;
     }
 
     public class DelayedExpLogging
@@ -2075,6 +2132,9 @@ public partial class EvaluationPackage : I_ResultStorage
         public string targetName, comName, comID;
         public List<string> comtags, targetBodytags;
         public int targetRef;
+        // loose (unlocalized) parts of targetName/comName, so first experience descs can be rebuilt under another localization
+        public string targetActorName = "", targetPartID = "";
+        public int comVariant = -1;
         public DelayedExpLogging(BodyInternal_Instance body, int targetRef, string targetName, string comID,  string comName, List<string> comtags, List<string> targetBodytags)
         {
             this.body = body;

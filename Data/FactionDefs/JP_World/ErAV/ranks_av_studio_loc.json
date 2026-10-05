@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ranks_av_studio.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "rank_av_studio": "Studio Rank",
+                "rank_av_studio_0": "Small-Time Studio",
+                "rank_av_studio_1": "Established Studio",
+                "rank_av_studio_2": "Major Studio",
+
+                "rank_req_renown": "Studio renown",
+                "rank_req_studioReleases": "Studio releases",
+                "rank_req_studioEarnings": "Studio total sales",
+                "rank_req_managesFaction": "Manages $faction$"
+            }
+        }
+    }
+}

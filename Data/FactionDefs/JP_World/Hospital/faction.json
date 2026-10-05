@@ -138,10 +138,32 @@
                             { "ID": "hospital_1F_entrance", "cost": 3.0 },
                             { "ID": "hospital_triage", "cost": 3.0 }
                         ],
-                        "furnitureIDs": [],
+                        "furnitureIDs": ["furniture_jp_hospital_waiting_bench"],
                         "_comment_roomImagePath": "PLACEHOLDER - reuses the lobby image until a corridor image exists",
                         "roomImagePath": "Hospital/BG/hospital_lobby.webp"
                     },
+                    
+                    {
+                        "ID":"medbay_changing_room_male",
+                        "displayName":"map_toilet_male",
+                        "connects":[
+                            { "ID": "hospital_ward_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_shower","furniture_marker_gender_male" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
+                    },
+                    {
+                        "ID":"medbay_changing_room_female",
+                        "displayName":"map_toilet_female",
+                        "connects":[
+                            { "ID": "hospital_ward_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_shower","furniture_marker_gender_female" ],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
+                    },
+
                     {
                         "ID": "hospital_patient_room_301",
                         "displayName": "jp_hospital_patient_room_301",
@@ -460,6 +482,11 @@
                 "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
                 "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": false,
                 "initiallyForbidWork": true,
+                "_comment_cannotRequestLeaveMemberTypes": "A patient never asks doctors or nurses to leave, whatever the reason (RequestLeaveUtility.CanRequestLeave).",
+                "cannotRequestLeaveMemberTypes": [
+                    "membertype_jp_hospital_doctor_day", "membertype_jp_hospital_doctor_weekend", "membertype_jp_hospital_doctor_evening", "membertype_jp_hospital_doctor_night",
+                    "membertype_jp_hospital_nurse_day", "membertype_jp_hospital_nurse_evening", "membertype_jp_hospital_nurse_night"
+                ],
                 "_comment_joinHandler": "Builds the admission options (JoinActiveFaction Result in jp_hospital_Opt_Admit) - logic lives in JoinHandler_HospitalPatient.",
                 "joinHandler": {
                     "$type": "JoinHandler_HospitalPatient, Assembly-CSharp",
@@ -604,7 +631,9 @@
                 "displayName":"jp_hospital_reception_duty_displayName",
                 "timeScale":60,
                 "comTags":["job","furniture","jp_hospital","jp_hospital_frontdesk"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hospital_frontdesk_day", "membertype_jp_hospital_frontdesk_evening", "membertype_jp_hospital_frontdesk_night"] } } },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } },
@@ -624,7 +653,9 @@
                 "displayName":"jp_hospital_triage_exam_displayName",
                 "timeScale":45,
                 "comTags":["job","furniture","jp_hospital","jp_hospital_doctor"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hospital_doctor_day", "membertype_jp_hospital_doctor_weekend", "membertype_jp_hospital_doctor_evening", "membertype_jp_hospital_doctor_night"] } } },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 8 } } },
@@ -644,7 +675,9 @@
                 "displayName":"jp_hospital_triage_assist_displayName",
                 "timeScale":45,
                 "comTags":["job","furniture","jp_hospital","jp_hospital_nurse"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hospital_nurse_day", "membertype_jp_hospital_nurse_evening", "membertype_jp_hospital_nurse_night"] } } },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } },
@@ -664,7 +697,9 @@
                 "displayName":"jp_hospital_pharmacy_dispense_displayName",
                 "timeScale":60,
                 "comTags":["job","furniture","jp_hospital","jp_hospital_pharmacy"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hospital_pharmacy_day", "membertype_jp_hospital_pharmacy_evening", "membertype_jp_hospital_pharmacy_night"] } } },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 2, "cost_EN": 6 } } },
@@ -685,7 +720,9 @@
                 "timeScale":30,
                 "allowInPrivateRoom": true,
                 "comTags":["job","furniture","jp_hospital","jp_hospital_doctor"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hospital_doctor_day", "membertype_jp_hospital_doctor_weekend", "membertype_jp_hospital_doctor_evening", "membertype_jp_hospital_doctor_night"] } } },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 3, "cost_EN": 6 } } },
@@ -706,7 +743,9 @@
                 "timeScale":45,
                 "allowInPrivateRoom": true,
                 "comTags":["job","furniture","jp_hospital","jp_hospital_nurse"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireSameActiveFaction": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true,
+                    "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                        "requireMemberType": ["membertype_jp_hospital_nurse_day", "membertype_jp_hospital_nurse_evening", "membertype_jp_hospital_nurse_night"] } } },
                 "variants": [
                     {
                         "requirements": { "requirement": { "doerCount": 1, "req_Doers": { "cost_ST": 4, "cost_EN": 6 } } },
@@ -745,10 +784,10 @@
                 "ID":"jp_hospital_bed_rest",
                 "ActionPackageClass":"ActionPackage_Interaction",
                 "displayName":"jp_hospital_bed_rest_displayName",
-                "_comment":"One command = 2 hours of bed rest, modeled on com_furniture_takingLongBreak. requireHomeFaction limits it to characters whose priority home is the hospital (patients). No generic 'bed'/'rest' tags on purpose. 'rest_required' marks it as bed rest for labor (ReproductionUtility.CanBirthNow) - without it a patient resting here never entered active labor.",
+                "_comment":"One command = 2 hours of bed rest, modeled on com_furniture_takingLongBreak. req_Doers.requireJobFaction Home limits it to characters whose priority home is the hospital (patients). No generic 'bed'/'rest' tags on purpose. 'rest_required' marks it as bed rest for labor (ReproductionUtility.CanBirthNow) - without it a patient resting here never entered active labor.",
                 "timeScale":120,
                 "comTags":["furniture","jp_hospital","jp_hospital_patient","rest_required"],
-                "requirements": { "requirement": { "treatReceiverAsDoer": true, "requireHomeFaction": true } },
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "req_Doers": { "requireJobFaction": "Home" } } },
                 "results_EP": {
                     "results_character": [
                         { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "4" } },

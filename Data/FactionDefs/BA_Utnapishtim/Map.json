@@ -79,6 +79,7 @@
                     },
                     {
                         "ID":"bridge_toilet_male",
+                        "displayName":"map_toilet_male",
                         "offsetX":101.6,
                         "offsetY":-335.0,
                         "connects":
@@ -92,6 +93,7 @@
                     },
                     {
                         "ID":"bridge_toilet_female",
+                        "displayName":"map_toilet_female",
                         "offsetX":101.6,
                         "offsetY":-292.5,
                         "connects":
@@ -628,8 +630,6 @@
         "bridge_lounge":"休息室",
         "bridge_captainsoffice":"舰长办公室",
         "bridge_captainsroom":"舰长卧室？",
-        "bridge_toilet_male":"男厕所",
-        "bridge_toilet_female":"女厕所",
 
         "lounge2_dining":"餐厅",
         "lounge2_multiuseroom":"多媒体室",

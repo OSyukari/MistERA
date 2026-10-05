@@ -221,10 +221,10 @@ public class Job_Furniture : Job
         //bool validNonJob = true;
         if (IsReservedAgainst(c)) return false;
         if (com != null && !this.ValidCOMs.Contains(com)) return false;
-        if (com != null) return com.requirements.requirement.ValidateActorFaction(this, c, out _) && com.GetValidVariant(c) >= 0;
+        if (com != null) return com.GetValidVariant(c, false, this) >= 0;
         foreach (COM com2 in this.ValidCOMs)
         {
-            if (com2.requirements.requirement.ValidateActorFaction(this, c, out _) && com2.GetValidVariant(c) >= 0) return true;//validJob = false;
+            if (com2.GetValidVariant(c, false, this) >= 0) return true;//validJob = false;
         }
         //Debug.Log("JobFurniture ValidateActor 4");
         return false;

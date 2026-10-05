@@ -79,7 +79,8 @@
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
             ] ,
-            "requireOriginID":["charOrigin_KivotosStudent"]
+            "requireOriginID":["charOrigin_KivotosStudent"],
+            "actorKeyword":["BlueArchive"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_Gehenna",
@@ -91,7 +92,8 @@
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
             ] ,
-            "requireOriginID":["charOrigin_KivotosStudent"]
+            "requireOriginID":["charOrigin_KivotosStudent"],
+            "actorKeyword":["BlueArchive"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_Millenium",
@@ -103,7 +105,8 @@
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
             ] ,
-            "requireOriginID":["charOrigin_KivotosStudent"]
+            "requireOriginID":["charOrigin_KivotosStudent"],
+            "actorKeyword":["BlueArchive"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_GSC",
@@ -115,7 +118,8 @@
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
             ] ,
-            "requireOriginID":["charOrigin_KivotosStudent"]
+            "requireOriginID":["charOrigin_KivotosStudent"],
+            "actorKeyword":["BlueArchive"]
         },
         {
             "ID": "humanRaceAddon_Kivotos_Abydos",
@@ -127,7 +131,8 @@
                     "modKey":"raceTemplateMod", "type":"addBase", "valueType":"number", "valueString":"1"
                 }
             ] ,
-            "requireOriginID":["charOrigin_KivotosStudent"]
+            "requireOriginID":["charOrigin_KivotosStudent"],
+            "actorKeyword":["BlueArchive"]
         }
     ]
     },

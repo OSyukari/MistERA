@@ -1645,13 +1645,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
     }
 
     /// <summary>
-    /// Memory counterpart of Confirm for agent runs: registers the consolidated LLM memory from
-    /// the session's accumulated interactions (captured by ActionPackage_LLM.CaptureMemory as
-    /// each inner AP settled; their own per-EP memory logging was suppressed via
-    /// suppressMemoryLogging). One wrapper entry per relevant actor (summary as description,
-    /// see MemoryManager.AddLLMEntry) with one interaction instance per executed AP the actor
-    /// participated in - relevant non-participants get the wrapper only. Deferred
-    /// first-experience records replay here. Single-shot never passes through here: its wrapper
+    /// Memory counterpart of Confirm for agent runs: for every actor of the run, everything logged
+    /// since the session started is merged into ONE memory entry carrying the LLM description (see
+    /// ActionPackage_LLM.RegisterConsolidatedMemory / MemoryManager.MergeLLMSession); relevant actors
+    /// who logged nothing get a "present" entry. Single-shot never passes through here: its wrapper
     /// registers at execution end, which only ever starts from Button_Confirm.
     /// </summary>
     void RegisterConfirmedMemory(LLMHistoryEntry entry)
@@ -1661,7 +1658,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         var json = CurrentResponse?.JSON ?? entry.response?.JSON;
         if (session == null || json == null) return;
 
-        ActionPackage_LLM.RegisterConsolidatedMemory(json.summary, session.memoryInteractions, session.memoryFirstExps, json.relevantActorRefs, session.memoryDuration);
+        ActionPackage_LLM.RegisterConsolidatedMemory(json.summary, session.startTime, session.memoryActorRefs, json.relevantActorRefs);
     }
 
     public class Button_Discard : ButtonValidator, I_ButtonClickable

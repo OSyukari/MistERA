@@ -21,6 +21,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
     public scr_HoverableText portrait_neutral, portrait_active, portrait_combat;
 
+    public scr_HoverableText storedCommand;
+
     protected void Update()
     {
         if (scr_System_CentralControl.current.isSafeMode) return;
@@ -83,6 +85,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
             // Debug.Log("Button " + button + " " + button.optionID);
             switch (button.optionID)
             {
+                case 1000: button.Initialize(this, new Button_StoreCommand(this)); break;
+                case 1001: button.Initialize(this, new Button_LoadCommand(this)); break;
                 default: break;
             }
             if (button.optionID != -1)
@@ -182,6 +186,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
         blacklist.SetText($"Blacklist: {CurrentTarget.Memory.PrintBlacklist()}");
 
+        UpdateStoredCommandText();
+
         /*
         foreach(var c in ConsoleButtonList.GetComponentsInChildren<scr_HoverableText>())
         {
@@ -266,9 +272,70 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         }
         public void OnClickButton()
         {
-            parent.consoleInput.text = command;
-            parent.consoleInput.caretPosition = parent.consoleInput.text.Length;
+            parent.InsertCommand(command);
         }
+    }
+
+    public void InsertCommand(string command)
+    {
+        SetInputAndFocus(command + " ");
+    }
+
+    protected void SetInputAndFocus(string text)
+    {
+        consoleInput.text = text;
+        consoleInput.ActivateInputField();
+        StartCoroutine(MoveCaretToEndNextFrame());
+    }
+
+    protected void UpdateStoredCommandText()
+    {
+        if (storedCommand == null) return;
+        storedCommand.SetText($"Stored: {scr_System_CentralControl.current.storedConsoleCommand}");
+    }
+
+    public class Button_StoreCommand : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Console parent;
+        public Button_StoreCommand(scr_Canvas_Console parent) : base(parent)
+        {
+            this.parent = parent;
+        }
+        public override bool IsButtonValid()
+        {
+            return true;
+        }
+        public void OnClickButton()
+        {
+            scr_System_CentralControl.current.storedConsoleCommand = parent.consoleInput.text;
+            parent.UpdateStoredCommandText();
+            parent.SetInputAndFocus(parent.consoleInput.text);
+        }
+    }
+
+    public class Button_LoadCommand : ButtonValidator, I_ButtonClickable
+    {
+        new scr_Canvas_Console parent;
+        public Button_LoadCommand(scr_Canvas_Console parent) : base(parent)
+        {
+            this.parent = parent;
+        }
+        public override bool IsButtonValid()
+        {
+            return !string.IsNullOrEmpty(scr_System_CentralControl.current.storedConsoleCommand);
+        }
+        public void OnClickButton()
+        {
+            parent.SetInputAndFocus(scr_System_CentralControl.current.storedConsoleCommand);
+        }
+    }
+
+    // ActivateInputField focuses during LateUpdate and selects all text (onFocusSelectAll),
+    // so the caret has to be moved to the end on the following frame or typing would replace the command
+    IEnumerator MoveCaretToEndNextFrame()
+    {
+        yield return null;
+        consoleInput.MoveTextEnd(false);
     }
 
 }

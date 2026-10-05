@@ -281,6 +281,7 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         foreach(var name in team.frontline)
         {
             var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name, teamB.ActorRefs);
+            if (chara == null) continue;
             teamB.frontline.Add(chara.RefID);
             teamB.NotifyAddActor();
             List<string> inv = new List<string>();
@@ -290,6 +291,7 @@ public class menu_combatSim : scr_Menu, IPointerClickHandler
         foreach (var name in team.support)
         {
             var chara = scr_System_CampaignManager.current.Combat.GetCombatDummy(name, teamB.ActorRefs);
+            if (chara == null) continue;
             teamB.support.Add(chara.RefID);
             teamB.NotifyAddActor();
             List<string> inv = new List<string>();

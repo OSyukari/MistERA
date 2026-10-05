@@ -45,7 +45,7 @@ public class tab_dialogue : MonoBehaviour
 
             var btn = Instantiate(prefab_button);
             btn.SelfRect.SetParent(eventRect, false);
-            menu.RegisterBtn(btn, new Button_DialogueEvent(menu, btn, ev, instance));
+            menu.RegisterBtn(btn, new Button_DialogueEvent(menu, btn, ev));
             btn.SetText(LocalizeDictionary.QueryThenParse(ev.ID));
         }
 
@@ -167,12 +167,12 @@ public class tab_dialogue : MonoBehaviour
     public class Button_DialogueEvent : ButtonValidator, I_ButtonClickable
     {
         scr_SelectableText text;
-        EventInstance instance;
+        Event ev;
 
-        public Button_DialogueEvent(scr_menu_changeRel parent, scr_SelectableText text, Event ev, EventInstance instance) : base(parent)
+        public Button_DialogueEvent(scr_menu_changeRel parent, scr_SelectableText text, Event ev) : base(parent)
         {
             this.text = text;
-            this.instance = instance;
+            this.ev = ev;
             this.noValidate = true;
         }
 
@@ -181,12 +181,46 @@ public class tab_dialogue : MonoBehaviour
             return true;
         }
 
+        /// <summary>
+        /// Treated as a player-issued 1 minute talk with the current target (ActionPackage_DialogueEvent):
+        /// the package is registered into the player job and interrupts the npc, then on menu close the event is
+        /// queued first and the update started after, so the event plays before the minute ticks.
+        /// </summary>
         public void OnClickButton()
         {
-            scr_UpdateHandler.current.EventHandler.StartEvent(instance, false);
+            var cm = scr_System_CampaignManager.current;
+            var player = cm.Player;
 
-            scr_System_CampaignManager.current.RegisterSceneUnloadActionCallback(() => { scr_UpdateHandler.current.EventHandler.Run();
-                scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
+            // rebuild on click instead of reusing the tab-init instance, targets may have changed since
+            var instance = new EventInstance(player, ev.ID, "", forbidGeneration: true);
+            if (!instance.isValid)
+            {
+                Debug.Log($"Button_DialogueEvent: event {ev.ID} no longer valid on click, abort");
+                return;
+            }
+
+            scr_System_CentralControl.current.AutoSave();
+
+            string optionName = text.Text.text;
+            var npc = cm.CurrentTarget;
+            var talkCOM = scr_System_Serializer.current.GetByNameOrID_COM(ActionPackage_DialogueEvent.TalkCOMID);
+            if (talkCOM == null) Debug.LogError($"Button_DialogueEvent: cannot find {ActionPackage_DialogueEvent.TalkCOMID}, advancing time without talk package");
+
+            if (npc != null && npc != player && talkCOM != null)
+            {
+                var currentjob = player.CurrentJob;
+                var playerjob = currentjob == null || currentjob.CanBeInterrupted ? cm.FindJobInstanceByID(cm.jobRef_playerCOM) : currentjob;
+
+                var ap = new ActionPackage_DialogueEvent(playerjob, talkCOM, npc.RefID, optionName);
+                player.ChangeCurrentJob(playerjob);
+                if (npc.CurrentJob == null || npc.CurrentJob.CanBeInterrupted) npc.ChangeCurrentJob(playerjob);
+                playerjob.AddPackage(new List<ActionPackage>() { ap }, true);
+            }
+
+            string eventID = ev.ID;
+            cm.RegisterSceneUnloadActionCallback(() => {
+                if (!scr_UpdateHandler.current.EventHandler.StartEvent(instance, false)) Debug.Log($"Button_DialogueEvent: event {eventID} rejected on start (cooldown / duplicate)");
+                scr_System_CampaignManager.current.FreeUpdate(-1, optionName);
             });
             parent.Notify(9999);
         }
@@ -194,6 +228,7 @@ public class tab_dialogue : MonoBehaviour
         public override void Destroy()
         {
             this.text = null;
+            this.ev = null;
             this.parent = null;
         }
     }

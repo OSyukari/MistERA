@@ -141,6 +141,22 @@ public static class ReproductionUtility
         var tempHome = c.FactionManager.Faction_Home_Temporary;
         return (home != null && home.isPlayerFaction) || (tempHome != null && tempHome.isPlayerFaction);
     }
+    /// <summary>Fired when a menstrual cycle enters its ovulation phase (Character_Trainable.NotifyOvulation).</summary>
+    public static string event_ovulation = "Repro_OvulationStart";
+    /// <summary>
+    /// Reproduction status notices (e.g. Repro_OvulationStart) only fire for the player, characters managed by the
+    /// player (home or temporary home is a player faction) and the player's family (same permanent home faction).
+    /// </summary>
+    public static bool IsReproStatusVisibleToPlayer(Character_Trainable c)
+    {
+        if (c == null) return false;
+        var player = scr_System_CampaignManager.current.Player;
+        if (player == null) return false;
+        if (c.RefID == player.RefID) return true;
+        foreach (var f in c.FactionManager.HomeFactions) if (f != null && f.isPlayerFaction) return true;
+        var playerHome = player.FactionManager.Faction_Home;
+        return playerHome != null && c.FactionManager.Faction_Home == playerHome;
+    }
     /// <summary>StoredOptions key of Labor_Start's hospital admission options.</summary>
     public static string laborStart_optionsKey = "hospitalOptions";
     /// <summary>Hospital patient MemberType offered on labor start (its joinHandler decides which factions admit).</summary>

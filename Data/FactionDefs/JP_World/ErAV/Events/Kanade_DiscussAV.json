@@ -1,0 +1,203 @@
+{
+    "Events": {
+        "list": [
+            {
+                "_comment": "Kanade_DiscussAV. OnDialogue_Options on Kanade, available once erav_kanon_offer >= 2 (Kanon's offer accepted) and hidden once resolved: SelfValidator requires erav_kanade_household_actor to not exist (set on the player's self record when she agrees - quest stages read the hero's self relationship), and the kanade TargetValidator requires her erav_actress_status (her rel toward the player) to not be 2 (already signed to the filmstudio via Kanon_IntroduceActress). Opening branches on erav_kanade_promise: 3 = she was brought along to Kanon's office and steps forward first, willing; 2 = she was left behind and expresses dissatisfaction about the broken promise before agreeing; unset = the player never promised, so she simply resolves to help on hearing the request. All paths converge on an ask/accept question; accepting sets erav_kanade_household_actor=1 (player self), erav_actress_status=1 (kanade rel toward player - keeps her selectable on Kanon's roster for later re-signing) and swaps her household membership to membertype_erav_miyama_household_actor (relaxed acceptance toward the ErAV_Player protagonist). Declining sets nothing, so the option stays available.",
+                "ID": "Kanade_DiscussAV",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": {
+                    "displayMode":"AVG",
+                    "infoDisplay":"Hide"
+                },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_offer",
+                                "operand": "gte",
+                                "value": 2
+                            }
+                        },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanade_household_actor",
+                                "checkExistOnly": true,
+                                "value": 0
+                            }
+                        }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "kanade" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "isActorBaseID", "ErAV_Kanade" ] },
+                            { "parameters": [ "isActiveFaction", "ErAV_miyama_Household" ] },
+                            {
+                                "relationshipTargetKey": "self",
+                                "requireKojoVariable": {
+                                    "variableID": "erav_actress_status",
+                                    "operand": "neq",
+                                    "value": 2
+                                }
+                            }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "Branch on how the promise to Kanon's office played out (erav_kanade_promise on the player's self record).",
+                        "options": [
+                            {
+                                "option": "promise_kept_brought_along",
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanade_promise",
+                                            "operand": "eq",
+                                            "value": 3
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kda_intro_brought" ] }
+                                ]
+                            },
+                            {
+                                "option": "promise_broken_left_behind",
+                                "self_chara_conditions": [
+                                    {
+                                        "requireKojoVariable": {
+                                            "variableID": "erav_kanade_promise",
+                                            "operand": "eq",
+                                            "value": 2
+                                        }
+                                    }
+                                ],
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kda_intro_left" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback_never_promised",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kda_intro_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kda_intro_brought",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [ "shy", "serious" ]
+                        },
+                        "line": "kda_L_brought01",
+                        "nextEntryLabel": "kda_question"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kda_intro_left",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [ "sad", "serious" ]
+                        },
+                        "line": "kda_L_left01",
+                        "nextEntryLabel": "kda_question"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kda_intro_generic",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [ "shy", "hesitated" ]
+                        },
+                        "line": "kda_L_generic01",
+                        "nextEntryLabel": "kda_question"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "kda_question",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [ "shy", "serious" ]
+                        },
+                        "question": "kda_Q01",
+                        "options": [
+                            {
+                                "option": "kda_Q01_op1",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kda_agree" ] }
+                                ]
+                            },
+                            {
+                                "option": "kda_Q01_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "kda_cancel" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kda_agree",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [ "shy", "happy" ]
+                        },
+                        "line": "kda_L_agree",
+                        "Results": [
+                            {
+                                "Type": "SetSelfKojoVariable",
+                                "arguments": [ "self", "false", "erav_kanade_household_actor", "1" ]
+                            },
+                            {
+                                "Type": "SetRelKojoVariable",
+                                "arguments": [ "kanade", "self", "false", "erav_actress_status", "1" ]
+                            },
+                            {
+                                "Type": "SetHomeFaction",
+                                "arguments": [ "kanade", "ErAV_miyama_Household", "membertype_erav_miyama_household_actor", "false", "true" ]
+                            }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "kda_cancel",
+                        "UISpec": {
+                            "portraitRefKey": "kanade",
+                            "selfTags": [ "sad", "relaxed" ]
+                        },
+                        "line": "kda_L_cancel",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Kanade_DiscussAV":"关于拍AV的事，想请你帮忙",
+                "kda_L_brought01": "$kanade.name$像是等着这一刻似的，向前迈了一步。\n「那间办公室里的事，我都听见了。」\n「拍片的事……让我来帮忙吧。反正那个人也说了，我这张脸能卖钱。」\n「别露出那种表情。我是认真的——$self.name$的债，也是我的债。」",
+                "kda_L_left01": "$kanade.name$沉默了片刻，才开口。\n「明明约好了，要带我一起去见那个人的。」\n「结果$self.name$还是一个人去了。这种时候也要把我护在身后——你以为我没看见吗。」\n她抬起头时，眼神里已经不是委屈，而是决意。\n「所以，这次让我帮忙。拍片也好，别的也好——别再把我排除在外了。」",
+                "kda_L_generic01": "听$self.name$说完来意，$kanade.name$握紧了裙摆，沉默了几秒。\n「拍那种东西……要在镜头前面，做那种事。」\n她抬起头时，眼里已经没有了动摇。\n「可是那笔债，光靠$self.name$一个人怎么还得完。」\n「让我帮忙吧。能用上的，我都想用上——这也是我的家。」",
+                "kda_Q01": "「让$kanade.name$协助拍摄AV？」",
+                "kda_Q01_op1": "拜托你了",
+                "kda_Q01_op2": "还是先别……",
+                "kda_L_agree": "$kanade.name$点了点头，深吸一口气。\n「……好。说定了。」\n「拍摄的时候，请别客气。不管是什么样的要求——我都会努力去配合。」\n她微微红了脸，却努力维持着认真的表情。\n\n【$kanade.name$开始协助拍摄AV（%%ErAV_miyama_Household%%）】",
+                "kda_L_cancel": "「……这样啊。」$kanade.name$垂下视线，又很快抬起来。\n「等$self.name$改了主意，随时来找我。」"
+            },
+            "en-us": {}
+        }
+    }
+}

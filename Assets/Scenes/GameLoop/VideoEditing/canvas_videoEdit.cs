@@ -22,11 +22,15 @@ public class canvas_videoEdit : scr_Menu
     public scr_HoverableText duration_req, duration_current;
     // -----------------------
 
+    public scr_HoverableText mandatoryGoalsTitle;
+
+
     Item_Instance originalItem = null;
     I_IsJobGiver factionOwner;
     public void InitializeWithArgument(Item_Instance instance, I_IsJobGiver factionOwner)
     {
         if (!initialized) Initialize();
+
 
         originalItem = instance;
         this.factionOwner = factionOwner;
@@ -543,9 +547,13 @@ public class canvas_videoEdit : scr_Menu
             // index 0 is always the no-op "keep current name" fallback, regardless of evaluator state
             List<string> options = new List<string> { LocalizeDictionary.QueryThenParse("ui_videoEdit_keepCurrentName") };
 
-            if (eval != null && eval.namingTemplate != null && eval.namingTemplate.Count > 0)
+            if (eval != null)
             {
-                foreach (var key in eval.namingTemplate)
+                // satisfied goals' namingTemplateOverride entries first, then the evaluator's own pool
+                var keys = evalInstance.SatisfiedNamingTemplateOverrides();
+                if (eval.namingTemplate != null) keys.AddRange(eval.namingTemplate);
+
+                foreach (var key in keys)
                 {
                     var basestr = LocalizeDictionary.QueryThenParse(key, key)
                         .Replace("$actor$", evalInstance.actors_main.RandomName)
@@ -576,7 +584,8 @@ public class canvas_videoEdit : scr_Menu
                 score_current.SetText(LocalizeDictionary.QueryThenParse("ui_videoEdit_score_withEval")
                     .Replace("$base$", evalInstance.scoreBase.ToString("0.#"))
                     .Replace("$mult$", evalInstance.scoreMult.ToString("0.##"))
-                    .Replace("$total$", evalInstance.totalScore.ToString("0")));
+                    .Replace("$total$", evalInstance.totalScore.ToString("0"))
+                    + (evalInstance.grade != "" ? $" [{evalInstance.grade}]" : ""));
                 score_current.SetExternalTooltip(evalInstance.ScoreDebug);
             }
             else
@@ -611,6 +620,46 @@ public class canvas_videoEdit : scr_Menu
             }
             duration_current.SetText(LocalizeDictionary.QueryThenParse("ui_videoEdit_durationCurrent").Replace("$total$", totalText));
         }
+
+        UpdateMandatoryGoals(eval);
+    }
+
+    /// <summary>
+    /// mandatoryGoalsTitle text: header line, then one "name [status]" line per mandatory goal.
+    /// Extra tooltip: one progress line per mandatory goal.
+    /// </summary>
+    void UpdateMandatoryGoals(RecordingEvaluator eval)
+    {
+        if (mandatoryGoalsTitle == null) return;
+
+        var goals = eval != null ? eval.MandatoryGoals : new List<RecordingEvaluator.OptionalGoal>();
+        var lines = new List<string>
+        {
+            LocalizeDictionary.QueryThenParse("ui_videoEdit_mandatoryGoals").Replace("$count$", goals.Count.ToString())
+        };
+        var details = new List<string>();
+
+        foreach (var goal in goals)
+        {
+            var name = LocalizeDictionary.QueryThenParse(goal.displayName, goal.displayName);
+            var ag = evalInstance != null ? evalInstance.GetGoalState(goal) : null;
+
+            string status = ag == null ? EvalUpdate_Empty
+                : LocalizeDictionary.QueryThenParse(ag.satisfied ? "ui_videoEdit_goalAchieved" : "ui_videoEdit_goalNotAchieved");
+            lines.Add(LocalizeDictionary.QueryThenParse("ui_videoEdit_mandatoryGoalLine")
+                .Replace("$name$", name)
+                .Replace("$status$", status));
+
+            if (ag == null) continue;
+            details.Add(name + ": " + LocalizeDictionary.QueryThenParse("ui_videoEdit_goalProgress")
+                .Replace("$count$", ag.actions.Count.ToString())
+                .Replace("$minCount$", Math.Max(1, goal.minOccurrences).ToString())
+                .Replace("$ratio$", ag.ratio.ToString("P0"))
+                .Replace("$minRatio$", goal.requiredRatio.ToString("P0")));
+        }
+
+        mandatoryGoalsTitle.SetText(string.Join("\n", lines));
+        mandatoryGoalsTitle.SetExternalTooltip(string.Join("\n", details));
     }
 
     void UpdateMessageCollectScores()
@@ -620,19 +669,34 @@ public class canvas_videoEdit : scr_Menu
         foreach (var kvp in mcolDict)
         {
             float sum = 0f;
+            var breakdowns = new List<ActionPackageRecords>();
             if (evalInstance != null && kvp.Key.apRecords != null)
             {
                 foreach (var ap in kvp.Key.apRecords)
                 {
-                    if (evalInstance.Actions.TryGetValue(ap, out var holder)) sum += holder.PotentialScore;
+                    if (evalInstance.Actions.TryGetValue(ap, out var holder))
+                    {
+                        sum += holder.PotentialScore;
+                        if (holder.ScoreBreakdown != "") breakdowns.Add(ap);
+                    }
                 }
+            }
+
+            // one line per scoring package; prefixed with the package name only when the block
+            // holds more than one, so a single-package block reads as just "= (...) * (...)"
+            var tooltip = new List<string>();
+            foreach (var ap in breakdowns)
+            {
+                var line = evalInstance.Actions[ap].ScoreBreakdown;
+                tooltip.Add(breakdowns.Count > 1 ? $"{ap.displayName} {line}" : line);
             }
 
             float penalty = 0f;
             evalInstance?.BlockDurationPenalty.TryGetValue(kvp.Key, out penalty);
             string penaltyText = penalty == 0f ? "" : penalty.ToString("+0;-0;0");
 
-            kvp.Value.score.SetText($"score: {sum:0}{penaltyText}");
+            kvp.Value.score.SetText($"score: {sum:0.#}{penaltyText}");
+            kvp.Value.score.SetExternalTooltip(string.Join("\n", tooltip));
         }
     }
 
@@ -690,10 +754,13 @@ public class canvas_videoEdit : scr_Menu
     {
         if (string.IsNullOrEmpty(comp.parentRecordingID)) comp.parentRecordingID = $"{DateTime.Now.Ticks}";
 
-        comp.value = evalInstance != null && evalInstance.Evaluator != null
-            ? (int?)Math.Round(evalInstance.Evaluator.scoreToValueRatio * evalInstance.totalScore)
-            : null;
+        // value is length-adjusted (qualityScore), not the raw totalScore - see RecordingEvaluatorInstance.UpdateQuality
+        comp.value = evalInstance != null && evalInstance.Evaluator != null ? (int?)evalInstance.Value : null;
         if (evalInstance != null && evalInstance.Evaluator != null) comp.evaluatorID = evalInstance.Evaluator.id;
+        comp.grade = evalInstance != null && evalInstance.Evaluator != null ? evalInstance.grade : "";
+        // credit whoever is main at release (manual overrides + automatic picks), fixed from here on
+        if (evalInstance != null) comp.SetMainActors(evalInstance.actors_main.actors.Select(a => a.baseID));
+        comp.pricePremium = GetPricePremium(evalInstance != null ? evalInstance.Evaluator : null, comp.mainActorIDs);
 
         // save actor name override
         foreach (var actorrec in actors)
@@ -736,6 +803,26 @@ public class canvas_videoEdit : scr_Menu
             if (registeredBox.ap != null && registeredBox.ap.mcol != null) registeredBox.ap.mcol.PurgeEntry(registeredBox.rec);
         }
         */
+    }
+
+    /// <summary>
+    /// Highest pricePremium among the main actors' current levels on the evaluator's rank track (1 if no
+    /// evaluator / track / live main actor) - fixed onto the recording at save.
+    /// </summary>
+    static float GetPricePremium(RecordingEvaluator evaluator, List<string> mainActorIDs)
+    {
+        if (evaluator == null || string.IsNullOrEmpty(evaluator.rankTrackID)) return 1f;
+        var track = scr_System_Serializer.current.MasterList.Ranks.GetByID(evaluator.rankTrackID);
+        if (track == null) return 1f;
+
+        float best = 1f;
+        foreach (var baseID in mainActorIDs)
+        {
+            var actor = scr_System_CampaignManager.current.HasInstanceCharaWithBaseID(baseID);
+            if (actor == null) continue;
+            best = Mathf.Max(best, track.GetPricePremium(actor.Ranks.GetLevel(track.ID)));
+        }
+        return best;
     }
 
     public bool recalculate = false;

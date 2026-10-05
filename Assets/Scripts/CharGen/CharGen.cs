@@ -71,6 +71,10 @@ public interface I_CharaGen
 
 public class CharaTemplateGenerator : I_CharaGen
 {
+    /// <summary>
+    /// Applies only to base characters listed directly in targetBaseIDs (not inherited by child generators).
+    /// false = a base is skipped while a live instance of it exists outside the stasis room.
+    /// </summary>
     public bool allowDuplicateID = true;
 
     public string ID = "";
@@ -84,7 +88,7 @@ public class CharaTemplateGenerator : I_CharaGen
     public string nameDisplayFormat = "";
     public string title = "";
 
-    public Character_Trainable GenerateChara(bool allowDuplicate = true)
+    public Character_Trainable GenerateChara()
     {
         if (childTemplates == null)
         {
@@ -106,8 +110,6 @@ public class CharaTemplateGenerator : I_CharaGen
             }
         }
 
-        allowDuplicate = allowDuplicate && this.allowDuplicateID;
-
         Utility.ShuffleList(childTemplates);
         foreach(var entry in childTemplates)
         {
@@ -115,13 +117,13 @@ public class CharaTemplateGenerator : I_CharaGen
             {
                 var c = entry as Character_Trainable;
                 if (c == null) continue;
-                if (!allowDuplicate && scr_System_CampaignManager.current.HasInstanceCharaWithBaseID(c.BaseID)) continue;
+                if (!allowDuplicateID && scr_System_CampaignManager.current.HasNonStasisInstanceWithBaseID(c.BaseID)) continue;
                 return ApplyTemplate(c);
             }
             else if (entry is CharaTemplateGenerator)
             {
                 var g = entry as CharaTemplateGenerator;
-                var c = g.GenerateChara(allowDuplicate);
+                var c = g.GenerateChara();
                 if (c == null) continue;
                 return ApplyTemplate(c);
             }
@@ -174,22 +176,6 @@ public class CharaTemplateGenerator : I_CharaGen
 
 
     List<I_CharaGen> childTemplates = null;
-
-    [JsonIgnore]
-    public string TargetBaseID
-    { get
-        {
-            if (targetBaseIDs.Count > 0)
-            {
-
-                if (allowDuplicateID) return Utility.GetRandomElement(targetBaseIDs);
-                else
-                {
-
-                }
-            }
-            return null;
-        } }
 
     public List<string> targetBaseIDs = new List<string>();
     public bool allowInTraining = true;

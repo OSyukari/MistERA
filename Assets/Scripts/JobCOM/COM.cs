@@ -399,10 +399,10 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }*/
 
   
-    protected virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, out bool hardlock, COM_Variant variant = null, int actorCountMult = 1)
+    protected virtual bool ValidateCondition(List<string> _tooltip, List<Character_Trainable> doerRefs, List<Character_Trainable> receiverRefs, COM com, out bool hardlock, COM_Variant variant = null, int actorCountMult = 1, I_IsJobGiver jobFaction = null)
     {
-        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, null, actorCountMult);
-        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, com.requirements.requirement, actorCountMult);
+        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, null, actorCountMult, jobFaction);
+        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, receiverRefs, out hardlock, com.requirements.requirement, actorCountMult, jobFaction);
         // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
@@ -410,11 +410,11 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         }
         return value1 && value2;
     }
-    protected virtual bool ValidateCondition(List<string> _tooltip, Character_Trainable doerRefs, COM com, out bool hardlock, COM_Variant variant = null)
+    protected virtual bool ValidateCondition(List<string> _tooltip, Character_Trainable doerRefs, COM com, out bool hardlock, COM_Variant variant = null, I_IsJobGiver jobFaction = null)
     {
         hardlock = false;
-        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, out hardlock, null);
-        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, out hardlock, com.requirements.requirement);
+        bool value1 = requirements.requirement.Validate(ref _tooltip, doerRefs, out hardlock, null, jobFaction);
+        bool value2 = variant == null ? true : variant.requirements.requirement.Validate(ref _tooltip, doerRefs, out hardlock, com.requirements.requirement, jobFaction);
         // if (!doerRefIDs.Contains(0)) Debug.Log("ValidateCondition com["+com.displayName+"] value["+value1+"] variant["+(variant == null? "-":variant.displayName)+"] value["+value2+"] doers["+String.Join(",",doerRefIDs)+ "] receivers[" + String.Join(",", receiverRefIDs) + "] ");
         if (!(value1 && value2))
         {
@@ -456,9 +456,14 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         return GetValidVariant(ref s, sourceJob, doerRefIDs, receiverRefIDs, excludeRequireExisting, actorCountMult, master);
     }
 
-    public int GetValidVariant(Character_Trainable doerRefIDs, bool excludeRequireExisting = false)
+    /// <summary>
+    /// sourceJob: the job offering this command; its FactionOwner feeds the job-faction checks on
+    /// req_Doers/req_Receivers (requireJobFaction, MemberTypeScope.JobFaction), which fail without it.
+    /// </summary>
+    public int GetValidVariant(Character_Trainable doerRefIDs, bool excludeRequireExisting = false, Job sourceJob = null)
     {
         int index = -1;
+        var jobFaction = sourceJob?.FactionOwner;
         //if (receiverRefIDs == null || receiverRefIDs.Count < 1) receiverRefIDs = doerRefIDs;
         if (!requirements.requireExisting.ValidateCondition(null, doerRefIDs, this))
         {
@@ -484,7 +489,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (doerRefIDs.CurrentJob is not Job_Sex_Group) return -1;
         }
 
-        if (!ValidateCondition(null, doerRefIDs, this, out bool hardlock))
+        if (!ValidateCondition(null, doerRefIDs, this, out bool hardlock, null, jobFaction))
         {
             return -1;
         }
@@ -493,7 +498,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
         {
             //s.Clear();
             if (!requirements.requireExisting.ValidateCondition(null, doerRefIDs, this, var)) continue;
-            if (!ValidateCondition(null, doerRefIDs, this, out hardlock, var)) continue;
+            if (!ValidateCondition(null, doerRefIDs, this, out hardlock, var, jobFaction)) continue;
             if (excludeRequireExisting && var.requirements.requireExisting.isValid) continue;
             //if( !comTags.Contains("sex") && !comTags.Contains("touch")) Debug.Log("validate com " + displayName + " return true valid variant id "+ variants.IndexOf(var));
             index = Math.Max(index, variants.IndexOf(var));
@@ -522,17 +527,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             if (logging) tooltip.Add(tooltipsInv);
             return -1;
         }
-        if (requirements.requirement.HasActorFactionReq)
-        {
-            foreach (var actor in requirements.TreatReceiverAsDoer ? doerRefIDs.Concat(receiverRefIDs) : doerRefIDs)
-            {
-                if (!requirements.requirement.ValidateActorFaction(sourceJob, actor, out var tooltipsFaction))
-                {
-                    if (logging) tooltip.Add(tooltipsFaction);
-                    return -1;
-                }
-            }
-        }
+        var jobFaction = sourceJob?.FactionOwner;
         if (!requirements.requireExisting.ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this))
         {
             return -2;
@@ -607,7 +602,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 }
             }
         }
-        if (!ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this, out bool hardlock, null, actorCountMult))
+        if (!ValidateCondition(tooltip, doerRefIDs, receiverRefIDs, this, out bool hardlock, null, actorCountMult, jobFaction))
         {
             return hardlock ? -2 : -1;
         }
@@ -648,7 +643,7 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
                 continue;
             }
             s.Clear();
-            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, out hardlock, var, actorCountMult))
+            if (!ValidateCondition(s, doerRefIDs, receiverRefIDs, this, out hardlock, var, actorCountMult, jobFaction))
             {
                 s2.Add($"{DisplayName(i)}: {String.Join("|", s)}");
                 continue;

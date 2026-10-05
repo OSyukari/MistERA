@@ -27,9 +27,9 @@
                 "mealHours": [7, 12, 18],
                 "activeHoursStart": 7,
                 "activeHoursEnd": 22,
-                "salesClientele": [
-                    { "clienteleID": "salesclientele_proper_av", "worldIDs": ["world_erav_modern_jp"], "startingShare": 0.01, "cadence": "Monthly" },
-                    { "clienteleID": "salesclientele_homemade_tape", "worldIDs": ["world_erav_modern_jp"], "startingShare": 0.01, "cadence": "Monthly" }
+                "_comment_salesClienteleAccess": "sells into the Kiryu office's AV market (provider) - placeholder so the studio keeps selling until access is granted by events instead",
+                "salesClienteleAccess": [
+                    { "providerFactionID": "ErAV_KiryuGumi_Office", "clienteleID": "salesclientele_av", "commission": 0 }
                 ]
             }
         ],
@@ -203,14 +203,14 @@
                         "_comment": "女演员 · 承受方：监督发起性行为时，允许开启会话（仅开启会话，不意味着可任意行事）并触发女演员反应口上",
                         "SelfReq": { "requireConscious": true, "requireFemale": true },
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_initiateSex", "isDoer": false },
-                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "TargetReq": { "requireMemberType": ["membertype_erav_kiryu_filmstudio_director"], "requireMemberTypeScope": "Any" },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_initiateSex_erAV_F" }
                     },
                     {
                         "_comment": "女演员 · 承受方：监督结束性行为时，允许结束并触发女演员反应口上",
                         "SelfReq": { "requireConscious": true, "requireFemale": true },
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_endOngoingSex", "isDoer": false },
-                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "TargetReq": { "requireMemberType": ["membertype_erav_kiryu_filmstudio_director"], "requireMemberTypeScope": "Any" },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_endOngoingSex_erAV_F" }
                     },
                     {
@@ -241,20 +241,20 @@
                         "_comment": "男演员 · 承受方：监督发起性行为时，允许开启会话并触发男演员反应口上（与女演员一致，强制接受开启）",
                         "SelfReq": { "requireConscious": true, "requireMale": true },
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_initiateSex", "isDoer": false },
-                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "TargetReq": { "requireMemberType": ["membertype_erav_kiryu_filmstudio_director"], "requireMemberTypeScope": "Any" },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_initiateSex_erAV_M" }
                     },
                     {
                         "_comment": "男演员 · 承受方：监督结束性行为时，允许结束并触发男演员反应口上（与女演员一致）",
                         "SelfReq": { "requireConscious": true, "requireMale": true },
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_endOngoingSex", "isDoer": false },
-                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "TargetReq": { "requireMemberType": ["membertype_erav_kiryu_filmstudio_director"], "requireMemberTypeScope": "Any" },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_accept_reason", "overrideKojoEventID": "com_interaction_endOngoingSex_erAV_M" }
                     },
                     {
                         "_comment": "演员（男女通用）：接受监督的同行邀请",
                         "Requirement_ActionPackage": { "targetComID": "com_interaction_partyInvite", "isDoer": false },
-                        "TargetReq": { "requireMemberType": "membertype_erav_kiryu_filmstudio_director", "requireMemberTypeCurrentActive": false },
+                        "TargetReq": { "requireMemberType": ["membertype_erav_kiryu_filmstudio_director"], "requireMemberTypeScope": "Any" },
                         "Result_EvaluationPackage": { "overrideResponse": "Accept", "overrideResponseExplanation": "erav_filmstudio_actor_partyinvite_accept_reason" }
                     }
                 ]

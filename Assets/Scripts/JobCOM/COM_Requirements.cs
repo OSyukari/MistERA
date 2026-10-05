@@ -85,15 +85,8 @@ public class COM_Requirements
         [JsonIgnore] public List<string> doerBodyTags { get { return req_Doers.BodyTags; } }
         [JsonIgnore] public List<string> receiverBodyTags { get { return req_Receivers.BodyTags; } }
 
-        // -- actor-vs-job-owner faction checks, see ValidateActorFaction -- //
-        /// <summary>Actor must belong to the job owner's faction in any way (home, temp home or work).</summary>
-        public bool requireSameFaction = false;
-        /// <summary>Job owner's faction must be the actor's currently active faction (on shift, visiting, etc).</summary>
-        public bool requireSameActiveFaction = false;
-        /// <summary>Job owner's faction must be the actor's priority home faction (HomeFactions[0]).</summary>
-        public bool requireHomeFaction = false;
-
-        [JsonIgnore] public bool HasActorFactionReq { get { return requireSameFaction || requireSameActiveFaction || requireHomeFaction; } }
+        // actor-vs-job-owner faction checks live on req_Doers/req_Receivers (CharaReq.requireJobFaction,
+        // requireMemberType with MemberTypeScope.JobFaction); jobFaction below is the job's FactionOwner.
 
         public void Read(Requirement req)
         {
@@ -103,48 +96,10 @@ public class COM_Requirements
             req_Receivers.Read(req.req_Receivers);
             treatDoerAsReceiver = treatDoerAsReceiver || req.treatDoerAsReceiver;
             treatReceiverAsDoer = treatReceiverAsDoer || req.treatReceiverAsDoer;
-            requireSameFaction = requireSameFaction || req.requireSameFaction;
-            requireSameActiveFaction = requireSameActiveFaction || req.requireSameActiveFaction;
-            requireHomeFaction = requireHomeFaction || req.requireHomeFaction;
             joinAlone = joinAlone || req.joinAlone;
         }
 
-        /// <summary>
-        /// Checks c against the faction owning sourceJob (e.g. the furniture's room owner) for the
-        /// requireSameFaction/requireSameActiveFaction/requireHomeFaction flags. Always true when none
-        /// is set; false when one is set but sourceJob has no owning faction.
-        /// </summary>
-        public bool ValidateActorFaction(Job sourceJob, Character_Trainable c, out string tooltip)
-        {
-            tooltip = "";
-            if (!HasActorFactionReq) return true;
-            if (c == null) return false;
-
-            var owner = sourceJob?.FactionOwner?.Faction;
-            var factions = c.FactionManager;
-            if (owner == null)
-            {
-                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireSameFaction").Replace("$faction$", "-");
-                return false;
-            }
-            if (requireSameFaction && !factions.Factions.Contains(owner))
-            {
-                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireSameFaction").Replace("$faction$", owner.FactionDisplayName);
-                return false;
-            }
-            if (requireSameActiveFaction && factions.CurrentlyActiveFaction != owner)
-            {
-                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireSameActiveFaction").Replace("$faction$", owner.FactionDisplayName);
-                return false;
-            }
-            if (requireHomeFaction && (factions.HomeFactions.Count < 1 || factions.HomeFactions[0] != owner))
-            {
-                tooltip = LocalizeDictionary.QueryThenParse("ui_COM_Requirements_requireHomeFaction").Replace("$faction$", owner.FactionDisplayName);
-                return false;
-            }
-            return true;
-        }
-        public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, out bool hardlock, Requirement extraCondition = null)
+        public bool Validate(ref List<string> _tooltip, Character_Trainable doerRefIDs, out bool hardlock, Requirement extraCondition = null, I_IsJobGiver jobFaction = null)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
@@ -177,25 +132,25 @@ public class COM_Requirements
 
             // Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock))
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
             {
                 //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
             {
                 return false;
             }
             if (receiverCount == 0)
             {
-                return CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock);
+                return CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction);
             }
             else
             {
                 return true;
             }
         }
-        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, out bool hardlock, Requirement extraCondition = null, int actorCountMult = 1)
+        public bool Validate(ref List<string> _tooltip, List<Character_Trainable> doerRefIDs, List<Character_Trainable> receiverRefIDs, out bool hardlock, Requirement extraCondition = null, int actorCountMult = 1, I_IsJobGiver jobFaction = null)
         {
             //int doercount = (extraCondition == null ? doerCount : (doerCount != -1 ? doerCount : extraCondition.doerCount));
             //int receivercount = (extraCondition == null ? receiverCount : (receiverCount != -1 ? receiverCount : extraCondition.receiverCount));
@@ -263,30 +218,30 @@ public class COM_Requirements
 
             //            Debug.Log("Command (Variant) Requirement Validating [" + String.Join(",", doerRefIDs) + "] and [" + String.Join(",", receiverRefIDs) + "]");
 
-            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock))
+            if (!CharaReqUtility.Validate(req_Doers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
             {
                 //if (logging) _tooltip.Add("doer failed doer req validation");
                 return false;
             }
-            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock))
+            if (treatDoerAsReceiver && !CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction))
             {
                 //if (logging) _tooltip.Add("doer failed receiver req validation");
                 return false;
             }
-            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs, out hardlock))
+            if (receiverCount > 0 && treatReceiverAsDoer && !CharaReqUtility.Validate(req_Doers, ref _tooltip, receiverRefIDs, out hardlock, jobFaction))
             {
                // if (logging) _tooltip.Add("receiver failed doer req validation");
                 return false;
             }
             if (receiverCount == 0)
             {
-                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, doerRefIDs, out hardlock, jobFaction);
                 //if (!value && logging) _tooltip.Add("doer failed receiver == 0 req validation");
                 return value;
             }
             else
             {
-                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs, out hardlock);
+                bool value = CharaReqUtility.Validate(req_Receivers, ref _tooltip, receiverRefIDs, out hardlock, jobFaction);
                 //if (!value && logging) _tooltip.Add("receiver failed receiver req validation");
                 return value;
             }

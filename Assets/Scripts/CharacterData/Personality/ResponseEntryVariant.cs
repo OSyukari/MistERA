@@ -522,6 +522,7 @@ public partial class ResponseEntry
             public ModKojoVariable modifyKojoVariables = new ModKojoVariable();
             public EventInitializer launchEvent = new EventInitializer();
             public Result_Character.ModStatusValue modifyStatusValue = new Result_Character.ModStatusValue();
+            public List<ModRelationship> modifyRelationship = new List<ModRelationship>();
             public string addCooldownID = "";
             public int addCooldownDuration = 0;
             public bool flushLog = false;
@@ -541,6 +542,7 @@ public partial class ResponseEntry
                     launchEvent.Execute(rel.Relation);
                 }
                 if (modifyStatusValue != null && modifyStatusValue.isValid) modifyStatusValue.Execute(rel.Owner, null);
+                if (modifyRelationship != null) foreach (var mod in modifyRelationship) mod.Execute(rel);
             }
             public void Execute(MessageCollect_KojoEntry message, Character_Relationship rel, List<string> selfTags, List<string> targetTags)
             {
@@ -586,6 +588,29 @@ public partial class ResponseEntry
                         if (startImmediate) scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false);
                         else scr_UpdateHandler.current.AddEventCallback(() => scr_UpdateHandler.current.EventHandler.StartEvent(newEvent, false));
                     }
+                }
+            }
+
+            /// <summary>
+            /// Relationship score change between kojo owner and target. reverse: target's score toward owner instead.
+            /// Goes through IncreaseRelationshipWith (mood/stress/lust + attitude scaling, skipped while the scoring
+            /// side is unconscious/timestopped) and registers into the kojo's expLog for display.
+            /// </summary>
+            [System.Serializable]
+            public class ModRelationship
+            {
+                public RelationshipScoreType type = RelationshipScoreType.None;
+                public float value = 0;
+                public bool reverse = false;
+
+                public void Execute(KojoCollector kol)
+                {
+                    if (type == RelationshipScoreType.None || value == 0 || kol == null) return;
+                    var owner = kol.Owner;
+                    var target = kol.Target;
+                    if (owner == null || target == null || owner == target) return;
+                    if (reverse) target.Relationships.IncreaseRelationshipWith(owner.RefID, type, value, kol.expLog);
+                    else owner.Relationships.IncreaseRelationshipWith(target.RefID, type, value, kol.expLog);
                 }
             }
 

@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for System_DayChange.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "System_DayChange_EV01": "A new day begins: $currentDateShort$."
+            }
+        }
+    }
+}

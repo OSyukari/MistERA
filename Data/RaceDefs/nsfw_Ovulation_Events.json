@@ -1,0 +1,24 @@
+{
+    "_doc": "Fired from code when a menstrual cycle enters its ovulation phase (Character_Trainable.NotifyOvulation, daily update only), no trigger. Self = the ovulating character. Only sent for the player, characters whose home or temporary home is a player faction, and members of the player's permanent home faction (ReproductionUtility.IsReproStatusVisibleToPlayer); always shown when sent (displayOverride).",
+    "Events": {
+        "list": [
+            {
+                "ID": "Repro_OvulationStart",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Repro_OvulationStart_EV01",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Repro_OvulationStart_EV01": "$self.name$进入了排卵期。"
+            }
+        }
+    }
+}

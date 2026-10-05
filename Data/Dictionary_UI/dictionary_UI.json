@@ -913,6 +913,11 @@
 "ui_videoEdit_scoreReq": "最低分数需求：$score$",
 "ui_videoEdit_durationReq": "影片时长限制：$req$ 分钟",
 "ui_videoEdit_durationCurrent": "当前影片时长：$total$",
+"ui_videoEdit_mandatoryGoals": "必要目标：$count$",
+"ui_videoEdit_mandatoryGoalLine": "$name$ [$status$]",
+"ui_videoEdit_goalAchieved": "已达成",
+"ui_videoEdit_goalNotAchieved": "未达成",
+"ui_videoEdit_goalProgress": "匹配次数 $count$（需要 $minCount$），占比 $ratio$（需要 $minRatio$）",
 
 "ui_diceroll_autosuccess":"必定接受",
 "ui_diceroll_autofailure":"必定拒绝",
@@ -955,6 +960,7 @@
 "ui_ap_CharaReqUtility_requireTimestopped":"需要$name$当前被时停",
 "ui_ap_CharaReqUtility_requireStatusValue":"需要$name$满足状态[$status$]的条件",
 "ui_ap_CharaReqUtility_requireMemberType":"需要$name$持有职位[$memberType$]",
+"ui_ap_CharaReqUtility_requireActorBaseID":"需要$name$为特定角色[$baseID$]",
 
 "ui_ap_PreEvaluate_requireDoer":"指令没有执行者",
 "ui_ap_PreEvaluate_requireCOM":"指令内容缺失",
@@ -1655,6 +1661,7 @@
 "ui_ap_CharaReqUtility_requireTimestopped": "Requires $name$ to be currently time-stopped",
 "ui_ap_CharaReqUtility_requireStatusValue": "Requires $name$ to meet the [$status$] status condition",
 "ui_ap_CharaReqUtility_requireMemberType": "Requires $name$ to hold the [$memberType$] status",
+"ui_ap_CharaReqUtility_requireActorBaseID": "Requires $name$ to be a specific character [$baseID$]",
 "ui_ap_CharaReqUtility_requireUnconscious": "Cannot be executed while $name$ is conscious",
 
 "ui_ap_PreEvaluate_requireDoer":"Command has no performer",
@@ -1731,6 +1738,11 @@
 "ui_videoEdit_scoreReq": "Minimum Score Required: $score$",
 "ui_videoEdit_durationReq": "Duration Limit: $req$ min",
 "ui_videoEdit_durationCurrent": "Current Duration: $total$",
+"ui_videoEdit_mandatoryGoals": "Mandatory Goals: $count$",
+"ui_videoEdit_mandatoryGoalLine": "$name$ [$status$]",
+"ui_videoEdit_goalAchieved": "Achieved",
+"ui_videoEdit_goalNotAchieved": "Not Achieved",
+"ui_videoEdit_goalProgress": "Matched $count$ (need $minCount$), share $ratio$ (need $minRatio$)",
 
 "ui_ap_onHoverTooltip_conflictAP": "Due to conflict, the following commands will be removed:\n$names$",
 

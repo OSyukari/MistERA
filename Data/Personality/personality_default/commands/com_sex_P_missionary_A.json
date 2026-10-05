@@ -65,6 +65,74 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "sleeping", "pain"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始正面位A 睡眠中",
+                            "responses": ["com_sex_P_missionary_A_Begin_FE_Sleep_1", "com_sex_P_missionary_A_Begin_FE_Sleep_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始正面位A 时停中",
+                            "responses": ["com_sex_P_missionary_A_Begin_FE_Timestop_1", "com_sex_P_missionary_A_Begin_FE_Timestop_2"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_A"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "tearful", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 开始正面位A 有允许",
+                                    "responses": ["com_sex_P_missionary_A_Begin_FE_Player_1", "com_sex_P_missionary_A_Begin_FE_Player_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "tearful"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始正面位A 有允许",
+                                    "responses": ["com_sex_P_missionary_A_Begin_FE_1", "com_sex_P_missionary_A_Begin_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "tearful", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始正面位A 未允许 好意",
+                                    "responses": ["com_sex_P_missionary_A_Begin_FE_3", "com_sex_P_missionary_A_Begin_FE_4"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "fear", "pain", "tearful", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始正面位A 未允许 敌意",
+                            "responses": ["com_sex_P_missionary_A_Begin_FE_5", "com_sex_P_missionary_A_Begin_FE_6"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_A"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "missionary", "anal", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 开始正面位A（插入的一方）",
+                            "responses": ["com_sex_P_missionary_A_Begin_FE_Partner_1", "com_sex_P_missionary_A_Begin_FE_Partner_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
                                 "selfTags": [
                                     "timestop"
                                 ]
@@ -142,6 +210,74 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "sleeping", "pain"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 睡眠中 正面位A",
+                            "responses": ["com_sex_P_missionary_A_FE_Sleep_1"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_A", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 时停中 正面位A",
+                            "responses": ["com_sex_P_missionary_A_FE_Timestop_1"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_A"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 正面位A 有允许",
+                                    "responses": ["com_sex_P_missionary_A_FE_Player_1"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 正面位A 有允许（还在适应）",
+                                    "responses": ["com_sex_P_missionary_A_FE_1", "com_sex_P_missionary_A_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "blush", "pain", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 正面位A 未允许 好意（还在适应）",
+                                    "responses": ["com_sex_P_missionary_A_FE_3"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "receiver", "missionary", "anal", "pain", "tearful", "cry"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 正面位A 未允许 敌意",
+                            "responses": ["com_sex_P_missionary_A_FE_4", "com_sex_P_missionary_A_FE_5"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_A"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "missionary", "anal"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 正面位A（插入的一方）",
+                            "responses": ["com_sex_P_missionary_A_FE_Partner_1"]
+                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -502,7 +638,32 @@
                 "com_sex_P_missionary_A_27": "$self$皱着眉把脸埋进手臂，身子随着撞击被动地前后晃。\n\n\"……你别顶那么深……好难受……\"\n\n干涩紧绷的菊穴被反复碾磨，她咬着下唇忍着，巴不得这段赶紧翻篇。",
                 "com_sex_P_missionary_A_28": "$self$面无表情地承受着撞击，眼神冷得发寒。\n\n\"……你要干就快点。\"\n\n这段她连哼都懒得哼，菊穴被磨得难受，由着身子被撞，心思早飞到别处去了。",
                 "com_sex_P_missionary_A_Begin_Timestop_1": "$target$把定格的腰垫高，龟头抵着菊穴缓缓碾开，穴口的软肉含住棒身不受控地吮紧，$self$的手还搭在身侧没动。",
-                "com_sex_P_missionary_A_Begin_Timestop_2": "后穴吞到最深处时，$self$垂在颈侧的头发悬着不落，静止的房间里只剩穴肉吞吐的黏腻声响。"
+                "com_sex_P_missionary_A_Begin_Timestop_2": "后穴吞到最深处时，$self$垂在颈侧的头发悬着不落，静止的房间里只剩穴肉吞吐的黏腻声响。",
+
+                "com_sex_P_missionary_A_Begin_FE_Sleep_1": "睡梦中的$self$身子猛地绷紧，发出一声难受的呜咽，身后的异物感都没能把她弄醒。",
+                "com_sex_P_missionary_A_Begin_FE_Sleep_2": "$self$不安地缩了缩身子，无意识地并紧了腿，呼吸很快又平稳下来，浑然不知自己的后穴已经不是第一次了。",
+                "com_sex_P_missionary_A_Begin_FE_Timestop_1": "紧窄的后穴在凝固的时间里被强行撑开，$self$睁着的眼纹丝不动，眼泪悬在眼角没有落下。",
+                "com_sex_P_missionary_A_Begin_FE_Timestop_2": "$self$脸上还停留着时停前的神情，初次被闯入的疼痛在静止的身体里蔓延，她对此一无所知。",
+                "com_sex_P_missionary_A_Begin_FE_Player_1": "\"后面……还是第一次……只有你可以……\"\n\n被撑开的那一瞬疼得倒抽冷气，$self$还是抓着$target$的手没有放。",
+                "com_sex_P_missionary_A_Begin_FE_Player_2": "\"很紧张……你抱着我，慢点进来……\"\n\n$self$疼得浑身发颤，却把$target$搂得更紧了。",
+                "com_sex_P_missionary_A_Begin_FE_1": "\"等、等一下……后面我是第一次……会很紧的……\"\n\n$self$疼得浑身一僵，眼泪一下子涌了出来。",
+                "com_sex_P_missionary_A_Begin_FE_2": "\"呜……比想象中还要……胀……\"\n\n初次被撑开的地方火辣辣的，$self$死死抓住了床单。",
+                "com_sex_P_missionary_A_Begin_FE_3": "\"后面……真的可以吗……你轻一点……\"\n\n$self$紧张得腿都在抖，指节攥得发白。",
+                "com_sex_P_missionary_A_Begin_FE_4": "\"疼……好疼……我会忍的，你别停……\"\n\n$self$咬着下唇，眼角泛起了泪花。",
+                "com_sex_P_missionary_A_Begin_FE_5": "\"不……那里不行……我还……！\"\n\n$self$疼得尖叫出声，身体绷得像块石头。",
+                "com_sex_P_missionary_A_Begin_FE_6": "\"我不会原谅你的……绝对不会……\"\n\n身后的疼痛一阵阵袭来，$self$把脸偏向一边，眼泪无声地淌。",
+                "com_sex_P_missionary_A_Begin_FE_Partner_1": "\"你……后面是第一次？\"\n\n被绞得生疼的地方传来警讯，$self$愣了一下。",
+                "com_sex_P_missionary_A_Begin_FE_Partner_2": "\"……那更要慢点了。\"\n\n$self$放轻了腰上的力道，生怕弄伤了身下的人。",
+
+                "com_sex_P_missionary_A_FE_Sleep_1": "睡梦中的$self$眉头始终没有松开，初次被撑开的后穴还在隐隐作痛。",
+                "com_sex_P_missionary_A_FE_Timestop_1": "初次领教过的后穴还火辣辣地疼着，定格的$self$脸上没有任何变化。",
+                "com_sex_P_missionary_A_FE_Player_1": "\"还是有点疼……不过，好像比刚才好了……\"\n\n$self$红着脸看向$target$，小声说道。",
+                "com_sex_P_missionary_A_FE_1": "\"别动……太怪了……让我先适应一下……\"\n\n后穴初次被填满的异物感让$self$喘不上气，腿还在抖。",
+                "com_sex_P_missionary_A_FE_2": "\"第一次……原来后面会进这么深……\"\n\n$self$的眉头皱着，身子僵得像块木板。",
+                "com_sex_P_missionary_A_FE_3": "\"我不知道后面该怎么用力……你、你慢点……\"\n\n$self$又疼又慌，只会紧紧抓着$target$的手臂。",
+                "com_sex_P_missionary_A_FE_4": "\"疼……够了……拿出去……\"\n\n初次被撑裂般的疼痛让$self$的眼泪一直没停。",
+                "com_sex_P_missionary_A_FE_5": "\"……快点结束。\"\n\n$self$死死盯着天花板，攥着床单的指节泛白。",
+                "com_sex_P_missionary_A_FE_Partner_1": "\"别绷这么紧……会伤到的。\"\n\n察觉到身下人的生涩，$self$放慢了动作。"
             },
             "en-us": {
                 "com_sex_P_missionary_A_Climax_1": "$self$ thrusts deep into that tight hole to the hilt with a low groan, coming inside.\n\nHot semen pumps deep in burst after burst; he grips the other's waist and won't pull out until he's drained, then stops with a ragged breath.",

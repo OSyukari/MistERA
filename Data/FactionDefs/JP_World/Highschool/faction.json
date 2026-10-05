@@ -194,7 +194,8 @@
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true,
-                        "requireSameActiveFaction": true
+                        "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                            "requireMemberType": ["membertype_jp_high_school_student"] }
                     }
                 },
                 "variants": [
@@ -262,7 +263,8 @@
                 "requirements": {
                     "requirement": {
                         "treatReceiverAsDoer": true,
-                        "requireSameActiveFaction": true
+                        "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                            "requireMemberType": ["membertype_jp_high_school_teacher"] }
                     }
                 },
                 "variants": [

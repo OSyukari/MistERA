@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for nsfw_Ovulation_Events.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Repro_OvulationStart_EV01": "$self.name$ has entered ovulation."
+            }
+        }
+    }
+}

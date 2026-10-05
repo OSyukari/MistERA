@@ -55,13 +55,54 @@ public class ItemComponent_Records : ItemComponent_Base
 
     public override string GetRetailID() { return Records == null ? "" : $"_records{Records.parentRecordingID}"; }
 
+    // every edit / re-export inherits parentRecordingID, so all cuts of one film share their buyers
+    public override string GetSalesLineageID() { return Records == null || string.IsNullOrEmpty(Records.parentRecordingID) ? null : $"records{Records.parentRecordingID}"; }
+
+    public override void FillSalesEdition(SalesManager.EditionRecord edition)
+    {
+        if (Records == null) return;
+        edition.evaluatorID = Records.evaluatorID;
+        edition.grade = Records.grade;
+        edition.mainActorIDs = new List<string>(Records.MainActorIDs);
+        edition.pricePremium = Records.pricePremium;
+    }
+
+    /// <summary>
+    /// Each copy sold gives every main actor famePerBuyer fame of the evaluator's fameType. Actors with no
+    /// live instance any more are skipped.
+    /// </summary>
+    public override void OnSold(int count, long revenue)
+    {
+        if (Records == null || count <= 0 || string.IsNullOrEmpty(Records.evaluatorID)) return;
+        var evaluator = scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(Records.evaluatorID);
+        if (evaluator == null || string.IsNullOrEmpty(evaluator.fameType) || evaluator.famePerBuyer <= 0f) return;
+
+        float amount = count * evaluator.famePerBuyer;
+        foreach (var baseID in Records.MainActorIDs)
+        {
+            var actor = scr_System_CampaignManager.current.HasInstanceCharaWithBaseID(baseID);
+            if (actor != null) actor.Fame.AddFame(amount, evaluator.fameType);
+        }
+    }
+
+    /// <summary>
+    /// The renownPerBuyer of this recording's grade in its evaluator's qualityGrades, per copy.
+    /// </summary>
+    public override float GetSalesRenown(int count)
+    {
+        if (Records == null || count <= 0 || string.IsNullOrEmpty(Records.evaluatorID)) return 0f;
+        var evaluator = scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(Records.evaluatorID);
+        var grade = evaluator?.GetQualityGrade(Records.grade);
+        return grade == null ? 0f : count * grade.renownPerBuyer;
+    }
+
     [JsonIgnore] public override bool CanBeSold { get { return Records != null && !string.IsNullOrEmpty(Records.parentRecordingID); } }
 
     public override void ValueMod(ref float value)
     {
         if (Records == null || string.IsNullOrEmpty(Records.evaluatorID)) return;
         var evaluator = scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(Records.evaluatorID);
-        if (evaluator != null) value += evaluator.basePrice;
+        if (evaluator != null) value += evaluator.basePrice * Records.pricePremium;
     }
 
     /// <summary>
@@ -73,7 +114,12 @@ public class ItemComponent_Records : ItemComponent_Base
     {
         if (Records != null && Records.value.HasValue && parentvalue > 0f)
         {
-            float ratio = Records.value.Value / parentvalue;
+            // compare against the price without the actor premium (ValueMod's basePrice x (pricePremium - 1)) -
+            // a star's higher price shouldn't read as lower quality (and so fewer buyers)
+            var evaluator = string.IsNullOrEmpty(Records.evaluatorID) ? null : scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(Records.evaluatorID);
+            float basis = parentvalue - (evaluator != null ? evaluator.basePrice * (Records.pricePremium - 1f) : 0f);
+            if (basis <= 0f) return value;
+            float ratio = Records.value.Value / basis;
             value += ratio - 1f;
         }
         return value;

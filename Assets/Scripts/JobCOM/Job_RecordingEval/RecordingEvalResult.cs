@@ -200,7 +200,7 @@ public class RecordingEvaluatorInstance
             var mainIDs = actors_main.actors.Select(c => c.baseID).ToList();
             var rivalIDs = actors_rivals.actors.Select(c => c.baseID).ToList();
 
-            foreach (var i in eval.actorFeatures)
+            foreach (var i in eval.ActorFeatureList)
             {
                 if (i.Match(mainIDs, rec) && !actors_main.features.Contains(i)) actors_main.features.Add(i);
                 if (i.Match(rivalIDs, rec) && !actors_rivals.features.Contains(i)) actors_rivals.features.Add(i);
@@ -263,12 +263,13 @@ public class RecordingEvaluatorInstance
                 Goals.Clear();
                 if (eval != null)
                 {
-                    foreach (var goal in eval.OptionalGoals)
+                    foreach (var goal in eval.AllGoals)
                     {
-                        Goals.Add(goal, new ActiveGoals { goal = goal });
+                        bool mandatory = eval.MandatoryGoals.Contains(goal);
+                        Goals.Add(goal, new ActiveGoals { goal = goal, mandatory = mandatory });
                         foreach (var sub in goal.subCategories)
                         {
-                            Goals.Add(sub, new ActiveGoals { goal = sub });
+                            Goals.Add(sub, new ActiveGoals { goal = sub, parent = goal, mandatory = mandatory });
                         }
                     }
                 }
@@ -297,37 +298,30 @@ public class RecordingEvaluatorInstance
                 }
                 act.activeGoals.Clear();
 
-                // matched goals depend only on the AP's own tags plus whether it features a
-                // currently selected actor - never on this action's own Active toggle - so
-                // PotentialScore (what this block would contribute if turned back on) stays
-                // stable across activate/deactivate and only moves when something that actually
+                // matched goals depend only on the AP's own tags plus which selected actors it
+                // features - never on this action's own Active toggle or on any other package -
+                // so PotentialScore (what this block would contribute if turned back on) stays
+                // fixed across activate/deactivate and only moves when something that actually
                 // changes matching (evaluator, actor group assignment) changes.
-                var matchedGoals = new List<OptionalGoal>();
-                float potential = 0f;
-                if (eval != null && APHasAnyActor(act.ap, currentMainIDs.Concat(currentRivalIDs).ToList()))
+                act.matchedGoals.Clear();
+                act.Featured = eval != null && APHasAnyActor(act.ap, currentMainIDs.Concat(currentRivalIDs).ToList());
+                if (act.Featured)
                 {
-                    foreach (var goal in eval.OptionalGoals)
+                    foreach (var goal in eval.AllGoals)
                     {
-                        if (MatchesGoal(act.ap, goal))
-                        {
-                            matchedGoals.Add(goal);
-                            potential += goal.scoreBonus_flat;
-                        }
+                        if (!MatchesGoal(act.ap, goal, currentMainIDs)) continue;
+                        act.matchedGoals.Add(goal);
                         foreach (var sub in goal.subCategories)
                         {
-                            if (MatchesGoal(act.ap, sub))
-                            {
-                                matchedGoals.Add(sub);
-                                potential += sub.scoreBonus_flat;
-                            }
+                            if (MatchesGoal(act.ap, sub, currentMainIDs)) act.matchedGoals.Add(sub);
                         }
                     }
                 }
-                act.PotentialScore = potential;
+                CalculatePackageScore(act);
 
                 if (act.Active)
                 {
-                    foreach (var g in matchedGoals) RegisterMatch(act, g);
+                    foreach (var g in act.matchedGoals) RegisterMatch(act, g);
                 }
 
                 act.UpdateMatchedState(currentMainIDs, currentRivalIDs);
@@ -336,22 +330,40 @@ public class RecordingEvaluatorInstance
 
             // recount fresh every pass - acts skipped above (unchanged this pass) still need
             // to count toward the total, so this can't be accumulated inside the loop above.
-            int totalActive = Actions.Values.Count(a => a.Active);
+            // top-level goals: share of active packages featuring a selected actor.
+            // subcategories: share of their parent goal's (active) matched packages.
+            int totalFeaturedActive = Actions.Values.Count(a => a.Active && a.Featured);
 
             foreach (var kvp in Goals)
             {
-                kvp.Value.ratio = totalActive > 0 ? (float)kvp.Value.actions.Count / totalActive : 0f;
+                var ag = kvp.Value;
+                int denominator = totalFeaturedActive;
+                if (ag.parent != null) denominator = Goals.TryGetValue(ag.parent, out var parentAg) ? parentAg.actions.Count : 0;
+                ag.ratio = denominator > 0 ? (float)ag.actions.Count / denominator : 0f;
+
+                bool satisfied = ag.actions.Count >= Math.Max(1, ag.goal.minOccurrences) && ag.ratio >= ag.goal.requiredRatio;
+                if (satisfied != ag.satisfied)
+                {
+                    ag.satisfied = satisfied;
+                    goalsVersion++;
+                }
             }
         }
 
         UpdateScore();
     }
 
-    static bool MatchesGoal(ActionPackageRecords ap, OptionalGoal goal)
+    static bool MatchesGoal(ActionPackageRecords ap, OptionalGoal goal, List<string> mainIDs)
     {
         if (ap.ListEPs == null) return false;
         foreach (var ep in ap.ListEPs)
         {
+            if (goal.mainActorRole == GoalActorRole.Doer && (ep.Doer == null || !mainIDs.Contains(ep.Doer.baseID))) continue;
+            if (goal.mainActorRole == GoalActorRole.Receiver && (ep.Receiver == null || !mainIDs.Contains(ep.Receiver.baseID))) continue;
+            // ListContainsLoose treats an empty list as "contains", so only test a non-empty exclude list
+            if (goal.excludeTags_DoerTargetTag.Count > 0 && Utility.ListContainsLoose(ep.DoerTargetTag, goal.excludeTags_DoerTargetTag)) continue;
+            if (goal.requireSuccess && !IsSuccessful(ap, ep)) continue;
+
             if (Utility.ListContainsStrict(ep.DoerTargetTag, goal.matchTags_DoerTargetTag)
                 && Utility.ListContainsStrict(ep.DoerSelfTag, goal.matchTags_DoerSelfTag)
                 && Utility.ListContainsStrict(ep.DoerTag, goal.matchTags_DoerTag)
@@ -365,6 +377,54 @@ public class RecordingEvaluatorInstance
         return false;
     }
 
+    /// <summary>
+    /// The difficulty check is only rolled when the package finishes (ActionPackage.ExecutePackage),
+    /// so Accept on an unfinished snapshot (accepted / running) means "not rolled yet", while Accept
+    /// on a finished one means the command has no difficulty check - same as EvaluationPackage's
+    /// comSuccess.
+    /// </summary>
+    static bool IsSuccessful(ActionPackageRecords ap, ActionPackageRecords.EvaluationPackageRecord ep)
+    {
+        if (ep.Response >= Memory_Response.Success) return true;
+        return ep.Response == Memory_Response.Accept && ap.internalState == AP_Status.success;
+    }
+
+    /// <summary>
+    /// Fixed per-package score, independent of every other package and of this package's own
+    /// Active toggle: (packageBaseScore + sum of matched scoreBonus_flat) x (1 + sum of matched
+    /// (packageMultiplier - 1)). Packages without a selected actor score 0. Also builds the
+    /// matching breakdown string for the block tooltip in canvas_videoEdit.
+    /// </summary>
+    void CalculatePackageScore(ActionHolder act)
+    {
+        act.PotentialScore = 0f;
+        act.ScoreBreakdown = "";
+        if (!act.Featured || eval == null) return;
+
+        float flat = eval.packageBaseScore;
+        float mult = 1f;
+        var flatText = new System.Text.StringBuilder(eval.packageBaseScore.ToString("0.##"));
+        var multText = new System.Text.StringBuilder("1");
+
+        foreach (var g in act.matchedGoals)
+        {
+            var name = LocalizeDictionary.QueryThenParse(g.displayName, g.displayName);
+            if (g.scoreBonus_flat != 0f)
+            {
+                flat += g.scoreBonus_flat;
+                flatText.Append($" + {g.scoreBonus_flat:0.##} {name}");
+            }
+            if (g.packageMultiplier != 1f)
+            {
+                mult += g.packageMultiplier - 1f;
+                multText.Append($" + {g.packageMultiplier - 1f:0.##} {name}");
+            }
+        }
+
+        act.PotentialScore = flat * mult;
+        act.ScoreBreakdown = multText.Length > 1 ? $"= ({flatText}) * ({multText})" : $"= ({flatText})";
+    }
+
     void RegisterMatch(ActionHolder act, OptionalGoal goal)
     {
         if (!Goals.TryGetValue(goal, out var ag)) return;
@@ -373,6 +433,16 @@ public class RecordingEvaluatorInstance
     }
 
     Dictionary<OptionalGoal, ActiveGoals> Goals = new Dictionary<OptionalGoal, ActiveGoals>();
+
+    /// <summary>
+    /// Current match state of one goal under the selected evaluator, or null when the goal isn't
+    /// used by it. Read-only view for UI (canvas_videoEdit's mandatory goal list).
+    /// </summary>
+    public ActiveGoals GetGoalState(OptionalGoal goal)
+    {
+        return goal != null && Goals.TryGetValue(goal, out var ag) ? ag : null;
+    }
+
     public Dictionary<ActionPackageRecords, ActionHolder> Actions = new Dictionary<ActionPackageRecords, ActionHolder>();
 
     /// <summary>
@@ -413,7 +483,7 @@ public class RecordingEvaluatorInstance
                 var satisfied = new List<ActiveGoals>();
                 foreach (var kvp in Goals)
                 {
-                    if (kvp.Value.actions.Count >= kvp.Key.minOccurrences) satisfied.Add(kvp.Value);
+                    if (kvp.Value.satisfied) satisfied.Add(kvp.Value);
                 }
                 satisfied.Sort((a, b) => b.ratio.CompareTo(a.ratio));
 
@@ -431,9 +501,17 @@ public class RecordingEvaluatorInstance
     public class ActiveGoals
     {
         public OptionalGoal goal;
+        // set for subcategories - ratio is measured against the parent's matched actions
+        public OptionalGoal parent = null;
+        // from the evaluator's mandatoryGoals (subcategories inherit their parent's flag, but
+        // only top-level mandatory goals disqualify when unsatisfied)
+        public bool mandatory = false;
         public List<ActionHolder> actions = new List<ActionHolder>();
 
         public float ratio = 0f;
+
+        // count >= minOccurrences and ratio >= requiredRatio, refreshed every ValidateAPs pass
+        public bool satisfied = false;
 
         public void Clear()
         {
@@ -522,31 +600,38 @@ public class RecordingEvaluatorInstance
         }
 
         // and here's what we do with custom logic
+        // goals this action is registered to (only while Active)
         public List<OptionalGoal> activeGoals = new List<OptionalGoal>();
+        // every goal (+ subcategory) this action matches, regardless of Active
+        public List<OptionalGoal> matchedGoals = new List<OptionalGoal>();
+        // features at least one selected (main or rival) actor - only these packages score
+        // and count toward goal ratios
+        public bool Featured = false;
         public void Clear()
         {
             this.activeGoals.Clear();
         }
 
         /// <summary>
-        /// This action's own contribution to totalScore: the sum of scoreBonus_flat for every
-        /// goal (+ subcategory) it matched. Recomputed on every UpdateScore pass. Does not
-        /// include baseScore, actor-feature bonuses, scoreMultiplier, or the duration penalty -
-        /// those apply to the recording as a whole and cannot be attributed to one action.
-        /// Zero whenever this action is inactive - see PotentialScore for the display-friendly
-        /// version that doesn't zero out.
+        /// This action's own contribution to totalScore: PotentialScore while Active, 0 otherwise.
+        /// Does not include baseScore, actor-feature bonuses, recording-level scoreMultiplier, or
+        /// the duration penalty - those apply to the recording as a whole.
         /// </summary>
         public float Score = 0f;
 
         /// <summary>
-        /// What Score would be if this action were Active - computed the same way (sum of
-        /// scoreBonus_flat across matched goals/subcategories) but ignoring the Active toggle
-        /// entirely, so it stays put across activate/deactivate and only moves when something
-        /// that actually changes matching (evaluator, actor group assignment) changes. Intended
-        /// for the per-block score display in canvas_videoEdit, which would otherwise flash to 0
-        /// every time a block is switched off.
+        /// This package's fixed score (see CalculatePackageScore), ignoring the Active toggle so
+        /// it stays put across activate/deactivate. Only moves when something that actually
+        /// changes matching (evaluator, actor group assignment) changes. Used for the per-block
+        /// score display in canvas_videoEdit.
         /// </summary>
         public float PotentialScore = 0f;
+
+        /// <summary>
+        /// "= (base + flat name ...) * (1 + mult name ...)" derivation of PotentialScore.
+        /// Empty when the package scores nothing.
+        /// </summary>
+        public string ScoreBreakdown = "";
     }
 
 
@@ -571,6 +656,37 @@ public class RecordingEvaluatorInstance
     public bool disqualified = false;
 
     /// <summary>
+    /// Total duration of the active blocks, in minutes.
+    /// </summary>
+    public int effectiveMinutes = 0;
+
+    /// <summary>
+    /// min(1, (referenceMinutes / effectiveMinutes) ^ lengthPenaltyExponent) - see RecordingEvaluator.referenceMinutes.
+    /// </summary>
+    public float lengthFactor = 1f;
+
+    /// <summary>
+    /// totalScore x lengthFactor - what the recording's value (and so its sales quality) is based on.
+    /// </summary>
+    public float qualityScore = 0f;
+
+    /// <summary>
+    /// qualityScore x scoreToValueRatio / basePrice - the same ratio ItemComponent_Records.AddQualityMod
+    /// turns into sales quality once saved.
+    /// </summary>
+    public float quality = 0f;
+
+    /// <summary>
+    /// Letter grade from eval.qualityGrades, "" if none matched or none are defined.
+    /// </summary>
+    public string grade = "";
+
+    /// <summary>
+    /// Value written to the recording at save: qualityScore x scoreToValueRatio.
+    /// </summary>
+    public int Value { get { return eval == null ? 0 : (int)Math.Round(eval.scoreToValueRatio * qualityScore); } }
+
+    /// <summary>
     /// Full line-by-line derivation of totalScore from the same pass that computes it (built
     /// alongside, not re-derived afterward, so it can never drift from the real math). Intended
     /// for score_current.SetExternalTooltip in canvas_videoEdit - not localized, this is a
@@ -592,6 +708,11 @@ public class RecordingEvaluatorInstance
             scoreMult = 1f;
             scoreBase = 0f;
             disqualified = false;
+            effectiveMinutes = 0;
+            lengthFactor = 1f;
+            qualityScore = 0f;
+            quality = 0f;
+            grade = "";
             ScoreDebug = "no evaluator selected";
             return;
         }
@@ -601,6 +722,19 @@ public class RecordingEvaluatorInstance
         float score = eval.baseScore;
         float multProduct = 1f;
         dbg.AppendLine($"base = {score:0.##}");
+
+        // fixed per-package scores of every active package
+        float packageSum = 0f;
+        int scoredPackages = 0;
+        foreach (var act in Actions.Values)
+        {
+            if (!act.Active || !act.Featured) continue;
+            act.Score = act.PotentialScore;
+            packageSum += act.Score;
+            scoredPackages++;
+        }
+        score += packageSum;
+        dbg.AppendLine($"packages = +{packageSum:0.##} ({scoredPackages} active package(s) featuring selected actors) -> score = {score:0.##}");
 
         // per-actorFeature bonuses (flat first, then multiplicative), across main + rivals
         float flatBonus = 0f;
@@ -612,16 +746,13 @@ public class RecordingEvaluatorInstance
         multProduct *= multBonus;
         dbg.AppendLine($"after actorFeatures = {score:0.##} (flat +{flatBonus:0.##}, mult x{multBonus:0.##})");
 
-        // global validation: foreach goal (+ 1-level subCategories), every matched action grants
-        // its flat bonus regardless of minOccurrences, and the scoreMultiplier applies once the
-        // goal's occurrence threshold is met.
-        foreach (var goal in eval.OptionalGoals)
+        // recording-level goals (+ 1-level subCategories): every satisfied goal multiplies the
+        // whole score; every unsatisfied mandatory goal disqualifies the recording.
+        bool mandatoryFailed = false;
+        foreach (var goal in eval.AllGoals)
         {
-            AppendGoalDebug(dbg, goal, ref score, ref multProduct);
-            foreach (var sub in goal.subCategories)
-            {
-                AppendGoalDebug(dbg, sub, ref score, ref multProduct, indent: "  ");
-            }
+            if (AppendGoalDebug(dbg, goal, ref score, ref multProduct)) continue;
+            if (Goals.TryGetValue(goal, out var ag) && ag.mandatory) mandatoryFailed = true;
         }
 
         dbg.AppendLine($"subtotal before duration = {score:0.##}");
@@ -632,26 +763,92 @@ public class RecordingEvaluatorInstance
         totalScore = score;
         scoreMult = multProduct;
         scoreBase = multProduct != 0f ? totalScore / multProduct : totalScore;
-        disqualified = eval.minimumScoreRequirement > 0f && totalScore < eval.minimumScoreRequirement;
+        bool belowMinimum = eval.minimumScoreRequirement > 0f && totalScore < eval.minimumScoreRequirement;
+        disqualified = belowMinimum || mandatoryFailed;
 
         dbg.AppendLine($"total = {totalScore:0.##}" + (eval.minimumScoreRequirement > 0f ? $" (min required {eval.minimumScoreRequirement:0.##})" : ""));
-        if (disqualified) dbg.AppendLine("DISQUALIFIED - below minimumScoreRequirement");
+        if (belowMinimum) dbg.AppendLine("DISQUALIFIED - below minimumScoreRequirement");
+        if (mandatoryFailed) dbg.AppendLine("DISQUALIFIED - mandatory goal not satisfied");
+
+        UpdateQuality(dbg);
 
         ScoreDebug = dbg.ToString().TrimEnd('\n', '\r');
     }
 
-    void AppendGoalDebug(System.Text.StringBuilder dbg, OptionalGoal goal, ref float score, ref float multProduct, string indent = "")
+    /// <summary>
+    /// Length-adjusted quality and letter grade from the totalScore UpdateScore just computed.
+    /// </summary>
+    void UpdateQuality(System.Text.StringBuilder dbg)
     {
-        if (!Goals.TryGetValue(goal, out var ag)) return;
+        effectiveMinutes = 0;
+        foreach (var kvp in rec.collect)
+        {
+            if (!InactiveBlocks.Contains(kvp.Value)) effectiveMinutes += kvp.Value.Duration;
+        }
 
-        float flatContribution = goal.scoreBonus_flat * ag.actions.Count;
-        score += flatContribution;
-        foreach (var act in ag.actions) act.Score += goal.scoreBonus_flat;
+        // within the allowed length there is no quality penalty - it only starts past maxMinutes
+        float referenceMinutes = eval.referenceMinutes > 0f ? eval.referenceMinutes : (eval.durationRequirement != null ? eval.durationRequirement.maxMinutes : 0f);
+        lengthFactor = 1f;
+        if (eval.lengthPenaltyExponent > 0f && referenceMinutes > 0f && effectiveMinutes > 0)
+        {
+            lengthFactor = Mathf.Min(1f, Mathf.Pow(referenceMinutes / effectiveMinutes, eval.lengthPenaltyExponent));
+        }
 
-        bool satisfied = ag.actions.Count >= goal.minOccurrences;
-        if (satisfied) { score *= goal.scoreMultiplier; multProduct *= goal.scoreMultiplier; }
+        qualityScore = totalScore * lengthFactor;
+        quality = eval.basePrice > 0f ? eval.scoreToValueRatio * qualityScore / eval.basePrice : 0f;
 
-        dbg.AppendLine($"{indent}{goal.displayName}: matched {ag.actions.Count} (need {goal.minOccurrences}) flat +{flatContribution:0.##} mult x{goal.scoreMultiplier:0.##} -> {(satisfied ? $"applied, score = {score:0.##}" : "not applied")}");
+        int optionalSatisfied = Goals.Values.Count(ag => ag.satisfied && !ag.mandatory);
+        grade = "";
+        foreach (var g in eval.qualityGrades)
+        {
+            if (quality >= g.minQuality && optionalSatisfied >= g.minOptionalGoals)
+            {
+                grade = g.grade;
+                break;
+            }
+        }
+
+        dbg.AppendLine($"length = {effectiveMinutes} min (reference {referenceMinutes:0.#}, exponent {eval.lengthPenaltyExponent:0.##}) -> length factor x{lengthFactor:0.##}, quality score = {qualityScore:0.##}");
+        dbg.AppendLine($"value = {Value} (quality {quality:0.##} vs basePrice {eval.basePrice:0}), optional goals satisfied {optionalSatisfied} -> grade {(grade == "" ? "-" : grade)}");
+    }
+
+    /// <summary>
+    /// Applies goal (and its subcategories)' recording-level scoreMultiplier when satisfied and
+    /// logs the line. Returns whether the top-level goal itself is satisfied.
+    /// </summary>
+    bool AppendGoalDebug(System.Text.StringBuilder dbg, OptionalGoal goal, ref float score, ref float multProduct, string indent = "")
+    {
+        if (!Goals.TryGetValue(goal, out var ag)) return false;
+
+        if (ag.satisfied) { score *= goal.scoreMultiplier; multProduct *= goal.scoreMultiplier; }
+
+        string kind = indent == "" ? (ag.mandatory ? "[mandatory] " : "") : "";
+        string against = ag.parent != null ? "of parent" : "of packages";
+        dbg.AppendLine($"{indent}{kind}{goal.displayName}: matched {ag.actions.Count} ({ag.ratio:P0} {against}, need {goal.requiredRatio:P0} and {Math.Max(1, goal.minOccurrences)}) mult x{goal.scoreMultiplier:0.##} -> {(ag.satisfied ? $"satisfied, score = {score:0.##}" : "not satisfied")}");
+
+        if (indent == "")
+        {
+            foreach (var sub in goal.subCategories) AppendGoalDebug(dbg, sub, ref score, ref multProduct, "  ");
+        }
+        return ag.satisfied;
+    }
+
+    /// <summary>
+    /// namingTemplateOverride keys of every currently satisfied goal / subcategory, in goal order,
+    /// without duplicates.
+    /// </summary>
+    public List<string> SatisfiedNamingTemplateOverrides()
+    {
+        var keys = new List<string>();
+        foreach (var kvp in Goals)
+        {
+            if (!kvp.Value.satisfied) continue;
+            foreach (var key in kvp.Key.namingTemplateOverride)
+            {
+                if (!keys.Contains(key)) keys.Add(key);
+            }
+        }
+        return keys;
     }
 
     float ValidateDuration(float score, System.Text.StringBuilder dbg = null)
@@ -707,9 +904,9 @@ public class RecordingEvaluatorInstance
         // dominant goal: highest matched-action count among satisfied goals/subcategories (subcategories preferred on tie)
         OptionalGoal dominant = null;
         int dominantCount = 0;
-        foreach (var goal in eval.OptionalGoals)
+        foreach (var goal in eval.AllGoals)
         {
-            if (Goals.TryGetValue(goal, out var ag) && ag.actions.Count >= goal.minOccurrences && ag.actions.Count > dominantCount)
+            if (Goals.TryGetValue(goal, out var ag) && ag.satisfied && ag.actions.Count > dominantCount)
             {
                 dominant = goal;
                 dominantCount = ag.actions.Count;
@@ -717,7 +914,7 @@ public class RecordingEvaluatorInstance
 
             foreach (var sub in goal.subCategories)
             {
-                if (Goals.TryGetValue(sub, out var subAg) && subAg.actions.Count >= sub.minOccurrences && subAg.actions.Count >= dominantCount)
+                if (Goals.TryGetValue(sub, out var subAg) && subAg.satisfied && subAg.actions.Count >= dominantCount)
                 {
                     dominant = sub;
                     dominantCount = subAg.actions.Count;

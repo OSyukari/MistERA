@@ -64,6 +64,74 @@
                         {
                             "requirement": {
                                 "requireSelfAction": false,
+                                "selfTags": ["firstexp_V", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "sleeping", "pain"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始后背位V 睡眠中",
+                            "responses": ["com_sex_P_doggy_Begin_FE_Sleep_1", "com_sex_P_doggy_Begin_FE_Sleep_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_V", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始后背位V 时停中",
+                            "responses": ["com_sex_P_doggy_Begin_FE_Timestop_1", "com_sex_P_doggy_Begin_FE_Timestop_2"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_V"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "tearful", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 开始后背位V 有允许",
+                                    "responses": ["com_sex_P_doggy_Begin_FE_Player_1", "com_sex_P_doggy_Begin_FE_Player_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "tearful"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始后背位V 有允许",
+                                    "responses": ["com_sex_P_doggy_Begin_FE_1", "com_sex_P_doggy_Begin_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "tearful", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 开始后背位V 未允许 好意",
+                                    "responses": ["com_sex_P_doggy_Begin_FE_3", "com_sex_P_doggy_Begin_FE_4"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "fear", "pain", "tearful", "trembling"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 开始后背位V 未允许 敌意",
+                            "responses": ["com_sex_P_doggy_Begin_FE_5", "com_sex_P_doggy_Begin_FE_6"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_V"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "doggy", "surprised"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 开始后背位V（插入的一方）",
+                            "responses": ["com_sex_P_doggy_Begin_FE_Partner_1", "com_sex_P_doggy_Begin_FE_Partner_2"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
                                 "selfTags": [
                                     "timestop"
                                 ]
@@ -138,6 +206,74 @@
                         "nsfw"
                     ],
                     "variants": [
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_V", "sleeping"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "sleeping", "pain"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 睡眠中 后背位V",
+                            "responses": ["com_sex_P_doggy_FE_Sleep_1"]
+                        },
+                        {
+                            "requirement": {
+                                "requireSelfAction": false,
+                                "selfTags": ["firstexp_V", "timestop"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "doll", "empty"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 时停中 后背位V",
+                            "responses": ["com_sex_P_doggy_FE_Timestop_1"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_V"]
+                            },
+                            "variants": [
+                                {
+                                    "requirement": {
+                                        "targetBaseID": "PLAYER",
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "love"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 玩家专用 后背位V 有允许",
+                                    "responses": ["com_sex_P_doggy_FE_Player_1"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requirePermission": true
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 后背位V 有允许（还在适应）",
+                                    "responses": ["com_sex_P_doggy_FE_1", "com_sex_P_doggy_FE_2"]
+                                },
+                                {
+                                    "requirement": {
+                                        "requireSelfAttitudeGTE": "Like"
+                                    },
+                                    "extraSelfPortraitTags": ["sex", "receiver", "doggy", "blush", "pain", "shy"],
+                                    "useActiveTags": false,
+                                    "_comment": "初体验 后背位V 未允许 好意（还在适应）",
+                                    "responses": ["com_sex_P_doggy_FE_3"]
+                                }
+                            ],
+                            "extraSelfPortraitTags": ["sex", "receiver", "doggy", "pain", "tearful", "cry"],
+                            "useActiveTags": false,
+                            "_comment": "初体验 后背位V 未允许 敌意",
+                            "responses": ["com_sex_P_doggy_FE_4", "com_sex_P_doggy_FE_5"]
+                        },
+                        {
+                            "requirement": {
+                                "selfTags": ["firstexp_partner_V"]
+                            },
+                            "extraSelfPortraitTags": ["sex", "doer", "doggy"],
+                            "useActiveTags": false,
+                            "_comment": "对方初体验 后背位V（插入的一方）",
+                            "responses": ["com_sex_P_doggy_FE_Partner_1"]
+                        },
                         {
                             "requirement": {
                                 "requireSelfAction": false,
@@ -497,7 +633,32 @@
                 "com_sex_P_doggy_29": "$self$皱着眉往前缩了缩，额上渗出冷汗。\n\"停停……太深了……撞得好疼……\"",
                 "com_sex_P_doggy_30": "$self$有气无力地随着撞击晃动，腰懒得迎合。\n\"……你只顾着自己舒服。\"",
                 "com_sex_P_doggy_Begin_Timestop_1": "$target$掰开她定格的臀瓣从后方抵入，穴口被龟头缓缓撑开，含住的软肉不受控地收缩吮紧，$self$的眼神停在半空没动。",
-                "com_sex_P_doggy_Begin_Timestop_2": "肉棒整根没入时，$self$垂在身侧的手还悬在离地半寸的地方，定格的房间里只剩穴肉吞吐的水声在响。"
+                "com_sex_P_doggy_Begin_Timestop_2": "肉棒整根没入时，$self$垂在身侧的手还悬在离地半寸的地方，定格的房间里只剩穴肉吞吐的水声在响。",
+
+                "com_sex_P_doggy_Begin_FE_Sleep_1": "睡梦中的$self$身子猛地一颤，含糊地哼了声，血丝顺着身后的结合处淌了下来。",
+                "com_sex_P_doggy_Begin_FE_Sleep_2": "$self$不安地往前缩了缩腰，无意识地并紧了腿，呼吸很快又平稳下来，浑然不知自己的第一次已经没了。",
+                "com_sex_P_doggy_Begin_FE_Timestop_1": "处女膜在凝固的时间里无声地破开，$self$保持着趴伏的姿势纹丝不动，鲜血从身后缓缓渗出。",
+                "com_sex_P_doggy_Begin_FE_Timestop_2": "$self$定格的表情没有任何变化，对自己的第一次正从身后被夺走一无所知。",
+                "com_sex_P_doggy_Begin_FE_Player_1": "\"从后面……这样的话，你就看不到我的脸了……\"\n\n破开的痛楚让$self$腰一软，声音里带着哭腔。",
+                "com_sex_P_doggy_Begin_FE_Player_2": "\"我是第一次……你、你慢点……\"\n\n$self$疼得整个人往前一颤，反手抓紧了床单。",
+                "com_sex_P_doggy_Begin_FE_1": "\"等、等一下……我是第一次，不能太深……\"\n\n$self$疼得腰塌了下去，眼泪一下子涌了出来。",
+                "com_sex_P_doggy_Begin_FE_2": "\"呜……从后面……比想象中还要深……\"\n\n初次被撑开的地方火辣辣的，$self$死死咬住了手臂。",
+                "com_sex_P_doggy_Begin_FE_3": "\"这是我的第一次……你会轻点的，对吧……\"\n\n$self$趴伏着，撑在地上的手指微微发抖。",
+                "com_sex_P_doggy_Begin_FE_4": "\"疼……原来第一次这么疼……\"\n\n$self$把脸埋进臂弯，肩膀止不住地抖。",
+                "com_sex_P_doggy_Begin_FE_5": "\"不……别从后面……我还是第一次……！\"\n\n$self$疼得发出呜咽，身体僵得动弹不得。",
+                "com_sex_P_doggy_Begin_FE_6": "\"……我记住你了。\"\n\n落红顺着腿根淌下来，$self$一声不吭地攥紧了床单。",
+                "com_sex_P_doggy_Begin_FE_Partner_1": "\"你……是第一次？\"\n\n身后的紧致紧得发疼，$self$愣了一下。",
+                "com_sex_P_doggy_Begin_FE_Partner_2": "\"……为什么不早说。\"\n\n看到结合处渗出的血丝，$self$停下了腰。",
+
+                "com_sex_P_doggy_FE_Sleep_1": "睡梦中的$self$眉头紧皱着，初次被撑开的地方还在隐隐渗血。",
+                "com_sex_P_doggy_FE_Timestop_1": "血丝混着爱液从身后的结合处溢出，定格的$self$没有任何反应。",
+                "com_sex_P_doggy_FE_Player_1": "\"还是有点疼……但是，好像慢慢可以了……\"\n\n$self$回过头看了$target$一眼，红着脸小声说。",
+                "com_sex_P_doggy_FE_1": "\"别顶那么深……我、我还不习惯……\"\n\n$self$的腰一个劲儿往前躲，身子还在发抖。",
+                "com_sex_P_doggy_FE_2": "\"原来……被从后面进入是这种感觉……\"\n\n$self$喘着气，脸红得发烫。",
+                "com_sex_P_doggy_FE_3": "\"我不知道该怎么配合……你、你引导我就好……\"\n\n$self$又疼又慌，只会趴着一动不动。",
+                "com_sex_P_doggy_FE_4": "\"……疼……够了……\"\n\n初次撕裂的地方火辣辣地疼，$self$的眼泪把臂弯都浸湿了。",
+                "com_sex_P_doggy_FE_5": "\"……快点结束。\"\n\n$self$死死盯着面前的床单，只有攥白的指节在抖。",
+                "com_sex_P_doggy_FE_Partner_1": "\"别硬撑……慢慢来。\"\n\n察觉到身下人的生涩，$self$放轻了腰上的力道。"
             }
         }
     }

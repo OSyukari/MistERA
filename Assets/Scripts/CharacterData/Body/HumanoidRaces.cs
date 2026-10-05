@@ -299,4 +299,6 @@ public class Humanoid_RaceTemplate
     public List<Needs> needs = new List<Needs>();
     public List<string> requireRaceType = new List<string>();
     public List<string> requireOriginID = new List<string>();
+    // static per-actor keyword tags (e.g. source franchise), merged into Character_Trainable.ActorKeywords
+    public List<string> actorKeyword = new List<string>();
 }

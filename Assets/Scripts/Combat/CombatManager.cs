@@ -175,7 +175,13 @@ public class CombatManager
         if (refList.Count < 1 || (generatedIDs != null && refList.Except(generatedIDs).ToList().Count < 1))
         {
             var chara = scr_System_CampaignManager.current.InstantiateCharacter_FromBaseID(baseID, scr_System_CampaignManager.current.StasisRoom);
-            
+            if (chara == null)
+            {
+                // unique generator with every candidate already alive outside stasis
+                Debug.LogWarning($"GetCombatDummy: could not generate dummy for [{baseID}], skipping");
+                return null;
+            }
+
             refList.Add(chara.RefID);
             combatDummyRefs.Add(chara.RefID, chara);
             return chara;

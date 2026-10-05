@@ -653,7 +653,7 @@ public abstract class ActionPackage
             var list = interruptedActors[actor].Distinct().ToList();
             foreach(var ep in list)
             {
-                if (!ep.Package.suppressMemoryLogging) actor.Memory.AddEntry(ep, -1, false, true);
+                actor.Memory.AddEntry(ep, -1, false, true);
             }
 
         }
@@ -1351,6 +1351,8 @@ public abstract class ActionPackage
         // evaluate acceptance
 
         Execution(m, eventCollector);
+        // first experience tags only apply to kojo fetched within this execution (result / climax / after)
+        foreach (var ep in ListEP) ep.ClearFirstExperienceRegistry();
 
         shuffledList = new List<EvaluationPackage>(ListEP);
 
@@ -2646,24 +2648,6 @@ public abstract class ActionPackage
     /// room notify for LLM inner packages.
     /// </summary>
     [JsonIgnore] protected Room_Instance RecordingRoom { get { return suppressRoomRecording ? null : Room; } }
-
-    /// <summary>
-    /// Set alongside suppressRoomRecording on LLM wrapper inner APs: their per-EP memory entries
-    /// (and first-experience triggers) must NOT be registered as they execute - the confirmed
-    /// response is instead registered as ONE consolidated wrapper entry per actor (see
-    /// ActionPackage_LLM.RegisterConsolidatedMemory). Everything else the EP does (experience
-    /// gains, relationship deltas, stat costs, body state) is untouched.
-    /// </summary>
-    [JsonIgnore] public bool suppressMemoryLogging = false;
-
-    /// <summary>
-    /// First-experience records deferred by EvaluationPackage.Execute when suppressMemoryLogging
-    /// is set - drained by the LLM wrapper and replayed at consolidated registration time
-    /// (Button_Confirm for agent runs, wrapper execution end for single-shot), so the LLM
-    /// interaction triggers first experience from its confirmed memory entry instead of the
-    /// suppressed inner executions.
-    /// </summary>
-    [JsonIgnore] public List<EvaluationPackage.DelayedFirstExperience> suppressedFirstExp = null;
 
     /// <summary>
     /// When true, Job.CollectLogs copies mcol into capturedLog immediately before merging it into

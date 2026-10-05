@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Kanade_DiscussAV.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Kanade_DiscussAV": "Ask her to help with the AV work",
+                "kda_L_brought01": "$kanade.name$ steps forward as if she'd been waiting for this moment.\n\"I heard everything in that office.\"\n\"The filming... let me help with it. That woman said it herself — this face of mine can sell.\"\n\"Don't make that face. I'm serious — your debt is my debt too, $self.name$.\"",
+                "kda_L_left01": "$kanade.name$ is silent for a moment before speaking.\n\"We agreed you'd take me with you to see her.\"\n\"And you went alone anyway. Shielding me behind you even at a time like this — did you think I wouldn't notice?\"\nWhen she looks up, it's no longer hurt in her eyes, but resolve.\n\"So let me help this time. The filming, anything — just stop leaving me out of it.\"",
+                "kda_L_generic01": "Hearing $self.name$ out, $kanade.name$ grips her skirt and stays silent for a few seconds.\n\"Filming that... doing those things, in front of a camera.\"\nWhen she looks up, there's no hesitation left in her eyes.\n\"But that debt — there's no way you can repay it alone, $self.name$.\"\n\"Let me help. Whatever I can offer, I want to offer — this is my family too.\"",
+                "kda_Q01": "\"Ask $kanade.name$ to help with the AV work?\"",
+                "kda_Q01_op1": "Ask for her help",
+                "kda_Q01_op2": "Better not, for now...",
+                "kda_L_agree": "$kanade.name$ nods and takes a deep breath.\n\"...All right. It's a promise.\"\n\"On set, please don't hold back. Whatever the request — I'll do my best to see it through.\"\nHer face flushes slightly, but she keeps her earnest expression.\n\n[$kanade.name$ has started helping with the AV work (%%ErAV_miyama_Household%%)]",
+                "kda_L_cancel": "\"...I see.\" $kanade.name$ lowers her eyes, then quickly raises them again.\n\"If you change your mind, come find me anytime.\""
+            }
+        }
+    }
+}

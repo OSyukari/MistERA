@@ -3,6 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
+/// <summary>
+/// How the job's owning faction/party must relate to the character (CharaReq.requireJobFaction).
+/// Any: one of the character's factions/parties. CurrentActive: the character's active party, else active
+/// faction (Character_Factions.CurrentActiveJobGiver). Home: the character's priority home faction.
+/// </summary>
+public enum FactionRelation { None, Any, CurrentActive, Home }
+
+/// <summary>
+/// Which faction/party CharaReq.requireMemberType is read from. Any: every faction/party the character
+/// belongs to. CurrentActive: Character_Factions.CurrentActiveMemberType (active party first). Home: the
+/// priority home faction. JobFaction: the faction/party owning the validating job.
+/// </summary>
+public enum MemberTypeScope { Any, CurrentActive, Home, JobFaction }
+
 [System.Serializable]
 public class CharaReq
 {
@@ -40,11 +54,22 @@ public class CharaReq
     public bool requireMale = false;
     public bool requireFemale = false;
 
-    // membertype requirement: does the character hold MemberType requireMemberType, either only in
-    // their currently-active faction/party (requireMemberTypeCurrentActive) or in any faction they
-    // belong to (see Character_Factions.HasMemberTypeInAnyFaction)
-    public string requireMemberType = "";
-    public bool requireMemberTypeCurrentActive = false;
+    // membertype requirement: does the character hold any MemberType in requireMemberType, read from the
+    // faction/party picked by requireMemberTypeScope (see CharaReqUtility.ValidateMemberType).
+    // Old data/saves authored as a single string still load through StringOrListConverter.
+    [JsonConverter(typeof(StringOrListConverter))]
+    public List<string> requireMemberType = new List<string>();
+    public MemberTypeScope requireMemberTypeScope = MemberTypeScope.Any;
+
+    // actor baseID requirement: the character's actor baseID must be one of these (e.g. only a specific
+    // story protagonist passes), regardless of faction membership - see CharaReqUtility.Validate.
+    [JsonConverter(typeof(StringOrListConverter))]
+    public List<string> requireActorBaseID = new List<string>();
+
+    // job-faction requirement: the faction/party owning the validating job (e.g. the furniture's room owner)
+    // must relate to the character as set here. Only checked where a job is available (COM validation);
+    // fails when set but there is no owning job/faction.
+    public FactionRelation requireJobFaction = FactionRelation.None;
 
     public List<string> requireInflatedBodyTags = new List<string>();
     public List<string> requireExtremeInflatedBodyTags = new List<string>();
@@ -70,8 +95,12 @@ public class CharaReq
         requireMale = this.requireMale || req.requireMale;
         requireFemale = this.requireFemale || req.requireFemale;
 
-        if (this.requireMemberType == "" && req.requireMemberType != "") this.requireMemberType = req.requireMemberType;
-        this.requireMemberTypeCurrentActive = this.requireMemberTypeCurrentActive || req.requireMemberTypeCurrentActive;
+        if (this.requireMemberType.Count == 0 && req.requireMemberType.Count > 0)
+        {
+            this.requireMemberType = new List<string>(req.requireMemberType);
+            if (this.requireMemberTypeScope == MemberTypeScope.Any) this.requireMemberTypeScope = req.requireMemberTypeScope;
+        }
+        if (this.requireJobFaction == FactionRelation.None) this.requireJobFaction = req.requireJobFaction;
 
         requireUnconscious = requireUnconscious || req.requireUnconscious;
         requireFollowing = requireFollowing || req.requireFollowing;

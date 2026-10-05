@@ -42,12 +42,153 @@ public class SalesManager
     /// </summary>
     [JsonProperty] protected Dictionary<string, SalesClienteleInstance> clientele_override = new Dictionary<string, SalesClienteleInstance>();
 
-    IEnumerable<SalesClienteleInstance> AllClientele
+    /// <summary>
+    /// This faction's own clientele (template + runtime overrides) - what it can provide to other factions
+    /// through ClienteleAccess.
+    /// </summary>
+    IEnumerable<SalesClienteleInstance> OwnClientele
     {
         get
         {
             foreach (var kvp in clientele) yield return kvp.Value;
             foreach (var kvp in clientele_override) yield return kvp.Value;
+        }
+    }
+
+    /// <summary>
+    /// Everything this faction sells to: its own clientele plus, per access link, a copy of the provider's
+    /// clientele tagged with that provider and the link's commission. An own clientele wins over a link with
+    /// the same clienteleID.
+    /// </summary>
+    IEnumerable<SalesClienteleInstance> AllClientele
+    {
+        get
+        {
+            foreach (var inst in OwnClientele) yield return inst;
+            foreach (var inst in LinkedClientele) yield return inst;
+        }
+    }
+
+    // ---- clientele access (selling into another faction's clientele) ----
+
+    /// <summary>
+    /// Access to one clientele of another faction (the provider) - e.g. the film studio selling into the Kiryu
+    /// office's AV market. Each link covers exactly one clientele with its own commission, so a provider with
+    /// several markets grants (and prices) each separately. Sales through a link are recorded in the provider's
+    /// release registry (shared by every seller), while market share, renown and studio rank stay the seller's.
+    /// </summary>
+    public class ClienteleAccess
+    {
+        public string providerFactionID = "";
+        public string clienteleID = "";
+        /// <summary>
+        /// Share of each sale's payment that goes to the provider instead of the seller (0..1).
+        /// </summary>
+        public float commission = 0f;
+        /// <summary>
+        /// Seller's starting market share in this clientele; negative = the provider clientele's startingShare.
+        /// </summary>
+        public float startingShare = -1f;
+        /// <summary>
+        /// Seller's payout cadence for this clientele; null = the provider clientele's cadence.
+        /// </summary>
+        public PaymentCadence? cadence = null;
+        /// <summary>
+        /// Whether the seller sells here under its own name. Private (false): its sales earn no renown, its market
+        /// share here doesn't follow renown (stays at startingShare / event bumps), and this clientele gives it no
+        /// studio rank track - e.g. a household quietly selling tapes, before it debuts a public studio brand.
+        /// </summary>
+        public bool isPublic = true;
+    }
+
+    /// <summary>
+    /// Access links granted at runtime (events - see GrantAccess). Persisted. A runtime link replaces a template
+    /// link (MapPlan.salesClienteleAccess) for the same provider + clientele, so its commission can be changed.
+    /// </summary>
+    [JsonProperty] protected List<ClienteleAccess> grantedAccess = new List<ClienteleAccess>();
+
+    [JsonIgnore] protected List<ClienteleAccess> templateAccess = new List<ClienteleAccess>();
+
+    [JsonIgnore] List<SalesClienteleInstance> _linkedClientele = null;
+
+    /// <summary>
+    /// Resolved lazily (providers may not exist yet while factions load) and rebuilt after any access change.
+    /// </summary>
+    IEnumerable<SalesClienteleInstance> LinkedClientele
+    {
+        get
+        {
+            if (_linkedClientele == null)
+            {
+                _linkedClientele = new List<SalesClienteleInstance>();
+                var own = new HashSet<string>(OwnClientele.Select(x => x.clienteleID));
+                foreach (var access in EffectiveAccess)
+                {
+                    if (own.Contains(access.clienteleID) || _linkedClientele.Exists(x => x.clienteleID == access.clienteleID)) continue;
+                    var provider = scr_System_CampaignManager.current.FindFactionByID(access.providerFactionID);
+                    if (provider == null || provider == Owner || provider.SalesManager == null) continue;
+                    var source = provider.SalesManager.OwnClientele.FirstOrDefault(x => x.clienteleID == access.clienteleID);
+                    if (source == null) continue;
+                    _linkedClientele.Add(source.LinkedCopy(provider, access));
+                }
+            }
+            return _linkedClientele;
+        }
+    }
+
+    // template links, with runtime grants replacing same provider + clientele
+    IEnumerable<ClienteleAccess> EffectiveAccess
+    {
+        get
+        {
+            foreach (var t in templateAccess)
+                if (!grantedAccess.Exists(g => g.providerFactionID == t.providerFactionID && g.clienteleID == t.clienteleID)) yield return t;
+            foreach (var g in grantedAccess) yield return g;
+        }
+    }
+
+    /// <summary>
+    /// Grants (or updates, e.g. a new commission) access to one clientele of providerFactionID.
+    /// </summary>
+    public void GrantAccess(ClienteleAccess access)
+    {
+        if (access == null || string.IsNullOrEmpty(access.providerFactionID) || string.IsNullOrEmpty(access.clienteleID)) return;
+        grantedAccess.RemoveAll(g => g.providerFactionID == access.providerFactionID && g.clienteleID == access.clienteleID);
+        grantedAccess.Add(access);
+        _linkedClientele = null;
+    }
+
+    /// <summary>
+    /// Removes a runtime grant. A template link for the same clientele can't be revoked this way; its
+    /// commission can still be overridden by a grant.
+    /// </summary>
+    public void RevokeAccess(string providerFactionID, string clienteleID)
+    {
+        if (grantedAccess.RemoveAll(g => g.providerFactionID == providerFactionID && g.clienteleID == clienteleID) > 0) _linkedClientele = null;
+    }
+
+    /// <summary>
+    /// Whose release registry records sales to inst: its provider for a linked clientele, otherwise this faction.
+    /// </summary>
+    SalesManager RegistryFor(SalesClienteleInstance inst)
+    {
+        return inst.Provider != null && inst.Provider.SalesManager != null ? inst.Provider.SalesManager : this;
+    }
+
+    /// <summary>
+    /// Every release registry this faction sells into (its own + each provider's) - for studio-wide stats.
+    /// </summary>
+    IEnumerable<SalesManager> Registries
+    {
+        get
+        {
+            var seen = new HashSet<SalesManager>() { this };
+            yield return this;
+            foreach (var inst in LinkedClientele)
+            {
+                var registry = RegistryFor(inst);
+                if (seen.Add(registry)) yield return registry;
+            }
         }
     }
 
@@ -59,8 +200,280 @@ public class SalesManager
     /// </summary>
     [JsonProperty] protected Dictionary<string, Dictionary<string, float>> marketShare = new Dictionary<string, Dictionary<string, float>>();
 
+    /// <summary>
+    /// Release registry, keyed by Item_Instance.SalesLineageID ("the same product" - e.g. every cut of one
+    /// film). Lives here instead of on ItemMatch so that re-edits, delisting + relisting, and an edit moving
+    /// to another evaluator/segment never wipe what was already sold. Source of truth for lifetime sales,
+    /// revenue and per-actor release stats (see the query section below).
+    /// </summary>
+    [JsonProperty] protected Dictionary<string, LineageRecord> lineages = new Dictionary<string, LineageRecord>();
+
+    // legacy: previous saves kept only limitedAudience sold counts here - migrated into lineages
+    [JsonProperty] protected Dictionary<string, Dictionary<string, int>> soldByLineage = new Dictionary<string, Dictionary<string, int>>();
+
+    public class LineageRecord
+    {
+        /// <summary>
+        /// Lifetime units sold to limitedAudience clientele, keyed by soldKey (clienteleID, or
+        /// clienteleID/segmentID) - drives each segment's remaining buyers.
+        /// </summary>
+        public Dictionary<string, int> soldByKey = new Dictionary<string, int>();
+
+        /// <summary>
+        /// Every edition of this lineage that has been listed, keyed by Item_Instance.SalesEditionID.
+        /// </summary>
+        public Dictionary<string, EditionRecord> editions = new Dictionary<string, EditionRecord>();
+
+        [JsonIgnore] public int TotalSold { get { return editions.Values.Sum(e => e.sold); } }
+        [JsonIgnore] public long TotalRevenue { get { return editions.Values.Sum(e => e.revenue); } }
+
+        /// <summary>
+        /// The best-selling edition (ties broken by revenue) - its grade is the lineage's grade.
+        /// </summary>
+        [JsonIgnore] public EditionRecord TopEdition
+        {
+            get
+            {
+                EditionRecord top = null;
+                foreach (var e in editions.Values)
+                {
+                    if (top == null || e.sold > top.sold || (e.sold == top.sold && e.revenue > top.revenue)) top = e;
+                }
+                return top;
+            }
+        }
+    }
+
+    /// <summary>
+    /// One listed edition. sold/revenue count every sale of it (any clientele), revenue at sale time rather
+    /// than when the clientele's payment cadence pays out. The remaining fields are filled by the item's
+    /// components (ItemComponent_Base.FillSalesEdition) and refreshed whenever it is listed or sold.
+    /// </summary>
+    public class EditionRecord
+    {
+        public string displayName = "";
+        public int sold = 0;
+        public long revenue = 0;
+
+        // recordings (ItemComponent_Records)
+        public string evaluatorID = "";
+        public string grade = "";
+        public List<string> mainActorIDs = new List<string>();
+        public float pricePremium = 1f;
+
+        // per selling faction (several factions can sell into one provider's registry)
+        public List<string> sellers = new List<string>();
+        public Dictionary<string, int> soldBySeller = new Dictionary<string, int>();
+        public Dictionary<string, long> revenueBySeller = new Dictionary<string, long>();
+
+        public void AddSale(string sellerID, int count, long payment)
+        {
+            sold += count;
+            revenue += payment;
+            if (string.IsNullOrEmpty(sellerID)) return;
+            soldBySeller[sellerID] = (soldBySeller.TryGetValue(sellerID, out int s) ? s : 0) + count;
+            revenueBySeller[sellerID] = (revenueBySeller.TryGetValue(sellerID, out long r) ? r : 0) + payment;
+        }
+
+        public long RevenueOf(string sellerID) { return revenueBySeller.TryGetValue(sellerID, out long r) ? r : 0; }
+    }
+
+    LineageRecord GetLineage(string lineageID)
+    {
+        if (!lineages.TryGetValue(lineageID, out var lineage))
+        {
+            lineage = new LineageRecord();
+            lineages[lineageID] = lineage;
+        }
+        return lineage;
+    }
+
+    /// <summary>
+    /// Creates or refreshes the item's edition entry in its lineage, noting sellerID as one of its sellers.
+    /// </summary>
+    EditionRecord RegisterEdition(Item_Instance item, string sellerID)
+    {
+        var lineage = GetLineage(item.SalesLineageID);
+        if (!lineage.editions.TryGetValue(item.SalesEditionID, out var edition))
+        {
+            edition = new EditionRecord();
+            lineage.editions[item.SalesEditionID] = edition;
+        }
+        if (!string.IsNullOrEmpty(sellerID) && !edition.sellers.Contains(sellerID)) edition.sellers.Add(sellerID);
+        edition.displayName = item.DisplayName;
+        foreach (var c in item.Comps) c.FillSalesEdition(edition);
+        return edition;
+    }
+
+    /// <summary>
+    /// Registers item (sold by this faction) in the registry of every clientele that would buy it - its provider's
+    /// for a linked clientele, otherwise this faction's own.
+    /// </summary>
+    void RegisterListing(Item_Instance item)
+    {
+        var done = new HashSet<SalesManager>();
+        foreach (var inst in AllClientele)
+        {
+            if (!inst.MatchItem(item.Tags)) continue;
+            var registry = RegistryFor(inst);
+            if (done.Add(registry)) registry.RegisterEdition(item, Owner.ID);
+        }
+    }
+
+    // set once MoveRegistryToProvider has run (or found nothing to move)
+    [JsonProperty] protected bool registryMovedToProvider = false;
+
+    /// <summary>
+    /// One-time save migration: a faction that sold through its own clientele before that clientele moved to a
+    /// provider (e.g. the film studio's AV sales, now the Kiryu office's) hands its release registry to that
+    /// provider, recorded as its own sales. Only when the faction has no own clientele and exactly one provider;
+    /// retried until the provider resolves (load order).
+    /// </summary>
+    void MoveRegistryToProvider()
+    {
+        if (registryMovedToProvider) return;
+        if (lineages.Count == 0 || OwnClientele.Any()) { registryMovedToProvider = true; return; }
+
+        var providers = LinkedClientele.Select(RegistryFor).Where(r => r != this).Distinct().ToList();
+        if (providers.Count == 0) return;
+        registryMovedToProvider = true;
+        if (providers.Count > 1) return;
+
+        foreach (var kvp in lineages) providers[0].MergeLineage(kvp.Key, kvp.Value, Owner.ID);
+        lineages.Clear();
+    }
+
+    void MergeLineage(string lineageID, LineageRecord from, string sellerID)
+    {
+        var into = GetLineage(lineageID);
+        foreach (var kvp in from.soldByKey) AddSold(lineageID, kvp.Key, kvp.Value);
+        foreach (var kvp in from.editions)
+        {
+            int sold = kvp.Value.sold;
+            long revenue = kvp.Value.revenue;
+            if (!into.editions.TryGetValue(kvp.Key, out var edition))
+            {
+                edition = kvp.Value;
+                edition.sold = 0;
+                edition.revenue = 0;
+                into.editions[kvp.Key] = edition;
+            }
+            if (!edition.sellers.Contains(sellerID)) edition.sellers.Add(sellerID);
+            // records from before per-seller tracking: attribute their totals to the moving seller
+            edition.AddSale(sellerID, sold, revenue);
+        }
+    }
+
+    void MigrateLegacySold()
+    {
+        if (soldByLineage.Count == 0) return;
+        foreach (var kvp in soldByLineage)
+            foreach (var sold in kvp.Value) AddSold(kvp.Key, sold.Key, sold.Value);
+        soldByLineage.Clear();
+    }
+
+    int GetSold(string lineageID, string soldKey)
+    {
+        return lineages.TryGetValue(lineageID, out var lineage) && lineage.soldByKey.TryGetValue(soldKey, out int sold) ? sold : 0;
+    }
+
+    void AddSold(string lineageID, string soldKey, int amount)
+    {
+        var perKey = GetLineage(lineageID).soldByKey;
+        perKey[soldKey] = (perKey.TryGetValue(soldKey, out int sold) ? sold : 0) + amount;
+    }
+
     const float MinMarketShare = 0.01f;
     const float MaxMarketShare = 1.0f;
+
+    // share of the gap between current and target market share closed each day (see UpdateMarketShare)
+    const float MarketShareConvergencePerDay = 0.1f;
+
+    /// <summary>
+    /// This faction's reputation as a seller (R) - drives its market share toward R / (R + K) in worlds with a
+    /// competitorWeight K (WorldClienteleInfo.competitorWeight). Grows with sales of well-graded products
+    /// (ItemComponent_Base.GetSalesRenown), capped by the current studio rank's renownCap.
+    /// </summary>
+    [JsonProperty] protected float renown = 0f;
+    [JsonIgnore] public float Renown { get { return renown; } }
+
+    [JsonProperty] protected RankTracker ranks = null;
+    /// <summary>
+    /// This faction's levels on rank tracks (e.g. its studio rank - see MapPlan.renownRankTrackID).
+    /// </summary>
+    [JsonIgnore] public RankTracker Ranks { get { if (ranks == null) ranks = new RankTracker(); return ranks; } }
+
+    /// <summary>
+    /// The studio rank track: the first clientele this faction sells to that defines one (the market's ladder),
+    /// else its own template's MapPlan.renownRankTrackID.
+    /// </summary>
+    [JsonIgnore] public string RenownRankTrackID
+    {
+        get
+        {
+            foreach (var inst in AllClientele)
+                if (inst.isPublic && !string.IsNullOrEmpty(inst.renownRankTrackID)) return inst.renownRankTrackID;
+            var plan = Owner == null ? null : scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(Owner.mapPlanID);
+            return plan == null ? "" : plan.renownRankTrackID;
+        }
+    }
+
+    /// <summary>
+    /// Maximum renown at the current studio rank; float.MaxValue if there's no rank track or the level sets no cap.
+    /// </summary>
+    [JsonIgnore] public float RenownCap
+    {
+        get
+        {
+            var track = scr_System_Serializer.current.MasterList.Ranks.GetByID(RenownRankTrackID);
+            var level = track?.GetLevel(Ranks.GetLevel(track.ID));
+            return level == null || level.renownCap <= 0f ? float.MaxValue : level.renownCap;
+        }
+    }
+
+    /// <summary>
+    /// Adds (or removes) renown, clamped to [0, RenownCap]. Renown already above a lowered cap is kept, not cut.
+    /// </summary>
+    public void AddRenown(float delta)
+    {
+        if (delta == 0f) return;
+        float cap = RenownCap;
+        if (delta > 0f) renown = Mathf.Max(renown, Mathf.Min(cap, renown + delta));
+        else renown = Mathf.Max(0f, renown + delta);
+    }
+
+    /// <summary>
+    /// Event bump: adds delta to this faction's market share for clienteleID (empty = every clientele) in each of
+    /// its worlds. In worlds with a competitorWeight the bump then fades back toward the renown target day by day.
+    /// </summary>
+    public void BumpMarketShare(string clienteleID, float delta)
+    {
+        foreach (var inst in AllClientele)
+        {
+            if (!string.IsNullOrEmpty(clienteleID) && inst.clienteleID != clienteleID) continue;
+            foreach (var world in inst.Worlds) ModMarketShare(inst.clienteleID, world.worldID, delta);
+        }
+    }
+
+    /// <summary>
+    /// Moves every (clientele, world) market share a step toward renown / (renown + competitorWeight), for worlds
+    /// that set a competitorWeight. Event bumps (ModMarketShare) fade back toward that target the same way.
+    /// </summary>
+    void UpdateMarketShare()
+    {
+        foreach (var inst in AllClientele)
+        {
+            if (!inst.isPublic) continue;
+            foreach (var world in inst.Worlds)
+            {
+                float k = world.clienteleInfo.competitorWeight;
+                if (k <= 0f) continue;
+                float target = Mathf.Clamp(renown / (renown + k), MinMarketShare, MaxMarketShare);
+                float current = ModMarketShare(inst.clienteleID, world.worldID, 0f);
+                ModMarketShare(inst.clienteleID, world.worldID, (target - current) * MarketShareConvergencePerDay);
+            }
+        }
+    }
 
     /// <summary>
     /// Lazy-init-and-adjust the faction's market share for a (clienteleID, worldID) pair. Pass
@@ -101,11 +514,14 @@ public class SalesManager
     {
         if (plan == null) plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(Owner.mapPlanID);
         clientele.Clear();
+        templateAccess.Clear();
+        _linkedClientele = null;
         if (plan == null) return;
         foreach (var inst in plan.salesClientele)
         {
             if (!string.IsNullOrEmpty(inst.clienteleID)) clientele[inst.clienteleID] = inst;
         }
+        templateAccess.AddRange(plan.salesClienteleAccess);
     }
 
 
@@ -140,6 +556,39 @@ public class SalesManager
         /// </summary>
         public PaymentCadence cadence = PaymentCadence.Daily;
 
+        /// <summary>
+        /// Rank track defining studio ranks for factions selling to this clientele (their level's renownCap caps
+        /// their renown) - set by the market's provider, so every seller climbs the same ladder.
+        /// </summary>
+        public string renownRankTrackID = "";
+
+        /// <summary>
+        /// Runtime only: set on copies made for a ClienteleAccess link - the faction providing this clientele
+        /// (whose release registry records the sales) and the link's commission. null / 0 for own clientele.
+        /// </summary>
+        [JsonIgnore] public Manageable Provider = null;
+        [JsonIgnore] public float commission = 0f;
+        /// <summary>
+        /// Runtime only: false for a private access link (ClienteleAccess.isPublic) - no renown, no renown-driven
+        /// share, no studio rank track. Own clientele are always public.
+        /// </summary>
+        [JsonIgnore] public bool isPublic = true;
+
+        public SalesClienteleInstance LinkedCopy(Manageable provider, ClienteleAccess access)
+        {
+            return new SalesClienteleInstance
+            {
+                clienteleID = clienteleID,
+                worldIDs = new List<string>(worldIDs),
+                startingShare = access.startingShare >= 0f ? access.startingShare : startingShare,
+                cadence = access.cadence ?? cadence,
+                renownRankTrackID = renownRankTrackID,
+                Provider = provider,
+                commission = Mathf.Clamp01(access.commission),
+                isPublic = access.isPublic,
+            };
+        }
+
         [JsonIgnore]
         public List<WorldPlan> Worlds
         {
@@ -159,7 +608,7 @@ public class SalesManager
         // and compute the item's popularity and need and finally, how many copy can it sell
         public bool MatchItem(List<string> tags)
         {
-            return BaseDef != null && BaseDef.itemReq.isActive && BaseDef.itemReq.Validate(tags);
+            return BaseDef != null && BaseDef.itemReq.isActive && BaseDef.itemReq.Validate(tags) && BaseDef.AnySegmentInterested(tags);
         }
         public bool MatchItem(Item_Instance item)
         {
@@ -193,6 +642,9 @@ public class SalesManager
 
         DateTime today = scr_System_Time.current.getCurrentTime();
 
+        MigrateLegacySold();
+        UpdateMarketShare();
+
         // Pass 1 - stock prep: for every active (non-disabled, in-stock) salesOrder, collect every real
         // item instance backing it (by reference, not removing yet) so we know how much stock exists and
         // can weight-pick which specific instance(s) get sold in Pass 4.
@@ -216,11 +668,26 @@ public class SalesManager
             }
             if (totalCount <= 0) continue;
 
+            // legacy saves kept limitedAudience sold counts on the listing itself - fold them into the
+            // listing's lineage once, so they keep counting
+            if (match.soldByClientele.Count > 0)
+            {
+                foreach (var kvp in match.soldByClientele) AddSold(representative.SalesLineageID, kvp.Key, kvp.Value);
+                match.soldByClientele.Clear();
+            }
+
+            // keep the release registries current for everything on sale (also registers listings that
+            // predate them)
+            RegisterListing(representative);
+
             activeMatches.Add(match);
             validItemsByMatch[match] = validItems;
             totalCountByMatch[match] = totalCount;
             representativeByMatch[match] = representative;
         }
+
+        // after Pass 1's legacy folds above, so anything they put on this faction's registry moves too
+        MoveRegistryToProvider();
 
         // Pass 2 - pooled demand + competitor counts: for every (clienteleID, worldID) pair touched by any
         // active match, compute the faction's captured share of that world's population once (population *
@@ -228,6 +695,10 @@ public class SalesManager
         // and count how many distinct active matches compete for that same pair (so Pass 3 can split it evenly).
         var competitorCount = new Dictionary<string, int>();
         var capturedDemand = new Dictionary<string, float>();
+        // limitedAudience only: per (clientele, world, segment), the summed segment affinity of every active
+        // match competing for it - a match's share of that segment's attention is its own affinity / this sum
+        // (equal split, like competitorCount, when every competitor has the same affinity).
+        var competitorWeight = new Dictionary<string, float>();
         foreach (var match in activeMatches)
         {
             var representative = representativeByMatch[match];
@@ -240,7 +711,20 @@ public class SalesManager
                 foreach (var world in inst.Worlds)
                 {
                     string key = DemandKey(inst.clienteleID, world.worldID);
-                    if (touchedKeys.Add(key)) competitorCount[key] = competitorCount.TryGetValue(key, out int c) ? c + 1 : 1;
+                    if (touchedKeys.Add(key))
+                    {
+                        competitorCount[key] = competitorCount.TryGetValue(key, out int c) ? c + 1 : 1;
+                        if (def.limitedAudience)
+                        {
+                            foreach (var seg in def.EffectiveSegments)
+                            {
+                                float affinity = seg.GetAffinity(representative.Tags);
+                                if (affinity <= 0f) continue;
+                                string segKey = SegmentKey(key, seg);
+                                competitorWeight[segKey] = (competitorWeight.TryGetValue(segKey, out float w) ? w : 0f) + affinity;
+                            }
+                        }
+                    }
 
                     if (!capturedDemand.ContainsKey(key))
                     {
@@ -266,13 +750,46 @@ public class SalesManager
             List<string> debugs = new List<string>();
             var representative = representativeByMatch[match];
 
-            // demand kept per-clientele from the start (not summed) - see method-level comment above.
-            var demandByInst = new Dictionary<SalesClienteleInstance, float>();
+            // popularity: advance currentPopularity toward today's curve target (a small pure function of
+            // days-since-release). The actual popularity x quality multiplier is read back via
+            // GetExpectedSalesMultiplier / GetPopularityMultiplier afterwards, so this and its UI preview
+            // (scr_prefabretail_box) can never drift apart onto two different formulas. Match-level,
+            // unrelated to which clientele(s) actually contribute demand. Advanced before the demand pass
+            // since limitedAudience clientele read popularity while computing their demand.
             SalesClienteleDef curveDef = null;
             foreach (var inst in AllClientele)
             {
                 var def = inst.BaseDef;
+                if (def == null || !def.usePopularityCurve || !inst.MatchItem(representative.Tags)) continue;
+                curveDef = def;
+                break;
+            }
+            if (curveDef != null)
+            {
+                double daysSinceRelease = match.firstSoldDate == DateTime.MaxValue ? 0 : (today - match.firstSoldDate).TotalDays;
+                float target;
+                if (daysSinceRelease <= 0) target = 0f;
+                else if (daysSinceRelease <= curveDef.curvePeakDay) target = (float)(daysSinceRelease / curveDef.curvePeakDay);
+                else target = curveDef.curveFloorRatio + (1f - curveDef.curveFloorRatio) * (float)Math.Exp(-curveDef.curveDecayPerDay * (daysSinceRelease - curveDef.curvePeakDay));
+
+                float convergenceRate = target >= match.currentPopularity ? PopularityConvergenceRate_Rise : PopularityConvergenceRate_Decay;
+                match.currentPopularity += (target - match.currentPopularity) * convergenceRate;
+                debugs.Add($"curve target {target} current {match.currentPopularity} convergence {convergenceRate}");
+            }
+
+            // demand kept per-clientele (per segment, for limitedAudience) from the start, not summed - see
+            // method-level comment above.
+            var demandEntries = new List<DemandEntry>();
+            foreach (var inst in AllClientele)
+            {
+                var def = inst.BaseDef;
                 if (def == null || !inst.MatchItem(representative.Tags)) continue;
+
+                if (def.limitedAudience)
+                {
+                    demandEntries.AddRange(LimitedAudienceDemand(inst, def, match, representative, competitorWeight, today, debugs));
+                    continue;
+                }
 
                 float instDemand = 0f;
                 foreach (var world in inst.Worlds)
@@ -296,27 +813,7 @@ public class SalesManager
 
                 debugs.Add($"[{inst.clienteleID}] flat {def.flatAmountPerDay} seasonMult {flatSeasonMult} fluctuation {def.fluctuation}");
 
-                demandByInst[inst] = instDemand;
-
-                if (def.usePopularityCurve && curveDef == null) curveDef = def;
-            }
-
-            // popularity: advance currentPopularity toward today's curve target (a small pure function of
-            // days-since-release). The actual popularity x quality multiplier is read back via
-            // GetExpectedSalesMultiplier right after, so this and its UI preview (scr_prefabretail_box) can
-            // never drift apart onto two different formulas. Match-level, unrelated to which clientele(s)
-            // actually contributed demand.
-            if (curveDef != null)
-            {
-                double daysSinceRelease = match.firstSoldDate == DateTime.MaxValue ? 0 : (today - match.firstSoldDate).TotalDays;
-                float target;
-                if (daysSinceRelease <= 0) target = 0f;
-                else if (daysSinceRelease <= curveDef.curvePeakDay) target = (float)(daysSinceRelease / curveDef.curvePeakDay);
-                else target = curveDef.curveFloorRatio + (1f - curveDef.curveFloorRatio) * (float)Math.Exp(-curveDef.curveDecayPerDay * (daysSinceRelease - curveDef.curvePeakDay));
-
-                float convergenceRate = target >= match.currentPopularity ? PopularityConvergenceRate_Rise : PopularityConvergenceRate_Decay;
-                match.currentPopularity += (target - match.currentPopularity) * convergenceRate;
-                debugs.Add($"curve target {target} current {match.currentPopularity} convergence {convergenceRate}");
+                demandEntries.Add(new DemandEntry { inst = inst, soldKey = inst.clienteleID, demand = instDemand, limited = false });
             }
 
             float expectedSalesMultiplier = GetExpectedSalesMultiplier(match);
@@ -333,12 +830,20 @@ public class SalesManager
             int matchTotalSold = 0;
             int matchTotalPayment = 0;
 
-            foreach (var kvp in demandByInst)
+            foreach (var entry in demandEntries)
             {
-                var inst = kvp.Key;
-                int wantToSell = Mathf.RoundToInt(kvp.Value * expectedSalesMultiplier);
+                var inst = entry.inst;
+                var registry = RegistryFor(inst);
+                // limitedAudience demand already carries popularity (purchase rate) and quality (audience
+                // size), and is usually fractional late in a listing's life - round stochastically so the
+                // last few buyers still trickle in instead of being rounded away forever.
+                int wantToSell = entry.limited ? StochasticRound(entry.demand) : Mathf.RoundToInt(entry.demand * expectedSalesMultiplier);
+                // several listings can share one lineage (e.g. two edits of the same film on sale at once) -
+                // re-read what's left after earlier listings (any seller sharing the registry) sold today,
+                // never selling past it
+                if (entry.limited) wantToSell = Math.Min(wantToSell, Math.Max(0, Mathf.FloorToInt(entry.potential - registry.GetSold(entry.lineageID, entry.soldKey))));
                 if (!match.isVirtualGood) wantToSell = Math.Min(wantToSell, remainingBudget);
-                debugs.Add($"[{inst.clienteleID}] demand {kvp.Value} expectedSalesMultiplier {expectedSalesMultiplier} final {wantToSell}");
+                debugs.Add($"[{entry.soldKey}] demand {entry.demand} expectedSalesMultiplier {expectedSalesMultiplier} final {wantToSell}");
 
                 if (wantToSell <= 0) continue;
 
@@ -355,7 +860,16 @@ public class SalesManager
                     int take = isDigital ? remaining : Math.Min(remaining, validItems[picked]);
                     if (take <= 0) break;
 
-                    paymentThisClientele += Owner.GetPrice(picked, isSell: true, perItem: true) * take;
+                    int pickPayment = Owner.GetPrice(picked, isSell: true, perItem: true) * take;
+                    paymentThisClientele += pickPayment;
+
+                    // gross revenue (before commission) - what the product earned
+                    registry.RegisterEdition(picked, Owner.ID).AddSale(Owner.ID, take, pickPayment);
+                    foreach (var c in picked.Comps)
+                    {
+                        c.OnSold(take, pickPayment);
+                        if (inst.isPublic) AddRenown(c.GetSalesRenown(take));
+                    }
 
                     if (!isDigital)
                     {
@@ -372,15 +886,26 @@ public class SalesManager
                 if (soldThisClientele > 0)
                 {
                     if (!match.isVirtualGood) remainingBudget -= soldThisClientele;
+                    if (entry.limited) registry.AddSold(entry.lineageID, entry.soldKey, soldThisClientele);
                     matchTotalSold += soldThisClientele;
-                    matchTotalPayment += paymentThisClientele;
+
+                    // linked clientele: the provider takes the access link's commission out of the payment
+                    int commissionAmount = inst.Provider != null && inst.commission > 0f ? Mathf.RoundToInt(paymentThisClientele * inst.commission) : 0;
+                    int sellerPayment = paymentThisClientele - commissionAmount;
+                    matchTotalPayment += sellerPayment;
 
                     // resolves daily into a pending Obligation_Sales instead of paying out immediately - the
                     // actual currency only lands in the faction's inventory once this clientele's own
                     // PaymentCadence next resolves (see Obligation_Sales.AttemptPayment). The source is
                     // stored/merged as a plain name string, not an object reference - see AccrueSale.
-                    var payment = new ItemEntry(Owner.Currency.ID, "", paymentThisClientele, false);
+                    var payment = new ItemEntry(Owner.Currency.ID, "", sellerPayment, false);
                     Owner.TradeManager.GetOrCreateSalesObligation(inst.clienteleID, inst.cadence).AccrueSale(payment, match.CurrentDisplayName, soldThisClientele);
+
+                    if (commissionAmount > 0 && inst.Provider.TradeManager != null)
+                    {
+                        var commission = new ItemEntry(Owner.Currency.ID, "", commissionAmount, false);
+                        inst.Provider.TradeManager.GetOrCreateSalesObligation(inst.clienteleID, inst.cadence).AccrueSale(commission, $"{match.CurrentDisplayName} ({Owner.FactionDisplayName})", soldThisClientele);
+                    }
                 }
             }
 
@@ -450,17 +975,304 @@ public class SalesManager
         var representative = Owner.Inventory.Contents.Find(match.ApplicableTo);
         if (representative == null) return 1f;
 
-        SalesClienteleDef curveDef = null;
+        return GetPopularityMultiplier(match, representative) * representative.QualityModifier;
+    }
+
+    /// <summary>
+    /// 1 + currentPopularity * popularityInfluence of the first matching clientele that uses a popularity
+    /// curve, or 1f if none does.
+    /// </summary>
+    float GetPopularityMultiplier(ItemMatch match, Item_Instance representative)
+    {
         foreach (var inst in AllClientele)
         {
             var def = inst.BaseDef;
             if (def == null || !def.usePopularityCurve || !inst.MatchItem(representative.Tags)) continue;
-            curveDef = def;
-            break;
+            return 1f + match.currentPopularity * def.popularityInfluence;
         }
+        return 1f;
+    }
 
-        float popularityMultiplier = curveDef != null ? 1f + match.currentPopularity * curveDef.popularityInfluence : 1f;
-        return popularityMultiplier * representative.QualityModifier;
+    /// <summary>
+    /// One clientele's (or, for limitedAudience, one clientele segment's) demand for a match today.
+    /// soldKey is the ItemMatch.soldByClientele key its sales are counted under.
+    /// </summary>
+    class DemandEntry
+    {
+        public SalesClienteleInstance inst;
+        public string soldKey;
+        public float demand;
+        public bool limited;
+        // limitedAudience only: the lineage the sale is counted under, and that segment's potential buyers
+        public string lineageID;
+        public float potential;
+    }
+
+    // a segment's competitorWeight key under a DemandKey
+    static string SegmentKey(string demandKey, SalesClienteleDef.Segment seg) { return demandKey + "::" + seg.ID; }
+
+    // LineageRecord.soldByKey key - the bare clienteleID for a clientele without segments
+    static string SoldKey(SalesClienteleInstance inst, SalesClienteleDef.Segment seg) { return seg.ID == "" ? inst.clienteleID : inst.clienteleID + "/" + seg.ID; }
+
+    /// <summary>
+    /// limitedAudience only: how many buyers in this clientele segment could ever buy this listing - per
+    /// world, population * effective ratio (incl. world clienteleMods) * this faction's market share *
+    /// segment weight * the segment's affinity for the item, summed and scaled by the item's
+    /// QualityModifier. audienceByWorld (optional) receives the unscaled per-world audience, used to
+    /// spread the remaining buyers across worlds.
+    /// </summary>
+    float GetPotentialBuyers(SalesClienteleInstance inst, SalesClienteleDef def, SalesClienteleDef.Segment seg, Item_Instance representative, Dictionary<WorldPlan, float> audienceByWorld = null)
+    {
+        float affinity = seg.GetAffinity(representative.Tags);
+        float total = 0f;
+        foreach (var world in inst.Worlds)
+        {
+            float effectiveRatio = def.ratio;
+            foreach (var mod in world.clienteleInfo.clienteleMods)
+                if (Utility.ListContainsStrict(representative.Tags, mod.requireTags)) effectiveRatio += mod.ratioMod;
+            effectiveRatio = Mathf.Max(0f, effectiveRatio);
+
+            float audience = world.clienteleInfo.population * effectiveRatio * ModMarketShare(inst.clienteleID, world.worldID, 0f) * seg.weight * affinity;
+            if (audienceByWorld != null) audienceByWorld[world] = audience;
+            total += audience;
+        }
+        return total * Mathf.Max(0f, representative.QualityModifier);
+    }
+
+    /// <summary>
+    /// limitedAudience only: today's demand for this listing from each segment of this clientele (a
+    /// clientele without segments is one implicit segment). Per segment: the remaining potential buyers
+    /// (GetPotentialBuyers minus that segment's ItemMatch.soldByClientele), spread across worlds by
+    /// audience size, each world's slice purchasing at dailyPurchaseRate x popularity x season x this
+    /// match's share of the segment's attention (own affinity / competitorWeight), with fluctuation
+    /// applied to the segment total.
+    /// </summary>
+    List<DemandEntry> LimitedAudienceDemand(SalesClienteleInstance inst, SalesClienteleDef def, ItemMatch match, Item_Instance representative, Dictionary<string, float> competitorWeight, DateTime today, List<string> debugs)
+    {
+        var entries = new List<DemandEntry>();
+        float popularityMult = GetPopularityMultiplier(match, representative);
+        float seasonMult = def.seasonalMultiplier.Count == 12 ? def.seasonalMultiplier[today.Month - 1] : 1f;
+
+        foreach (var seg in def.EffectiveSegments)
+        {
+            float affinity = seg.GetAffinity(representative.Tags);
+            if (affinity <= 0f) continue;
+
+            string soldKey = SoldKey(inst, seg);
+            string lineageID = representative.SalesLineageID;
+            var audienceByWorld = new Dictionary<WorldPlan, float>();
+            float potential = GetPotentialBuyers(inst, def, seg, representative, audienceByWorld);
+            int sold = RegistryFor(inst).GetSold(lineageID, soldKey);
+            float remaining = Mathf.Max(0f, potential - sold);
+            float totalAudience = audienceByWorld.Values.Sum();
+
+            float demand = 0f;
+            if (remaining > 0f && totalAudience > 0f)
+            {
+                foreach (var kvp in audienceByWorld)
+                {
+                    float weightSum = competitorWeight.TryGetValue(SegmentKey(DemandKey(inst.clienteleID, kvp.Key.worldID), seg), out float w) ? w : affinity;
+                    float attentionShare = weightSum > 0f ? affinity / weightSum : 1f;
+                    demand += remaining * (kvp.Value / totalAudience) * def.dailyPurchaseRate * popularityMult * seasonMult * attentionShare;
+                }
+                demand = Utility.getRandwithVariation(demand, def.fluctuation);
+            }
+
+            debugs.Add($"[{soldKey}] limited audience: affinity {affinity:0.##} potential {potential:0.#} (quality x{representative.QualityModifier:0.##}) sold {sold} remaining {remaining:0.#} rate {def.dailyPurchaseRate} pop x{popularityMult:0.##} season x{seasonMult:0.##} -> demand {demand:0.##}");
+            entries.Add(new DemandEntry { inst = inst, soldKey = soldKey, demand = demand, limited = true, lineageID = lineageID, potential = potential });
+        }
+        return entries;
+    }
+
+    /// <summary>
+    /// Rounds down, then rounds up with probability equal to the fractional part (0.3 -> 1 sale 30% of days).
+    /// </summary>
+    static int StochasticRound(float value)
+    {
+        if (value <= 0f) return 0;
+        int floor = Mathf.FloorToInt(value);
+        return floor + (UnityEngine.Random.value < value - floor ? 1 : 0);
+    }
+
+    // ---- release registry queries ----
+
+    public LineageRecord GetLineageRecord(string lineageID)
+    {
+        return lineageID != null && lineages.TryGetValue(lineageID, out var lineage) ? lineage : null;
+    }
+
+    /// <summary>
+    /// Total revenue of one product across all its editions (e.g. every cut of a film).
+    /// </summary>
+    public long GetLineageEarnings(string lineageID)
+    {
+        var lineage = GetLineageRecord(lineageID);
+        return lineage == null ? 0 : lineage.TotalRevenue;
+    }
+
+    /// <summary>
+    /// The lineage's grade: the grade of its best-selling edition ("" if none).
+    /// </summary>
+    public string GetLineageGrade(string lineageID)
+    {
+        var top = GetLineageRecord(lineageID)?.TopEdition;
+        return top == null ? "" : top.grade;
+    }
+
+    /// <summary>
+    /// Total revenue of every edition this actor was a main actor in. Several main actors in one edition are
+    /// each credited its full revenue.
+    /// </summary>
+    public long GetActorEarnings(string baseID)
+    {
+        long total = 0;
+        foreach (var lineage in lineages.Values)
+            foreach (var e in lineage.editions.Values)
+                if (e.mainActorIDs.Contains(baseID)) total += e.revenue;
+        return total;
+    }
+
+    /// <summary>
+    /// Total revenue recorded in this registry - every seller, or only sellerID's sales.
+    /// </summary>
+    public long GetTotalEarnings(string sellerID = null)
+    {
+        long total = 0;
+        foreach (var lineage in lineages.Values)
+            foreach (var e in lineage.editions.Values) total += sellerID == null ? e.revenue : e.RevenueOf(sellerID);
+        return total;
+    }
+
+    /// <summary>
+    /// Lineages in this registry graded minGrade or better by their best-selling edition (that edition's
+    /// evaluator's grade order) - every seller's, or only those sellerID listed an edition of. Empty minGrade =
+    /// every lineage with a registered edition.
+    /// </summary>
+    public int CountReleases(string minGrade = "", string sellerID = null)
+    {
+        int count = 0;
+        foreach (var lineage in lineages.Values)
+        {
+            var top = lineage.TopEdition;
+            if (top == null) continue;
+            if (sellerID != null && !lineage.editions.Values.Any(e => e.sellers.Contains(sellerID))) continue;
+            if (!string.IsNullOrEmpty(minGrade))
+            {
+                var evaluator = scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(top.evaluatorID);
+                if (evaluator == null || !evaluator.IsGradeAtLeast(top.grade, minGrade)) continue;
+            }
+            count++;
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// This faction's own sales revenue as a seller, across every registry it sells into.
+    /// </summary>
+    public long GetStudioEarnings()
+    {
+        long total = 0;
+        foreach (var registry in Registries) total += registry.GetTotalEarnings(Owner.ID);
+        return total;
+    }
+
+    /// <summary>
+    /// Lineages this faction has listed, graded minGrade or better, across every registry it sells into.
+    /// </summary>
+    public int CountStudioReleases(string minGrade = "")
+    {
+        int count = 0;
+        foreach (var registry in Registries) count += registry.CountReleases(minGrade, Owner.ID);
+        return count;
+    }
+
+    public class ActorRelease
+    {
+        public string lineageID = "";
+        // the lineage's best-selling edition
+        public string displayName = "";
+        public string grade = "";
+        public string evaluatorID = "";
+        // whether this actor is a main actor in that best-selling edition (what grade-based conditions count)
+        public bool mainInTopEdition = false;
+        // across the editions this actor was a main actor in
+        public int sold = 0;
+        public long revenue = 0;
+    }
+
+    /// <summary>
+    /// One entry per lineage this actor was a main actor in (any edition) - re-edits never count twice.
+    /// </summary>
+    public List<ActorRelease> GetActorReleases(string baseID)
+    {
+        var releases = new List<ActorRelease>();
+        foreach (var kvp in lineages)
+        {
+            ActorRelease release = null;
+            foreach (var e in kvp.Value.editions.Values)
+            {
+                if (!e.mainActorIDs.Contains(baseID)) continue;
+                if (release == null) release = new ActorRelease { lineageID = kvp.Key };
+                release.sold += e.sold;
+                release.revenue += e.revenue;
+            }
+            if (release == null) continue;
+
+            var top = kvp.Value.TopEdition;
+            release.displayName = top.displayName;
+            release.grade = top.grade;
+            release.evaluatorID = top.evaluatorID;
+            release.mainInTopEdition = top.mainActorIDs.Contains(baseID);
+            releases.Add(release);
+        }
+        return releases;
+    }
+
+    /// <summary>
+    /// Lineages graded minGrade or better (by their best-selling edition, in that edition's evaluator's
+    /// grade order) where this actor is a main actor in that best-selling edition. Empty minGrade = any.
+    /// </summary>
+    public int CountActorReleases(string baseID, string minGrade = "")
+    {
+        int count = 0;
+        foreach (var release in GetActorReleases(baseID))
+        {
+            if (!release.mainInTopEdition) continue;
+            if (!string.IsNullOrEmpty(minGrade))
+            {
+                var evaluator = scr_System_Serializer.current.MasterList.ErAV.GetRecordingEvaluatorByID(release.evaluatorID);
+                if (evaluator == null || !evaluator.IsGradeAtLeast(release.grade, minGrade)) continue;
+            }
+            count++;
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// Per limitedAudience clientele segment interested in this listing: "clienteleID/segmentID: remaining /
+    /// potential buyers". Empty if none match. For UI tooltips.
+    /// </summary>
+    public List<string> DescribeAudience(ItemMatch match)
+    {
+        var lines = new List<string>();
+        if (match == null) return lines;
+        var representative = Owner.Inventory.Contents.Find(match.ApplicableTo);
+        if (representative == null) return lines;
+
+        foreach (var inst in AllClientele)
+        {
+            var def = inst.BaseDef;
+            if (def == null || !def.limitedAudience || !inst.MatchItem(representative.Tags)) continue;
+            foreach (var seg in def.EffectiveSegments)
+            {
+                if (seg.GetAffinity(representative.Tags) <= 0f) continue;
+                string soldKey = SoldKey(inst, seg);
+                float potential = GetPotentialBuyers(inst, def, seg, representative);
+                int sold = RegistryFor(inst).GetSold(representative.SalesLineageID, soldKey);
+                lines.Add($"{soldKey}: remaining buyers {Mathf.Max(0f, potential - sold):0} / {potential:0}");
+            }
+        }
+        return lines;
     }
 
 
@@ -473,6 +1285,7 @@ public class SalesManager
          * 1. global item type and buyer type and default need
          * 2. world based population and mod on default need         
          */
+        RegisterListing(item);
         foreach (var i in salesOrder)
         {
             if (i.MergeWith(item)) return;
@@ -580,6 +1393,10 @@ public class SalesManager
 
         // lifetime units sold via DailyUpdate, for future UI/stats
         public int totalSoldCount = 0;
+
+        // legacy: limitedAudience sold counts used to live here - now kept per lineage in
+        // SalesManager.lineages. Only still read to migrate old saves (see DailyUpdate Pass 1).
+        public Dictionary<string, int> soldByClientele = new Dictionary<string, int>();
 
         // temporary pause the order
         public bool isDisabled = false;

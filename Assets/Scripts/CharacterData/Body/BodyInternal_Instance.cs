@@ -25,7 +25,54 @@ public class BodyInternal_Instance
 
     [JsonIgnore] public string FirstExperienceDesc { get { return this.firstExpDesc; } }
 
+    public enum UnawareReason { None, Sleeping, Timestop }
+
+    // first experience taken while owner was unaware (sleeping/unconscious/timestopped). Kept apart from
+    // firstExperience (aware) - an unaware loss doesn't block the aware one, but once the aware first experience
+    // is filled the unaware one stays permanently empty.
+    // unawareExperience is the memory tick of the loss event, same as firstExperience - the memory entry
+    // (permanent, "important") carries every related actor.
+    [JsonProperty] protected long unawareExperience = 0;
+
+    // written once when the loss happens, never modified. unawareExpDesc is the snapshot in the localization of
+    // that time; the loose fields rebuild it under the current localization. Target name is stored since the
+    // target actor may no longer exist.
+    [JsonProperty] protected string unawareExpDesc = "", unawareDescKey = "", unawareTargetName = "", unawareTargetPartID = "", unawareComID = "";
+    [JsonProperty] protected int unawareComVariant = -1;
+
+    [JsonIgnore] public bool HasUnawareExperience { get { return this.unawareExperience != 0; } }
+
+    /// <summary>
+    /// Unaware loss desc rebuilt under current localization, falls back to the stored snapshot when the
+    /// COM / target body part definition no longer exists.
+    /// </summary>
+    [JsonIgnore] public string UnawareExperienceDesc
+    {
+        get
+        {
+            var s = BuildUnawareDesc(unawareDescKey, unawareTargetName, unawareTargetPartID, unawareComID, unawareComVariant);
+            return s ?? unawareExpDesc;
+        }
+    }
+
+    string BuildUnawareDesc(string descKey, string targetName, string targetPartID, string comID, int comVariant)
+    {
+        if (descKey == "") return null;
+        var com = comID == "" ? null : scr_System_Serializer.current.MasterList.COMs.GetByID(comID);
+        if (com == null) return null;
+        string target = targetName;
+        if (targetPartID != "")
+        {
+            var partBase = scr_System_Serializer.current.GetByNameOrID_BodyInternal_Base(targetPartID);
+            if (partBase == null) return null;
+            target = LocalizeDictionary.QueryThenParse("bodyPart_Fulldisplayname").Replace("$name$", targetName).Replace("$part$", partBase.DisplayName);
+        }
+        return LocalizeDictionary.QueryThenParse(descKey).Replace("$target$", target).Replace("$command$", com.DisplayName(comVariant)).Replace("$partname$", this.DisplayName);
+    }
+
     Memory_Entry cache_firstEXP = null, cache_lastEXP = null;
+    /// <summary>Drop cached memory entries - called when entries get merged away (MemoryManager.MergeLLMSession).</summary>
+    public void ClearExperienceCache() { cache_firstEXP = null; cache_lastEXP = null; }
     [JsonIgnore] public Memory_Entry FirstExperience { get
         {
             if (firstExperience == 0) return null;
@@ -105,42 +152,94 @@ public class BodyInternal_Instance
         }
     }
 
-    public bool NotifySexExperience(bool hasPermission, string targetName, string comName, List<string> comtags, List<string> targetBodyTag)
+    /// <summary>
+    /// Owner's awareness at the moment of a sex experience, matching GetActorTag's timestop/sleeping/unconscious tags.
+    /// </summary>
+    public static UnawareReason GetUnawareReason(Character_Trainable c)
     {
+        if (c == null) return UnawareReason.None;
+        if (c.isTimeStopped) return UnawareReason.Timestop;
+        if (c.isSleeping || c.Stats.isConsciousnessUnconscious) return UnawareReason.Sleeping;
+        return UnawareReason.None;
+    }
+
+    /// <summary>
+    /// reason != None: owner unaware of the act - registered as the unaware first experience instead
+    /// (see unawareExperience). Returns true on either kind of first experience registration.
+    /// </summary>
+    public bool NotifySexExperience(bool hasPermission, EvaluationPackage.DelayedExpLogging exp, UnawareReason reason)
+    {
+        string targetName = exp.targetName, comName = exp.comName;
+        List<string> comtags = exp.comtags, targetBodyTag = exp.targetBodytags;
         if (Owner.Memory.Last == null)
         {
             Debug.LogError($"error NotifySexExperience {Owner.FirstName} Last memory null");
             return false;
         }
-        
+
         this.lastExperience = Owner.Memory.Last.FinalEndTime.Ticks;
         this.lastExpDesc = LocalizeDictionary.QueryThenParse("bodyPart_internal_lastExpFormat").Replace("$target$", targetName).Replace("$command$", comName);
 
+        // aware first experience filled: both closed (unaware one stays permanently empty)
         if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1)
         {
             return false;
         }
+        // only the first unaware loss is recorded
+        if (reason != UnawareReason.None && this.unawareExperience != 0) return false;
 
         if (targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags))
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on targetBodytags {String.Join(" ", targetBodyTag)}");
-            this.firstExperience = lastExperience;
-            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            if (reason != UnawareReason.None) RegisterUnawareExperience(exp, reason);
+            else
+            {
+                this.firstExperience = lastExperience;
+                this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            }
             return true;
         }
         else if (Utility.ListContainsLoose(comtags, this.Base.virginityLossTags))
         {
             if (scr_System_CentralControl.current.LogPrefs.DLog_Training) Debug.Log($"{Owner.FirstName} match firstexperience {DisplayName} on comtags {String.Join(" ", comtags)}");
-            this.firstExperience = lastExperience;
-            this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            if (reason != UnawareReason.None) RegisterUnawareExperience(exp, reason);
+            else
+            {
+                this.firstExperience = lastExperience;
+                this.firstExpDesc = LocalizeDictionary.QueryThenParse(hasPermission ? "bodyPart_internal_expVirginLoss_cons" : "bodyPart_internal_expVirginLoss").Replace("$target$", targetName).Replace("$command$", comName).Replace("$partname$", this.DisplayName);
+            }
             return true;
         }
         else
         {
-           
+
             return false;
             //Debug.LogError("Checking virginity loss with tags [" + String.Join(",", ownerTags) + "][" + String.Join(",", comtags) + "] with baseTags [" + String.Join(",", this.Base.virginityLossTags) + "]");
         }
+    }
+
+    /// <summary>
+    /// Dry run of NotifySexExperience's gate - whether this interaction would register a first experience
+    /// (aware or unaware), without changing anything. Used to tag command kojo before the loss is registered.
+    /// </summary>
+    public bool WouldLoseFirstExperience(List<string> comtags, List<string> targetBodyTag, UnawareReason reason)
+    {
+        if (this.firstExperience != 0 || this.Base.firstExperienceDesc == "" || this.Base.virginityLossTags.Count < 1) return false;
+        if (reason != UnawareReason.None && this.unawareExperience != 0) return false;
+        if (targetBodyTag != null && Utility.ListContainsLoose(targetBodyTag, this.Base.virginityLossTags)) return true;
+        return comtags != null && Utility.ListContainsLoose(comtags, this.Base.virginityLossTags);
+    }
+
+    void RegisterUnawareExperience(EvaluationPackage.DelayedExpLogging exp, UnawareReason reason)
+    {
+        this.unawareExperience = lastExperience;
+        this.unawareDescKey = reason == UnawareReason.Timestop ? "bodyPart_internal_expVirginLoss_unaware_timestop" : "bodyPart_internal_expVirginLoss_unaware_sleep";
+        this.unawareTargetName = exp.targetActorName;
+        this.unawareTargetPartID = exp.targetPartID;
+        this.unawareComID = exp.comID;
+        this.unawareComVariant = exp.comVariant;
+        this.unawareExpDesc = BuildUnawareDesc(unawareDescKey, unawareTargetName, unawareTargetPartID, unawareComID, unawareComVariant)
+            ?? LocalizeDictionary.QueryThenParse(unawareDescKey).Replace("$target$", exp.targetName).Replace("$command$", exp.comName).Replace("$partname$", this.DisplayName);
     }
 
     // Called by ExperienceInitializer at generation time to mark this body part as already
@@ -198,10 +297,15 @@ public class BodyInternal_Instance
         if (Base.firstExperienceDesc == "") box.SetText("");    // this organ does not register first experience at all
 
 
-        if (firstExpDesc == "") box.SetText(LocalizeDictionary.QueryThenParse(Base.firstExperienceDesc)); 
-        else box.SetText(firstExpDesc);
+        string conscious = firstExpDesc == "" ? LocalizeDictionary.QueryThenParse(Base.firstExperienceDesc) : firstExpDesc;
+        if (unawareExperience == 0) box.SetText(conscious);
+        else if (firstExperience != 0) box.SetText($"{UnawareExperienceDesc}\n{conscious}");
+        // unaware loss only: owner still believes they're a virgin
+        else box.SetText(UnawareExperienceDesc + LocalizeDictionary.QueryThenParse("bodyPart_internal_unaware_marker"));
 
-        if (FirstExperience != null) box.SetExternalTooltip(FirstExperience.ToString(false, true, true));
+        var mem = FirstExperience;
+        if (mem == null && unawareExperience != 0) mem = Owner.Memory.FindEntryByDateTimeTick(unawareExperience);
+        if (mem != null) box.SetExternalTooltip(mem.ToString(false, true, true));
     }
     public void Draw_LastExperience(scr_HoverableText box)
     {

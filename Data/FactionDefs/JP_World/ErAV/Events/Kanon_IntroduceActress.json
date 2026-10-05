@@ -20,6 +20,13 @@
                                 "operand": "eq",
                                 "value": 2
                             }
+                        },
+                        {
+                            "requireKojoVariable": {
+                                "variableID": "erav_kanon_rental",
+                                "operand": "eq",
+                                "value": 1
+                            }
                         }
                     ]
                 },

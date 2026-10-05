@@ -231,6 +231,31 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         }
     }
 
+    /// <summary>
+    /// Identity of "the same product" for limitedAudience sales (see SalesManager.soldByLineage): items
+    /// sharing it share one pool of buyers. The first component lineage (ItemComponent_Base.GetSalesLineageID)
+    /// wins; otherwise a virtual good is its own product (each digital instance can be different content),
+    /// and a physical good shares its pool with every copy of the same RetailID.
+    /// </summary>
+    [JsonIgnore] public string SalesLineageID
+    {
+        get
+        {
+            foreach (var c in Comps)
+            {
+                var lineage = c.GetSalesLineageID();
+                if (!string.IsNullOrEmpty(lineage)) return lineage;
+            }
+            return isVirtualGood ? $"ref{RefID}" : RetailID;
+        }
+    }
+
+    /// <summary>
+    /// One edition within a sales lineage (see SalesManager.LineageRecord.editions): each virtual good is
+    /// its own edition (e.g. each cut of a film), while physical copies of the same RetailID are one edition.
+    /// </summary>
+    [JsonIgnore] public string SalesEditionID { get { return isVirtualGood ? $"ref{RefID}" : RetailID; } }
+
     [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
     [DefaultValue("")]
     public string nameOverwrite = "";

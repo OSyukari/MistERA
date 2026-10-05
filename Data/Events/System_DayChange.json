@@ -1,0 +1,25 @@
+{
+    "_doc": "OnDayChange: triggered on the player at every day change, before any day update runs. Self = the player, so always shown.",
+    "Events": {
+        "list": [
+            {
+                "ID": "System_DayChange",
+                "trigger": "OnDayChange",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "System_DayChange_EV01",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "System_DayChange_EV01": "新的一天开始了：$currentDateShort$。"
+            }
+        }
+    }
+}

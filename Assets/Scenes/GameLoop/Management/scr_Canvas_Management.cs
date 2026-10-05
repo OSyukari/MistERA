@@ -691,6 +691,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 title = parent.otherf;
             }
             tooltip2 += (tooltip2.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(m.ID);
+            if (scr_System_CampaignManager.current.DebugMode) tooltip2 += (tooltip2.Length > 0 ? "\n" : "") + m.ID;
         }
 
         public override bool IsButtonValid()

@@ -7,6 +7,7 @@
             "displayName": "Nikke",
             "tooltip": "Android body housing a human consciousness. Made to resemble humanoid physiology as close as possible.\nIn spite of their superhuman capabilities, Nikkes still need an environment close to human experience to maintain their mental stability.\nSTR+10 CON+10",
             "addStatsKeyword":["hunger","sleep","stress","lust","mood"],
+            "actorKeyword":["NIKKE"],
             "stat_modifiers": [
                 {
                     "statID":"Strength",

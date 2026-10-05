@@ -796,7 +796,8 @@
                 "timeScale": 30,
                 "comTags": [
                     "furniture",
-                    "shower"
+                    "shower",
+                    "privacy"
                 ],
                 "requirements": {
                     "requirement": {

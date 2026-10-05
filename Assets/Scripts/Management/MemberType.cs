@@ -272,6 +272,13 @@ public class MemberType
     public bool initiallyForbidWork = false;
 
     /// <summary>
+    /// MemberType IDs (of the same faction) a member of this status may never ask to leave a room, whatever the reason -
+    /// see Manageable.CanMemberRequestLeave / RequestLeaveUtility.CanRequestLeave. E.g. a hospital patient can't send the
+    /// doctors and nurses out.
+    /// </summary>
+    public List<string> cannotRequestLeaveMemberTypes = new List<string>();
+
+    /// <summary>
     /// Optional data-authored join logic ("$type" object, e.g. JoinHandler_TempHomeWithRoom) consulted by
     /// Manageable.BuildJoinOptions (event Result JoinActiveFaction): builds the ready-made options of joining as this
     /// type, each with its own join callback. Null = nothing offered (every existing type).

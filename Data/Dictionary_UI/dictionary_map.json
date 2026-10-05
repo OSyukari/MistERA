@@ -30,6 +30,9 @@
         "map_cafeteria":"餐厅",
         "map_dressing":"更衣间",
 
+        "map_toilet_male":"男厕所",
+        "map_toilet_female":"女厕所",
+
         "map_prisoncell_single":"单人牢房",
         "map_prisoncell_double":"双人牢房"
 
