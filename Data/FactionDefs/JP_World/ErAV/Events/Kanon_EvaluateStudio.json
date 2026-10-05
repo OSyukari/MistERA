@@ -12,6 +12,7 @@
                 },
                 "SelfValidator": {
                     "chara_conditions": [
+                        { "parameters": [ "isActorBaseID", "__TEMP_DISABLED__" ] },
                         { "parameters": [ "exists" ] },
                         { "parameters": [ "isActorBaseID", "ErAV_Player" ] },
                         {
