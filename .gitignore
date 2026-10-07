@@ -72,4 +72,5 @@ Assets/*
 *.mdb
 *.opendb
 *.VC.db
+*.jpg
 !Demo/*.png
