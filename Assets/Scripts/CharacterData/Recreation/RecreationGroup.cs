@@ -175,10 +175,17 @@ public class RecreationGroupRegistry
     [JsonIgnore] public IReadOnlyList<RecreationGroup> All { get { return Sessions; } }
     List<RecreationGroup> Sessions { get { if (sessions == null) sessions = new List<RecreationGroup>(); return sessions; } }
 
-    /// <summary>Registers session (dropping ended ones first) and, for Faction / World visibility, posts it to its scope's list.</summary>
+    /// <summary>
+    /// Registers session (dropping ended ones first) and, for Faction / World visibility, posts it to its scope's list.
+    /// A new session counts as self-updated in the hour it is posted: its members answer in this hour's second pass
+    /// (RecreationUtility.LateHourConfirm), so a member ticking after the post must not validate - and, from T-1, cancel -
+    /// it before anyone could answer. Its first self-update is next hour.
+    /// </summary>
     public void Add(RecreationGroup session)
     {
         if (session == null) return;
+        if (session.lastUpdatedAbsHour < 0 && scr_System_Time.current != null)
+            session.lastUpdatedAbsHour = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
         Prune();
         Sessions.Add(session);
         Post(session);

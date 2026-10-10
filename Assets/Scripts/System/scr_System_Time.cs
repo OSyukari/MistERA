@@ -230,6 +230,12 @@ public class scr_System_Time : MonoBehaviour
     /// Day update happens after Hours update
     /// </summary>
     public event Action<int> Observer_globalTime_Day;
+    /// <summary>
+    /// Fired once per hour change, after Observer_globalTime_Hours and - at midnight - after the day update: every
+    /// character has had its hourly tick (and day update) by now. Second pass of the hour (recreation sessions confirmed
+    /// once every character posted - Character_Trainable.Observer_GlobalHourLate).
+    /// </summary>
+    public event Action Observer_globalTime_HoursLate;
 
     /// <summary>
     /// Multi-pass daily payment resolution (Manageable.OnDayUpdate_PaymentResolve / TradeManager.ResolveDuePass)
@@ -341,10 +347,12 @@ public class scr_System_Time : MonoBehaviour
                 
                 UpdateMinute(timescale, timescale);
 
+                bool hourChanged = false;
                 if (currentDate.Hour != CurrentHour)
                 {
                     CurrentHour = currentDate.Hour;
                     UpdateSingleHour();
+                    hourChanged = true;
                 }
 
                 if (currentDate.Day != CurrentDay)
@@ -352,6 +360,9 @@ public class scr_System_Time : MonoBehaviour
                     CurrentDay = currentDate.Day;
                     UpdateSingleDay();
                 }
+
+                // after both: at midnight the late pass follows the day update too
+                if (hourChanged) Observer_globalTime_HoursLate?.Invoke();
             }
         }
     }

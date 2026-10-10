@@ -11,7 +11,7 @@ using UnityEngine;
 /// (MemberType.recreation - RecreationSpec.activities, one activity per visit) and flexible offers (RecreationOfferDef,
 /// Flexible) - into the free time around work and sleep, as RecreationBookings. A visit whose spec has a visibility is
 /// hosted as a shared session instead; fixed offers are sessions posted by the board. Sessions are ranked and confirmed
-/// on each character's next hourly tick (RecreationUtility_Groups.cs).
+/// in each character's second pass of the hour (LateHourConfirm - RecreationUtility_Groups.cs).
 /// The first run for a character also fills the rest of today.
 /// <br/>Shape of a day's plan: one chain of flexible visits (2-4h each, MaxDailyHours in total with the day's other
 /// bookings) placed as near as fits to an anchor - after the day's last shift (work ->
@@ -241,8 +241,8 @@ public static partial class RecreationUtility
     /// (fixed offers, each its daysInAdvance ahead - whichever character plans first), f's session bookings synced, then
     /// f's flexible visits planned - booked solo or posted as sessions f hosts (AddPlannedBookings): a day not planned
     /// yet (tomorrow; today too on the first run) with every activity its daysInAdvance allows, and today - already
-    /// planned last night - once more with the same-day-only ones (daysInAdvance 0). Sessions are ranked / confirmed on
-    /// f's next hourly tick.
+    /// planned last night - once more with the same-day-only ones (daysInAdvance 0). Sessions are ranked / confirmed in
+    /// the hour's second pass, after the day update (LateHourConfirm).
     /// </summary>
     public static void DailyPlan(Character_Factions f)
     {
@@ -272,6 +272,23 @@ public static partial class RecreationUtility
         }
     }
 
+    /// <summary>
+    /// Character_Factions.OnHourLate_Recreation (second pass of the hour - scr_System_Time.Observer_globalTime_HoursLate):
+    /// steps 2-3 (SessionPass), once every character has had its hourly tick and, at midnight, its day update - so a
+    /// session posted in either (DailyPlan, RefillSlot, an event) is ranked and confirmed by everyone it reaches within
+    /// the hour it was posted (a confirmed member booking is in effect at once - RefreshValidity). NPCs that plan only.
+    /// At midnight it is announced like the night's reservations (on screen for the player's own household).
+    /// </summary>
+    public static void LateHourConfirm(Character_Factions f)
+    {
+        if (f == null || scr_System_CampaignManager.current == null || scr_System_Time.current == null) return;
+        if (!ShouldPlan(f)) return;
+        bool midnight = scr_System_Time.current.getCurrentTime().Hour == 0;
+        BeginNotice(f);
+        try { SessionPass(f); }
+        finally { EndNotice(f, midnight && FactionUtility.IsPlayerHousehold(f.Owner)); }
+    }
+
     static bool ShouldPlan(Character_Factions f)
     {
         var c = f?.Owner;
@@ -296,8 +313,8 @@ public static partial class RecreationUtility
     ///   for a session booking, the member marked arrived.
     /// <br/>Then the visit under way gets its Job_Activity if it has none yet (EnsureActivityJobs).
     /// <br/>First, every session f holds checks itself (UpdateSession - once per hour, whoever asks first) and f's session
-    /// bookings follow (SyncSessionBookings); last, an NPC that plans re-ranks / confirms its sessions when its schedule
-    /// changed or new ones became visible (SessionPass).
+    /// bookings follow (SyncSessionBookings). Re-ranking / confirming (SessionPass) is not done here but in the hour's
+    /// second pass (LateHourConfirm), once every character has ticked.
     /// </summary>
     public static void HourlyCheck(Character_Factions f)
     {
@@ -320,8 +337,7 @@ public static partial class RecreationUtility
         if (SyncSessionBookings(f)) f.RefreshSchedule();
         CheckBookings(f, c);
         EnsureActivityJobs(f, c);
-        // steps 2-3: re-rank / confirm when f's schedule changed or new sessions became visible
-        if (ShouldPlan(f)) SessionPass(f);
+        // steps 2-3 (re-rank / confirm) run in the hour's second pass, once everyone has ticked - LateHourConfirm
     }
 
     /// <summary>
@@ -677,7 +693,7 @@ public static partial class RecreationUtility
     /// <summary>
     /// Plans f's flexible visits on absolute day `day`: one chain from the first anchor it fits at, placed around f's
     /// existing bookings; each is then booked solo or hosted as a session (AddPlannedBookings). Fixed offers are sessions
-    /// f ranks in its next hourly tick, moving these visits if needed. True if anything was booked (the caller refreshes
+    /// f ranks in the hour's second pass (LateHourConfirm), moving these visits if needed. True if anything was booked (the caller refreshes
     /// the schedule once).
     /// </summary>
     /// <param name="maxAdvance">Only activities whose daysInAdvance is at most this (0 = the same-day-only ones, for a day already planned).</param>
@@ -1149,7 +1165,7 @@ public static partial class RecreationUtility
 
     /// <summary>
     /// AddRecreationOffer: posts fixed offer def defID on day today + dayOffset (optionally at another start/length) - its
-    /// hostless World session goes on the venue's world list, and each character there ranks it on its next hourly tick.
+    /// hostless World session goes on the venue's world list, and each character there ranks it in the hour's second pass (LateHourConfirm).
     /// False if the def is unknown or flexible.
     /// </summary>
     public static bool PostOffer(string defID, int dayOffset, int startHour = -1, int hours = -1)

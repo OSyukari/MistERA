@@ -9,7 +9,7 @@ using UnityEngine;
 /// it solo (TryHostSession) - Private / Friends at the time most of the invitees are free, pushed to their inboxes;
 /// Faction / World at the host's own time, posted to the faction's / world's list. Fixed offers are hostless World
 /// sessions posted by the offer board (PostOfferSession). The host books nothing yet.
-/// <br/>Steps 2-3 (each character's next hourly tick - SessionPass): collect every session visible to them (inbox, their
+/// <br/>Steps 2-3 (SessionPass - each character's second pass of the hour, LateHourConfirm, after every character's hourly tick and day update): collect every session visible to them (inbox, their
 /// factions' and worlds' lists), ask AcceptSession the first time (no = Refused, final), rank (CompareBookingPreference,
 /// then a fixed order) and confirm in that order (TryConfirm: time, conflicts - a flexible visit in the way moves, a
 /// lower-ranked session gives way - extending the invitation, then the member booking). The ranking is kept and re-run
@@ -403,6 +403,7 @@ public static partial class RecreationUtility
         }
         f.PushSession(g);
         foreach (var t in targets) InviteMember(g, t.chara, t.role.RoleID, RecreationMemberOrigin.Scope, -1);
+        if (hostBooked) RefreshValidity(g);
         return true;
     }
 
@@ -532,7 +533,7 @@ public static partial class RecreationUtility
     }
 
     /// <summary>
-    /// Steps 2-3 for f (HourlyCheck - NPCs that plan only): when f's schedule changed (RecreationDirty) or new sessions
+    /// Steps 2-3 for f (LateHourConfirm - NPCs that plan only): when f's schedule changed (RecreationDirty) or new sessions
     /// became visible, re-rank (RankSessions) and confirm in order (ConfirmSessions). True if a booking changed (the
     /// schedule is already refreshed).
     /// </summary>
@@ -679,8 +680,8 @@ public static partial class RecreationUtility
         var c = f.Owner;
         int nowAbs = NowAbs();
         var booking = MakeMemberBooking(g, m);
-        if (booking == null) return Block(m, "noAccess");
-        if (!forced && !HasTimeFor(f, booking)) return Block(m, "noTime");
+        if (booking == null) return Block(g, m,"noAccess");
+        if (!forced && !HasTimeFor(f, booking)) return Block(g, m,"noTime");
 
         var ctx = MakeContext(g, c);
         var giveUp = new List<RecreationBooking>();
@@ -689,19 +690,19 @@ public static partial class RecreationUtility
         {
             if (IsMovableVisit(b, nowAbs))
             {
-                if (!forced && c.CompareBookingPreference(b, null, booking, ctx) < 0) return Block(m, "prefersVisit");
+                if (!forced && c.CompareBookingPreference(b, null, booking, ctx) < 0) return Block(g, m,"prefersVisit");
                 move.Add(b);
                 continue;
             }
-            if (IsProtectedBooking(b, nowAbs)) return Block(m, "conflict");
+            if (IsProtectedBooking(b, nowAbs)) return Block(g, m,"conflict");
             if (forced) { giveUp.Add(b); continue; }
             var other = b.Session;
             if (other != null && f.SessionRanking.IndexOf(other) > rankIndex) { giveUp.Add(b); continue; }
-            return Block(m, "conflict");
+            return Block(g, m,"conflict");
         }
 
         var extension = PlanExtension(f, g, m, out bool extensionOk);
-        if (!extensionOk) return Block(m, "inviteFailed");
+        if (!extensionOk) return Block(g, m,"inviteFailed");
 
         BeginNotice(f);
         try
@@ -711,7 +712,7 @@ public static partial class RecreationUtility
             if (!f.AddBooking(booking, false))
             {
                 foreach (var b in move) f.AddBooking(b, false);   // put back as it was
-                return Block(m, "conflict");
+                return Block(g, m,"conflict");
             }
             m.state = RecreationMemberState.Attending;
             m.reason = "";
@@ -719,15 +720,18 @@ public static partial class RecreationUtility
             RecordBooked(f, booking);
             foreach (var b in move) TryReschedule(f, b, CancelReason.Displaced);
             CommitExtension(g, c, extension);
+            RefreshValidity(g);
             return true;
         }
         finally { EndNotice(f, false); }
     }
 
-    static bool Block(RecreationGroupMember m, string reason)
+    /// <summary>m of g Blocked with reason - g's validity follows (m may have been attending: a re-confirm of an attending member whose booking went).</summary>
+    static bool Block(RecreationGroup g, RecreationGroupMember m, string reason)
     {
         m.state = RecreationMemberState.Blocked;
         m.reason = reason;
+        RefreshValidity(g);
         return false;
     }
 
@@ -920,6 +924,18 @@ public static partial class RecreationUtility
             }
         }
 
+        RefreshValidity(g);
+    }
+
+    /// <summary>
+    /// g's validity recomputed now (kept as it was from T+2 on), and g cancelled if invalid at T-1, T or T+1 - run by
+    /// UpdateSession and whenever g's attendance changes (a member confirms / stops attending), so a member booking
+    /// drives its owner (IsSessionBookingLive) from the moment it is confirmed, not from the session's next self-update.
+    /// </summary>
+    static void RefreshValidity(RecreationGroup g)
+    {
+        if (g == null || !g.IsOpen) return;
+        int nowAbs = NowAbs();
         if (nowAbs <= g.AbsStart + 1) g.valid = IsValid(g, ResolveSpec(g.specRef));
         if (!g.valid && nowAbs >= g.AbsStart - 1 && nowAbs <= g.AbsStart + 1) CancelSession(g, CancelReason.GroupCancelled);
     }
@@ -989,6 +1005,7 @@ public static partial class RecreationUtility
                 m.state = RecreationMemberState.Blocked;
                 break;
         }
+        RefreshValidity(g);
     }
 
     /// <summary>
@@ -1084,6 +1101,7 @@ public static partial class RecreationUtility
             {
                 m.state = RecreationMemberState.Declined;
                 m.reason = "lostOnLoad";
+                RefreshValidity(g);
             }
         }
     }

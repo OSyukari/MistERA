@@ -61,6 +61,17 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             if (string.IsNullOrEmpty(o.ID)) continue;
             if (!ID_Dictionary_MemberType.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MemberType id [{o.ID}] due to duplicate");
         }
+        // save-migration aliases (MemberType.legacyIDs) - after every live ID, so an alias shadowing one is caught
+        foreach (MemberType o in this.memberTypes)
+        {
+            if (string.IsNullOrEmpty(o.ID) || o.legacyIDs == null) continue;
+            foreach (var legacyID in o.legacyIDs)
+            {
+                if (string.IsNullOrEmpty(legacyID)) continue;
+                if (ID_Dictionary_MemberType.ContainsKey(legacyID)) Debug.LogError($"MemberType [{o.ID}]: legacyID [{legacyID}] is still a live MemberType ID, alias ignored");
+                else if (!ID_Dictionary_MemberTypeLegacy.TryAdd(legacyID, o) && ID_Dictionary_MemberTypeLegacy[legacyID] != o) Debug.LogError($"MemberType [{o.ID}]: legacyID [{legacyID}] already aliased to [{ID_Dictionary_MemberTypeLegacy[legacyID].ID}], ignored");
+            }
+        }
         // field inheritance and remaining defaults - nothing may read MemberType fields before this
         MemberType.ApplyHierarchy(memberTypes);
 
@@ -195,6 +206,9 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
 
     Dictionary<string, MemberType> ID_Dictionary_MemberType = new Dictionary<string, MemberType>();
     public MemberType GetByID_MemberType(string id) { return ID_Dictionary_MemberType.ContainsKey(id) ? ID_Dictionary_MemberType[id] : null; }
+    Dictionary<string, MemberType> ID_Dictionary_MemberTypeLegacy = new Dictionary<string, MemberType>();
+    /// <summary>The MemberType listing id in its legacyIDs (a removed/renamed type's replacement), or null. Save migration only.</summary>
+    public MemberType GetByLegacyID_MemberType(string id) { return id != null && ID_Dictionary_MemberTypeLegacy.TryGetValue(id, out var type) ? type : null; }
 
     Dictionary<string, MemberRelations> ID_Dictionary_MemberRelations = new Dictionary<string, MemberRelations>();
     /// <summary>

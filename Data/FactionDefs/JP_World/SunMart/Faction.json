@@ -150,6 +150,8 @@
                         [
                             {
                                 "ID":"membertype_jp_convenience_store_morning_a",
+                                "_comment_legacyIDs":"Save migration: members still on the removed pre-rework clerk posts are moved here on load.",
+                                "legacyIDs":[ "membertype_jp_convenience_store_clerk_morning", "membertype_jp_convenience_store_clerk_afternoon", "membertype_jp_convenience_store_clerk_midnight" ],
                                 "socialStandingKey":"membertype_jp_convenience_store_morning_a",
                                 "workModule": {
                                     "jobPostID":"jp_convenience_store_morning_a",

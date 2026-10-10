@@ -225,6 +225,8 @@
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_hospital_doctor_team_a",
+                        "_comment_legacyIDs": "Save migration: members still on the removed pre-team shift posts are moved here on load.",
+                        "legacyIDs": [ "membertype_jp_hospital_doctor_day", "membertype_jp_hospital_doctor_evening", "membertype_jp_hospital_doctor_night", "membertype_jp_hospital_doctor_weekend" ],
                         "socialStandingKey": "membertype_jp_hospital_doctor_team_a",
                         "workModule": {
                             "jobPostID": "jp_hospital_doctor_team_a",
@@ -279,6 +281,8 @@
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_hospital_nurse_team_a",
+                        "_comment_legacyIDs": "Save migration: members still on the removed pre-team shift posts are moved here on load.",
+                        "legacyIDs": [ "membertype_jp_hospital_nurse_day", "membertype_jp_hospital_nurse_evening", "membertype_jp_hospital_nurse_night" ],
                         "socialStandingKey": "membertype_jp_hospital_nurse_team_a",
                         "workModule": {
                             "jobPostID": "jp_hospital_nurse_team_a",
@@ -339,6 +343,8 @@
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_hospital_pharmacy_team_a",
+                        "_comment_legacyIDs": "Save migration: members still on the removed pre-team shift posts are moved here on load.",
+                        "legacyIDs": [ "membertype_jp_hospital_pharmacy_day", "membertype_jp_hospital_pharmacy_evening", "membertype_jp_hospital_pharmacy_night" ],
                         "socialStandingKey": "membertype_jp_hospital_pharmacy_team_a",
                         "workModule": {
                             "jobPostID": "jp_hospital_pharmacy_team_a",
@@ -375,6 +381,8 @@
                 "childMemberTypes": [
                     {
                         "ID": "membertype_jp_hospital_frontdesk_team_a",
+                        "_comment_legacyIDs": "Save migration: members still on the removed pre-team shift posts are moved here on load.",
+                        "legacyIDs": [ "membertype_jp_hospital_frontdesk_day", "membertype_jp_hospital_frontdesk_evening", "membertype_jp_hospital_frontdesk_night" ],
                         "socialStandingKey": "membertype_jp_hospital_frontdesk_team_a",
                         "workModule": {
                             "jobPostID": "jp_hospital_frontdesk_team_a",

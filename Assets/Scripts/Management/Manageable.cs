@@ -3675,8 +3675,28 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     }
 
+    /// <summary>
+    /// Save migration: a member stored under a MemberType ID no longer in the data (a removed/renamed post) but named in
+    /// some type's legacyIDs is moved to that type, keeping their membership, schedule and work lists as they were.
+    /// Unknown IDs without an alias are left alone (they still read as MemberType_None).
+    /// </summary>
+    void MigrateLegacyMemberTypes()
+    {
+        if (charaGuestStatus == null) return;
+        var index = scr_System_Serializer.current.MasterList.MapPlans;
+        foreach (var kvp in new List<KeyValuePair<int, string>>(charaGuestStatus))
+        {
+            if (index.GetByID_MemberType(kvp.Value) != null) continue;
+            var replacement = index.GetByLegacyID_MemberType(kvp.Value);
+            if (replacement == null) continue;
+            charaGuestStatus[kvp.Key] = replacement.ID;
+            Debug.LogWarning($"Manageable [{ID}]: member [{kvp.Key}] MemberType [{kvp.Value}] no longer exists, migrated to [{replacement.ID}]");
+        }
+    }
+
     public void OnAfterDeserialize()
     {
+        MigrateLegacyMemberTypes();   // stored IDs only - before InitScript reads any member's type
         InitScript();   // include wiping nonjobpost and jobpost so run this first before anything else
 
         if (this.TradeManager == null)

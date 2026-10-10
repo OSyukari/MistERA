@@ -1144,6 +1144,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (FactionManager != null) FactionManager.OnDayUpdate_Recreation();
     }
 
+    /// <summary>Second pass of the hour (scr_System_Time.Observer_globalTime_HoursLate - every character ticked / posted): recreation sessions ranked and confirmed.</summary>
+    private void Observer_GlobalHourLate()
+    {
+        if (FactionManager != null) FactionManager.OnHourLate_Recreation();
+    }
+
     
 
     public int GetStatusSeverity(string s)
@@ -3113,6 +3119,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_0;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_3;
+        scr_System_Time.current.Observer_globalTime_HoursLate += Observer_GlobalHourLate;
     }
 
     /// <summary>Per-minute ticks - dropped while dormant, caught up in one go by EndDormantState.</summary>
@@ -3148,6 +3155,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_0;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_3;
+        scr_System_Time.current.Observer_globalTime_HoursLate -= Observer_GlobalHourLate;
     }
 
     protected void RemoveObservers_Minute()

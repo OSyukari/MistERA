@@ -942,7 +942,7 @@ public class Character_Factions
     [JsonIgnore] readonly Dictionary<string, int> seenListSerials = new Dictionary<string, int>();
     /// <summary>The kept preference order of the sessions this character accepted (RecreationUtility.RankSessions), best first.</summary>
     [JsonIgnore] public List<RecreationGroup> SessionRanking = new List<RecreationGroup>();
-    /// <summary>The schedule was rebuilt for a real change (UpdateSchedule with fullrebuild), or a save was loaded: the next hourly tick re-runs ranking and confirming.</summary>
+    /// <summary>The schedule was rebuilt for a real change (UpdateSchedule with fullrebuild), or a save was loaded: the hour's next second pass (RecreationUtility.LateHourConfirm) re-runs ranking and confirming.</summary>
     [JsonIgnore] public bool RecreationDirty = false;
 
     [JsonIgnore] public IReadOnlyList<RecreationGroup> SessionInbox { get { return sessionInbox; } }
@@ -986,7 +986,7 @@ public class Character_Factions
 
     /// <summary>
     /// After a save is loaded (sessions already relinked - RecreationGroupRegistry.OnAfterLoad): drops, quietly, bookings
-    /// whose session is gone and those of the old group system; the next hourly tick re-ranks (RecreationDirty). Saves
+    /// whose session is gone and those of the old group system; the next second pass of the hour re-ranks (RecreationDirty). Saves
     /// made before RecreationBooking.ownerRef existed get it stamped here.
     /// </summary>
     public void PostReloadUpdate_Recreation()
@@ -1124,6 +1124,15 @@ public class Character_Factions
     public void OnDayUpdate_Recreation()
     {
         RecreationUtility.DailyPlan(this);
+    }
+
+    /// <summary>
+    /// Session confirm entry point - Character_Trainable's second pass of the hour (after every character's hourly tick
+    /// and, at midnight, the day update). The logic is RecreationUtility.LateHourConfirm.
+    /// </summary>
+    public void OnHourLate_Recreation()
+    {
+        RecreationUtility.LateHourConfirm(this);
     }
 
     /// <summary>
@@ -1634,7 +1643,7 @@ public class Character_Factions
     {
         int currentHour = scr_System_Time.current.getCurrentTime().Hour;
         PruneBookings();
-        // a real change (not the plain hourly recompute): the next hourly tick re-ranks / re-confirms recreation sessions
+        // a real change (not the plain hourly recompute): the hour's next second pass (LateHourConfirm) re-ranks / re-confirms recreation sessions
         if (fullrebuild) RecreationDirty = true;
 
         if (privateSchedule.HasWorkHoursWithCOM(currentHour, "com_furniture_sleep"))

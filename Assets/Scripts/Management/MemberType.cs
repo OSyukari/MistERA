@@ -91,6 +91,13 @@ public class MemberType
 
     public string ID = "";
 
+    /// <summary>
+    /// Old IDs this type replaces (a removed/renamed post). Save migration only: a faction loading a member stored under
+    /// one of these IDs moves them to this type (Manageable.MigrateLegacyMemberTypes). Never inherited - an alias names
+    /// exactly one type. Registered by Index_MapPlan (GetByLegacyID_MemberType).
+    /// </summary>
+    public List<string> legacyIDs = null;
+
     // ---------------- hierarchy ---------------- //
     //
     // A parent MemberType groups near-identical posts (e.g. the day/evening/night shifts of one job). Its children are
@@ -101,7 +108,7 @@ public class MemberType
     // Inheritance: every serialized field defaults to null here (bools are bool? behind a getter), so after loading,
     // null = "not written in the JSON". ApplyHierarchy then copies each such field from the parent; a field the child
     // writes is the child's own (mirroring the parent is the child's job). Fields still null afterwards get their
-    // normal default (FillDefaults). ID and childMemberTypes are never inherited. Copied values are the parent's
+    // normal default (FillDefaults). ID, childMemberTypes and legacyIDs are never inherited. Copied values are the parent's
     // own instances (lists, handlers, behavior nodes) - template data, read-only.
 
     /// <summary>Child MemberTypes defined inline under this one, in order; the first is the default post when joining as this type.</summary>
@@ -193,7 +200,7 @@ public class MemberType
             _inheritableFields = new List<System.Reflection.FieldInfo>();
             foreach (var f in typeof(MemberType).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic))
             {
-                if (f.Name == nameof(ID) || f.Name == nameof(childDefinitions)) continue;
+                if (f.Name == nameof(ID) || f.Name == nameof(childDefinitions) || f.Name == nameof(legacyIDs)) continue;
                 if (f.FieldType.IsValueType && Nullable.GetUnderlyingType(f.FieldType) == null) continue;
                 bool serialized = f.IsDefined(typeof(JsonPropertyAttribute), true) || (f.IsPublic && !f.IsDefined(typeof(JsonIgnoreAttribute), true));
                 if (serialized) _inheritableFields.Add(f);
