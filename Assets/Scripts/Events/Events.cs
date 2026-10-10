@@ -575,12 +575,14 @@ public class Event : I_SerializationCallbackReceiver
             JumpToLabel,
 
             /// <summary>
-            /// [string rel_self, string rel_target, string kojoID, string storeIntoAppendID]
+            /// [string rel_self, string rel_target, string kojoID, string storeIntoAppendID,
+            /// optional string storeMode ("replace" default | "append" | "keep")]
             /// </summary>
             GetKojoEntry,
 
             /// <summary>
-            /// [string rel_self, string rel_target, string kojoID_fromAppendStrings, string storeIntoAppendID]
+            /// [string rel_self, string rel_target, string kojoID_fromAppendStrings, string storeIntoAppendID,
+            /// optional string storeMode ("replace" default | "append" | "keep")]
             /// </summary>
             GetKojoEntryFromAppendStrings,
 

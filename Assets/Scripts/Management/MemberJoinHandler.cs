@@ -32,6 +32,13 @@ public abstract class MemberOptionHandler
     /// <summary>AppendStrings key the callbacks fill with what changed (see AppendFactionChange), shown via $factionChangeString$.</summary>
     public const string FactionChangeStringKey = "factionChangeString";
 
+    /// <summary>
+    /// AppendStrings key overwritten (not accumulated) with just the most recent change's lines - for events that
+    /// embed each change into its own line (e.g. Opt_ArrangeJoin_StudentFullTime) instead of printing the running
+    /// $factionChangeString$ summary separately.
+    /// </summary>
+    public const string LastFactionChangeStringKey = "lastFactionChange";
+
     /// <summary>An option standing for boundTarget: runs onSelect when picked, or is shown disabled with disabledReasonKey as tooltip.</summary>
     protected Event.EventEntry.Options MakeOption(Character_Trainable boundTarget, Action<EventInstance> onSelect, string disabledReasonKey = "")
     {
@@ -76,6 +83,9 @@ public abstract class MemberOptionHandler
     static void AppendFactionChangeLines(EventInstance ev, List<string> lines)
     {
         if (lines.Count == 0) return;
+        // per-change capture: overwritten every call, so an event showing $lastFactionChange$ right after a
+        // pick sees exactly that pick's change, never a stale or accumulated one
+        ev.AppendStrings[LastFactionChangeStringKey] = new List<string>() { string.Join("\n", lines) };
         if (!ev.AppendStrings.TryGetValue(FactionChangeStringKey, out var stored) || stored.Count == 0)
             ev.AppendStrings[FactionChangeStringKey] = new List<string>() { string.Join("\n", lines) };
         else stored[0] += "\n" + string.Join("\n", lines);

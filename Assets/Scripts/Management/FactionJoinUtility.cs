@@ -88,8 +88,10 @@ public static class FactionJoinUtility
     public static string heldMembershipTextKey = "event_heldMembership";
 
     /// <summary>
-    /// Every faction where candidate currently holds a MemberType carrying tag in its Tags (their own faction lists: work
-    /// factions, home, temporary home and recreation factions), with that MemberType.
+    /// Every faction where candidate currently holds a MemberType carrying tag in its Tags or in an ancestor's (their own
+    /// faction lists: work factions, home, temporary home and recreation factions), with that MemberType. The ancestor walk
+    /// is needed because the held type is usually a child post (a shift) while the tag sits on its parent - Tags is never
+    /// null, so MemberType.ApplyInheritance doesn't copy it down.
     /// </summary>
     public static List<KeyValuePair<Manageable, MemberType>> FindHeldMembershipsByTag(Character_Trainable candidate, string tag)
     {
@@ -99,9 +101,16 @@ public static class FactionJoinUtility
         {
             if (faction == null || !faction.isManagedChara(candidate.RefID)) continue;
             var type = faction.GetMemberType(candidate);
-            if (type != null && type.Tags.Contains(tag)) held.Add(new KeyValuePair<Manageable, MemberType>(faction, type));
+            if (HasTagInHierarchy(type, tag)) held.Add(new KeyValuePair<Manageable, MemberType>(faction, type));
         }
         return held;
+    }
+
+    /// <summary>type or one of its ancestors carries tag in its Tags.</summary>
+    static bool HasTagInHierarchy(MemberType type, string tag)
+    {
+        for (var t = type; t != null; t = t.Parent) if (t.Tags != null && t.Tags.Contains(tag)) return true;
+        return false;
     }
 
     /// <summary>

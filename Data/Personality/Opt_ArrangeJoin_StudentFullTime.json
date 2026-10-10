@@ -1,0 +1,167 @@
+{
+    "_doc": "口上loose entry文件（Character_Personalities.looselist），供事件 Opt_ArrangeJoin_StudentFullTime（Data/Events/OnDialogue_Options/Opt_ArrangeJoin_StudentFullTime.json）通过 GetKojoEntry 执行器检索。\n\n== 口上通用生成规范（LLM生成时必读，各条目_comment只写该条目的特有语境） ==\n1. 口上只负责NPC的台词本身：每条response必须且只能是一句被引号包裹的说话内容，禁止任何旁白、动作描写、心理描写、场景描写（不要写括号叙述、不要写($self$)之类的前缀、不要写'看起来很开心'式的总结）。\n2. 不要在台词里自我介绍或点名说话者（说话者身份由系统头像与对齐负责）。$self$/$target$占位符仅用于台词内自然地称呼对方，且整句可以完全不使用占位符。\n3. 台词长度1~2句自然口语，符合说话者对玩家（上级/雇主，关系随意但非恋人）的日常语气，全年龄（SFW），不涉及性内容。\n4. personality_default为默认女性口上（说话者是女性NPC），personality_base为默认男性口上（说话者是男性NPC），语气风格应区分。\n5. 该场景为玩家作为派系领袖，与自己派系的NPC（worker）面对面谈话，话题是安排worker去全日制上学或为其办理退学（入学通过找工作式的列表选择学校）。NPC此时处于正常可行动状态。\n6. 每个条目请生成多条可选response（建议3条以上），语义相同方向但措辞各异，供运行时随机抽取。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_start",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime一开始，玩家向'目前没有在上学'的worker提出'安排入学'话题时（事件按worker当前是否在校分别检索本条目与_start_enrolled；每次进入都会重新抽取）。场景：玩家问worker愿不愿意去上学。worker尚未得知具体结果，只是被征询意见。内容要求：对'被安排去上学'话题的通用反应，可以表示愿意、惊讶、犹豫或让玩家决定，语气自然日常。说话者：女性NPC（当前未在校），听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"上学？我还可以去上学吗？\"",
+                                "\"要送我去学校？嗯……听起来不坏。\"",
+                                "\"全日制上学吗？那我就把时间交给你安排啦。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_start_enrolled",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime一开始，玩家向'已经在全日制上学'的worker提出话题时（接下来是转学或退学的询问；事件按worker当前是否在校分别检索本条目与_start）。场景：worker已经是在校学生，玩家再次谈起上学安排。内容要求：对'又被谈起上学的事'的反应，可表达疑惑、猜到要换学校、或表示现在的学校还不错等，语气自然日常。说话者：女性NPC（当前在校），听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"怎么啦？突然提起上学的事。\"",
+                                "\"难道要给我换个学校吗？\"",
+                                "\"现在的学校挺好的哦……还是说有什么安排？\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_enrolled",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime中，玩家为worker选定了学校并成功办妥全日制入学之后。场景：worker得知自己即将成为某学校的全日制学生。内容要求：对入学成功的反应，可表达感谢、期待、紧张等，不涉及具体学校名。说话者：女性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"入学手续办好了？我会好好学习的。\"",
+                                "\"哇，真的要上学了……好紧张，也好期待。\"",
+                                "\"谢谢你给我这个机会，我不会偷懒的。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_withdrawn",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime中，玩家为worker成功办理退学之后（之后通常会接着询问要不要去别的学校）。场景：worker得知自己退学了。内容要求：对退学成功的反应，可表达释然、无所谓、轻微可惜、对接下来安排的好奇等，不应过度悲伤或抱怨玩家。说话者：女性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"退学了吗……那接下来我做什么呢？\"",
+                                "\"嗯，那就先不上学了。\"",
+                                "\"有点突然，不过既然你这么决定，好吧。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_bye",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime中，玩家取消对话（或退学后没有任何可入学的学校）时，作为 closing line 显示。场景：本次谈话结束，什么都没办或办完了，worker向玩家道别。内容要求：简短的告别语，不涉及入学话题的结果，不要开启新话题。说话者：女性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"嗯，那我去忙了。需要再叫我。\"",
+                                "\"好，那就这样。拜拜。\"",
+                                "\"决定了就好，有事随时找我哦。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_start",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime一开始，玩家向'目前没有在上学'的worker提出'安排入学'话题时（事件按worker当前是否在校分别检索本条目与_start_enrolled；每次进入都会重新抽取）。场景：玩家问worker愿不愿意去上学。worker尚未得知具体结果，只是被征询意见。内容要求：对'被安排去上学'话题的通用反应，可以表示愿意、惊讶、犹豫或让玩家决定，男性语气应相对收敛直接。说话者：男性NPC（当前未在校），听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"上学？行，你要安排的话我没意见。\"",
+                                "\"都这个岁数了还上学……算了，听你的。\"",
+                                "\"学校啊……有正经课上的话，倒也不是坏事。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_start_enrolled",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime一开始，玩家向'已经在全日制上学'的worker提出话题时（接下来是转学或退学的询问；事件按worker当前是否在校分别检索本条目与_start）。场景：worker已经是在校学生，玩家再次谈起上学安排。内容要求：对'又被谈起上学的事'的反应，可表达疑惑、猜到要换学校、或表示现在的学校还可以等，男性语气应相对收敛直接。说话者：男性NPC（当前在校），听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"嗯？怎么突然说起上学的事。\"",
+                                "\"要换学校吗？还是……别的事？\"",
+                                "\"学校我还上得好好的，怎么了？\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_enrolled",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime中，玩家为worker选定了学校并成功办妥全日制入学之后。场景：worker得知自己即将成为某学校的全日制学生。内容要求：对入学成功的反应，可表达接受、务实态度、简单感谢等，男性语气应相对收敛直接，不涉及具体学校名。说话者：男性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"办好了？行，我会去的。\"",
+                                "\"嗯，学生生涯是吧……我会认真上的。\"",
+                                "\"既然报了名，就不会白白浪费。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_withdrawn",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime中，玩家为worker成功办理退学之后（之后通常会接着询问要不要去别的学校）。场景：worker得知自己退学了。内容要求：对退学成功的反应，可表达释然、务实、轻微可惜、对接下来安排的好奇等，不应过度悲伤或抱怨玩家，男性语气应相对收敛直接。说话者：男性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"退了也好，省得两头跑。\"",
+                                "\"嗯，退学了。接下来听你安排。\"",
+                                "\"说实话有点可惜，不过没办法。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_base",
+                "Entry": {
+                    "ID": "Opt_ArrangeJoin_StudentFullTime_bye",
+                    "_comment": "触发时机：事件Opt_ArrangeJoin_StudentFullTime中，玩家取消对话（或退学后没有任何可入学的学校）时，作为 closing line 显示。场景：本次谈话结束，什么都没办或办完了，worker向玩家道别。内容要求：简短的告别语，不涉及入学话题的结果，不要开启新话题，男性语气应相对收敛直接。说话者：男性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "responses": [
+                                "\"嗯，那就这样。我先去忙了。\"",
+                                "\"好，有需要再找我。\"",
+                                "\"行，那就先这样。\""
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

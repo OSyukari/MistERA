@@ -1,5 +1,5 @@
 {
-    "_doc": "Arrange (or quit) a full-time job - one of the tag-driven arrange events, see Opt_ArrangeJoin.json for the shared flow and keys.",
+    "_doc": "Arrange (or quit) a full-time job - one of the tag-driven arrange events, see Opt_ArrangeJoin.json for the shared flow and keys. Same flow as Opt_ArrangeJoin_StudentFullTime: holding a post opens on quitting it, then offers a new one.",
     "Events": {
         "list": [
             {
@@ -30,11 +30,12 @@
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "_comment": "Join or leave: holding a full-time post with leave options -> leave branch, else join.",
+                        "_comment": "Join or leave: holding a full-time post with leave options -> leave branch, else join. The two options also fetch different opening reactions into $kojo_start$ (shown above both question texts): _held already works (kojo Opt_ArrangeJoin_WorkFullTime_start_employed), _join does not (kojo Opt_ArrangeJoin_WorkFullTime_start).",
                         "options": [
                             {
                                 "option": "_held",
                                 "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_start_employed", "kojo_start" ] },
                                     { "Type": "LeaveHeldFactionsByTag", "arguments": [ "leaveOptions", "worker", "memberType_work_fullTime", "heldMemberships" ] },
                                     { "Type": "ExistStoredOptions", "arguments": [ "leaveOptions" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "leave_ask" ] }
@@ -43,6 +44,7 @@
                             {
                                 "option": "_join",
                                 "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_start", "kojo_start" ] },
                                     { "Type": "JoinReachableFactionsByTag", "arguments": [ "arrangeOptions", "worker", "memberType_work_fullTime" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrange_ask" ] }
                                 ]
@@ -52,27 +54,42 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "leave_ask",
-                        "_comment": "Picking a loaded leave option runs its leave callback, then (loadOptionsResults) goes on to rejoin.",
+                        "_comment": "Picking a loaded leave option runs its leave callback, then (loadOptionsResults) fetches the quitting reaction kojo and shows it, then goes on to rejoin.",
                         "UISpec": { "portraitRefKey": "worker" },
                         "question": "Opt_ArrangeJoin_WorkFullTime_leave_question",
                         "loadOptionsKey": "leaveOptions",
-                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "rejoin" ] } ],
+                        "loadOptionsResults": [
+                            { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_quit", "kojo_changed" ] },
+                            { "Type": "JumpToLabel", "arguments": [ "", "leave_changed" ] }
+                        ],
                         "options": [
                             {
                                 "option": "Opt_ArrangeJoin_Work_leave_cancel",
                                 "isDefaultCancel": true,
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_bye", "kojo_bye" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] }
+                                ]
                             }
                         ]
                     },
                     {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "leave_changed",
+                        "_comment": "The quitting reaction ($kojo_changed$, fetched by leave_ask's loadOptionsResults), then the rejoin branch.",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "line": "Opt_ArrangeJoin_WorkFullTime_left",
+                        "nextEntryLabel": "rejoin"
+                    },
+                    {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "rejoin",
-                        "_comment": "After quitting: rebuild the job options. None (e.g. nothing reachable right now) -> end; the player can run the option again.",
+                        "_comment": "After quitting: rebuild the job options. None (e.g. nothing reachable right now) -> fetch the farewell kojo and end; the player can run the option again.",
                         "options": [
                             {
                                 "option": "_has_options",
                                 "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_start", "kojo_start" ] },
                                     { "Type": "JoinReachableFactionsByTag", "arguments": [ "arrangeOptions", "worker", "memberType_work_fullTime" ] },
                                     { "Type": "ExistStoredOptions", "arguments": [ "arrangeOptions" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrange_ask" ] }
@@ -80,7 +97,10 @@
                             },
                             {
                                 "option": "_no_options",
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_bye", "kojo_bye" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] }
+                                ]
                             }
                         ]
                     },
@@ -90,32 +110,35 @@
                         "UISpec": { "portraitRefKey": "worker" },
                         "question": "Opt_ArrangeJoin_WorkFullTime_question",
                         "loadOptionsKey": "arrangeOptions",
-                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_done" ] } ],
+                        "loadOptionsResults": [
+                            { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_hired", "kojo_changed" ] },
+                            { "Type": "JumpToLabel", "arguments": [ "", "arrange_done" ] }
+                        ],
                         "options": [
                             {
                                 "option": "Opt_ArrangeJoin_cancel",
                                 "isDefaultCancel": true,
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_WorkFullTime_bye", "kojo_bye" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] }
+                                ]
                             }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "arrange_done",
-                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here); $kojo_changed$ is the hiring reaction fetched there, $lastFactionChange$ the per-change capture of AppendFactionChange (MemberJoinHandler.LastFactionChangeStringKey - who is now what).",
                         "UISpec": { "portraitRefKey": "worker" },
-                        "line": "Opt_ArrangeJoin_Work_done"
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what).",
-                        "line": "$factionChangeString$",
+                        "line": "Opt_ArrangeJoin_WorkFullTime_done",
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "arrange_cancel",
-                        "line": "",
+                        "_comment": "The player cancelled (or nothing is reachable after quitting): show the farewell kojo ($kojo_bye$, fetched by the cancel paths) and close.",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "line": "Opt_ArrangeJoin_WorkFullTime_bye",
                         "isLast": true
                     }
                 ]
@@ -126,8 +149,11 @@
         "Entries": {
             "zh-cn": {
                 "Opt_ArrangeJoin_WorkFullTime": "安排全职工作",
-                "Opt_ArrangeJoin_WorkFullTime_question": "要让$worker.name$去哪里做全职工作？",
-                "Opt_ArrangeJoin_WorkFullTime_leave_question": "$worker.name$已经是$heldMemberships$了。要让$worker.name$辞职吗？"
+                "Opt_ArrangeJoin_WorkFullTime_question": "$kojo_start$\n要给$worker.name$安排哪里的全职工作？",
+                "Opt_ArrangeJoin_WorkFullTime_leave_question": "$kojo_start$\n$worker.name$已经是$heldMemberships$了。要让$worker.name$辞职吗？",
+                "Opt_ArrangeJoin_WorkFullTime_done": "$kojo_changed$\n\n已经为$worker.name$办好了入职手续。\n$lastFactionChange$",
+                "Opt_ArrangeJoin_WorkFullTime_left": "$kojo_changed$\n\n已经为$worker.name$办好了辞职手续。\n$lastFactionChange$",
+                "Opt_ArrangeJoin_WorkFullTime_bye": "$kojo_bye$"
             }
         }
     }

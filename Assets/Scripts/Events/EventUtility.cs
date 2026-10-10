@@ -1063,6 +1063,27 @@ public static class EventUtility
     }
 
     /// <summary>
+    /// Stores the GetKojoEntry executors' retrieved texts under AppendStrings[key]. storeMode: "" / "replace"
+    /// (default) overwrites an existing key - the loop-back-to-menu pattern re-runs the fetch every pass, so
+    /// Add would throw on the second pass; "append" adds to the existing list; "keep" leaves an existing
+    /// value untouched. No-op on empty texts.
+    /// </summary>
+    static void StoreKojoAppendStrings(EventInstance owner, string key, List<string> texts, string storeMode)
+    {
+        if (texts.Count < 1) return;
+        switch (storeMode)
+        {
+            case "append":
+                if (owner.AppendStrings.TryGetValue(key, out var existing)) { existing.AddRange(texts); return; }
+                break;
+            case "keep":
+                if (owner.AppendStrings.ContainsKey(key)) return;
+                break;
+        }
+        owner.AppendStrings[key] = texts;
+    }
+
+    /// <summary>
     /// Resolves an executor scope key: "self" = owner.Self; "selfAndFollowers" = owner.Self plus the player's
     /// party members (only when owner.Self is the player - nobody else has followers); anything else =
     /// owner.Targets[key]. Returns false if the key is not resolvable.
@@ -1313,7 +1334,8 @@ public static class EventUtility
                        // msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
                         //if (msg.message.Length > 0) texts.Add(msg.message);
                     }
-                    if (texts.Count > 0) owner.AppendStrings.Add(exec.arguments[3], texts);
+                    var storeMode = exec.arguments.Count >= 5 ? exec.arguments[4] : "";
+                    StoreKojoAppendStrings(owner, exec.arguments[3], texts, storeMode);
 
                     Debug.Log($"GetKojoEntry result {exec.arguments[3]} : {String.Join(" | ", texts)}");
                     return texts.Count > 0;
@@ -1364,7 +1386,8 @@ public static class EventUtility
                         // msg.message = msg.message.Replace("$self$", i.FirstName).Replace("$target$", randtarget.FirstName);
                         //if (msg.message.Length > 0) texts.Add(msg.message);
                     }
-                    if (texts.Count > 0) owner.AppendStrings.Add(exec.arguments[3], texts);
+                    var storeMode = exec.arguments.Count >= 5 ? exec.arguments[4] : "";
+                    StoreKojoAppendStrings(owner, exec.arguments[3], texts, storeMode);
                     return texts.Count > 0;
                 }
                 else return false;

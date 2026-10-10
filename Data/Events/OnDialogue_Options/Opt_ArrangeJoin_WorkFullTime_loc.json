@@ -6,8 +6,10 @@
         "Entries": {
             "en-us": {
                 "Opt_ArrangeJoin_WorkFullTime": "Arrange a full-time job",
-                "Opt_ArrangeJoin_WorkFullTime_question": "Where should $worker.name$ work full-time?",
-                "Opt_ArrangeJoin_WorkFullTime_leave_question": "$worker.name$ already works as $heldMemberships$. Should $worker.name$ quit?"
+                "Opt_ArrangeJoin_WorkFullTime_question": "$kojo_start$\nWhere should $worker.name$ work full-time?",
+                "Opt_ArrangeJoin_WorkFullTime_leave_question": "$kojo_start$\n$worker.name$ already works as $heldMemberships$. Should $worker.name$ quit?",
+                "Opt_ArrangeJoin_WorkFullTime_done": "$kojo_changed$\n\n$worker.name$ is now hired.\n$lastFactionChange$",
+                "Opt_ArrangeJoin_WorkFullTime_left": "$kojo_changed$\n\n$worker.name$ has quit.\n$lastFactionChange$"
             }
         }
     }

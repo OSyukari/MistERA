@@ -1,5 +1,5 @@
 {
-    "_doc": "Arrange or cancel recreation memberships (sports club, salon...) for one of the player's own people. Unlike the work arrange flows (one job at a time, so leaving comes first), memberships never conflict: joining and leaving are independent menu choices, and the menu comes back after every change (the lists are rebuilt each time an option is picked, so they always reflect the change) until the player picks 算了.",
+    "_doc": "Arrange or cancel recreation memberships (sports club, salon...) for one of the player's own people. Unlike the work arrange flows (one job at a time, so leaving comes first), memberships never conflict: joining and leaving are independent menu choices, and the menu comes back after every change (the lists are rebuilt each time an option is picked, so they always reflect the change) until the player picks 算了. Every menu pass goes through menu_check, whose options refresh $kojo_menu$ (GetKojoEntry - the worker's Opt_ArrangeJoin_Recreation_menu kojo, shown above the menu text) and, while memberships are held, $heldMemberships$ (LeaveHeldFactionsByTag's heldAppendKey, shown below the menu text), so both always reflect the state after the latest change.",
     "Events": {
         "list": [
             {
@@ -29,9 +29,34 @@
                 ],
                 "events": [
                     {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "menu_check",
+                        "_comment": "Menu entry point - every path back to the menu jumps here. The held-membership description under the menu text only makes sense while memberships are held, so branch on the worker's live state: _has_memberships first refreshes $heldMemberships$ (LeaveHeldFactionsByTag's heldAppendKey) and routes to the menu variant with the description; both options refresh $kojo_menu$ (GetKojoEntry) before jumping. The real leave flow rebuilds leaveOptions at menu pick time - leaveOptionsPreview here is a throwaway.",
+                        "options": [
+                            {
+                                "option": "_has_memberships",
+                                "target_chara_conditions": {
+                                    "worker": [ { "parameters": [ "holdsMemberTypeByTag", "memberType_recreation" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_Recreation_menu", "kojo_menu" ] },
+                                    { "Type": "LeaveHeldFactionsByTag", "arguments": [ "leaveOptionsPreview", "worker", "memberType_recreation", "heldMemberships" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "menu_held" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_memberships",
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_Recreation_menu", "kojo_menu" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "menu_plain" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
-                        "label": "menu",
-                        "_comment": "Join and leave are independent. 退会 is greyed out (invalidTooltip = the reason) while nothing is held.",
+                        "label": "menu_plain",
+                        "_comment": "(口上文)\\n说明文. Join and leave are independent. 退会 is greyed out (invalidTooltip = the reason) while nothing is held.",
                         "UISpec": { "portraitRefKey": "worker" },
                         "question": "Opt_ArrangeJoin_Recreation_menu",
                         "options": [
@@ -56,7 +81,45 @@
                             {
                                 "option": "Opt_ArrangeJoin_cancel",
                                 "isDefaultCancel": true,
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_Recreation_bye", "kojo_bye" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "menu_held",
+                        "_comment": "Same menu, plus the '(worker) is already a member of ...' description ($heldMemberships$, refreshed by menu_check's _has_memberships on every pass).",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "question": "Opt_ArrangeJoin_Recreation_menu_held",
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_Recreation_menu_join",
+                                "Results": [
+                                    { "Type": "JoinReachableFactionsByTag", "arguments": [ "joinOptions", "worker", "memberType_recreation" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "join_check" ] }
+                                ]
+                            },
+                            {
+                                "option": "Opt_ArrangeJoin_Recreation_menu_leave",
+                                "target_chara_conditions": {
+                                    "worker": [ { "parameters": [ "holdsMemberTypeByTag", "memberType_recreation" ] } ]
+                                },
+                                "invalidTooltip": "Opt_ArrangeJoin_Recreation_noMembership",
+                                "Results": [
+                                    { "Type": "LeaveHeldFactionsByTag", "arguments": [ "leaveOptions", "worker", "memberType_recreation" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "leave_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "Opt_ArrangeJoin_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_Recreation_bye", "kojo_bye" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
                             }
                         ]
                     },
@@ -83,51 +146,60 @@
                         "label": "join_none",
                         "UISpec": { "portraitRefKey": "worker" },
                         "line": "Opt_ArrangeJoin_Recreation_noJoin",
-                        "nextEntryLabel": "menu"
+                        "nextEntryLabel": "menu_check"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "join_ask",
-                        "_comment": "Picking a loaded option runs its join callback, then (loadOptionsResults) shows what changed.",
+                        "_comment": "Picking a loaded option runs its join callback, then (loadOptionsResults) fetches the join reaction kojo and shows what changed.",
                         "UISpec": { "portraitRefKey": "worker" },
                         "question": "Opt_ArrangeJoin_Recreation_question",
                         "loadOptionsKey": "joinOptions",
-                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "changed" ] } ],
+                        "loadOptionsResults": [
+                            { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_Recreation_joined", "kojo_changed" ] },
+                            { "Type": "JumpToLabel", "arguments": [ "", "changed" ] }
+                        ],
                         "options": [
                             {
                                 "option": "Opt_ArrangeJoin_Recreation_back",
                                 "isDefaultCancel": true,
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "menu" ] } ]
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "menu_check" ] } ]
                             }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
                         "label": "leave_ask",
-                        "_comment": "Picking a loaded option runs its leave callback (that membership only), then (loadOptionsResults) shows what changed.",
+                        "_comment": "Picking a loaded option runs its leave callback (that membership only), then (loadOptionsResults) fetches the leave reaction kojo and shows what changed.",
                         "UISpec": { "portraitRefKey": "worker" },
                         "question": "Opt_ArrangeJoin_Recreation_leave_question",
                         "loadOptionsKey": "leaveOptions",
-                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "changed" ] } ],
+                        "loadOptionsResults": [
+                            { "Type": "GetKojoEntry", "arguments": [ "worker", "self", "Opt_ArrangeJoin_Recreation_left", "kojo_changed" ] },
+                            { "Type": "JumpToLabel", "arguments": [ "", "changed" ] }
+                        ],
                         "options": [
                             {
                                 "option": "Opt_ArrangeJoin_Recreation_back",
                                 "isDefaultCancel": true,
-                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "menu" ] } ]
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "menu_check" ] } ]
                             }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "changed",
-                        "_comment": "$factionChangeString$ accumulates over the whole conversation (the handlers append one line per change, nothing clears it), so this line is the running summary of every change made so far - then back to the menu.",
+                        "_comment": "$kojo_changed$ is the reaction fetched by join_ask/leave_ask's loadOptionsResults; $factionChangeString$ accumulates over the whole conversation (the handlers append one line per change, nothing clears it), so this line is the running summary of every change made so far - then back to menu_check, which refreshes the menu (kojo + held list).",
+                        "UISpec": { "portraitRefKey": "worker" },
                         "line": "Opt_ArrangeJoin_Recreation_changed",
-                        "nextEntryLabel": "menu"
+                        "nextEntryLabel": "menu_check"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "end",
-                        "line": "",
+                        "_comment": "Shows the farewell kojo ($kojo_bye$, fetched by the 算了 options' Results) before the dialogue closes.",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "line": "Opt_ArrangeJoin_Recreation_end",
                         "isLast": true
                     }
                 ]
@@ -138,7 +210,8 @@
         "Entries": {
             "zh-cn": {
                 "Opt_ArrangeJoin_Recreation": "办理会员",
-                "Opt_ArrangeJoin_Recreation_menu": "要为$worker.name$办理什么？",
+                "Opt_ArrangeJoin_Recreation_menu": "$kojo_menu$\n要为$worker.name$办理什么？",
+                "Opt_ArrangeJoin_Recreation_menu_held": "$kojo_menu$\n要为$worker.name$办理什么？\n\n$worker.name$已经是以下地方的会员了：\n$heldMemberships$",
                 "Opt_ArrangeJoin_Recreation_menu_join": "办理会员",
                 "Opt_ArrangeJoin_Recreation_menu_leave": "退会",
                 "Opt_ArrangeJoin_Recreation_noMembership": "$worker.name$目前没有任何会员。",
@@ -146,7 +219,8 @@
                 "Opt_ArrangeJoin_Recreation_question": "要给$worker.name$办哪里的会员？",
                 "Opt_ArrangeJoin_Recreation_leave_question": "要退掉$worker.name$的哪个会员？",
                 "Opt_ArrangeJoin_Recreation_back": "返回",
-                "Opt_ArrangeJoin_Recreation_changed": "本次办理：\n$factionChangeString$",
+                "Opt_ArrangeJoin_Recreation_changed": "$kojo_changed$\n本次办理：\n$factionChangeString$",
+                "Opt_ArrangeJoin_Recreation_end": "$kojo_bye$",
                 "recreation_joinOption": "$memberType$",
                 "recreation_leaveOption": "让$name$退会"
             }

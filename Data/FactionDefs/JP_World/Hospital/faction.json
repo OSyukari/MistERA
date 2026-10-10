@@ -50,7 +50,7 @@
                     "membertype_jp_hospital_frontdesk"
                 ],
                 "_comment_joinableMemberTypes": "MemberTypes this faction can be joined as through the reachable-faction searches (FactionJoinUtility: Labor_Start admission, the join-by-tag dialogue options). Their joinHandler still decides who is admitted.",
-                "joinableMemberTypes": [ "membertype_jp_hospital_patient" ],
+                "joinableMemberTypes": [ "membertype_jp_hospital_patient", "membertype_jp_hospital_pharmacy" ],
                 "_comment_fallbackWorkers": "Per-shift staffing: headcount = total wanted on shift, maxFallback = most fallback workers used. templateIDs = CharaTemplateGenerators from JP_World/Characters/templates.json. Each fallback worker is generated for exactly one of these memberTypeIDs and stays pinned to it (Manageable_WorkerPool.assignedMemberTypes). Pharmacy/front desk reuse the nurse template until dedicated clerk portrait bases exist.",
                 "fallbackWorkers": [
                     { "memberTypeID": "membertype_jp_hospital_doctor_team_a", "headcount": 1, "maxFallback": 1, "templateID": "jp_hospital_doctor" },
@@ -335,10 +335,21 @@
                 "ID": "membertype_jp_hospital_pharmacy",
                 "_comment": "Parent of the pharmacy clerk shifts (MemberType hierarchy): never held - joining as it joins the first child. Shifts defined inline (childMemberTypes, first = default). Pharmacy clerk: single workCommand, so they never leave the pharmacy counter during their shift.",
                 "socialStandingKey": "membertype_jp_hospital_pharmacy",
-                "Tags": ["jp_hospital_staff", "pharmacy_clerk"],
+                "Tags": ["jp_hospital_staff", "pharmacy_clerk", "memberType_work_fullTime"],
                 "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
                 "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
                 "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
+                "_comment_joinHandler": "Arrange-a-job (Opt_ArrangeJoin_WorkFullTime, via joinableMemberTypes + the memberType_work_fullTime tag): joins the first shift (team_a). Inherited by the shifts, so leaving works from whichever shift is held.",
+                "joinHandler": {
+                    "$type": "JoinHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "work_post_joinOption",
+                    "bindTargetKey": "worker"
+                },
+                "leaveHandler": {
+                    "$type": "LeaveHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "work_post_leaveOption",
+                    "bindTargetKey": "worker"
+                },
                 "_comment_rota": "Same 12-hour Pitman rota as the doctors (see membertype_jp_hospital_doctor _comment_rota). Pay: day 1300 base; night 1490 = 12h average of base with the 25% late-night premium for 22:00-05:00.",
                 "childMemberTypes": [
                     {
@@ -373,7 +384,7 @@
                 "ID": "membertype_jp_hospital_frontdesk",
                 "_comment": "Parent of the front desk shifts (MemberType hierarchy): never held - joining as it joins the first child. Shifts defined inline (childMemberTypes, first = default). Front desk: single workCommand, so they never leave reception during their shift.",
                 "socialStandingKey": "membertype_jp_hospital_frontdesk",
-                "Tags": ["jp_hospital_staff", "receptionist"],
+                "Tags": ["jp_hospital_staff", "receptionist","memberType_work_fullTime"],
                 "isMember": true, "isPrisoner": false, "isManager": false, "isHidden": false,
                 "canBeTransferred": true, "canBeLiberated": false, "canBeRescued": false,
                 "skipsJobDispatch": false, "isPurgedOnPartyCleanup": false, "isDisplayableInFactionUI": true, "participatesInCombat": true,
