@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Opt_ArrangeJoin_WorkPartTime.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Opt_ArrangeJoin_WorkPartTime": "Arrange a part-time job",
+                "Opt_ArrangeJoin_WorkPartTime_question": "Where should $worker.name$ work part-time?",
+                "Opt_ArrangeJoin_WorkPartTime_leave_question": "$worker.name$ already works part-time as $heldMemberships$. Should $worker.name$ quit?"
+            }
+        }
+    }
+}

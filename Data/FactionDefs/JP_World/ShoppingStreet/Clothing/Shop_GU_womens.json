@@ -1,0 +1,283 @@
+{
+    "_doc": "Womenswear store on the JP_ShoppingStreet mall floor. Primary store name 'G○' is a parody of the real chain GU. Dictionary carries alternate candidates (_alt1.._alt6), each with its own _tooltip explaining the real brand it parodies - pick one, delete the rest. Item tooltips reference the primary name via '「G○」'; if another name is chosen, adjust those strings. Sellable via salesInventory (currency_JPY). Tooltips live under '<id>_tooltip' keys (see Item_Base.Tooltip).",
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_jp_gu_offshoulder_onepiece",
+            "displayName":"G○ Off-Shoulder One-Piece",
+            "Tags":["rarity_common"],
+            "value":6800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_floral_longdress",
+            "displayName":"G○ Floral Maxi Dress",
+            "Tags":["rarity_common"],
+            "value":7900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm","Lower","Leg","Leg"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_chiffon_blouse",
+            "displayName":"G○ Lace Chiffon Blouse",
+            "Tags":["rarity_common"],
+            "value":3900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_highwaist_skirt",
+            "displayName":"G○ High-Waist Skirt",
+            "Tags":["rarity_common"],
+            "value":4500,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_pleated_miniskirt",
+            "displayName":"G○ Pleated Miniskirt",
+            "Tags":["rarity_common"],
+            "value":3200,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_skinny_jeans",
+            "displayName":"G○ Skinny Jeans",
+            "Tags":["rarity_common"],
+            "value":4900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"]
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":3,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_cardigan",
+            "displayName":"G○ Loose Cardigan",
+            "Tags":["rarity_common"],
+            "value":5500,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Outer",
+                        "coverSlot":["Arm","Arm"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_ribbon_headband",
+            "displayName":"G○ Ribbon Headband",
+            "Tags":["rarity_common"],
+            "value":1600,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Hair"],
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_ballet_flats",
+            "displayName":"G○ Ballet Flats",
+            "Tags":["rarity_common"],
+            "value":4400,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Feet"],
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_gu_lace_ankle_socks",
+            "displayName":"G○ Lace Ankle Socks",
+            "Tags":["rarity_common"],
+            "value":1200,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet"],
+                        "equipLayer":"Skin",
+                        "coverSlot":["Feet"],
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+        "shop_jp_gu_name":"极○",
+        "shop_jp_gu_name_tooltip":"坐落在商场一角的少女系快时尚品牌「极○」。原型：GU（极优），卖平价基础款女装——T恤、牛仔、连衣裙、开衫、平底鞋一应俱全。被圆掉的那个字母，据说是被律师函要求圆回去的。",
+        "shop_jp_gu_name_alt1":"优衣○",
+        "shop_jp_gu_name_alt1_tooltip":"「优衣○」。原型：UNIQLO（优衣库）。卖基础款女装与家居服：摇粒绒、打底衫、T恤、牛仔裤、无痕内衣。加盟条件是店员必须能把一件摇粒绒在三十秒内叠成完美的立方体。",
+        "shop_jp_gu_name_alt2":"飒○",
+        "shop_jp_gu_name_alt2_tooltip":"「飒○」。原型：ZARA。卖当季流行款：碎花长裙、通勤裤装、约会系上衣。每两周上一次新，翻译过程中会损失约七成的面料预算和九成的原版尊严。",
+        "shop_jp_gu_name_alt3":"ハ○ーズ",
+        "shop_jp_gu_name_alt3_tooltip":"「ハ○ーズ」(HO○YS)。原型：Honeys（ハニーズ）。卖平价少女系女装：碎花裙、针织开衫、糖果色小物与短袜。店里的每位客人都会被店员称为『蜂蜜』，连六十岁的大叔也不例外。",
+        "shop_jp_gu_name_alt4":"IN○NI",
+        "shop_jp_gu_name_alt4_tooltip":"「IN○NI」。原型：INGNI。卖涉谷系约会女装：露肩上衣、迷你裙、紧身高腰裤。品牌名的意思是『这样那样』（あれこれ），设计理念也是这样那样。",
+        "shop_jp_gu_name_alt5":"L○WRYS FARM",
+        "shop_jp_gu_name_alt5_tooltip":"「L○WRYS FARM」。原型：LOWRYS FARM。卖原宿系休闲女装、连衣裙与穿搭小物。农场里不种菜，种的是穿搭杂志推荐款。",
+        "shop_jp_gu_name_alt6":"WE○O",
+        "shop_jp_gu_name_alt6_tooltip":"「WE○O」。原型：WEGO。卖平价潮流女装与杂货，迷你裙和印花T恤是招牌。店名本来就只有四个字母，再圆掉一个之后，读出来的音近乎一声叹息。",
+
+        "clothing_jp_gu_offshoulder_onepiece":"露肩连衣裙",
+        "clothing_jp_gu_offshoulder_onepiece_tooltip":"「G○」本季主打的一字领露肩连衣裙。柔软的黑丝绒布料顺着锁骨滑落，只靠纤细的松紧带勉强挂在胸口，行走间衣料会随着呼吸轻轻起伏，仿佛下一秒就要从肩头溜走。裙摆及膝，侧开衩刚好到大腿最柔软的弧度，坐下的瞬间便悄无声息地敞开一线春光。",
+
+        "clothing_jp_gu_floral_longdress":"碎花长裙",
+        "clothing_jp_gu_floral_longdress_tooltip":"印满小苍兰图案的轻薄长裙，布料薄得能透出体温。高开衩的下摆随着每一步若隐若现地掀起，露出被裙内阴暗衬得愈发白皙的小腿与膝弯。腰间缎带勒出纤细的腰线，把视线一路引向布料下起伏的曲线。",
+
+        "clothing_jp_gu_chiffon_blouse":"蕾丝雪纺衫",
+        "clothing_jp_gu_chiffon_blouse_tooltip":"米白色的雪纺衬衫，领口和袖口缀着半透明的蕾丝花边。布料薄透轻软，白色内衣的轮廓会在光线下若隐若现，弯腰俯身时领口便垂出一道深不见底的沟壑。解开的每颗纽扣都像是一道无声的邀请。",
+
+        "clothing_jp_gu_highwaist_skirt":"高腰裙",
+        "clothing_jp_gu_highwaist_skirt_tooltip":"「G○」的高腰铅笔裙，弹力布料紧紧包裹着腰胯，把臀部的轮廓描摹得一览无余。裙摆在膝上一掌宽处收口，迈步时腿侧的面料被绷出紧致的褶痕，每走一步，裙下暗藏的雪白肌肤便闪现一次。",
+
+        "clothing_jp_gu_pleated_miniskirt":"百褶迷你裙",
+        "clothing_jp_gu_pleated_miniskirt_tooltip":"裙长短得危险的百褶迷你裙，仅以胯骨勉强挂住。百褶的裙摆轻盈地随动作翻飞，微风、下蹲、抬手取物……任何一点意外都会让裙底风光尽收眼底。内衬很浅，仿佛设计者从一开始就没打算遮挡什么。",
+
+        "clothing_jp_gu_skinny_jeans":"紧身牛仔裤",
+        "clothing_jp_gu_skinny_jeans_tooltip":"洗得发白的浅色紧身牛仔裤，弹力丹宁布从腰际一路密不透风地勒到脚踝，把双腿修长的线条和臀肉的形状一寸不落地刻画出来。金属纽扣和小小的皮革标牌正卡在小腹最敏感的位置，每次坐下都能感觉到那点冰凉。",
+
+        "clothing_jp_gu_cardigan":"宽松开衫",
+        "clothing_jp_gu_cardigan_tooltip":"奶油色的宽松针织开衫，细软的毛线松松垮垮地垂坠在身上。领口开得极大，歪着身子时整侧肩膀甚至侧乳都会从衣襟里溜出来；半褪到肩下的穿法更是店员推荐的『撒娇风格』——像随时准备被人从背后拥进怀里一样。",
+
+        "clothing_jp_gu_ribbon_headband":"缎带发箍",
+        "clothing_jp_gu_ribbon_headband_tooltip":"樱粉色缎带缠绕的发箍，末端垂下两条长长的飘带。系在发间时会衬得脸颊格外娇小，也让人不自觉地想把那两条缎带从发间抽出来，另作他用。",
+
+        "clothing_jp_gu_ballet_flats":"芭蕾平底鞋",
+        "clothing_jp_gu_ballet_flats_tooltip":"「G○」的浅口芭蕾平底鞋，缎面鞋头缀着一枚小小的蝴蝶结。鞋口开得极浅，踮脚时脚背绷出优美的弧线，脚跟会俏皮地微微滑出鞋外。薄软的鞋底几乎不隔什么，能清楚感觉到脚下每一寸地面。",
+
+        "clothing_jp_gu_lace_ankle_socks":"蕾丝短袜",
+        "clothing_jp_gu_lace_ankle_socks_tooltip":"袜口缀着一圈精致蕾丝的白色短袜。薄薄的棉纱贴着脚踝，正正卡在袜靴与裙摆之间那截最惹人遐想的裸露肌肤上，仿佛故意要提醒视线：这里，刚好是绝对领域的起点。"
+            },
+            "en-us":
+            {
+        "shop_jp_gu_name":"G○",
+
+        "shop_jp_gu_name_tooltip":"'G○', a girly fast-fashion boutique in a corner of the mall. Parody of GU: sells budget-basics womenswear — tees, denim, dresses, cardigans, flats. The rounded-off letter was rounded off under threat of legal letters.",
+
+        "shop_jp_gu_name_alt1":"UNI○LO",
+        "shop_jp_gu_name_alt1_tooltip":"'UNI○LO'. Parody of UNIQLO: basics and loungewear — fleece, layering tops, tees, jeans, seamless underwear. Franchise requirement: every clerk must fold a fleece into a perfect cube in thirty seconds.",
+        "shop_jp_gu_name_alt2":"ZA○A",
+        "shop_jp_gu_name_alt2_tooltip":"'ZA○A'. Parody of ZARA: current-season florals, commuter tailoring and date-night tops, restocked every two weeks — losing about seventy percent of the fabric budget and ninety percent of the original's dignity in translation.",
+        "shop_jp_gu_name_alt3":"HO○YS",
+        "shop_jp_gu_name_alt3_tooltip":"'HO○YS'. Parody of Honeys: budget girly fashion — floral dresses, knit cardigans, candy-colored trinkets and socks. Every customer is addressed as 'honey' by the staff, including the sixty-year-old salarymen.",
+        "shop_jp_gu_name_alt4":"IN○NI",
+        "shop_jp_gu_name_alt4_tooltip":"'IN○NI'. Parody of INGNI: Shibuya-girl datewear — off-shoulder tops, miniskirts, high-waist skinnies. The name means 'this and that' (あれこれ); so does the design philosophy.",
+        "shop_jp_gu_name_alt5":"L○WRYS FARM",
+        "shop_jp_gu_name_alt5_tooltip":"'L○WRYS FARM'. Parody of LOWRYS FARM: Harajuku casual wear, dresses and outfit trinkets. The farm grows no vegetables — only looks recommended by fashion magazines.",
+        "shop_jp_gu_name_alt6":"WE○O",
+        "shop_jp_gu_name_alt6_tooltip":"'WE○O'. Parody of WEGO: budget street fashion and trinkets, miniskirts and printed tees as the house specialties. The name was only four letters to begin with; rounding one off makes it read like a soft sigh.",
+
+        "clothing_jp_gu_offshoulder_onepiece":"Off-Shoulder One-Piece",
+        "clothing_jp_gu_offshoulder_onepiece_tooltip":"G○'s seasonal centerpiece: a one-shoulder bared velvet dress in soft black. The plush fabric slides down from the collarbone, held to the chest by only a slender elastic band that rises and falls with every breath, as if it might slip off the shoulder at any moment. The knee-length hem is slit to the softest curve of the thigh, opening a line of pale skin the instant its wearer sits down.",
+
+        "clothing_jp_gu_floral_longdress":"Floral Maxi Dress",
+        "clothing_jp_gu_floral_longdress_tooltip":"A gauzy maxi dress printed with little freesia blossoms, thin enough to betray the warmth beneath. The high slit lifts with every step, flashing calves and the back of the knee made all the fairer against the dress's shadowed interior. A satin ribbon cinches the waist, guiding the eye along every curve the fabric traces.",
+
+        "clothing_jp_gu_chiffon_blouse":"Lace Chiffon Blouse",
+        "clothing_jp_gu_chiffon_blouse_tooltip":"An ivory chiffon blouse with translucent lace at the collar and cuffs. The gauzy weave lets the outline of white lingerie ghost through whenever the light catches it, and leaning forward spills the neckline into a fathomless shadow between the breasts. Every undone button reads as a silent invitation.",
+
+        "clothing_jp_gu_highwaist_skirt":"High-Waist Skirt",
+        "clothing_jp_gu_highwaist_skirt_tooltip":"A high-waisted pencil skirt whose stretch weave hugs from waist to hips, sketching the shape of the rear in unsparing detail. The hem ends a hand's width above the knee; with every stride the fabric strains into taut pleats, and a flash of hidden skin flickers beneath the hem.",
+
+        "clothing_jp_gu_pleated_miniskirt":"Pleated Miniskirt",
+        "clothing_jp_gu_pleated_miniskirt_tooltip":"A pleated miniskirt of frankly dangerous length, hanging on by the jut of the hips alone. The featherweight hem flutters with every motion — a breeze, a crouch, a reach for a high shelf — any small accident offers the view beneath in full. The lining is scant; the designer never meant to hide much.",
+
+        "clothing_jp_gu_skinny_jeans":"Skinny Jeans",
+        "clothing_jp_gu_skinny_jeans_tooltip":"Faded light-wash skinny jeans in stretchy denim, cinching from waist to ankle without a breath of slack, recording every line of the legs and the round of the rear in minute detail. The metal button and tiny leather patch sit right on the most sensitive spot of the lower belly — a point of coolness felt every time its wearer sits.",
+
+        "clothing_jp_gu_cardigan":"Loose Cardigan",
+        "clothing_jp_gu_cardigan_tooltip":"A cream knit cardigan, soft and slouchy, draping loosely off the body. The collar gapes wide: tilt sideways and an entire shoulder — even the side of the breast — slips free of the lapels. The clerk recommends wearing it half off the shoulder as the 'coquettish look', like someone perpetually ready to be embraced from behind.",
+
+        "clothing_jp_gu_ribbon_headband":"Ribbon Headband",
+        "clothing_jp_gu_ribbon_headband_tooltip":"A headband wrapped in sakura-pink satin, its ends trailing two long streamers. Worn in the hair it makes the face look delicately small — and makes one want to draw those ribbons out of the hair and put them to other uses.",
+
+        "clothing_jp_gu_ballet_flats":"Ballet Flats",
+        "clothing_jp_gu_ballet_flats_tooltip":"G○'s shallow ballet flats, satin toes crowned with a tiny bow. The vamp sits so low that rising on tiptoe draws the instep into a lovely arch and lets the heel slip teasingly out of the shoe. The thin soft soles barely separate skin from ground — every inch of it felt.",
+
+        "clothing_jp_gu_lace_ankle_socks":"Lace Ankle Socks",
+        "clothing_jp_gu_lace_ankle_socks_tooltip":"White ankle socks finished with a delicate ring of lace. The thin cotton hugs the ankle, planted precisely on that strip of bare skin between boot shaft and hem — the stretch that most invites the imagination — as if deliberately pointing out: here, exactly here, is where the absolute territory begins."
+            }
+        }
+    }
+
+}

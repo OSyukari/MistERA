@@ -81,7 +81,7 @@ public class ActionPackage_DialogueEvent : ActionPackage
 
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         var copy = new ActionPackage_DialogueEvent(job, targetCOM, ReceiverRefs.Count > 0 ? ReceiverRefs[0] : -1, nameOverwrite);
         copy.SetVariantID(this.validVariant);

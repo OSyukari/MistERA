@@ -11,6 +11,8 @@ public class NPCInit
     public FactionInit Homefaction = null;
     public FactionInit TempHomefaction = null;
     public List<FactionInit> Workfactions = new List<FactionInit>();
+    /// <summary>Recreation memberships (Character_Factions.AddRecreationFaction) - factionID + guestStatus only; never a spawn candidate.</summary>
+    public List<FactionInit> Recreationfactions = new List<FactionInit>();
 
     // for spawning, homefaction > temphome > works, first valid one wins
 

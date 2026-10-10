@@ -154,7 +154,7 @@ public class ActionPackage_PathTo : ActionPackage
     }
     //[JsonIgnore] public override string DisplayName { get { return targetCOM.DisplayName(COMVariantID); } }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         return this;
     }

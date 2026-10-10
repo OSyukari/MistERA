@@ -579,7 +579,9 @@ public class TradeManager
     {
         if (!owner.isPlayerFaction || c == null) return;
 
-        foreach (var workFaction in c.FactionManager.WorkFactions)
+        // recreation memberships (gym, salon...) are billed the same way; they never track a dispatcher, so their
+        // source is always the priority home (GetWorkFactionSourceOrDefault's fallback)
+        foreach (var workFaction in c.FactionManager.WorkFactions.Concat(c.FactionManager.RecreationFactions))
         {
             if (workFaction == null || workFaction == owner) continue;
             var status = workFaction.GetMemberType(c);
@@ -602,6 +604,31 @@ public class TradeManager
     {
         if (!owner.isPlayerFaction) return;
         foreach (var c in owner.ManagedChara) EnsureMembershipFeeObligationFor(c);
+    }
+
+    // ---------------------------------------------------------------------
+    // Recreation visit fee helper (operates over Obligations.OfType<Obligation_ActivityFee>())
+    // ---------------------------------------------------------------------
+
+    /// <summary>
+    /// Finds or creates the Obligation_ActivityFee this (paying) faction owes venue for its characters' visits there -
+    /// one per venue, Daily (settled at the end of the day), firing the membership fee's payment events. Each visit's
+    /// entrance fee is accrued once by RecreationUtility.BillVisitHour.
+    /// </summary>
+    public Obligation_ActivityFee GetOrCreateActivityFeeObligation(Manageable venue)
+    {
+        var existing = Obligations.OfType<Obligation_ActivityFee>().FirstOrDefault(x => x.targetFactionID == venue.ID);
+        if (existing != null) return existing;
+
+        var obligation = new Obligation_ActivityFee();
+        obligation.obligationID = Guid.NewGuid().ToString();
+        obligation.TargetFaction = venue;
+        obligation.cadence = PaymentCadence.Daily;
+        obligation.onPaidEventID = "OnMembershipFeePaid";
+        obligation.onFailedEventID = "OnMembershipFeeFailed";
+        Obligations.Add(obligation);
+        NotifyTargetOfObligation(obligation);
+        return obligation;
     }
 
     // ---------------------------------------------------------------------

@@ -1,0 +1,61 @@
+{
+    "_doc": "Generic gathering-failed events of recreation activities, fired from code (Job_Activity) - no trigger of their own. An activity picks one with gatherFailedEventID (RecreationActivity / RecreationOfferDef; \"\" = Recreation_GatherFailed_Stay) - or names its own. Fired once when the gathering fails at T+30 (no NPC participant there, or a mandatory participant missing), and again for each latecomer reaching the gather room afterwards (isLate). The consequences are this event's own Results. SELF ONLY DECIDES VISIBILITY (the player when involved, forced on screen) - use the targets: participants / mandatory / optional / host / <role IDs> / waited (in the gather room at the failure) / late (the original fire: who was still missing; a late fire: the latecomer) / player. AppendStrings: isLate (late fire only), hasWaited / hasLate (when those targets are non-empty), activityFailed, activityName.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Recreation_GatherFailed_Stay",
+                "_comment": "No consequence: the bookings stay, so everyone sandboxes the venue alone until the visit is over (the job never pulls them in again).",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "a latecomer", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
+                            { "option": "some waited for the missing", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["hasWaited"] }, { "Type": "ExistAppendStrings", "arguments": ["hasLate"] }, { "Type": "JumpToLabel", "arguments": ["", "waited_late"] } ] },
+                            { "option": "nobody came", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "nobody"] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "Recreation_GatherFailed_Stay_late" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "waited_late", "isLast": true, "line": "Recreation_GatherFailed_Stay_waited" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "nobody", "isLast": true, "line": "Recreation_GatherFailed_nobody" }
+                ]
+            },
+            {
+                "ID": "Recreation_GatherFailed_Leave",
+                "_comment": "Those who waited give up and leave: their bookings are cancelled (CancelRecreationBooking on waited, the booking in effect now) - their behavior tree sends them home. A latecomer's booking is cancelled the same way (CancelRecreationBooking on late).",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "a latecomer", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
+                            { "option": "some waited for the missing", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["hasWaited"] }, { "Type": "ExistAppendStrings", "arguments": ["hasLate"] }, { "Type": "JumpToLabel", "arguments": ["", "waited_late"] } ] },
+                            { "option": "nobody came", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "nobody"] } ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "Recreation_GatherFailed_Leave_late",
+                        "Results": [ { "Type": "CancelRecreationBooking", "arguments": ["late", "", "now"] } ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "waited_late", "isLast": true, "line": "Recreation_GatherFailed_Leave_waited",
+                        "Results": [ { "Type": "CancelRecreationBooking", "arguments": ["waited", "", "now"] } ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "nobody", "isLast": true, "line": "Recreation_GatherFailed_nobody",
+                        "Results": [ { "Type": "CancelRecreationBooking", "arguments": ["waited", "", "now"] } ]
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Recreation_GatherFailed_nobody": "约定的时间已经过了半个小时，却没有人来参加$activityName$，只好取消了。",
+                "Recreation_GatherFailed_Stay_waited": "$waited.name$等了半个小时，$late.name$还是没有来，$activityName$只好取消了。",
+                "Recreation_GatherFailed_Stay_late": "$late.name$赶到时，$activityName$早已取消了。",
+                "Recreation_GatherFailed_Leave_waited": "$waited.name$等了半个小时，$late.name$还是没有来，只好先离开了。",
+                "Recreation_GatherFailed_Leave_late": "$late.name$赶到时已经太晚了，$activityName$早已取消，等待的人也都离开了。"
+            }
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for recreation_notices.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Recreation_BookingChanged_EV01": "$self.name$'s plans:\n$bookingText$"
+            }
+        }
+    }
+}

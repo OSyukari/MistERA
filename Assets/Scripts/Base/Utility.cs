@@ -114,6 +114,35 @@ public static class Utility
         text.SetExternalTooltip(tooltip);
     }
 
+    /// <summary>
+    /// Fills text with c's standing in a recreation faction (Character_Factions.RecreationFactions); the tooltip lists
+    /// every sibling of c's MemberType there (the other options of the same membership).
+    /// </summary>
+    public static void FillRecreationFactionRect(scr_HoverableText text, Manageable faction, Character_Trainable c, string extraTooltip, Manageable highlightFaction = null)
+    {
+        if (faction == null || c == null)
+        {
+            text.SetText(WrapTextColor(" - ", scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
+            return;
+        }
+
+        bool dim = highlightFaction != null && faction != highlightFaction && !faction.isPlayerFaction;
+        string name = faction.GetCharaSocialStandingName(c);
+        if (dim) name = WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color);
+        text.SetText(name, false, extraTooltip);
+
+        string tooltip = faction.GetCharaSocialStandingTooltip(c);
+
+        var member = faction.GetMemberType(c);
+        var siblings = member == null ? null : member.GetSiblings();
+        if (siblings != null && siblings.Count > 0)
+        {
+            tooltip += "\n\n" + LocalizeDictionary.QueryThenParse("management_faction_recreation_siblings_tooltip");
+            foreach (var sibling in siblings) tooltip += "\n- " + sibling.DisplayName;
+        }
+        text.SetExternalTooltip(tooltip);
+    }
+
     public static string GetFactionDetail(Manageable faction, Character_Trainable c)
     {
         bool shouldWork = c.ShouldWorkFor(faction, out string strikeReason);

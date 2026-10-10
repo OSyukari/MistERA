@@ -359,7 +359,7 @@ public class ActionPackage_ItemUse_Recording : ActionPackage_ItemUse
 
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         ActionPackage_ItemUse_Recording copy = new ActionPackage_ItemUse_Recording(job, targetCOM, ItemInstance, DoerRefs, ReceiverRefs, masterRef);
         copy.SetVariantID(this.validVariant);

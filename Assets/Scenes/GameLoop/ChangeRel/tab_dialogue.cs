@@ -203,6 +203,8 @@ public class tab_dialogue : MonoBehaviour
 
             string optionName = text.Text.text;
             var npc = cm.CurrentTarget;
+            // the talked-to character's personality may play its own event instead (first valid override, else the default)
+            if (npc != null && npc != player) instance = EventUtility.ResolveDialogueOverride(instance, ev.ID, npc);
             var talkCOM = scr_System_Serializer.current.GetByNameOrID_COM(ActionPackage_DialogueEvent.TalkCOMID);
             if (talkCOM == null) Debug.LogError($"Button_DialogueEvent: cannot find {ActionPackage_DialogueEvent.TalkCOMID}, advancing time without talk package");
 
@@ -217,7 +219,7 @@ public class tab_dialogue : MonoBehaviour
                 playerjob.AddPackage(new List<ActionPackage>() { ap }, true);
             }
 
-            string eventID = ev.ID;
+            string eventID = instance.CurrentEventID;
             cm.RegisterSceneUnloadActionCallback(() => {
                 if (!scr_UpdateHandler.current.EventHandler.StartEvent(instance, false)) Debug.Log($"Button_DialogueEvent: event {eventID} rejected on start (cooldown / duplicate)");
                 scr_System_CampaignManager.current.FreeUpdate(-1, optionName);

@@ -67,7 +67,7 @@ public class ActionPackage_Interaction : ActionPackage
         }
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         ActionPackage_Interaction copy = new ActionPackage_Interaction(job, targetCOM, DoerRefs, ReceiverRefs, masterRef);        copy.SetVariantID(this.validVariant);
         copy.LoggedBegin = this.LoggedBegin;

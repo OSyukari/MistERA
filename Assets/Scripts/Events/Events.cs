@@ -151,9 +151,18 @@ public enum TargetScope
     /// <summary>
     /// Every member of a faction, filtered by chara_conditions (e.g. on-shift doctors by staff tag, across all their
     /// shift MemberTypes). extraScopeArguments[0] = factionID, or "@selfTempHome" (self's temporary home faction, e.g.
-    /// the hospital a patient is admitted to) / "@selfActiveFaction" (self's currently active faction).
+    /// the hospital a patient is admitted to) / "@selfActiveFaction" (self's currently active faction) /
+    /// "@selfHomeFaction" (self's first home by priority - the temporary one if any) / "@selfHomeFactionStrict" (self's
+    /// permanent home, never the temporary one) / "@selfWorkFaction" (self's first work faction).
     /// </summary>
-    FactionMembers
+    FactionMembers,
+    /// <summary>
+    /// The characters self has a relationship with whose relationship type (bio, social or personal, either direction)
+    /// is one of extraScopeArguments (relationship type IDs, e.g. relationship_friend; none = any relationship),
+    /// filtered by chara_conditions. Walks self's own relationship list only - pair with stopAtMaxTargetCount to stop
+    /// early on a long list.
+    /// </summary>
+    SelfRelationships
 }
 
 public class EventScope_Target
@@ -169,7 +178,20 @@ public class EventScope_Target
     /// </summary>
     public bool pickAmongValidTargets = false;
     /// <summary>
-    /// return true if pickAmongValidTargets and validtargetcount > maxTargetCount 
+    /// With maxTargetCount set: the scope's candidates are walked in random order and the search stops as soon as
+    /// maxTargetCount valid targets are found (the rest are never validated, and "too many" never fails) - for scopes
+    /// over long lists (SelfRelationships, big factions).
+    /// </summary>
+    public bool stopAtMaxTargetCount = false;
+    /// <summary>
+    /// Order the scope's candidates are tried in ("" = as the scope lists them, random with stopAtMaxTargetCount):
+    /// "friendliness" = self's Character_Relationship.Friendliness_Raw toward each, highest first (no relationship = 0;
+    /// ties in random order). With stopAtMaxTargetCount the top valid ones are taken; with pickAmongValidTargets the top
+    /// maxTargetCount instead of a random pick.
+    /// </summary>
+    public string orderBy = "";
+    /// <summary>
+    /// return true if pickAmongValidTargets and validtargetcount > maxTargetCount
     /// </summary>
     public bool mustHaveMoreValidTargets = false;
     /// <summary>
@@ -491,6 +513,11 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>Runtime only: when set, the option is invalid (drawn disabled) and this localization key is
             /// appended to its tooltip as the reason.</summary>
             [JsonIgnore] public string disabledReasonKey = "";
+            /// <summary>
+            /// Optional localization key appended to the option's tooltip only while the option is invalid (its
+            /// conditions fail - EventUtility.isValid) - the authored "why it's greyed out" for a fixed option.
+            /// </summary>
+            public string invalidTooltip = "";
 
             public Options CloneForTarget(Character_Trainable target)
             {
@@ -962,7 +989,84 @@ public class Event : I_SerializationCallbackReceiver
             /// [string sellerFaction, string providerFactionID, string clienteleID] <br/>
             /// Removes a runtime-granted access link (template links stay).
             /// </summary>
-            RevokeClienteleAccess
+            RevokeClienteleAccess,
+
+            /// <summary>
+            /// [string storeKey, string candidateKey, string memberTypeTag] <br/>
+            /// Join-by-tag counterpart of JoinActiveFaction: for the first character resolved from candidateKey
+            /// (TryResolveExecTargets), asks every revealed, reachable faction that lists a MemberType carrying memberTypeTag
+            /// (MemberType.Tags) in its joinableMemberTypes for the options of joining as it
+            /// (FactionJoinUtility.BuildReachableJoinOptionsByTag), disabled ones included (tooltip = reason; a faction that
+            /// offers nothing but gives a reason, e.g. full, appears as one disabled option). Stored in
+            /// EventInstance.StoredOptions[storeKey] (loaded by a question's loadOptionsKey). Always returns true.
+            /// </summary>
+            JoinReachableFactionsByTag,
+
+            /// <summary>
+            /// [string storeKey, string candidateKey, string memberTypeTag, optional string heldAppendKey] <br/>
+            /// Leave counterpart of JoinReachableFactionsByTag: for the first character resolved from candidateKey, the leave
+            /// options (the MemberType's leaveHandler) of every faction where they hold a MemberType carrying memberTypeTag
+            /// (FactionJoinUtility.BuildHeldLeaveOptionsByTag), stored in EventInstance.StoredOptions[storeKey]. If
+            /// heldAppendKey is given, AppendStrings[heldAppendKey] = the held memberships as text ("(MemberType) at (faction)").
+            /// Branch on ExistStoredOptions. Always returns true.
+            /// </summary>
+            LeaveHeldFactionsByTag,
+
+            /// <summary>
+            /// [string offerDefID, int dayOffset, optional int startHour, optional int hours] <br/>
+            /// Posts a recreation offer (RecreationOfferDef - WorldPlan.AllRecreationOffers) on today + dayOffset, optionally at
+            /// another start/length than the def's (RecreationUtility.PostOffer). Each NPC picks it up in its own update:
+            /// an already planned day at its next hourly check (booked alone), a later day in its daily planning. False if the def is unknown.
+            /// </summary>
+            AddRecreationOffer,
+
+            /// <summary>
+            /// [string scopeKey, string factionID, int dayOffset, int startHour (-1 = this hour), int hours,
+            /// optional string templateID, optional string flags, optional string onCancelledEventID] <br/>
+            /// Books a recreation visit for every resolved character (RecreationUtility.SetEventBooking): locked (never
+            /// moved by the planner, only cancelled). templateID = an offer def ID or a MemberType ID, giving the visit's
+            /// commands and the MemberType the character acts under there. flags: "|"-separated "wakeForIt" (a sleeping
+            /// character's sleep is cut to end at the start) / "overrideWork" (takes even work hours) / "forbidCancel" (the
+            /// player can't ask them to cancel it - also set when the template's own forbidCancel is) / "solo" (invites
+            /// nobody - otherwise the booked NPC invites others along per the template's invite spec, like a planned
+            /// visit; the player never invites). The booking remembers this event's ID as who arranged it. Planned bookings in
+            /// the way are moved or cancelled. factionID "@home" = each character's priority home; their own home/work
+            /// factions may be booked. True if anyone was booked.
+            /// </summary>
+            SetRecreationBooking,
+
+            /// <summary>
+            /// [string scopeKey, optional string factionID ("" = any), optional string when ("now" | "today" | "all", default "all")] <br/>
+            /// Cancels recreation bookings of every resolved character (RecreationUtility.CancelBookings): the one under
+            /// way, those under way or starting today, or every one not ended. Each fires its onCancelledEventID.
+            /// True if anything was cancelled.
+            /// </summary>
+            CancelRecreationBooking,
+
+            /// <summary>
+            /// [string storeKey, string candidateKey, string selectedParamKey] <br/>
+            /// For the first character resolved from candidateKey: one option per recreation booking not ended yet
+            /// (RecreationUtility.BuildCancelOptions - tooltip = who arranged it; forbidCancel ones disabled), stored in
+            /// EventInstance.StoredOptions[storeKey]. Picking one sets Parameters[selectedParamKey] = the booking's absolute
+            /// start hour (read by AcceptBookingCancelRequest / CancelSelectedBooking). Branch on ExistStoredOptions. Always true.
+            /// </summary>
+            ListCancellableBookings,
+
+            /// <summary>
+            /// [string candidateKey, string askerKey, string selectedParamKey] <br/>
+            /// Whether the first character of candidateKey agrees to cancel the booking picked through ListCancellableBookings
+            /// when the first character of askerKey asks (Character_Relationship.AcceptBookingCancelRequest, candidate's
+            /// relationship toward the asker). False if either character or the booking is missing - branch on it.
+            /// </summary>
+            AcceptBookingCancelRequest,
+
+            /// <summary>
+            /// [string candidateKey, string selectedParamKey, optional string resultAppendKey] <br/>
+            /// Cancels the booking picked through ListCancellableBookings at the player's request
+            /// (RecreationUtility.CancelByRequest - quiet: daily report only, no booking-change notice event; refused for a
+            /// forbidCancel booking). AppendStrings[resultAppendKey] = the cancelled booking's line. True if cancelled.
+            /// </summary>
+            CancelSelectedBooking
 
         }
     }

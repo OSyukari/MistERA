@@ -1,0 +1,23 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Opt_ArrangeJoin_Recreation.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Opt_ArrangeJoin_Recreation": "Arrange memberships",
+                "Opt_ArrangeJoin_Recreation_menu": "What would you like to arrange for $worker.name$?",
+                "Opt_ArrangeJoin_Recreation_menu_join": "Sign up for a membership",
+                "Opt_ArrangeJoin_Recreation_menu_leave": "Cancel a membership",
+                "Opt_ArrangeJoin_Recreation_noMembership": "$worker.name$ doesn't hold any membership.",
+                "Opt_ArrangeJoin_Recreation_noJoin": "There are no more memberships to sign up for nearby.",
+                "Opt_ArrangeJoin_Recreation_question": "Where should $worker.name$ become a member?",
+                "Opt_ArrangeJoin_Recreation_leave_question": "Which of $worker.name$'s memberships should be cancelled?",
+                "Opt_ArrangeJoin_Recreation_back": "Back",
+                "Opt_ArrangeJoin_Recreation_changed": "Done so far:\n$factionChangeString$",
+                "recreation_joinOption": "$memberType$",
+                "recreation_leaveOption": "Cancel $name$'s membership"
+            }
+        }
+    }
+}

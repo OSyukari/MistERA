@@ -48,7 +48,9 @@ public class FindJobNodeRoot
     public void TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
         var activeFaction = c.FactionManager.CurrentlyActiveFaction;
-        var memberType = activeFaction == null ? null : activeFaction.GetMemberType(c);
+        // an active recreation booking may name its own MemberType, and its activity may carry its own overrides (checked first)
+        var memberType = activeFaction == null ? null : c.FactionManager.GetScheduledMemberType(activeFaction);
+        var activity = activeFaction == null ? null : c.FactionManager.GetScheduledActivity(activeFaction);
 
         foreach (var n in nodes)
         {
@@ -57,11 +59,9 @@ public class FindJobNodeRoot
 
             // node order is preserved - only the behavior run at this position may be swapped
             var node = n;
-            if (memberType != null)
-            {
-                var overrideNode = memberType.GetBehaviorOverride(n.behaviorOverrideID);
-                if (overrideNode != null) node = overrideNode;
-            }
+            var overrideNode = activity?.GetBehaviorOverride(n.behaviorOverrideID);
+            if (overrideNode == null && memberType != null) overrideNode = memberType.GetBehaviorOverride(n.behaviorOverrideID);
+            if (overrideNode != null) node = overrideNode;
 
             if (node.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s))
             {

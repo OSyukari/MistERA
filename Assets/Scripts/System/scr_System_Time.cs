@@ -124,11 +124,88 @@ public class scr_System_Time : MonoBehaviour
     }
 
     /// <summary>
+    /// Console/debug: jump the calendar straight to the given date (keeping the current clock time) and fire
+    /// the normal day-change observers once. No minute-by-minute simulation - the days in between do NOT tick.
+    /// </summary>
+    public void SetCurrentDate(int year, int month, int day)
+    {
+        var timeOfDay = currentDate.TimeOfDay;
+        currentDate = new DateTime(year, month, day) + timeOfDay;
+        _hour = -1;
+        _day = -1;
+        UpdateSingleDay();
+    }
+
+    /// <summary>
+    /// Writes today's holiday and seasons (holiday first, then seasons, space-separated display names) into
+    /// the hoverable text, and joins each entry's "&lt;ID&gt;_tooltip" dictionary entry with \n\n into the
+    /// external tooltip. The info comes from the HolidaySeasonSystem tracker of the world the player's current
+    /// room belongs to (falling back to the first loaded world). Empty when there is no holiday and no season.
+    /// </summary>
+    public static void DrawSeasonHolidayInfo(scr_HoverableText text)
+    {
+        if (text == null) return;
+        var names = new List<string>();
+        var tooltips = new List<string>();
+        var snapshot = HolidaySeasonSystem.GetTracker(GetDisplayWorldID());
+        if (snapshot != null)
+        {
+            if (snapshot.holidayID != "") AppendEntry(names, tooltips, snapshot.holidayID);
+            foreach (var seasonID in snapshot.seasonIDs) AppendEntry(names, tooltips, seasonID);
+        }
+        text.SetText(String.Join(" ", names));
+        text.SetExternalTooltip(String.Join("\n\n", tooltips));
+    }
+
+    static void AppendEntry(List<string> names, List<string> tooltips, string id)
+    {
+        names.Add(LocalizeDictionary.QueryThenParse(id, id));
+        var tooltip = LocalizeDictionary.QueryThenParse(id + "_tooltip", "");
+        if (tooltip.Length > 0) tooltips.Add(tooltip);
+    }
+
+    static string GetDisplayWorldID()
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign == null || campaign.currentWorldPlanIDs == null || campaign.currentWorldPlanIDs.Count < 1) return null;
+        var room = campaign.CurrentRoom;
+        var factionID = room != null && room.FactionOwner != null ? room.FactionOwner.FactionID : null;
+        if (factionID != null)
+            foreach (var world in campaign.FindWorldsContainingFaction(factionID))
+                if (campaign.currentWorldPlanIDs.Contains(world.worldID)) return world.worldID;
+        return campaign.currentWorldPlanIDs[0];
+    }
+
+    /// <summary>
     /// Current day of week as an index matching MapPlan.WorkModuleInit.activeDays: 0 = Monday ... 6 = Sunday.
     /// </summary>
     public int getCurrentDayInWeek()
     {
         return ((int)currentDate.DayOfWeek + 6) % 7;
+    }
+
+    /// <summary>
+    /// Day index (daysLookahead days from now) in a work cycle of cycleLength days, matching
+    /// MapPlan.WorkModuleInit.activeDays: 7 = 0 Monday ... 6 Sunday (same as getCurrentDayInWeek); 14 = week A
+    /// (0 Monday ... 6 Sunday) then week B (7 ... 13). Week A is the Monday-Sunday week holding the campaign start date
+    /// (initializeTime), so the A/B alternation is fixed per campaign and shared by everyone.
+    /// </summary>
+    /// <summary>
+    /// Calendar-stable day number: days since the campaign start date (0 = start day), daysLookahead days from now.
+    /// For plans pinned to a date rather than a weekday (e.g. Character_Factions recreation bookings).
+    /// </summary>
+    public int getAbsoluteDay(int daysLookahead = 0)
+    {
+        return (int)(currentDate.Date - startDate.Date).TotalDays + daysLookahead;
+    }
+
+    public int getCurrentDayInCycle(int cycleLength, int daysLookahead = 0)
+    {
+        // daysLookahead may be negative (an overnight shift's morning hours belong to the day before)
+        if (cycleLength <= 7) return (((getCurrentDayInWeek() + daysLookahead) % 7) + 7) % 7;
+        var weekAMonday = startDate.Date.AddDays(-(((int)startDate.DayOfWeek + 6) % 7));
+        int days = (int)(currentDate.Date - weekAMonday).TotalDays + daysLookahead;
+        return ((days % cycleLength) + cycleLength) % cycleLength;
     }
 
     // Start is called before the first frame update
@@ -174,6 +251,9 @@ public class scr_System_Time : MonoBehaviour
 
     private void UpdateSingleDay()
     {
+        // calendar period rollover notice first, so it precedes every other new-day output
+        AnnounceNewPeriod();
+
         // before any day update, so the new-day notice comes first
         scr_UpdateHandler.current.EventHandler.Trigger(scr_System_CampaignManager.current.Player, EventTrigger.OnDayChange);
 
@@ -191,6 +271,30 @@ public class scr_System_Time : MonoBehaviour
         Observer_globalTime_Day?.Invoke(3);
 
         scr_UpdateHandler.current.EventHandler.Trigger(scr_System_CampaignManager.current.Player, EventTrigger.OnDailyUpdate);
+    }
+
+
+    /// <summary>
+    /// New-year/new-month notice, evaluated before the day-change pipeline: new year beats new month when both
+    /// rolled over since the last processed day. The year number is deliberately not shown.
+    /// </summary>
+    private void AnnounceNewPeriod()
+    {
+        var campaign = scr_System_CampaignManager.current;
+        if (campaign == null) return;
+
+        string templateID;
+        if (currentDate.Day == 1)
+        {
+            if (currentDate.Month == 1) templateID = "ui_new_year";
+            else templateID = "ui_new_month";
+        }
+        else return;
+
+        string text = LocalizeDictionary.QueryThenParse(templateID)
+            .Replace("$month$", currentDate.Month.ToString());
+        var desc = new DescriptionCollector(text, VisibilityLevel.Global);
+        campaign.AddLog(desc, null, true);
     }
 
     private void UpdateMinute(int amount, int realTime)

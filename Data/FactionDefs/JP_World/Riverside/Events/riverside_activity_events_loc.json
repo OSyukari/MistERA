@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for riverside_activity_events.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Riverside_Fireworks_Begin_EV01": "The embankment is packed. With a shrill whistle the first firework streaks into the night sky - the fireworks festival has begun!",
+                "Riverside_Stroll_Begin_EV01": "$waited.name$ set off slowly along the riverside promenade.",
+                "Riverside_Stroll_Begin_late": "$late.name$ arrived a little late, but still managed to join the riverside stroll."
+            }
+        }
+    }
+}

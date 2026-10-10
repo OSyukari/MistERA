@@ -12,7 +12,11 @@ using UnityEngine;
 /// keeps them away from their shift at the establishment; FallbackWorkerManager lifts it per worker when
 /// a shift is short-staffed and parks them (dormant: hour/day ticks only, per-minute state caught up on waking) back in the room when not needed.
 /// <br/>Not a shared pool: each worker is generated for one establishment MemberType (shift) and stays pinned to
-/// it for good (assignedMemberTypes) - they only ever cover that shift, never another one.
+/// it for good (assignedMemberTypes) - they only ever cover that shift, never another one. A worker whose shift is no
+/// longer offered (dropped from fallbackWorkers, or unknown) is retired: parked, then removed (FallbackWorkerManager.RetireWorker).
+/// <br/>Subfactions (e.g. mall shops) don't get a pool of their own: they request workers from their owner's pool
+/// (FallbackWorkerManager.PoolOwnerFor), so one pool owned by the mall serves every shop. Each worker also records the
+/// establishment they were generated for (assignedEstablishments), since shops can share the same shift MemberTypes.
 /// </summary>
 public class Manageable_WorkerPool : Manageable
 {
@@ -42,6 +46,12 @@ public class Manageable_WorkerPool : Manageable
     /// re-asserts it if anything else changes or removes their establishment membership.
     /// </summary>
     [JsonProperty] protected Dictionary<int, string> assignedMemberTypes = new Dictionary<int, string>();
+
+    /// <summary>
+    /// Worker RefID -> ID of the establishment that worker was generated for. Absent = the pool's Owner (every worker
+    /// of a pool serving a single establishment, and saves predating this record).
+    /// </summary>
+    [JsonProperty] protected Dictionary<int, string> assignedEstablishments = new Dictionary<int, string>();
 
     /// <summary>USED FOR SERIALIZER ONLY DO NOT MANUALLY CALL</summary>
     public Manageable_WorkerPool() { }
@@ -107,9 +117,24 @@ public class Manageable_WorkerPool : Manageable
         assignedMemberTypes[c.RefID] = memberTypeID;
     }
 
+    public void SetAssignedEstablishment(Character_Trainable c, Manageable establishment)
+    {
+        if (assignedEstablishments == null) assignedEstablishments = new Dictionary<int, string>();
+        if (establishment == null || establishment == Owner) assignedEstablishments.Remove(c.RefID);
+        else assignedEstablishments[c.RefID] = establishment.ID;
+    }
+
+    /// <summary>ID of the establishment c was generated for - the pool's Owner unless recorded otherwise.</summary>
+    public string GetAssignedEstablishmentID(Character_Trainable c)
+    {
+        if (assignedEstablishments != null && assignedEstablishments.TryGetValue(c.RefID, out var id)) return id;
+        return ownerID;
+    }
+
     public void ClearAssignedMemberType(int refID)
     {
         assignedMemberTypes?.Remove(refID);
+        assignedEstablishments?.Remove(refID);
         strayHours?.Remove(refID);
     }
 
@@ -122,8 +147,9 @@ public class Manageable_WorkerPool : Manageable
         if (assignedMemberTypes == null) assignedMemberTypes = new Dictionary<int, string>();
         if (assignedMemberTypes.TryGetValue(c.RefID, out var typeID)) return typeID;
 
-        if (Owner == null || !Owner.isManagedChara(c.RefID)) return "";
-        var current = Owner.GetMemberType(c);
+        var establishment = scr_System_CampaignManager.current.FindFactionByID(GetAssignedEstablishmentID(c));
+        if (establishment == null || !establishment.isManagedChara(c.RefID)) return "";
+        var current = establishment.GetMemberType(c);
         if (current == null || current.ID == FactionUtility.MemberTypeID_None) return "";
         assignedMemberTypes[c.RefID] = current.ID;
         return current.ID;
@@ -144,7 +170,20 @@ public static class FallbackWorkerManager
 
     static readonly HashSet<string> reportedMissingTemplates = new HashSet<string>();
 
-    public static string PoolIDFor(Manageable establishment) { return establishment.ID + "_workerpool"; }
+    public static string PoolIDFor(Manageable establishment) { return PoolOwnerFor(establishment).ID + "_workerpool"; }
+
+    /// <summary>
+    /// The faction whose pool supplies establishment's fallback workers: the establishment itself, or for a subfaction
+    /// (e.g. a mall shop) its top owner - the subfaction's MainExit is its owner's room, and the pool room hangs off its
+    /// owner's MainExit, so pooling under the owner keeps the pool room's FactionOwnerRoot the owner of that exit.
+    /// </summary>
+    public static Manageable PoolOwnerFor(Manageable establishment)
+    {
+        var owner = establishment;
+        var visited = new HashSet<Manageable>();
+        while (owner is Manageable_Subfaction sub && sub.Parent != null && visited.Add(owner)) owner = sub.Parent;
+        return owner;
+    }
 
     /// <summary>
     /// Hourly (Manageable.OnHourUpdate): for each MapPlan.fallbackWorkers entry, wake / generate enough pooled
@@ -167,19 +206,28 @@ public static class FallbackWorkerManager
         if (pool == null || pool.Room == null) return;
 
         int hour = scr_System_Time.current.getCurrentTime().Hour;
-        int dayInWeek = scr_System_Time.current.getCurrentDayInWeek();
 
         // group every pooled worker by the one shift they were generated for - never by whatever membertype
         // they currently hold at the establishment, so a worker can't drift into (or be counted for) another shift
         pool.PruneAssignments();
         var workersByType = new Dictionary<string, List<Character_Trainable>>();
+        // workers whose shift can't be known (e.g. a save whose shift MemberType was since removed - it reads as None)
+        var retired = new List<Character_Trainable>();
         foreach (var w in pool.ManagedChara)
         {
             if (!pool.IsPooledWorker(w)) continue;
+            // a shared pool (owner of several subfactions) also holds the other establishments' workers - leave those to
+            // their own establishment's pass, unless that establishment no longer exists
+            var establishmentID = pool.GetAssignedEstablishmentID(w);
+            if (establishmentID != establishment.ID)
+            {
+                if (scr_System_CampaignManager.current.FindFactionByID(establishmentID) == null) retired.Add(w);
+                continue;
+            }
             // taken by a temp home (e.g. admitted as a hospital patient): not staffed, not sent home - its shift gets a replacement
             if (w.FactionManager.Faction_Home_Temporary != null) continue;
             var typeID = pool.GetAssignedMemberType(w);
-            if (string.IsNullOrEmpty(typeID)) continue;
+            if (string.IsNullOrEmpty(typeID)) { retired.Add(w); continue; }
             if (!workersByType.TryGetValue(typeID, out var list)) workersByType[typeID] = list = new List<Character_Trainable>();
             list.Add(w);
         }
@@ -189,8 +237,7 @@ public static class FallbackWorkerManager
             if (!FactionUtility.TryGetMemberType(entry.memberTypeID, out var shiftType) || shiftType.workModule == null) continue;
 
             var module = shiftType.workModule;
-            bool shiftActive = module.activeHours.Contains(hour)
-                && (module.activeDays.Count == 0 || (dayInWeek < module.activeDays.Count && module.activeDays[dayInWeek] != 0));
+            bool shiftActive = module.IsActiveAt(hour);
 
             if (!workersByType.TryGetValue(shiftType.ID, out var workers)) workers = new List<Character_Trainable>();
             workersByType.Remove(shiftType.ID);
@@ -202,7 +249,7 @@ public static class FallbackWorkerManager
                 foreach (var c in establishment.ManagedChara)
                 {
                     if (c == null || pool.IsPooledWorker(c) || establishment.GetMemberType(c)?.ID != shiftType.ID) continue;
-                    if (c.FactionManager.CurrentJobScheduleFaction(hour) == establishment) real++;
+                    if (establishment.IsOnShift(c, hour)) real++;
                 }
             }
 
@@ -236,15 +283,37 @@ public static class FallbackWorkerManager
             }
         }
 
-        // workers whose shift was dropped from fallbackWorkers are never reassigned - they just stay parked
-        foreach (var leftovers in workersByType.Values)
+        // workers whose shift was dropped from fallbackWorkers (or is unknown) are never reassigned - they are retired
+        foreach (var leftovers in workersByType.Values) retired.AddRange(leftovers);
+        foreach (var w in retired) RetireWorker(pool, w);
+    }
+
+    /// <summary>
+    /// A pooled worker whose shift no longer exists: forbidden and sent back to the pool room like any idle worker, and
+    /// once parked there (dormant - out of sight, not busy) removed from the game (scr_System_CampaignManager.Unregister).
+    /// Until then - walking home, in a party, busy - it is just checked again the next hour.
+    /// </summary>
+    static void RetireWorker(Manageable_WorkerPool pool, Character_Trainable w)
+    {
+        if (pool.AllowWorkFaction(w)) pool.SetAllowWork(w, false);
+        if (!CanRemoveWorker(pool, w))
         {
-            foreach (var w in leftovers)
-            {
-                if (pool.AllowWorkFaction(w)) pool.SetAllowWork(w, false);
-                SendHomeSafety(pool, w);
-            }
+            SendHomeSafety(pool, w);
+            return;
         }
+        Debug.Log($"FallbackWorkerManager: removing retired fallback worker {w.FirstName} [{w.RefID}] of {pool.ID} (assigned shift no longer offered)");
+        pool.ClearAssignedMemberType(w.RefID);
+        scr_System_CampaignManager.current.Unregister(w);
+    }
+
+    /// <summary>Parked in the pool room (dormant) and not held by anything else - safe to remove unseen.</summary>
+    static bool CanRemoveWorker(Manageable_WorkerPool pool, Character_Trainable w)
+    {
+        if (!w.IsDormant) return false;
+        if (w.FactionManager.Faction_Home_Temporary != null) return false;
+        if (w.FactionManager.CurrentParty != null || w.FactionManager.isPartyLocked) return false;
+        if (scr_System_CampaignManager.current.PlayerPartyMembers.Contains(w.RefID)) return false;
+        return scr_System_CampaignManager.current.Map.FindRoomByChara(w.RefID) == pool.Room;
     }
 
     /// <summary>
@@ -313,7 +382,7 @@ public static class FallbackWorkerManager
         var existing = scr_System_CampaignManager.current.FindFactionByID(id);
         if (existing != null) return existing as Manageable_WorkerPool;
 
-        var pool = new Manageable_WorkerPool(id, establishment);
+        var pool = new Manageable_WorkerPool(id, PoolOwnerFor(establishment));
         scr_System_CampaignManager.current.AddFaction(pool);
         return pool;
     }
@@ -334,6 +403,7 @@ public static class FallbackWorkerManager
 
         c.fallbackPoolID = pool.ID;
         pool.SetAssignedMemberType(c, shiftType.ID);
+        pool.SetAssignedEstablishment(c, establishment);
         c.FactionManager.SetHomeFaction(pool.ID, poolType, false);
         pool.AddRoomOwnership(c.RefID, pool.Room.RefID);
         c.FactionManager.AddWorkFaction(establishment.ID, shiftType, false);

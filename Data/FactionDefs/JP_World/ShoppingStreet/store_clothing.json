@@ -1,0 +1,46 @@
+{
+    "MapPlans": {
+        "factionInit": [
+{
+    "ID": "jp_mall_clothing",
+    "z_rotation": 0.0,
+    "initializeFaction": "jp_mall_clothing",
+    "setPrivateRoomOwner": true,
+    "mainExit": {
+        "roomID": "clothing_room",
+        "exitCost": 5
+    },
+    "floors": [],
+    "mealHours": [],
+    "salesCurrency": "currency_JPY",
+    "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+    "salesInventory": [],
+    "workModules": [],
+    "managerBaseIDs": [
+        ""
+    ],
+    "_comment_assignableMemberTypes": "Shared mall clerk shift - see _doc_staff. Not in joinableMemberTypes: NPC-only, the player can't join it.",
+    "assignableMemberTypes": [ "membertype_jp_mall_clerk" ],
+    "_comment_fallbackWorkers": "One fallback front desk clerk.",
+    "fallbackWorkers": [
+        { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 0, "templateID": "jp_store_clerk" }
+    ],
+    "workHours": [],
+    "workAssignment": [],
+    "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+}
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_mall_clothing_room": "服装店（施工中）"
+
+            },
+            "en-us": {
+                "jp_mall_clothing_room": "Clothing Store"
+
+            }
+        }
+    }
+}

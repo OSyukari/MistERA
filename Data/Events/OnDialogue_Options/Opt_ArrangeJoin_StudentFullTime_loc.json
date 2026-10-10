@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Opt_ArrangeJoin_StudentFullTime.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Opt_ArrangeJoin_StudentFullTime": "Arrange school enrollment",
+                "Opt_ArrangeJoin_StudentFullTime_question": "Where should $worker.name$ go to school?",
+                "Opt_ArrangeJoin_StudentFullTime_leave_question": "$worker.name$ is already enrolled as $heldMemberships$. Should $worker.name$ withdraw?",
+                "Opt_ArrangeJoin_StudentFullTime_done": "$worker.name$ is now enrolled.",
+                "student_post_leaveOption": "Have $name$ withdraw"
+            }
+        }
+    }
+}

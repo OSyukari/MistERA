@@ -275,7 +275,7 @@ public class ActionPackage_Expedition : ActionPackage
    
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
             ActionPackage_Expedition copy = new ActionPackage_Expedition(doer, JobExp, SourceEV);
            // copy.SetVariantID(this.validVariant);

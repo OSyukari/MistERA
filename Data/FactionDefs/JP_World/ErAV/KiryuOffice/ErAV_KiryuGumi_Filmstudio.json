@@ -163,7 +163,7 @@
                     "activeHours":[8,9,10,11,12,13,14,15,16,17,18,19,20,21],
                     "activeDays":[1,1,1,1,1,1,1]
                 },
-                "portraitTags":[ ]
+                "Tags":[ ]
             },
             {
                 "ID": "membertype_erav_kiryu_filmstudio_actor",
@@ -179,7 +179,7 @@
                     "activeHours":[10,11,12,13,14,15,16,17,18,19],
                     "activeDays":[1,1,1,1,1,1,1]
                 },
-                "portraitTags":[  ],
+                "Tags":[  ],
                 "AcceptanceMods": [
                     {
                         "_comment": "女演员 · 承受方：被触摸/被侍奉时不会拒绝（被触碰的入口，逐步累积好感）",

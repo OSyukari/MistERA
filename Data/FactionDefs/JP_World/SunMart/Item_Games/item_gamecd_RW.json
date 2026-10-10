@@ -5,7 +5,7 @@
             {
                 "id":"item_gamecd_RW",
                 "displayName":"Rib World",
-                "Tags":["furniture_playVideoGames","videogame","industrial","rarity_common"],
+                "Tags":["furniture_playVideoGames","videogame","rarity_common"],
                 "value":4980,
                     "itemComps_Template":[
                         {

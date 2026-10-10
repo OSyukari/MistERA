@@ -1,0 +1,303 @@
+{
+    "_doc": "Adult boutique on the JP_ShoppingStreet mall floor (sold openly in this world's Japan). Primary store name '超级波○' (SUPER P○PO) parodies the real adult-goods chain スーパーポーパス / SUPER POPO. Dictionary carries alternate candidates (_alt1.._alt3), each with its own _tooltip explaining the real brand it parodies - pick one, delete the rest. Item tooltips reference the primary name; if another name is chosen, adjust those strings. All items carry the 'nsfw' tag. Only small Stats_Derived_Bases bonuses (maxSensitivity), no base stat modifiers. Sellable via salesInventory (currency_JPY). Tooltips live under '<id>_tooltip' keys (see Item_Base.Tooltip).",
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_jp_popo_lace_babydoll",
+            "displayName":"Super P○po Sheer Lace Babydoll",
+            "Tags":["nsfw","rarity_common"],
+            "value":5800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower"],
+                        "revealing":"SeeThrough",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_maxSensitivity_M",
+                                "modKey":"clothing_jp_popo_lace_babydoll", "type":"addBase", "valueType":"number", "valueString":"0.1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_crotchless_panty",
+            "displayName":"Super P○po Crotchless T-Back Panty",
+            "Tags":["nsfw","rarity_common"],
+            "value":1900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_maxSensitivity_V",
+                                "modKey":"clothing_jp_popo_crotchless_panty", "type":"addBase", "valueType":"number", "valueString":"0.1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_garter_belt",
+            "displayName":"Super P○po Lace Garter Belt",
+            "Tags":["nsfw","rarity_common"],
+            "value":3400,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_fishnet_stockings",
+            "displayName":"Super P○po Fishnet Stockings",
+            "Tags":["nsfw","rarity_common"],
+            "value":2200,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet","Leg"],
+                        "equipLayer":"Skin",
+                        "revealing":"SeeThrough",
+                        "coverSlot":["Feet","Leg"],
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_maxSensitivity_W",
+                                "modKey":"clothing_jp_popo_fishnet_stockings", "type":"addBase", "valueType":"number", "valueString":"0.1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_bunny_leotard",
+            "displayName":"Super P○po Bunny Girl Leotard",
+            "Tags":["nsfw","rarity_common"],
+            "value":6900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower"],
+                        "revealing":"ShapeReveal",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_maxSensitivity_M",
+                                "modKey":"clothing_jp_popo_bunny_leotard", "type":"addBase", "valueType":"number", "valueString":"0.1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_nurse_costume",
+            "displayName":"Super P○po Naughty Nurse Costume",
+            "Tags":["nsfw","rarity_common"],
+            "value":7800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_cutout_bodysuit",
+            "displayName":"Super P○po Cutout Mesh Bodysuit",
+            "Tags":["nsfw","rarity_common"],
+            "value":6200,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower"],
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_opencup_bra",
+            "displayName":"Super P○po Open-Cup Shelf Bra",
+            "Tags":["nsfw","rarity_common"],
+            "value":2600,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Skin",
+                        "revealing":"Erotic",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_maxSensitivity_B",
+                                "modKey":"clothing_jp_popo_opencup_bra", "type":"addBase", "valueType":"number", "valueString":"0.1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_bell_collar",
+            "displayName":"Super P○po Bell Choker Collar",
+            "Tags":["nsfw","rarity_common"],
+            "value":3100,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Neck"],
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_maxSensitivity_Mind",
+                                "modKey":"clothing_jp_popo_bell_collar", "type":"addBase", "valueType":"number", "valueString":"0.1"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_popo_thighhigh_heelboots",
+            "displayName":"Super P○po Thigh-High Heel Boots",
+            "Tags":["nsfw","rarity_common"],
+            "value":9800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet","Leg"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Feet","Leg"],
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+        "shop_jp_popo_name":"超级波○",
+        "shop_jp_popo_name_tooltip":"灯箱是粉紫色的、招牌音乐会在整点变成喘息声效的成人用品连锁「超级波○」。原型：秋叶原成人用品名店 スーパーポーパス（SUPER POPO），卖情趣内衣、角色扮演服、成人玩具与润滑品。被圆掉的那个『波』据说是被叠加进了很多层必要性的。",
+        "shop_jp_popo_name_alt1":"唐吉○德",
+        "shop_jp_popo_name_alt1_tooltip":"「唐吉○德」。原型：ドン・キホーテ（唐吉诃德），压缩到天花板的24小时杂货殿堂，从零食、家电卖到情趣内衣、成人玩具和 cosplay 服——成人用品区和食品区只隔一条窄得妙的过道。",
+        "shop_jp_popo_name_alt2":"蜜桃○",
+        "shop_jp_popo_name_alt2_tooltip":"「蜜桃○」(PEACH J○HN)。原型：PEACH JOHN（蜜桃约翰），性感内衣专卖店，卖蕾丝文胸、丁字裤、睡裙与吊袜带。主打『可爱到犯罪的内衣』，橱窗模特的尺码从不标注，因为那是商业机密。",
+        "shop_jp_popo_name_alt3":"TEN○A",
+        "shop_jp_popo_name_alt3_tooltip":"「TEN○A」。原型：TENGA，以自慰杯闻名世界的品牌，卖自慰杯、润滑液与情趣周边。严格来说是品牌不是店铺，但整面由圆圈组成的logo被圆掉一个之后，反而更含蓄了。",
+
+        "clothing_jp_popo_lace_babydoll":"透视蕾丝娃娃装",
+        "clothing_jp_popo_lace_babydoll_tooltip":"「超级波○」的镇店爆款：一袭近乎全透的黑蕾丝娃娃装，硬纱裙摆只到腰臀之间，随着呼吸轻轻荡开。胸前的花边细得遮不住任何东西，乳尖的颜色隔着布料都看得一清二楚；裙下空空荡荡，弯腰或抬手的瞬间便什么都藏不住。穿上它的人从镜子里第一眼就会明白——这不是衣服，这是一句『请享用我』。",
+
+        "clothing_jp_popo_crotchless_panty":"开裆丁字裤",
+        "clothing_jp_popo_crotchless_panty_tooltip":"「超级波○」最直白的商品：一条只讲仪式感的丁字裤。三根细带在腰胯交汇，后面一丝布料勒进臀缝，而最关键的地方干脆完全敞开——花边只是绕着秘密的边缘装饰了一圈。它存在的意义就是让人在衣裙之下时刻提醒自己：下一秒随时可以开始，什么都不必脱。",
+
+        "clothing_jp_popo_garter_belt":"蕾丝吊袜带",
+        "clothing_jp_popo_garter_belt_tooltip":"缀着黑蕾丝的缎面吊袜带，宽宽的腰带箍在腰际，四条带子顺着大腿前侧垂下去，夹住袜口的金属扣正好扣在大腿最内侧、最不敢被人碰到的位置。戴上它的那一刻起，每一根带子都变成一条柔软的缰绳，把『解开』这个动作变成一场漫长的前戏。",
+
+        "clothing_jp_popo_fishnet_stockings":"渔网袜",
+        "clothing_jp_popo_fishnet_stockings_tooltip":"大网眼的黑色渔网袜，从脚尖一路织到大腿根。菱形的网眼把皮肤切割成无数小块，每一块都在网绳的勒痕里微微凸起；手指勾住网眼轻轻一拉，松开的网便在雪白的腿肉上留下更深的红痕。所谓破了洞也无需在意——这双袜子从来就没打算完整。",
+
+        "clothing_jp_popo_bunny_leotard":"兔女郎连体衣",
+        "clothing_jp_popo_bunny_leotard_tooltip":"「超级波○」的招牌角色服：高叉的漆光连体衣，布料像倒进来的融化巧克力一样紧贴全身，把胸型的弧线和裆间的轮廓描到纤毫毕现。高叉的开衩直切髋骨，胯侧只余两指宽的布料勉强维持体面。配上发箍上的兔耳，就是一句『今晚，请点我』。",
+
+        "clothing_jp_popo_nurse_costume":"淘气护士服",
+        "clothing_jp_popo_nurse_costume_tooltip":"白得过分纯净的迷你护士裙，配着红色的十字标志和短得违规的裙摆——弯腰打针的姿势是这套衣服真正想让人摆出的动作。胸前的纽扣松松搭着，随时能被一把扯开露出里面的白色蕾丝；据说穿上它的人，问诊方式会变得格外『贴心』。",
+
+        "clothing_jp_popo_cutout_bodysuit":"镂空网纱连体衣",
+        "clothing_jp_popo_cutout_bodysuit_tooltip":"「超级波○」的进阶款：整件网纱织成的连体衣，从锁骨到脚踝包得密不透风，却处处透明。胸前开了两个环形的镂空，乳尖恰好从洞里探出来；裆部同样留了一道暗门。它把『遮掩』和『展示』缝在同一块布上，让人隔着一层黑纱，对每个轮廓、每次呼吸都心痒难耐。",
+
+        "clothing_jp_popo_opencup_bra":"露乳罩杯胸罩",
+        "clothing_jp_popo_opencup_bra_tooltip":"只有下托、没有罩杯的蕾丝胸罩。硬挺的托架从下方兜住双乳，把它们往上推挤成深壑，而最敏感的顶端完全裸露在外，被冰凉的空气和滚烫的视线轮番照料。穿上它走动一步就能明白：这份随时的战栗，正是设计者最恶意的温柔。",
+
+        "clothing_jp_popo_bell_collar":"铃铛项圈",
+        "clothing_jp_popo_bell_collar_tooltip":"黑色漆皮项圈，内衬软绒，正中坠着一颗小小的金铃。扣上的那一声轻响便是契约成立的瞬间——从今往后每一步、每一次俯身、每一个动作，铃声都会替主人作证。戴上它的人会不自觉地放软声线，毕竟，铃铛响得太急可是会害羞的。",
+
+        "clothing_jp_popo_thighhigh_heelboots":"过膝高跟靴",
+        "clothing_jp_popo_thighhigh_heelboots_tooltip":"「超级波○」的终极武器：漆皮过膝高跟靴，靴筒一路包到大腿根部，在绝对领域的正中央戛然而止。十二厘米的细高跟逼着双腿绷出最紧致的线条，臀部随之高高翘起；拉链从脚踝一直开到靴口顶端，被慢慢拉下的每一寸，都是一场庄重的揭幕式。"
+            },
+            "en-us":
+            {
+        "shop_jp_popo_name":"Super P○po",
+
+        "shop_jp_popo_name_tooltip":"'Super P○po', the adult-goods chain with lavender lightboxes and a jingle that dissolves into soft gasps on the hour. Parody of the famous Akihabara adult shop スーパーポーパス (SUPER POPO): erotic lingerie, costume play outfits, adult toys and lubricants. The rounded-off 'Po' was, reportedly, rounded off for reasons of considerable necessity.",
+
+        "shop_jp_popo_name_alt1":"DON QUI○OTE",
+        "shop_jp_popo_name_alt1_tooltip":"'DON QUI○OTE'. Parody of ドン・キホーテ (Don Quijote), the 24-hour discount palace stacked to the ceiling — snacks, appliances, erotic lingerie, adult toys and cosplay outfits all in one go, the adult section sitting one suspiciously narrow aisle away from the food section.",
+        "shop_jp_popo_name_alt2":"PEACH J○HN",
+        "shop_jp_popo_name_alt2_tooltip":"'PEACH J○HN'. Parody of PEACH JOHN, a sexy-lingerie specialist: lace bras, thongs, babydolls and garter belts — lingerie 'too cute to be legal'. The mannequins' measurements are never listed, as that is a trade secret.",
+        "shop_jp_popo_name_alt3":"TEN○A",
+        "shop_jp_popo_name_alt3_tooltip":"'TEN○A'. Parody of TENGA, world-famous for its onacups: masturbators, lubricants and erotic merchandise. Strictly a brand rather than a store, but rounding one circle out of that circle-packed logo somehow makes it subtler.",
+
+        "clothing_jp_popo_lace_babydoll":"Sheer Lace Babydoll",
+        "clothing_jp_popo_lace_babydoll_tooltip":"Super P○po' signature bestseller: a near-fully sheer black lace babydoll, its stiffened hem dancing just below the waist with every breath. The lace at the bust is too fine to hide anything — the color of the nipples reads clean through the weave; below, emptiness, so a bend or a reach betrays everything. Anyone who puts it on understands at first glance in the mirror: this is not clothing. It is the phrase 'enjoy me'.",
+
+        "clothing_jp_popo_crotchless_panty":"Crotchless T-Back Panty",
+        "clothing_jp_popo_crotchless_panty_tooltip":"Super P○po' most candid product: a thong that exists purely for ceremony. Three slender straps converge at the hips; a single thread of fabric saws into the cleft behind; and the most crucial place is simply, completely open — the lace exists only to trim the edge of the secret. Its whole purpose is the constant reminder beneath one's clothes: the next second may begin at any time, and nothing needs to come off.",
+
+        "clothing_jp_popo_garter_belt":"Lace Garter Belt",
+        "clothing_jp_popo_garter_belt_tooltip":"A satin garter belt trimmed in black lace: a wide band cinching the waist, four straps sliding down the front of the thighs, their metal clips fastening at the stocking tops right on the innermost, most untouchable part of the leg. From the moment it is worn, every strap becomes a soft rein, and 'unfastening' becomes a long, deliberate overture.",
+
+        "clothing_jp_popo_fishnet_stockings":"Fishnet Stockings",
+        "clothing_jp_popo_fishnet_stockings_tooltip":"Wide-mesh black fishnets woven from toe to thigh. The diamond cells carve the skin into countless little islands, each puffing softly against the strain of the cords; hook a mesh with a fingertip and pull, and the released net presses a deeper red line into the pale flesh. A torn hole is nothing to mind — these stockings were never meant to stay whole.",
+
+        "clothing_jp_popo_bunny_leotard":"Bunny Girl Leotard",
+        "clothing_jp_popo_bunny_leotard_tooltip":"Super P○po' house costume: a high-cut patent leotard, the fabric hugging the body like melted chocolate poured on, sketching the curve of the bust and the outline at the crotch to the last detail. The leg openings cut straight across the hipbones, leaving barely two fingers of fabric to keep up appearances. Add the ears on the headband and the message completes itself: 'tonight, order me'.",
+
+        "clothing_jp_popo_nurse_costume":"Naughty Nurse Costume",
+        "clothing_jp_popo_nurse_costume_tooltip":"A scandalously pure white mini nurse dress with a red cross and a hem in open violation of regulations — the bending-to-administer pose is the one this outfit truly wants its wearer to strike. The breast buttons are left loosely fastened, ready to be torn open over the white lace beneath. It is said that whoever wears it develops an unusually 'attentive' bedside manner.",
+
+        "clothing_jp_popo_cutout_bodysuit":"Cutout Mesh Bodysuit",
+        "clothing_jp_popo_cutout_bodysuit_tooltip":"Super P○po' advanced piece: a bodysuit woven entirely of mesh, sealed from collarbone to ankle and transparent everywhere. Two ring-shaped cutouts at the chest let the nipples peek exactly through; the crotch keeps a hidden gate of its own. It stitches 'concealment' and 'display' into the same cloth, leaving every outline and every breath an itch behind a layer of black gauze.",
+
+        "clothing_jp_popo_opencup_bra":"Open-Cup Shelf Bra",
+        "clothing_jp_popo_opencup_bra_tooltip":"A lace bra with only the underwire — no cups. A stiff cradle scoops the breasts from below, pressing them up into a deep valley while the most sensitive tips stand wholly bare, attended in turn by cool air and scorching gazes. One step in it and the lesson lands: this constant shiver is the designer's most malicious tenderness.",
+
+        "clothing_jp_popo_bell_collar":"Bell Choker Collar",
+        "clothing_jp_popo_bell_collar_tooltip":"A black patent choker lined in soft velvet, a small golden bell hanging at its center. The soft click as it closes is the moment the contract seals — from then on, every step, every lean, every motion is attested by the bell. The one wearing it finds their voice softening on its own; after all, it's embarrassing when the bell rings too eagerly.",
+
+        "clothing_jp_popo_thighhigh_heelboots":"Thigh-High Heel Boots",
+        "clothing_jp_popo_thighhigh_heelboots_tooltip":"Super P○po' ultimate weapon: patent thigh-high boots rising to the very root of the thigh, ending dead center in the absolute territory. The twelve-centimeter stilettos force the legs into their tautest lines and cant the rear proudly high; and the zipper runs from ankle all the way to the top of the shaft — every inch drawn down slowly is a solemn unveiling."
+            }
+        }
+    }
+
+}

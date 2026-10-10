@@ -517,10 +517,77 @@ public class TryFindNurseJobNode : FindJobNode
     }
 }
 
+/// <summary>
+/// Sandboxes a booked recreation visit by its activity's work module the way TryFindScheduledJobNode sandboxes a shift -
+/// while c is busy with one of the current schedule's workCommands it keeps at it; otherwise it draws a random
+/// workCommand (then the others, if that one has no free furniture) and goes to the furniture in the scheduled faction
+/// offering it. Unlike a shift it searches the NON-job postings: recreation commands are not work. Fails (next node)
+/// when nothing is scheduled. TryFindScheduledJobNode already runs this for every booked visit (RunVisit), so it is only
+/// needed as an override with a filter / heuristic of its own.
+/// </summary>
+public class TryFindScheduledActivityNode : FindJobNode
+{
+    /// <summary>The search a booked visit runs with when no override gives one (TryFindScheduledJobNode): any public or private non-job posting, at random.</summary>
+    public static readonly PathingRoomFilter VisitFilter = new PathingRoomFilter()
+    {
+        checkBlacklist = true,
+        skipPrivateRoom = false,
+        searchJobList = false,
+        searchNonJobList = true,
+        excludePrisonRooms = true
+    };
+
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        return RunVisit(c, currentJobFaction, resetJob, currentHour, Heuristic, filter, s);
+    }
+
+    /// <summary>The sandbox described on the class, with heuristic / filter - shared with TryFindScheduledJobNode's booked-visit branch.</summary>
+    public static bool RunVisit(Character_Trainable c, I_IsJobGiver currentJobFaction, bool resetJob, int currentHour,
+        Func<Job_Furniture, Character_Trainable, Dictionary<int, float>, float> heuristic, PathingRoomFilter filter, List<string> s)
+    {
+        var jobpost = c.GetJobPost(currentHour);
+        if (jobpost == null || jobpost.comIDs == null || jobpost.comIDs.Count == 0 || currentJobFaction == null) return false;
+        var commands = jobpost.comIDs.Where(id => id != "com_furniture_sleep").ToList();
+        if (commands.Count == 0) return false;
+
+        // already doing (or heading to) one of the schedule's commands - keep at it
+        if (c.CurrentJob != null && !resetJob && commands.Exists(id => c.CurrentJob.hasActivePackge(c.RefID, id)
+            || (c.CurrentJob.allusableCOMStrings.Contains(id) && c.CurrentJob.hasActivePathing(c.RefID))))
+            return true;
+
+        var first = jobpost.getRandCOM;
+        var order = new List<string>();
+        if (first != null && commands.Contains(first.ID)) order.Add(first.ID);
+        foreach (var id in commands.OrderBy(x => UnityEngine.Random.value)) if (!order.Contains(id)) order.Add(id);
+
+        foreach (var comID in order)
+        {
+            var possible = currentJobFaction.GetValidJobs_Heuristics(heuristic, 1, c, currentHour, filter, comIDOverride: comID, s: s);
+            if (possible == null || possible.Count == 0) continue;
+
+            Job job = possible[0];
+            if (s != null) s.Add($"Changing job to scheduled activity [{comID}] in room [" + job.ParentRoom.DisplayName + "]");
+            c.ChangeCurrentJob(job, comID);
+            return true;
+        }
+        return false;
+    }
+}
+
 public class TryFindScheduledJobNode : FindJobNode
 {
     public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
     {
+        // a booked recreation visit at the scheduled faction, with commands of its own: coordinated by a Job_Activity
+        // (TryActivityJob - gathering, launch, dispatch); a visit whose commands are real job commands (or a booking
+        // without any, running on the faction's own schedule) falls through to the shift search
+        var booking = currentJobFaction == null ? null : c.FactionManager?.GetEffectiveBooking(currentHour);
+        if (booking != null && (I_IsJobGiver)booking.Faction == currentJobFaction
+            && booking.workModule?.workCommands != null && booking.workModule.workCommands.Count > 0
+            && TryActivityJob(c, currentJobFaction, resetJob, currentHour, booking, s))
+            return true;
+
         var jobpost = c.GetJobPost(currentHour);
         COM currentScheduleCOM = jobpost == null ? null : jobpost.getRandCOM;
 
@@ -576,6 +643,90 @@ public class TryFindScheduledJobNode : FindJobNode
             }
         }
         return false;
+    }
+
+    /// <summary>
+    /// The booked-visit branch (Plan_ActivityJobs): every visit whose booking carries its own commands is coordinated
+    /// by a Job_Activity. Resolves the visit's instance (its session, else the booking itself - a session booking with
+    /// no linked session has no instance): no job yet and the visit under way -> created lazily, by whoever asks first;
+    /// gathering -> join it (the job paths the participant to the gather room and waits; a released participant - a
+    /// restroom trip - comes back the same way). With an outcome (launched / failed - the job lives until the visit is
+    /// over): a latecomer joins the job, which walks them to the gather room - arriving there is their late arrival
+    /// (Job_Activity.ArriveLate); someone who took part in a launched activity is Dispatched without joining the job -
+    /// a failed Dispatch falls through to the normal behavior tree (dispatched again on a later think); someone the
+    /// activity is done with (released by a failure, turned away, no longer attending) sandboxes the venue alone while
+    /// the booking lasts - never pulled in again, no fee. No instance at all means the plain RunVisit sandbox - never a job.
+    /// </summary>
+    static bool TryActivityJob(Character_Trainable c, I_IsJobGiver currentJobFaction, bool resetJob, int currentHour, RecreationBooking booking, List<string> s)
+    {
+        var key = RecreationUtility.ActivityKeyFor(c.FactionManager, booking);
+        var job = Job_Activity.FindFor(key);
+        if (job == null)
+        {
+            int nowAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
+            if (key != null && booking.AbsStart <= nowAbs) job = Job_Activity.Create(key, c);
+            if (job == null)
+            {
+                if (s != null) s.Add($"scheduled activity: no instance / no job - plain sandbox");
+                return PlainSandbox(c, currentJobFaction, resetJob, currentHour, booking, s);
+            }
+        }
+
+        // already this job's actor (gathering, or waiting to be dispatched) - keep at it
+        if (c.CurrentJob == job) return true;
+
+        if (job.Phase == ActivityPhase.Gathering)
+        {
+            if (s != null) s.Add($"Changing job to gathering activity {job.DisplayName} in room [{job.ParentRoom?.DisplayName}]");
+            c.ChangeCurrentJob(job);
+            return true;
+        }
+
+        if (job.HasOutcome)
+        {
+            if (job.AwaitsLateArrival(c))
+            {
+                // late: the job walks them to the gather room; arriving there joins / turns them away (ArriveLate)
+                if (s != null) s.Add($"late for activity {job.DisplayName} - heading to the gather room [{job.ParentRoom?.DisplayName}]");
+                c.ChangeCurrentJob(job);
+                return true;
+            }
+            if (job.Phase == ActivityPhase.Launched && job.TookPart(c))
+            {
+                if (job.Dispatch(c))
+                {
+                    if (s != null) s.Add($"dispatched to launched activity {job.DisplayName}");
+                    return true;
+                }
+                // nothing to dispatch to right now: the normal behavior tree takes over (restroom, meals...); the next
+                // think dispatches again - never park them on the job
+                if (s != null) s.Add($"launched activity {job.DisplayName} has nothing to dispatch to - behavior tree");
+                return false;
+            }
+            // done with this activity (released by its failure, turned away, no longer attending): sandbox the venue
+            // alone while the booking lasts - no fee (the activity did not take place for them)
+            if (s != null) s.Add($"done with activity {job.DisplayName} - plain sandbox");
+            return PlainSandbox(c, currentJobFaction, resetJob, currentHour, booking, s, chargeFee: false);
+        }
+
+        // ended (only between its instance ending and the job unregistering): the plain sandbox, never a new job
+        if (s != null) s.Add($"scheduled activity ended - plain sandbox");
+        return PlainSandbox(c, currentJobFaction, resetJob, currentHour, booking, s);
+    }
+
+    /// <summary>
+    /// A visit with no coordinating job to take part in (no instance, the job ended, done with its activity): the plain
+    /// workModule sandbox (RunVisit). With chargeFee, the visit still costs its entrance fee - charged once the visitor
+    /// is at the venue (RecreationUtility.ChargeEntranceFee; the booking's guard keeps it to once); not for someone whose
+    /// activity failed / turned them away.
+    /// </summary>
+    static bool PlainSandbox(Character_Trainable c, I_IsJobGiver currentJobFaction, bool resetJob, int currentHour, RecreationBooking booking, List<string> s, bool chargeFee = true)
+    {
+        var venue = booking.Faction;
+        if (chargeFee && !booking.entranceFeeCharged && venue != null && (I_IsJobGiver)venue == c.FactionManager.CurrentLocaleFaction)
+            RecreationUtility.ChargeEntranceFee(c, venue, booking.GetActivity(c.FactionManager), booking);
+        return TryFindScheduledActivityNode.RunVisit(c, currentJobFaction, resetJob, currentHour,
+            FactionUtility.GetHeuristic(PathfindHeuristic.random), TryFindScheduledActivityNode.VisitFilter, s);
     }
 }
 

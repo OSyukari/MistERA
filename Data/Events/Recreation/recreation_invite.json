@@ -1,0 +1,59 @@
+{
+    "_doc": "Fired from code (RecreationUtility.StartInviteEvent), no trigger, the player only: started whenever someone picks the player as an invitee of a recreation session (the host's invitation, or a participant extending it). Self = the player; Targets.inviter = who invites them; $inviteText$ = the activity line, who is coming, who else is invited, role / required (built and localized by code). The session is carried only by the event's runtime callbacks (events are never saved): ExecuteCallback buildOptions = the Accept option + the clashes with the player's bookings ($inviteConflictText$), built just before the question shows; the Accept option answers yes through its own callback; ExecuteCallback decline answers no (final). An invitation already answered or whose session is gone shows no Accept.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Recreation_Invite",
+                "allowDuplicate": true,
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "Builds the Accept option and the clashes text from the current state, then asks.",
+                        "options": [
+                            {
+                                "option": "_build",
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "buildOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "_comment": "The loaded Accept answers yes through its callback (disabled with the reason when a clash can't be cancelled); Decline answers no.",
+                        "UISpec": { "portraitRefKey": "inviter" },
+                        "question": "Recreation_Invite_question",
+                        "loadOptionsKey": "inviteOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ],
+                        "options": [
+                            {
+                                "option": "Recreation_Invite_decline",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "ExecuteCallbackPermissive", "arguments": [ "decline" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "end" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Recreation_Invite_question": "$inviter.name$邀请$self.name$一起去：\n$inviteText$$inviteConflictText$",
+                "Recreation_Invite_decline": "拒绝"
+            }
+        }
+    }
+}

@@ -568,6 +568,8 @@ public class Manageable_Party : I_IsJobGiver
     /// <param name="guestStatus"></param>
     public void AddToFaction(Character_Trainable c, MemberType guestStatus, bool sendEvent = true)
     {
+        // a parent MemberType is never held: joining as it joins as its first child
+        guestStatus = guestStatus?.ResolveJoinTarget();
         //c.AddToFaction(this);
         if (!charaGuestStatus.ContainsKey(c.RefID)) charaGuestStatus.Add(c.RefID, guestStatus.ID);
         else charaGuestStatus[c.RefID] = guestStatus.ID;

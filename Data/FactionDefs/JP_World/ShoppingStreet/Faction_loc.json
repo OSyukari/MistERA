@@ -5,7 +5,13 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "jp_mall_furniture": "Furniture Store"
+                "jp_mall_furniture": "Furniture Store",
+
+                "jp_mall_frontDesk_displayName_1": "Shop Counter",
+                "jp_mall_frontDesk_displayName_2": "Shop Counter Together",
+
+                "membertype_jp_mall_clerk": "Mall Clerk",
+                "jp_mall_clerk": "Clerk, Opening Hours"
             }
         }
     }

@@ -68,7 +68,7 @@ public class ActionPackage_Wait : ActionPackage
         duration = Math.Max(duration, minutes);
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         return this;
     }

@@ -5,6 +5,19 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
+                "consumable_jp_high_school_lunch": "School Lunch",
+                "consumable_jp_high_school_lunch_tooltip": "A lunch set from the school cafeteria.",
+                "jp_high_school_entrance": "Entrance & Shoe Lockers",
+                "jp_high_school_1F_corridor": "1F Corridor",
+                "jp_high_school_2F_corridor": "2F Corridor",
+                "jp_high_school_principal_office": "Principal's Office",
+                "jp_high_school_teachers_office": "Teachers' Office",
+                "jp_high_school_cafeteria": "Cafeteria",
+                "jp_high_school_gym": "Gym",
+                "jp_high_school_classroom": "Classroom",
+                "jp_high_school_1F_spare_room_1": "1F Spare Room",
+                "jp_high_school_2F_spare_room_1": "2F Spare Room A",
+                "jp_high_school_2F_spare_room_2": "2F Spare Room B",
                 "jp_high_school_board_duty": "School Board Duties",
                 "jp_high_school_student_class": "Attend School",
                 "jp_high_school_student_lesson_displayName": "Attend Class",

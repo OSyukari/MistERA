@@ -141,7 +141,7 @@ public class ActionPackage_LLM : ActionPackage
         return isValid;
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         return this;
     }

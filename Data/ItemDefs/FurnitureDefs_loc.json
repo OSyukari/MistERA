@@ -1,0 +1,12 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for FurnitureDefs.json. Holds en-us entries added after the in-file en-us block."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "furniture_marker_wait": "Waiting Marker"
+            }
+        }
+    }
+}

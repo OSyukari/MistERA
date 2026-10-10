@@ -63,41 +63,60 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// <summary>Index 0 = Monday ... 6 = Sunday, matching MapPlan.WorkModuleInit.activeDays.</summary>
     static readonly string[] WeekdayNames = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
+    /// <summary>Whether day i of the activeDays cycle is a work day - an empty activeDays means unrestricted (every day).</summary>
+    static bool IsCycleDayActive(List<int> activeDays, int i) { return activeDays.Count < 1 || (i < activeDays.Count && activeDays[i] == 1); }
+
     /// <summary>
-    /// Prints all 7 weekdays in short form (Mon Tue ...), graying out days not in activeDays via
+    /// Prints the weekdays in short form (Mon Tue ...), graying out days not in activeDays via
     /// TextColor_disabled - an empty activeDays means unrestricted (7/7), so every day prints active.
+    /// A two-week cycle (MapPlan.WorkModuleInit.GetCycleLength = 14) prints one labelled line per week (A, B).
     /// </summary>
     public static string FormatActiveDays(List<int> activeDays)
     {
-        var names = new List<string>();
-        for (int i = 0; i < WeekdayNames.Length; i++)
-        {
-            var name = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_" + WeekdayNames[i] + "_short");
-            bool active = activeDays.Count < 1 || (i < activeDays.Count && activeDays[i] == 1);
-            names.Add(active ? name : Utility.WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color));
-        }
-        return String.Join(" ", names);
+        return FormatCycleWeeks(activeDays, (name, active) => active ? name : Utility.WrapTextColor(name, scr_System_CentralControl.current.DisplaySetting.TextColor_disabled.Color), "\n");
     }
     /// <summary>
-    /// Prints all 7 weekdays in short form (Mon Tue ...), graying out days not in activeDays via
-    /// TextColor_disabled - an empty activeDays means unrestricted (7/7), so every day prints active.
+    /// Prints only the active weekdays in short form (Mon Tue ...) - an empty activeDays means unrestricted (7/7).
+    /// A two-week cycle prints each week labelled (A, B).
     /// </summary>
     public static string FormatActiveDaysSimple(List<int> activeDays)
     {
-        var names = new List<string>();
-        for (int i = 0; i < WeekdayNames.Length; i++)
-        {
-            var name = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_" + WeekdayNames[i] + "_short");
-            bool active = activeDays.Count < 1 || (i < activeDays.Count && activeDays[i] == 1);
-            if (!active) continue;
-            names.Add(name);
-        }
-        return String.Join(" ", names);
+        return FormatCycleWeeks(activeDays, (name, active) => active ? name : null, ", ");
     }
-    /// <summary>Empty activeDays means unrestricted (7/7) - see MapPlan.WorkModuleInit.activeDays.</summary>
+
+    /// <summary>One week of the cycle per entry (formatDay returns null to skip a day); weeks are labelled only in a two-week cycle.</summary>
+    static string FormatCycleWeeks(List<int> activeDays, Func<string, bool, string> formatDay, string weekSeparator)
+    {
+        int cycle = MapPlan.WorkModuleInit.GetCycleLength(activeDays);
+        var weeks = new List<string>();
+        for (int week = 0; week * WeekdayNames.Length < cycle; week++)
+        {
+            var names = new List<string>();
+            for (int d = 0; d < WeekdayNames.Length; d++)
+            {
+                var name = LocalizeDictionary.QueryThenParse("ui_calendar_dayOfWeek_" + WeekdayNames[d] + "_short");
+                var text = formatDay(name, IsCycleDayActive(activeDays, week * WeekdayNames.Length + d));
+                if (text != null) names.Add(text);
+            }
+            string line = String.Join(" ", names);
+            if (cycle > WeekdayNames.Length) line = LocalizeDictionary.QueryThenParse(week == 0 ? "ui_workdays_weekA" : "ui_workdays_weekB").Replace("$days$", line);
+            weeks.Add(line);
+        }
+        return String.Join(weekSeparator, weeks);
+    }
+
+    /// <summary>Work days in one cycle (7 or 14 days) - an empty activeDays means unrestricted (7/7). See MapPlan.WorkModuleInit.activeDays.</summary>
     public static int CountActiveDays(List<int> activeDays)
     {
-        return activeDays.Count < 1 ? WeekdayNames.Length : activeDays.Count(x => x == 1);
+        return activeDays.Count < 1 ? WeekdayNames.Length : activeDays.Take(MapPlan.WorkModuleInit.GetCycleLength(activeDays)).Count(x => x == 1);
+    }
+
+    /// <summary>"Active N Days/Week", or "Active N Days / 2 Weeks" for a two-week cycle.</summary>
+    public static string FormatActiveDayCount(List<int> activeDays)
+    {
+        bool twoWeeks = MapPlan.WorkModuleInit.GetCycleLength(activeDays) > WeekdayNames.Length;
+        return LocalizeDictionary.QueryThenParse(twoWeeks ? "ui_workdays_countPerTwoWeeks" : "ui_workdays_countPerWeek")
+            .Replace("$dayCount$", CountActiveDays(activeDays).ToString());
     }
 
     /// <summary>
@@ -167,6 +186,14 @@ public class Manageable : I_Disposable, I_IsJobGiver
         var member = GetMemberType(c);
         var activeDays = member != null && member.workModule != null ? member.workModule.activeDays : new List<int>();
         return CountActiveDays(activeDays);
+    }
+
+    /// <summary>FormatActiveDayCount of c's MemberType here: "Active N Days/Week" or "Active N Days / 2 Weeks".</summary>
+    public string GetWorkDayCountString(Character_Trainable c)
+    {
+        var member = GetMemberType(c);
+        var activeDays = member != null && member.workModule != null ? member.workModule.activeDays : new List<int>();
+        return FormatActiveDayCount(activeDays);
     }
 
     public string GetWorkHoursPerDayString(Character_Trainable c)
@@ -314,7 +341,35 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     public bool isMealHourAt(int hour)
     {
-        return this.mealHours.Contains(hour); 
+        return this.mealHours.Contains(hour);
+    }
+
+    /// <summary>
+    /// This faction has a meal spot c could eat at: a "food_meal" command posted in its rooms (what TryFindMealNode
+    /// searches - furniture giving food_meal generates one COM_TakeMeal per meal item) in a room c may enter
+    /// (Room_Instance.CanBeAccessedBy), whose meal package for c validates. The package is checked ahead of time
+    /// (ActionPackage.ignoreActorRoom - c need not be there) against the current state (stock, seats, c's stats);
+    /// the meal hour itself is not checked here.
+    /// </summary>
+    public bool CanOfferMealTo(Character_Trainable c)
+    {
+        if (c == null) return false;
+        foreach (var kvpair in nonjobPosts)
+        {
+            var com = kvpair.Key;
+            if (!com.comTags.Contains("food_meal")) continue;
+            foreach (var post in kvpair.Value)
+            {
+                if (post == null || post.ParentRoom == null) continue;
+                if (!post.ParentRoom.CanBeAccessedBy(c)) continue;
+
+                var package = com.MakePackage(post, new List<int>() { c.RefID }, new List<int>(), -1);
+                if (package == null) continue;
+                package.ignoreActorRoom = true;
+                if (package.Validate()) return true;
+            }
+        }
+        return false;
     }
 
     public RelationshipType GetRelationshipBetween(int self, int target, out bool isA)
@@ -378,6 +433,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
         return mainExit_cache;
     } }
 
+    /// <summary>
+    /// Where this faction's rally job (Job_MoveLocation) takes a character to get them inside the faction - MainExit,
+    /// except for a subfaction, whose MainExit is its parent's room (see Manageable_Subfaction.RallyRoom).
+    /// </summary>
+    [JsonIgnore] public virtual Room_Instance RallyRoom { get { return MainExit; } }
     [JsonIgnore] public virtual int MainExitCost { get { return mainExit == null ? 1 : mainExit.exitCost; } }
     [JsonProperty] protected Map_MainExit mainExit = null;
     public void SetMainExit(Map_MainExit exit)
@@ -389,6 +449,26 @@ public class Manageable : I_Disposable, I_IsJobGiver
         int newRef = MainExit == null ? -1 : MainExit.RefID;
     }
 
+    public const string MainExitWaitMarkerID = "furniture_marker_wait";
+    /// <summary>
+    /// Gives the faction's data-defined MainExit room a furniture_marker_wait (generic wait commands,
+    /// COM_Defs/com_furniture_wait.json) unless a furniture there already offers 'wait'-tagged commands
+    /// (e.g. furniture_jp_hospital_waiting_bench). Idempotent - called on map instantiation and on load.
+    /// A faction whose MainExit doesn't resolve yet (virtual tenant without its room) is skipped.
+    /// </summary>
+    public void EnsureMainExitWaitMarker()
+    {
+        if (mainExit == null || string.IsNullOrEmpty(mainExit.roomID)) return;
+        var room = MainExit;
+        if (room == null) return;
+        foreach (var furniture in room.Furnitures)
+        {
+            if (furniture.FurnitureBase == null) continue;
+            foreach (var giver in furniture.FurnitureBase.givesJob) if (giver.comTags.Contains("wait")) return;
+        }
+        room.AddFurniture(MainExitWaitMarkerID);
+    }
+
     public MapPlan.WorkModuleInit GetActiveWorkModule(Character_Trainable c, int hour)
     {
         var type = GetMemberType(c);
@@ -396,13 +476,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (type.workModule == null) return null;
         if (HasCustomOverride(c)) return null;
         // check customoverride if true then false
+        if (c.FactionManager.IsWorkPaused(this)) return null;
 
-        if (!type.workModule.activeHours.Contains(hour)) return null;
-        if (type.workModule.activeDays.Count > 0)
-        {
-            int dayInWeek = (scr_System_Time.current.getCurrentDayInWeek() + 0) % 7;
-            if (dayInWeek >= type.workModule.activeDays.Count || type.workModule.activeDays[dayInWeek] == 0) return null;
-        }
+        if (!type.workModule.IsActiveAt(hour)) return null;
         return type.workModule;
     }
 
@@ -488,16 +564,44 @@ public class Manageable : I_Disposable, I_IsJobGiver
     public List<Event.EventEntry.Options> BuildJoinOptions(MemberType type, List<Character_Trainable> candidates, out string errorKey)
     {
         errorKey = "";
+        // a parent is joined as its first child - that child's handler answers
+        type = type?.ResolveJoinTarget();
         if (type == null || type.joinHandler == null || candidates == null) return new List<Event.EventEntry.Options>();
         return type.joinHandler.BuildOptions(this, type, candidates, out errorKey);
     }
 
-    /// <summary>Leave counterpart of BuildJoinOptions, through type's MemberLeaveHandler (LeaveActiveFaction event Result).</summary>
+    /// <summary>
+    /// Leave counterpart of BuildJoinOptions, through type's MemberLeaveHandler (LeaveActiveFaction event Result). For a
+    /// parent type, each candidate holding one of its descendants here is asked through the type they actually hold.
+    /// </summary>
     public List<Event.EventEntry.Options> BuildLeaveOptions(MemberType type, List<Character_Trainable> candidates, out string errorKey)
     {
         errorKey = "";
-        if (type == null || type.leaveHandler == null || candidates == null) return new List<Event.EventEntry.Options>();
-        return type.leaveHandler.BuildOptions(this, type, candidates, out errorKey);
+        if (type == null || candidates == null) return new List<Event.EventEntry.Options>();
+        if (type.Children.Count == 0)
+        {
+            if (type.leaveHandler == null) return new List<Event.EventEntry.Options>();
+            return type.leaveHandler.BuildOptions(this, type, candidates, out errorKey);
+        }
+
+        var options = new List<Event.EventEntry.Options>();
+        var byHeld = new Dictionary<MemberType, List<Character_Trainable>>();
+        foreach (var c in candidates)
+        {
+            if (c == null || !isManagedChara(c.RefID)) continue;
+            var held = GetMemberType(c);
+            if (held == null || held == type || !held.IsOrDescendsFrom(type.ID)) continue;
+            if (!byHeld.TryGetValue(held, out var group)) byHeld[held] = group = new List<Character_Trainable>();
+            group.Add(c);
+        }
+        foreach (var kvp in byHeld)
+        {
+            var built = BuildLeaveOptions(kvp.Key, kvp.Value, out var heldErrorKey);
+            options.AddRange(built);
+            if (string.IsNullOrEmpty(errorKey)) errorKey = heldErrorKey;
+        }
+        if (options.Count > 0) errorKey = "";
+        return options;
     }
 
     /// <summary>First managed room whose Base ID starts with roomIDPrefix (empty = any) and that has no owner, or null.</summary>
@@ -775,7 +879,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         var subjectType = GetMemberType(subject);
         var targetType = GetMemberType(target);
         if (subjectType == null || targetType == null) return true;
-        return !subjectType.cannotRequestLeaveMemberTypes.Contains(targetType.ID);
+        return !subjectType.cannotRequestLeaveMemberTypes.Exists(id => targetType.IsOrDescendsFrom(id));
     }
 
     /// <summary>Every member of this faction linked to target (as memberTypeID, or as anything when it is empty), e.g. a patient's visitors.</summary>
@@ -834,6 +938,11 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         public string memberTypeID = "";
         public List<MemberLink> links = new List<MemberLink>();
+        /// <summary>
+        /// The faction that dispatched the member into this post (Character_Factions.GetWorkFactionSourceOrDefault - who
+        /// its salary/fees belong to), given back with the post. "" = none (older saves): the default applies again.
+        /// </summary>
+        public string sourceFactionID = "";
     }
 
     /// <summary>member RefID -> the work post they held here before it was suspended (see SuspendedPost).</summary>
@@ -882,7 +991,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             foreach (var c in ManagedChara.ToList())
             {
                 if (c == null) continue;
-                if (entry.memberTypeID != "" && GetMemberType(c)?.ID != entry.memberTypeID) continue;
+                if (entry.memberTypeID != "" && !MemberType.Matches(GetMemberType(c), entry.memberTypeID)) continue;
                 var ev = new EventInstance(c, entry.eventID, "");
                 if (!ev.isValid) continue;
                 scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
@@ -904,11 +1013,17 @@ public class Manageable : I_Disposable, I_IsJobGiver
         StartHourlyEvents();
 
         int currentHour = (scr_System_Time.current.getCurrentTime().Hour + 24 - 1) % 24;
+        // the hour being paid is the one that just ended - yesterday's 23:00 at midnight
+        int paidDayOffset = scr_System_Time.current.getCurrentTime().Hour == 0 ? -1 : 0;
         foreach(var c in ManagedChara)
         {
             if (c == null) continue;
             // first check if chara is in faction
             if (!isCharaInManagedSpace(c.RefID)) continue;
+            // a member billed by the hour (membershipFee.hourlyFee, e.g. a salon customer) owes this hour stayed
+            AccrueHourlyUsage(c);
+            // only hours c's schedule actually gave to a shift here are paid (not a booking, strike, forbid-work... hour)
+            if (!IsOnShift(c, currentHour, paidDayOffset)) continue;
 
             List<ItemEntry> payout = null;
             PaymentCadence cadence = PaymentCadence.Biweekly;
@@ -962,6 +1077,22 @@ public class Manageable : I_Disposable, I_IsJobGiver
         }
     }
 
+    /// <summary>
+    /// Pay-per-hour-stayed: if c's MemberType here bills by the hour (MembershipFeeInit.hourlyFee), adds one hour to the
+    /// Obligation_MembershipFee c's payer (Character_Factions.GetWorkFactionSourceOrDefault - the priority home for a
+    /// recreation membership) owes this faction, billed at the fee's cadence. Only player payers are tracked, like flat
+    /// membership fees (NPC-to-NPC charges always succeed - TradeManager.TryChargeObligation).
+    /// </summary>
+    void AccrueHourlyUsage(Character_Trainable c)
+    {
+        var fee = GetMemberType(c)?.membershipFee;
+        var hourly = fee?.hourlyFee;
+        if (hourly == null || string.IsNullOrEmpty(hourly.itemID) || hourly.itemCount <= 0) return;
+        var payer = c.FactionManager.GetWorkFactionSourceOrDefault(this.ID);
+        if (payer == null || payer == this || !payer.isPlayerFaction || payer.TradeManager == null) return;
+        payer.TradeManager.GetOrCreateMembershipFeeObligation(this, fee.cadence).AccrueUsage(hourly);
+    }
+
     protected void OnHourPreUpdate()
     {
         if (!scr_UpdateHandler.current.EventHandler.Active)
@@ -992,6 +1123,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (updateOrder != 0) return;
         DailyReport.Clear();
+        dailyNeedFailures.Clear();
         if (isPlayerFaction) mealHours.Clear();
         foreach (var i in this.SubFactions) i.OnDayUpdate_0();
     }
@@ -1153,6 +1285,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     protected void OnDayUpdate_3(int updateOrder)
     {   // character log their daily consumption at updateOrder 2, refresh report at update3
         if (updateOrder != 3) return;
+        FireDailyNeedFailureEvent();
         this.DailyReport.FinalizeReport();
         RefreshSalesInventory();
     }
@@ -1294,9 +1427,31 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
 
+    /// <summary>
+    /// c's recreation booking here that actually drives hour (Character_Factions.GetEffectiveBooking) - its schedule stands
+    /// in for c's schedule at this faction for those hours. At c's own workplace a shift hour wins over a booking (unless
+    /// the booking is overrideWork); at c's home the booking wins over the home schedule.
+    /// </summary>
+    HourlySchedule GetBookingSchedule(Character_Trainable c, int hour, int daysLookahead)
+    {
+        var booking = c.FactionManager.GetEffectiveBooking(hour, daysLookahead);
+        return booking != null && booking.Faction == this ? booking.Schedule : null;
+    }
+
+    /// <summary>
+    /// Whether this faction's OWN schedule for c claims hour: the party gathering override, c's MemberType shift, or
+    /// c's assigned hours here. Recreation bookings never count - Character_Factions.CurrentJobScheduleFaction weighs
+    /// those itself, and sleep placement / the recreation planner must not see them as schedules.
+    /// </summary>
     public bool HasScheduleFor(Character_Trainable c, int hour, int daysLookahead = 0)
     {
         if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out _)) return true;
+        return HasOwnShift(c, hour, daysLookahead);
+    }
+
+    /// <summary>c's MemberType shift (unless custom-overridden) or c's active assigned hours here cover hour.</summary>
+    bool HasOwnShift(Character_Trainable c, int hour, int daysLookahead)
+    {
         if (!HasCustomOverride(c) && GetMemberTypeSchedule(c, hour, daysLookahead) != null) return true;
         if (charaSchedules.TryGetValue(c.RefID, out var schedule))
         {
@@ -1305,9 +1460,26 @@ public class Manageable : I_Disposable, I_IsJobGiver
         else return false;
     }
 
+    /// <summary>
+    /// Whether c actually works a shift here at hour (daysLookahead days from today; -1 = yesterday): this faction has a
+    /// shift for c then (MemberType shift or assigned hours - HasOwnShift) AND c's schedule really resolves to it - c's
+    /// CurrentJobScheduleFaction is this faction, with no party gathering and no recreation booking in effect. So hours
+    /// c's schedule did not give to this work (forbid-work home, unpaid fee, salary strike, a party, an overriding
+    /// booking) are not shift hours. What salary and staffing counts read.
+    /// </summary>
+    public bool IsOnShift(Character_Trainable c, int hour, int daysLookahead = 0)
+    {
+        if (c == null || !HasOwnShift(c, hour, daysLookahead)) return false;
+        if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out _)) return false;
+        if (c.FactionManager.GetEffectiveBooking(hour, daysLookahead) != null) return false;
+        return c.FactionManager.CurrentJobScheduleFaction(hour, daysLookahead) == this;
+    }
+
     public HourlySchedule GetHourlySchedule(Character_Trainable c, int hour, int daysLookahead = 0)
     {
         if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out var schedule)) return schedule;
+        var booked = GetBookingSchedule(c, hour, daysLookahead);
+        if (booked != null) return booked;
         var types = GetMemberTypeSchedule(c, hour, daysLookahead);
         if (!HasCustomOverride(c) && types != null) return types;
         if (charaSchedules.TryGetValue(c.RefID, out var schedulec) && schedulec.Get(hour).isActive) return schedulec.Get(hour);
@@ -1356,22 +1528,21 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// (for every hour, not just this one) once HasCustomOverride(c) is true.
     /// <br/> daysLookahead: 0 = today (default), 1 = tomorrow, etc. - pass a nonzero value when hour
     /// belongs to a future day, e.g. a sleep lookahead that crosses midnight.
+    /// <br/> Null for every hour while c's shift here is paused (Character_Factions.IsWorkPaused).
     /// </summary>
     HourlySchedule GetMemberTypeSchedule(Character_Trainable c, int hour, int daysLookahead = 0)
     {
+        if (c.FactionManager.IsWorkPaused(this)) return null;
         var module = GetMemberType(c).workModule;
-        if (module == null || !module.activeHours.Contains(hour)) return null;
-        if (module.activeDays.Count > 0)
-        {
-            int dayInWeek = (scr_System_Time.current.getCurrentDayInWeek() + daysLookahead) % 7;
-            if (dayInWeek >= module.activeDays.Count || module.activeDays[dayInWeek] == 0) return null;
-        }
+        if (module == null || !module.IsActiveAt(hour, daysLookahead)) return null;
         return module.CachedSchedule;
     }
 
     public HourlySchedule GetSchedule(Character_Trainable c, int hour, int daysLookahead = 0)
     {
         if (FactionUtility.TryGetPartyGatheringOverride(c, hour, out var sc)) return sc;
+        var booked = GetBookingSchedule(c, hour, daysLookahead);
+        if (booked != null) return booked;
         if (!HasCustomOverride(c))
         {
             var memberTypeSchedule = GetMemberTypeSchedule(c, hour, daysLookahead);
@@ -1988,6 +2159,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
     /// <param name="guestStatus"></param>
     public void AddToFaction(Character_Trainable c, MemberType guestStatus, bool sendEvent = true)
     {
+        // a parent MemberType is never held: joining as it joins as its first child
+        guestStatus = guestStatus?.ResolveJoinTarget();
         // once the player has a foothold in a faction, its world-map door should no longer stay hidden
         if (c.RefID == 0) hiddenOnWorldMap = false;
 
@@ -2077,6 +2250,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             string linkedStanding = leaveHandler != null ? GetCharaSocialStandingName(linked) : "";
             if (linked.FactionManager.WorkFactions.Contains(this)) linked.FactionManager.RemoveWorkFaction(this.ID);
             else if (linked.FactionManager.Faction_Home_Temporary == this) linked.FactionManager.SetTempHomeFaction("", null);
+            else if (linked.FactionManager.RecreationFactions.Contains(this)) linked.FactionManager.RemoveRecreationFaction(this.ID);
             if (!isManagedChara(linked.RefID)) departedLinked.Add(new KeyValuePair<Character_Trainable, string>(linked, linkedStanding));
         }
         managedChara = null;
@@ -2561,7 +2735,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
             var chara = scr_System_CampaignManager.current.FindInstanceByID(assignment.Key);
             for(int i = 0; i < 24; i++)
             {
-                if (chara.FactionManager.CurrentJobScheduleFaction(i) != this) continue;
+                if (!IsOnShift(chara, i)) continue;
                 if (assignment.Value.HasWorkHoursWithCOM(i, jobCOM.ID)) assignedWorkLoad += 60;
             }
         }
@@ -3306,6 +3480,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
                     // chara's daily need is not this faction's responsibility (wrong home / on another faction's party / party-locked)
                     continue;
                 }
+                if (registeredOnly) dailyNeedCoveredCharaIDs.Add(chara.RefID);
 
                 var needs = chara.Stats.Needs;
                 if (needs.Count < 1) continue;
@@ -3346,6 +3521,12 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     List<Tuple<string, int>> DailyCharaMaintenance = new List<Tuple<string, int>>();
     /// <summary>
+    /// RefIDs of the characters whose needs today's CheckDailyResourceConsumption actually consumed for
+    /// (registered AND this faction's responsibility - filled by GetMaintenanceCost_Chara(true)). See
+    /// WasDailyNeedCovered.
+    /// </summary>
+    HashSet<int> dailyNeedCoveredCharaIDs = new HashSet<int>();
+    /// <summary>
     /// Only consumes token item for now
     /// </summary>
     /// <param name="debug"></param>
@@ -3356,6 +3537,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
         Dictionary<string, int> consumedTokens = new Dictionary<string, int>();
         List<string> consumeMessage = new List<string>();
         DailyCharaMaintenance.Clear();
+        dailyNeedCoveredCharaIDs.Clear();
         foreach (KeyValuePair<string, int> kvp in GetMaintenanceCost_Chara(true))
         {
             List<Item_Instance> extraConsume = new List<Item_Instance>();
@@ -3395,6 +3577,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
     }
 
     /// <summary>
+    /// Whether today's CheckDailyResourceConsumption consumed for this chara. False when e.g. its
+    /// responsible faction changed between day update 0 registration and the update 2 check, or it was
+    /// absent - DailyNeedConsumption skips such charas entirely (no debuff, no trust change).
+    /// </summary>
+    public bool WasDailyNeedCovered(int charaRefID)
+    {
+        return dailyNeedCoveredCharaIDs.Contains(charaRefID);
+    }
+
+    /// <summary>
     /// Used by individuals to see if current faction satisfied their need
     /// </summary>
     /// <param name="queryTag"></param>
@@ -3404,6 +3596,78 @@ public class Manageable : I_Disposable, I_IsJobGiver
         var v = DailyCharaMaintenance.Find(x=>x.Item1 == queryTag);
         if (v == null) return false;
         return v.Item2 >= 0;
+    }
+
+    /// <summary>
+    /// Today's unmet-need reports, pushed by each affected character from their own
+    /// Character_Factions.DailyNeedConsumption (day update 2) and drained into one combined
+    /// OnDailyNeedsFailed event at day update 3 - see FireDailyNeedFailureEvent. Cleared in OnDayUpdate_0.
+    /// </summary>
+    [JsonIgnore] List<DailyNeedFailure> dailyNeedFailures = new List<DailyNeedFailure>();
+    class DailyNeedFailure
+    {
+        public Character_Trainable chara;
+        public List<string> failedTags;
+        public List<Character_Trainable> trustManagers;
+        public int trustChange;
+    }
+
+    /// <summary>
+    /// Called by a character whose daily needs this faction failed to cover today. trustManagers are the
+    /// managers whose trust from chara was already changed by trustChange (applied by the caller).
+    /// </summary>
+    public void RecordDailyNeedFailure(Character_Trainable chara, List<string> failedTags, List<Character_Trainable> trustManagers, int trustChange)
+    {
+        if (chara == null || failedTags == null || failedTags.Count < 1) return;
+        dailyNeedFailures.Add(new DailyNeedFailure { chara = chara, failedTags = failedTags, trustManagers = trustManagers, trustChange = trustChange });
+    }
+
+    /// <summary>
+    /// Fires one combined OnDailyNeedsFailed event for every member whose needs went unmet today - same
+    /// EventInstance shape as TradeManager.FireObligationEvent: $factionName$, $needs$ (the localized
+    /// failed need tags, deduplicated), target key "affected" ($affected.name$), and - only when trust
+    /// actually changed - target key "managers" plus a signed $trustChange$ gating the event's check_trust
+    /// branch. Characters only report here for player factions (see DailyNeedConsumption), so this is
+    /// always a player-facing alert.
+    /// </summary>
+    void FireDailyNeedFailureEvent()
+    {
+        if (dailyNeedFailures.Count < 1) return;
+
+        Character_Trainable actingChara = isPlayerFaction ? scr_System_CampaignManager.current.Player : Managers.FirstOrDefault();
+        if (actingChara == null) { dailyNeedFailures.Clear(); return; }
+
+        var affected = new List<Character_Trainable>();
+        var needs = new List<string>();
+        var managers = new List<Character_Trainable>();
+        int trustChange = 0;
+        foreach (var f in dailyNeedFailures)
+        {
+            if (!affected.Contains(f.chara)) affected.Add(f.chara);
+            foreach (var tag in f.failedTags)
+            {
+                var needName = LocalizeDictionary.QueryThenParse(tag);
+                if (!needs.Contains(needName)) needs.Add(needName);
+            }
+            if (f.trustManagers != null && f.trustChange != 0)
+            {
+                trustChange = f.trustChange;
+                foreach (var m in f.trustManagers) if (!managers.Contains(m)) managers.Add(m);
+            }
+        }
+        dailyNeedFailures.Clear();
+
+        var ev = new EventInstance(actingChara, "OnDailyNeedsFailed", "");
+        ev.displayOverride = isPlayerFaction;
+        ev.AppendStrings["factionName"] = new List<string> { FactionDisplayName };
+        ev.AppendStrings["needs"] = needs;
+        ev.Targets["affected"] = affected;
+        if (managers.Count > 0 && trustChange != 0)
+        {
+            ev.Targets["managers"] = managers;
+            ev.AppendStrings["trustChange"] = new List<string> { trustChange.ToString("+0;-#") };
+        }
+        scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
     }
 
     public void OnBeforeSerialize()
@@ -3444,7 +3708,18 @@ public class Manageable : I_Disposable, I_IsJobGiver
         if (!isPlayerFaction) RemoveSettledSingleBuyInOrders();
 
         foreach (var p in ProductionOrders) p.ReEstablishParent(this);
-        if (this.managedRoomRefs != null) foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
+        if (this.managedRoomRefs != null)
+        {
+            // drop refs to rooms that no longer exist (e.g. saves where a removed template room was only taken off
+            // its subfaction owner, leaving the host's ref dangling - see Floor.ApplyPendingRoomChanges)
+            foreach (var r in new List<KeyValuePair<int, Room_Instance>>(ManagedRooms))
+            {
+                if (r.Value != null) continue;
+                Debug.LogWarning($"Manageable [{ID}] managed room [{r.Key}] no longer exists, removing");
+                RemoveManagedRoom(r.Key);
+            }
+            foreach (var r in ManagedRooms) RefreshRoomJobs(r.Value);
+        }
         if (this.Inventory != null) this.Inventory.ReEstablishParent(this);
         if (this.MealManager != null) MealManager.ReEstablishParent(this);
 
@@ -3549,11 +3824,48 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (plan == null) return list;
             foreach (var id in plan.assignableMemberTypes)
             {
-                if (FactionUtility.TryGetMemberType(id, out var type) && !type.isManager && type.workModule != null && type.workModule.hourlyPayout.Count > 0)
-                    list.Add(type);
+                if (!FactionUtility.TryGetMemberType(id, out var listed)) continue;
+                // a parent ID stands for every post under it (the shifts), in authored order
+                foreach (var type in listed.GetLeafDescendants())
+                {
+                    if (list.Contains(type)) continue;
+                    if (!type.isManager && type.workModule != null && type.workModule.hourlyPayout.Count > 0) list.Add(type);
+                }
             }
             return list;
         }
+    }
+
+    /// <summary>
+    /// Whether this faction lists memberTypeID - or one of its parents - in its MapPlan.joinableMemberTypes (read from the
+    /// template by mapPlanID, not saved) - the gate of the reachable-faction join searches (FactionJoinUtility).
+    /// </summary>
+    public bool CanBeJoinedAs(string memberTypeID)
+    {
+        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+        if (plan == null || !FactionUtility.TryGetMemberType(memberTypeID, out var type)) return false;
+        return plan.joinableMemberTypes.Exists(id => type.IsOrDescendsFrom(id));
+    }
+
+    /// <summary>
+    /// The recreation memberships this faction offers: its MapPlan.joinableMemberTypes resolved to the type actually
+    /// joined (ResolveJoinTarget), kept when it has a recreation spec and both a join and a leave handler. Its own home
+    /// and work members may book these visits here without joining (RecreationUtility) - what they may then do there is
+    /// up to the commands' own requirements (bookable commands gate only with requireJobFaction).
+    /// </summary>
+    public List<MemberType> GetOfferedRecreationTypes()
+    {
+        var result = new List<MemberType>();
+        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(mapPlanID);
+        if (plan == null) return result;
+        foreach (var id in plan.joinableMemberTypes)
+        {
+            if (!FactionUtility.TryGetMemberType(id, out var listed) || listed == null) continue;
+            var type = listed.ResolveJoinTarget();
+            if (type.recreation == null || type.joinHandler == null || type.leaveHandler == null || result.Contains(type)) continue;
+            result.Add(type);
+        }
+        return result;
     }
 
     public void RefreshSalesInventory(MapPlan plan = null)
@@ -3738,6 +4050,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
         [JsonIgnore]
         public int ActiveDayCount { get { return CountActiveDays(activeDays); } }
+
+        [JsonIgnore]
+        public string ActiveDayCountText { get { return FormatActiveDayCount(activeDays); } }
 
         [JsonIgnore]
         public string PrintHourRanges { get { return FormatHourRanges(activeHours); } }

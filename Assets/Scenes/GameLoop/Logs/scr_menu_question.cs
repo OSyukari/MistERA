@@ -250,6 +250,9 @@ public class scr_menu_question : scr_Menu
 
             if (option.isDefaultCancel) this.tooltip += (this.tooltip.Length > 0 ? "\n":"") + LocalizeDictionary.QueryThenParse("event_isDefaultCancel_tooltip");
             if (!string.IsNullOrEmpty(option.disabledReasonKey)) this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(option.disabledReasonKey);
+            // authored reason for a fixed option whose conditions currently fail
+            else if (!string.IsNullOrEmpty(option.invalidTooltip) && !EventUtility.isValid(option, instance))
+                this.tooltip += (this.tooltip.Length > 0 ? "\n" : "") + LocalizeDictionary.QueryThenParse(option.invalidTooltip);
             this.tooltip = UtilityEX.ParseEventEntry(instance, this.tooltip);
         }
 

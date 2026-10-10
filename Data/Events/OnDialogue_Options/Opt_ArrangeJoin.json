@@ -1,0 +1,148 @@
+{
+    "_doc": "Dialogue options to arrange for the person being talked to to join - or leave - some faction as a tagged MemberType (MemberType.Tags), e.g. 'memberType_hospital_patient'. A faction offers joining as a MemberType only if it lists it in its MapPlan joinableMemberTypes; the MemberType's joinHandler decides who is admitted, its leaveHandler how they leave. canArrangeJoinByTag shows the option when the person already holds such a membership or any such faction answers (even with only refusals). Flow: already a member -> say where, offer the leave options (LeaveHeldFactionsByTag); after leaving, the join options are rebuilt and offered (none -> end, run it again later). Not a member -> join options (JoinReachableFactionsByTag: one per faction/type, refusals drawn disabled with the reason as tooltip). To support another MemberType: tag it, list it in the faction's joinableMemberTypes, copy an arrange event into its own file (one event per file, e.g. Opt_ArrangeJoin_WorkFullTime.json) with the new tag and texts. This file holds the hospital admission event plus the dictionary keys shared by every arrange event (option labels, held text, work_post_* handler texts, shift tooltip).",
+    "Events": {
+        "list": [
+            {
+                "ID": "Opt_ArrangeJoin_HospitalPatient",
+                "_comment": "Arrange hospital admission (or discharge) for one of the player's own people (sharesHomeFaction). Same join/leave callbacks as jp_hospital_Opt_Admit / jp_hospital_Opt_Discharge (JoinHandler_HospitalPatient / LeaveHandler_HospitalPatient), but searching every reachable hospital.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "patient" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "sharesHomeFaction" ] },
+                            { "parameters": [ "canArrangeJoinByTag", "memberType_hospital_patient" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "Join or leave: holding a tagged membership with leave options -> leave branch, else join.",
+                        "options": [
+                            {
+                                "option": "_held",
+                                "Results": [
+                                    { "Type": "LeaveHeldFactionsByTag", "arguments": [ "leaveOptions", "patient", "memberType_hospital_patient", "heldMemberships" ] },
+                                    { "Type": "ExistStoredOptions", "arguments": [ "leaveOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "leave_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_join",
+                                "Results": [
+                                    { "Type": "JoinReachableFactionsByTag", "arguments": [ "arrangeOptions", "patient", "memberType_hospital_patient" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrange_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "leave_ask",
+                        "_comment": "Picking a loaded leave option runs its leave callback, then (loadOptionsResults) goes on to rejoin.",
+                        "UISpec": { "portraitRefKey": "patient" },
+                        "question": "Opt_ArrangeJoin_leave_question",
+                        "loadOptionsKey": "leaveOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "rejoin" ] } ],
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_leave_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "rejoin",
+                        "_comment": "After leaving: rebuild the join options. None (e.g. nothing reachable right now) -> end; the player can run the option again.",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "JoinReachableFactionsByTag", "arguments": [ "arrangeOptions", "patient", "memberType_hospital_patient" ] },
+                                    { "Type": "ExistStoredOptions", "arguments": [ "arrangeOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrange_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "arrange_ask",
+                        "UISpec": { "portraitRefKey": "patient" },
+                        "question": "Opt_ArrangeJoin_HospitalPatient_question",
+                        "loadOptionsKey": "arrangeOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_done" ] } ],
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "arrange_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "patient" },
+                        "line": "Opt_ArrangeJoin_HospitalPatient_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what, who stopped following, family registered as visitors).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "arrange_cancel",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "event_joinOption_byTag": "$faction$：$option$",
+                "event_heldMembership": "$faction$的$memberType$",
+                "event_heldMembership_separator": "、",
+                "Opt_ArrangeJoin_cancel": "算了",
+                "Opt_ArrangeJoin_leave_question": "$patient.name$已经是$heldMemberships$了。要让$patient.name$离开吗？",
+                "Opt_ArrangeJoin_leave_cancel": "不用了",
+                "Opt_ArrangeJoin_HospitalPatient": "安排住院",
+                "Opt_ArrangeJoin_HospitalPatient_question": "要让$patient.name$去哪家医院住院？",
+                "Opt_ArrangeJoin_HospitalPatient_done": "已经为$patient.name$办好了住院手续。",
+                "event_joinOption_childPosts": "包含班次：",
+                "event_joinOption_childPost": "· $name$ $hours$ $days$",
+                "work_post_joinOption": "$memberType$",
+                "work_post_leaveOption": "让$name$辞职",
+                "work_post_err_member": "已经在这里任职或登记。",
+                "work_post_err_tempHome": "目前暂住于其他地方，无法就职。",
+                "Opt_ArrangeJoin_Work_done": "已经为$worker.name$安排好了工作。",
+                "Opt_ArrangeJoin_Work_leave_cancel": "不用了"
+            }
+        }
+    }
+}

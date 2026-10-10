@@ -1,0 +1,13 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for recreation_invite.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Recreation_Invite_question": "$inviter.name$ invites $self.name$ along:\n$inviteText$$inviteConflictText$",
+                "Recreation_Invite_decline": "Decline"
+            }
+        }
+    }
+}

@@ -13,6 +13,11 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
     public List<MemberType> memberTypes = new List<MemberType>();
     public List<SalesClienteleDef> clienteleDefs = new List<SalesClienteleDef>();
     public List<DebtClassDef> debtClasses = new List<DebtClassDef>();
+    /// <summary>
+    /// Recreation offers authored in the venue's own data file (under "MapPlans", next to its memberTypes). Template data,
+    /// never saved: each world collects the ones whose factionID it initializes (WorldPlan.AllRecreationOffers).
+    /// </summary>
+    public List<RecreationOfferDef> recreationOffers = new List<RecreationOfferDef>();
 
     // MemberType.GetRelationshipWithType will consult this list and lazily build its cache
     // though, we do need to make sure the game does not store membertype inside save file, and always have the game use pointer to this object's stored membertypes
@@ -45,6 +50,10 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             if (!ID_Dictionary_World.TryAdd(o.worldID, o)) Debug.Log($"failed to add Index_WorldPlan id [{o.worldID}] due to duplicate");
         }
 
+        // child MemberTypes defined inline under a parent (MemberType.childMemberTypes) join the flat list, so they are
+        // registered and looked up like any other type
+        foreach (MemberType o in new List<MemberType>(this.memberTypes)) o?.RegisterChildren(memberTypes.Add);
+
         message.Add("Index_MemberType : registering ID with list length [" + memberTypes.Count + "]");
 
         foreach (MemberType o in this.memberTypes)
@@ -52,6 +61,8 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             if (string.IsNullOrEmpty(o.ID)) continue;
             if (!ID_Dictionary_MemberType.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_MemberType id [{o.ID}] due to duplicate");
         }
+        // field inheritance and remaining defaults - nothing may read MemberType fields before this
+        MemberType.ApplyHierarchy(memberTypes);
 
         message.Add("Index_SalesClienteleDef : registering ID with list length [" + clienteleDefs.Count + "]");
 
@@ -67,6 +78,17 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         {
             if (string.IsNullOrEmpty(o.ID)) continue;
             if (!ID_Dictionary_DebtClass.TryAdd(o.ID, o)) Debug.Log($"failed to add Index_DebtClassDef id [{o.ID}] due to duplicate");
+        }
+
+        message.Add("Index_RecreationOfferDef : registering ID with list length [" + recreationOffers.Count + "]");
+
+        foreach (RecreationOfferDef o in this.recreationOffers)
+        {
+            if (o == null || string.IsNullOrEmpty(o.ID)) continue;
+            if (!ID_Dictionary_RecreationOffer.TryAdd(o.ID, o)) { Debug.Log($"failed to add Index_RecreationOfferDef id [{o.ID}] due to duplicate"); continue; }
+            if (!RecreationOffersByFaction.TryGetValue(o.factionID ?? "", out var atFaction))
+                RecreationOffersByFaction[o.factionID ?? ""] = atFaction = new List<RecreationOfferDef>();
+            atFaction.Add(o);
         }
 
         message.Add("Index_MemberRelations : registering ID with list length [" + memberRelations.Count + "]");
@@ -143,10 +165,16 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
             initializeFactions = new Dictionary<string, string>(parent.initializeFactions),
             doors = new List<WorldPlan.DoorConnection>(parent.doors),
             npcInit = new List<NPCInit>(parent.npcInit),
+            recreationOffers = new List<RecreationOfferDef>(parent.recreationOffers),
+            holidayDefs = new List<HolidayDef>(parent.holidayDefs),
+            seasonDefs = new List<SeasonDef>(parent.seasonDefs),
         };
         foreach (var kvp in self.initializeFactions) merged.initializeFactions[kvp.Key] = kvp.Value;
         merged.doors.AddRange(self.doors);
         merged.npcInit.AddRange(self.npcInit);
+        merged.recreationOffers.AddRange(self.recreationOffers);   // a child's entry with a parent's ID wins (RecreationBoard.FindDef takes the last)
+        merged.holidayDefs.AddRange(self.holidayDefs);             // same-day overlap across parent/child: the first entry in the merged list wins (HolidaySystem.BuildYearCalendar)
+        merged.seasonDefs.AddRange(self.seasonDefs);
         return merged;
     }
 
@@ -155,6 +183,15 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
 
     Dictionary<string, DebtClassDef> ID_Dictionary_DebtClass = new Dictionary<string, DebtClassDef>();
     public DebtClassDef GetByID_DebtClassDef(string id) { return ID_Dictionary_DebtClass.ContainsKey(id) ? ID_Dictionary_DebtClass[id] : null; }
+
+    Dictionary<string, RecreationOfferDef> ID_Dictionary_RecreationOffer = new Dictionary<string, RecreationOfferDef>();
+    Dictionary<string, List<RecreationOfferDef>> RecreationOffersByFaction = new Dictionary<string, List<RecreationOfferDef>>();
+    static readonly List<RecreationOfferDef> NoRecreationOffers = new List<RecreationOfferDef>();
+    /// <summary>The data-file recreation offers (recreationOffers) whose venue is factionID, in authored order - read-only.</summary>
+    public IReadOnlyList<RecreationOfferDef> GetRecreationOffersAt(string factionID)
+    {
+        return factionID != null && RecreationOffersByFaction.TryGetValue(factionID, out var list) ? list : NoRecreationOffers;
+    }
 
     Dictionary<string, MemberType> ID_Dictionary_MemberType = new Dictionary<string, MemberType>();
     public MemberType GetByID_MemberType(string id) { return ID_Dictionary_MemberType.ContainsKey(id) ? ID_Dictionary_MemberType[id] : null; }
@@ -179,6 +216,7 @@ public class Index_MapPlan : I_IndexHasID, I_IndexMergeable, I_SerializationCall
         if (l.memberTypes != null) this.memberTypes.AddRange(l.memberTypes);
         if (l.clienteleDefs != null) this.clienteleDefs.AddRange(l.clienteleDefs);
         if (l.debtClasses != null) this.debtClasses.AddRange(l.debtClasses);
+        if (l.recreationOffers != null) this.recreationOffers.AddRange(l.recreationOffers);
         if (l.memberRelations != null) this.memberRelations.AddRange(l.memberRelations);
     }
     public void OnAfterDeserialize()
@@ -284,10 +322,17 @@ public class MapPlan
 
     /// <summary>
     /// IDs of MemberType entries (from Index_MapPlan.memberTypes) this faction offers as player-
-    /// assignable shift statuses in the Management UI - see Manageable.AssignableMemberTypes, which
+    /// assignable shift statuses in the Management UI (a parent ID stands for all its child posts) - see Manageable.AssignableMemberTypes, which
     /// resolves these and filters to non-manager types carrying a paid workModule.
     /// </summary>
     public List<string> assignableMemberTypes = new List<string>();
+
+    /// <summary>
+    /// IDs of MemberType entries (from Index_MapPlan.memberTypes) this faction can be joined as through the
+    /// reachable-faction searches (FactionJoinUtility) - see Manageable.CanBeJoinedAs. Read from this template, never
+    /// saved. The MemberType's joinHandler still decides who is admitted.
+    /// </summary>
+    public List<string> joinableMemberTypes = new List<string>();
 
     /// <summary>
     /// Per-shift staffing targets for this (non-player) faction, one entry per shift MemberType. Each hour
@@ -378,12 +423,53 @@ public class MapPlan
         public List<string> workCommands = new List<string>();
         public List<int> activeHours = new List<int>();
         /// <summary>
-        /// Per-weekday toggle, index 0 = Monday ... index 6 = Sunday (matches
-        /// scr_System_Time.getCurrentDayInWeek()). 1 = active that day, 0 = inactive.
-        /// Leave empty to keep the module active every day (7/7), e.g. [1,1,1,1,1,0,0] for a
-        /// Monday-Friday student schedule.
+        /// Per-day toggle, 1 = active that day, 0 = inactive. The list length picks the cycle:
+        /// up to 7 entries = weekly, index 0 = Monday ... 6 = Sunday, e.g. [1,1,1,1,1,0,0] for a Monday-Friday
+        /// student schedule; 8-14 entries = two-week cycle, 0-6 = week A Monday-Sunday, 7-13 = week B (week A
+        /// is the week of the campaign start date - scr_System_Time.getCurrentDayInCycle). Missing entries are
+        /// inactive. Leave empty to keep the module active every day (7/7). Check through IsDayActive.
         /// </summary>
         public List<int> activeDays = new List<int>();
+
+        /// <summary>Cycle length picked by activeDays' length: 14 for more than 7 entries, else 7.</summary>
+        public static int GetCycleLength(List<int> activeDays) { return activeDays != null && activeDays.Count > 7 ? 14 : 7; }
+
+        /// <summary>Whether activeDays allows work daysLookahead days from now (0 = today). Empty = every day.</summary>
+        public static bool IsDayActive(List<int> activeDays, int daysLookahead = 0)
+        {
+            if (activeDays == null || activeDays.Count == 0) return true;
+            int day = scr_System_Time.current.getCurrentDayInCycle(GetCycleLength(activeDays), daysLookahead);
+            return day < activeDays.Count && activeDays[day] != 0;
+        }
+
+        /// <summary>IsDayActive for this module's activeDays.</summary>
+        public bool IsActiveOnDay(int daysLookahead = 0) { return IsDayActive(activeDays, daysLookahead); }
+
+        /// <summary>
+        /// Whether this module works at hour, daysLookahead days from now: hour is in activeHours and the day its shift
+        /// started is active. An hour belonging to a shift that began before midnight (e.g. 03:00 of a 19:00-07:00
+        /// night shift - its run of consecutive activeHours wraps from 23 to 0) is checked against the previous day,
+        /// so an overnight shift follows activeDays as one shift instead of being split by the calendar day.
+        /// </summary>
+        public bool IsActiveAt(int hour, int daysLookahead = 0)
+        {
+            if (!activeHours.Contains(hour)) return false;
+            return IsDayActive(activeDays, daysLookahead + (StartedPreviousDay(hour) ? -1 : 0));
+        }
+
+        /// <summary>Walking back through consecutive activeHours from hour reaches 23 (the shift started the day before).</summary>
+        bool StartedPreviousDay(int hour)
+        {
+            if (activeHours.Count >= 24) return false;
+            for (int h = hour, steps = 0; steps < 24; steps++)
+            {
+                int prev = (h + 23) % 24;
+                if (!activeHours.Contains(prev)) return false;
+                if (h == 0) return true;
+                h = prev;
+            }
+            return false;
+        }
         public List<ItemEntry> hourlyPayout = new List<ItemEntry>();
         public List<ItemEntry> hourlyCost = new List<ItemEntry>();
 

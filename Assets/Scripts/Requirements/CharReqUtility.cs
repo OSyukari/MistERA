@@ -346,9 +346,10 @@ public static class CharaReqUtility
         }
     }
 
+    /// <summary>type is one of memberTypeIDs, or descends from one of them (a listed parent ID covers all its child posts).</summary>
     static bool HasMemberType(MemberType type, List<string> memberTypeIDs)
     {
-        return type != null && memberTypeIDs.Contains(type.ID);
+        return type != null && memberTypeIDs.Exists(id => type.IsOrDescendsFrom(id));
     }
 
     public static void ApplyCost(CharaReq q, EvaluationPackage m, Character_Trainable c, COM com, bool isDoer, MessageCollect msg)

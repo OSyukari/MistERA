@@ -9,7 +9,7 @@ public class Character_Factions
     // Owner Ref
     int ownerRefID = -1;
     Character_Trainable ownerPointer = null;
-    Character_Trainable Owner { get { if (ownerPointer == null) ownerPointer = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID);
+    [JsonIgnore] public Character_Trainable Owner { get { if (ownerPointer == null) ownerPointer = scr_System_CampaignManager.current.FindInstanceByID(ownerRefID);
             return ownerPointer;
         } }
 
@@ -40,6 +40,12 @@ public class Character_Factions
     /// </summary>
     [JsonProperty] Dictionary<string, string> FactionIDs_WorkSource = new Dictionary<string, string>();
     [JsonProperty] List<string> FactionIDs_Work = new List<string>();
+    /// <summary>
+    /// Work factions whose MemberType shift this character currently doesn't attend (toggled off in the Management
+    /// external job tab): still a member there (fees, access, commands), but the shift gives no schedule - see
+    /// Manageable.GetMemberTypeSchedule. Only the MemberType shift is paused, never hours assigned through charaSchedules.
+    /// </summary>
+    [JsonProperty] List<string> FactionIDs_WorkPaused = new List<string>();
     List<Manageable> Factions_Work_Cache = null;
     [JsonIgnore] public List<Manageable> Factions_Work{get
         {
@@ -49,6 +55,28 @@ public class Character_Factions
                 foreach(var i in FactionIDs_Work) Factions_Work_Cache.Add(scr_System_CampaignManager.current.FindFactionByID(i));
             }
             return Factions_Work_Cache;
+        }
+    }
+    //--------------------------
+
+    /// <summary>
+    /// Recreation memberships (gym, salon, cram school...) - a third membership kind next to home and work, kept in
+    /// its own list so nothing that walks WorkFactions (job schedule priority, salary/strike, worker pools, the
+    /// work-post join dialogue) ever sees them. Held MemberTypes have no fixed hours: their visits are booked day by
+    /// day. A faction is in at most one of this character's lists (a faction holds one MemberType per character):
+    /// AddRecreationFaction refuses a home/work faction, and becoming home/work at a recreation faction drops it here.
+    /// </summary>
+    [JsonProperty] List<string> FactionIDs_Recreation = new List<string>();
+    List<Manageable> Factions_Recreation_Cache = null;
+    [JsonIgnore] public List<Manageable> RecreationFactions { get
+        {
+            if (FactionIDs_Recreation == null) FactionIDs_Recreation = new List<string>();
+            if (Factions_Recreation_Cache == null)
+            {
+                Factions_Recreation_Cache = new List<Manageable>();
+                foreach (var i in FactionIDs_Recreation) Factions_Recreation_Cache.Add(scr_System_CampaignManager.current.FindFactionByID(i));
+            }
+            return Factions_Recreation_Cache;
         }
     }
     //--------------------------
@@ -103,6 +131,7 @@ public class Character_Factions
             }
             this.FactionID_Home = homeFactionID;
             this.Faction_Home_Cache = null;   // else Faction_Home below still returns the old faction
+            DropRecreationEntry(homeFactionID);
         }
         //Debug.Log("SetHomeFaction called on " + Owner.FirstName + " with arguments homeFactionID["+ homeFactionID+ "] isManager["+isManager+"]");
         if (this.Faction_Home != null)
@@ -126,6 +155,7 @@ public class Character_Factions
             if (Faction_Home_Temporary != null) Faction_Home_Temporary.RemoveFromFaction(Owner);
             this.Faction_Home_Temporary_FactionID = tempFactionID;
             this.Faction_Home_Temporary_Cache = null;   // else Faction_Home_Temporary below still returns the old faction
+            DropRecreationEntry(tempFactionID);
         }
 
         if (Faction_Home_Temporary != null && status != null)
@@ -169,25 +199,33 @@ public class Character_Factions
         bool returnValue = true;
         Manageable home = this.DailyNeedResponsibleFaction;
 
-        if (home != null && home.isPlayerFaction)
+        if (home != null && home.isPlayerFaction && home.WasDailyNeedCovered(Owner.RefID))
         {
+            List<string> failedTags = new List<string>();
             foreach(var v in Owner.Stats.Needs)
             {
                 var v2 = home.QueryDailyCharaMaintenanceResult(v.consumeItemByTag);
+                if (!v2) failedTags.Add(v.consumeItemByTag);
                 if (!v2 && v.statusDebuffID != "")
                 {   // add status debuff
                     Owner.Stats.AddOrModStatus(v.statusDebuffID, 1441, 1441);
-                    home.DailyReport.AddManageReport("Due to missing resource "+v.consumeItemByTag+", "+Owner.FirstName+" is now "+v.statusDebuffID, true);
+                    var debuff = Owner.Stats.FindStatusByExactID(v.statusDebuffID);
+                    home.DailyReport.AddManageReport(LocalizeDictionary.QueryThenParse("ui_management_overview_daily_debuff")
+                        .Replace("$resource$", LocalizeDictionary.QueryThenParse(v.consumeItemByTag))
+                        .Replace("$name$", Owner.FirstName)
+                        .Replace("$status$", debuff != null ? debuff.SeverityDisplayName : v.statusDebuffID), true);
                 }
                 returnValue = v2 && returnValue;
             }
 
             // increase relationship
+            List<Character_Trainable> trustManagers = new List<Character_Trainable>();
+            var scoreinc = returnValue ? 1 : -1;
             foreach (var manager in home.Managers)
             {
                 if (Owner.RefID == manager.RefID) continue;
 
-                var scoreinc = returnValue ? 1 : -1;
+                trustManagers.Add(manager);
                 Owner.Relationships.IncreaseRelationshipWith(manager.RefID, RelationshipScoreType.Trust, scoreinc);// FindRelationshipWith(manager.RefID).ModRelationValue(RelationshipScoreType.Trust, 1);
 
                 var s = LocalizeDictionary.QueryThenParse("ui_management_overview_daily_trust")
@@ -199,8 +237,11 @@ public class Character_Factions
                 home.DailyReport.AddManageReport(s, !returnValue);
 
             }
+
+            // home bundles every member's failure into one OnDailyNeedsFailed alert at day update 3
+            if (failedTags.Count > 0) home.RecordDailyNeedFailure(Owner, failedTags, trustManagers, scoreinc);
         }
-        // else, no home faction, dont check it.
+        // else, no home faction, or home did not consume for this chara today (absent / responsibility changed since registration), dont check it.
     }
 
     /// <summary>
@@ -302,14 +343,13 @@ public class Character_Factions
     {
         get
         {
-            if (CurrentlyActiveFaction == null) return "";
-            return CurrentlyActiveFaction.GetCharaSocialStandingTooltip(Owner.RefID);
+            return Owner.CurrentActiveFactionName;
         }
     }
 
     /// <summary>
     /// The character's current MemberType, preferring an active party over the active faction
-    /// (mirrors Utility.GetActorTag's portraitTags precedence). Null if neither is present.
+    /// (mirrors Utility.GetActorTag's MemberType Tags precedence). Null if neither is present.
     /// </summary>
     [JsonIgnore]
     public MemberType CurrentActiveMemberType
@@ -319,7 +359,7 @@ public class Character_Factions
             var party = CurrentActiveParty;
             if (party != null) return party.GetMemberType(Owner);
             var faction = CurrentlyActiveFaction;
-            return faction != null ? faction.GetMemberType(Owner) : null;
+            return faction != null ? GetScheduledMemberType(faction) : null;
         }
     }
     [JsonIgnore]
@@ -333,7 +373,7 @@ public class Character_Factions
     }
     /// <summary>
     /// True if this character currently holds MemberType memberTypeID in any faction they belong to
-    /// (HomeFactions + WorkFactions), regardless of which faction/party is currently active. Does not
+    /// (HomeFactions + WorkFactions + RecreationFactions), regardless of which faction/party is currently active. Does not
     /// check party membership (parties are tracked separately via TrackedPartyRef) since MemberType
     /// authorship for this kind of check is expected to be faction-scoped (e.g. a job post).
     /// </summary>
@@ -341,7 +381,7 @@ public class Character_Factions
     {
         if (string.IsNullOrEmpty(memberTypeID)) return false;
         foreach (var faction in Factions)
-            if (faction != null && faction.GetMemberType(Owner)?.ID == memberTypeID) return true;
+            if (faction != null && MemberType.Matches(faction.GetMemberType(Owner), memberTypeID)) return true;
         return false;
     }
 
@@ -361,7 +401,7 @@ public class Character_Factions
     }
 
     /// <summary>
-    /// Every job giver this character belongs to: home + work factions, plus every party they are
+    /// Every job giver this character belongs to: home + work + recreation factions, plus every party they are
     /// rostered in (TrackedPartyRef) and the current/locked party.
     /// </summary>
     [JsonIgnore]
@@ -403,6 +443,8 @@ public class Character_Factions
         if (targetFaction == null) return;
         else
         {
+            // hired where they were a recreation member: the work MemberType replaces the membership
+            DropRecreationEntry(targetFaction.ID);
             targetFaction.AddToFaction(Owner, status, sendEvent);
             if (!Factions_Work.Contains(targetFaction)) this.Factions_Work.Add(targetFaction);
             if (!FactionIDs_Work.Contains(targetFaction.ID)) this.FactionIDs_Work.Add(targetFaction.ID);
@@ -671,7 +713,8 @@ public class Character_Factions
         }
         else
         {
-            if (!this.Factions.Contains(sourceFaction)) AddWorkFaction(sourceFaction.ID);
+            // a recreation member assigned a job post here is hired (AddWorkFaction drops the membership)
+            if (!WorkFactions.Contains(sourceFaction) && !HomeFactions.Contains(sourceFaction)) AddWorkFaction(sourceFaction.ID);
             foreach(var hour in preset.activeHours)
             {
                 sourceFaction.SetWorkHour(Owner, hour, preset.jobPostID, preset.workCommands);
@@ -692,19 +735,454 @@ public class Character_Factions
         targetFaction.RemoveFromFaction(Owner);
         this.FactionIDs_Work.Remove(targetFaction.ID);
         this.FactionIDs_WorkSource.Remove(targetFaction.ID);
+        if (FactionIDs_WorkPaused != null) FactionIDs_WorkPaused.Remove(targetFaction.ID);
         this.Factions_Work.Remove(targetFaction);
 
         UpdateFactionPriorityList();
     }
 
+    /// <summary>Whether this character's MemberType shift at workFaction is paused (see FactionIDs_WorkPaused).</summary>
+    public bool IsWorkPaused(Manageable workFaction)
+    {
+        return workFaction != null && FactionIDs_WorkPaused != null && FactionIDs_WorkPaused.Contains(workFaction.ID);
+    }
+
+    /// <summary>
+    /// Pauses (or resumes) attending workFaction's MemberType shift without leaving it - the character stays a member
+    /// (fees, access) but the shift stops driving their schedule. Only for one of this character's work factions.
+    /// </summary>
+    public void SetWorkPaused(Manageable workFaction, bool paused)
+    {
+        if (workFaction == null) return;
+        if (FactionIDs_WorkPaused == null) FactionIDs_WorkPaused = new List<string>();
+        if (paused)
+        {
+            if (!WorkFactions.Contains(workFaction))
+            {
+                Debug.LogError($"SetWorkPaused target {workFaction.FactionDisplayName} not in workfactions, return");
+                return;
+            }
+            if (!FactionIDs_WorkPaused.Contains(workFaction.ID)) FactionIDs_WorkPaused.Add(workFaction.ID);
+        }
+        else FactionIDs_WorkPaused.Remove(workFaction.ID);
+
+        List<string> s = new List<string>();
+        UpdateSchedule(ref s);
+    }
+
+    /// <summary>
+    /// Joins factionID as a recreation member (see RecreationFactions). Refused (false) when the faction already is one
+    /// of this character's home or work factions - it would overwrite the MemberType held there. Re-joining an existing
+    /// membership just changes its MemberType.
+    /// </summary>
+    public bool AddRecreationFaction(string factionID, MemberType status, bool sendEvent = true)
+    {
+        var targetFaction = scr_System_CampaignManager.current.FindFactionByID(factionID);
+        if (targetFaction == null || status == null) return false;
+        if (WorkFactions.Contains(targetFaction) || HomeFactions.Contains(targetFaction))
+        {
+            Debug.LogWarning($"AddRecreationFaction: [{Owner?.FirstName}] already belongs to [{factionID}] as home/work, membership refused");
+            return false;
+        }
+
+        targetFaction.AddToFaction(Owner, status, sendEvent);
+        if (!FactionIDs_Recreation.Contains(targetFaction.ID)) FactionIDs_Recreation.Add(targetFaction.ID);
+        Factions_Recreation_Cache = null;
+
+        UpdateFactionPriorityList();
+        return true;
+    }
+
+    public void RemoveRecreationFaction(string factionID)
+    {
+        var targetFaction = RecreationFactions.Find(x => x != null && x.ID == factionID);
+        if (targetFaction == null) return;
+        targetFaction.RemoveFromFaction(Owner);
+        if (FactionIDs_Recreation.Remove(factionID)) Factions_Recreation_Cache = null;
+        // visits planned for the membership go with it; an event's visit there doesn't need membership and stays
+        CancelBookingsAt(factionID, true);
+
+        UpdateFactionPriorityList();
+    }
+
+    /// <summary>
+    /// For a faction about to hold this character as home/work instead: if it was a recreation membership, removes it from
+    /// the recreation list and cancels the visits booked through it (they ran under the membership's MemberType, which the
+    /// new one replaces). Other bookings there (offers, events) stay.
+    /// </summary>
+    void DropRecreationEntry(string factionID)
+    {
+        if (FactionIDs_Recreation == null || string.IsNullOrEmpty(factionID)) return;
+        if (!FactionIDs_Recreation.Remove(factionID)) return;
+        Factions_Recreation_Cache = null;
+        CancelBookingsAt(factionID, true);
+    }
+
+    //--------------------------
+    /// <summary>
+    /// Planned recreation visits (see RecreationBooking), dated by absolute day, kept until they end (PruneBookings).
+    /// Read through GetEffectiveBooking by CurrentJobScheduleFaction (after work, before home) and the booked faction's
+    /// schedule getters. Sleep placement deliberately ignores them (ValidateSchedule), so a booking overlapping sleep
+    /// takes those hours and the sleep window measured by Character_Trainable.Sleep comes out shorter.
+    /// </summary>
+    [JsonProperty] List<RecreationBooking> recreationBookings = new List<RecreationBooking>();
+    [JsonIgnore] public IReadOnlyList<RecreationBooking> RecreationBookings { get { return Bookings; } }
+    List<RecreationBooking> Bookings { get { if (recreationBookings == null) recreationBookings = new List<RecreationBooking>(); return recreationBookings; } }
+
+    /// <summary>The booking covering hour (-1 = now) daysLookahead days from today, or null.</summary>
+    public RecreationBooking GetBookingAt(int hour = -1, int daysLookahead = 0)
+    {
+        if (recreationBookings == null || recreationBookings.Count == 0) return null;
+        if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
+        int day = scr_System_Time.current.getAbsoluteDay(daysLookahead);
+        foreach (var b in recreationBookings) if (b != null && b.Covers(day, hour)) return b;
+        return null;
+    }
+
+    /// <summary>
+    /// The booking (never a session booking - those are their session's instance) starting exactly at absolute hour
+    /// absStart at factionID: the live list, else the past-booking record (a cancelled visit's job keeps resolving
+    /// until it notices). Job_Activity's instance lookup (RecreationUtility.ResolveActivityInstance). Null when none.
+    /// </summary>
+    public RecreationBooking FindBookingStartedAt(int absStart, string factionID)
+    {
+        foreach (var b in Bookings)
+            if (b != null && !b.isSessionBooking && b.AbsStart == absStart && b.factionID == factionID) return b;
+        if (pastRecreationBookings != null)
+            foreach (var b in pastRecreationBookings)
+                if (b != null && !b.isSessionBooking && b.AbsStart == absStart && b.factionID == factionID) return b;
+        return null;
+    }
+
+    /// <summary>
+    /// Adds booking unless it overlaps another booking or targets a missing faction. Any faction may be booked, this
+    /// character's own home/work factions included (GetEffectiveBooking decides when a booking there beats their own
+    /// schedule). Refreshes the schedule on success unless refresh is false (batch callers - the planner - refresh once at the end).
+    /// </summary>
+    public bool AddBooking(RecreationBooking booking, bool refresh = true)
+    {
+        if (booking == null || booking.hours < 1) return false;
+        if (booking.Faction == null) return false;
+        foreach (var b in Bookings) if (b != null && b.Overlaps(booking.AbsStart, booking.AbsEnd)) return false;
+
+        if (Owner != null) booking.ownerRef = Owner.RefID;
+        Bookings.Add(booking);
+        if (refresh) RefreshSchedule();
+        return true;
+    }
+
+    /// <summary>
+    /// Removes booking; if it had not ended yet, starts its onCancelledEventID (if any) on this character and announces
+    /// the cancellation (reason - see NotifyBookingCancelled). Refreshes the schedule unless refresh is false (callers
+    /// mid-way through a faction change that refreshes it afterwards).
+    /// </summary>
+    public void CancelBooking(RecreationBooking booking, bool refresh = true, RecreationUtility.CancelReason reason = RecreationUtility.CancelReason.None)
+    {
+        if (!RemoveBooking(booking)) return;
+        RecordPastBooking(booking);
+        NotifyBookingCancelled(booking, reason);
+        if (refresh) RefreshSchedule();
+    }
+
+    /// <summary>Takes booking off the list with no event and no refresh - for the planner moving it (RecreationUtility.TryReschedule).</summary>
+    public bool RemoveBooking(RecreationBooking booking)
+    {
+        return booking != null && Bookings.Remove(booking);
+    }
+
+    /// <summary>
+    /// A booking was cancelled before it ended: announces it (RecreationUtility.RecordCancelled - the change notice) and
+    /// starts its onCancelledEventID (if any) on this character. Nothing for a booking that had already ended.
+    /// </summary>
+    public void NotifyBookingCancelled(RecreationBooking booking, RecreationUtility.CancelReason reason = RecreationUtility.CancelReason.None)
+    {
+        if (booking == null || HasBookingEnded(booking)) return;
+        // a session booking given up: this character's answer to the session changes (it re-validates on its next hourly update)
+        RecreationUtility.OnSessionBookingCancelled(this, booking, reason);
+        RecreationUtility.RecordCancelled(this, booking, reason);
+        if (!string.IsNullOrEmpty(booking.onCancelledEventID))
+            scr_UpdateHandler.current.EventHandler.StartEvent(Owner, booking.onCancelledEventID, "", false);
+    }
+
+    public void RefreshSchedule()
+    {
+        var s = new List<string>();
+        UpdateSchedule(ref s);
+    }
+
+    /// <summary>The planned night (see plannedSleepStartAbs) as absolute hours [start, end); false when none is planned.</summary>
+    public bool TryGetPlannedSleep(out int startAbs, out int endAbs)
+    {
+        startAbs = plannedSleepStartAbs;
+        endAbs = plannedSleepEndAbs;
+        return startAbs >= 0 && endAbs > startAbs;
+    }
+
+    //--------------------------
+    /// <summary>Last absolute day RecreationUtility.DailyPlan has planned this character's bookings up to (-1 = never).</summary>
+    [JsonProperty] int lastRecreationPlanDay = -1;
+    [JsonIgnore] public int LastRecreationPlanDay { get { return lastRecreationPlanDay; } set { lastRecreationPlanDay = value; } }
+
+    /// <summary>
+    /// Characters who refused this character's recreation invitations (RefIDs) - never invited by them again. Not saved;
+    /// cleared at the start of this character's daily planning (RecreationUtility.DailyPlan).
+    /// </summary>
+    [JsonIgnore] protected HashSet<int> inviteRefusedBy = new HashSet<int>();
+
+    public bool HasRefusedInvite(int charaRef) { return inviteRefusedBy != null && inviteRefusedBy.Contains(charaRef); }
+    public void AddInviteRefusal(int charaRef) { if (inviteRefusedBy == null) inviteRefusedBy = new HashSet<int>(); inviteRefusedBy.Add(charaRef); }
+    public void ClearInviteMemory() { inviteRefusedBy?.Clear(); }
+
+    //-------------------------- recreation sessions (runtime only - rebuilt on load: RecreationUtility.RelinkAfterLoad + recreationDirty)
+    /// <summary>Sessions pushed to this character (invited, extended to them, hosted by them) - read in their own ranking pass.</summary>
+    [JsonIgnore] readonly List<RecreationGroup> sessionInbox = new List<RecreationGroup>();
+    [JsonIgnore] int inboxSerial = 0;
+    /// <summary>Inbox serial / faction and world list serials (RecreationGroupRegistry.PostedSerial) as of this character's last ranking pass.</summary>
+    [JsonIgnore] int seenInboxSerial = -1;
+    [JsonIgnore] readonly Dictionary<string, int> seenListSerials = new Dictionary<string, int>();
+    /// <summary>The kept preference order of the sessions this character accepted (RecreationUtility.RankSessions), best first.</summary>
+    [JsonIgnore] public List<RecreationGroup> SessionRanking = new List<RecreationGroup>();
+    /// <summary>The schedule was rebuilt for a real change (UpdateSchedule with fullrebuild), or a save was loaded: the next hourly tick re-runs ranking and confirming.</summary>
+    [JsonIgnore] public bool RecreationDirty = false;
+
+    [JsonIgnore] public IReadOnlyList<RecreationGroup> SessionInbox { get { return sessionInbox; } }
+
+    /// <summary>Puts session in this character's inbox (once) - a push from its host / extender, never a broadcast.</summary>
+    public void PushSession(RecreationGroup session)
+    {
+        if (session == null || sessionInbox.Contains(session)) return;
+        sessionInbox.Add(session);
+        inboxSerial++;
+    }
+
+    /// <summary>Takes session out of the inbox and the ranking (refused, or the session ended - RecreationUtility.UnhookSession).</summary>
+    public void DropSession(RecreationGroup session)
+    {
+        if (session == null) return;
+        sessionInbox.Remove(session);
+        SessionRanking.Remove(session);
+    }
+
+    /// <summary>Whether the inbox or any of listIDs' session lists changed since the last MarkSessionListsSeen.</summary>
+    public bool SessionListsChanged(IEnumerable<string> listIDs)
+    {
+        if (seenInboxSerial != inboxSerial) return true;
+        var registry = scr_System_CampaignManager.current.RecreationGroups;
+        foreach (var id in listIDs)
+        {
+            int serial = registry.PostedSerial(id);
+            if (serial == 0) continue;
+            if (!seenListSerials.TryGetValue(id, out int seen) || seen != serial) return true;
+        }
+        return false;
+    }
+
+    public void MarkSessionListsSeen(IEnumerable<string> listIDs)
+    {
+        seenInboxSerial = inboxSerial;
+        var registry = scr_System_CampaignManager.current.RecreationGroups;
+        foreach (var id in listIDs) seenListSerials[id] = registry.PostedSerial(id);
+    }
+
+    /// <summary>
+    /// After a save is loaded (sessions already relinked - RecreationGroupRegistry.OnAfterLoad): drops, quietly, bookings
+    /// whose session is gone and those of the old group system; the next hourly tick re-ranks (RecreationDirty). Saves
+    /// made before RecreationBooking.ownerRef existed get it stamped here.
+    /// </summary>
+    public void PostReloadUpdate_Recreation()
+    {
+        if (recreationBookings != null)
+            recreationBookings.RemoveAll(b => b != null && (b.IsLegacyGroupBooking || (b.isSessionBooking && b.Session == null)));
+        if (Owner != null)
+        {
+            if (recreationBookings != null) foreach (var b in recreationBookings) if (b != null && b.ownerRef < 0) b.ownerRef = Owner.RefID;
+            if (pastRecreationBookings != null) foreach (var b in pastRecreationBookings) if (b != null && b.ownerRef < 0) b.ownerRef = Owner.RefID;
+        }
+        RecreationDirty = true;
+    }
+
+    /// <summary>Recreation source key (a membership's faction ID, an offer's ID) -> absolute days a visit was attended, last RecreationUtility.AttendanceMemoryDays only.</summary>
+    [JsonProperty] Dictionary<string, List<int>> recreationAttendance = new Dictionary<string, List<int>>();
+
+    /// <summary>Notes a visit for sourceKey on absolute day `day` (once per day), forgetting days older than the planner looks back.</summary>
+    public void RecordAttendance(string sourceKey, int day)
+    {
+        if (string.IsNullOrEmpty(sourceKey)) return;
+        if (recreationAttendance == null) recreationAttendance = new Dictionary<string, List<int>>();
+        if (!recreationAttendance.TryGetValue(sourceKey, out var days)) recreationAttendance[sourceKey] = days = new List<int>();
+        if (!days.Contains(day)) days.Add(day);
+        days.RemoveAll(d => d < day - RecreationUtility.AttendanceMemoryDays);
+    }
+
+    /// <summary>Absolute days a visit for sourceKey was attended (remembered window only), empty if none.</summary>
+    public IReadOnlyList<int> GetAttendedDays(string sourceKey)
+    {
+        if (recreationAttendance != null && !string.IsNullOrEmpty(sourceKey) && recreationAttendance.TryGetValue(sourceKey, out var days)) return days;
+        return Array.Empty<int>();
+    }
+
+    /// <summary>
+    /// Cancels this character's bookings at factionID (only those made for a membership there if membershipOnly) without
+    /// refreshing the schedule - for faction changes, which refresh it themselves (UpdateFactionPriorityList).
+    /// </summary>
+    void CancelBookingsAt(string factionID, bool membershipOnly)
+    {
+        if (recreationBookings == null || recreationBookings.Count == 0 || string.IsNullOrEmpty(factionID)) return;
+        foreach (var b in recreationBookings.ToList())
+        {
+            if (b == null || b.factionID != factionID) continue;
+            if (membershipOnly && b.source != RecreationBookingSource.Membership) continue;
+            CancelBooking(b, false, RecreationUtility.CancelReason.MembershipChanged);
+        }
+    }
+
+    static bool HasBookingEnded(RecreationBooking b)
+    {
+        int now = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
+        return b.AbsEnd <= now;
+    }
+
+    /// <summary>Drops bookings that have ended (into the past-booking record) - run from the hourly UpdateSchedule.</summary>
+    void PruneBookings()
+    {
+        PrunePastBookings();
+        if (recreationBookings == null || recreationBookings.Count == 0) return;
+        foreach (var b in recreationBookings) if (b != null && HasBookingEnded(b)) RecordPastBooking(b);
+        recreationBookings.RemoveAll(b => b == null || HasBookingEnded(b));
+    }
+
+    /// <summary>
+    /// Bookings no longer in recreationBookings (ended, or cancelled after they started - cut to the hours already
+    /// spent) that still reach into today, so the schedule UI can show today's elapsed booked hours, and the hour that
+    /// just ended can still be billed (GetBookingInEffectAtAbs). Never read by the live gameplay getters (GetBookingAt /
+    /// GetEffectiveBooking). Entries ending before today are dropped (PrunePastBookings).
+    /// </summary>
+    [JsonProperty] List<RecreationBooking> pastRecreationBookings = new List<RecreationBooking>();
+
+    /// <summary>Keeps the part of booking that has already elapsed (if any) in the past-booking record.</summary>
+    void RecordPastBooking(RecreationBooking booking)
+    {
+        if (booking == null) return;
+        int now = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), scr_System_Time.current.getCurrentTime().Hour);
+        int spent = Math.Min(booking.hours, now - booking.AbsStart);
+        if (spent < 1) return;
+        if (pastRecreationBookings == null) pastRecreationBookings = new List<RecreationBooking>();
+        pastRecreationBookings.Add(spent == booking.hours ? booking : booking.CopyTruncated(spent));
+        PrunePastBookings();
+    }
+
+    /// <summary>
+    /// Drops past-booking entries that ended before today began. One ending exactly at midnight is kept until the next
+    /// day: the 00:00 tick still bills its last hour (GetBookingInEffectAtAbs - RecreationUtility.BillVisitHour).
+    /// </summary>
+    void PrunePastBookings()
+    {
+        if (pastRecreationBookings == null || pastRecreationBookings.Count == 0) return;
+        int todayStart = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), 0);
+        pastRecreationBookings.RemoveAll(b => b == null || b.AbsEnd < todayStart);
+    }
+
+    /// <summary>
+    /// The booking that drove absolute hour absHour (RecreationBooking.AbsoluteHour) under GetEffectiveBooking's rules
+    /// (IsBookingInEffect), or null - a live one, else the past-booking record's (ended, or cancelled after it started).
+    /// For billing the hour that just ended (RecreationUtility.BillVisitHour), whose booking UpdateSchedule may already
+    /// have pruned.
+    /// </summary>
+    public RecreationBooking GetBookingInEffectAtAbs(int absHour)
+    {
+        int day = absHour / 24, hour = absHour % 24;
+        RecreationBooking found = null;
+        if (recreationBookings != null)
+            foreach (var b in recreationBookings) if (b != null && b.Covers(day, hour)) { found = b; break; }
+        if (found == null && pastRecreationBookings != null)
+            foreach (var b in pastRecreationBookings) if (b != null && b.Covers(day, hour)) { found = b; break; }
+        if (found == null) return null;
+        return IsBookingInEffect(found, hour, day - scr_System_Time.current.getAbsoluteDay()) ? found : null;
+    }
+
+    /// <summary>
+    /// UI only: the booking that drives today's hour - the live one (GetEffectiveBooking), else for an elapsed hour the
+    /// past-booking record's entry covering it, under the same rules as a live booking (work / forbid-work win unless overrideWork).
+    /// </summary>
+    public RecreationBooking GetUiBooking(int hour)
+    {
+        var live = GetEffectiveBooking(hour, 0);
+        if (live != null) return live;
+        if (pastRecreationBookings == null || pastRecreationBookings.Count == 0) return null;
+        if (hour >= scr_System_Time.current.getCurrentTime().Hour) return null;
+
+        int day = scr_System_Time.current.getAbsoluteDay();
+        foreach (var b in pastRecreationBookings)
+            if (b != null && b.Covers(day, hour)) return IsBookingInEffect(b, hour, 0) ? b : null;
+        return null;
+    }
+
+    /// <summary>
+    /// Daily recreation planning entry point - Character_Trainable's day update, stage 3 only (after factions and
+    /// characters updated). The logic is RecreationUtility.DailyPlan; this class only stores the bookings.
+    /// </summary>
+    public void OnDayUpdate_Recreation()
+    {
+        RecreationUtility.DailyPlan(this);
+    }
+
+    /// <summary>
+    /// Hourly recreation booking check entry point - Character_Trainable's hourly tick, right after UpdateSchedule.
+    /// The logic is RecreationUtility.HourlyCheck.
+    /// </summary>
+    public void OnHourUpdate_Recreation()
+    {
+        RecreationUtility.HourlyCheck(this);
+    }
+
+    /// <summary>
+    /// The MemberType this character acts under at faction right now: the booking in effect there (GetEffectiveBooking)
+    /// if it names its own memberTypeID (e.g. a festival spectator, gym staff training as a member), else the faction's
+    /// own MemberType for them. Used wherever the active faction's MemberType is read (behavior overrides, actor tags,
+    /// CurrentActiveMemberType).
+    /// </summary>
+    public MemberType GetScheduledMemberType(I_IsJobGiver faction)
+    {
+        if (faction == null) return null;
+        var booking = GetEffectiveBooking();
+        if (booking != null && booking.MemberType != null && (I_IsJobGiver)booking.Faction == faction) return booking.MemberType;
+        return faction.GetMemberType(Owner);
+    }
+
+    /// <summary>
+    /// The recreation activity this character is visiting at faction right now: the activity of the booking in effect
+    /// there (GetEffectiveBooking - RecreationBooking.GetActivity), else null. Applied wherever GetScheduledMemberType is,
+    /// on top of it: its behaviorOverrides first (FindJobNodeRoot.TryGetJob), its Tags (Utility.GetActorTag) and
+    /// AcceptanceMods (CurrentActiveActivity) next to the MemberType's.
+    /// </summary>
+    public RecreationActivity GetScheduledActivity(I_IsJobGiver faction)
+    {
+        if (faction == null) return null;
+        var booking = GetEffectiveBooking();
+        if (booking == null || (I_IsJobGiver)booking.Faction != faction) return null;
+        return booking.GetActivity(this);
+    }
+
+    /// <summary>The activity counterpart of CurrentActiveMemberType: none while a party is active (the party's type rules then), else GetScheduledActivity of the active faction.</summary>
+    [JsonIgnore]
+    public RecreationActivity CurrentActiveActivity
+    {
+        get
+        {
+            if (CurrentActiveParty != null) return null;
+            var faction = CurrentlyActiveFaction;
+            return faction != null ? GetScheduledActivity(faction) : null;
+        }
+    }
+
     List<Manageable> _factions = null;
     /// <summary>
-    /// Listing factions in order of priority. Work (internal priority order) > Home/TempHome
+    /// Listing factions in order of priority. Work (internal priority order) > Home/TempHome > Recreation
     /// </summary>
-    [JsonIgnore] public List<Manageable> Factions  { get { 
+    [JsonIgnore] public List<Manageable> Factions  { get {
             if (_factions == null)
             {
-                _factions = new List<Manageable>(WorkFactions.Count + HomeFactions.Count);
+                _factions = new List<Manageable>(WorkFactions.Count + HomeFactions.Count + RecreationFactions.Count);
                 foreach (var faction in WorkFactions)
                 {
                     if (_factions.Contains(faction)) continue;
@@ -713,6 +1191,11 @@ public class Character_Factions
                 foreach(var faction in HomeFactions)
                 {
                     if (_factions.Contains(faction)) continue;
+                    _factions.Add(faction);
+                }
+                foreach (var faction in RecreationFactions)
+                {
+                    if (faction == null || _factions.Contains(faction)) continue;
                     _factions.Add(faction);
                 }
             }
@@ -741,9 +1224,11 @@ public class Character_Factions
         this.Faction_Home_Temporary_Cache = null;
         this.Faction_Home_Cache = null;
         this.Factions_Work_Cache = null;
+        this.Factions_Recreation_Cache = null;
 
         foreach (var v in HomeFactions) v.NotifyFactionMemberChange();
         foreach (var v in WorkFactions) v.NotifyFactionMemberChange();
+        foreach (var v in RecreationFactions) v?.NotifyFactionMemberChange();
 
         // Alerts every faction managing this character (home AND work) to recalculate/recollect
         // membership fees right now, rather than waiting for the next daily TradeManager.ResolveDuePass
@@ -765,26 +1250,73 @@ public class Character_Factions
     /// <br/>Only the priority home faction (HomeFactions[0] - temp home if set, else home) is ever
     /// considered; lower-priority home factions' schedules are ignored. Work factions are skipped
     /// entirely while the priority home faction forbids work (Manageable.AllowWorkFaction).
+    /// <br/>Recreation bookings come after every work faction (before them if the booking is overrideWork, an event's)
+    /// and before the priority home - see GetEffectiveBooking. includeRecreation = false leaves them out (sleep
+    /// placement - see ValidateSchedule - and the planner's own occupancy checks).
     /// </summary>
     /// <param name="hour"></param>
     /// <returns></returns>
-    public Manageable CurrentJobScheduleFaction(int hour = -1, int daysLookahead = 0)
+    public Manageable CurrentJobScheduleFaction(int hour = -1, int daysLookahead = 0, bool includeRecreation = true)
     {
         if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
         var priorityHome = HomeFactions.Count > 0 ? HomeFactions[0] : null;
 
-        if (priorityHome == null || priorityHome.AllowWorkFaction(Owner))
+        if (includeRecreation)
         {
-            foreach (var faction in WorkFactions)
-            {
-                if (faction == null || !faction.HasScheduleFor(this.Owner, hour, daysLookahead)) continue;
-                // a work faction that is also the priority home keeps its work-order slot, with home semantics
-                if (faction == priorityHome || (Owner.CanWorkFor(faction) && Owner.ShouldWorkFor(faction))) return faction;
-            }
+            var booking = GetEffectiveBooking(hour, daysLookahead);
+            if (booking != null) return booking.Faction;
         }
+
+        var work = WorkingFactionAt(hour, daysLookahead, priorityHome);
+        if (work != null) return work;
 
         if (priorityHome != null && priorityHome.HasScheduleFor(this.Owner, hour, daysLookahead)) return priorityHome;
         return null;
+    }
+
+    /// <summary>
+    /// The work faction whose own schedule (Manageable.HasScheduleFor - bookings never count) claims hour, in work
+    /// priority order: one the character can and should work for, or one that is also the priority home (it keeps its
+    /// work-order slot, with home semantics). Null while the priority home forbids work.
+    /// </summary>
+    Manageable WorkingFactionAt(int hour, int daysLookahead, Manageable priorityHome)
+    {
+        if (priorityHome != null && !priorityHome.AllowWorkFaction(Owner)) return null;
+        foreach (var faction in WorkFactions)
+        {
+            if (faction == null || !faction.HasScheduleFor(this.Owner, hour, daysLookahead)) continue;
+            if (faction == priorityHome || (Owner.CanWorkFor(faction) && Owner.ShouldWorkFor(faction))) return faction;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// The booking that actually drives hour (-1 = now), daysLookahead days from today, or null: the booking covering it
+    /// (GetBookingAt), unless the priority home forbids work, or a work schedule claims the hour (WorkingFactionAt) and the
+    /// booking is not overrideWork. An unpaid membership fee (CanWorkFor) does NOT drop it - it only stops new visits
+    /// being booked there (RecreationUtility.CollectCandidates); visits already booked or under way go ahead. It beats
+    /// the priority home's own schedule. Single source of truth for CurrentJobScheduleFaction and the booked faction's
+    /// schedule getters (Manageable.GetSchedule) - so a booking at one's own workplace never stands in for a real shift
+    /// hour there, and one at home does replace the home schedule.
+    /// </summary>
+    public RecreationBooking GetEffectiveBooking(int hour = -1, int daysLookahead = 0)
+    {
+        if (hour == -1) hour = scr_System_Time.current.getCurrentTime().Hour;
+        var booking = GetBookingAt(hour, daysLookahead);
+        // a session booking only while its session is open and valid and this character attends (otherwise it just holds the time)
+        if (booking != null && booking.isSessionBooking && !RecreationUtility.IsSessionBookingLive(booking, Owner)) return null;
+        return IsBookingInEffect(booking, hour, daysLookahead) ? booking : null;
+    }
+
+    /// <summary>The GetEffectiveBooking rules for booking at hour: its faction exists, the priority home allows work, and no work schedule claims the hour unless overrideWork.</summary>
+    bool IsBookingInEffect(RecreationBooking booking, int hour, int daysLookahead)
+    {
+        if (booking?.Faction == null) return false;
+
+        var priorityHome = HomeFactions.Count > 0 ? HomeFactions[0] : null;
+        if (priorityHome != null && !priorityHome.AllowWorkFaction(Owner)) return false;
+        if (!booking.overrideWork && WorkingFactionAt(hour, daysLookahead, priorityHome) != null) return false;
+        return true;
     }
 
     public string CurrentJobName(int hour)
@@ -921,6 +1453,7 @@ public class Character_Factions
     {
         var scheduleValidation  = ValidateSchedule(ref s, null, false, currentHour);
         privateSchedule.Clear();
+        plannedSleepStartAbs = plannedSleepEndAbs = -1;
 
         var consecutiveFreeRun  = scheduleValidation.Item1; // indexed by r = hours-from-now, see ValidateSchedule
         var consecutiveRestHour = scheduleValidation.Item2;
@@ -929,51 +1462,83 @@ public class Character_Factions
         if (sleepHours == 0 || HomeFactions.Count < 1) return;
         if (consecutiveRestHour < sleepHours) return; // ValidateSchedule already logged the warning
 
-        // CanWakeAt(r): all sleepHours hours immediately before relative hour r are free.
-        // r is an offset from "now" (0..ScheduleLookaheadHours-1), not a wrapping absolute hour.
-        // Requires r > sleepHours (not just r > 0) so the resulting sleep block - hours
-        // [r-sleepHours, r-1] - always starts at r==1 ("next hour") at the earliest, never r==0
-        // ("now"). A recompute triggered mid-hour (e.g. from a player's SetSchedule edit) must never
-        // mark the current hour as sleep, since doing so would immediately trip UpdateSchedule's
-        // sleeping-guard and freeze further edits until game-clock time moves past it.
-        // r>=ScheduleLookaheadHours is rejected outright since it falls outside the computed horizon.
-        bool CanWakeAt(int r) => r > sleepHours && r <= ScheduleLookaheadHours - 1 && consecutiveFreeRun[r - 1] >= sleepHours;
+        int wakeR = PlaceSleep(consecutiveFreeRun, sleepHours, GetTargetWakeR(currentHour, sleepHours), SleepTraitOffset);
+        if (wakeR < 0) return;
 
-        // CanWakeAtWithBuffer(r): same as CanWakeAt, but also requires relative hour r itself to
-        // be free, so the character never wakes directly into a job with zero prep/travel time.
-        bool CanWakeAtWithBuffer(int r) => CanWakeAt(r) && consecutiveFreeRun[r] > 0;
-
-        // WriteSleep(wakeR): fills sleepHours hours ending just before relative hour wakeR,
-        // converting back to absolute hour-of-day only at the point of writing.
-        void WriteSleep(int wakeR)
+        // fills sleepHours hours ending just before relative hour wakeR, converting back to absolute hour-of-day
+        // only at the point of writing
+        for (int i = 0; i < sleepHours; i++)
         {
-            for (int i = 0; i < sleepHours; i++)
-            {
-                int r = wakeR - sleepHours + i;
-                int absHour = (currentHour + r) % 24;
-                if (absHour >= currentHour && currentHour + r > 23) continue;
-                privateSchedule.Get(absHour).Set("com_furniture_sleep");
-            }
+            int r = wakeR - sleepHours + i;
+            int absHour = (currentHour + r) % 24;
+            if (absHour >= currentHour && currentHour + r > 23) continue;
+            privateSchedule.Get(absHour).Set("com_furniture_sleep");
         }
 
+        int nowAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(), currentHour);
+        plannedSleepStartAbs = nowAbs + wakeR - sleepHours;
+        plannedSleepEndAbs = nowAbs + wakeR;
+    }
+
+    /// <summary>
+    /// The sleep block the last RecomputePrivateSchedule placed, as absolute hours [start, end) (RecreationBooking.AbsoluteHour),
+    /// whole even where privateSchedule's 24 slots could not hold it; -1 when none was placed. Kept while the recompute is
+    /// skipped (mid-sleep), so it stays the night in progress. Read by RecreationUtility.HourlyCheck (sleep floor / no split).
+    /// </summary>
+    [JsonProperty] int plannedSleepStartAbs = -1;
+    [JsonProperty] int plannedSleepEndAbs = -1;
+
+    /// <summary>GetStatValue returns 0 safely when stat_derived_wakeupOffset is not yet defined.</summary>
+    int SleepTraitOffset { get { return (int)Owner.Stats.GetStatValue("stats_derived_wakeupOffset"); } }
+
+    /// <summary>
+    /// The priority home's wake target (DayStartHour, or 6:00 for 24/24 factions) as an hour offset from anchorHour -
+    /// its next reachable occurrence.
+    /// </summary>
+    int GetTargetWakeR(int anchorHour, int sleepHours)
+    {
         var homeFaction = HomeFactions[0];
         int targetWake  = homeFaction.HasDayNight ? homeFaction.DayStartHour : 6;
         // Convert to relative-hour space: the next occurrence of targetWake from "now" (today if
         // still ahead, tomorrow if already passed) - this is what makes "wake at 6am" unambiguous
         // regardless of the current hour, instead of assuming it always means "today at 6am".
-        int targetWakeR = (targetWake - currentHour + 24) % 24;
+        int targetWakeR = (targetWake - anchorHour + 24) % 24;
         // targetWakeR in [0, sleepHours] is unreachable as a fresh wake point - reaching it would
         // require having already started sleeping before "now", which CanWakeAt's r > sleepHours
-        // guard above forbids. (targetWakeR==0, currentHour==targetWake exactly, is just the most
+        // guard forbids. (targetWakeR==0, currentHour==targetWake exactly, is just the most
         // obvious case of this - but 1..sleepHours are equally impossible, just less obviously so.)
         // Its real next occurrence is a full cycle away, so re-anchor the search there. With the
         // wider ScheduleLookaheadHours-hour lookahead, targetWakeR+24 is (for realistic sleepHours)
-        // a directly checkable candidate, so Step 2 below can confirm "wake at tomorrow's exact
+        // a directly checkable candidate, so Step 2 can confirm "wake at tomorrow's exact
         // target hour" outright instead of Step 3's search silently accepting whatever immediate
         // forward slot happens to be free (which, for a jobless/free character, is literally r ==
         // sleepHours+1 - sleep starting the very next hour, in the middle of the day).
         if (targetWakeR <= sleepHours) targetWakeR += 24;
-        //Debug.LogError($"UpdateSchedule {consecutiveRestHour} {String.Join("|", consecutiveFreeRun)}");
+        return targetWakeR;
+    }
+
+    /// <summary>
+    /// Sleep scheduling algorithm (design 2.3+), pure: the wake hour, as an offset r into freeRun (ValidateSchedule's
+    /// consecutive-free-hours array), of a sleepHours sleep ending just before it - or -1 if none fits. Shared by
+    /// RecomputePrivateSchedule and PredictSleep so a predicted night is exactly what the hourly recompute will place.
+    /// </summary>
+    static int PlaceSleep(int[] freeRun, int sleepHours, int targetWakeR, int traitOffset)
+    {
+        int horizon = freeRun.Length;
+
+        // CanWakeAt(r): all sleepHours hours immediately before relative hour r are free.
+        // r is an offset from "now" (0..horizon-1), not a wrapping absolute hour.
+        // Requires r > sleepHours (not just r > 0) so the resulting sleep block - hours
+        // [r-sleepHours, r-1] - always starts at r==1 ("next hour") at the earliest, never r==0
+        // ("now"). A recompute triggered mid-hour (e.g. from a player's SetSchedule edit) must never
+        // mark the current hour as sleep, since doing so would immediately trip UpdateSchedule's
+        // sleeping-guard and freeze further edits until game-clock time moves past it.
+        // r>=horizon is rejected outright since it falls outside the computed horizon.
+        bool CanWakeAt(int r) => r > sleepHours && r <= horizon - 1 && freeRun[r - 1] >= sleepHours;
+
+        // CanWakeAtWithBuffer(r): same as CanWakeAt, but also requires relative hour r itself to
+        // be free, so the character never wakes directly into a job with zero prep/travel time.
+        bool CanWakeAtWithBuffer(int r) => CanWakeAt(r) && freeRun[r] > 0;
 
         // Step 2: Happy path — sleep aligned to faction day start.
         // Requires a free buffer hour at targetWakeR itself; if a job sits right at targetWakeR
@@ -981,50 +1546,79 @@ public class Character_Factions
         // wake hour that leaves at least 1 free hour before the job.
         if (CanWakeAtWithBuffer(targetWakeR))
         {
-            // GetStatValue returns 0 safely when stat_derived_wakeupOffset is not yet defined
-            int traitOffset = (int)Owner.Stats.GetStatValue("stats_derived_wakeupOffset");
             int desiredWakeR = targetWakeR - traitOffset;
 
-            if (desiredWakeR < 0 || desiredWakeR > ScheduleLookaheadHours - 1 || !CanWakeAtWithBuffer(desiredWakeR))
+            if (desiredWakeR < 0 || desiredWakeR > horizon - 1 || !CanWakeAtWithBuffer(desiredWakeR))
             {
                 // Clamp: step back toward targetWakeR one hour at a time
                 int step = traitOffset > 0 ? 1 : -1;
                 for (int n = 1; n <= Math.Abs(traitOffset); n++)
                 {
                     desiredWakeR += step;
-                    if (desiredWakeR >= 0 && desiredWakeR <= ScheduleLookaheadHours - 1 && CanWakeAtWithBuffer(desiredWakeR)) break;
+                    if (desiredWakeR >= 0 && desiredWakeR <= horizon - 1 && CanWakeAtWithBuffer(desiredWakeR)) break;
                 }
-                if (desiredWakeR < 0 || desiredWakeR > ScheduleLookaheadHours - 1 || !CanWakeAtWithBuffer(desiredWakeR)) desiredWakeR = targetWakeR; // full fallback
+                if (desiredWakeR < 0 || desiredWakeR > horizon - 1 || !CanWakeAtWithBuffer(desiredWakeR)) desiredWakeR = targetWakeR; // full fallback
             }
 
-            WriteSleep(desiredWakeR);
-            return;
+            return desiredWakeR;
         }
 
         // Step 3: Conflict path — bidirectional search from targetWakeR, traits ignored.
         // At each distance n, check backward first (prefers later wake = more night-aligned).
-        // Bounded by the horizon edges [0, ScheduleLookaheadHours-1] - unlike absolute-hour
+        // Bounded by the horizon edges [0, horizon-1] - unlike absolute-hour
         // arithmetic, going past either edge means "outside the horizon we just computed", not
         // "wrap to yesterday".
-        for (int n = 1; n <= ScheduleLookaheadHours - 1; n++)
+        for (int n = 1; n <= horizon - 1; n++)
         {
             int bw = targetWakeR - n;
-            if (bw >= 0 && CanWakeAtWithBuffer(bw)) { WriteSleep(bw); return; }
+            if (bw >= 0 && CanWakeAtWithBuffer(bw)) return bw;
 
             int fw = targetWakeR + n;
-            if (fw <= ScheduleLookaheadHours - 1 && CanWakeAtWithBuffer(fw)) { WriteSleep(fw); return; }
+            if (fw <= horizon - 1 && CanWakeAtWithBuffer(fw)) return fw;
         }
 
         // Step 4: Fallback — no free buffer hour exists (block length == sleepHours exactly).
         // Find nearest CanWakeAt without the buffer requirement.
-        for (int n = 0; n <= ScheduleLookaheadHours - 1; n++)
+        for (int n = 0; n <= horizon - 1; n++)
         {
             int bw = targetWakeR - n;
-            if (bw >= 0 && CanWakeAt(bw)) { WriteSleep(bw); return; }
+            if (bw >= 0 && CanWakeAt(bw)) return bw;
             int fw = targetWakeR + n;
-            if (n > 0 && fw <= ScheduleLookaheadHours - 1 && CanWakeAt(fw)) { WriteSleep(fw); return; }
+            if (n > 0 && fw <= horizon - 1 && CanWakeAt(fw)) return fw;
         }
+        return -1;
     }
+
+    /// <summary>
+    /// The sleep block the hourly recompute would place if it ran at anchorHour, anchorDaysFromToday days from today
+    /// (same occupancy - work/home schedules, recreation bookings excluded - and same PlaceSleep), as absolute hours
+    /// [startAbs, endAbs). For the recreation planner to see a future day's nights before the rolling privateSchedule
+    /// reaches them. Anchor before the night starts (e.g. midday) - a recompute never places sleep in the anchor hour.
+    /// False when no sleep would be placed.
+    /// </summary>
+    public bool PredictSleep(int anchorDaysFromToday, int anchorHour, out int startAbs, out int endAbs)
+    {
+        startAbs = endAbs = -1;
+        int sleepHours = Owner.Stats.SleepHours;
+        if (sleepHours == 0 || HomeFactions.Count < 1) return false;
+
+        var freeRun = BuildFreeRun(anchorHour, anchorDaysFromToday, null, out int maxRun);
+        if (maxRun < sleepHours) return false;
+
+        int wakeR = PlaceSleep(freeRun, sleepHours, GetTargetWakeR(anchorHour, sleepHours), SleepTraitOffset);
+        if (wakeR < 0) return false;
+
+        int anchorAbs = RecreationBooking.AbsoluteHour(scr_System_Time.current.getAbsoluteDay(anchorDaysFromToday), anchorHour);
+        startAbs = anchorAbs + wakeR - sleepHours;
+        endAbs = anchorAbs + wakeR;
+        return true;
+    }
+
+    /// <summary>
+    /// Fewest sleep hours a night may keep once recreation bookings eat into it (half of SleepHours, rounded up) - see
+    /// RecreationUtility.HourlyCheck.
+    /// </summary>
+    [JsonIgnore] public int MinSleepHoursWithBookings { get { return (Owner.Stats.SleepHours + 1) / 2; } }
 
     /// <summary>
     /// Wipe and rebuild personal sleep schedule.<br/>
@@ -1039,6 +1633,9 @@ public class Character_Factions
     public void UpdateSchedule(ref List<string> s, bool fullrebuild = true)
     {
         int currentHour = scr_System_Time.current.getCurrentTime().Hour;
+        PruneBookings();
+        // a real change (not the plain hourly recompute): the next hourly tick re-ranks / re-confirms recreation sessions
+        if (fullrebuild) RecreationDirty = true;
 
         if (privateSchedule.HasWorkHoursWithCOM(currentHour, "com_furniture_sleep"))
         {
@@ -1049,8 +1646,15 @@ public class Character_Factions
             RecomputePrivateSchedule(ref s, currentHour);
         }
 
+        // the hourly getter, not the whole-day Job_Schedule one: that one is null for a faction not managing this
+        // character (a recreation booking at a public venue), and skips MemberType workModule hours
         var job = CurrentJobScheduleFaction(currentHour);
-        if (job != null) pastSchedule.CopyFrom(job.GetSchedule(Owner), currentHour);
+        if (job != null)
+        {
+            var post = job.GetSchedule(Owner, currentHour);
+            if (post != null) pastSchedule.Get(currentHour).CopyFrom(post);
+            else pastSchedule.Get(currentHour).Set("");
+        }
         else pastSchedule.CopyFrom(privateSchedule, currentHour);
     }
 
@@ -1068,25 +1672,7 @@ public class Character_Factions
     {
         if (startHour == -1) startHour = scr_System_Time.current.getCurrentTime().Hour;
 
-        int consecutiveRestHour = 0;
-        int counter = 0;
-        // Indexed by r = hours-from-now (0..ScheduleLookaheadHours-1), NOT absolute hour-of-day -
-        // this is a linear horizon starting at startHour, not a repeating daily cycle. Deliberately
-        // wider than privateSchedule's 24-slot output - see ScheduleLookaheadHours.
-        int[] consecutiveFreeRun = new int[ScheduleLookaheadHours];
-
-        for (int r = 0; r < ScheduleLookaheadHours; r++)
-        {
-            int absHour = (startHour + r) % 24;
-            int daysLookahead = (startHour + r) / 24;
-            if (CurrentJobScheduleFaction(absHour, daysLookahead) != null || (extraSchedule != null && extraSchedule.Contains(absHour))) counter = 0;
-            else
-            {
-                counter++;
-                consecutiveRestHour = Math.Max(consecutiveRestHour, counter);
-            }
-            consecutiveFreeRun[r] = counter;
-        }
+        var consecutiveFreeRun = BuildFreeRun(startHour, 0, extraSchedule, out int consecutiveRestHour);
 
         int listMax = consecutiveFreeRun.Max();
         int sleepHours = Owner.Stats.SleepHours;
@@ -1100,6 +1686,35 @@ public class Character_Factions
         // if we dont have enough consecutive time, we wipe everything and everytime character rest it falls dead sleep
         return new Tuple<int[], int>(consecutiveFreeRun, consecutiveRestHour);
 
+    }
+
+    /// <summary>
+    /// Consecutive free hours over a ScheduleLookaheadHours horizon from startHour, startDayOffset days from today:
+    /// entry r = free hours in a row ending at hour r (0 when occupied). Indexed by r = hours-from-start, NOT absolute
+    /// hour-of-day - a linear horizon, not a repeating daily cycle, deliberately wider than privateSchedule's 24 slots.
+    /// Occupied = a work/home schedule (CurrentJobScheduleFaction) or an extraSchedule hour-of-day. Recreation bookings
+    /// never count: sleep is placed as if they weren't there, and a booking overlapping it simply takes those hours
+    /// (the sleep window then measures shorter). maxRun = longest free run.
+    /// </summary>
+    int[] BuildFreeRun(int startHour, int startDayOffset, List<int> extraSchedule, out int maxRun)
+    {
+        maxRun = 0;
+        int counter = 0;
+        int[] freeRun = new int[ScheduleLookaheadHours];
+
+        for (int r = 0; r < ScheduleLookaheadHours; r++)
+        {
+            int absHour = (startHour + r) % 24;
+            int daysLookahead = startDayOffset + (startHour + r) / 24;
+            if (CurrentJobScheduleFaction(absHour, daysLookahead, false) != null || (extraSchedule != null && extraSchedule.Contains(absHour))) counter = 0;
+            else
+            {
+                counter++;
+                maxRun = Math.Max(maxRun, counter);
+            }
+            freeRun[r] = counter;
+        }
+        return freeRun;
     }
 }
 

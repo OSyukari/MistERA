@@ -495,6 +495,29 @@ public class Character_Relationship
         return false;
     }
 
+    /// <summary>
+    /// Whether Owner agrees when Target asks them to cancel their recreation booking (Opt_CancelBooking, the
+    /// AcceptBookingCancelRequest Result). Always yes for now - the hook for a relationship-based rule.
+    /// </summary>
+    public bool AcceptBookingCancelRequest(RecreationBooking booking)
+    {
+        return true;
+    }
+
+    /// <summary>
+    /// Whether one of this relationship's types - bio, personal, or social (per shared faction) - is one of typeIDs
+    /// (null/empty = any). Inequal types match whichever side Owner is on (TargetScope.SelfRelationships).
+    /// </summary>
+    public bool HasRelationshipType(ICollection<string> typeIDs)
+    {
+        if (typeIDs == null || typeIDs.Count == 0) return true;
+        if (Relationship_Bio != null && typeIDs.Contains(Relationship_Bio.ID)) return true;
+        if (Relationship_Personal != null && typeIDs.Contains(Relationship_Personal.ID)) return true;
+        foreach (var key in Relationship_Social_Keys)
+            if (tryGetSocialFaction(key, out var rel, out _) && rel != null && typeIDs.Contains(rel.ID)) return true;
+        return false;
+    }
+
     bool? _canBeAttractedTo = null;
     /// <summary>
     /// Whether Owner can feel sexual attraction toward Target, per Owner's trait_GenderPreference trait
@@ -1116,6 +1139,12 @@ public class Character_Relationship
             return Desire_Base + Desire_Bonus;
         }
     }
+
+    /// <summary>
+    /// How friendly Owner is toward Target, from the raw scores: Trust - Fear + Goodwill - Badwill + Desire. Orders
+    /// event targets (EventScope_Target.orderBy "friendliness").
+    /// </summary>
+    [JsonIgnore] public float Friendliness_Raw { get { return Trust_Raw - Fear_Raw + Goodwill_Raw - Badwill_Raw + Desire_Raw; } }
 
     protected float Desire_Div
     {

@@ -1,0 +1,24 @@
+{
+    "_doc": "Fired from code (RecreationUtility.AnnounceNotice), no trigger. Self = the character whose recreation bookings changed; $bookingText$ = the change list (booked / rescheduled / cancelled, one line each), already built and localized by code. One notice per character per pass (the midnight planning, an hourly check, an event Result). Midnight new reservations are forced on screen for the player's household (FactionUtility.IsPlayerHousehold); daytime changes only show when the player can see the character; event-Result changes inherit the calling event's displayOverride. The same list goes into the home factions' daily report (misc entry).",
+    "Events": {
+        "list": [
+            {
+                "ID": "Recreation_BookingChanged",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Recreation_BookingChanged_EV01",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Recreation_BookingChanged_EV01": "$self.name$的活动安排：\n$bookingText$"
+            }
+        }
+    }
+}

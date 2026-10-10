@@ -1,0 +1,28 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Opt_ArrangeJoin.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "event_joinOption_byTag": "$faction$: $option$",
+                "event_heldMembership": "$memberType$ at $faction$",
+                "event_heldMembership_separator": ", ",
+                "Opt_ArrangeJoin_cancel": "Never mind",
+                "Opt_ArrangeJoin_leave_question": "$patient.name$ is already registered as $heldMemberships$. Should $patient.name$ leave?",
+                "Opt_ArrangeJoin_leave_cancel": "No, stay",
+                "Opt_ArrangeJoin_HospitalPatient": "Arrange hospital admission",
+                "Opt_ArrangeJoin_HospitalPatient_question": "Which hospital should $patient.name$ be admitted to?",
+                "Opt_ArrangeJoin_HospitalPatient_done": "$patient.name$'s admission has been arranged.",
+                "event_joinOption_childPosts": "Shifts:",
+                "event_joinOption_childPost": "· $name$ $hours$ $days$",
+                "work_post_joinOption": "$memberType$",
+                "work_post_leaveOption": "$name$ quits",
+                "work_post_err_member": "Already works or is registered here.",
+                "work_post_err_tempHome": "Currently staying elsewhere and can't take a job.",
+                "Opt_ArrangeJoin_Work_done": "$worker.name$'s job has been arranged.",
+                "Opt_ArrangeJoin_Work_leave_cancel": "No, keep working"
+            }
+        }
+    }
+}

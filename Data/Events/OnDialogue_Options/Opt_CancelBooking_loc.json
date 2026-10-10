@@ -1,0 +1,17 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for Opt_CancelBooking.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Opt_CancelBooking": "Cancel plans",
+                "Opt_CancelBooking_question": "Which of $person.name$'s plans should be cancelled?",
+                "Opt_CancelBooking_back": "Back",
+                "Opt_CancelBooking_cancelled": "$person.name$ cancelled this plan:\n$cancelledBooking$",
+                "Opt_CancelBooking_refused": "$person.name$ doesn't want to cancel that plan.",
+                "Opt_CancelBooking_none": "$person.name$ has no other plans left."
+            }
+        }
+    }
+}

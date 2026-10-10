@@ -1,0 +1,318 @@
+{
+    "_doc": "Menswear store on the JP_ShoppingStreet mall floor. Primary store name '洋服の青○' (Yofuku no Ao○ama) parodies the real suit chain 洋服の青山. Dictionary carries alternate candidates (_alt1.._alt5), each with its own _tooltip explaining the real brand it parodies - pick one, delete the rest. Item tooltips reference the primary name; if another name is chosen, adjust those strings. Sellable via salesInventory (currency_JPY). Tooltips live under '<id>_tooltip' keys (see Item_Base.Tooltip).",
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_jp_aoy_dress_shirt",
+            "displayName":"Yofuku no Ao○ama Fitted Dress Shirt",
+            "Tags":["rarity_common"],
+            "value":4500,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_polo_shirt",
+            "displayName":"Yofuku no Ao○ama Pique Polo Shirt",
+            "Tags":["rarity_common"],
+            "value":3500,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_slim_suit",
+            "displayName":"Yofuku no Ao○ama Slim Suit Jacket",
+            "Tags":["rarity_common"],
+            "value":22800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Outer",
+                        "coverSlot":["Arm","Arm"]
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":5,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_chino_pants",
+            "displayName":"Yofuku no Ao○ama Tapered Chinos",
+            "Tags":["rarity_common"],
+            "value":4900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"]
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":3,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_denim_jeans",
+            "displayName":"Yofuku no Ao○ama Straight Denim Jeans",
+            "Tags":["rarity_common"],
+            "value":5900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"]
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":4,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_bomber_jacket",
+            "displayName":"Yofuku no Ao○ama Bomber Jacket",
+            "Tags":["rarity_common"],
+            "value":8900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Outer",
+                        "coverSlot":["Neck","Arm","Arm"]
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":5,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":2 },
+                            { "applyToDamageTypes":["Blunt"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_boxer_briefs",
+            "displayName":"Yofuku no Ao○ama Boxer Briefs",
+            "Tags":["rarity_common"],
+            "value":1800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Skin"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_leather_belt",
+            "displayName":"Yofuku no Ao○ama Leather Belt",
+            "Tags":["rarity_common"],
+            "value":3900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_silk_necktie",
+            "displayName":"Yofuku no Ao○ama Silk Necktie",
+            "Tags":["rarity_common"],
+            "value":2900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Neck"],
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_aoy_casual_sneakers",
+            "displayName":"Yofuku no Ao○ama Low-Top Sneakers",
+            "Tags":["rarity_common"],
+            "value":6900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Feet"],
+                        "revealing":"ShapeReveal"
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":4,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Slash"], "damageReductionValue":2 },
+                            { "applyToDamageTypes":["Pierce","Blunt"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+        "shop_jp_aoy_name":"洋服の青○",
+        "shop_jp_aoy_name_tooltip":"站前商店街常客熟知的西装连锁「洋服の青○」。原型：洋服の青山，卖西装、商务衬衫、领带、皮带与通勤休闲装。被圆掉的那个字据说赔偿金额高达三亿日元，所以现在整套西装的利润里有一成是律师费。",
+        "shop_jp_aoy_name_alt1":"AO○I",
+        "shop_jp_aoy_name_alt1_tooltip":"「AO○I」。原型：AOKI，同样卖西装与商务男装。主打『美变形西装』，穿上后站姿自动笔挺，鞠躬角度精确到十五度。",
+        "shop_jp_aoy_name_alt2":"BEA○S",
+        "shop_jp_aoy_name_alt2_tooltip":"「BEA○S」。原型：BEAMS，卖潮流男装、休闲外套与配饰。店员全员入选『最想被他穿搭的男人』榜单，尽管他们只是按手册穿衣服。",
+        "shop_jp_aoy_name_alt3":"UNITED AR○OWS",
+        "shop_jp_aoy_name_alt3_tooltip":"「UNITED AR○OWS」。原型：UNITED ARROWS，卖精选正装与雅痞休闲男装、皮鞋与配饰。一支被圆掉头的箭，依然自信地指向『精选的生活方式』。",
+        "shop_jp_aoy_name_alt4":"Right-○n",
+        "shop_jp_aoy_name_alt4_tooltip":"「Right-○n」。原型：Right-on（ライトオン），专卖牛仔裤、丹宁外套与休闲服饰。店员试穿牛仔褲时的后空翻是入职必修课。",
+        "shop_jp_aoy_name_alt5":"HARUYA○A",
+        "shop_jp_aoy_name_alt5_tooltip":"「HARUYA○A」(はる○ま)。原型：HARUYAMA（はるやま），卖西装与商务男装、制服用衬衫。春夏秋冬都营业，但只有春天打折。",
+
+        "clothing_jp_aoy_dress_shirt":"修身衬衫",
+        "clothing_jp_aoy_dress_shirt_tooltip":"「洋服の青○」的白色修身衬衫，剪裁贴着躯干的线条走，胸肌和腹肌的起伏在熨帖的布料下若隐若现。领口最上方的纽扣解开时，喉结到锁骨的那一段便坦然露在外面；袖口挽到小臂，则又是另一副让人心跳的懒散模样。",
+
+        "clothing_jp_aoy_polo_shirt":"珠地Polo衫",
+        "clothing_jp_aoy_polo_shirt_tooltip":"藏青色的珠地网眼Polo衫，领口贴着颈侧，两颗纽扣之间露出一小片结实的胸膛。弹力布料半拥半抱地箍着腰身，抬手时下摆会随之上提，撩起一线腰侧的肌肤——店员说这叫『不经意的性感』。",
+
+        "clothing_jp_aoy_slim_suit":"窄身西装",
+        "clothing_jp_aoy_slim_suit_tooltip":"炭灰色的窄身西装外套，垫肩撑起挺括的肩线，收腰的剪裁把宽肩窄腰的倒三角勾画得极具侵略性。穿上它的人看起来体面又克制——而这恰恰让人更想亲手扯松那条领带，把这份体面一寸寸剥开，看看布料底下藏着怎样的温度。",
+
+        "clothing_jp_aoy_chino_pants":"锥形休闲裤",
+        "clothing_jp_aoy_chino_pants_tooltip":"卡其色的锥形休闲裤，臀部和大腿处剪裁合体，布料随着迈步贴上又离开腿侧的肌肉。裆部的缝线恰好描出一道令人不敢多看第二眼、却忍不住看的轮廓。",
+
+        "clothing_jp_aoy_denim_jeans":"直筒牛仔裤",
+        "clothing_jp_aoy_denim_jeans_tooltip":"「洋服の青○」的经典直筒牛仔裤，厚实的丹宁布带着粗粝的质感，磨白的位置集中在膝盖和大腿前侧——正是身体最常被目光丈量的地方。腰带通常只松松扣住胯骨，布料坠在髋部，露出一截内裤边缘也毫不在意的穿法，据说最受欢迎。",
+
+        "clothing_jp_aoy_bomber_jacket":"飞行员夹克",
+        "clothing_jp_aoy_bomber_jacket_tooltip":"哑光黑的飞行员夹克，罗纹领口和袖口箍住手腕与脖颈，宽大的衣身把穿在里面的人整个拢进阴影里。皮质的领子蹭着后颈，拉链拉到一半时衣襟敞开，胸口在暗色内衬的衬托下显得格外滚烫——像是随时会把谁拽进这层外壳里一起取暖。",
+
+        "clothing_jp_aoy_boxer_briefs":"男士平角内裤",
+        "clothing_jp_aoy_boxer_briefs_tooltip":"深灰色的莫代尔平角内裤，触感像第二层皮肤一样服帖。弹力腰封箍在胯上，布料不多不少地兜住臀型和裆间的重量，把每一分轮廓都诚实地上交。脱下外裤的瞬间，它便成为视线的终点站。",
+
+        "clothing_jp_aoy_leather_belt":"皮质腰带",
+        "clothing_jp_aoy_leather_belt_tooltip":"「洋服の青○」的头层牛皮腰带，深棕的革面随着使用泛出温润的光。金属带扣压在小腹正中，解腰带时那一声轻响和皮革缓缓抽出的触感，总被形容为『开场的信号』。",
+
+        "clothing_jp_aoy_silk_necktie":"真丝领带",
+        "clothing_jp_aoy_silk_necktie_tooltip":"酒红色的真丝领带，缎面在指间滑腻冰凉。系在颈间时垂在衬衫正中，随呼吸轻轻晃动——而它真正的用途往往在衬衫解开的时刻：从领口抽出来松松绕在手腕上，或是被谁轻轻一拉，把两个人的距离拉到零。",
+
+        "clothing_jp_aoy_casual_sneakers":"低帮板鞋",
+        "clothing_jp_aoy_casual_sneakers_tooltip":"极简设计的白色低帮板鞋，牛皮鞋面干净得发亮。鞋口浅浅地兜住脚踝，露出袜口上方那一线皮肤；新的鞋底摩擦地面时会发出干净的吱呀声，像是这双鞋也渴望着把它的主人带去某人的床边。"
+            },
+            "en-us":
+            {
+        "shop_jp_aoy_name":"Yofuku no Ao○ama",
+
+        "shop_jp_aoy_name_tooltip":"'Yofuku no Ao○ama', the suit chain every commuter knows by heart. Parody of 洋服の青山 (Yofuku no Aoyama): suits, dress shirts, neckties, belts and business-casual wear. The rounded-off character is said to have cost 300 million yen in settlement fees, so about ten percent of every suit's price tag is legal costs.",
+
+        "shop_jp_aoy_name_alt1":"AO○I",
+        "shop_jp_aoy_name_alt1_tooltip":"'AO○I'. Parody of AOKI, also selling suits and businesswear — makers of the 'posture-correcting suit' that straightens your spine and calibrates your bow to exactly fifteen degrees.",
+        "shop_jp_aoy_name_alt2":"BEA○S",
+        "shop_jp_aoy_name_alt2_tooltip":"'BEA○S'. Parody of BEAMS: trendy menswear, casual jackets and accessories. Its entire staff ranks among 'men whose outfits you envy', despite them only dressing per the manual.",
+        "shop_jp_aoy_name_alt3":"UNITED AR○OWS",
+        "shop_jp_aoy_name_alt3_tooltip":"'UNITED AR○OWS'. Parody of UNITED ARROWS: curated tailoring, smart-casual menswear, leather shoes and accessories. An arrow with its head rounded off, still confidently pointing at 'a curated lifestyle'.",
+        "shop_jp_aoy_name_alt4":"Right-○n",
+        "shop_jp_aoy_name_alt4_tooltip":"'Right-○n'. Parody of Right-on (ライトオン), a denim specialist: jeans, denim jackets and casual wear. Backflips while trying on jeans are mandatory training for clerks.",
+        "shop_jp_aoy_name_alt5":"HARUYA○A",
+        "shop_jp_aoy_name_alt5_tooltip":"'HARUYA○A' (はる○ま). Parody of HARUYAMA (はるやま): suits, business shirts and uniforms. Open all four seasons, but only spring goes on sale.",
+
+        "clothing_jp_aoy_dress_shirt":"Fitted Dress Shirt",
+        "clothing_jp_aoy_dress_shirt_tooltip":"Yofuku no Ao○ama' white fitted dress shirt, cut to follow the line of the torso, the rise of chest and abs ghosting beneath the pressed weave. Undo the top button and the whole stretch from Adam's apple to collarbone lies frankly bare; roll the cuffs to the forearm for another heart-skipping shade of laziness.",
+
+        "clothing_jp_aoy_polo_shirt":"Pique Polo Shirt",
+        "clothing_jp_aoy_polo_shirt_tooltip":"A navy pique polo, its collar close against the neck, the open placket baring a modest strip of solid chest. The stretchy knit half-hugs the waist, and raising an arm tugs the hem up with it — a flash of skin along the flank. The clerk calls it 'accidental sexiness'.",
+
+        "clothing_jp_aoy_slim_suit":"Slim Suit Jacket",
+        "clothing_jp_aoy_slim_suit_tooltip":"A charcoal slim-cut suit jacket: structured shoulders, a nipped waist, the V-taper drawn with quiet aggression. Whoever wears it looks respectable and restrained — which is precisely what makes the hands itch to loosen that tie and strip the respectability away inch by inch, to learn what warmth the cloth has been hiding.",
+
+        "clothing_jp_aoy_chino_pants":"Tapered Chinos",
+        "clothing_jp_aoy_chino_pants_tooltip":"Khaki tapered chinos, trim through hip and thigh, the fabric kissing and leaving the muscle of the leg with every stride. The seam at the crotch traces an outline no one dares look at twice — and no one manages to look at only once.",
+
+        "clothing_jp_aoy_denim_jeans":"Straight Denim Jeans",
+        "clothing_jp_aoy_denim_jeans_tooltip":"Yofuku no Ao○ama' classic straight jeans in dense, gritty denim, the fading concentrated at knee and thigh — exactly where every gaze takes its measurements. Worn loose on the hipbones with the waistband barely fastened, a strip of underwear waistband showing without apology: reportedly the most popular way to wear them.",
+
+        "clothing_jp_aoy_bomber_jacket":"Bomber Jacket",
+        "clothing_jp_aoy_bomber_jacket_tooltip":"A matte-black bomber, ribbed collar and cuffs cinching neck and wrists, its roomy shell gathering the wearer into its shadow. The leather collar rasps the nape; half-unzipped, the jacket falls open and the chest looks all the hotter against the dark lining — like its owner might pull anyone inside the shell to share the warmth.",
+
+        "clothing_jp_aoy_boxer_briefs":"Boxer Briefs",
+        "clothing_jp_aoy_boxer_briefs_tooltip":"Charcoal modal boxer briefs with a touch like a second skin. The elastic waistband rides the hips; the fabric holds the weight of rear and crotch in honest detail, surrendering every contour. The instant the trousers drop, it becomes the terminus of every gaze.",
+
+        "clothing_jp_aoy_leather_belt":"Leather Belt",
+        "clothing_jp_aoy_leather_belt_tooltip":"Yofuku no Ao○ama' full-grain leather belt, the dark hide developing a warm glow with wear. The buckle presses cool against the pit of the stomach; the soft click as it comes undone, the slow rasp of leather drawing free — often described as 'the opening signal'.",
+
+        "clothing_jp_aoy_silk_necktie":"Silk Necktie",
+        "clothing_jp_aoy_silk_necktie_tooltip":"A wine-red silk tie, its satin cool and slick between the fingers. Knotted, it hangs down the center of the shirt, swaying faintly with each breath — but its true use comes once the shirt is open: pulled loose from the collar and wound loosely around a wrist, or tugged gently by someone drawing the distance between two people down to zero.",
+
+        "clothing_jp_aoy_casual_sneakers":"Low-Top Sneakers",
+        "clothing_jp_aoy_casual_sneakers_tooltip":"Minimalist white low-tops in mirror-clean calfskin. The shallow collar cups the ankle, leaving a line of skin bare above the sock; fresh soles give a clean squeak against the floor — as if the shoes themselves longed to carry their owner to someone's bedside."
+            }
+        }
+    }
+
+}

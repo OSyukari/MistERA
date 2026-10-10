@@ -20,6 +20,8 @@ public class ptDownTracker : MonoBehaviour, IScrollHandler//, IDragHandler
     {
         var p = scr_System_CampaignManager.current.CurrentTargetEXPortrait;
         if (p != currentPortrait) SetRectPosition(p);
+        var box = scr_System_CampaignManager.current.CurrentTargetEX_Box;
+        if (box != null && box.isShowingLandscape) return;   // landscape images are fixed, don't save offsets
         if (currentPortrait != null && init)
         {
             currentPortrait.SetPortraitOffsets(x + targetRect.anchoredPosition.x, y + targetRect.anchoredPosition.y, s + (targetRect.localScale.x - 1));

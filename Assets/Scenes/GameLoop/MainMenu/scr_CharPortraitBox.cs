@@ -12,6 +12,12 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     public Image picture;
     public Image picture_landscape;
     public CanvasGroup picture_landscape_group;
+    /// <summary>
+    /// Optional, on the picture object. Used (stretch to fit) for image portraits whose x/y/size offsets are all default (0).
+    /// Keep it disabled in the prefab: its anchors are recorded on Awake and restored when manual offsets are used.
+    /// </summary>
+    public AspectRatioFitter picture_fitter;
+    protected Vector2 _pictureAnchorMin, _pictureAnchorMax;
     public scr_SpineLoader spineLoader;
     public Transform spineRect { get { return (spineLoader == null ? null : spineLoader.GetLoaderRect); } }
 
@@ -31,6 +37,11 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private void Awake()
     {
+        if (picture_fitter != null && picture != null)
+        {
+            _pictureAnchorMin = picture.rectTransform.anchorMin;
+            _pictureAnchorMax = picture.rectTransform.anchorMax;
+        }
 
         if (isCurrentTargetBox)
         {
@@ -152,24 +163,61 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public Coroutine currentlyRunning = null;
 
+    /// <summary>
+    /// True while the landscape slot is the visible image (every draw path sets the group alpha).
+    /// Landscape images are fixed: no offsets, no drag.
+    /// </summary>
+    public bool isShowingLandscape { get { return picture_landscape_group != null && picture_landscape_group.alpha > 0; } }
+
     public void UpdateAnchor(PortraitManager.CharaPortrait p)
     {
         if (picture == null || picture.rectTransform == null) return;
+        if (isShowingLandscape) return;
         //Debug.Log($"update anchor {x} {y} {size}");
-        picture.SetNativeSize();
-        picture.rectTransform.localScale = new Vector3(p.portrait_offset_size, p.portrait_offset_size, p.portrait_offset_size);
-        picture.rectTransform.anchoredPosition = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
-        picture.rectTransform.localPosition = new Vector3(picture.rectTransform.localPosition.x, picture.rectTransform.localPosition.y, 0);
-        
-        if (this.spineRect != null)
+        if (UsePictureFitter(p))
         {
-            spineRect.localScale = new Vector3(p.portrait_offset_size, p.portrait_offset_size, p.portrait_offset_size);
-            spineRect.position = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
-            spineRect.localPosition = new Vector3(picture.rectTransform.localPosition.x, picture.rectTransform.localPosition.y, 0);
+            picture.rectTransform.localScale = Vector3.one;
+            picture_fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            picture_fitter.aspectRatio = picture.sprite.rect.width / picture.sprite.rect.height;
+            picture_fitter.enabled = true;
+            picture.rectTransform.localPosition = new Vector3(picture.rectTransform.localPosition.x, picture.rectTransform.localPosition.y, 0);
+        }
+        else
+        {
+            if (picture_fitter != null)
+            {
+                // fitter stretches the anchors, put them back before manual offsets
+                picture_fitter.enabled = false;
+                picture.rectTransform.anchorMin = _pictureAnchorMin;
+                picture.rectTransform.anchorMax = _pictureAnchorMax;
+            }
+            // size 0 marks "auto" (fitter); without the fitter fall back to native size
+            float size = Mathf.Approximately(p.portrait_offset_size, 0) ? 1 : p.portrait_offset_size;
+            picture.SetNativeSize();
+            picture.rectTransform.localScale = new Vector3(size, size, size);
+            picture.rectTransform.anchoredPosition = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
+            picture.rectTransform.localPosition = new Vector3(picture.rectTransform.localPosition.x, picture.rectTransform.localPosition.y, 0);
+
+            if (this.spineRect != null)
+            {
+                spineRect.localScale = new Vector3(size, size, size);
+                spineRect.position = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
+                spineRect.localPosition = new Vector3(picture.rectTransform.localPosition.x, picture.rectTransform.localPosition.y, 0);
+            }
         }
 
         this.spineLoader.SelfRect.localScale = new Vector3(InvertXAxis && p.AllowXAxisFlip ? - 1 : 1, 1, 1);
-        
+
+    }
+
+    /// <summary>
+    /// Fitter only for image portraits (spine positions itself from the picture rect) with untouched x/y/size offsets (all 0).
+    /// </summary>
+    protected bool UsePictureFitter(PortraitManager.CharaPortrait p)
+    {
+        if (picture_fitter == null || !(p is PortraitManager.CharaPortrait_Image)) return false;
+        if (picture.sprite == null || picture.sprite.rect.height <= 0) return false;
+        return Mathf.Approximately(p.portrait_offset_x, 0) && Mathf.Approximately(p.portrait_offset_y, 0) && Mathf.Approximately(p.portrait_offset_size, 0);
     }
 
     private void CheckCharaChange(PortraitManager newPortrait, I_hasPortrait handler = null)

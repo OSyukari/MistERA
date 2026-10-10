@@ -12,8 +12,8 @@ public class initScript_Relations : MonoBehaviour
     public scr_memoryBox prefab_MemoryEntry;
     public scr_memoryDaySplit prefab_DaySplit;
     //public RectTransform workFactionBox, workFactionsPrefab;
-    public scr_HoverableText workFactionsNone;
-    public RectTransform workFactionsGrid;
+    public scr_HoverableText workFactionsNone, recreationFactionsNone, activitiesNone;
+    public RectTransform workFactionsGrid, recreationFactionsGrid, activitiesGrid;
     List<RectTransform> listRelationship = new List<RectTransform>();
 
     public scr_HoverableText prefab_work;
@@ -49,6 +49,30 @@ public class initScript_Relations : MonoBehaviour
         }
         workFactionsNone.gameObject.SetActive(!haswork);
 
+        bool hasrec = false;
+        foreach (var i in c.FactionManager.RecreationFactions)
+        {
+            if (i == null) continue;
+            hasrec = true;
+            var hov = Instantiate(prefab_work);
+            hov.SelfRect.SetParent(recreationFactionsGrid, false);
+            Utility.FillRecreationFactionRect(hov, i, c, "management_faction_recreation_tooltip");
+        }
+        recreationFactionsNone.gameObject.SetActive(!hasrec);
+
+
+        bool hasAct = false;
+        foreach (var i in RecreationUtility.GetReservedActivities(c))
+        {
+            if (i == null) continue;
+            hasAct = true;
+            var hov = Instantiate(prefab_work);
+            hov.SelfRect.SetParent(activitiesGrid, false);
+            RecreationUtility.PrintActivityDetail(hov, i);
+        }
+        activitiesNone.gameObject.SetActive(!hasAct);
+
+
         bool safe = scr_System_CentralControl.current.isSafeMode;
 
         //listRelationship = new List<RectTransform>();
@@ -66,6 +90,7 @@ public class initScript_Relations : MonoBehaviour
             }
         }
 
+
         if (c.Template != null) charaComment.SetText(LocalizeDictionary.QueryThenParse( c.Template.characterComment));
         else charaComment.SetText("");
 
@@ -78,6 +103,7 @@ public class initScript_Relations : MonoBehaviour
         else viewHidden.SetExternalTooltip("none");
 
         SideRectUtility.LoadHistoryLogsData(c, parent.boxMemoriesList, AddDaySplit, AddMemoryEntry);
+
         /*
         
         DateTime current = scr_System_Time.current.getCurrentTime();

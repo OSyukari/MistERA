@@ -80,7 +80,7 @@ public class ActionPackage_Talk : ActionPackage
         }
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         ActionPackage_Talk copy = new ActionPackage_Talk(job, targetCOM, DoerRefs, ReceiverRefs, masterRef); copy.SetVariantID(this.validVariant);
         copy.LoggedBegin = this.LoggedBegin;

@@ -1,0 +1,144 @@
+{
+    "_doc": "Ask one of the player's own people to cancel one of their recreation bookings (planned visits, offers they took, event-arranged plans). Each booking not ended yet is its own option (RecreationUtility.BuildCancelOptions - tooltip = who arranged it; forbidCancel bookings are listed disabled with the reason). Picking one asks the person (AcceptBookingCancelRequest - their relationship toward the player; always yes for now), cancels it quietly (no separate booking-change notice; the home's daily report still logs it), shows what was cancelled and rebuilds the list until the player picks 返回 or nothing is left. The freed time stays free - the planner does not refill an already planned day.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Opt_CancelBooking",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "person" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "sharesHomeFaction" ] },
+                            { "parameters": [ "hasRecreationBooking" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "build",
+                        "_comment": "(Re)build the booking list each time - it always reflects the cancellations so far. Nothing left -> say so and end.",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ListCancellableBookings", "arguments": [ "cancelOptions", "person", "selectedBooking" ] },
+                                    { "Type": "ExistStoredOptions", "arguments": [ "cancelOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "none" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "ask",
+                        "_comment": "Picking a loaded option only remembers the booking (Parameters.selectedBooking), then (loadOptionsResults) asks.",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "question": "Opt_CancelBooking_question",
+                        "loadOptionsKey": "cancelOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "decide" ] } ],
+                        "options": [
+                            {
+                                "option": "Opt_CancelBooking_back",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "decide",
+                        "_comment": "The person's answer: Character_Relationship.AcceptBookingCancelRequest (their relationship toward the player).",
+                        "options": [
+                            {
+                                "option": "_accept",
+                                "Results": [
+                                    { "Type": "AcceptBookingCancelRequest", "arguments": [ "person", "self", "selectedBooking" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "cancel" ] }
+                                ]
+                            },
+                            {
+                                "option": "_refuse",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "refused" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "cancel",
+                        "_comment": "Cancelled -> show it. Not cancelled (the booking is gone or may not be cancelled) -> just rebuild the list.",
+                        "options": [
+                            {
+                                "option": "_done",
+                                "Results": [
+                                    { "Type": "CancelSelectedBooking", "arguments": [ "person", "selectedBooking", "cancelledBooking" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "cancelled" ] }
+                                ]
+                            },
+                            {
+                                "option": "_failed",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "build" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "cancelled",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "line": "Opt_CancelBooking_cancelled",
+                        "nextEntryLabel": "build"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "refused",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "line": "Opt_CancelBooking_refused",
+                        "nextEntryLabel": "build"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "none",
+                        "UISpec": { "portraitRefKey": "person" },
+                        "line": "Opt_CancelBooking_none",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Opt_CancelBooking": "取消安排",
+                "Opt_CancelBooking_question": "要让$person.name$取消哪个安排？",
+                "Opt_CancelBooking_back": "返回",
+                "Opt_CancelBooking_cancelled": "$person.name$取消了这个安排：\n$cancelledBooking$",
+                "Opt_CancelBooking_refused": "$person.name$不愿意取消这个安排。",
+                "Opt_CancelBooking_none": "$person.name$已经没有其他安排了。"
+            }
+        }
+    }
+}

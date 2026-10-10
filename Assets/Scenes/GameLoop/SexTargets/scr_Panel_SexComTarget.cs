@@ -8,7 +8,7 @@ using System;
 
 public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    public enum SubPanel { None, SexCom, Equipment, History, Internals }
+    public enum SubPanel { None, SexCom, Equipment, History, Internals, Schedule }
     public enum InternalsTab { Internals, Wombs }
 
     private const int ID_ToggleSexCom = -3;
@@ -18,6 +18,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     private const int ID_TabInternals = -7;
     private const int ID_TabWombs = -8;
     private const int ID_Hide = -9;
+    private const int ID_ToggleSchedule = -10;
 
     public RectTransform child;     // SexCom content root
     private Image image_bg;
@@ -30,7 +31,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
 
     // side panels (current target data)
     public RectTransform topBar;
-    public RectTransform panel_Equipment, panel_History, panel_Internals;
+    public RectTransform panel_Equipment, panel_History, panel_Internals, panel_Schedules;
     public RectTransform content_Equipment, content_History, content_Internals, content_Wombs;
     public RectTransform prefab_BodyInstanceGear, prefab_Equipment;
     public TextMeshProUGUI prefab_TextBox, prefab_ButtonBox;
@@ -51,8 +52,10 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         { SubPanel.Equipment, -1 },
         { SubPanel.History, -1 },
         { SubPanel.Internals, -1 },
+        { SubPanel.Schedule, -1 },
     };
 
+    public List<scr_ScheduleBox> Schedules;
     protected override void Awake()
     {
         base.Awake();
@@ -184,6 +187,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         builtForRef[SubPanel.Equipment] = -1;
         builtForRef[SubPanel.History] = -1;
         builtForRef[SubPanel.Internals] = -1;
+        builtForRef[SubPanel.Schedule] = -1;
     }
 
     private static void SetActive(Component c, bool value)
@@ -210,6 +214,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         SetActive(panel_Equipment, contentVisible && activePanel == SubPanel.Equipment);
         SetActive(panel_History, contentVisible && activePanel == SubPanel.History);
         SetActive(panel_Internals, contentVisible && activePanel == SubPanel.Internals);
+        SetActive(panel_Schedules, contentVisible && activePanel == SubPanel.Schedule);
         SetActive(content_Internals, internalsTab == InternalsTab.Internals);
         SetActive(content_Wombs, internalsTab == InternalsTab.Wombs);
 
@@ -266,6 +271,9 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
                 Utility.DestroyAllChildrenFrom(content_Wombs, 1);
                 SideRectUtility.LoadCycleData(c, cycleRect, cycle_total, cycle_current, cycle_ovum, cycle_fertility);
                 SideRectUtility.LoadBodyInternalData(c, AddBodyDetail, AddWombDetail);
+                break;
+            case SubPanel.Schedule:
+                SideRectUtility.LoadScheduleData(c, Schedules);
                 break;
         }
     }
@@ -623,6 +631,9 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
                 case ID_TabWombs:
                     if (scr_System_CentralControl.current.isSafeMode) button.SelfRect.gameObject.SetActive(false);
                     else button.Initialize(this, new ButtonValidator_InternalsTab(this, InternalsTab.Wombs, button));
+                    break;
+                case ID_ToggleSchedule:
+                    button.Initialize(this, new ButtonValidator_TogglePanel(this, SubPanel.Schedule, button));
                     break;
                 case ID_Hide:
                     button.Initialize(this, new ButtonValidator_HidePanel(this, button));

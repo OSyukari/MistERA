@@ -1,0 +1,207 @@
+{
+    "_doc": "Public riverside park along the embankment. Minimal standalone faction: the world faction (Manageable_World) cannot own it - its only room is the world-map transit room, so a booking there would lead to that room, and world-map travel time is only measured between initializeFactions members with their own door. No floor plan: rooms are hideOnMap with no offsetX/offsetY, walking minutes as door cost (hospital pattern). No members and no staff.",
+    "_doc_recreation": "Anyone may stroll here (jp_riverside_relax: generic 'recreation', ungated). Fireworks viewing (jp_riverside_watch_fireworks) is open while the fireworks offer is under way (its requireActiveRecreationOffer gate). Both are offers (MapPlans.recreationOffers below: recreation_offer_jp_riverside_fireworks on its festival dates, recreation_offer_jp_riverside_stroll daily, or a SetRecreationBooking event with one as template). No MemberTypes: a booked visit runs on its offer's own workModule - the default behavior tree sandboxes its workCommands (TryFindScheduledJobNode's booked-visit branch).",
+
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "jp_tourist_riverside",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_tourist_riverside",
+                "setPrivateRoomOwner": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "public land",
+                "mainExit": { "roomID": "riverside_entrance", "exitCost": 5 },
+                "floors": [
+                    { "ID": "floor_jp_tourist_riverside", "nameOverwrite": "jp_tourist_riverside" }
+                ],
+                "workModules": [],
+                "managerBaseIDs": [""],
+                "workHours": [],
+                "workAssignment": []
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_tourist_riverside",
+                "_comment_imagePath": "PLACEHOLDER - must stay non-empty (Floor_Base.OnAfterDeserialize). Riverside/BG images to be provided.",
+                "imagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                "isFloorPlan": false,
+                "mapExit": "riverside_entrance",
+                "_comment_travel": "Approximate walking minutes per hop: entrance->promenade 2, promenade->embankment lawn 3.",
+                "rooms": [
+                    {
+                        "ID": "riverside_entrance",
+                        "displayName": "jp_riverside_entrance",
+                        "hideOnMap": true,
+                        "connects": [],
+                        "furnitureIDs": [],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
+                    },
+                    {
+                        "ID": "riverside_promenade",
+                        "displayName": "jp_riverside_promenade",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "riverside_entrance", "cost": 2.0 }
+                        ],
+                        "furnitureIDs": ["furniture_jp_riverside_bench", "furniture_jp_riverside_viewing_spot"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg",
+                        "roomImagePath_Night": "Media_UI_Scenario_Background/BG_RiversideRoad.jpg"
+                    }
+                ]
+            }
+        ],
+        "_comment_recreationOffers": "This venue's public activities (RecreationOfferDef) - every world that initializes jp_tourist_riverside collects them (WorldPlan.AllRecreationOffers). Template data, reloaded every game load, never saved. No MemberType: each visit runs on its offer's own workModule (the default behavior tree sandboxes its workCommands); behaviorOverrides / Tags / AcceptanceMods could be added per offer. Fireworks dates are placeholders to tune (two summer festivals).",
+        "recreationOffers": [
+            {
+                "ID": "recreation_offer_jp_riverside_fireworks",
+                "factionID": "jp_tourist_riverside",
+                "startHour": 19,
+                "hours": 2,
+                "workModule": { "jobPostID": "jp_riverside_fireworks", "workCommands": ["jp_riverside_watch_fireworks"] },
+                "_comment_activity": "Job_Activity gathers on the embankment lawn and launches at T+5 (World session, no mandatory participants), firing Riverside_Fireworks_Begin (Events/riverside_activity_events.json).",
+                "gatherRoomID": "riverside_promenade",
+                "launchEventID": "Riverside_Fireworks_Begin",
+                "weight": 3.0,
+                "participationChance": 0.6,
+                "daysInAdvance": 3,
+                "dates": ["07-26", "08-16"]
+            },
+            {
+                "_comment": "Everyday riverside stroll - a flexible offer: never posted, every eligible character may plan it into free time like a membership activity (2h, not two days running). Placement weight = weight.",
+                "ID": "recreation_offer_jp_riverside_stroll",
+                "mode": "Flexible",
+                "factionID": "jp_tourist_riverside",
+                "minHours": 2,
+                "maxHours": 2,
+                "daysInAdvance": 0,
+                "workModule": { "jobPostID": "jp_riverside_stroll", "workCommands": ["jp_riverside_relax"] },
+                "_comment_activity": "Job_Activity gathers at the promenade and launches once everyone attending is there (Private), firing Riverside_Stroll_Begin.",
+                "gatherRoomID": "riverside_promenade",
+                "launchEventID": "Riverside_Stroll_Begin",
+                "weight": 1.0,
+                "minDaysBetween": 1,
+                "invite": {
+                    "_comment": "Private session with one housemate: the first valid member of the stroller's permanent home faction (never a temporary home) whose own permanent home is the same one - not someone only staying there - at the time the housemate is free. Optional: the stroller goes alone if the housemate declines.",
+                    "visibility": "Private",
+                    "inviteChance": 1.0,
+                    "minParticipants": 1,
+                    "TargetValidators": [
+                        {
+                            "refKeys": [ "companion" ],
+                            "baseScope": "FactionMembers",
+                            "extraScopeArguments": [ "@selfHomeFactionStrict" ],
+                            "chara_conditions": [
+                                { "parameters": [ "excludeSelf" ] },
+                                { "parameters": [ "sharesHomeFaction" ] }
+                            ],
+                            "maxTargetCount": 1,
+                            "stopAtMaxTargetCount": true
+                        }
+                    ]
+                }
+            }
+        ]
+    },
+    "Furnitures":
+    {
+        "list":
+        [
+            {
+                "ID": "furniture_jp_riverside_bench",
+                "displayName": "jp_riverside_bench",
+                "recipe": [],
+                "furnitureSize": 0,
+                "value": 30000,
+                "Tags": [],
+                "givesJob": [ { "comID": ["jp_riverside_relax"] } ]
+            },
+            {
+                "ID": "furniture_jp_riverside_viewing_spot",
+                "displayName": "jp_riverside_viewing_spot",
+                "recipe": [],
+                "_comment": "Open lawn / railing along the river - no actor cap.",
+                "furnitureSize": 0,
+                "value": 0,
+                "Tags": [],
+                "givesJob": [ { "comID": ["jp_riverside_relax", "jp_riverside_watch_fireworks"] } ]
+            }
+        ]
+    },
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID": "jp_riverside_relax",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_riverside_relax_displayName",
+                "_comment": "Open to everyone at any time - found by the generic recreation search too.",
+                "timeScale": 60,
+                "comTags": ["furniture", "recreation", "jp_tourist_riverside"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "results_EP": {
+                    "results_character": [
+                        { "entry_conditions": { "applyToDoer": true }, "entry_results": { "type": "statMod_ST", "value": "3" } }
+                    ]
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "jp_riverside_relax_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$沿着河边慢慢散步"] } ] },
+                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正望着河面吹风"] } ] },
+                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了河边"] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在河边歇够了"] } ] }
+            },
+            {
+                "ID": "jp_riverside_watch_fireworks",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_riverside_watch_fireworks_displayName",
+                "_comment": "Open to anyone at the riverside while the fireworks offer is under way (requireRoomExisting.requireActiveRecreationOffer - its posted hours on its posted days). A booked fireworks visit only brings NPCs here; their spectator behavior_job then finds this command.",
+                "timeScale": 60,
+                "comTags": ["furniture", "recreation", "jp_tourist_riverside", "jp_riverside_fireworks"],
+                "requirements": {
+                    "requirement": { "treatReceiverAsDoer": true },
+                    "requireRoomExisting": { "requireActiveRecreationOffer": ["recreation_offer_jp_riverside_fireworks"] }
+                },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "jp_riverside_watch_fireworks_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 15 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$在河岸找了个位置，仰头等待烟火"] } ] },
+                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正仰望着夜空中绽放的烟火"] } ] },
+                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$不再看烟火了"] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["最后一发烟火散去，$doer.firstname$意犹未尽地收回了目光"] } ] }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_riverside_entrance": "河堤入口",
+                "jp_riverside_promenade": "河畔步道",
+
+                "jp_riverside_bench": "河边长椅",
+                "jp_riverside_viewing_spot": "观景处",
+
+                "jp_riverside_relax_displayName": "河边散步",
+                "jp_riverside_watch_fireworks_displayName": "观赏烟火",
+                "jp_riverside_watch_fireworks":"%%notimplemented%%",
+
+                "jp_riverside_fireworks": "烟火大会",
+                "jp_riverside_stroll": "河边散步"
+            }
+        }
+    }
+}

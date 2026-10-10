@@ -5,7 +5,7 @@
                 "id": "item_recording_camera",
                 "Tags": [
                     "item_recorder",
-                    "industrial",
+                    "electronics",
                     "rarity_common"
                 ],
                 "value": 18000,
@@ -24,7 +24,7 @@
             {
                 "id": "item_recording_camera_Tape",
                 "Tags": [
-                    "industrial",
+                    "electronics",
                     "rarity_common"
                 ],
                 "value": 400
@@ -32,7 +32,7 @@
             {
                 "id": "item_recorded_camera_Tape",
                 "Tags": [
-                    "industrial",
+                    "electronics",
                     "item_records",
                     "retail_digital"
                 ],

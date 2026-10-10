@@ -86,7 +86,7 @@ public class scr_panel_TargetInfo : scr_Menu
             //self_canvasGroup.alpha = 1;
             self_canvasGroup.gameObject.SetActive(true);
 
-            fullname.SetText(chara.FullName+(chara.FactionManager.CurrentlyActiveFaction == null ? "" : ", "+chara.FactionManager.CurrentlyActiveFaction.GetCharaSocialStandingName(chara)));
+            fullname.SetText(chara.FullName+(chara.FactionManager.CurrentlyActiveFaction == null ? "" : ", "+chara.CurrentActiveFactionName));
             fullname.SetExternalTooltip(chara.FactionManager.CurrentlyActiveFaction == null ? "" : chara.FactionManager.CurrentlyActiveFaction.GetCharaSocialStandingTooltip(chara));
 
             if(chara.Stats.HP != null) chara.Stats.HP.Draw(hp);

@@ -1,0 +1,45 @@
+{
+    "Events": {
+        "list": [
+            {
+                "ID": "OnDailyNeedsFailed",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        {"parameters":["exists"]}
+                    ]
+                },
+                "events": [
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "line": "OnDailyNeedsFailed_failed", "nextEntryLabel": "check_trust" },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "check_trust",
+                        "options": [
+                            {
+                                "option": "trust changed - narrate it",
+                                "Results": [
+                                    { "Type": "ExistAppendStrings", "arguments": ["trustChange"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "trust_change"] }
+                                ]
+                            },
+                            {
+                                "option": "no trust change - nothing more to say",
+                                "Results": [ { "Type": "EventEnd" } ]
+                            }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "trust_change", "isLast": true, "line": "OnDailyNeedsFailed_trust_change" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "OnDailyNeedsFailed": "每日需求 - 未满足",
+                "OnDailyNeedsFailed_failed": "$factionName$缺乏$needs$，$affected.name$今日的需求未能得到满足。",
+                "OnDailyNeedsFailed_trust_change": "$affected.name$对$managers.name$的信赖$trustChange$。"
+            }
+        }
+    }
+}

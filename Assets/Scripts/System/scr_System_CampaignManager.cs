@@ -26,6 +26,10 @@ public class scr_System_CampaignManager_Serializable
     public int debugRoomRef, statisRoomRef, tempRoomRef;
     public Dictionary<string, string> LLMResponseStorage;
     public List<int> specialUpdateJobs;
+    /// <summary>RefIDs of I_TemporaryJob jobs (Job_Activity) of this save - see the campaign manager's temporaryJobs.</summary>
+    public List<int> temporaryJobs;
+    public RecreationBoard RecreationBoard;
+    public RecreationGroupRegistry RecreationGroups;
     // LogsManager? dont need serializing, logs are throwaway lines anyway
 }
 
@@ -75,6 +79,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
 
         scr_System_SceneManager.current.Observer_OnPageUnload += OnSceneUnload;
+        scr_System_Time.current.Observer_globalTime_Day += HolidaySeasonSystem.OnDayUpdate;
     }
 
     protected void OnSceneUnload()
@@ -252,11 +257,14 @@ public class scr_System_CampaignManager : MonoBehaviour
         obj.WorldPlanIDs = currentWorldPlanIDs;
         obj.ExpeditionInstances = this.Index_ExpeditionInstances;
         obj.specialUpdateJobs = this.specialUpdateJobs;
+        obj.temporaryJobs = this.temporaryJobs;
 
         obj.statisRoomRef = this.statisRoomID;
         obj.tempRoomRef = this.tempRoomID;
         obj.debugRoomRef = this.debugRoomRef;
         obj.LLMResponseStorage = this.LLMResponseStorage;
+        obj.RecreationBoard = this.RecreationBoard;
+        obj.RecreationGroups = this.RecreationGroups;
 
         return obj;
     }
@@ -333,6 +341,9 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         this.CurrentCampaignID = obj.campaignSettingID;
         this.currentWorldPlanIDs = obj.WorldPlanIDs ?? new List<string>();
+        HolidaySeasonSystem.Reset();   // trackers are runtime-only; the next day update/query rebuilds them silently
+        this.recreationBoard = obj.RecreationBoard;
+        this.recreationGroups = obj.RecreationGroups;
 
         //this.jobs = obj.Jobs;
         //index_JobReferenceIDCache = null;
@@ -360,6 +371,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         // that Factions/Jobs/Items/Characters are the real (save-restored) data
         map.ApplyPendingRoomChanges();
 
+        // saves made before furniture_marker_wait existed (or before a MainExit room changed)
+        foreach (var i in Factions) i.EnsureMainExitWaitMarker();
+
         // now rebuild full map data
         map.SerializationRebuilt(true);
 
@@ -384,6 +398,7 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         this.Index_ExpeditionInstances = obj.ExpeditionInstances;
         this.specialUpdateJobs = obj.specialUpdateJobs != null ? obj.specialUpdateJobs : new List<int>();
+        this.temporaryJobs = obj.temporaryJobs != null ? obj.temporaryJobs : new List<int>();
 
         this._uniqueExpeditionInstances = null;
 
@@ -401,6 +416,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         currentTarget = 0;
         viewMode = ViewMode.View_Room;
 
+        // recreation sessions relink their members' bookings / inboxes before each character drops what found no session
+        RecreationGroups.OnAfterLoad();
         foreach (var i in Index_referenceID) i.Value.PostReloadUpdate();
 
         var ri = CurrentRoom;
@@ -1253,6 +1270,13 @@ public class scr_System_CampaignManager : MonoBehaviour
 
 
     public List<int> specialUpdateJobs = new List<int>();
+    /// <summary>
+    /// RefIDs of this campaign's temporary jobs (I_TemporaryJob - Job_Activity): registered like any job, saved like
+    /// every job (Index_JobReferenceID), but belonging to no room's job list. A job quietly ended early stays listed
+    /// until its visit's hours are over (its own LastUpdate releases it then), so no new one is created for it.
+    /// </summary>
+    public List<int> temporaryJobs = new List<int>();
+    [JsonIgnore] public IReadOnlyList<int> TemporaryJobRefs { get { return temporaryJobs; } }
     List<Room_Instance> specialUpdateRooms = new List<Room_Instance>();
     /// <summary>
     /// Clear executed APs, and resolve filming
@@ -1682,7 +1706,26 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             var roomKey = p.RoomKey;
             if (!registeredPackagesByRoom.ContainsKey(roomKey)) registeredPackagesByRoom.Add(roomKey, new List<ActionPackage>() { p });
-            else registeredPackagesByRoom[roomKey].Add(p);
+            else
+            {
+                // keep the room list sorted by priority (same order as Register) - the passes above walk it from the end
+                // and break on the first lower-priority AP, so an appended npc pathing AP would stop the player's APs from ticking
+                var list = registeredPackagesByRoom[roomKey];
+                var priority = p.PackagePriority;
+                var jobref = p.job?.RefID ?? -1;
+                int insertIndex = 0;
+                for (int i = list.Count - 1; i >= 0; i--)
+                {
+                    var cPriority = list[i].PackagePriority;
+                    int cJobRef = list[i].job?.RefID ?? -1;
+                    if (cPriority < priority || (cPriority == priority && cJobRef < jobref))
+                    {
+                        insertIndex = i + 1;
+                        break;
+                    }
+                }
+                list.Insert(insertIndex, p);
+            }
         }
 
     }
@@ -1702,6 +1745,7 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         Index_JobReferenceID.Remove(j.RefID);
         specialUpdateJobs.Remove(j.RefID);
+        temporaryJobs.Remove(j.RefID);
         int jj = 0;
         foreach(var kvp in registeredPackagesByRoom)
         {
@@ -1737,6 +1781,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         j.Register(forceRefID);
 
         if (j is I_RequireSpecialTracker) specialUpdateJobs.Add(j.RefID);
+        if (j is I_TemporaryJob) temporaryJobs.Add(j.RefID);
         //Debug.Log("Registering job " + j.RefID);
         //index_JobReferenceIDCache = null;
         //Index_JobReferenceID.Add(j.RefID, j);
@@ -2167,6 +2212,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         viewMode = ViewMode.View_Room;
 
         this.CurrentCampaignID = camp.ID;
+        this.recreationBoard = null;
 
         map = new Map_Instance();
 
@@ -2178,6 +2224,8 @@ public class scr_System_CampaignManager : MonoBehaviour
         main = InstantiateCharacter(main, debugRoom,0);
         //main = Register(main);
         if (sub != null) sub = InstantiateCharacter(sub, debugRoom);
+
+        HolidaySeasonSystem.Reset();   // a new campaign starts with no holiday/season trackers
 
         scr_System_Time.current.initializeTime();
 
@@ -2991,6 +3039,20 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// <summary>
     /// Resolves every WorldPlan ID tracked by the current campaign back into its (always re-read, never saved) def.
     /// </summary>
+    RecreationBoard recreationBoard = null;
+    /// <summary>Posted recreation offers of this campaign (saved with it) - see RecreationBoard / RecreationUtility.</summary>
+    public RecreationBoard RecreationBoard
+    {
+        get { if (recreationBoard == null) recreationBoard = new RecreationBoard(); return recreationBoard; }
+    }
+
+    RecreationGroupRegistry recreationGroups = null;
+    /// <summary>Recreation sessions (shared multi-character activities) of this campaign (saved with it) - see RecreationGroup.</summary>
+    public RecreationGroupRegistry RecreationGroups
+    {
+        get { if (recreationGroups == null) recreationGroups = new RecreationGroupRegistry(); return recreationGroups; }
+    }
+
     public List<WorldPlan> GetLoadedWorldPlans()
     {
         var list = new List<WorldPlan>();
@@ -3415,6 +3477,7 @@ public static class WorldManager
             if (map.mainExit != null && map.mainExit.roomID != "")
             {
                 org.SetMainExit(map.mainExit);
+                org.EnsureMainExitWaitMarker();
             }
 
             foreach (var fd in map.floorDoors)
@@ -3588,8 +3651,8 @@ public static class WorldManager
 
     /// <summary>
     /// Applies an NPCInit's Home/TempHome/Work faction membership (work factions in list order, most
-    /// important first) with each entry's guest status and optional room ownership, onto an already-placed
-    /// character - shared by InitializeNPC (new character) and InitializePlayer (existing Player).
+    /// important first) with each entry's guest status and optional room ownership, then its recreation
+    /// memberships, onto an already-placed character - shared by InitializeNPC (new character) and InitializePlayer (existing Player).
     /// </summary>
     static void ApplyFactionAssignments(Character_Trainable chara, NPCInit init)
     {
@@ -3641,6 +3704,16 @@ public static class WorldManager
                     }
                 }
 
+            }
+        }
+
+        if (init.Recreationfactions != null)
+        {
+            foreach (var rec in init.Recreationfactions)
+            {
+                if (rec == null || !FactionUtility.TryGetMemberType(rec.guestStatus, out var status3)) continue;
+                scr_System_CampaignManager.current.FindorAddHomeFactionByID(rec.factionID);
+                chara.FactionManager.AddRecreationFaction(rec.factionID, status3, true);
             }
         }
     }

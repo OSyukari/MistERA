@@ -959,7 +959,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             box.description.text = parent.CurrentFaction == null || parent.currentChara == null ? ""
                 : tooltip_desc
-                .Replace("$dayCount$", parent.CurrentFaction.GetWorkDayCountPerWeek(parent.currentChara).ToString())
+                .Replace("$dayCount$", parent.CurrentFaction.GetWorkDayCountString(parent.currentChara))
                 .Replace("$workdays$", parent.CurrentFaction.GetWorkDaysPerWeekString(parent.currentChara))
                 .Replace("$workhours$", parent.CurrentFaction.GetWorkHoursPerDayString(parent.currentChara));
 
@@ -1137,6 +1137,8 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
     /// Manageable.GetMemberTypeSchedule) and aren't stored per-character. Not an I_ScheduleOption pick:
     /// this replaces the character's whole status in memberTypeOwnerFaction outright, with its own
     /// hour-range conflict checking, rather than acting on a single clicked hour.
+    /// <br/> Every assignable post is shown, but only a sibling of the character's held type (another shift
+    /// of the same post) can be picked - joining a job is dialogue-event only.
     /// </summary>
     public class button_ScheduleMemberType : ButtonValidator, I_ButtonClickable, I_ScheduleHoverNotifiable
     {
@@ -1146,7 +1148,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
         MemberType targetMemberType;
         Manageable memberTypeOwnerFaction;
-        bool unset = false;
+        bool isCurrent = false;
 
         public button_ScheduleMemberType(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText, MemberType memberType, Manageable memberTypeOwnerFaction) : base(parent)
         {
@@ -1159,28 +1161,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             this.memberTypeOwnerFaction = memberTypeOwnerFaction;
             box.notifyTarget = this;
 
-            var strs = new List<string>();
-            if (memberType != null && memberType.workModule != null)
-            {
-                // reuse JobPostPreset's display formatting (workCommands/activeHours/PrintPayout)
-                var display = new Manageable.JobPostPreset(memberType.workModule);
-                foreach (var cid in display.workCommands)
-                {
-                    var c_com = scr_System_Serializer.current.GetByNameOrID_COM(cid);
-                    if (c_com != null) strs.Add(c_com.DisplayName());
-                    else Debug.LogError($"CANNOT FIND WORK PRESET COMMAND {cid}");
-                }
-                description.text = LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
-                    .Replace("$description$", String.Join(",", strs))
-                    .Replace("$hourCount$", display.activeHours.Count.ToString())
-                    .Replace("$hourRange$", display.PrintHourRanges)
-                    .Replace("$payout$", display.PrintPayout)
-                    .Replace("$paymentCadence$", PaymentCadenceUtility.DisplayName(display.paymentCadence))
-                    .Replace("$days$", display.PrintActiveDays)
-                    .Replace("$dayCount$", display.ActiveDayCount.ToString())
-                    .Replace("$additionalDescription$", "");
-            }
-            else description.text = "error";
+            description.text = BuildMemberTypeDescription(memberType);
 
             buttonText.linkText = "";
             buttonText.SetTextPreInit($"{this.memberTypeOwnerFaction.FactionDisplayName} : {(memberType != null ? memberType.DisplayName : "")}");
@@ -1197,13 +1178,22 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
             if (currentStatus == this.targetMemberType)
             {
-                unset = true;
-                tooltip += "will unset\n";
+                // the held post: shown selected, clicking it does nothing (leaving a job is dialogue-event only)
+                isCurrent = true;
                 button.Toggle(true, true);
                 return true;
             }
 
-            unset = false;
+            isCurrent = false;
+
+            // every post is listed, but only a sibling of the held type (another shift of the same post) can be swapped to
+            if (currentStatus == null || !currentStatus.GetSiblings().Contains(this.targetMemberType))
+            {
+                tooltip += "can only swap between posts of the member's current job\n";
+                button.Toggle(true, false);
+                return false;
+            }
+
             var returnVal = true;
             bool ttip_overwrite_home = false;
 
@@ -1226,11 +1216,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                 }
             }
 
-            if (returnVal)
-            {
-                tooltip += "will overwrite previous member status, if any\n";
-                if (!chara.FactionManager.HomeFactions.Contains(memberTypeOwnerFaction)) tooltip += "chara will be added to job faction\n";
-            }
+            if (returnVal) tooltip += "will change member status in this faction\n";
             if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
 
             button.Toggle(true, false);
@@ -1243,14 +1229,155 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
             // mirrors SetSchedule(Manageable, JobPostPreset)'s AddWorkFaction/RemoveWorkFaction
             // pattern - assigning a role registers memberTypeOwnerFaction as a work faction;
             // unassigning removes chara from it entirely rather than just reverting status.
-            if (unset) chara.FactionManager.RemoveWorkFaction(memberTypeOwnerFaction.ID);
-            else chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType, true, parent.CurrentFaction);
+            if (isCurrent) return;
+            // only a sibling swap gets here: chara already holds a post in memberTypeOwnerFaction - no sourceFaction, so the salary source is kept
+            chara.FactionManager.AddWorkFaction(memberTypeOwnerFaction.ID, targetMemberType, false);
             parent.NotifyScheduleChanged();
         }
 
         public void NotifyPointerEnter()
         {
             parent.CurrentHighlightHours = this.targetMemberType.workModule.activeHours;
+            parent.ValidateAll();
+        }
+        public void NotifyPointerExit()
+        {
+            parent.CurrentHighlightHours = null;
+            parent.ValidateAll();
+        }
+    }
+
+    /// <summary>A MemberType's shift as job post description text (commands, hours, payout, days); "error" without a workModule.</summary>
+    static string BuildMemberTypeDescription(MemberType memberType)
+    {
+        if (memberType == null || memberType.workModule == null) return "error";
+
+        var strs = new List<string>();
+        // reuse JobPostPreset's display formatting (workCommands/activeHours/PrintPayout)
+        var display = new Manageable.JobPostPreset(memberType.workModule);
+        foreach (var cid in display.workCommands)
+        {
+            var c_com = scr_System_Serializer.current.GetByNameOrID_COM(cid);
+            if (c_com != null) strs.Add(c_com.DisplayName());
+            else Debug.LogError($"CANNOT FIND WORK PRESET COMMAND {cid}");
+        }
+        return LocalizeDictionary.QueryThenParse("management_jobpost_description_desc")
+            .Replace("$description$", String.Join(",", strs))
+            .Replace("$hourCount$", display.activeHours.Count.ToString())
+            .Replace("$hourRange$", display.PrintHourRanges)
+            .Replace("$payout$", display.PrintPayout)
+            .Replace("$paymentCadence$", PaymentCadenceUtility.DisplayName(display.paymentCadence))
+            .Replace("$days$", display.PrintActiveDays)
+            .Replace("$dayCount$", display.ActiveDayCountText)
+            .Replace("$additionalDescription$", "");
+    }
+
+    /// <summary>
+    /// External job tab: one of the posts (the held MemberType or one of its siblings) at a work faction the character
+    /// already belongs to. Never joins or leaves - joining/quitting is dialogue-event only. Clicking a sibling switches
+    /// the character's MemberType there (salary source kept) and resumes attending; clicking the held, attended type
+    /// pauses it (Character_Factions.SetWorkPaused) - still a member, paying fees, but its shift no longer schedules them.
+    /// </summary>
+    public class button_ExternalMemberType : ButtonValidator, I_ButtonClickable, I_ScheduleHoverNotifiable
+    {
+        new scr_Canvas_Management parent;
+        scr_SelectableText button;
+
+        MemberType targetMemberType;
+        Manageable workFaction;
+        bool pauseOnClick = false;
+
+        public button_ExternalMemberType(scr_Canvas_Management parent, scr_button_setHighlightCOM box, scr_SelectableText buttonText, MemberType memberType, Manageable workFaction) : base(parent)
+        {
+            this.parent = parent;
+            this.button = box.button;
+            button.isButtonToggle = true;
+
+            this.targetMemberType = memberType;
+            this.workFaction = workFaction;
+            box.notifyTarget = this;
+
+            box.description.text = BuildMemberTypeDescription(memberType);
+
+            buttonText.linkText = "";
+            buttonText.SetTextPreInit($"{this.workFaction.FactionDisplayName} : {(memberType != null ? memberType.DisplayName : "")}");
+        }
+
+        public override bool IsButtonValid()
+        {
+            tooltip = "";
+            pauseOnClick = false;
+            var chara = parent.currentChara;
+            if (chara == null || targetMemberType == null || !chara.FactionManager.WorkFactions.Contains(workFaction))
+            {
+                button.Toggle(true, false);
+                return false;
+            }
+
+            bool held = workFaction.GetMemberType(chara) == targetMemberType;
+            bool paused = chara.FactionManager.IsWorkPaused(workFaction);
+
+            if (held && !paused)
+            {
+                pauseOnClick = true;
+                tooltip += "will pause: chara stays a member (fees still due) but does not go to this shift\n";
+                button.Toggle(true, true);
+                return true;
+            }
+
+            var returnVal = true;
+            bool ttip_overwrite_home = false;
+
+            if (targetMemberType.workModule != null)
+            {
+                foreach (var hour in targetMemberType.workModule.activeHours)
+                {
+                    // bookings are left out: the recreation planner moves/cancels them around a new shift itself
+                    var f = chara.FactionManager.CurrentJobScheduleFaction(hour, 0, false);
+                    if (f == null || f == workFaction)
+                    {
+                        // free hour, or this faction's own schedule (about to be replaced)
+                    }
+                    else if (chara.FactionManager.HomeFactions.Contains(f))
+                    {
+                        ttip_overwrite_home = true;
+                    }
+                    else
+                    {
+                        returnVal = false;
+                        tooltip += $"member type conflict with existing schedule from [{f.FactionDisplayName}]";
+                        break;
+                    }
+                }
+            }
+
+            if (returnVal)
+            {
+                if (!held) tooltip += "will change member status in this faction\n";
+                if (paused) tooltip += "will resume attending this faction's shift\n";
+            }
+            if (ttip_overwrite_home) tooltip += "will overwrite home faction job setting\n";
+
+            button.Toggle(true, false);
+            return returnVal;
+        }
+
+        public void OnClickButton()
+        {
+            var chara = parent.currentChara;
+            if (pauseOnClick) chara.FactionManager.SetWorkPaused(workFaction, true);
+            else
+            {
+                // already a work faction: only the MemberType changes - no sourceFaction, so the salary source is kept
+                if (workFaction.GetMemberType(chara) != targetMemberType) chara.FactionManager.AddWorkFaction(workFaction.ID, targetMemberType, false);
+                chara.FactionManager.SetWorkPaused(workFaction, false);
+            }
+            parent.NotifyScheduleChanged();
+        }
+
+        public void NotifyPointerEnter()
+        {
+            parent.CurrentHighlightHours = targetMemberType?.workModule?.activeHours;
             parent.ValidateAll();
         }
         public void NotifyPointerExit()
@@ -1308,7 +1435,7 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
                     .Replace("$payout$", preset.PrintPayout)
                     .Replace("$paymentCadence$", PaymentCadenceUtility.DisplayName(preset.paymentCadence))
                     .Replace("$days$", preset.PrintActiveDays)
-                    .Replace("$dayCount$", preset.ActiveDayCount.ToString())
+                    .Replace("$dayCount$", preset.ActiveDayCountText)
                     .Replace("$additionalDescription$", "");
 
             }
@@ -1547,31 +1674,83 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
 
                 break;
             case JobAssignmentTab.externalJob:
-
-                // External job posting requires both a commercial pact and actual physical/world
-                // reachability - see Manageable.ExternalJobFactions / Map.GetExternalJobFactions.
-                foreach(var faction in currentFaction.ExternalJobFactions)
-                {
-                    foreach(var c in faction.AssignableMemberTypes)
-                    {
-                        int hash = AssertUniqueHash(c.ID.GetHashCode());
-
-                        scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
-                        RectTransform r = scr.GetComponent<RectTransform>();
-                        r.SetParent(rectTransform, false);
-
-                        scr_SelectableText comp = scr.button;
-                        comp.Initialize(this, new button_ScheduleMemberType(this, scr, comp, c, faction));
-                        comp.optionID = hash;
-                        buttonsByID.Add(comp.optionID, comp);
-                        validatorsByID.Add(comp.optionID, comp.Validator);
-                        comp.Validate();
-                        tempListHash.Add(hash);
-                    }
-                }
+                // depends on the current character, so rebuilt on every character change - see RebuildExternalJobTab
+                externalJobRect = rectTransform;
+                externalJobBuiltForChara = null;
+                externalJobBuiltForFaction = null;
+                RebuildExternalJobTab();
                 break;
         }
 
+    }
+
+    RectTransform externalJobRect = null;
+    Character_Trainable externalJobBuiltForChara = null;
+    Manageable externalJobBuiltForFaction = null;
+    List<int> externalJobHashes = new List<int>();
+
+    /// <summary>
+    /// (Re)builds the external job tab for currentChara, if the tab is open and was not already built for this
+    /// character and faction: for each of the character's work factions other than the current one, a button for the
+    /// held MemberType and each of its siblings (button_ExternalMemberType). Called when the tab opens and from
+    /// initScript_ManageChara.SetCurrentChara.
+    /// </summary>
+    public void RebuildExternalJobTab()
+    {
+        if (externalJobRect == null || !externalJobRect.gameObject.activeInHierarchy) return;
+        if (externalJobBuiltForChara == currentChara && externalJobBuiltForFaction == currentFaction) return;
+
+        ClearExternalJobButtons();
+        externalJobBuiltForChara = currentChara;
+        externalJobBuiltForFaction = currentFaction;
+        if (currentChara == null) return;
+
+        foreach (var faction in currentChara.FactionManager.WorkFactions)
+        {
+            if (faction == null || faction == currentFaction) continue;
+            var held = faction.GetMemberType(currentChara);
+            if (held == null) continue;
+
+            foreach (var type in held.GetSiblings(true))
+            {
+                int hash = AssertUniqueHash((faction.ID + ":" + type.ID).GetHashCode());
+
+                scr_button_setHighlightCOM scr = Instantiate(prefab_setHighlightCOM);
+                RectTransform r = scr.GetComponent<RectTransform>();
+                r.SetParent(externalJobRect, false);
+
+                scr_SelectableText comp = scr.button;
+                comp.Initialize(this, new button_ExternalMemberType(this, scr, comp, type, faction));
+                comp.optionID = hash;
+                buttonsByID.Add(comp.optionID, comp);
+                validatorsByID.Add(comp.optionID, comp.Validator);
+                comp.Validate();
+                externalJobHashes.Add(hash);
+            }
+        }
+    }
+
+    void ClearExternalJobButtons()
+    {
+        foreach (var hash in externalJobHashes)
+        {
+            // the tab's own OnDisable may already have destroyed the button objects
+            if (validatorsByID.TryGetValue(hash, out var validator))
+            {
+                validatorsByID.Remove(hash);
+                if (validator != null) validator.Destroy();
+            }
+            if (buttonsByID.TryGetValue(hash, out var text))
+            {
+                buttonsByID.Remove(hash);
+                if (text != null)
+                {
+                    text.gameObject.SetActive(false);
+                    Destroy(text.gameObject);
+                }
+            }
+        }
+        externalJobHashes.Clear();
     }
 
     public void OnChildDisable(JobAssignmentTab tabID, RectTransform rect)
@@ -1592,6 +1771,14 @@ public class scr_Canvas_Management : scr_Menu, IPointerClickHandler
         }
 
         tempListHash.Clear();
+
+        if (tabID == JobAssignmentTab.externalJob)
+        {
+            ClearExternalJobButtons();
+            externalJobRect = null;
+            externalJobBuiltForChara = null;
+            externalJobBuiltForFaction = null;
+        }
     }
 
     public void NotifyScheduleChanged()

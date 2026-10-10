@@ -20,7 +20,17 @@ public class Job_MoveLocation : Job
     {
         get
         {
-            return FactionOwner.MainExit;
+            return RallyRoom;
+        }
+    }
+
+    /// <summary>The room this job takes characters to: the owner's Manageable.RallyRoom (MainExit for non-Manageable owners).</summary>
+    [JsonIgnore]
+    Room_Instance RallyRoom
+    {
+        get
+        {
+            return FactionOwner is Manageable m ? m.RallyRoom : FactionOwner.MainExit;
         }
     }
 
@@ -85,7 +95,7 @@ public class Job_MoveLocation : Job
         }
 
 
-        ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, FactionOwner.MainExit.RefID);
+        ActionPackage_PathTo package = new ActionPackage_PathTo(this, c.RefID, RallyRoom.RefID);
         if (!package.Validate())
         {
             ss += "actor pathing package creation failed ||";

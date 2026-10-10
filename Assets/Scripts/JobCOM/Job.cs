@@ -1013,11 +1013,13 @@ public class Job : IDisposable, I_Disposable
     {
 
         bool visible = isJobVisibleToPlayer;
+        // a package running in a room of its own (ActionPackage.SetRoom) shows its logs where it runs, whatever the job's room
+        bool anyLogged = visible;
         for (int i = packages_completed.Count - 1; i >= 0; i--)
         {
             var p = packages_completed[i];
             if (p.Duration != 0) continue;
-            if (visible) CollectLogs(p);
+            if (visible || p.isOwnRoomVisibleToPlayer) { CollectLogs(p); anyLogged = true; }
         }
 
         packages_completed.Clear();
@@ -1028,7 +1030,7 @@ public class Job : IDisposable, I_Disposable
         for ( int i = packages_previous.Count -1; i >= 0; i--)
         {
             var p = packages_previous[i];
-            if (visible) CollectLogs(p);
+            if (visible || p.isOwnRoomVisibleToPlayer) { CollectLogs(p); anyLogged = true; }
             // Duration 0 meaning they just run, meaning
             if (p.Duration <= 0)
             {
@@ -1061,7 +1063,7 @@ public class Job : IDisposable, I_Disposable
         }
 
         //InternalJobUpdate();
-        if (visible)
+        if (anyLogged)
         {
             this.m.exp.AddRelevantChara(this.actorRemove);
             this.m.exp.AddRelevantChara(this.actorJobComplete);

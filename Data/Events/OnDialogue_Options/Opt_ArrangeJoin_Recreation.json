@@ -1,0 +1,155 @@
+{
+    "_doc": "Arrange or cancel recreation memberships (sports club, salon...) for one of the player's own people. Unlike the work arrange flows (one job at a time, so leaving comes first), memberships never conflict: joining and leaving are independent menu choices, and the menu comes back after every change (the lists are rebuilt each time an option is picked, so they always reflect the change) until the player picks 算了.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Opt_ArrangeJoin_Recreation",
+                "_comment": "Sign one of the player's own people (sharesHomeFaction) up for a recreation membership, or cancel one. Join list: every reachable faction listing a 'memberType_recreation' MemberType in its joinableMemberTypes (JoinHandler_Recreation - memberships already held show disabled). Leave list: the memberships held (LeaveHandler_Recreation). The fee is billed to their home; visits are planned day by day (RecreationUtility).",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "worker" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "sharesHomeFaction" ] },
+                            { "parameters": [ "canArrangeJoinByTag", "memberType_recreation" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "menu",
+                        "_comment": "Join and leave are independent. 退会 is greyed out (invalidTooltip = the reason) while nothing is held.",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "question": "Opt_ArrangeJoin_Recreation_menu",
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_Recreation_menu_join",
+                                "Results": [
+                                    { "Type": "JoinReachableFactionsByTag", "arguments": [ "joinOptions", "worker", "memberType_recreation" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "join_check" ] }
+                                ]
+                            },
+                            {
+                                "option": "Opt_ArrangeJoin_Recreation_menu_leave",
+                                "target_chara_conditions": {
+                                    "worker": [ { "parameters": [ "holdsMemberTypeByTag", "memberType_recreation" ] } ]
+                                },
+                                "invalidTooltip": "Opt_ArrangeJoin_Recreation_noMembership",
+                                "Results": [
+                                    { "Type": "LeaveHeldFactionsByTag", "arguments": [ "leaveOptions", "worker", "memberType_recreation" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "leave_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "Opt_ArrangeJoin_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "join_check",
+                        "_comment": "Any option at all (disabled ones explain why) -> the list; none -> say so and back to the menu.",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "joinOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "join_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "join_none" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "join_none",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "line": "Opt_ArrangeJoin_Recreation_noJoin",
+                        "nextEntryLabel": "menu"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "join_ask",
+                        "_comment": "Picking a loaded option runs its join callback, then (loadOptionsResults) shows what changed.",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "question": "Opt_ArrangeJoin_Recreation_question",
+                        "loadOptionsKey": "joinOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "changed" ] } ],
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_Recreation_back",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "menu" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "leave_ask",
+                        "_comment": "Picking a loaded option runs its leave callback (that membership only), then (loadOptionsResults) shows what changed.",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "question": "Opt_ArrangeJoin_Recreation_leave_question",
+                        "loadOptionsKey": "leaveOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "changed" ] } ],
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_Recreation_back",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "menu" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "changed",
+                        "_comment": "$factionChangeString$ accumulates over the whole conversation (the handlers append one line per change, nothing clears it), so this line is the running summary of every change made so far - then back to the menu.",
+                        "line": "Opt_ArrangeJoin_Recreation_changed",
+                        "nextEntryLabel": "menu"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Opt_ArrangeJoin_Recreation": "办理会员",
+                "Opt_ArrangeJoin_Recreation_menu": "要为$worker.name$办理什么？",
+                "Opt_ArrangeJoin_Recreation_menu_join": "办理会员",
+                "Opt_ArrangeJoin_Recreation_menu_leave": "退会",
+                "Opt_ArrangeJoin_Recreation_noMembership": "$worker.name$目前没有任何会员。",
+                "Opt_ArrangeJoin_Recreation_noJoin": "附近没有可以办理的会员了。",
+                "Opt_ArrangeJoin_Recreation_question": "要给$worker.name$办哪里的会员？",
+                "Opt_ArrangeJoin_Recreation_leave_question": "要退掉$worker.name$的哪个会员？",
+                "Opt_ArrangeJoin_Recreation_back": "返回",
+                "Opt_ArrangeJoin_Recreation_changed": "本次办理：\n$factionChangeString$",
+                "recreation_joinOption": "$memberType$",
+                "recreation_leaveOption": "让$name$退会"
+            }
+        }
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "_doc": "Dialogue options offered by ON-SHIFT hospital doctors/nurses (target must be active at jp_hospital AND carry the jp_hospital_staff actor tag, which only comes from the staff MemberTypes' portraitTags while that MemberType is their active one). Admit: done by the patient MemberType's joinHandler callback. Discharge / End visit: done by the patient / visitor MemberType's leaveHandler callbacks, for the player's own people.",
+    "_doc": "Dialogue options offered by ON-SHIFT hospital doctors/nurses (target must be active at jp_hospital AND carry the jp_hospital_staff actor tag, which only comes from the staff MemberTypes' Tags while that MemberType is their active one). Admit: done by the patient MemberType's joinHandler callback. Discharge / End visit: done by the patient / visitor MemberType's leaveHandler callbacks, for the player's own people.",
     "Events": {
         "list": [
             {

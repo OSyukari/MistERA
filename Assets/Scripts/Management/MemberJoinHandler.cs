@@ -20,6 +20,15 @@ public abstract class MemberOptionHandler
 
     public abstract List<Event.EventEntry.Options> BuildOptions(Manageable faction, MemberType type, List<Character_Trainable> candidates, out string errorKey);
 
+    /// <summary>
+    /// A disabled option standing for boundTarget with this handler's option text and reasonKey as tooltip - for callers
+    /// that show why a whole faction offered nothing (e.g. FactionJoinUtility's join-by-tag search: a full hospital).
+    /// </summary>
+    public Event.EventEntry.Options MakeDisabledOption(Character_Trainable boundTarget, string reasonKey)
+    {
+        return MakeOption(boundTarget, null, reasonKey);
+    }
+
     /// <summary>AppendStrings key the callbacks fill with what changed (see AppendFactionChange), shown via $factionChangeString$.</summary>
     public const string FactionChangeStringKey = "factionChangeString";
 
@@ -106,13 +115,14 @@ public abstract class MemberLeaveHandler : MemberOptionHandler
     public virtual void OnMemberLeft(Manageable faction, Character_Trainable c, string standing, List<KeyValuePair<Character_Trainable, string>> departedLinked) { }
 
     /// <summary>
-    /// Takes c out of faction through c's own faction lists (temporary home, or work faction) - Manageable.RemoveFromFaction
-    /// then also releases c's rooms and drops everyone linked to c. Returns false if c wasn't held there by either.
+    /// Takes c out of faction through c's own faction lists (temporary home, work or recreation faction) - Manageable.RemoveFromFaction
+    /// then also releases c's rooms and drops everyone linked to c. Returns false if c wasn't held there by any of them.
     /// </summary>
     protected static bool RemoveThroughOwnFactions(Manageable faction, Character_Trainable c)
     {
         if (c.FactionManager.Faction_Home_Temporary == faction) c.FactionManager.SetTempHomeFaction("", null);
         else if (c.FactionManager.WorkFactions.Contains(faction)) c.FactionManager.RemoveWorkFaction(faction.ID);
+        else if (c.FactionManager.RecreationFactions.Contains(faction)) c.FactionManager.RemoveRecreationFaction(faction.ID);
         else return false;
         return true;
     }
@@ -214,7 +224,8 @@ public class LeaveHandler_HospitalPatient : MemberLeaveHandler
         // a visitor whose every patient has left meanwhile has nothing to come back to
         if (links.Count > 0 && targets.Count == 0) return;
 
-        patient.FactionManager.AddWorkFaction(hospital.ID, type, false);
+        var source = string.IsNullOrEmpty(post.sourceFactionID) ? null : scr_System_CampaignManager.current.FindFactionByID(post.sourceFactionID);
+        patient.FactionManager.AddWorkFaction(hospital.ID, type, false, source);
         foreach (var target in targets) hospital.SetMemberLink(patient, target, type);
     }
 }
@@ -315,7 +326,13 @@ public class JoinHandler_HospitalPatient : MemberJoinHandler
         if (!c.FactionManager.WorkFactions.Contains(hospital)) return;
         var type = hospital.GetMemberType(c);
         if (type != null && type.ID != FactionUtility.MemberTypeID_None)
-            hospital.SetSuspendedPost(c, new Manageable.SuspendedPost() { memberTypeID = type.ID, links = hospital.GetMemberLinks(c) });
+            hospital.SetSuspendedPost(c, new Manageable.SuspendedPost()
+            {
+                memberTypeID = type.ID,
+                links = hospital.GetMemberLinks(c),
+                // read before the temp home is set: the default falls back to HomeFactions[0], which the hospital is about to become
+                sourceFactionID = c.FactionManager.GetWorkFactionSourceOrDefault(hospital.ID)?.ID ?? "",
+            });
         c.FactionManager.RemoveWorkFaction(hospital.ID);
     }
 
@@ -385,7 +402,7 @@ public class JoinHandler_HospitalVisitor : MemberJoinHandler
 
         foreach (var patient in hospital.ManagedChara)
         {
-            if (patient == null || patient.RefID == 0 || hospital.GetMemberType(patient)?.ID != patientMemberTypeID) continue;
+            if (patient == null || patient.RefID == 0 || !MemberType.Matches(hospital.GetMemberType(patient), patientMemberTypeID)) continue;
             bool allVisiting = visitors.TrueForAll(v => v == patient || hospital.IsMemberLinked(v, patient, visitorType.ID));
             result.Add(MakeOption(patient, ev => Register(ev, hospital, visitorType, visitors, patient), allVisiting ? alreadyVisitingErrorKey : ""));
         }
@@ -449,5 +466,92 @@ public class JoinHandler_TempHomeWithRoom : MemberJoinHandler
         c.FactionManager.SetTempHomeFaction(faction.ID, type);
         if (faction.isManagedChara(c.RefID)) faction.AddRoomOwnership(c.RefID, room.RefID);
         AppendFactionChange(ev, c, faction, leftParty);
+    }
+}
+
+/// <summary>
+/// Generic work post (e.g. a store clerk's shifts): one option per candidate, joining the faction as a work faction with
+/// this MemberType - the same as assigning the post in the Management UI. Usually set on a parent post, so it is
+/// inherited by the shifts and joining the parent joins its first shift (shift changes are the player's job, in the UI).
+/// Disabled (with reason): already part of the faction in any role, or held by a temporary home (hospital, kidnapping...).
+/// Hours clashing with another job are allowed. Nobody is moved.
+/// </summary>
+public class JoinHandler_WorkPost : MemberJoinHandler
+{
+    public string alreadyMemberErrorKey = "work_post_err_member";
+    public string otherTempHomeErrorKey = "work_post_err_tempHome";
+
+    public override List<Event.EventEntry.Options> BuildOptions(Manageable faction, MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        var result = new List<Event.EventEntry.Options>();
+        foreach (var c in candidates)
+        {
+            if (c == null) continue;
+            result.Add(MakeOption(c, ev => Join(ev, faction, type, c), DebugForceJoin(c) ? "" : GetRefusal(faction, c)));
+        }
+        return result;
+    }
+
+    string GetRefusal(Manageable faction, Character_Trainable c)
+    {
+        if (faction.isManagedChara(c.RefID)) return alreadyMemberErrorKey;
+        if (c.FactionManager.Faction_Home_Temporary != null) return otherTempHomeErrorKey;
+        return "";
+    }
+
+    void Join(EventInstance ev, Manageable faction, MemberType type, Character_Trainable c)
+    {
+        c.FactionManager.AddWorkFaction(faction.ID, type, true, null);
+        AppendFactionChange(ev, c, faction, false);
+    }
+}
+
+/// <summary>Generic work post leaving: one option per candidate currently holding this post here; picking it removes the work faction.</summary>
+public class LeaveHandler_WorkPost : MemberLeaveHandler
+{
+    public override List<Event.EventEntry.Options> BuildOptions(Manageable faction, MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        return BuildOptionPerHolder(faction, type, candidates);
+    }
+}
+
+/// <summary>
+/// Recreation membership (gym, salon, cram school...): one option per candidate, joining the faction as a recreation
+/// faction (Character_Factions.AddRecreationFaction) with this MemberType - no fixed hours, visits are booked day by day.
+/// Usually set on a parent membership, so joining the parent joins its first child. Disabled (with reason) when the
+/// candidate is already part of the faction in any role. Nobody is moved.
+/// </summary>
+public class JoinHandler_Recreation : MemberJoinHandler
+{
+    public string alreadyMemberErrorKey = "work_post_err_member";
+
+    public override List<Event.EventEntry.Options> BuildOptions(Manageable faction, MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        var result = new List<Event.EventEntry.Options>();
+        foreach (var c in candidates)
+        {
+            if (c == null) continue;
+            string refusal = DebugForceJoin(c) || !faction.isManagedChara(c.RefID) ? "" : alreadyMemberErrorKey;
+            result.Add(MakeOption(c, ev => Join(ev, faction, type, c), refusal));
+        }
+        return result;
+    }
+
+    void Join(EventInstance ev, Manageable faction, MemberType type, Character_Trainable c)
+    {
+        if (c.FactionManager.AddRecreationFaction(faction.ID, type, true)) AppendFactionChange(ev, c, faction, false);
+    }
+}
+
+/// <summary>Recreation membership leaving: one option per candidate currently holding this membership here; picking it ends the membership.</summary>
+public class LeaveHandler_Recreation : MemberLeaveHandler
+{
+    public override List<Event.EventEntry.Options> BuildOptions(Manageable faction, MemberType type, List<Character_Trainable> candidates, out string errorKey)
+    {
+        errorKey = "";
+        return BuildOptionPerHolder(faction, type, candidates);
     }
 }

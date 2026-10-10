@@ -26,10 +26,9 @@
                 "mealHours":[0, 6, 12, 18],
                 "salesCurrency":"currency_JPY",
                 "salesInventory":[
-                    { "matchByTags":["industrial","rarity_common"] },
+                    { "matchByTags":["industrial","rarity_common"],
+                        "exceptTags":["furniture_packed"] },
                     { "matchByTags":["consumable","industrial","rarity_common"] },
-                    { "matchByTags":["videogame","industrial","rarity_common"] },
-                    { "matchByTags":["moviecd","industrial","rarity_common"] },
                     { "matchByTags":["paperbook","industrial","rarity_common"] },
                     { "matchByID":"raw_rice","nameOverwrite":"jp_convenience_store_rice_bag_5kg", "itemCount":5000, "countOverride":true },
                     { "matchByID":"currency_pyroxene","nameOverwrite":"jp_convenience_store_pyroxene_4800", "itemCount":4800, "countOverride":true },
@@ -39,16 +38,14 @@
                 "_comment":"here is faction initializer. Calling mapPlan init create a new instance of the faction following this same template.",
                 "_comment2":"called by MapPlan.Instantiate(args)",
                 "managerBaseIDs":[""],
-                "assignableMemberTypes":[
-                    "membertype_jp_convenience_store_clerk_morning",
-                    "membertype_jp_convenience_store_clerk_afternoon",
-                    "membertype_jp_convenience_store_clerk_midnight"
-                ],
-                "_comment_fallbackWorkers": "Per-shift staffing: headcount = total wanted on shift, maxFallback = most fallback workers used. templateID = CharaTemplateGenerator from JP_World/Characters/templates.json.",
+                "_comment_assignableMemberTypes":"The full-time and part-time posts (parents stand for their posts).",
+                "assignableMemberTypes":[ "membertype_jp_convenience_store_parttime" ],
+                "_comment_joinableMemberTypes":"MemberTypes this faction can be joined as through the reachable-faction searches (FactionJoinUtility: Opt_ArrangeJoin_WorkFullTime / _WorkPartTime). Each parent joins as its first post.",
+                "joinableMemberTypes":[ "membertype_jp_convenience_store_parttime" ],
+                "_comment_fallbackWorkers": "Only the two NPC-only 12h posts (day 08-20, night 20-08, every day) get a fallback worker, so one clerk is always on duty with just 2 fallback workers. The full-time and part-time posts are left open for other NPCs or the player to fill, with no fallback worker behind them. templateID = CharaTemplateGenerator from JP_World/Characters/templates.json.",
                 "fallbackWorkers": [
-                    { "memberTypeID": "membertype_jp_convenience_store_clerk_morning", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
-                    { "memberTypeID": "membertype_jp_convenience_store_clerk_afternoon", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
-                    { "memberTypeID": "membertype_jp_convenience_store_clerk_midnight", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+                    { "memberTypeID": "membertype_jp_convenience_store_npc_day", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" },
+                    { "memberTypeID": "membertype_jp_convenience_store_npc_night", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
                 ],
                 "workHours":[],
                 "workAssignment":[]
@@ -58,8 +55,9 @@
         "memberTypes":
         [
             {
-                "ID":"membertype_jp_convenience_store_clerk_morning",
-                "socialStandingKey":"membertype_jp_convenience_store_clerk_morning",
+                "ID":"membertype_jp_convenience_store_clerk",
+                "_comment":"Root of every SunMart post (MemberType hierarchy, never held): full-time (manager, assistant manager), part-time (one A/B pair per time block, splitting the week Mon-Thu / Fri-Sun) - all open for other NPCs or the player, no fallback worker; plus two NPC-only 12h posts (npc_day 08-20, npc_night 20-08) each backed by a fallback worker. Children inherit every field they leave out (flags, handlers); each post states its own workModule. Night posts run 22-06 and count for the day they start (WorkModuleInit.IsActiveAt). Pay: part-time 1200/h, night 1500/h (25% late-night premium), daily; full-time 1500/h manager, 1350/h assistant, monthly.",
+                "socialStandingKey":"membertype_jp_convenience_store_clerk",
                 "isMember": true,
                 "isPrisoner": false,
                 "isManager": false,
@@ -71,60 +69,185 @@
                 "isPurgedOnPartyCleanup": false,
                 "isDisplayableInFactionUI": true,
                 "participatesInCombat": true,
-                "workModule": {
-                    "jobPostID":"jp_convenience_store_clerk_morning",
-                    "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
-                    "workCommands":["jp_convenience_store_frontDesk"],
-                    "activeHours":[ 6, 7, 8, 9,10,11,12,13],
-                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1200" }  ],
-                    "paymentCadence":"Daily"
-                }
-            },
-            {
-                "ID":"membertype_jp_convenience_store_clerk_afternoon",
-                "socialStandingKey":"membertype_jp_convenience_store_clerk_afternoon",
-                "isMember": true,
-                "isPrisoner": false,
-                "isManager": false,
-                "isHidden": false,
-                "canBeTransferred": true,
-                "canBeLiberated": false,
-                "canBeRescued": false,
-                "skipsJobDispatch": false,
-                "isPurgedOnPartyCleanup": false,
-                "isDisplayableInFactionUI": true,
-                "participatesInCombat": true,
-                "workModule": {
-                    "jobPostID":"jp_convenience_store_clerk_afternoon",
-                    "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
-                    "workCommands":["jp_convenience_store_frontDesk"],
-                    "activeHours":[14,15,16,17,18,19,20,21],
-                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1200" }  ],
-                    "paymentCadence":"Daily"
-                }
-            },
-            {
-                "ID":"membertype_jp_convenience_store_clerk_midnight",
-                "socialStandingKey":"membertype_jp_convenience_store_clerk_midnight",
-                "isMember": true,
-                "isPrisoner": false,
-                "isManager": false,
-                "isHidden": false,
-                "canBeTransferred": true,
-                "canBeLiberated": false,
-                "canBeRescued": false,
-                "skipsJobDispatch": false,
-                "isPurgedOnPartyCleanup": false,
-                "isDisplayableInFactionUI": true,
-                "participatesInCombat": true,
-                "workModule": {
-                    "jobPostID":"jp_convenience_store_clerk_midnight",
-                    "_activeHours":"take sum of all variant hours. This should only be used by non-player work-only factions that offers job",
-                    "workCommands":["jp_convenience_store_frontDesk"],
-                    "activeHours":[22,23, 0, 1, 2, 3, 4, 5],
-                    "hourlyPayout": [  { "itemID":"currency_JPY", "itemCount":"1500" }  ],
-                    "paymentCadence":"Daily"
-                }
+                "joinHandler": {
+                    "$type": "JoinHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "work_post_joinOption",
+                    "bindTargetKey": "worker"
+                },
+                "leaveHandler": {
+                    "$type": "LeaveHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "work_post_leaveOption",
+                    "bindTargetKey": "worker"
+                },
+                "childMemberTypes":
+                [
+                    {
+                        "ID":"membertype_jp_convenience_store_fulltime",
+                        "_comment":"Full-time posts (arrange-a-job: Opt_ArrangeJoin_WorkFullTime). Joining joins the store manager.",
+                        "socialStandingKey":"membertype_jp_convenience_store_fulltime",
+                        "Tags":["memberType_work_fullTime"],
+                        "childMemberTypes":
+                        [
+                            {
+                                "ID":"membertype_jp_convenience_store_manager",
+                                "socialStandingKey":"membertype_jp_convenience_store_manager",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_manager",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[ 9,10,11,12,13,14,15,16],
+                                    "activeDays":[1,1,1,1,1,0,0],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
+                                    "paymentCadence":"Monthly"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_assistant_manager",
+                                "_comment":"14-22: overlaps the manager Wed-Fri for the handover, covers the evening rush and closing.",
+                                "socialStandingKey":"membertype_jp_convenience_store_assistant_manager",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_assistant_manager",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[14,15,16,17,18,19,20,21],
+                                    "activeDays":[0,0,1,1,1,1,1],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1350" } ],
+                                    "paymentCadence":"Monthly"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_npc_day",
+                                "_comment":"NPC-only 12h day post, every day, always covered by a fallback worker. Directly under the root (no part-time/full-time tag) and in neither assignableMemberTypes nor joinableMemberTypes, so it can't be joined or assigned.",
+                                "socialStandingKey":"membertype_jp_convenience_store_npc_day",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_npc_day",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[ 8, 9,10,11,12,13,14,15,16,17,18,19],
+                                    "activeDays":[],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_npc_night",
+                                "_comment":"NPC-only 12h night post (20-08, counts for the day it starts), every day, always covered by a fallback worker. Not joinable or assignable, like the day post. Night pay 1500/h.",
+                                "socialStandingKey":"membertype_jp_convenience_store_npc_night",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_npc_night",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[20,21,22,23, 0, 1, 2, 3, 4, 5, 6, 7],
+                                    "activeDays":[],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "ID":"membertype_jp_convenience_store_parttime",
+                        "_comment":"Part-time posts (arrange-a-job: Opt_ArrangeJoin_WorkPartTime): A = Mon-Thu, B = Fri-Sun of each time block. Joining joins Morning Staff A.",
+                        "socialStandingKey":"membertype_jp_convenience_store_parttime",
+                        "Tags":["memberType_work_partTime"],
+                        "childMemberTypes":
+                        [
+                            {
+                                "ID":"membertype_jp_convenience_store_morning_a",
+                                "socialStandingKey":"membertype_jp_convenience_store_morning_a",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_morning_a",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[ 6, 7, 8],
+                                    "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_morning_b",
+                                "socialStandingKey":"membertype_jp_convenience_store_morning_b",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_morning_b",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[ 6, 7, 8],
+                                    "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_daytime_a",
+                                "socialStandingKey":"membertype_jp_convenience_store_daytime_a",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_daytime_a",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[ 9,10,11,12,13,14,15,16],
+                                    "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_daytime_b",
+                                "socialStandingKey":"membertype_jp_convenience_store_daytime_b",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_daytime_b",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[ 9,10,11,12,13,14,15,16],
+                                    "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_evening_a",
+                                "socialStandingKey":"membertype_jp_convenience_store_evening_a",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_evening_a",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[17,18,19,20,21],
+                                    "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_evening_b",
+                                "socialStandingKey":"membertype_jp_convenience_store_evening_b",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_evening_b",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[17,18,19,20,21],
+                                    "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_night_a",
+                                "socialStandingKey":"membertype_jp_convenience_store_night_a",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_night_a",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[22,23, 0, 1, 2, 3, 4, 5],
+                                    "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            },
+                            {
+                                "ID":"membertype_jp_convenience_store_night_b",
+                                "socialStandingKey":"membertype_jp_convenience_store_night_b",
+                                "workModule": {
+                                    "jobPostID":"jp_convenience_store_night_b",
+                                    "workCommands":["jp_convenience_store_frontDesk"],
+                                    "activeHours":[22,23, 0, 1, 2, 3, 4, 5],
+                                    "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
+                                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
+                                    "paymentCadence":"Daily"
+                                }
+                            }
+                        ]
+                    }
+                    
+                ]
             }
         ]
     },
@@ -167,7 +290,7 @@
                     "requirement": {
                         "treatReceiverAsDoer": true,
                         "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
-                            "requireMemberType": ["membertype_jp_convenience_store_clerk_morning", "membertype_jp_convenience_store_clerk_afternoon", "membertype_jp_convenience_store_clerk_midnight"] }
+                            "requireMemberType": ["membertype_jp_convenience_store_clerk"] }
                     }
                 },
                 "variants": [
@@ -516,9 +639,33 @@
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "membertype_jp_convenience_store_clerk_morning":"早班店员",
-                "membertype_jp_convenience_store_clerk_afternoon":"午班店员",
-                "membertype_jp_convenience_store_clerk_midnight":"夜班店员"
+                "membertype_jp_convenience_store_clerk":"店员",
+                "membertype_jp_convenience_store_fulltime":"全职店员",
+                "membertype_jp_convenience_store_manager":"店长",
+                "membertype_jp_convenience_store_assistant_manager":"副店长",
+                "membertype_jp_convenience_store_parttime":"兼职店员",
+                "membertype_jp_convenience_store_morning_a":"早班兼职A",
+                "membertype_jp_convenience_store_morning_b":"早班兼职B",
+                "membertype_jp_convenience_store_daytime_a":"日班兼职A",
+                "membertype_jp_convenience_store_daytime_b":"日班兼职B",
+                "membertype_jp_convenience_store_evening_a":"晚班兼职A",
+                "membertype_jp_convenience_store_evening_b":"晚班兼职B",
+                "membertype_jp_convenience_store_night_a":"夜班兼职A",
+                "membertype_jp_convenience_store_night_b":"夜班兼职B",
+                "membertype_jp_convenience_store_npc_day":"日间店员",
+                "membertype_jp_convenience_store_npc_night":"夜间店员",
+                "jp_convenience_store_manager":"店长 日班",
+                "jp_convenience_store_assistant_manager":"副店长 午后至打烊",
+                "jp_convenience_store_morning_a":"兼职 早班（周一至周四）",
+                "jp_convenience_store_morning_b":"兼职 早班（周五至周日）",
+                "jp_convenience_store_daytime_a":"兼职 日班（周一至周四）",
+                "jp_convenience_store_daytime_b":"兼职 日班（周五至周日）",
+                "jp_convenience_store_evening_a":"兼职 晚班（周一至周四）",
+                "jp_convenience_store_evening_b":"兼职 晚班（周五至周日）",
+                "jp_convenience_store_night_a":"兼职 夜班（周一至周四）",
+                "jp_convenience_store_night_b":"兼职 夜班（周五至周日）",
+                "jp_convenience_store_npc_day":"店员 日间（每天）",
+                "jp_convenience_store_npc_night":"店员 夜间（每天）"
             }
         }
     }

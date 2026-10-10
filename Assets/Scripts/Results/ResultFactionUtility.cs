@@ -90,11 +90,13 @@ public static class ResultFactionUtility
     public static void Apply(Result_Faction result, Job job, ActionPackage package, EvaluationPackage m, Character_Trainable c)
     {
         //Debug.Log("Validator_Result Apply on " + c.FirstName);
-        if (job.ParentRoom == null) return;
+        // the room the package ran in (ActionPackage.PackageRoom - its job's ParentRoom unless it was given its own)
+        var room = package != null ? package.PackageRoom : job.ParentRoom;
+        if (room == null) return;
         var faction = ValidateFaction(result, job, c);
         if (faction == null) return;
         if (result.entry_conditions != null && !ValidateCondition(result.entry_conditions, faction)) return;
-        if (result.entry_results != null) ApplyEntryResult(result.entry_results, faction, job.ParentRoom);
+        if (result.entry_results != null) ApplyEntryResult(result.entry_results, faction, room);
     }
     public static void Apply(Result_Faction_Party result, Job_Expedition job, List<string> tooltips = null)
     {

@@ -155,6 +155,31 @@
 
         },
         {
+            "ID":"com_interaction_goto_schedule",
+            "ActionPackageClass":"ActionPackage_GoToSchedule",
+            "displayName":"com_interaction_goto_schedule_displayName",
+            "_comment":"Player-only. ActionPackage_GoToSchedule (extends ActionPackage_PathTo) resolves the target from the player's current hour (party gathering > schedule faction > home) and renames itself _work/_booking/_home. timeScale is unused - duration comes from the path.",
+            "timeScale":1,
+            "comTags": [
+                "action",
+                "player"
+            ],
+            "requirements":{
+                "requirement":{
+                    "forbidTeammateJoin":true,
+                    "req_Doers":{ "allowNPC":false, "requireMovement":true }
+                }
+            },
+            "variants":[
+                {
+                    "requirements":{ "requirement":{ "doerCount":1 } },
+                    "displayName":"com_interaction_goto_schedule_displayName"
+                }
+            ],
+            "AcceptanceCheck":{ "baseAcceptanceValue":0 },
+            "DifficultyCheck":{ "baseD20Check": -1 }
+        },
+        {
             "ID":"com_interaction_talk",
             "ActionPackageClass":"ActionPackage_Talk",
             "displayName":"com_interaction_talk_displayName_1",
@@ -375,6 +400,20 @@
                 "com_interaction_partyInvite":"%%com_unique_party_invite_tooltip%%",
                 "com_interaction_waste_time": "玩家限定，NPC不可执行。跟NPC组队时请请先解散NPC",
                 "com_interaction_waste_time_displayName": "什么都不做",
+                "com_interaction_goto_schedule": "玩家限定。前往当前时段日程所在的地点",
+                "com_interaction_goto_schedule_displayName": "前往……",
+                "com_interaction_goto_schedule_work": "前往工作地点",
+                "com_interaction_goto_schedule_booking": "前往预约地点",
+                "com_interaction_goto_schedule_home": "回家",
+                "com_interaction_goto_schedule_noSchedule": "当前时段没有需要前往的地点",
+                "com_interaction_goto_schedule_noPath": "无法找到前往$room$的路线",
+                "com_interaction_goto_schedule_busy": "$name$正在进行无法中断的行动",
+                "com_interaction_goto_schedule_tooltip_target": "目的地：$room$",
+                "com_interaction_goto_schedule_tooltip_source": "日程来源：$source$（$type$，$hour$:00）",
+                "com_interaction_goto_schedule_type_Work": "工作",
+                "com_interaction_goto_schedule_type_Booking": "预约",
+                "com_interaction_goto_schedule_type_Party": "队伍集合",
+                "com_interaction_goto_schedule_type_Home": "家",
                 "com_interaction_partyInvite_begin_1": "$receiver.firstname$加入了$doer.firstname$",
                 "com_interaction_partyInvite_ongoing_1": "$receiver.firstname$正准备跟上$doer.firstname$",
                 "comManager_com_follow_stop_begin_1": "$receiver.firstname$离开了$doer.firstname$",

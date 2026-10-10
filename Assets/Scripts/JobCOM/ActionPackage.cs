@@ -248,7 +248,53 @@ public abstract class ActionPackage
             return _actors;
         } }
 
+    /// <summary>
+    /// Room this package runs in when it is not its job's own room (-1 = the job's ParentRoom) - set by a job that builds
+    /// packages in several rooms (SetRoom / COM.MakePackage's room), e.g. an activity job hosting a command away from its
+    /// current room. Saved with the package.
+    /// </summary>
+    [JsonProperty] protected int roomRefOverride = -1;
+
+    /// <summary>Runs this package in room instead of its job's ParentRoom (null = back to the job's). Set it before Validate / the job's AddPackage: the package is registered under its room then.</summary>
+    public void SetRoom(Room_Instance room)
+    {
+        roomRefOverride = room == null ? -1 : room.RefID;
+        _room = null;
+    }
+
+    /// <summary>
+    /// The room this package is meant to run in: its own room (SetRoom), else its job's ParentRoom. What its room checks
+    /// (PreEvaluate - COM.ValidateRoom, every actor in it) and room-scoped results go by. RoomKey (where it is registered,
+    /// ticked and logged) is this by default; movement / wait packages override RoomKey with their actor's current room.
+    /// </summary>
+    [JsonIgnore] public Room_Instance PackageRoom
+    {
+        get
+        {
+            if (roomRefOverride >= 0) return scr_System_CampaignManager.current.Map.GetRoomByRef(roomRefOverride);
+            return this.job?.ParentRoom;
+        }
+    }
+
+    /// <summary>Runs in a room of its own (SetRoom), not its job's ParentRoom.</summary>
+    [JsonIgnore] public bool HasOwnRoom { get { return roomRefOverride >= 0; } }
+
+    /// <summary>
+    /// Has a room of its own (SetRoom) and the player is in it: its logs show there even while its job's room is
+    /// elsewhere (Job.PostUpdateTime / the wake-up re-validation, next to Job.isVisibleToPlayer).
+    /// </summary>
+    [JsonIgnore] public bool isOwnRoomVisibleToPlayer
+    {
+        get
+        {
+            if (roomRefOverride < 0) return false;
+            var playerRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(0);
+            return playerRoom != null && playerRoom.RefID == roomRefOverride;
+        }
+    }
+
     [JsonIgnore] public virtual int RoomKey { get {
+            if (roomRefOverride >= 0) return roomRefOverride;
             if (this.job != null && this.job.ParentRoom != null) return this.job.ParentRoom.RefID;
             return -1; } }
 
@@ -912,6 +958,12 @@ public abstract class ActionPackage
 
     [JsonIgnore] public string FailureReason = null;
 
+    /// <summary>
+    /// Opt-in for validating a package ahead of time, while its actors are elsewhere (e.g. Manageable.CanOfferMealTo while
+    /// booking a visit): PreEvaluate then skips only the "actor is in the job's room" check. Never set on a package that runs.
+    /// </summary>
+    [JsonIgnore] public bool ignoreActorRoom = false;
+
 
     /// <summary>
     /// Validation to check if COM can be applied
@@ -960,10 +1012,11 @@ public abstract class ActionPackage
             isValid = false;
             return isValid;
         }
-        else if (job.ParentRoom != null && !targetCOM.ValidateRoom(job.ParentRoom, out var tooltips))
+        var packageRoom = PackageRoom;
+        if (packageRoom != null && !targetCOM.ValidateRoom(packageRoom, out var tooltips))
         {
             tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireRoom")
-                .Replace("$room$", job.ParentRoom.DisplayName)
+                .Replace("$room$", packageRoom.DisplayName)
                 .Replace("$conditions$", tooltips));
             isValid = false;
             return isValid;
@@ -1005,14 +1058,15 @@ public abstract class ActionPackage
                 isValid = false;
                 continue;
             }
+            if (ignoreActorRoom) continue;
 
             var room = scr_System_CampaignManager.current.GetCharaRoomInstance(i.RefID);
-            if (room != job.ParentRoom)
+            if (room != packageRoom)
             {
                 tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_requireSameRoom")
                                 .Replace("$name$", i.FirstName)
                                 .Replace("$location$", room != null ? room.DisplayName : "nowhere")
-                                .Replace("$room$", job.ParentRoom.DisplayName));
+                                .Replace("$room$", packageRoom != null ? packageRoom.DisplayName : "nowhere"));
                 isValid = false;
             }
         }
@@ -1226,7 +1280,7 @@ public abstract class ActionPackage
                         "negative response chance[" + package.AttitudeRate_Neg + "]\n";*/
     }
 
-    public string GetTooltips(string s)
+    public virtual string GetTooltips(string s)
     {
         var names_doer = new List<string>();
         var names_receiver = new List<string>();
@@ -3167,10 +3221,26 @@ public abstract class ActionPackage
     }
 
     /// <summary>
+    /// A copy of this package (CopyPackage), keeping what every package carries regardless of its class - its own room
+    /// (SetRoom), so a copy made for a join check, a forced retry or a job's AddPackage runs where the original was meant to.
+    /// </summary>
+    public ActionPackage Copy()
+    {
+        var copy = CopyPackage();
+        if (copy != null && copy != this)
+        {
+            copy.roomRefOverride = roomRefOverride;
+            copy._room = null;
+        }
+        return copy;
+    }
+
+    /// <summary>
+    /// The class-specific copy behind Copy (which then adds the shared fields).
     /// REMEMBER TO COPY PACKAGE COM VARIANT ID
     /// </summary>
     /// <returns></returns>
-    public abstract ActionPackage Copy();
+    protected abstract ActionPackage CopyPackage();
 
     public virtual void CollectCopy(ActionPackage ap)
     {

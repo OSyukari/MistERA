@@ -1,0 +1,203 @@
+{
+    "_doc": "Dialogue options offered by an ON-SHIFT sports club front desk clerk (target must be active at jp_sports_center AND carry the jp_sports_center_frontdesk actor tag, which only comes from the front desk MemberType's Tags while that MemberType is their active one). Sign-up: done by the membership MemberType's joinHandler callback (JoinHandler_Recreation) - offered to the player and followers, so the player can join themselves. Cancellation: done by its leaveHandler callback (LeaveHandler_Recreation), for the player's own people holding the membership.",
+    "Events": {
+        "list": [
+            {
+                "ID": "jp_sports_center_Opt_Join",
+                "_comment": "JoinActiveFaction asks the membership's joinHandler for one option per player/follower (disabled with a reason when already part of the club). Options found -> question (picking one signs them up via its callback, then jumps to join_done); none -> the handler's reason from $joinError$.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_sports_center" ] },
+                            { "parameters": [ "hasActorTag", "jp_sports_center_frontdesk" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_sports_center_Opt_Join_greeting",
+                        "Results": [
+                            { "Type": "JoinActiveFaction", "arguments": [ "joinOptions", "selfAndFollowers", "staff", "membertype_jp_sports_center_member", "joinError" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "ExistStoredOptions", "arguments": [ "joinOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "join_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "join_error" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "join_error",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "$joinError$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "join_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_sports_center_Opt_Join_question",
+                        "loadOptionsKey": "joinOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "join_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_sports_center_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "join_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "join_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_sports_center_Opt_Join_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "join_cancel",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_sports_center_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "jp_sports_center_Opt_Cancel",
+                "_comment": "Shown when a club member shares the player's permanent home faction (the player or one of the player's own people). LeaveActiveFaction asks the membership's leaveHandler for one option per such member; picking one ends their membership.",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG", "infoDisplay": "Hide" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "staff" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "isConscious" ] },
+                            { "parameters": [ "isActiveFaction", "jp_sports_center" ] },
+                            { "parameters": [ "hasActorTag", "jp_sports_center_frontdesk" ] }
+                        ],
+                        "minTargetCount": 1
+                    },
+                    {
+                        "refkeys": [ "leavers" ],
+                        "baseScope": "FactionMembersWithMemberType",
+                        "extraScopeArguments": [ "jp_sports_center", "membertype_jp_sports_center_member" ],
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "sharesHomeFaction" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_build_options",
+                                "Results": [
+                                    { "Type": "LeaveActiveFaction", "arguments": [ "cancelOptions", "leavers", "staff", "membertype_jp_sports_center_member" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "cancel_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "cancel_ask",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "question": "jp_sports_center_Opt_Cancel_question",
+                        "loadOptionsKey": "cancelOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "cancel_done" ] } ],
+                        "options": [
+                            {
+                                "option": "jp_sports_center_Opt_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "cancel_abort" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "cancel_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_sports_center_Opt_Cancel_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "Who left (AppendFactionLeave from the leave callback).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "cancel_abort",
+                        "UISpec": { "portraitRefKey": "staff", "selfTags": [ "focused" ] },
+                        "line": "jp_sports_center_Opt_cancelLine",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_sports_center_Opt_Join": "办理会员",
+                "jp_sports_center_Opt_Join_greeting": "「欢迎光临！是想办理入会吗？月费一万三千日元，所有设施都可以随意使用哦。」",
+                "jp_sports_center_Opt_Join_question": "「请问是哪一位要办理入会？」",
+                "jp_sports_center_Opt_Join_done": "「入会手续已经办好了，欢迎随时来锻炼！」",
+                "jp_sports_center_Opt_Cancel": "办理退会",
+                "jp_sports_center_Opt_Cancel_question": "「请问是哪一位要办理退会？」",
+                "jp_sports_center_Opt_Cancel_done": "「退会手续已经办好了，期待您再次光临。」",
+                "jp_sports_center_Opt_cancel": "算了",
+                "jp_sports_center_Opt_cancelLine": "「有需要请随时告诉我。」"
+            }
+        }
+    }
+}

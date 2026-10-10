@@ -843,6 +843,19 @@ public class scr_panel_COMmanager : scr_Menu
                     }
 
                 }
+                else if (j is Job_Activity jActivity)
+                {
+                    // a recreation activity in the player's room (tracked while Job_Activity.OffersJoinTo): the player's own
+                    // "wait for the activity" command (valid while gathering) and "join the activity" (valid once launched -
+                    // a late join). Each validates by the job's phase (ActionPackage_ActivityWait), so the one for the other
+                    // phase hides - except the wait button where the player may not join at all (Private scope, disabled via
+                    // targetActorRef): kept visible, it only tells the player an activity is going on.
+                    var player = scr_System_CampaignManager.current.Player;
+                    var waitAP = jActivity.MakePlayerWaitPackage(player);
+                    if (waitAP != null && waitAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, waitAP.targetCOM, true, jActivity.PlayerMayJoin, waitAP);
+                    var joinAP = jActivity.MakePlayerJoinPackage(player);
+                    if (joinAP != null && joinAP.targetCOM != null) MakeCOMButton(Box_FurnitureCOMs, buttonPrefab_COM, j, joinAP.targetCOM, true, true, joinAP);
+                }
                 else if (j is Job_PlayerCOM)
                 {
                     Job_PlayerCOM jPlayer = j as Job_PlayerCOM;
@@ -1848,6 +1861,8 @@ public class scr_panel_COMmanager : scr_Menu
                             }
                         }
                         if (package is ActionPackage_Interaction && job is Job_CharaCOM && !package.ComTags.Contains("endSex") && !package.ComTags.Contains("initSex")) forbidInjectTarget = true;
+                        // joinAlone: the player takes it by themselves - no current target / teammates added (e.g. waiting for an activity)
+                        if (package.targetCOM != null && package.targetCOM.requirements.requirement.joinAlone) forbidInjectTarget = true;
 
                         var currentref = scr_System_CampaignManager.current.CurrentTargetRef;
                         if (!forbidInjectTarget && currentref > 0 && !doers.Contains(currentref) && !receivers.Contains(currentref)) targets.Add(currentref);

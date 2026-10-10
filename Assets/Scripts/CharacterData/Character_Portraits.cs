@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using UnityEngine;
 
 
@@ -323,7 +324,7 @@ public class PortraitManager
                     //Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
                     continue;
                 }
-                portrait = i.PortraitPath(keywords);    // DOES NOT CHECK TARGET
+                portrait = i.PortraitPath(keywords, box);    // DOES NOT CHECK TARGET
                 icon = i.IconPath(keywords) != "" ? i.IconPath(keywords) : portrait;
 
                 if (portrait == "" || icon == "") continue;
@@ -334,7 +335,7 @@ public class PortraitManager
             if (handler == null)
             {
                 handler = portraitPriorityList[portraitPriorityList.Count - 1];
-                portrait = handler.PortraitPath(keywords);
+                portrait = handler.PortraitPath(keywords, box);
                 icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
             }
         }
@@ -354,7 +355,7 @@ public class PortraitManager
             return;
         }
 
-        portrait = handler.PortraitPath(keywords);
+        portrait = handler.PortraitPath(keywords, box);
         icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
     }
 
@@ -376,7 +377,7 @@ public class PortraitManager
     {
         if (this.CharaBanner != null)
         {
-            box.Draw(this.CharaBanner.DrawPortrait(box, this.CharaBanner.PortraitPath(new List<string>())));
+            box.Draw(this.CharaBanner.DrawPortrait(box, this.CharaBanner.PortraitPath(new List<string>(), box)));
         }
         else
         {
@@ -660,6 +661,56 @@ public class PortraitManager
         public bool Enable = true;
         public List<string> tagsMatch = new List<string>();
         public CharaReq charaReq = null;
+
+        /// <summary>
+        /// Image handlers only (Image / LandscapeImage): PortraitVariantData resolved into image paths.
+        /// Entries with an image extension are kept as file paths, anything else is searched as a folder.
+        /// Variants are shared by reference between copied handlers: the result depends only on this variant's data,
+        /// so it is identical for every sharer, and a rebuild swaps in a new list instead of editing the old one in place.
+        /// Read only - do not modify the returned list.
+        /// </summary>
+        [JsonIgnore] public List<string> ImagePaths
+        {
+            get
+            {
+                if (_imagePaths == null) RebuildImagePaths();
+                return _imagePaths;
+            }
+        }
+        [JsonIgnore] protected List<string> _imagePaths = null;
+
+        public void RebuildImagePaths()
+        {
+            var result = new List<string>();
+            if (PortraitVariantData != null)
+            {
+                foreach (var entry in PortraitVariantData)
+                {
+                    if (string.IsNullOrEmpty(entry)) continue;
+                    var extension = System.IO.Path.GetExtension(entry).ToLower();
+                    if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".webp") result.Add(entry);
+                    else result.AddRange(scr_System_Serializer.current.GetAllImageFilesInFolder(entry.TrimEnd('/')));
+                }
+            }
+            Utility.DistinctInPlace(result);
+            _imagePaths = result;
+            _portraitOnlyImagePaths = null;
+        }
+
+        /// <summary>
+        /// ImagePaths without landscape images (by file header), for boxes that cannot show landscape.
+        /// Built on first use and swapped in as a new list like ImagePaths. Read only.
+        /// </summary>
+        [JsonIgnore] public List<string> PortraitOnlyImagePaths
+        {
+            get
+            {
+                if (_portraitOnlyImagePaths == null) _portraitOnlyImagePaths = ImagePaths.Where(p => !PortraitImageInfo.IsLandscape(p)).ToList();
+                return _portraitOnlyImagePaths;
+            }
+        }
+        [JsonIgnore] protected List<string> _portraitOnlyImagePaths = null;
+
         public bool Validate(Character_Trainable c)
         {
             if (!Enable) return false;
@@ -741,6 +792,14 @@ public class PortraitManager
             return "";
         }
 
+        /// <summary>
+        /// Box-aware path pick. box may be null (neutral / icon draws). Default ignores the box.
+        /// </summary>
+        internal virtual string PortraitPath(List<string> tags, scr_CharPortraitBox box)
+        {
+            return PortraitPath(tags);
+        }
+
         public CharaReq charaReq = null;
 
         public List<string> RequireSelfContextKeys = new List<string>();
@@ -790,12 +849,19 @@ public class PortraitManager
         }
     }
 
+    /// <summary>
+    /// CharaPortrait_Image draw target: portrait = picture rect (with offsets), landscape = picture_landscape rect (fixed, no offsets),
+    /// auto = decided per image from its native size (landscape only when width > height).
+    /// </summary>
+    public enum ImageOrientation { auto, portrait, landscape }
+
     public class CharaPortrait_Image : CharaPortrait
     {   // do not allow multiple transparent image layering -> should use spine instead.
         public string portrait_path = "";
         public List<string> random_portrait_path = new List<string>();
         public string random_portrait_folder = "";
         public string icon_path="";
+        [JsonConverter(typeof(StringEnumConverter))] public ImageOrientation image_orientation = ImageOrientation.auto;
 
         public override void RebuildInternal()
         {
@@ -803,6 +869,7 @@ public class PortraitManager
             {
                 this.random_portrait_path = scr_System_Serializer.current.GetAllImageFilesInFolder(this.random_portrait_folder);
             }
+            if (this.Variants != null) foreach (var i in this.Variants) i.RebuildImagePaths();
         }
         public override CharaPortrait Copy()
         {
@@ -819,6 +886,7 @@ public class PortraitManager
             newEntry.AllowXAxisFlip = this.AllowXAxisFlip;
             newEntry.Disable = this.Disable;
             newEntry.icon_path = this.icon_path;
+            newEntry.image_orientation = this.image_orientation;
             newEntry.Variants = this.Variants;
             newEntry.RequireSelfContextKeys = this.RequireSelfContextKeys;
             newEntry.RequireTargetContextKeys = this.RequireTargetContextKeys;
@@ -845,6 +913,16 @@ public class PortraitManager
         }
 
         public override bool isValid() { return !Disable; }
+
+        /// <summary>
+        /// Forced landscape needs a landscape slot (same as CharaPortrait_LandscapeImage).
+        /// Auto can't know the orientation before the image is picked, so it stays valid and falls back to portrait at draw time.
+        /// </summary>
+        public override bool isValidForBox(scr_CharPortraitBox box)
+        {
+            if (image_orientation == ImageOrientation.landscape) return box != null && box.picture_landscape_group != null;
+            return true;
+        }
         public override IEnumerator DrawIcon(scr_CharIconBox iconBox, string pathOverride)
         {
 
@@ -882,10 +960,50 @@ public class PortraitManager
             if (this.Variants != null)
             {
                 if (tags.Count > 0 && scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"Validating variants with tags {String.Join("|", tags)}");
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement( i.PortraitVariantData);
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.ImagePaths.Count > 0) return Utility.GetRandomElement(i.ImagePaths);
             }
             if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
             else return portrait_path;
+        }
+
+        /// <summary>
+        /// Auto orientation on a box without a landscape slot (or no box): pick from portrait-only images,
+        /// same variant -> random folder -> portrait_path order. portrait_path is an explicit pick and is returned as is.
+        /// </summary>
+        internal override string PortraitPath(List<string> tags, scr_CharPortraitBox box)
+        {
+            if (image_orientation != ImageOrientation.auto || BoxAcceptsLandscape(box)) return PortraitPath(tags);
+
+            if (this.Variants != null)
+            {
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitOnlyImagePaths.Count > 0) return Utility.GetRandomElement(i.PortraitOnlyImagePaths);
+            }
+            var portraitOnlyRandom = PortraitOnlyRandomPaths;
+            if (portraitOnlyRandom.Count > 0) return Utility.GetRandomElement(portraitOnlyRandom);
+            else return portrait_path;
+        }
+
+        /// <summary>
+        /// random_portrait_path without landscape images, rebuilt whenever random_portrait_path is replaced. Read only.
+        /// </summary>
+        [JsonIgnore] protected List<string> PortraitOnlyRandomPaths
+        {
+            get
+            {
+                if (_portraitOnlyRandomPaths == null || _portraitOnlyRandomSource != random_portrait_path)
+                {
+                    _portraitOnlyRandomSource = random_portrait_path;
+                    _portraitOnlyRandomPaths = random_portrait_path == null ? new List<string>() : random_portrait_path.Where(p => !PortraitImageInfo.IsLandscape(p)).ToList();
+                }
+                return _portraitOnlyRandomPaths;
+            }
+        }
+        [JsonIgnore] protected List<string> _portraitOnlyRandomPaths = null;
+        [JsonIgnore] protected List<string> _portraitOnlyRandomSource = null;
+
+        public static bool BoxAcceptsLandscape(scr_CharPortraitBox box)
+        {
+            return box != null && box.picture_landscape_group != null && box.picture_landscape != null;
         }
 
         public override IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride, bool lowPriority = false)
@@ -898,31 +1016,56 @@ public class PortraitManager
             {
                // Debug.Log($"image drawportrait [{pathOverride}]");
 
-                if (scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
-                {
-                    portraitBox.picture.sprite = sprite;
-                }
-                else
+                if (!scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
                 {
                     Texture2D loaded = null;
                     yield return AssetsLoader.LoadTextureCoroutine(pathOverride, texture => loaded = texture);
-                    portraitBox.picture.sprite = scr_System_CentralControl.current.MakeSprite(pathOverride, loaded);
+                    sprite = scr_System_CentralControl.current.MakeSprite(pathOverride, loaded);
                 }
 
-                portraitBox.picture.gameObject.SetActive(true);
-                if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
-                if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
+                if (UseLandscape(portraitBox, sprite))
+                {
+                    // landscape images are fixed: no UpdateAnchor, offsets are not applied
+                    portraitBox.picture_landscape.sprite = sprite;
+                    if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
+                    portraitBox.picture.gameObject.SetActive(false);
+                    portraitBox.picture_landscape_group.alpha = 1;
+                    portraitBox.currentPortrait = pathOverride;
+                }
+                else
+                {
+                    portraitBox.picture.sprite = sprite;
+                    portraitBox.picture.gameObject.SetActive(true);
+                    if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
+                    if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
 
-                portraitBox.currentPortrait = pathOverride;
+                    portraitBox.currentPortrait = pathOverride;
 
-                portraitBox.UpdateAnchor(this);
+                    portraitBox.UpdateAnchor(this);
+                }
                 portraitBox.NotifyEndDraw();
                 //portraitBox.UpdateAnchor(this, portrait_offset_x, portrait_offset_y, portrait_offset_size);
             }
         }
 
+        /// <summary>
+        /// Landscape when forced, or in auto when the image is wider than tall (square counts as portrait).
+        /// Boxes without a landscape slot always draw as portrait.
+        /// </summary>
+        protected bool UseLandscape(scr_CharPortraitBox portraitBox, Sprite sprite)
+        {
+            if (!BoxAcceptsLandscape(portraitBox)) return false;
+            switch (image_orientation)
+            {
+                case ImageOrientation.landscape: return true;
+                case ImageOrientation.portrait: return false;
+                default: return sprite != null && sprite.rect.width > sprite.rect.height;
+            }
+        }
+
         public override void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
         {
+            if (image_orientation == ImageOrientation.landscape) return;    // landscape images are fixed
             Owner?.MarkCustomized();
             this.portrait_offset_x = offsetX;
             this.portrait_offset_y = offsetY;
@@ -1165,6 +1308,7 @@ public class PortraitManager
             {
                 this.random_portrait_path = scr_System_Serializer.current.GetAllImageFilesInFolder(this.random_portrait_folder);
             }
+            if (this.Variants != null) foreach (var i in this.Variants) i.RebuildImagePaths();
         }
 
         public override CharaPortrait Copy()
@@ -1197,7 +1341,7 @@ public class PortraitManager
         {
             if (this.Variants != null)
             {
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitVariantData.Count > 0) return Utility.GetRandomElement(i.PortraitVariantData);
+                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.ImagePaths.Count > 0) return Utility.GetRandomElement(i.ImagePaths);
             }
             if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
             else return portrait_path;

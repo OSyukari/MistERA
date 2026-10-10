@@ -1,0 +1,77 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for faction.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_sports_center_lobby": "Sports Club Reception & Lobby",
+                "jp_sports_center_locker_male": "Men's Locker Room",
+                "jp_sports_center_locker_female": "Women's Locker Room",
+                "jp_sports_center_gym": "Training Gym",
+                "jp_sports_center_studio": "Studio",
+                "jp_sports_center_pool": "Indoor Pool",
+                "jp_sports_center_spa": "Sauna & Spa",
+                "jp_sports_center_machine_room": "Machine Room",
+
+                "jp_sports_center_reception_counter": "Reception Counter",
+                "jp_sports_center_lounge_bench": "Lobby Bench",
+                "jp_sports_center_locker_bench": "Locker Room Bench",
+                "jp_sports_center_treadmill": "Treadmill",
+                "jp_sports_center_weight_rack": "Dumbbell Rack",
+                "jp_sports_center_training_machine": "Training Machine",
+                "jp_sports_center_gym_bench": "Rest Bench",
+                "jp_sports_center_gym_staff_point": "Gym Floor Desk",
+                "jp_sports_center_studio_floor": "Studio Mat Area",
+                "jp_sports_center_studio_staff_point": "Instructor's Spot",
+                "jp_sports_center_pool_lane": "Swim Lane",
+                "jp_sports_center_poolside_bench": "Poolside Bench",
+                "jp_sports_center_pool_staff_point": "Lifeguard Chair",
+                "jp_sports_center_sauna": "Sauna",
+                "jp_sports_center_cold_bath": "Cold Plunge",
+                "jp_sports_center_filtration_panel": "Filtration System",
+
+                "jp_sports_center_cardio_displayName": "Cardio",
+                "jp_sports_center_weights_displayName": "Strength Training",
+                "jp_sports_center_machine_workout_displayName": "Machine Workout",
+                "jp_sports_center_gym_rest_displayName": "Rest Between Sets",
+                "jp_sports_center_yoga_displayName": "Yoga",
+                "jp_sports_center_stretch_displayName": "Stretch",
+                "jp_sports_center_swim_laps_displayName": "Swim Laps",
+                "jp_sports_center_water_walk_displayName": "Water Walking",
+                "jp_sports_center_poolside_rest_displayName": "Poolside Rest",
+                "jp_sports_center_sauna_displayName": "Sauna",
+                "jp_sports_center_cool_down_displayName": "Cold Plunge & Cool Down",
+                "jp_sports_center_reception_duty_displayName": "Reception Duty",
+                "jp_sports_center_gym_instruct_displayName": "Gym Floor Coaching",
+                "jp_sports_center_lead_class_displayName": "Lead a Class",
+                "jp_sports_center_lifeguard_displayName": "Lifeguard Duty",
+                "jp_sports_center_clean_lockers_displayName": "Clean Locker Rooms",
+                "jp_sports_center_clean_equipment_displayName": "Wipe Down Equipment",
+                "jp_sports_center_clean_pool_deck_displayName": "Clean Pool Deck",
+                "jp_sports_center_inspect_equipment_displayName": "Equipment Inspection",
+                "jp_sports_center_pool_water_check_displayName": "Pool Water Check",
+                "jp_sports_center_filtration_service_displayName": "Filtration Service",
+
+                "membertype_jp_sports_center_member": "Sports Club Member",
+                "jp_sports_center_member_joinOption": "Sign up $name$",
+                "membertype_jp_sports_center_frontdesk": "Front Desk Clerk",
+                "membertype_jp_sports_center_trainer": "Trainer",
+                "membertype_jp_sports_center_cleaner": "Cleaner",
+                "membertype_jp_sports_center_maintenance": "Maintenance Technician",
+
+                "jp_sports_center_activity_gym": "Workout",
+                "jp_sports_center_activity_yoga": "Yoga Class",
+                "jp_sports_center_activity_swimming": "Swimming",
+                "jp_sports_center_activity_sauna": "Sauna",
+                "jp_sports_center_frontdesk_npc": "Front Desk (All Day)",
+                "jp_sports_center_trainer_early": "Trainer (Early)",
+                "jp_sports_center_trainer_late": "Trainer (Late)",
+                "jp_sports_center_cleaner_early": "Cleaning (Early)",
+                "jp_sports_center_cleaner_late": "Cleaning (Late)",
+                "jp_sports_center_maintenance_early": "Maintenance (Early)",
+                "jp_sports_center_maintenance_late": "Maintenance (Late)"
+            }
+        }
+    }
+}

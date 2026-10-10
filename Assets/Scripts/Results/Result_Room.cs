@@ -8,7 +8,7 @@ public class Result_Room
     public void Apply(Job job, ActionPackage package, EvaluationPackage m, Character_Trainable c)
     {
         //Debug.Log("Validator_Result Apply on " + c.FirstName);
-        if (job.ParentRoom == null) return;
+        if ((package != null ? package.PackageRoom : job.ParentRoom) == null) return;
         if (entry_conditions != null && !entry_conditions.Validate(job, package, m, c)) return;
         if (entry_results != null) entry_results.Apply(job, package, m, c);
     }
@@ -41,7 +41,9 @@ public class Result_Room
 
 
 
-                var item = job.ParentRoom.RemoveItemByTag(moveItem.itemTag, moveItem.maxCount);
+                // the room the package ran in (ActionPackage.PackageRoom - its job's ParentRoom unless it was given its own)
+                var room = package != null ? package.PackageRoom : job.ParentRoom;
+                var item = room.RemoveItemByTag(moveItem.itemTag, moveItem.maxCount);
                 if (targetInventory != null) targetInventory.AddItem(item);
                 else
                 {

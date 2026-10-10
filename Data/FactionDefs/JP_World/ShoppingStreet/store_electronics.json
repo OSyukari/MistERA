@@ -1,0 +1,70 @@
+{
+    
+    "MapPlans": {
+        "factionInit": [
+{
+    "ID": "jp_mall_electronics",
+    "z_rotation": 0.0,
+    "initializeFaction": "jp_mall_electronics",
+    "setPrivateRoomOwner": true,
+    "mainExit": {
+        "roomID": "electronics_room",
+        "exitCost": 5
+    },
+    "floors": [],
+    "mealHours": [],
+    "salesCurrency": "currency_JPY",
+    "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
+    "salesInventory": [
+        {
+            "matchByTags": [
+                "electronics",
+                "rarity_common"
+            ]
+        },
+        {
+            "matchByTags": [
+                "videogame",
+                "rarity_common"
+            ]
+        },
+        {
+            "matchByTags": [
+                "moviecd",
+                "rarity_common"
+            ]
+        }
+    ],
+    "workModules": [],
+    "managerBaseIDs": [
+        ""
+    ],
+    "_comment_assignableMemberTypes": "Shared mall clerk shift - see _doc_staff. Not in joinableMemberTypes: NPC-only, the player can't join it.",
+    "assignableMemberTypes": [ "membertype_jp_mall_clerk" ],
+    "_comment_fallbackWorkers": "One fallback front desk clerk.",
+    "fallbackWorkers": [
+        { "memberTypeID": "membertype_jp_mall_clerk", "headcount": 1, "maxFallback": 1, "templateID": "jp_store_clerk" }
+    ],
+    "workHours": [],
+    "workAssignment": [],
+    "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
+}
+
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_mall_electronics_room": "电器店",
+                "jp_mall_electronics_room_tooltip": "电子设备，游戏，电影"
+
+
+
+            },
+            "en-us": {
+                "jp_mall_electronics_room": "Electronics Store"
+            }
+        }
+    }
+}

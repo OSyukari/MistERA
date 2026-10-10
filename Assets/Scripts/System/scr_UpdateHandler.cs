@@ -41,7 +41,7 @@ public enum LLMStatus
 }
 
 
-public class scr_UpdateHandler : MonoBehaviour
+public partial class scr_UpdateHandler : MonoBehaviour
 {
     public EventManager EventHandler = new EventManager();
 
@@ -1139,6 +1139,21 @@ public class scr_UpdateHandler : MonoBehaviour
     }
 
     int updateTime, totalUpdateTime, totalUpdateTime2;
+
+    /// <summary>
+    /// A player package the running update loop is advancing time through was interrupted from outside the loop's own
+    /// tick (e.g. Job_Activity launching an activity removes the player's "wait for the activity" package): stop
+    /// advancing time after the current minute - updateTime was sized on that package's duration. The elapsed count
+    /// (totalUpdateTime) becomes the minutes actually spent, as the loop's own interrupt check does
+    /// (scr_System_CampaignManager.FreeUpdateOneStep). After the loop, another pending player package resumes as usual.
+    /// </summary>
+    public void NotifyPlayerPackageInterrupted()
+    {
+        if (!Updating || updateTime <= 0) return;
+        totalUpdateTime -= updateTime;
+        updateTime = 0;
+    }
+
     bool firstPreUpdate = false;
     bool timeStop;
     bool oneLoop;

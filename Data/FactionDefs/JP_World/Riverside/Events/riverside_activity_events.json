@@ -1,0 +1,42 @@
+{
+    "_doc": "Begin events of the riverside activities (RecreationActivity.launchEventID), fired by Job_Activity when it launches the activity, and again for each latecomer who joins (isLate) - no trigger of their own. SELF ONLY DECIDES VISIBILITY (the player when involved) - use the targets: participants / mandatory / optional / host / one key per invite role (e.g. companion) / waited (there at the launch) / late (the launch: still missing; a late fire: the latecomer) / player. AppendStrings: isLate, hasWaited / hasLate, activityRunning, activityName, instanceKey.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Riverside_Fireworks_Begin",
+                "_comment": "recreation_offer_jp_riverside_fireworks - a hostless World session: no mandatory participants, so it launches at T+5 with whoever has gathered on the embankment.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "Riverside_Fireworks_Begin_EV01",
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "Riverside_Stroll_Begin",
+                "_comment": "recreation_offer_jp_riverside_stroll - Private: a solo stroll, or with the housemate (role companion) who accepted; launches once everyone attending is at the promenade (at T+30 with whoever is there - nobody is mandatory). Fired again for a latecomer (isLate, late = the latecomer). Uses the targets, never self.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            { "option": "a latecomer joins", "Results": [ { "Type": "ExistAppendStrings", "arguments": ["isLate"] }, { "Type": "JumpToLabel", "arguments": ["", "late"] } ] },
+                            { "option": "the stroll begins", "Results": [ { "Type": "JumpToLabel", "arguments": ["", "begin"] } ] }
+                        ]
+                    },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "begin", "isLast": true, "line": "Riverside_Stroll_Begin_EV01" },
+                    { "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp", "label": "late", "isLast": true, "line": "Riverside_Stroll_Begin_late" }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Riverside_Fireworks_Begin_EV01": "河岸上人头攒动。随着一声尖啸，第一发烟火冲上夜空，烟火大会开始了！",
+                "Riverside_Stroll_Begin_EV01": "$waited.name$沿着河畔步道慢慢走了起来。",
+                "Riverside_Stroll_Begin_late": "$late.name$来晚了一些，不过还是赶上了，加入了河边的散步。"
+            }
+        }
+    }
+}

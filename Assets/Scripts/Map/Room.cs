@@ -701,7 +701,7 @@ public class Room_Instance: IDisposable, I_Disposable
 
     /// <summary>
     /// False only for a Room_Base.requireFactionMembership room whose owning faction c does not belong to
-    /// (home, temporary home or work). Unowned rooms and rooms without the flag are open to everyone.
+    /// (home, temporary home, work or recreation). Unowned rooms and rooms without the flag are open to everyone.
     /// </summary>
     public bool CanBeAccessedBy(Character_Trainable c)
     {

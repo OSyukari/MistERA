@@ -1,0 +1,23 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for com_furniture_wait.json. Holds en-us entries for the wait commands."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_furniture_wait_displayName": "Wait...",
+                "com_furniture_wait_nextHour_displayName": "Wait until the next hour ($minutes$ min)",
+                "com_furniture_wait_5min_displayName": "Wait 5 minutes",
+                "com_furniture_wait_15min_displayName": "Wait 15 minutes",
+                "com_furniture_wait_30min_displayName": "Wait 30 minutes",
+                "com_furniture_wait_1h_displayName": "Wait 1 hour",
+                "com_furniture_wait_2h_displayName": "Wait 2 hours",
+                "com_furniture_wait_4h_displayName": "Wait 4 hours",
+                "com_furniture_wait_begin": "$doer.firstname$ began waiting",
+                "com_furniture_wait_ongoing": "$doer.firstname$ is waiting",
+                "com_furniture_wait_remove": "$doer.firstname$ got up and stopped waiting",
+                "com_furniture_wait_after": "$doer.firstname$ finished waiting"
+            }
+        }
+    }
+}

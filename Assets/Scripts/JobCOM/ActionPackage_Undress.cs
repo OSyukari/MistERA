@@ -49,7 +49,7 @@ public class ActionPackage_Undress : ActionPackage
         this.doerRefs.Add(doerRef);
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         return this;
     }

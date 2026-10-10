@@ -62,7 +62,7 @@ public class initScript_ManageChara : MonoBehaviour
 
         comp.Validate();
     }
-    public RectTransform list_factionWork, list_assignCOM, list_CharaNeeds;
+    public RectTransform list_factionWork, list_factionRecreation, list_assignCOM, list_CharaNeeds, list_activities;
 
     public TMP_Text chara_fullname, charaGender, charaGenderSeparator;
     public scr_HoverableText chara_Race, chara_RaceTemplate;
@@ -79,8 +79,9 @@ public class initScript_ManageChara : MonoBehaviour
     {
         // destroy previous
         Utility.DestroyAllChildrenFrom(list_factionWork);
+        Utility.DestroyAllChildrenFrom(list_factionRecreation);
         Utility.DestroyAllChildrenFrom(list_CharaNeeds);
-
+        Utility.DestroyAllChildrenFrom(list_activities);
 
         bool safe = scr_System_CentralControl.current.isSafeMode;
 
@@ -121,6 +122,22 @@ public class initScript_ManageChara : MonoBehaviour
             Utility.FillFactionRect(hover, faction, c, "management_faction_work_tooltip", parent.CurrentFaction);
         }
 
+        foreach (Manageable faction in c.FactionManager.RecreationFactions)
+        {
+            if (faction == null) continue;
+            var hover = Instantiate(prefab_worktext);
+            hover.SelfRect.SetParent(list_factionRecreation, false);
+            Utility.FillRecreationFactionRect(hover, faction, c, "management_faction_recreation_tooltip", parent.CurrentFaction);
+        }
+
+        foreach(var i in RecreationUtility.GetReservedActivities(c))
+        {
+            if (i == null) continue;
+            var hover = Instantiate(prefab_worktext);
+            hover.SelfRect.SetParent(list_activities, false);
+            RecreationUtility.PrintActivityDetail(hover, i);
+        }
+
         if (c.hasSleepNeed)
         {
             var text = Instantiate(prefab_worktext);
@@ -134,6 +151,9 @@ public class initScript_ManageChara : MonoBehaviour
             text.SetText(need.DisplayName);
             text.SelfRect.SetParent(list_CharaNeeds, false);
         }
+
+        // external job posts depend on the character's own work factions
+        parent.RebuildExternalJobTab();
     }
 
     public scr_HoverableText prefab_worktext;

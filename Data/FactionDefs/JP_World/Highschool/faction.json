@@ -17,7 +17,16 @@
                         "nameOverwrite": "jp_high_school"
                     }
                 ],
+                "_comment_joinableMemberTypes": "MemberTypes this faction can be joined as through the reachable-faction searches (FactionJoinUtility: Opt_ArrangeJoin_StudentFullTime).",
+                "joinableMemberTypes": [ "membertype_jp_high_school_student" ],
+                "_comment_meals": "Non-player faction: mealHours stay fixed, and taking an item from a non-player faction's inventory hands out a fresh copy without depleting stock, so a single lunch item is enough (hospital pattern). Lunch is served by furniture_marker_getmeal in the cafeteria.",
                 "mealHours": [12],
+                "initializers": [
+                    {
+                        "initClass": "campaign_init_factionInventory",
+                        "initArguments": ["jp_high_school", "consumable_jp_high_school_lunch", "", "1"]
+                    }
+                ],
                 "activeHoursStart": 8,
                 "activeHoursEnd": 18
             }
@@ -26,6 +35,8 @@
             {
                 "ID":"floor_jp_high_school",
                 "imagePath":"BGAssets/Generated/school_exterior_06.webp",
+                "_comment_isFloorPlan": "false = imagePath is a straight background image (canvas_RoomDisplay.bgpicture), not a floor plan, so no room coordinates are needed. Every room is hideOnMap: the building only exists as the room list + the connects graph below (hospital pattern).",
+                "isFloorPlan": false,
                 "floorWidth":400.0,
                 "floorHeight":400.0,
                 "resize":1.0,
@@ -36,15 +47,151 @@
                     "rentFee": { "itemID": "currency_JPY", "itemCount": 1000000 },
                     "cadence": "Monthly"
                 },
+                "_comment_layout": "Abstract hub-and-spoke layout, door cost = approximate walking minutes. 1F: entrance (shoe lockers, also the world-map exit) -> 1F corridor, which the principal's office, teachers' office, cafeteria, a spare room and (down the covered walkway, 2 min) the gym open onto. Stairs: 1F corridor -> 2F corridor 2 min. 2F: the classroom, the boys'/girls' restrooms and two spare rooms. Spare rooms are deliberately empty, reserved for later use. Worst case entrance->2F room = 4 min. Room images are placeholders borrowed from BA_Utnapishtim/Media_UI_Scenario_Background.",
                 "rooms":[
                     {
                         "ID":"school_frontGate",
-                        "displayName":"Classroom",
-                        "offsetX":0.0,
-                        "offsetY":0.0,
+                        "displayName":"jp_high_school_entrance",
+                        "hideOnMap": true,
                         "connects": [],
-                        "furnitureIDs":["furniture_marker_jp_high_school_teacher_podium","furniture_marker_jp_high_school_student_desk"],
+                        "furnitureIDs":[],
                         "roomImagePath":"BGAssets/Generated/school_exterior_06.webp"
+                    },
+                    {
+                        "ID":"school_1F_corridor",
+                        "displayName":"jp_high_school_1F_corridor",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_frontGate", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID":"school_principal_office",
+                        "displayName":"jp_high_school_principal_office",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_1F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_ReceptionRoom.jpg"
+                    },
+                    {
+                        "ID":"school_teachers_office",
+                        "displayName":"jp_high_school_teachers_office",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_1F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_ValkyrieOffice2.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_ValkyrieOffice2_Night.jpg"
+                    },
+                    {
+                        "ID":"school_cafeteria",
+                        "displayName":"jp_high_school_cafeteria",
+                        "_comment":"furniture_marker_getmeal serves the school lunch (consumable_jp_high_school_lunch from the faction inventory, see the factionInit initializers / mealHours).",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_1F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":["furniture_dining_table_10","furniture_marker_getmeal"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_SchoolCafeteria.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_SchoolCafeteria_Night.jpg"
+                    },
+                    {
+                        "ID":"school_gym",
+                        "displayName":"jp_high_school_gym",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_1F_corridor", "cost": 2.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Gym.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_Gym_Night.jpg"
+                    },
+                    {
+                        "ID":"school_1F_spare_room_1",
+                        "displayName":"jp_high_school_1F_spare_room_1",
+                        "_comment":"Empty, reserved for later use.",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_1F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor2.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_BuildingCorridor2_Night.jpg"
+                    },
+                    {
+                        "ID":"school_2F_corridor",
+                        "displayName":"jp_high_school_2F_corridor",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_1F_corridor", "cost": 2.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_BuildingCorridor_Night.jpg"
+                    },
+                    {
+                        "ID":"school_classroom",
+                        "displayName":"jp_high_school_classroom",
+                        "_comment":"Where students gather for class: the student desks and the teacher's podium.",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_2F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":["furniture_marker_jp_high_school_teacher_podium","furniture_marker_jp_high_school_student_desk"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_Auditorium.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_Auditorium_Night.jpg"
+                    },
+                    {
+                        "ID":"school_restroom_male",
+                        "displayName":"map_toilet_male",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_2F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_marker_gender_male"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
+                    },
+                    {
+                        "ID":"school_restroom_female",
+                        "displayName":"map_toilet_female",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_2F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":["furniture_bathroom_set","furniture_bathroom_set","furniture_marker_gender_female"],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_LockerRoom.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_LockerRoom_Night.jpg"
+                    },
+                    {
+                        "ID":"school_2F_spare_room_1",
+                        "displayName":"jp_high_school_2F_spare_room_1",
+                        "_comment":"Empty, reserved for later use.",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_2F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor2.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_BuildingCorridor2_Night.jpg"
+                    },
+                    {
+                        "ID":"school_2F_spare_room_2",
+                        "displayName":"jp_high_school_2F_spare_room_2",
+                        "_comment":"Empty, reserved for later use.",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "school_2F_corridor", "cost": 1.0 }
+                        ],
+                        "furnitureIDs":[],
+                        "roomImagePath":"Media_UI_Scenario_Background/BG_BuildingCorridor2.jpg",
+                        "roomImagePath_Inactive_Night":"Media_UI_Scenario_Background/BG_BuildingCorridor2_Night.jpg"
                     }
                 ]
             }
@@ -115,6 +262,18 @@
             {
                 "ID": "membertype_jp_high_school_student",
                 "socialStandingKey": "membertype_jp_high_school_student",
+                "_comment_Tags": "Full-time enrollment (arrange-a-school: Opt_ArrangeJoin_StudentFullTime).",
+                "Tags": ["memberType_student_fullTime"],
+                "joinHandler": {
+                    "$type": "JoinHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "work_post_joinOption",
+                    "bindTargetKey": "worker"
+                },
+                "leaveHandler": {
+                    "$type": "LeaveHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "student_post_leaveOption",
+                    "bindTargetKey": "worker"
+                },
                 "isMember": true,
                 "isPrisoner": false,
                 "isManager": false,
@@ -325,9 +484,57 @@
             }
         ]
     },
+    "Items":
+    {
+        "list": [
+            {
+                "id": "consumable_jp_high_school_lunch",
+                "displayName": "School Lunch",
+                "tooltip": "school lunch",
+                "_comment": "Cafeteria lunch set. Deliberately no ItemComponent_Degradable (so it never spoils out of the school's one-item stock) and no 'industrial' tag (so shops matching industrial consumables don't sell it) - same as consumable_jp_hospital_meal.",
+                "Tags": ["food_meal", "consumable", "rarity_common", "do_not_sell"],
+                "value": 300,
+                "itemComps_Template": [
+                    {
+                        "compType": "ItemComponent_Ingestible",
+                        "comp_Ingestible": {
+                            "ingestMethod": [
+                                {
+                                    "bodyTags": "stomach",
+                                    "digestSpeed": -1,
+                                    "digestDelay": 30,
+                                    "digestDelayVariation": 10,
+                                    "amountMod": 8
+                                }
+                            ],
+                            "amount": 5,
+                            "OnUseEffects": [
+                                { "effectID": "ModStatValuePercent", "arguments": ["stats_derived_extended_energy", "0.3"] },
+                                { "effectID": "ModStatValuePercent", "arguments": ["stats_derived_extended_stamina", "0.2"] }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
+                "consumable_jp_high_school_lunch": "学校午餐",
+                "consumable_jp_high_school_lunch_tooltip": "学校食堂提供的午餐套餐",
+                "jp_high_school_entrance": "正门·鞋柜区",
+                "jp_high_school_1F_corridor": "1楼走廊",
+                "jp_high_school_2F_corridor": "2楼走廊",
+                "jp_high_school_principal_office": "校长室",
+                "jp_high_school_teachers_office": "教职员室",
+                "jp_high_school_cafeteria": "食堂",
+                "jp_high_school_gym": "体育馆",
+                "jp_high_school_classroom": "教室",
+                "jp_high_school_1F_spare_room_1": "1楼空教室",
+                "jp_high_school_2F_spare_room_1": "2楼空教室A",
+                "jp_high_school_2F_spare_room_2": "2楼空教室B",
+
                 "membertype_jp_high_school_board":"学校董事会成员",
                 "membertype_jp_high_school_teacher":"教师",
                 "membertype_jp_high_school_student":"学生",

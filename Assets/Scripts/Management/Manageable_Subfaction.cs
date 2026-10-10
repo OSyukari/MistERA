@@ -25,6 +25,18 @@ public class Manageable_Subfaction : Manageable
             else return null;
         }
     }
+    /// <summary>
+    /// Its own mainExit room from its MapPlan (e.g. a mall shop's sportswear_room), not the parent's MainExit: the rally
+    /// job only counts a character as arrived inside a room this faction owns, which the parent's room never is.
+    /// </summary>
+    [JsonIgnore]
+    public override Room_Instance RallyRoom
+    {
+        get
+        {
+            return base.MainExit ?? MainExit;
+        }
+    }
     [JsonIgnore]
     public override List<Manageable> ConnectedFactions
     {

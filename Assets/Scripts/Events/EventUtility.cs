@@ -42,6 +42,26 @@ public static class EventUtility
        // return inst;
     }
 
+    /// <summary>
+    /// Personality override of a player-picked dialogue event (tab_dialogue.Button_DialogueEvent): the talked-to
+    /// character's personality may list events to play instead of defaultInstance's event
+    /// (Character_Personality.GetDialogueEventOverrides, fallback personality included). Each is built for the same self
+    /// and validated in order; the first valid one is returned. None (or no personality / no list) -> defaultInstance.
+    /// Overrides are resolved once - an override event is never overridden itself.
+    /// </summary>
+    public static EventInstance ResolveDialogueOverride(EventInstance defaultInstance, string defaultEventID, Character_Trainable talkTarget)
+    {
+        var personality = talkTarget?.Relationships?.Personality;
+        if (defaultInstance == null || personality == null) return defaultInstance;
+        foreach (var overrideID in personality.GetDialogueEventOverrides(defaultEventID))
+        {
+            if (string.IsNullOrEmpty(overrideID)) continue;
+            var candidate = new EventInstance(defaultInstance.Self, overrideID, "", forbidGeneration: true);
+            if (candidate.isValid) return candidate;
+        }
+        return defaultInstance;
+    }
+
 
     public static bool Validate(Event ev, EventInstance instance)
     {
@@ -305,6 +325,9 @@ public static class EventUtility
             case "excludePlayer":
                 //if (debug) Debug.Log($"excludePlayer {c.FirstName} {scr_System_CampaignManager.current.Player != c}");
                 return scr_System_CampaignManager.current.Player != c;
+            case "excludeSelf":
+                // excludeSelf -- c is not the event's self (e.g. a faction-members scope that would otherwise include self)
+                return ev?.Self != c;
             case "isPlayer":
                 //if (debug) Debug.Log($"excludePlayer {c.FirstName} {scr_System_CampaignManager.current.Player == c}");
                 return scr_System_CampaignManager.current.Player == c;
@@ -439,6 +462,27 @@ public static class EventUtility
                 var remainType = remainFaction.GetMemberType(c);
                 return remainType?.joinHandler != null && remainType.joinHandler.ShouldRemain(remainFaction, remainType, c);
             }
+            case "canArrangeJoinByTag":
+            {
+                // canArrangeJoinByTag [memberTypeTag] [optional true|false, default true] -- c already holds a MemberType tagged
+                // memberTypeTag somewhere (FactionJoinUtility.FindHeldMembershipsByTag - the arrange event then offers leaving),
+                // or some revealed faction c can path to lists such a MemberType as joinable and offers c an option for it,
+                // enabled or disabled (FactionJoinUtility.BuildReachableJoinOptionsByTag - refusals explain themselves).
+                // Pathfinds to every such faction - keep it after cheap conditions.
+                if (r.parameters.Count < 2) return false;
+                bool expected = r.parameters.Count < 3 || !bool.TryParse(r.parameters[2], out var exp) || exp;
+                bool canArrange = FactionJoinUtility.FindHeldMembershipsByTag(c, r.parameters[1]).Count > 0
+                    || FactionJoinUtility.BuildReachableJoinOptionsByTag(c, r.parameters[1], true).Count > 0;
+                return canArrange == expected;
+            }
+            case "holdsMemberTypeByTag":
+            {
+                // holdsMemberTypeByTag [memberTypeTag] [optional true|false, default true] -- c holds a MemberType tagged
+                // memberTypeTag in one of their own factions (FactionJoinUtility.FindHeldMembershipsByTag)
+                if (r.parameters.Count < 2) return false;
+                bool expected = r.parameters.Count < 3 || !bool.TryParse(r.parameters[2], out var exp) || exp;
+                return (FactionJoinUtility.FindHeldMembershipsByTag(c, r.parameters[1]).Count > 0) == expected;
+            }
             case "sharesHomeFaction":
             {
                 // sharesHomeFaction -- c's permanent home faction is the event self's permanent home faction (e.g. the
@@ -446,13 +490,20 @@ public static class EventUtility
                 var selfHome = ev?.Self?.FactionManager.Faction_Home;
                 return selfHome != null && c.FactionManager.Faction_Home == selfHome;
             }
+            case "hasRecreationBooking":
+            {
+                // hasRecreationBooking [optional true|false, default true] -- c has a recreation booking not ended yet
+                // (RecreationUtility.PendingBookings - forbidCancel ones included)
+                bool expected = r.parameters.Count < 2 || !bool.TryParse(r.parameters[1], out var exp) || exp;
+                return (RecreationUtility.PendingBookings(c).Count > 0) == expected;
+            }
             case "NonPlayerFactionChara":
                 return !c.FactionManager.HasPlayerFaction;
             case "isPartyPrisoner":
                 return c.FactionManager.CurrentActiveParty != null && c.FactionManager.CurrentActiveParty.GetMemberType(c).isPrisoner;
             case "hasActorTag":
             {
-                // hasActorTag [tag] -- actor tag set incl. the ACTIVE faction/party MemberType's portraitTags
+                // hasActorTag [tag] -- actor tag set incl. the ACTIVE faction/party MemberType's Tags
                 if (r.parameters.Count < 2) return false;
                 var actorTags = new List<string>();
                 UtilityEX.GetActorTag(ref actorTags, c);
@@ -464,7 +515,7 @@ public static class EventUtility
                 if (r.parameters.Count < 3) return false;
                 bool expected = r.parameters.Count < 4 || !bool.TryParse(r.parameters[3], out var exp) || exp;
                 var mtFaction = scr_System_CampaignManager.current.FindFactionByID(r.parameters[1]);
-                bool has = mtFaction != null && mtFaction.isManagedChara(c.RefID) && mtFaction.GetMemberType(c)?.ID == r.parameters[2];
+                bool has = mtFaction != null && mtFaction.isManagedChara(c.RefID) && MemberType.Matches(mtFaction.GetMemberType(c), r.parameters[2]);
                 return has == expected;
             }
             case "isInLabor":
@@ -614,6 +665,21 @@ public static class EventUtility
 
         var list = new List<Character_Trainable>();
 
+        // stopAtMaxTargetCount: candidates walked in random order, the search ends once maxTargetCount are found;
+        // orderBy "friendliness": self's friendliest first (ties random) - the found list keeps that order
+        bool stopAtMax = scope.stopAtMaxTargetCount && scope.maxTargetCount > 0;
+        bool byFriendliness = scope.orderBy == "friendliness" && self?.Relationships != null;
+        IEnumerable<Character_Trainable> Ordered(IEnumerable<Character_Trainable> source)
+        {
+            if (source == null) return Enumerable.Empty<Character_Trainable>();
+            if (!stopAtMax && !byFriendliness) return source;
+            var copy = new List<Character_Trainable>(source);
+            Utility.Shuffle(copy);
+            if (byFriendliness) return copy.OrderByDescending(c => self.Relationships.PeekRelationshipWith(c)?.Friendliness_Raw ?? 0f).ToList();
+            return copy;
+        }
+        bool Full() { return stopAtMax && list.Count >= scope.maxTargetCount; }
+
         if (scope.baseScope != TargetScope.None)
         {
             Room_Instance room = null;
@@ -636,9 +702,10 @@ public static class EventUtility
                         var memberFaction = scr_System_CampaignManager.current.FindFactionByID(scope.extraScopeArguments[0]);
                         if (memberFaction != null)
                         {
-                            foreach (var chara in memberFaction.ManagedChara)
+                            foreach (var chara in Ordered(memberFaction.ManagedChara))
                             {
-                                if (chara == null || memberFaction.GetMemberType(chara)?.ID != scope.extraScopeArguments[1]) continue;
+                                if (Full()) break;
+                                if (chara == null || !MemberType.Matches(memberFaction.GetMemberType(chara), scope.extraScopeArguments[1])) continue;
                                 bool isvalid = true;
                                 foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
                                 if (isvalid && !list.Contains(chara)) list.Add(chara);
@@ -652,11 +719,15 @@ public static class EventUtility
                         var factionArg = scope.extraScopeArguments[0];
                         Manageable membersOf = factionArg == "@selfTempHome" ? self?.FactionManager.Faction_Home_Temporary
                             : factionArg == "@selfActiveFaction" ? self?.FactionManager.CurrentlyActiveFaction
+                            : factionArg == "@selfHomeFaction" ? (self != null && self.FactionManager.HomeFactions.Count > 0 ? self.FactionManager.HomeFactions[0] : null)
+                            : factionArg == "@selfHomeFactionStrict" ? self?.FactionManager.Faction_Home
+                            : factionArg == "@selfWorkFaction" ? (self != null && self.FactionManager.WorkFactions.Count > 0 ? self.FactionManager.WorkFactions[0] : null)
                             : scr_System_CampaignManager.current.FindFactionByID(factionArg);
                         if (membersOf != null)
                         {
-                            foreach (var chara in membersOf.ManagedChara)
+                            foreach (var chara in Ordered(membersOf.ManagedChara))
                             {
+                                if (Full()) break;
                                 if (chara == null) continue;
                                 bool isvalid = true;
                                 foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
@@ -676,8 +747,9 @@ public static class EventUtility
                     if (self == null) return false;
                     room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
                     charaRefs = room == null ? new List<Character_Trainable>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
-                    foreach (var chara in charaRefs)
+                    foreach (var chara in Ordered(charaRefs))
                     {
+                        if (Full()) break;
                         bool isvalid = true;
                         foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
                         if (!isvalid) continue;
@@ -688,8 +760,9 @@ public static class EventUtility
                     if (self == null) return false;
                     room = scr_System_CampaignManager.current.GetCharaRoomInstance(self.RefID);
                     charaRefs = room == null ? new List<Character_Trainable>() : scr_System_CampaignManager.current.CharaInRoom(room.RefID);
-                    foreach (var chara in charaRefs)
+                    foreach (var chara in Ordered(charaRefs))
                     {
+                        if (Full()) break;
                         if (chara == self) continue;
                         if (scr_System_CampaignManager.current.IsInSameParty(self, chara)) continue;
                         bool isvalid = true;
@@ -709,8 +782,9 @@ public static class EventUtility
                     {
                         if (ev.Targets.TryGetValue(scope.extraScopeArguments[0], out var possibleRefs))
                         {
-                            foreach (var chara in possibleRefs)
+                            foreach (var chara in Ordered(possibleRefs))
                             {
+                                if (Full()) break;
                                 bool isvalid = true;
                                 foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
                                 if (!isvalid) continue;
@@ -747,8 +821,9 @@ public static class EventUtility
                             room = Utility.GetMaxWeightInDict(roomRegistry);
                             charaRefs = room == null ? new List<Character_Trainable>() : room.RoomChara;
                             //Debug.Log($"ScopeInRoomExceptRef with Chara {String.Join("|",room.RoomCharaRefs)}");
-                            foreach (var chara in charaRefs)
+                            foreach (var chara in Ordered(charaRefs))
                             {
+                                if (Full()) break;
                                 if (locationRef.Contains(chara))
                                 {
                                     //Debug.Log($"ScopeInRoomExceptRef locationref conflict");
@@ -789,6 +864,17 @@ public static class EventUtility
                         Debug.LogError($"Error ScopeInRoomExceptRef lacking extrascopearguments for [{String.Join("|",scope.extraScopeArguments)}]");
                     }
                     break;
+                case TargetScope.SelfRelationships:
+                    if (self?.Relationships == null) return false;
+                    foreach (var chara in Ordered(self.Relationships.GetRelationTargets(scope.extraScopeArguments)))
+                    {
+                        if (Full()) break;
+                        if (chara == null || chara == self) continue;
+                        bool isvalid = true;
+                        foreach (var cond in scope.chara_conditions) if (!isValid(cond, ev, chara)) isvalid = false;
+                        if (isvalid && !list.Contains(chara)) list.Add(chara);
+                    }
+                    break;
 
                 default: break;
             }
@@ -796,10 +882,13 @@ public static class EventUtility
 
         // if scoped target exceed max count, check if allow failure
         if (scope.minTargetCount != -1 && list.Count < scope.minTargetCount) return scope.allowEventOnMinTargetCountMiss;
-        if (scope.maxTargetCount != -1 && list.Count > scope.maxTargetCount && !scope.pickAmongValidTargets) return scope.allowEventOnMinTargetCountMiss;
-        if (scope.mustHaveMoreValidTargets && list.Count >= scope.maxTargetCount && !scope.pickAmongValidTargets) return scope.allowEventOnMinTargetCountMiss;
+        // an early-stopped search never holds more than maxTargetCount - "too many" can't be judged, so never fails
+        if (!stopAtMax && scope.maxTargetCount != -1 && list.Count > scope.maxTargetCount && !scope.pickAmongValidTargets) return scope.allowEventOnMinTargetCountMiss;
+        if (!stopAtMax && scope.mustHaveMoreValidTargets && list.Count >= scope.maxTargetCount && !scope.pickAmongValidTargets) return scope.allowEventOnMinTargetCountMiss;
 
-        if (scope.pickAmongValidTargets) Utility.FilterRandXInList(list, scope.maxTargetCount);
+        // an ordered list keeps its top maxTargetCount instead of a random pick
+        if (scope.pickAmongValidTargets && byFriendliness && scope.maxTargetCount >= 0 && list.Count > scope.maxTargetCount) list.RemoveRange(scope.maxTargetCount, list.Count - scope.maxTargetCount);
+        else if (scope.pickAmongValidTargets) Utility.FilterRandXInList(list, scope.maxTargetCount);
         foreach(var key in scope.refKeys)
         {
             if (!library.ContainsKey(key)) library.Add(key, new List<Character_Trainable>());
@@ -1535,7 +1624,7 @@ public static class EventUtility
                 foreach (var c in linkSources)
                 {
                     if (c == null || c == linkTarget) continue;
-                    if (requiredType != "" && linkFaction.GetMemberType(c)?.ID != requiredType) continue;
+                    if (requiredType != "" && !MemberType.Matches(linkFaction.GetMemberType(c), requiredType)) continue;
                     linkFaction.SetMemberLink(c, linkTarget, linkFaction.GetMemberType(c));
                 }
                 return true;
@@ -1706,6 +1795,85 @@ public static class EventUtility
                 if (exec.arguments.Count < 1) return false;
                 scr_UpdateHandler.current.EventHandler.EndChain(exec.arguments[0], owner.Self);
                 return true;
+            case Event.EventEntry.ExecutionType.AddRecreationOffer:
+            {
+                if (exec.arguments.Count < 2 || !int.TryParse(exec.arguments[1], out var offerDayOffset)) return false;
+                int offerStart = exec.arguments.Count >= 3 && int.TryParse(exec.arguments[2], out var os) ? os : -1;
+                int offerHours = exec.arguments.Count >= 4 && int.TryParse(exec.arguments[3], out var oh) ? oh : -1;
+                return RecreationUtility.PostOffer(exec.arguments[0], offerDayOffset, offerStart, offerHours);
+            }
+            case Event.EventEntry.ExecutionType.SetRecreationBooking:
+            {
+                if (exec.arguments.Count < 5 || !int.TryParse(exec.arguments[2], out var bookDayOffset)
+                    || !int.TryParse(exec.arguments[3], out var bookStart) || !int.TryParse(exec.arguments[4], out var bookHours)) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var bookers))
+                {
+                    Debug.LogError($"SetRecreationBooking missing target scopeKey {exec.arguments[0]}");
+                    return false;
+                }
+                string templateID = exec.arguments.Count >= 6 ? exec.arguments[5] : "";
+                var flags = exec.arguments.Count >= 7 ? exec.arguments[6].Split('|') : new string[0];
+                string onCancelled = exec.arguments.Count >= 8 ? exec.arguments[7] : "";
+                bool anyBooked = false;
+                foreach (var c in bookers)
+                {
+                    if (c == null) continue;
+                    anyBooked |= RecreationUtility.SetEventBooking(c, exec.arguments[1], bookDayOffset, bookStart, bookHours, templateID,
+                        flags.Contains("wakeForIt"), flags.Contains("overrideWork"), onCancelled, owner.displayOverride,
+                        flags.Contains("forbidCancel"), owner.CurrentEventID, flags.Contains("solo"));
+                }
+                return anyBooked;
+            }
+            case Event.EventEntry.ExecutionType.CancelRecreationBooking:
+            {
+                if (exec.arguments.Count < 1) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var cancellers))
+                {
+                    Debug.LogError($"CancelRecreationBooking missing target scopeKey {exec.arguments[0]}");
+                    return false;
+                }
+                string cancelFaction = exec.arguments.Count >= 2 ? exec.arguments[1] : "";
+                string cancelWhen = exec.arguments.Count >= 3 && exec.arguments[2] != "" ? exec.arguments[2] : "all";
+                int cancelled = 0;
+                foreach (var c in cancellers) if (c != null) cancelled += RecreationUtility.CancelBookings(c, cancelFaction, cancelWhen, owner.displayOverride);
+                return cancelled > 0;
+            }
+            case Event.EventEntry.ExecutionType.ListCancellableBookings:
+            {
+                if (exec.arguments.Count < 3) return false;
+                var cancelOptions = new List<Event.EventEntry.Options>();
+                owner.StoredOptions[exec.arguments[0]] = cancelOptions;
+                if (!TryResolveExecTargets(owner, exec.arguments[1], out var listHolders))
+                {
+                    Debug.LogError($"ListCancellableBookings missing target scopeKey {exec.arguments[1]}");
+                    return true;
+                }
+                var listHolder = listHolders.Find(x => x != null);
+                if (listHolder != null) cancelOptions.AddRange(RecreationUtility.BuildCancelOptions(listHolder, exec.arguments[2]));
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.AcceptBookingCancelRequest:
+            {
+                if (exec.arguments.Count < 3) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var requestees) || !TryResolveExecTargets(owner, exec.arguments[1], out var askers)) return false;
+                var requestee = requestees.Find(x => x != null);
+                var asker = askers.Find(x => x != null);
+                if (requestee == null || asker == null || !owner.Parameters.TryGetValue(exec.arguments[2], out var requestedStart)) return false;
+                var requested = RecreationUtility.FindPendingBooking(requestee, (int)requestedStart);
+                var requestRel = requested != null ? requestee.Relationships.FindRelationshipWith(asker) : null;
+                return requestRel != null && requestRel.AcceptBookingCancelRequest(requested);
+            }
+            case Event.EventEntry.ExecutionType.CancelSelectedBooking:
+            {
+                if (exec.arguments.Count < 2) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var selectedHolders)) return false;
+                var selectedHolder = selectedHolders.Find(x => x != null);
+                if (selectedHolder == null || !owner.Parameters.TryGetValue(exec.arguments[1], out var selectedStart)) return false;
+                var selected = RecreationUtility.FindPendingBooking(selectedHolder, (int)selectedStart);
+                if (!RecreationUtility.CancelByRequest(selectedHolder, selected, out var cancelledText)) return false;
+                if (exec.arguments.Count >= 3 && exec.arguments[2] != "") owner.AppendStrings[exec.arguments[2]] = new List<string>() { cancelledText };
+                return true;
+            }
             case Event.EventEntry.ExecutionType.RemoveFromFaction:
             {
                 if (exec.arguments.Count < 2) return false;
@@ -1723,9 +1891,10 @@ public static class EventUtility
                     if (c == null) continue;
                     var leaveFaction = leaveTempHome ? c.FactionManager.Faction_Home_Temporary : namedFaction;
                     if (leaveFaction == null || !leaveFaction.isManagedChara(c.RefID)) continue;
-                    if (requiredType != "" && leaveFaction.GetMemberType(c)?.ID != requiredType) continue;
+                    if (requiredType != "" && !MemberType.Matches(leaveFaction.GetMemberType(c), requiredType)) continue;
                     if (c.FactionManager.WorkFactions.Contains(leaveFaction)) c.FactionManager.RemoveWorkFaction(leaveFaction.ID);
                     else if (c.FactionManager.Faction_Home_Temporary == leaveFaction) c.FactionManager.SetTempHomeFaction("", null);
+                    else if (c.FactionManager.RecreationFactions.Contains(leaveFaction)) c.FactionManager.RemoveRecreationFaction(leaveFaction.ID);
                 }
                 return true;
             }
@@ -2777,6 +2946,38 @@ public static class EventUtility
                 else joinOptions.AddRange(joinFaction.BuildJoinOptions(joinType, joinCandidates, out joinErrorKey));
                 if (joinOptions.Count == 0 && exec.arguments.Count >= 5 && exec.arguments[4] != "" && !string.IsNullOrEmpty(joinErrorKey))
                     owner.AppendStrings[exec.arguments[4]] = new List<string>() { LocalizeDictionary.QueryThenParse(joinErrorKey) };
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.JoinReachableFactionsByTag:
+            {
+                if (exec.arguments.Count < 3) return false;
+                var tagOptions = new List<Event.EventEntry.Options>();
+                owner.StoredOptions[exec.arguments[0]] = tagOptions;
+                if (!TryResolveExecTargets(owner, exec.arguments[1], out var tagCandidates))
+                {
+                    Debug.LogError($"JoinReachableFactionsByTag missing target scopeKey {exec.arguments[1]}");
+                    return true;
+                }
+                var tagCandidate = tagCandidates.Find(x => x != null);
+                if (tagCandidate == null) return true;
+                tagOptions.AddRange(FactionJoinUtility.BuildReachableJoinOptionsByTag(tagCandidate, exec.arguments[2], true));
+                FactionJoinUtility.MarkRandomDefaultAccept(tagOptions);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.LeaveHeldFactionsByTag:
+            {
+                if (exec.arguments.Count < 3) return false;
+                var heldOptions = new List<Event.EventEntry.Options>();
+                owner.StoredOptions[exec.arguments[0]] = heldOptions;
+                if (!TryResolveExecTargets(owner, exec.arguments[1], out var heldCandidates))
+                {
+                    Debug.LogError($"LeaveHeldFactionsByTag missing target scopeKey {exec.arguments[1]}");
+                    return true;
+                }
+                var heldCandidate = heldCandidates.Find(x => x != null);
+                if (heldCandidate == null) return true;
+                heldOptions.AddRange(FactionJoinUtility.BuildHeldLeaveOptionsByTag(heldCandidate, exec.arguments[2], out var heldText));
+                if (exec.arguments.Count >= 4 && exec.arguments[3] != "") owner.AppendStrings[exec.arguments[3]] = new List<string>() { heldText };
                 return true;
             }
             case Event.EventEntry.ExecutionType.ExistStoredOptions:

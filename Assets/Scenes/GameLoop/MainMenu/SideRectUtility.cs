@@ -131,6 +131,21 @@ public static class SideRectUtility
         }
     }
 
+
+    public static void LoadScheduleData(Character_Trainable c,
+        List<scr_ScheduleBox> boxes)
+    {
+        if (boxes == null && boxes.Count < 24) return;
+        for (int i = 0; i < 24; i++)
+        {
+            scr_ScheduleBox box = boxes[i];
+            if (box != null)
+            {
+                box.Refresh(c, null);
+            }
+        }
+    }
+
     public static void LoadEquipmentData(Character_Trainable chara, 
         Func<RectTransform> instantiate_gear, 
         Func<RectTransform, RectTransform> instantiate_equip,

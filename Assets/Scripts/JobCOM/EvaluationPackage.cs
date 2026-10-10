@@ -1191,7 +1191,7 @@ public partial class EvaluationPackage : I_ResultStorage
             if (Doer != null)
             {
                 var doerLocaleMemberType = Doer.FactionManager.CurrentLocaleMemberType != Doer.FactionManager.CurrentActiveMemberType ? Doer.FactionManager.CurrentLocaleMemberType : null;
-                Doer.Relationships.Personality.CollectApplicableAcceptanceMods(Doer, true, Receiver, this, ref tooltip, _doerAcceptanceMods, Doer.FactionManager.CurrentActiveMemberType?.AcceptanceMods, doerLocaleMemberType?.AcceptanceMods);
+                Doer.Relationships.Personality.CollectApplicableAcceptanceMods(Doer, true, Receiver, this, ref tooltip, _doerAcceptanceMods, Doer.FactionManager.CurrentActiveMemberType?.AcceptanceMods, doerLocaleMemberType?.AcceptanceMods, Doer.FactionManager.CurrentActiveActivity?.AcceptanceMods);
             }
         }
         foreach (var mod in _doerAcceptanceMods) mod.Apply(this, Doer, Receiver);
@@ -1202,7 +1202,7 @@ public partial class EvaluationPackage : I_ResultStorage
             {
                 _receiverAcceptanceMods = new List<PersonalityAcceptanceMod>();
                 var receiverLocaleMemberType = Receiver.FactionManager.CurrentLocaleMemberType != Receiver.FactionManager.CurrentActiveMemberType ? Receiver.FactionManager.CurrentLocaleMemberType : null;
-                Receiver.Relationships.Personality.CollectApplicableAcceptanceMods(Receiver, false, Doer, this, ref tooltip, _receiverAcceptanceMods, Receiver.FactionManager.CurrentActiveMemberType?.AcceptanceMods, receiverLocaleMemberType?.AcceptanceMods);
+                Receiver.Relationships.Personality.CollectApplicableAcceptanceMods(Receiver, false, Doer, this, ref tooltip, _receiverAcceptanceMods, Receiver.FactionManager.CurrentActiveMemberType?.AcceptanceMods, receiverLocaleMemberType?.AcceptanceMods, Receiver.FactionManager.CurrentActiveActivity?.AcceptanceMods);
             }
             foreach (var mod in _receiverAcceptanceMods) mod.Apply(this, Receiver, Doer);
         }

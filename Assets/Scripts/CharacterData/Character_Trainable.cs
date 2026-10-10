@@ -56,6 +56,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             Body.ClearLastInteractedRefs();
             Skills.FinalizeExperience();
             RemoveObservers_Minute();
+            // fallback workers: drop every memory that would expire anyway, so parked workers stay small in saves
+            if (fallbackPoolID != "") Memory.ClearExpiring();
             dormantSince = scr_System_Time.current.getCurrentTime();
             isDormant = true;
         }
@@ -559,6 +561,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         {
             var scheduleRefreshMsg = new List<string>();
             FactionManager.UpdateSchedule(ref scheduleRefreshMsg, false);
+            // recreation bookings against the refreshed schedule / planned night / sleep state
+            FactionManager.OnHourUpdate_Recreation();
         }
 
 
@@ -1133,6 +1137,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         this.FactionManager.FlagForDailyNeed();
     }
 
+    /// <summary>Day update stage 3 (after factions and characters updated): recreation planning only.</summary>
+    private void Observer_GlobalDay_3(int updateOrder)
+    {
+        if (updateOrder != 3) return;
+        if (FactionManager != null) FactionManager.OnDayUpdate_Recreation();
+    }
+
     
 
     public int GetStatusSeverity(string s)
@@ -1507,14 +1518,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// obligation itself already has. Filtered to THIS character's own membershipFee.cadence at C (same
     /// lookup Obligation_MembershipFee.GetRelevantFees itself uses) so an unrelated sibling's unpaid dues
     /// under a different MemberType/cadence at the same provider never blocks this character - only the
-    /// obligation actually covering this character's own membership arrangement counts.
+    /// obligation actually covering this character's own membership arrangement counts. Recreation
+    /// memberships (Character_Factions.RecreationFactions) are gated the same way, billed to the priority home.
     /// </summary>
     public bool CanWorkFor(I_IsJobGiver faction, out string reason)
     {
         reason = "";
         var provider = faction == null ? null : faction.Faction;
         if (provider == null) return true;
-        if (FactionManager == null || !FactionManager.WorkFactions.Contains(provider)) return true;
+        if (FactionManager == null || (!FactionManager.WorkFactions.Contains(provider) && !FactionManager.RecreationFactions.Contains(provider))) return true;
 
         var status = provider.GetMemberType(this);
         if (status == null || status.membershipFee == null) return true;
@@ -1559,6 +1571,57 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         else return FactionManager.CurrentJobScheduleFaction(hour);
     }
 
+    /// <summary>
+    /// Whether this character wants a solo flexible visit the planner picked for them (a membership activity, a flexible
+    /// offer) - ctx is null. Always yes for now.
+    /// </summary>
+    public bool AcceptBooking(RecreationBooking booking, RecreationInviteContext ctx)
+    {
+        return true;
+    }
+
+    /// <summary>
+    /// Whether this character takes session into consideration at all - asked once, the first time they see it (their
+    /// inbox, a faction / world list, an extended invitation - RecreationUtility.RankSessions). No = Refused: final for
+    /// this session, never ranked. ctx: who invited them, their role, how they were reached, who attends / is invited.
+    /// The player answers through the Recreation_Invite event instead. Always yes for now.
+    /// </summary>
+    public bool AcceptSession(RecreationGroup session, RecreationInviteContext ctx)
+    {
+        return true;
+    }
+
+    /// <summary>
+    /// Whether this character hosts session - asked before it is posted (RecreationUtility.TryHostSession; ctx.invited =
+    /// who would be invited). No = not posted: the visit stays solo (a mandatory activity isn't booked). Always yes for now.
+    /// </summary>
+    public bool AcceptHosting(RecreationGroup session, RecreationInviteContext ctx)
+    {
+        return true;
+    }
+
+    /// <summary>
+    /// Whether this character, confirming session, extends the invitation with validator (one of the spec's
+    /// InviteeValidators - RecreationUtility.ExtendInvitation). No = that validator isn't used (an inviteRequired one then
+    /// keeps them from taking part, as if nobody was found). Always yes for now.
+    /// </summary>
+    public bool AcceptExtending(RecreationGroup session, RecreationInviteTarget validator, RecreationInviteContext ctx)
+    {
+        return true;
+    }
+
+    /// <summary>
+    /// Which of two bookings this character prefers - &gt; 0 incoming, &lt; 0 existing, 0 no preference. The comparator of
+    /// the session ranking (RecreationUtility.RankSessions - ties fall back to a fixed order: earlier start, host, venue)
+    /// and of a session against a flexible visit in its way (RecreationUtility.TryConfirm: the session wins unless the
+    /// visit is preferred). Must be deterministic (no random rolls) so the same situation always resolves the same way.
+    /// Equal for now.
+    /// </summary>
+    public int CompareBookingPreference(RecreationBooking existing, RecreationInviteContext existingCtx, RecreationBooking incoming, RecreationInviteContext incomingCtx)
+    {
+        return 0;
+    }
+
     [JsonProperty] private Character_Factions factionManager = null;
     [JsonIgnore] public  Character_Factions FactionManager { get { if (factionManager == null)
             {
@@ -1569,7 +1632,24 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return factionManager;
         } }
 
-    
+    /// <summary>
+    /// What the character is "being" right now, for name labels: taking part in the recreation visit that drives this
+    /// hour (Character_Factions.GetEffectiveBooking - a session booking names its session: ui_recreation_participating),
+    /// else their social standing in the currently active faction (Manageable.GetCharaSocialStandingName). "" when neither.
+    /// </summary>
+    [JsonIgnore] public string CurrentActiveFactionName
+    {
+        get
+        {
+            var booking = FactionManager.GetEffectiveBooking();
+            string activity = booking == null ? "" : booking.DisplayName;
+            if (!string.IsNullOrEmpty(activity))
+                return LocalizeDictionary.QueryThenParse("ui_recreation_participating").Replace("$activity$", activity);
+            var faction = FactionManager.CurrentlyActiveFaction;
+            return faction == null ? "" : faction.GetCharaSocialStandingName(this);
+        }
+    }
+
 
     public void InitializeFaction(Manageable m, bool isManager)
     {
@@ -2537,7 +2617,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                         //Debug.LogError($"Wakeup revalidating ap {ap.targetCOM.displayName} on {this.FirstName}, isDoer {ap.doer.Contains(this)} isReceiver {ap.receiver.Contains(this)}, result {result}");
                         //ap.ExecutePackageOutsideUpdate();
                         ap.ExecutePackageOutsideUpdate(eventCollector: apEventCollector);
-                        if (ap.job.isVisibleToPlayer) ap.job.CollectLogs(ap);
+                        if (ap.job.isVisibleToPlayer || ap.isOwnRoomVisibleToPlayer) ap.job.CollectLogs(ap);
 
                         ap.DisablePackage();
                         scr_System_CampaignManager.current.Unregister(ap);
@@ -2574,7 +2654,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                             }
                             if (ap.ListEP.Count < 1) Debug.LogError("Erorr ap ep null");
                         }
-                        if (ap.job.isVisibleToPlayer) ap.job.CollectLogs(ap);
+                        if (ap.job.isVisibleToPlayer || ap.isOwnRoomVisibleToPlayer) ap.job.CollectLogs(ap);
                     }
                 }
 
@@ -2979,6 +3059,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     public void PostReloadUpdate()
     {
         if (this.Relationships != null) Relationships.PostReloadUpdate();
+        if (this.factionManager != null) factionManager.PostReloadUpdate_Recreation();
     }
 
     public void OnAfterDeserialize()
@@ -3031,6 +3112,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_System_Time.current.Observer_globalTime_Hours += Observer_GlobalHour;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_0;
+        scr_System_Time.current.Observer_globalTime_Day += Observer_GlobalDay_3;
     }
 
     /// <summary>Per-minute ticks - dropped while dormant, caught up in one go by EndDormantState.</summary>
@@ -3065,6 +3147,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         scr_System_Time.current.Observer_globalTime_Hours -= Observer_GlobalHour;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay;
         scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_0;
+        scr_System_Time.current.Observer_globalTime_Day -= Observer_GlobalDay_3;
     }
 
     protected void RemoveObservers_Minute()

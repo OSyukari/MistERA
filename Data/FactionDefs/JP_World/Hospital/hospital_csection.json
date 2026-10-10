@@ -80,7 +80,7 @@
                         "options": [
                             {
                                 "option": "_hospital_patient",
-                                "self_chara_conditions": [ { "parameters": [ "hasActorTag", "hospital_patient" ] } ],
+                                "self_chara_conditions": [ { "parameters": [ "hasActorTag", "memberType_hospital_patient" ] } ],
                                 "Results": [
                                     { "Type": "AddStatus", "arguments": [ "self", "chara_status_postop_recovery", "100", "4320", "5760", "Hospital_AutoDischarge" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "birth_main" ] }

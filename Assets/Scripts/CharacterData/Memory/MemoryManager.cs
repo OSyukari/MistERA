@@ -161,6 +161,28 @@ public class MemoryManager
         }
     }
 
+    /// <summary>
+    /// Wipe every entry that would eventually expire (counting down, not "important") along with already expired
+    /// ones - only permanent entries remain. Used to keep parked fallback workers small in saves (Character_Trainable.SetDormant).
+    /// </summary>
+    public void ClearExpiring()
+    {
+        bool removed = false;
+        for (var i = entries.Count - 1; i >= 0; i--)
+        {
+            var entry = entries.Values[i];
+            if (entry.Duration < 0 || entry.HasTag("important")) continue;
+            entries.RemoveAt(i);
+            removed = true;
+        }
+        if (!removed) return;
+
+        lastRef = long.MinValue;
+        // body part first/last experience ticks may have pointed at a removed entry
+        foreach (var part in Owner.Body.Internals) part.ClearExperienceCache();
+        ClearCache();
+    }
+
     private void calculateValue(ref int i, ref int max, ref int min, int memValue)
     {
         max = Math.Max(max, memValue);

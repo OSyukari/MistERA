@@ -4,37 +4,37 @@
 [
     {
         "id":"item_videocd_pmmm_rebellion",
-        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "Tags":["furniture_watchVideo","moviecd","rarity_common"],
         "value":5800
     },
     {
         "id":"item_videocd_bd_am",
-        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "Tags":["furniture_watchVideo","moviecd","rarity_common"],
         "value":6600
     },
     {
         "id":"item_videocd_bd2049",
-        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "Tags":["furniture_watchVideo","moviecd","rarity_common"],
         "value":4180
     },
     {
         "id":"item_videocd_wuwa3dot1",
-        "Tags":["furniture_watchVideo","moviecd","industrial","rarity_common"],
+        "Tags":["furniture_watchVideo","moviecd","rarity_common"],
         "value":4200
     },
     {
         "id":"item_paperbooks_kvngt_5",
-        "Tags":["furniture_readBooks","paperbook","industrial","rarity_common"],
+        "Tags":["furniture_readBooks","paperbook","rarity_common"],
         "value":902
     },
     {
         "id":"item_paperbooks_cscz_guide",
-        "Tags":["furniture_readBooks","paperbook","industrial","rarity_common"],
+        "Tags":["furniture_readBooks","paperbook","rarity_common"],
         "value":1980
     },
     {
         "id":"item_paperbooks_mask_nyarla",
-        "Tags":["furniture_readBooks","paperbook","industrial","rarity_common"],
+        "Tags":["furniture_readBooks","paperbook","rarity_common"],
         "value":4840
     }
 

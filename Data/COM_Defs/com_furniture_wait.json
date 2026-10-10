@@ -1,0 +1,199 @@
+{
+    "_doc": "Generic wait commands. com_furniture_wait is a folder parent (never executed itself): clicking it opens the child panel (scr_panel_COMmanager.LoadChildCOMPanel), the children link to it via parentCOMID. Offered by any furniture giving comTags [furniture, wait] (currently furniture_jp_hospital_waiting_bench). NPC furniture dispatch (Job_Furniture, MakePackages allowParent:false) only ever picks the children. com_furniture_wait_nextHour runs as ActionPackage_WaitUntilNextHour (temporary AP, duration = minutes left until the next full hour); its COM_WaitUntilNextHour class shows that value as $minutes$ in its texts.",
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"com_furniture_wait",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_furniture_wait_displayName",
+                "timeScale":60,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            },
+            {
+                "$type": "COM_WaitUntilNextHour, Assembly-CSharp",
+                "parentCOMID":"com_furniture_wait",
+                "ID":"com_furniture_wait_nextHour",
+                "ActionPackageClass":"ActionPackage_WaitUntilNextHour",
+                "displayName":"com_furniture_wait_nextHour_displayName",
+                "_comment":"timeScale is only a fallback - ActionPackage_WaitUntilNextHour (temporary AP) sets its duration from the game clock on construction/reset/repeat. COM_WaitUntilNextHour only fills $minutes$ in the texts.",
+                "timeScale":60,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_nextHour_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            },
+            {
+                "parentCOMID":"com_furniture_wait",
+                "ID":"com_furniture_wait_5min",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_furniture_wait_5min_displayName",
+                "timeScale":5,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_5min_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            },
+            {
+                "parentCOMID":"com_furniture_wait",
+                "ID":"com_furniture_wait_15min",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_furniture_wait_15min_displayName",
+                "timeScale":15,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_15min_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            },
+            {
+                "parentCOMID":"com_furniture_wait",
+                "ID":"com_furniture_wait_30min",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_furniture_wait_30min_displayName",
+                "timeScale":30,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_30min_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            },
+            {
+                "parentCOMID":"com_furniture_wait",
+                "ID":"com_furniture_wait_1h",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_furniture_wait_1h_displayName",
+                "timeScale":60,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_1h_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            },
+            {
+                "parentCOMID":"com_furniture_wait",
+                "ID":"com_furniture_wait_2h",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_furniture_wait_2h_displayName",
+                "timeScale":120,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_2h_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            },
+            {
+                "parentCOMID":"com_furniture_wait",
+                "ID":"com_furniture_wait_4h",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"com_furniture_wait_4h_displayName",
+                "timeScale":240,
+                "comTags":["furniture","wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "com_furniture_wait_4h_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["com_furniture_wait_after"] } ] }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "com_furniture_wait_displayName": "等候...",
+                "com_furniture_wait_nextHour_displayName": "等待至下个小时（$minutes$分钟）",
+                "com_furniture_wait_5min_displayName": "等待5分钟",
+                "com_furniture_wait_15min_displayName": "等待15分钟",
+                "com_furniture_wait_30min_displayName": "等待30分钟",
+                "com_furniture_wait_1h_displayName": "等待1小时",
+                "com_furniture_wait_2h_displayName": "等待2小时",
+                "com_furniture_wait_4h_displayName": "等待4小时",
+                "com_furniture_wait_begin": "$doer.firstname$开始等候",
+                "com_furniture_wait_ongoing": "$doer.firstname$正在等候",
+                "com_furniture_wait_remove": "$doer.firstname$起身不再等候",
+                "com_furniture_wait_after": "$doer.firstname$结束了等候"
+            }
+        }
+    }
+}

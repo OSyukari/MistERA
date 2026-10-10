@@ -1,0 +1,22 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for faction.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_shrine_torii": "Torii & Approach",
+                "jp_shrine_haiden": "Worship Hall",
+                "jp_shrine_shamusho": "Shrine Office",
+
+                "jp_shrine_offering_box": "Offering Box",
+                "jp_shrine_omikuji_stand": "Omikuji Stand",
+
+                "jp_shrine_pray_displayName": "Pray",
+                "jp_shrine_omikuji_displayName": "Draw an Omikuji",
+
+                "jp_shrine_hatsumode": "New Year's Shrine Visit"
+            }
+        }
+    }
+}

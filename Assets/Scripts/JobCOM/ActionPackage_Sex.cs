@@ -84,7 +84,7 @@ public class ActionPackage_Sex : ActionPackage
         return base.Evaluate();
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         ActionPackage_Sex copy = new ActionPackage_Sex(job, targetCOM, DoerRefs, ReceiverRefs, masterRef);
         copy.SetVariantID(this.validVariant);

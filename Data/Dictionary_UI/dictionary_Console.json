@@ -17,8 +17,10 @@
 "console_furnitureUnpack_tooltip":"furnitureUnpack\ninitiate furniture packing/unpacking in current room",
 "console_forceConscious_tooltip":"forceConscious [int targetRefID] [bool true/false]\nfalse: use game's system\ntrue: target is always treated as conscious",
 "console_advanceTime_tooltip":"advanceTime [int days]\nAdvance the current clock by the given number of days",
+"console_setCalendar_tooltip":"setCalendar [int year] [int month] [int day]\nJump the current date straight to the given calendar date (keeping the clock time); fires the normal day-change update once",
 "console_debug_refuse_salary_payment_tooltip":"debug_refuse_salary_payment [optional bool true/false]\nDebug: when on, non-player factions always fail salary payments (default: off when omitted, toggles)",
-"console_debug_force_joinFaction_Agree_tooltip":"debug_force_joinFaction_Agree [optional bool true/false]\nDebug: when on, the player and party members pass every MemberJoinHandler check (e.g. hospital admission), even with no free room (toggles when omitted, not saved)"
+"console_debug_force_joinFaction_Agree_tooltip":"debug_force_joinFaction_Agree [optional bool true/false]\nDebug: when on, the player and party members pass every MemberJoinHandler check (e.g. hospital admission), even with no free room (toggles when omitted, not saved)",
+"console_listallvalidbookings_tooltip":"listallvalidbookings [optional bool replan]\nrequire target\nreplan true: first drops the target's planned bookings not yet started (event bookings and visits under way stay), plans the rest of today + tomorrow right away and outputs the resulting bookings\nDebug: output in log every recreation booking the target could make, as [templateID @ factionID (source)] - the templateID/factionID arguments of SetRecreationBooking.\nMembership activities (unpaid fee excluded), recreation memberships offered by the target's home/work factions, and every offer the target is eligible for. Day/cooldown rules are not applied"
 
 
             }

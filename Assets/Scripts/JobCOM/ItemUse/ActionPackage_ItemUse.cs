@@ -148,7 +148,7 @@ public class ActionPackage_ItemUse : ActionPackage
             return -1;
         }
     }
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         ActionPackage_ItemUse copy = new ActionPackage_ItemUse(job, targetCOM, ItemInstance, DoerRefs, ReceiverRefs, masterRef);
         copy.SetVariantID(this.validVariant);

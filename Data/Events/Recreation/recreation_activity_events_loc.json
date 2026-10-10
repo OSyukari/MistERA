@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for recreation_activity_events.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "Recreation_GatherFailed_nobody": "Half an hour past the agreed time, and nobody has come for the $activityName$ - it is called off.",
+                "Recreation_GatherFailed_Stay_waited": "$waited.name$ waited half an hour, but $late.name$ never came - the $activityName$ is called off.",
+                "Recreation_GatherFailed_Stay_late": "By the time $late.name$ arrived, the $activityName$ had long been called off.",
+                "Recreation_GatherFailed_Leave_waited": "$waited.name$ waited half an hour, but $late.name$ never came, so they left.",
+                "Recreation_GatherFailed_Leave_late": "$late.name$ arrived far too late - the $activityName$ had been called off, and everyone who waited had already left."
+            }
+        }
+    }
+}

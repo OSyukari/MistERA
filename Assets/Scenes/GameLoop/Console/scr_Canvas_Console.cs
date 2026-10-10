@@ -147,7 +147,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "showQuestStages",
         "furnitureUnpack",
         "forceConscious",
-        "advanceTime"
+        "advanceTime",
+        "setCalendar"
     };
 
     string[] devConsoleCommands = new string[]
@@ -162,7 +163,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     string[] editorConsoleCommands = new string[]
     {
         "debug_refuse_salary_payment",
-        "debug_force_joinFaction_Agree"
+        "debug_force_joinFaction_Agree",
+        "listallvalidbookings"
     };
 
     protected void ActivateUI()

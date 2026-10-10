@@ -16,7 +16,7 @@
                 "events":[
 {
     "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-    "_comment": "Every birth leaves the mother on bed rest for 1-2 days (chara_status_postpartum_recovery: requireBedRest) - only after the LAST baby (hasPendingBirth: a sibling still in labor or waiting for a C-section skips it). Hospital patients (hospital_patient actor tag, from their patient MemberType) additionally get Hospital_AutoDischarge fired when it wears off.",
+    "_comment": "Every birth leaves the mother on bed rest for 1-2 days (chara_status_postpartum_recovery: requireBedRest) - only after the LAST baby (hasPendingBirth: a sibling still in labor or waiting for a C-section skips it). Hospital patients (memberType_hospital_patient actor tag, from their patient MemberType) additionally get Hospital_AutoDischarge fired when it wears off.",
     "options": [
         {
             "option": "_more_babies",
@@ -27,7 +27,7 @@
         },
         {
             "option": "_hospital_patient",
-            "self_chara_conditions": [ { "parameters": [ "hasActorTag", "hospital_patient" ] } ],
+            "self_chara_conditions": [ { "parameters": [ "hasActorTag", "memberType_hospital_patient" ] } ],
             "Results": [
                 { "Type": "AddStatus", "arguments": [ "self", "chara_status_postpartum_recovery", "100", "1440", "2880", "Hospital_AutoDischarge" ] },
                 { "Type": "JumpToLabel", "arguments": [ "", "birth_main" ] }

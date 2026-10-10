@@ -112,6 +112,51 @@ public class WorldPlan
     public List<NPCInit> npcInit = new List<NPCInit>();
 
     /// <summary>
+    /// World-level recreation offers (RecreationOfferDef / RecreationBoard) - only for offers that belong to no single
+    /// venue, or to override a venue's own offer by ID. A venue's offers go in its own data file (Index_MapPlan.recreationOffers)
+    /// and are collected through initializeFactions - see AllRecreationOffers. Unioned with the parent world's (parentWorldID) like npcInit.
+    /// </summary>
+    public List<RecreationOfferDef> recreationOffers = new List<RecreationOfferDef>();
+
+    /// <summary>
+    /// World-level holiday definitions (HolidayDef), evaluated against the calendar by HolidaySystem - one
+    /// date resolves to at most ONE holiday, so multi-day festivals that behave differently across their days
+    /// are authored as separate phase entries sharing a theme tag. Unioned with the parent world's
+    /// (parentWorldID) like npcInit/recreationOffers.
+    /// </summary>
+    public List<HolidayDef> holidayDefs = new List<HolidayDef>();
+
+    /// <summary>
+    /// World-level season definitions (SeasonDef) - observance windows independent from holidays: a date
+    /// resolves to at most one holiday but any number of seasons. Unioned with the parent world's
+    /// (parentWorldID) like npcInit/recreationOffers.
+    /// </summary>
+    public List<SeasonDef> seasonDefs = new List<SeasonDef>();
+
+    [Newtonsoft.Json.JsonIgnore] List<RecreationOfferDef> _allRecreationOffers = null;
+    /// <summary>
+    /// Every recreation offer this world has: the data-file offers of each faction it initializes (initializeFactions
+    /// keys - Index_MapPlan.GetRecreationOffersAt), then its own recreationOffers (later entries win by ID -
+    /// RecreationBoard.FindDef). Built from template data on first read; never saved.
+    /// </summary>
+    [Newtonsoft.Json.JsonIgnore] public List<RecreationOfferDef> AllRecreationOffers
+    {
+        get
+        {
+            if (_allRecreationOffers == null)
+            {
+                var list = new List<RecreationOfferDef>();
+                var index = scr_System_Serializer.current?.MasterList?.MapPlans;
+                if (index != null && initializeFactions != null)
+                    foreach (var factionID in initializeFactions.Keys) list.AddRange(index.GetRecreationOffersAt(factionID));
+                if (recreationOffers != null) list.AddRange(recreationOffers);
+                _allRecreationOffers = list;
+            }
+            return _allRecreationOffers;
+        }
+    }
+
+    /// <summary>
     /// Declarative player placement/faction-assignment for this world, reusing NPCInit's FactionInit
     /// shape (Homefaction/TempHomefaction/Workfactions, first resolvable spawn room wins) but targeting
     /// the already-existing Player character instead of instantiating a new one - see

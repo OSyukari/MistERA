@@ -513,9 +513,21 @@ public class COM_Requirements
         public bool requireHasRecording = false;
         public bool requireNotRecording = false;
 
+        /// <summary>
+        /// Recreation offer def IDs (RecreationOfferDef - WorldPlan.AllRecreationOffers): valid only while a posted offer from one of them is under way
+        /// at the faction owning the room (RecreationBoard.GetUnderway) - e.g. watching fireworks during the festival hours.
+        /// Open to anyone in the room then; a booked visit only brings NPCs there.
+        /// </summary>
+        public List<string> requireActiveRecreationOffer = null;
+
 
         public void Read(RequireRoomExisting req)
         {
+            if (req.requireActiveRecreationOffer != null)
+            {
+                if (this.requireActiveRecreationOffer == null) this.requireActiveRecreationOffer = new List<string>();
+                this.requireActiveRecreationOffer.AddRange(req.requireActiveRecreationOffer);
+            }
             if (req.requiresFurniture != null)
             {
                 if (this.requiresFurniture == null) this.requiresFurniture = new List<RequireRoomExisting_FurnitureBase>();
@@ -542,6 +554,14 @@ public class COM_Requirements
             if (requireNotRecording && targetRoom.HasRecording)
             {
                 tooltip = "require no active recording in room";
+                return false;
+            }
+            if (requireActiveRecreationOffer != null && requireActiveRecreationOffer.Count > 0
+                && scr_System_CampaignManager.current.RecreationBoard.GetUnderway(requireActiveRecreationOffer, targetRoom.FactionOwner?.FactionID) == null)
+            {
+                var def = RecreationBoard.FindDef(requireActiveRecreationOffer[0]);
+                tooltip = LocalizeDictionary.QueryThenParse("ui_ap_PreEvaluate_RequireRoomExisting_activeOffer")
+                    .Replace("$activity$", def != null ? def.DisplayName : requireActiveRecreationOffer[0]);
                 return false;
             }
             tooltip = "";

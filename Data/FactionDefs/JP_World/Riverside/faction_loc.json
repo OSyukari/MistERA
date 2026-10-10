@@ -1,0 +1,22 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for faction.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_riverside_entrance": "Embankment Entrance",
+                "jp_riverside_promenade": "Riverside Promenade",
+
+                "jp_riverside_bench": "Riverside Bench",
+                "jp_riverside_viewing_spot": "Viewing Spot",
+
+                "jp_riverside_relax_displayName": "Riverside Stroll",
+                "jp_riverside_watch_fireworks_displayName": "Watch the Fireworks",
+
+                "jp_riverside_fireworks": "Fireworks Festival",
+                "jp_riverside_stroll": "Riverside Stroll"
+            }
+        }
+    }
+}

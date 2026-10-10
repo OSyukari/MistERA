@@ -606,6 +606,22 @@ public static class FactionUtility
     }
 
     /// <summary>
+    /// The player, characters managed by the player (home or temporary home is a player faction) and the player's family
+    /// (same permanent home faction) - whose status notices are forced on screen wherever the player is (ovulation -
+    /// ReproductionUtility.IsReproStatusVisibleToPlayer; new recreation bookings - RecreationUtility.DailyPlan).
+    /// </summary>
+    public static bool IsPlayerHousehold(Character_Trainable c)
+    {
+        if (c == null) return false;
+        var player = scr_System_CampaignManager.current.Player;
+        if (player == null) return false;
+        if (c.RefID == player.RefID) return true;
+        foreach (var f in c.FactionManager.HomeFactions) if (f != null && f.isPlayerFaction) return true;
+        var playerHome = player.FactionManager.Faction_Home;
+        return playerHome != null && c.FactionManager.Faction_Home == playerHome;
+    }
+
+    /// <summary>
     /// Travel-time buffer (minutes) added on top of the raw world-map travel time. Kept at 0 for now -
     /// a positive buffer caused NPCs to physically arrive a minute or more before the hour flips over,
     /// while currentJobFaction/currentHour (still the old hour) treats being at the destination as being
@@ -624,6 +640,8 @@ public static class FactionUtility
     /// Callers are responsible for the "don't interrupt if the current action is itself job-tagged (or
     /// otherwise non-interruptible)" half of the rule - this only answers "is next hour's destination
     /// worth leaving early for", not "is now a safe time to leave".
+    /// <br/>The destination is next hour's schedule FACTION, not its commands: a command-less schedule (hospital
+    /// visitor, board duty, a recreation booking driven by a behavior_job override) is still somewhere to be.
     /// </summary>
     public static bool ShouldTravelForNextHourSchedule(Character_Trainable c, I_IsJobGiver currentLocaleFaction, int currentHour, out Manageable nextFaction, out float travelMinutes)
     {
@@ -632,20 +650,21 @@ public static class FactionUtility
 
         int nextHour = (currentHour + 1) % 24;
         int daysLookahead = (currentHour + 1) / 24;
-        var nextSchedule = c.GetJobPost(nextHour, daysLookahead);
-        if (nextSchedule == null || !nextSchedule.isActive) return false;
+        nextFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour, daysLookahead);
+        if (nextFaction == null || (I_IsJobGiver)nextFaction == currentLocaleFaction) return false;
 
+        // same schedule carries into next hour - nothing to travel for. Same faction required too: every command-less
+        // schedule looks alike (empty commands, empty jobID), so two of them at different factions are not "the same"
+        var nextSchedule = c.GetJobPost(nextHour, daysLookahead);
         var currentSchedule = c.GetJobPost(currentHour);
-        if (currentSchedule != null && currentSchedule.jobID == nextSchedule.jobID
+        if (nextSchedule != null && currentSchedule != null
+            && c.FactionManager.CurrentJobScheduleFaction(currentHour) == nextFaction
+            && currentSchedule.jobID == nextSchedule.jobID
             && Utility.ListContainsLoose(currentSchedule.comIDs, nextSchedule.comIDs)
             && Utility.ListContainsLoose(nextSchedule.comIDs, currentSchedule.comIDs))
         {
-            // same schedule carries into next hour - nothing to travel for
             return false;
         }
-
-        nextFaction = c.FactionManager.CurrentJobScheduleFaction(nextHour, daysLookahead);
-        if (nextFaction == null || (I_IsJobGiver)nextFaction == currentLocaleFaction) return false;
 
         // Only worth pre-empting for actual world-map travel (typically 10-40+ minutes). Factions linked
         // directly within a map (isConnectedFaction) are a cheap sub-10-minute hop - not worth interrupting

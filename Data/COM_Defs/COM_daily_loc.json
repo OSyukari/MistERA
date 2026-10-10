@@ -9,7 +9,21 @@
                 "com_interaction_talk_begin_2_topic": "$doer.firstname$ started chatting with $receiver.firstname$ about $topic$ nonchalantly",
                 "com_interaction_talk_begin_3_topic": "$doer.firstname$ casually chatted with $receiver.firstname$ about $topic$",
                 "com_interaction_talk_displayName_1_topic": "Chat about $topic$",
-                "com_interaction_talk_displayName_2_topic": "Chat Together about $topic$"
+                "com_interaction_talk_displayName_2_topic": "Chat Together about $topic$",
+                "com_interaction_goto_schedule": "Player only. Travel to where your schedule for the current hour takes place.",
+                "com_interaction_goto_schedule_displayName": "Go to...",
+                "com_interaction_goto_schedule_work": "Go to Workplace",
+                "com_interaction_goto_schedule_booking": "Go to Appointment",
+                "com_interaction_goto_schedule_home": "Go Home",
+                "com_interaction_goto_schedule_noSchedule": "Nowhere to go for the current hour",
+                "com_interaction_goto_schedule_noPath": "Cannot find a route to $room$",
+                "com_interaction_goto_schedule_busy": "$name$ is busy with something that cannot be interrupted",
+                "com_interaction_goto_schedule_tooltip_target": "Destination: $room$",
+                "com_interaction_goto_schedule_tooltip_source": "Schedule: $source$ ($type$, $hour$:00)",
+                "com_interaction_goto_schedule_type_Work": "Work",
+                "com_interaction_goto_schedule_type_Booking": "Appointment",
+                "com_interaction_goto_schedule_type_Party": "Party Gathering",
+                "com_interaction_goto_schedule_type_Home": "Home"
             }
         }
     }

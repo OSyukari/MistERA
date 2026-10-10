@@ -1,5 +1,6 @@
 {
-    "_doc": "Host faction for the shopping mall's shared physical floor (floor_jp_shopping_street, see floor.json in this folder). Owns the floor and its entrance room; the 7 shop rooms on that same floor are reassigned to their own factions via each room's subfactionOwnerOverwrite.",
+    "_doc": "Host faction for the shopping mall's shared physical floor (floor_jp_shopping_street, see floor.json in this folder). Owns the floor and its entrance room; the 8 shop rooms on that same floor are reassigned to their own factions via each room's subfactionOwnerOverwrite.",
+    "_doc_staff": "Every shop shares one shift (membertype_jp_mall_clerk, below): MemberTypes are global and held per faction, so each shop's clerk holds it at that shop only. One all-day shift (10-22, every day) and one fallback front desk clerk per shop (fallbackWorkers) - not realistic shifts on purpose: the post isn't joinable by the player, and a single shift keeps it to 1 clerk per shop.",
 
     "MapPlans": {
         "factionInit": [
@@ -19,248 +20,6 @@
                 "managerBaseIDs": [""],
                 "workHours": [],
                 "workAssignment": []
-            },
-            {
-                "ID": "jp_mall_sportswear",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_sportswear",
-                "setPrivateRoomOwner": true,
-                "mainExit": {
-                    "roomID": "sportswear_room",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-                "salesInventory": [],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
-            },
-            {
-                "ID": "jp_mall_fastfood",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_fastfood",
-                "setPrivateRoomOwner": true,
-                "mainExit": {
-                    "roomID": "fastfood_counter",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-                "salesInventory": [],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
-            },
-            {
-                "ID": "jp_mall_electronics",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_electronics",
-                "setPrivateRoomOwner": true,
-                "mainExit": {
-                    "roomID": "electronics_room",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-                "salesInventory": [],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
-            },
-            {
-                "ID": "jp_mall_bookstore",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_bookstore",
-                "setPrivateRoomOwner": true,
-                "mainExit": {
-                    "roomID": "bookstore_room",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-                "salesInventory": [],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
-            },
-            {
-                "ID": "jp_mall_cinema",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_cinema",
-                "setPrivateRoomOwner": true,
-                "mainExit": {
-                    "roomID": "cinema_room",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-                "salesInventory": [],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
-            },
-            {
-                "ID": "jp_mall_clothing",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_clothing",
-                "setPrivateRoomOwner": true,
-                "mainExit": {
-                    "roomID": "clothing_room",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-                "salesInventory": [],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
-            },
-            {
-                "ID": "jp_mall_furniture",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_furniture",
-                "setPrivateRoomOwner": true,
-                "mainExit": {
-                    "roomID": "furniture_room",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "intentionally empty for now - see Plan_ErAV_OpeningScene.md §10.3",
-                "salesInventory": [
-                    {
-                        "matchByTags": [
-                            "furniture_packed",
-                            "rarity_common"
-                        ]
-                    }
-                ],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
-            },
-            {
-                "ID": "jp_mall_general_goods",
-                "z_rotation": 0.0,
-                "initializeFaction": "jp_mall_general_goods",
-                "setPrivateRoomOwner": false,
-                "mainExit": {
-                    "roomID": "generalgoods_room",
-                    "exitCost": 5
-                },
-                "floors": [],
-                "mealHours": [],
-                "salesCurrency": "currency_JPY",
-                "_comment_salesInventory": "copied from JP_CovenienceStore/Faction.json (SunMart)",
-                "salesInventory": [
-                    {
-                        "matchByTags": [
-                            "industrial",
-                            "rarity_common"
-                        ]
-                    },
-                    {
-                        "matchByTags": [
-                            "consumable",
-                            "industrial",
-                            "rarity_common"
-                        ]
-                    },
-                    {
-                        "matchByTags": [
-                            "videogame",
-                            "industrial",
-                            "rarity_common"
-                        ]
-                    },
-                    {
-                        "matchByTags": [
-                            "moviecd",
-                            "industrial",
-                            "rarity_common"
-                        ]
-                    },
-                    {
-                        "matchByTags": [
-                            "paperbook",
-                            "industrial",
-                            "rarity_common"
-                        ]
-                    },
-                    {
-                        "matchByID": "raw_rice",
-                        "nameOverwrite": "jp_convenience_store_rice_bag_5kg",
-                        "itemCount": 5000,
-                        "countOverride": true
-                    },
-                    {
-                        "matchByID": "currency_pyroxene",
-                        "nameOverwrite": "jp_convenience_store_pyroxene_4800",
-                        "itemCount": 4800,
-                        "countOverride": true
-                    },
-                    {
-                        "matchByID": "consumable_drug_sleepingpill",
-                        "nameOverwrite": "jp_convenience_store_otcsleepingpills_6pack",
-                        "itemCount": 6,
-                        "countOverride": true
-                    },
-                    {
-                        "matchByID": "consumable_alcohol_beer",
-                        "nameOverwrite": "jp_convenience_store_beer_6pack",
-                        "itemCount": 6,
-                        "countOverride": true
-                    }
-                ],
-                "workModules": [],
-                "managerBaseIDs": [
-                    ""
-                ],
-                "workHours": [],
-                "workAssignment": [],
-                "_comment_floors": "intentionally empty - this faction's room lives on the shared JP_ShoppingStreet floor (floor_jp_shopping_street), assigned via that room's factionOwnerOverwrite. See Manageable.AddToFaction(Floor_Instance,...)."
             }
         ],
         "floorPlans": [
@@ -290,7 +49,7 @@
                         "ID": "hallway_1",
                         "displayName": "map_hallway",
                         "offsetX": 571, "offsetY": 287,
-                        "connects": [ 
+                        "connects": [
                             { "ID": "jp_shopping_street_entrance", "cost": 1.0 }
                         ],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -299,7 +58,7 @@
                         "ID": "hallway_2",
                         "displayName": "map_hallway",
                         "offsetX": 995, "offsetY": 473,
-                        "connects": [ 
+                        "connects": [
                             { "ID": "hallway_1", "cost": 1.0 }
                         ],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -317,7 +76,7 @@
                         "ID": "hallway_4",
                         "displayName": "map_hallway",
                         "offsetX": 279, "offsetY": 399,
-                        "connects": [ 
+                        "connects": [
                             { "ID": "hallway_3", "cost": 1.0 },
                             { "ID": "hallway_1", "cost": 1.0 }],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -329,7 +88,7 @@
                         "offsetY": 495,
                         "subfactionOwnerOverwrite": "jp_mall_clothing",
                         "furnitureIDs":["furniture_marker_store_trade"],
-                        "connects": [ 
+                        "connects": [
                             { "ID": "hallway_3", "cost": 1.0 }],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
@@ -339,7 +98,9 @@
                         "offsetX": 940,
                         "offsetY": 286,
                         "subfactionOwnerOverwrite": "jp_mall_cinema",
-                        "connects": [     
+                        "_comment_furnitureIDs": "ticket counter - gives the cinema's clerks their work station (jp_mall_frontDesk)",
+                        "furnitureIDs":["furniture_marker_store_trade"],
+                        "connects": [
                             { "ID": "hallway_1", "cost": 1.0 },
                             { "ID": "hallway_2", "cost": 1.0 }                   ],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -350,8 +111,8 @@
                         "offsetX": 594,
                         "offsetY": 354,
                         "subfactionOwnerOverwrite": "jp_mall_fastfood",
-                        "connects": [   
-                            { "ID": "hallway_1", "cost": 1.0 }                    
+                        "connects": [
+                            { "ID": "hallway_1", "cost": 1.0 }
                         ],
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -362,7 +123,7 @@
                         "offsetX": 507,
                         "offsetY": 602,
                         "subfactionOwnerOverwrite": "jp_mall_electronics",
-                        "connects": [    
+                        "connects": [
                             { "ID": "hallway_3", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -373,7 +134,7 @@
                         "offsetX": 1037,
                         "offsetY": 564,
                         "subfactionOwnerOverwrite": "jp_mall_furniture",
-                        "connects": [    
+                        "connects": [
                             { "ID": "hallway_2", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -384,18 +145,18 @@
                         "offsetX": 647,
                         "offsetY": 656,
                         "subfactionOwnerOverwrite": "jp_mall_bookstore",
-                        "connects": [    
+                        "connects": [
                             { "ID": "hallway_3", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     },
                     {
-                        "ID": "generalgoods_room",
-                        "displayName": "jp_mall_general_goods_room",
+                        "ID": "hardware_room",
+                        "displayName": "jp_mall_hardware_room",
                         "offsetX": 245,
                         "offsetY": 294,
-                        "subfactionOwnerOverwrite": "jp_mall_general_goods",
-                        "connects": [     
+                        "subfactionOwnerOverwrite": "jp_mall_hardware",
+                        "connects": [
                             { "ID": "hallway_4", "cost": 1.0 }                     ],
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
@@ -406,12 +167,49 @@
                         "offsetX": 662,
                         "offsetY": 145,
                         "subfactionOwnerOverwrite": "jp_mall_sportswear",
-                        "connects": [    
+                        "connects": [
                             { "ID": "hallway_1", "cost": 1.0 }                    ],
                         "furnitureIDs":["furniture_marker_store_trade"],
                         "roomImagePath": "BGAssets/Generated/shopping_mall_01.webp"
                     }
                 ]
+            }
+        ],
+        "memberTypes":
+        [
+            {
+                "ID":"membertype_jp_mall_clerk",
+                "_comment":"The one mall shop post, shared by all shop factions: a single all-day shift (10-22, every day) covered by each shop's one fallback front desk clerk. Deliberately not realistic and not joinable (no part-time/full-time tag, in no shop's joinableMemberTypes) - one shift instead of several keeps it to 1 clerk per shop. Pay: 1150/h daily.",
+                "socialStandingKey":"membertype_jp_mall_clerk",
+                "isMember": true,
+                "isPrisoner": false,
+                "isManager": false,
+                "isHidden": false,
+                "canBeTransferred": true,
+                "canBeLiberated": false,
+                "canBeRescued": false,
+                "skipsJobDispatch": false,
+                "isPurgedOnPartyCleanup": false,
+                "isDisplayableInFactionUI": true,
+                "participatesInCombat": true,
+                "joinHandler": {
+                    "$type": "JoinHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "work_post_joinOption",
+                    "bindTargetKey": "worker"
+                },
+                "leaveHandler": {
+                    "$type": "LeaveHandler_WorkPost, Assembly-CSharp",
+                    "optionTextKey": "work_post_leaveOption",
+                    "bindTargetKey": "worker"
+                },
+                "workModule": {
+                    "jobPostID":"jp_mall_clerk",
+                    "workCommands":["jp_mall_frontDesk"],
+                    "activeHours":[10,11,12,13,14,15,16,17,18,19,20,21],
+                    "activeDays":[],
+                    "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1150" } ],
+                    "paymentCadence":"Daily"
+                }
             }
         ]
     },
@@ -426,7 +224,95 @@
                 "furnitureSize":2,
                 "value":50000,
                 "Tags":[],
-                "givesJob": [ { "comTags":["furniture","retailTrade"] } ]
+                "givesJob": [ { "comID":["jp_mall_frontDesk"] },
+                                { "comTags":["furniture","retailTrade"] } ]
+            }
+        ]
+    },
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"jp_mall_frontDesk",
+                "_comment":"Shop counter duty for every mall shop - copy of SunMart's jp_convenience_store_frontDesk, gated to the shared mall clerk tree at the doer's current job faction (so each shop's clerks work only their own counter).",
+                "ActionPackageClass":"ActionPackage_Interaction",
+                "displayName":"jp_mall_frontDesk_displayName_1",
+                "timeScale":30,
+                "comTags":["job","furniture","workModules","social"],
+                "requirements": {
+                    "requirement": {
+                        "treatReceiverAsDoer": true,
+                        "req_Doers": { "requireJobFaction": "CurrentActive", "requireMemberTypeScope": "JobFaction",
+                            "requireMemberType": ["membertype_jp_mall_clerk"] }
+                    }
+                },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1,
+                                "req_Doers": {
+                                    "cost_ST": 5,
+                                    "cost_EN": 10
+                                }
+                            }
+                        },
+                        "displayName": "jp_mall_frontDesk_displayName_1"
+                    },
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 2,
+                                "req_Doers": {
+                                    "cost_ST": 2,
+                                    "cost_EN": 5
+                                }
+                            }
+                        },
+                        "displayName": "jp_mall_frontDesk_displayName_2"
+                    }
+                ],
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 0
+                },
+                "DifficultyCheck":{ "baseD20Check":10 },
+                "description_ongoing":{
+                    "Entries":
+                    [
+                        {
+                            "keepLooking":true,
+                            "texts": [ "$doer.firstname$正在工作" ]
+                        }
+                    ]
+                },
+                "description_remove":{
+                    "Entries":[
+                        {
+                            "_comment":"",
+                            "keepLooking":true,
+                            "texts":[ "$doer.firstname$停下了工作" ]
+                        }
+                    ]
+                },
+                "description_after":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts":[ "$receiver.firstname$结束了工作" ]
+                        }
+                    ]
+                },
+                "description_begin":
+                {
+                    "Entries":[
+                        {
+                            "keepLooking":true,
+                            "texts": ["$doer.firstname$开始工作"]
+                        }
+                    ]
+                }
             }
         ]
     },
@@ -435,24 +321,15 @@
         "Entries": {
             "zh-cn": {
                 "jp_shopping_street_entrance": "商店街入口",
-                "jp_mall_sportswear_room": "运动用品店",
-                "jp_mall_general_goods_room": "百货杂货",
-                "jp_mall_fastfood_room": "快餐店",
-                "jp_mall_electronics_room": "电器店",
-                "jp_mall_clothing_room": "服装店",
-                "jp_mall_cinema_room": "电影院",
-                "jp_mall_bookstore_room": "书店",
-                "jp_mall_furniture":"家具店"
+
+                "jp_mall_frontDesk_displayName_1":"店面接待",
+                "jp_mall_frontDesk_displayName_2":"一同店面接待",
+
+                "membertype_jp_mall_clerk":"商场店员",
+                "jp_mall_clerk":"店员 营业时间"
             },
             "en-us": {
-                "jp_shopping_street_entrance": "Shopping Street Entrance",
-                "jp_mall_sportswear_room": "Sportswear Store",
-                "jp_mall_general_goods_room": "General Goods",
-                "jp_mall_fastfood_room": "Fast Food Counter",
-                "jp_mall_electronics_room": "Electronics Store",
-                "jp_mall_clothing_room": "Clothing Store",
-                "jp_mall_cinema_room": "Cinema",
-                "jp_mall_bookstore_room": "Bookstore"
+                "jp_shopping_street_entrance": "Shopping Street Entrance"
             }
         }
     }

@@ -1,0 +1,180 @@
+{
+    "_doc": "Local Shinto shrine. Minimal standalone faction (the world faction cannot own it - see JP_World/Riverside/faction.json _doc). No floor plan: rooms are hideOnMap with no offsetX/offsetY, walking minutes as door cost (hospital pattern). No members and no staff for now (a priest / miko staff could be added as shift MemberTypes later).",
+    "_doc_recreation": "Praying and drawing an omikuji are open to anyone any day (generic 'recreation', ungated). The new-year visit (MapPlans.recreationOffers below: recreation_offer_jp_shrine_hatsumode, 01-01..01-03) runs on the offer's own workModule: the default behavior tree keeps visitors on its workCommands (pray, omikuji) for the whole visit, it tags them shrine_worshipper, and it charges its entranceFee once per visit. No MemberType.",
+
+    "MapPlans": {
+        "factionInit": [
+            {
+                "ID": "jp_tourist_shrine",
+                "z_rotation": 0.0,
+                "initializeFaction": "jp_tourist_shrine",
+                "setPrivateRoomOwner": false,
+                "isRentingFloor": false,
+                "_comment_isRentingFloor": "the shrine owns its grounds",
+                "mainExit": { "roomID": "shrine_torii", "exitCost": 5 },
+                "floors": [
+                    { "ID": "floor_jp_tourist_shrine", "nameOverwrite": "jp_tourist_shrine" }
+                ],
+                "workModules": [],
+                "managerBaseIDs": [""],
+                "workHours": [],
+                "workAssignment": []
+            }
+        ],
+        "floorPlans": [
+            {
+                "ID": "floor_jp_tourist_shrine",
+                "_comment_imagePath": "PLACEHOLDER - must stay non-empty (Floor_Base.OnAfterDeserialize). Shrine/BG images to be provided.",
+                "imagePath": "Media_UI_Scenario_Background/BG_HyakkiyakoLanternSquare.jpg",
+                "isFloorPlan": false,
+                "floorWidth": 400.0,
+                "floorHeight": 400.0,
+                "resize": 1.0,
+                "mapExit": "shrine_torii",
+                "_comment_travel": "Approximate walking minutes per hop: torii -> worship hall up the approach 3, worship hall -> shrine office 1, torii -> shrine office 3.",
+                "rooms": [
+                    {
+                        "ID": "shrine_torii",
+                        "displayName": "jp_shrine_torii",
+                        "hideOnMap": true,
+                        "connects": [],
+                        "furnitureIDs": [],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_BambooForest.jpg",
+                        "roomImagePath_Night":"Media_UI_Scenario_Background/BG_BambooForest_Night.jpg"
+                    },
+                    {
+                        "ID": "shrine_haiden",
+                        "displayName": "jp_shrine_haiden",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "shrine_torii", "cost": 3.0 }
+                        ],
+                        "furnitureIDs": ["furniture_jp_shrine_offering_box"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_HyakkiyakoLanternSquare.jpg",
+                        "roomImagePath_Night":"Media_UI_Scenario_Background/BG_HyakkiyakoLanternSquare_Night.jpg"
+                    },
+                    {
+                        "ID": "shrine_shamusho",
+                        "displayName": "jp_shrine_shamusho",
+                        "hideOnMap": true,
+                        "connects": [
+                            { "ID": "shrine_haiden", "cost": 1.0 },
+                            { "ID": "shrine_torii", "cost": 3.0 }
+                        ],
+                        "furnitureIDs": ["furniture_jp_shrine_omikuji_stand"],
+                        "roomImagePath": "Media_UI_Scenario_Background/BG_HyakkiyakoMeetingroom.jpg",
+                        "roomImagePath_Night":"Media_UI_Scenario_Background/BG_HyakkiyakoMeetingroom_Night.jpg"
+                    }
+                ]
+            }
+        ],
+        "_comment_recreationOffers": "This venue's public activities (RecreationOfferDef) - every world that initializes jp_tourist_shrine collects them (WorldPlan.AllRecreationOffers). Template data, reloaded every game load, never saved. The new-year visit runs over 01-01..01-03, once per NPC thanks to minDaysBetween.",
+        "recreationOffers": [
+            {
+                "ID": "recreation_offer_jp_shrine_hatsumode",
+                "factionID": "jp_tourist_shrine",
+                "startHour": 10,
+                "hours": 2,
+                "_comment_workModule": "The default behavior tree sandboxes workCommands for the whole visit.",
+                "workModule": { "jobPostID": "jp_shrine_hatsumode", "workCommands": ["jp_shrine_pray", "jp_shrine_omikuji"] },
+                "_comment_entranceFee": "Offering money + omikuji: charged once per visit, on its first hour at the shrine, to the visitor's home, settled at the end of the day (Obligation_ActivityFee - player households only).",
+                "entranceFee": { "itemID": "currency_JPY", "itemCount": 1000 },
+                "_comment_Tags": "Actor tag while the visit is under way (Utility.GetActorTag).",
+                "Tags": ["shrine_worshipper"],
+                "weight": 3.0,
+                "participationChance": 0.7,
+                "daysInAdvance": 3,
+                "minDaysBetween": 3,
+                "_dates": ["01-01", "01-02", "01-03"]
+            }
+        ]
+    },
+    "Furnitures":
+    {
+        "list":
+        [
+            {
+                "ID": "furniture_jp_shrine_offering_box",
+                "displayName": "jp_shrine_offering_box",
+                "recipe": [],
+                "_comment": "saisen-bako in front of the worship hall - no actor cap (new-year crowds).",
+                "furnitureSize": 0,
+                "value": 100000,
+                "Tags": [],
+                "givesJob": [ { "comID": ["jp_shrine_pray"] } ]
+            },
+            {
+                "ID": "furniture_jp_shrine_omikuji_stand",
+                "displayName": "jp_shrine_omikuji_stand",
+                "recipe": [],
+                "furnitureSize": 0,
+                "value": 20000,
+                "Tags": [],
+                "givesJob": [ { "comID": ["jp_shrine_omikuji"] } ]
+            }
+        ]
+    },
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID": "jp_shrine_pray",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_shrine_pray_displayName",
+                "timeScale": 30,
+                "comTags": ["furniture", "recreation", "jp_tourist_shrine", "jp_shrine_visit"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "jp_shrine_pray_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$投下香油钱，摇响了铃铛"] } ] },
+                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$二礼二拍手，正双手合十默默祈愿"] } ] },
+                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$离开了拜殿前"] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$深深一礼，结束了参拜"] } ] }
+            },
+            {
+                "ID": "jp_shrine_omikuji",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "jp_shrine_omikuji_displayName",
+                "timeScale": 20,
+                "comTags": ["furniture", "recreation", "jp_tourist_shrine", "jp_shrine_visit"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { "doerCount": 1 } },
+                        "displayName": "jp_shrine_omikuji_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_begin": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$摇了摇签筒，抽出一支签"] } ] },
+                "description_ongoing": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$正仔细读着签文"] } ] },
+                "description_remove": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$收起了签纸"] } ] },
+                "description_after": { "Entries": [ { "keepLooking": true, "texts": ["$doer.firstname$把签纸系在了绳上"] } ] }
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "jp_shrine_torii": "参道",
+                "jp_shrine_haiden": "拜殿",
+                "jp_shrine_shamusho": "社务所",
+
+                "jp_shrine_offering_box": "香油钱箱",
+                "jp_shrine_omikuji_stand": "求签处",
+
+                "jp_shrine_pray_displayName": "参拜",
+                "jp_shrine_omikuji_displayName": "求签",
+
+                "jp_shrine_hatsumode": "初诣"
+            }
+        }
+    }
+}

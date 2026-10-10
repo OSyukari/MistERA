@@ -1,0 +1,14 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for DailyNeeds.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "OnDailyNeedsFailed": "Daily Needs - Unmet",
+                "OnDailyNeedsFailed_failed": "$factionName$ ran short of $needs$; $affected.name$'s needs went unmet today.",
+                "OnDailyNeedsFailed_trust_change": "$affected.name$'s trust toward $managers.name$ $trustChange$."
+            }
+        }
+    }
+}

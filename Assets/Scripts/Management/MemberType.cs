@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
+using UnityEngine;
 
 /// <summary>
 /// Faction has a list of preferred or unique membertypes defined
@@ -90,17 +91,158 @@ public class MemberType
 
     public string ID = "";
 
+    // ---------------- hierarchy ---------------- //
+    //
+    // A parent MemberType groups near-identical posts (e.g. the day/evening/night shifts of one job). Its children are
+    // defined inline (childMemberTypes) and flattened into Index_MapPlan.memberTypes on registration (RegisterChildren),
+    // so every child is looked up by ID like any other type. A parent is never held: joining as a parent joins as its
+    // first child (ResolveJoinTarget, applied by Manageable.AddToFaction / BuildJoinOptions).
+    //
+    // Inheritance: every serialized field defaults to null here (bools are bool? behind a getter), so after loading,
+    // null = "not written in the JSON". ApplyHierarchy then copies each such field from the parent; a field the child
+    // writes is the child's own (mirroring the parent is the child's job). Fields still null afterwards get their
+    // normal default (FillDefaults). ID and childMemberTypes are never inherited. Copied values are the parent's
+    // own instances (lists, handlers, behavior nodes) - template data, read-only.
+
+    /// <summary>Child MemberTypes defined inline under this one, in order; the first is the default post when joining as this type.</summary>
+    [JsonProperty("childMemberTypes")] List<MemberType> childDefinitions = null;
+
+    [JsonIgnore] public MemberType Parent { get; private set; } = null;
+    [JsonIgnore] public List<MemberType> Children { get; private set; } = new List<MemberType>();
+
+    /// <summary>The MemberType actually held when joining as this one: itself, or (a parent) its first child's target.</summary>
+    public MemberType ResolveJoinTarget() { return Children.Count > 0 ? Children[0].ResolveJoinTarget() : this; }
+
+    /// <summary>The other children of this type's parent (e.g. the other shifts of the same post); empty without a parent.</summary>
+    public List<MemberType> GetSiblings(bool includeSelf = false)
+    {
+        if (Parent == null) return includeSelf ? new List<MemberType>() { this } : new List<MemberType>();
+        return Parent.Children.FindAll(x => includeSelf || x != this);
+    }
+
+    /// <summary>The types that can actually be held under this one: itself without children, else its children's leaves, in authored order.</summary>
+    public List<MemberType> GetLeafDescendants()
+    {
+        var result = new List<MemberType>();
+        if (Children.Count == 0) result.Add(this);
+        else foreach (var child in Children) result.AddRange(child.GetLeafDescendants());
+        return result;
+    }
+
+    /// <summary>This type is id, or id is one of its ancestors - for ID lists/arguments that may name a parent.</summary>
+    public bool IsOrDescendsFrom(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return false;
+        for (var t = this; t != null; t = t.Parent) if (t.ID == id) return true;
+        return false;
+    }
+
+    /// <summary>type is non-null and IsOrDescendsFrom(id).</summary>
+    public static bool Matches(MemberType type, string id) { return type != null && type.IsOrDescendsFrom(id); }
+
+    /// <summary>
+    /// Links this type's inline children (childMemberTypes, in authored order) to it and hands each to register (e.g. adding
+    /// it to the flat Index_MapPlan.memberTypes list), then does the same for their own children, depth-first. A child
+    /// already linked (registered twice) is logged and skipped.
+    /// </summary>
+    public void RegisterChildren(Action<MemberType> register)
+    {
+        if (childDefinitions == null) return;
+        foreach (var child in childDefinitions)
+        {
+            if (child == null) continue;
+            if (child.Parent != null)
+            {
+                Debug.LogError($"MemberType [{ID}]: child [{child.ID}] is already registered under [{child.Parent.ID}]");
+                continue;
+            }
+            child.Parent = this;
+            Children.Add(child);
+            register(child);
+            child.RegisterChildren(register);
+        }
+    }
+
+    /// <summary>
+    /// Called once every MemberType - inline children included (RegisterChildren) - is registered
+    /// (Index_MapPlan.RegisterAllID): applies inheritance from the root down, then fills the remaining defaults.
+    /// </summary>
+    public static void ApplyHierarchy(List<MemberType> all)
+    {
+        foreach (var t in all) t?.ApplyInheritance();
+        foreach (var t in all) t?.FillDefaults();
+
+        // activeDays: empty = every day, 7 = weekly, 14 = two-week cycle (MapPlan.WorkModuleInit.activeDays)
+        foreach (var t in all)
+        {
+            int days = t?.workModule?.activeDays?.Count ?? 0;
+            if (days != 0 && days != 7 && days != 14)
+                Debug.LogWarning($"MemberType [{t.ID}]: workModule.activeDays has {days} entries - expected 7 (weekly) or 14 (two weeks); missing days count as off");
+        }
+    }
+
+    bool _inheritanceApplied = false;
+
+    /// <summary>Serialized fields (what Newtonsoft fills: public non-[JsonIgnore], or [JsonProperty]), minus the never-inherited ones.</summary>
+    static List<System.Reflection.FieldInfo> _inheritableFields = null;
+    static List<System.Reflection.FieldInfo> InheritableFields
+    {
+        get
+        {
+            if (_inheritableFields != null) return _inheritableFields;
+            _inheritableFields = new List<System.Reflection.FieldInfo>();
+            foreach (var f in typeof(MemberType).GetFields(System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic))
+            {
+                if (f.Name == nameof(ID) || f.Name == nameof(childDefinitions)) continue;
+                if (f.FieldType.IsValueType && Nullable.GetUnderlyingType(f.FieldType) == null) continue;
+                bool serialized = f.IsDefined(typeof(JsonPropertyAttribute), true) || (f.IsPublic && !f.IsDefined(typeof(JsonIgnoreAttribute), true));
+                if (serialized) _inheritableFields.Add(f);
+            }
+            return _inheritableFields;
+        }
+    }
+
+    void ApplyInheritance()
+    {
+        if (_inheritanceApplied) return;
+        _inheritanceApplied = true;
+        if (Parent == null) return;
+        Parent.ApplyInheritance();
+
+        // a child without its own relationship key groups under its parent's (the parent's fallback key, else its ID)
+        if (relationshipFallbackID == null)
+            relationshipFallbackID = string.IsNullOrEmpty(Parent.relationshipFallbackID) ? Parent.ID : Parent.relationshipFallbackID;
+
+        foreach (var f in InheritableFields)
+            if (f.GetValue(this) == null) f.SetValue(this, f.GetValue(Parent));
+    }
+
+    /// <summary>Fields still null after inheritance: "" for strings, empty for lists/dictionaries; objects stay null.</summary>
+    void FillDefaults()
+    {
+        foreach (var f in InheritableFields)
+        {
+            if (f.GetValue(this) != null) continue;
+            if (f.FieldType == typeof(string)) f.SetValue(this, "");
+            else if (f.FieldType.IsGenericType && (f.FieldType.GetGenericTypeDefinition() == typeof(List<>) || f.FieldType.GetGenericTypeDefinition() == typeof(Dictionary<,>)))
+                f.SetValue(this, Activator.CreateInstance(f.FieldType));
+        }
+    }
+
+    // ---------------- data ---------------- //
+
     /// <summary>
     /// Optional shared grouping key for MemberRelations lookups - see GetRelationshipWithType. Lets a
     /// set of otherwise-distinct MemberTypes (e.g. several school-specific student statuses) share a
     /// single pair of authored relations instead of needing one MemberRelations entry per combination.
     /// This ID is never itself expected to be a real, assignable MemberType - it only ever appears as
     /// a memberTypeA/memberTypeB value in MemberRelations entries. Leave empty for MemberTypes that
-    /// should only ever match on their own real ID.
+    /// should only ever match on their own real ID. A child that leaves it unset uses its parent's key
+    /// (the parent's own relationshipFallbackID, else the parent's ID) - see ApplyInheritance.
     /// </summary>
-    public string relationshipFallbackID = "";
+    public string relationshipFallbackID = null;
 
-    [JsonProperty] protected string displayNameKey = "";
+    [JsonProperty] protected string displayNameKey = null;
     string _cachedDisplayName = null;
     /// <summary>
     /// Cache the value
@@ -123,7 +265,7 @@ public class MemberType
     /// (replaces Manageable.GetCharaSocialStandingName's old isManager/isMember/isPrisoner/isVisitor if-chain).
     /// Leave empty for statuses that shouldn't produce a social-standing label (e.g. a "None"/no-faction type).
     /// </summary>
-    [JsonProperty] protected string socialStandingKey = "";
+    [JsonProperty] protected string socialStandingKey = null;
     string _cachedSocialStandingLabel = null;
     [JsonIgnore]
     public string SocialStandingLabel
@@ -140,7 +282,7 @@ public class MemberType
     /// Looked up as "{ID}_tooltip" in the localization dictionary, falling back to the JSON-authored
     /// tooltip field if no dictionary key is authored (mirrors Humanoid_Race.Tooltip).
     /// </summary>
-    [JsonProperty] protected string tooltip = "";
+    [JsonProperty] protected string tooltip = null;
     string _cachedTooltip = null;
     [JsonIgnore]
     public string Tooltip
@@ -152,54 +294,66 @@ public class MemberType
         }
     }
 
+    // bool flags: bool? backing field (null = not written in the JSON, inheritable) behind a read-only getter with the default
+
     /// <summary>
     /// Member will
     /// </summary>
-    public bool isMember = true;
+    [JsonProperty("isMember")] bool? _isMember = null;
+    [JsonIgnore] public bool isMember => _isMember ?? true;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    public bool isPrisoner = false;
+    [JsonProperty("isPrisoner")] bool? _isPrisoner = null;
+    [JsonIgnore] public bool isPrisoner => _isPrisoner ?? false;
 
     /// <summary>
     /// If true, character will have manage access. for now, should only concern player.
     /// </summary>
-    public bool isManager = false;
+    [JsonProperty("isManager")] bool? _isManager = null;
+    [JsonIgnore] public bool isManager => _isManager ?? false;
 
 
     /// <summary>
     /// If true, character will not show up in members list, and will not consume resource from faction (when daily update check)
     /// </summary>
-    public bool isHidden = false;
+    [JsonProperty("isHidden")] bool? _isHidden = null;
+    [JsonIgnore] public bool isHidden => _isHidden ?? false;
 
     // -- member transfer rules -- //
-    public bool canBeTransferred = true;
+    [JsonProperty("canBeTransferred")] bool? _canBeTransferred = null;
+    [JsonIgnore] public bool canBeTransferred => _canBeTransferred ?? true;
 
     /// <summary>
     /// Difference between liberate and rescue:
     /// rescue transfers chara to player faction (keep the character)
     /// liberate will remove the character afterward
     /// </summary>
-    public bool canBeLiberated = false;
-    public bool canBeRescued = false;
+    [JsonProperty("canBeLiberated")] bool? _canBeLiberated = null;
+    [JsonIgnore] public bool canBeLiberated => _canBeLiberated ?? false;
+    [JsonProperty("canBeRescued")] bool? _canBeRescued = null;
+    [JsonIgnore] public bool canBeRescued => _canBeRescued ?? false;
 
     // -- faction/UI/AI treatment rules, replacing old per-file switches on Manageable_GuestStatus -- //
 
     /// <summary>
     /// Replaces the old Manageable_Party.skipTryGetJob hardcoded "== Hidden" check.
     /// </summary>
-    public bool skipsJobDispatch = false;
+    [JsonProperty("skipsJobDispatch")] bool? _skipsJobDispatch = null;
+    [JsonIgnore] public bool skipsJobDispatch => _skipsJobDispatch ?? false;
 
     /// <summary>
     /// Replaces the old Manageable_Party.ExpeditionEnd hardcoded "== Prisoner || == Visitor" purge check.
     /// </summary>
-    public bool isPurgedOnPartyCleanup = false;
+    [JsonProperty("isPurgedOnPartyCleanup")] bool? _isPurgedOnPartyCleanup = null;
+    [JsonIgnore] public bool isPurgedOnPartyCleanup => _isPurgedOnPartyCleanup ?? false;
 
     /// <summary>
     /// Replaces the old Manageable_Party.ManagedChara_Displayables hardcoded "!= Hidden" filter.
     /// </summary>
-    public bool isDisplayableInFactionUI = true;
+    [JsonProperty("isDisplayableInFactionUI")] bool? _isDisplayableInFactionUI = null;
+    [JsonIgnore] public bool isDisplayableInFactionUI => _isDisplayableInFactionUI ?? true;
 
     /// <summary>
     /// Type-level default: does a member of this status take part in combat at all.
@@ -208,13 +362,14 @@ public class MemberType
     /// Replaces the old team-requirement combat-eligibility check (see Requirement_Manageable_Party.Validate)
     /// (status != Manager &amp;&amp; status != Member &amp;&amp; status != Visitor).
     /// </summary>
-    public bool participatesInCombat = true;
+    [JsonProperty("participatesInCombat")] bool? _participatesInCombat = null;
+    [JsonIgnore] public bool participatesInCombat => _participatesInCombat ?? true;
 
     /// <summary>
     /// For temporary status (such as rescued target during party expedition).
-    /// when reaching 
+    /// when reaching
     /// </summary>
-    public string memberConvertTarget = "";
+    public string memberConvertTarget = null;
 
     /// <summary>
     /// Key: FindJobNode.behaviorOverrideID
@@ -225,7 +380,7 @@ public class MemberType
     /// also it should remove the need to check prisoner status when looking for sleeping spots,
     /// as we can override the node by a custom node that only search for activity in prisons
     /// </summary>
-    public Dictionary<string, FindJobNode> behaviorOverrides = new Dictionary<string, FindJobNode>();
+    public Dictionary<string, FindJobNode> behaviorOverrides = null;
 
     /// <summary>
     /// Optional single work shift baked directly into this status, e.g. "morning clerk" or "student".
@@ -252,6 +407,13 @@ public class MemberType
     public MembershipFeeInit membershipFee = null;
 
     /// <summary>
+    /// Optional: makes this a recreation membership (gym, salon...) held through Character_Factions.RecreationFactions,
+    /// whose visits RecreationUtility books day by day instead of a fixed workModule schedule - see RecreationSpec.
+    /// Leave null for every other status.
+    /// </summary>
+    public RecreationSpec recreation = null;
+
+    /// <summary>
     /// If true (the default), the Schedule UI additionally lets the player control, per hour, whether
     /// a character holding this status is sandboxed (present) at this faction - see
     /// Manageable.HourlySchedule.Sandbox and Manageable.HasCustomOverride. Defaults on so every
@@ -259,7 +421,8 @@ public class MemberType
     /// whose scheduling must stay fully hardcoded (e.g. something like a fixed lesson dispatch) and
     /// should never be player-editable.
     /// </summary>
-    public bool allowCustomOverride = true;
+    [JsonProperty("allowCustomOverride")] bool? _allowCustomOverride = null;
+    [JsonIgnore] public bool allowCustomOverride => _allowCustomOverride ?? true;
 
     /// <summary>
     /// If true, a character entering this status in a faction is added to that faction's mutable
@@ -269,14 +432,15 @@ public class MemberType
     /// hospitalized patient who shouldn't leave for their usual job. Only seeds the list: the faction
     /// can later lift/restore it per character via Manageable.SetAllowWork. Default false.
     /// </summary>
-    public bool initiallyForbidWork = false;
+    [JsonProperty("initiallyForbidWork")] bool? _initiallyForbidWork = null;
+    [JsonIgnore] public bool initiallyForbidWork => _initiallyForbidWork ?? false;
 
     /// <summary>
     /// MemberType IDs (of the same faction) a member of this status may never ask to leave a room, whatever the reason -
     /// see Manageable.CanMemberRequestLeave / RequestLeaveUtility.CanRequestLeave. E.g. a hospital patient can't send the
-    /// doctors and nurses out.
+    /// doctors and nurses out. A parent ID covers all its children (IsOrDescendsFrom).
     /// </summary>
-    public List<string> cannotRequestLeaveMemberTypes = new List<string>();
+    public List<string> cannotRequestLeaveMemberTypes = null;
 
     /// <summary>
     /// Optional data-authored join logic ("$type" object, e.g. JoinHandler_TempHomeWithRoom) consulted by
@@ -293,11 +457,12 @@ public class MemberType
     public MemberLeaveHandler leaveHandler = null;
 
     /// <summary>
-    /// Optional tags contributed by this member status (e.g. "prisoner", "clergy"), merged into the
-    /// actor's tag set (Utility.GetActorTag) when this is the character's current MemberType in their
-    /// active faction or active party. Empty by default.
+    /// Optional tags of this member status (e.g. "prisoner", "clergy"). Merged into the actor's tag set
+    /// (Utility.GetActorTag) when this is the character's current MemberType in their active faction or
+    /// active party, and matched by the join-by-tag search (FactionJoinUtility.BuildReachableJoinOptionsByTag,
+    /// e.g. "memberType_hospital_patient"). Empty by default.
     /// </summary>
-    public List<string> portraitTags = new List<string>();
+    public List<string> Tags = new List<string>();
 
     /// <summary>
     /// Additional PersonalityAcceptanceMods contributed by this member status, checked and applied
@@ -306,7 +471,7 @@ public class MemberType
     /// their active faction or active party. Lets a faction/job post grant reactions shared by every
     /// member holding this status, instead of duplicating them per-Character_Personality. Empty by default.
     /// </summary>
-    public List<PersonalityAcceptanceMod> AcceptanceMods = new List<PersonalityAcceptanceMod>();
+    public List<PersonalityAcceptanceMod> AcceptanceMods = null;
 
     /// <summary>
     /// Looks up a behavior override for the given FindJobNode.behaviorOverrideID, or null if this
@@ -365,6 +530,15 @@ public class MembershipFeeInit
 {
     public ItemEntry feeAmount = new ItemEntry();
     public PaymentCadence cadence = PaymentCadence.Monthly;
+
+    /// <summary>
+    /// Optional pay-per-hour-stayed charge (e.g. a beauty salon): every hour the member spends inside the provider's
+    /// space adds this to their home's Obligation_MembershipFee with the provider (Manageable.OnHourUpdate ->
+    /// Obligation_MembershipFee.AccrueUsage), billed with feeAmount at this cadence. A failed payment suspends the
+    /// obligation like an unpaid flat fee: no new visits get booked there until it is paid (Character_Trainable.CanWorkFor).
+    /// Null / zero = none.
+    /// </summary>
+    public ItemEntry hourlyFee = null;
 
     /// <summary>Fired via TradeManager.FireObligationEvent (see Obligation_MembershipFee.HandlePaymentEvent)
     /// when a fee under this MemberType resolves successfully/fails, if set. Non-empty by default (unlike

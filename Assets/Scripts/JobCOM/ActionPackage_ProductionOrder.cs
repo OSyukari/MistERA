@@ -112,7 +112,7 @@ public class ActionPackage_ProductionOrder : ActionPackage
         return base.Evaluate();
     }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         ActionPackage_ProductionOrder copy = new ActionPackage_ProductionOrder(order, jobFurn, targetCOM, doerRefs, receiverRefs, masterRef);
         copy.SetVariantID(this.validVariant);

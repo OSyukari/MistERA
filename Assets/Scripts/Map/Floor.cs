@@ -267,7 +267,11 @@ public class Floor_Instance : IDisposable, I_Disposable
             foreach (var chara in new List<Character_Trainable>(ri.RoomChara))
                 scr_System_CampaignManager.current.Map.MoveCharaTo(chara, destination, true);
 
-            owner?.RemoveManagedRoom(ri.RefID);
+            // a subfactionOwnerOverwrite room (e.g. a mall shop) is also kept in its host's managedRoomRefs
+            // (Manageable.AddToFaction) - drop it from the whole parent chain, not just the owning subfaction
+            var visited = new HashSet<Manageable>();
+            for (var m = owner; m != null && visited.Add(m); m = (m as Manageable_Subfaction)?.Parent)
+                m.RemoveManagedRoom(ri.RefID);
             rooms.Remove(ri);
             scr_System_CampaignManager.current.UnregisterRoom(ri.RefID);
 

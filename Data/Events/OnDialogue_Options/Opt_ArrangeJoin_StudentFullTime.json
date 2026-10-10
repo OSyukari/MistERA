@@ -1,0 +1,136 @@
+{
+    "_doc": "Arrange (or withdraw from) full-time school enrollment - one of the tag-driven arrange events, see Opt_ArrangeJoin.json for the shared flow and keys.",
+    "Events": {
+        "list": [
+            {
+                "ID": "Opt_ArrangeJoin_StudentFullTime",
+                "_comment": "Arrange (or withdraw from) full-time school enrollment for one of the player's own people (sharesHomeFaction). Searches every reachable faction listing a 'memberType_student_fullTime' membertype in its joinableMemberTypes, labelled '<faction>: <membertype>'. Join/leave logic: JoinHandler_WorkPost / LeaveHandler_WorkPost on the membertype (enrollment is a work faction).",
+                "allowDuplicate": false,
+                "trigger": "OnDialogue_Options",
+                "UISpec": { "displayMode": "AVG" },
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] },
+                        { "parameters": [ "isPlayer" ] }
+                    ]
+                },
+                "TargetValidators": [
+                    {
+                        "refkeys": [ "worker" ],
+                        "baseScope": "CurrentTarget",
+                        "chara_conditions": [
+                            { "parameters": [ "exists" ] },
+                            { "parameters": [ "excludePlayer" ] },
+                            { "parameters": [ "sharesHomeFaction" ] },
+                            { "parameters": [ "canArrangeJoinByTag", "memberType_student_fullTime" ] }
+                        ],
+                        "minTargetCount": 1
+                    }
+                ],
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "_comment": "Join or leave: enrolled somewhere with leave options -> leave branch, else join.",
+                        "options": [
+                            {
+                                "option": "_held",
+                                "Results": [
+                                    { "Type": "LeaveHeldFactionsByTag", "arguments": [ "leaveOptions", "worker", "memberType_student_fullTime", "heldMemberships" ] },
+                                    { "Type": "ExistStoredOptions", "arguments": [ "leaveOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "leave_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_join",
+                                "Results": [
+                                    { "Type": "JoinReachableFactionsByTag", "arguments": [ "arrangeOptions", "worker", "memberType_student_fullTime" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrange_ask" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "leave_ask",
+                        "_comment": "Picking a loaded leave option runs its leave callback, then (loadOptionsResults) goes on to rejoin.",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "question": "Opt_ArrangeJoin_StudentFullTime_leave_question",
+                        "loadOptionsKey": "leaveOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "rejoin" ] } ],
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_Work_leave_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "rejoin",
+                        "_comment": "After withdrawing: rebuild the school options. None (e.g. nothing reachable right now) -> end; the player can run the option again.",
+                        "options": [
+                            {
+                                "option": "_has_options",
+                                "Results": [
+                                    { "Type": "JoinReachableFactionsByTag", "arguments": [ "arrangeOptions", "worker", "memberType_student_fullTime" ] },
+                                    { "Type": "ExistStoredOptions", "arguments": [ "arrangeOptions" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrange_ask" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no_options",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "arrange_ask",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "question": "Opt_ArrangeJoin_StudentFullTime_question",
+                        "loadOptionsKey": "arrangeOptions",
+                        "loadOptionsResults": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_done" ] } ],
+                        "options": [
+                            {
+                                "option": "Opt_ArrangeJoin_cancel",
+                                "isDefaultCancel": true,
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "arrange_cancel" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "arrange_done",
+                        "_comment": "Reached by picking a loaded option (the question's loadOptionsResults jump here).",
+                        "UISpec": { "portraitRefKey": "worker" },
+                        "line": "Opt_ArrangeJoin_StudentFullTime_done"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "_comment": "What the picked option's join callback changed (AppendFactionChange: who is now what).",
+                        "line": "$factionChangeString$",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "arrange_cancel",
+                        "line": "",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "Opt_ArrangeJoin_StudentFullTime": "安排入学",
+                "Opt_ArrangeJoin_StudentFullTime_question": "要让$worker.name$去哪里上学？",
+                "Opt_ArrangeJoin_StudentFullTime_leave_question": "$worker.name$已经是$heldMemberships$了。要让$worker.name$退学吗？",
+                "Opt_ArrangeJoin_StudentFullTime_done": "已经为$worker.name$办好了入学手续。",
+                "student_post_leaveOption": "让$name$退学"
+            }
+        }
+    }
+}

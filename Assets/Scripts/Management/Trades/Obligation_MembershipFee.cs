@@ -21,21 +21,52 @@ public class Obligation_MembershipFee : RecurringObligation
 {
     protected override bool ArrearsAccumulate { get { return false; } }
 
-    protected override ItemEntry GetCycleAccrual(Manageable owner)
+    /// <summary>
+    /// Pay-per-hour-stayed charges (MembershipFeeInit.hourlyFee) accrued since the last billed cycle - see AccrueUsage.
+    /// Billed with the flat fees and reset when a cycle accrues; while the obligation is suspended (freeze-type, no new
+    /// accrual) it keeps growing and is billed once the backlog is cleared.
+    /// </summary>
+    [JsonProperty] protected ItemEntry pendingUsage = new ItemEntry();
+
+    /// <summary>Adds one hour of usage (hourlyFee) - Manageable.OnHourUpdate, for each hour a member spent at TargetFaction.</summary>
+    public void AccrueUsage(ItemEntry hourlyFee)
+    {
+        if (hourlyFee == null || string.IsNullOrEmpty(hourlyFee.itemID) || hourlyFee.itemCount <= 0) return;
+        if (pendingUsage == null) pendingUsage = new ItemEntry();
+        if (string.IsNullOrEmpty(pendingUsage.itemID))
+        {
+            pendingUsage.itemID = hourlyFee.itemID;
+            pendingUsage.itemNameOverwrite = hourlyFee.itemNameOverwrite;
+            pendingUsage.itemCountOverride = hourlyFee.itemCountOverride;
+        }
+        pendingUsage.itemCount += hourlyFee.itemCount;
+    }
+
+    /// <summary>This cycle's charge as it stands: the flat fees plus the usage accrued so far. Does not consume the usage.</summary>
+    ItemEntry PeekCycleAccrual(Manageable owner)
     {
         ItemEntry total = null;
-        foreach (var entry in GetRelevantFees(owner)) total = AddInto(total, entry.fee);
+        foreach (var entry in GetRelevantFees(owner))
+            if (entry.fee != null && entry.fee.itemCount > 0) total = AddInto(total, entry.fee);
+        if (pendingUsage != null && !string.IsNullOrEmpty(pendingUsage.itemID) && pendingUsage.itemCount > 0) total = AddInto(total, pendingUsage);
+        return total;
+    }
+
+    protected override ItemEntry GetCycleAccrual(Manageable owner)
+    {
+        var total = PeekCycleAccrual(owner);
+        if (pendingUsage != null) pendingUsage.itemCount = 0;   // billed now
         return total;
     }
 
     /// <summary>
     /// owed alone understates what's actually pending, since the fee only actually resolves once per
     /// cadence - lets the "due" preview stay accurate day-to-day (e.g. reflecting a membership picked up
-    /// mid-cycle) instead of only refreshing on the cadence's own paydate.
+    /// mid-cycle, or hours already stayed) instead of only refreshing on the cadence's own paydate.
     /// </summary>
     public override ItemEntry GetProjectedDue(Manageable owner)
     {
-        var accrual = GetCycleAccrual(owner);
+        var accrual = PeekCycleAccrual(owner);
         if (accrual == null) return owed;
 
         var projected = new ItemEntry(owed);
@@ -88,8 +119,12 @@ public class Obligation_MembershipFee : RecurringObligation
             if (status == null || status.membershipFee == null) continue;
             if (status.membershipFee.cadence != this.cadence) continue;
 
+            // a pay-per-hour membership (hourlyFee) counts too, even without a flat fee - for its events/name
             var fee = status.membershipFee.feeAmount;
-            if (fee == null || fee.itemCount <= 0) continue;
+            var hourly = status.membershipFee.hourlyFee;
+            bool hasFlat = fee != null && fee.itemCount > 0;
+            bool hasHourly = hourly != null && hourly.itemCount > 0;
+            if (!hasFlat && !hasHourly) continue;
 
             yield return (c, fee, status.membershipFee);
         }
@@ -133,7 +168,9 @@ public class Obligation_MembershipFee : RecurringObligation
                 ? LocalizeDictionary.QueryThenParse(entry.def.membershipFeeName)
                 : LocalizeDictionary.QueryThenParse("obligation_membershipfee_generic_name");
 
-            FireObligationEventBothSides(manager, owner, eventID, "", "payee", entry.fee, available, resumed, entry.chara, feeName, interrupted: interrupted);
+            // a pay-per-hour membership has no flat fee of its own to show - show the cycle's charge instead
+            var shown = entry.fee != null && entry.fee.itemCount > 0 ? entry.fee : attempt;
+            FireObligationEventBothSides(manager, owner, eventID, "", "payee", shown, available, resumed, entry.chara, feeName, interrupted: interrupted);
         }
     }
 

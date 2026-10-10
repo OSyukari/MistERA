@@ -1,0 +1,69 @@
+{
+    "_doc": "The gathering command of Job_Activity (see Plan_ActivityJobs): while an activity job gathers its participants in the gather room, each waiting participant runs this COM there, in a package of their own (ActionPackage_ActivityWait - not joinable; its duration is the job's remaining wait, up to T+30). The player gets the same command as a button (Job_Activity.MakePlayerWaitPackage) that advances time while they wait; joinAlone keeps their target and teammates out of it. When the activity can launch, the job interrupts every waiting package (the player's too - the update loop stops advancing time); one that runs out first is simply issued again.",
+    "COMs":
+    {
+        "list":
+        [
+            {
+                "ID":"recreation_activity_wait",
+                "ActionPackageClass":"ActionPackage_ActivityWait",
+                "displayName":"recreation_activity_wait_displayName",
+                "_comment_timeScale":"fallback only - ActionPackage_ActivityWait takes its duration from the job (Job_Activity.WaitMinutesLeft, up to T+30)",
+                "timeScale":30,
+                "comTags":["recreation","activity_wait"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { } },
+                        "displayName":"recreation_activity_wait_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_wait_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_wait_ongoing"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_wait_remove"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_wait_after"] } ] }
+            },
+            {
+                "_comment":"The player's late-join command once the activity has launched (Job_Activity.JoinCOMID, button from MakePlayerJoinPackage): a 1-minute ActionPackage_ActivityWait, valid only after the launch; starting it joins late (Job_Activity.AddActor -> JoinLate: entrance fee, targets), then the player is released.",
+                "ID":"recreation_activity_join",
+                "ActionPackageClass":"ActionPackage_ActivityWait",
+                "displayName":"recreation_activity_join_displayName",
+                "timeScale":1,
+                "comTags":["recreation","activity_join"],
+                "requirements": { "requirement": { "treatReceiverAsDoer": true, "joinAlone": true } },
+                "variants": [
+                    {
+                        "requirements": { "requirement": { } },
+                        "displayName":"recreation_activity_join_displayName"
+                    }
+                ],
+                "AcceptanceCheck": { "baseAcceptanceValue": 10 },
+                "DifficultyCheck":{ "baseD20Check":0 },
+                "description_begin":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_begin"] } ] },
+                "description_ongoing":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_begin"] } ] },
+                "description_remove":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_begin"] } ] },
+                "description_after":{ "Entries":[ { "keepLooking":true, "texts":["recreation_activity_join_begin"] } ] }
+            }
+        ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+                "recreation_activity_wait_displayName": "等待活动开始",
+                "recreation_activity_wait_begin": "$doer.firstname$加入活动，等待开始",
+                "recreation_activity_wait_ongoing": "$doer.firstname$正在等待活动开始",
+                "recreation_activity_wait_remove": "$doer.firstname$不再等待活动",
+                "recreation_activity_wait_after": "$doer.firstname$结束了等候",
+                "recreation_activity_join_displayName": "加入活动",
+                "recreation_activity_wait_playerDisplayName": "加入活动",
+                "recreation_activity_join_tooltip": "将加入：$activity$\n$detail$",
+                "recreation_activity_join_begin": "$doer.firstname$赶上了已经开始的活动"
+            }
+        }
+    }
+}

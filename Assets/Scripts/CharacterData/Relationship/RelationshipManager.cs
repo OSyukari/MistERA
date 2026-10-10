@@ -253,6 +253,22 @@ public class RelationshipManager
         foreach (var i in this.relationships.Values) i.NotifyFactionChange();
     }
 
+    /// <summary>
+    /// The characters this one has a relationship with of one of typeIDs (Character_Relationship.HasRelationshipType;
+    /// null/empty = any), unsorted - TargetScope.SelfRelationships.
+    /// </summary>
+    public List<Character_Trainable> GetRelationTargets(ICollection<string> typeIDs)
+    {
+        var result = new List<Character_Trainable>();
+        foreach (var rel in relationships.Values)
+        {
+            if (rel == null || !rel.displayable || !rel.HasRelationshipType(typeIDs)) continue;
+            var target = rel.Target;
+            if (target != null) result.Add(target);
+        }
+        return result;
+    }
+
     [JsonIgnore]
     public List<Character_Relationship> Relationships
     {
@@ -976,6 +992,13 @@ public class RelationshipManager
             }
         }
         return null;
+    }
+
+    /// <summary>The relationship with c if one exists, else null - unlike FindRelationshipWith, never creates one (e.g. for ranking many candidates).</summary>
+    public Character_Relationship PeekRelationshipWith(Character_Trainable c)
+    {
+        if (c == null || c.RefID < 0) return null;
+        return relationships.TryGetValue(c.RefID, out var rel) ? rel : null;
     }
 
     public Character_Relationship FindRelationshipWith(int charaRef)

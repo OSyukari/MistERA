@@ -83,7 +83,7 @@ public class ActionPackage_TeleportTo : ActionPackage
     }
     //[JsonIgnore] public override string DisplayName { get { return targetCOM.DisplayName(COMVariantID); } }
 
-    public override ActionPackage Copy()
+    protected override ActionPackage CopyPackage()
     {
         return this;
     }

@@ -14,7 +14,7 @@
         "worldHeight":400,
         "worldSizeMult":4,
 
-        "travelDistancePerMinute":6.67,
+        "travelDistancePerMinute":12.67,
 
         "playerInit": {
             "initID": "init_erav_player",
@@ -36,7 +36,10 @@
             "jp_shopping_street":"jp_shopping_street",
             "jp_high_school":"jp_high_school",
             "CoffinAnL_Household":"CoffinAnL_Household",
-            "jp_hospital":"jp_hospital"
+            "jp_hospital":"jp_hospital",
+            "jp_sports_center":"jp_sports_center",
+            "jp_tourist_riverside":"jp_tourist_riverside",
+            "jp_tourist_shrine":"jp_tourist_shrine"
         },
         "doors":
         [
@@ -118,13 +121,11 @@
                 "floorExitID":"arcade_entrance"
             },
             {
-                "_comment":"placeholder - no factionInit yet",
                 "offset_x":620, "offset_y":275,
-                "factionID":"jp_gym",
-                "floorExitID":"gym_entrance"
+                "factionID":"jp_sports_center",
+                "floorExitID":"sports_club_lobby"
             },
             {
-                "_comment":"placeholder - no factionInit yet",
                 "offset_x":540, "offset_y":275,
                 "factionID":"jp_beauty_salon",
                 "floorExitID":"beautysalon_entrance"
@@ -160,13 +161,11 @@
                 "floorExitID":"station_gate"
             },
             {
-                "_comment":"placeholder - no factionInit yet",
                 "offset_x":350, "offset_y":240,
                 "factionID":"jp_tourist_riverside",
                 "floorExitID":"riverside_entrance"
             },
             {
-                "_comment":"placeholder - no factionInit yet",
                 "offset_x":200, "offset_y":310,
                 "factionID":"jp_tourist_shrine",
                 "floorExitID":"shrine_torii"
@@ -254,6 +253,36 @@
                 "TempHomefaction":null,
                 "Workfactions":[]
             }
+        ],
+        "_comment_holidayDefs": "One date resolves to at most ONE holiday (first entry wins on overlap) - multi-day festivals whose phases differ are split into separate entries sharing a theme tag. national_holiday = 放假, observance = 不放假. Rules: fixed (month/day), equinox (spring/autumn, computed), silverWeek (occurs only in years where respect-for-aged monday + bridge day + autumn equinox form one Mon-Wed run).",
+        "holidayDefs":
+        [
+            { "ID":"holiday_jp_ganjitsu",        "tags":["newyear", "national_holiday"],     "rule":{ "type":"fixed", "month":1,  "day":1 } },
+            { "ID":"holiday_jp_shogatsu_d2",     "tags":["newyear", "national_holiday"],     "rule":{ "type":"fixed", "month":1,  "day":2 } },
+            { "ID":"holiday_jp_shogatsu_d3",     "tags":["newyear", "national_holiday"],     "rule":{ "type":"fixed", "month":1,  "day":3 } },
+            { "ID":"holiday_jp_valentine",       "tags":["valentine", "observance"],         "rule":{ "type":"fixed", "month":2,  "day":14 } },
+            { "ID":"holiday_jp_white_day",       "tags":["whiteday", "observance"],          "rule":{ "type":"fixed", "month":3,  "day":14 } },
+            { "ID":"holiday_jp_spring_equinox",  "tags":["national_holiday"],                "rule":{ "type":"equinox", "equinox":"spring" } },
+            { "ID":"holiday_jp_gw_start",        "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":4,  "day":29 } },
+            { "ID":"holiday_jp_gw_mid1",         "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":5,  "day":3 } },
+            { "ID":"holiday_jp_gw_mid2",         "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":5,  "day":4 } },
+            { "ID":"holiday_jp_gw_end",          "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":5,  "day":5 } },
+            { "ID":"holiday_jp_tanabata",        "tags":["tanabata", "observance"],          "rule":{ "type":"fixed", "month":7,  "day":7 } },
+            { "ID":"holiday_jp_obon_mukaebi",    "tags":["obon", "national_holiday"],        "rule":{ "type":"fixed", "month":8,  "day":13 } },
+            { "ID":"holiday_jp_obon_okuribi",    "tags":["obon", "national_holiday"],        "rule":{ "type":"fixed", "month":8,  "day":14 }, "durationDays":2 },
+            { "ID":"holiday_jp_silverweek",      "tags":["silverweek", "national_holiday"],  "rule":{ "type":"silverWeek" }, "durationDays":3 },
+            { "ID":"holiday_jp_christmas_eve",   "tags":["christmas", "observance"],         "rule":{ "type":"fixed", "month":12, "day":24 } },
+            { "ID":"holiday_jp_christmas",       "tags":["christmas", "observance"],         "rule":{ "type":"fixed", "month":12, "day":25 } },
+            { "ID":"holiday_jp_omisoka",         "tags":["newyear_eve", "observance"],       "rule":{ "type":"fixed", "month":12, "day":31 } }
+        ],
+        "_comment_seasonDefs": "Seasons are independent from holidays: a date resolves to at most one holiday but any number of seasons. Ranges may wrap around the year end (start month/day > end month/day).",
+        "seasonDefs":
+        [
+            { "ID":"season_spring", "tags":["spring"],          "ranges":[{ "startMonth":3,  "startDay":1,  "endMonth":5,  "endDay":31 }] },
+            { "ID":"season_summer", "tags":["summer"],          "ranges":[{ "startMonth":6,  "startDay":1,  "endMonth":8,  "endDay":31 }] },
+            { "ID":"season_autumn", "tags":["autumn"],          "ranges":[{ "startMonth":9,  "startDay":1,  "endMonth":11, "endDay":30 }] },
+            { "ID":"season_winter", "tags":["winter"],          "ranges":[{ "startMonth":12, "startDay":1,  "endMonth":2,  "endDay":28 }] },
+            { "ID":"season_hanabi", "tags":["hanabi", "summer_festival"], "ranges":[{ "startMonth":7, "startDay":1, "endMonth":8, "endDay":31 }] }
         ]
     }
 ],
@@ -325,7 +354,7 @@
                 "jp_karaoke": "卡拉OK",
                 "jp_maid_cafe": "女仆咖啡厅",
                 "jp_arcade": "游戏中心",
-                "jp_gym": "健身房",
+                "jp_sports_center": "体育中心",
                 "jp_beauty_salon": "美容院",
                 "jp_pet_shop": "宠物店",
                 "jp_casino": "赌场",
@@ -334,7 +363,62 @@
                 "jp_tourist_riverside": "河畔",
                 "jp_tourist_shrine": "神社",
                 "jp_farm": "农场",
-                "jp_ranch": "牧场"
+                "jp_ranch": "牧场",
+
+                "holiday_jp_ganjitsu": "元日",
+                "holiday_jp_shogatsu_d2": "正月第二日",
+                "holiday_jp_shogatsu_d3": "正月第三日",
+                "holiday_jp_valentine": "情人节",
+                "holiday_jp_white_day": "白色情人节",
+                "holiday_jp_spring_equinox": "春分之日",
+                "holiday_jp_gw_start": "昭和之日",
+                "holiday_jp_gw_mid1": "宪法纪念日",
+                "holiday_jp_gw_mid2": "绿之日",
+                "holiday_jp_gw_end": "儿童之日",
+                "holiday_jp_tanabata": "七夕",
+                "holiday_jp_obon_mukaebi": "盂兰盆·迎魂",
+                "holiday_jp_obon_okuribi": "盂兰盆·送魂",
+                "holiday_jp_silverweek": "银周",
+                "holiday_jp_christmas_eve": "平安夜",
+                "holiday_jp_christmas": "圣诞节",
+                "holiday_jp_omisoka": "大晦日",
+
+                "season_spring": "春季",
+                "season_summer": "夏季",
+                "season_autumn": "秋季",
+                "season_winter": "冬季",
+                "season_hanabi": "花火大会季",
+
+                "ui_holiday_today": "今天是 $name$",
+                "ui_season_start": "$name$开始了",
+                "ui_season_end": "$name$结束了",
+
+                "ui_new_year": "新的一年开始了",
+                "ui_new_month": "新的一月开始了——$month$月",
+
+                "holiday_jp_ganjitsu_tooltip": "元日。一年中最重要的节日，许多人会前往神社进行新年首次参拜（初诣）。",
+                "holiday_jp_shogatsu_d2_tooltip": "正月第二日。商店开始营业，初売与福袋促销的日子。",
+                "holiday_jp_shogatsu_d3_tooltip": "正月第三日。正月假期的最后一天。",
+                "holiday_jp_valentine_tooltip": "情人节。在日本，女性会在这天向男性赠送巧克力。",
+                "holiday_jp_white_day_tooltip": "白色情人节。男性在这天回赠情人节收到的礼物。",
+                "holiday_jp_spring_equinox_tooltip": "春分之日。昼夜等长，人们会在彼岸期间扫墓、赏春。",
+                "holiday_jp_gw_start_tooltip": "昭和之日，黄金周的开始。大型连休从此开始，各处出行人潮涌动。",
+                "holiday_jp_gw_mid1_tooltip": "宪法纪念日，黄金周正中。",
+                "holiday_jp_gw_mid2_tooltip": "绿之日，亲近自然的日子，黄金周正中。",
+                "holiday_jp_gw_end_tooltip": "儿童之日，黄金周的最后一天。有男孩的家庭会挂起鲤鱼旗。",
+                "holiday_jp_tanabata_tooltip": "七夕。人们在竹枝上挂短册许愿。",
+                "holiday_jp_obon_mukaebi_tooltip": "盂兰盆·迎魂。点燃迎火迎接祖先灵魂归来，许多人回乡扫墓。",
+                "holiday_jp_obon_okuribi_tooltip": "盂兰盆·送魂。盆踊与送火，送别祖先的灵魂，连休两日。",
+                "holiday_jp_silverweek_tooltip": "银周。敬老之日与秋分之日恰好连成的大连休（并非每年都有）。",
+                "holiday_jp_christmas_eve_tooltip": "平安夜。在日本更像情侣约会日，约会与蛋糕的预订会排队。",
+                "holiday_jp_christmas_tooltip": "圣诞节。商场装饰灯火，家庭吃炸鸡与圣诞蛋糕。",
+                "holiday_jp_omisoka_tooltip": "大晦日。一年的最后一天，人们吃跨年荞麦面、看红白歌会守岁。",
+
+                "season_spring_tooltip": "春季。樱花与温暖回归的季节。",
+                "season_summer_tooltip": "夏季。暑气与蝉鸣的季节。",
+                "season_autumn_tooltip": "秋季。红叶与丰收的季节。",
+                "season_winter_tooltip": "冬季。寒冷与白雪的季节。",
+                "season_hanabi_tooltip": "花火大会季。各地接连举办夏祭与花火大会。"
             },
             "en-us": {
 
@@ -349,7 +433,7 @@
                 "jp_karaoke": "Karaoke",
                 "jp_maid_cafe": "Maid Cafe",
                 "jp_arcade": "Game Center",
-                "jp_gym": "Gym",
+                "jp_sports_center": "Sports Club",
                 "jp_beauty_salon": "Beauty Salon",
                 "jp_pet_shop": "Pet Shop",
                 "jp_casino": "Casino",
@@ -358,7 +442,62 @@
                 "jp_tourist_riverside": "Riverside",
                 "jp_tourist_shrine": "Shrine",
                 "jp_farm": "Farm",
-                "jp_ranch": "Ranch"
+                "jp_ranch": "Ranch",
+
+                "holiday_jp_ganjitsu": "New Year's Day",
+                "holiday_jp_shogatsu_d2": "New Year - Day 2",
+                "holiday_jp_shogatsu_d3": "New Year - Day 3",
+                "holiday_jp_valentine": "Valentine's Day",
+                "holiday_jp_white_day": "White Day",
+                "holiday_jp_spring_equinox": "Spring Equinox Day",
+                "holiday_jp_gw_start": "Showa Day",
+                "holiday_jp_gw_mid1": "Constitution Day",
+                "holiday_jp_gw_mid2": "Greenery Day",
+                "holiday_jp_gw_end": "Children's Day",
+                "holiday_jp_tanabata": "Tanabata",
+                "holiday_jp_obon_mukaebi": "Obon - Mukaebi",
+                "holiday_jp_obon_okuribi": "Obon - Okuribi",
+                "holiday_jp_silverweek": "Silver Week",
+                "holiday_jp_christmas_eve": "Christmas Eve",
+                "holiday_jp_christmas": "Christmas",
+                "holiday_jp_omisoka": "New Year's Eve",
+
+                "season_spring": "Spring",
+                "season_summer": "Summer",
+                "season_autumn": "Autumn",
+                "season_winter": "Winter",
+                "season_hanabi": "Fireworks Season",
+
+                "ui_holiday_today": "Today is $name$",
+                "ui_season_start": "$name$ begins",
+                "ui_season_end": "$name$ ends",
+
+                "ui_new_year": "A new year begins",
+                "ui_new_month": "Month $month$ has begun",
+
+                "holiday_jp_ganjitsu_tooltip": "New Year's Day. The most important holiday of the year; many visit shrines for hatsumode.",
+                "holiday_jp_shogatsu_d2_tooltip": "New Year - Day 2. Stores reopen with fukubukuro lucky-bag sales.",
+                "holiday_jp_shogatsu_d3_tooltip": "New Year - Day 3. The last day of the New Year holidays.",
+                "holiday_jp_valentine_tooltip": "Valentine's Day. In Japan, women give chocolates to men.",
+                "holiday_jp_white_day_tooltip": "White Day. Men give return gifts for Valentine's Day.",
+                "holiday_jp_spring_equinox_tooltip": "Spring Equinox Day. Day and night are equal; graves are visited during ohigan.",
+                "holiday_jp_gw_start_tooltip": "Showa Day, the start of Golden Week. The long holiday begins.",
+                "holiday_jp_gw_mid1_tooltip": "Constitution Memorial Day, mid-Golden Week.",
+                "holiday_jp_gw_mid2_tooltip": "Greenery Day, mid-Golden Week. A day to appreciate nature.",
+                "holiday_jp_gw_end_tooltip": "Children's Day, the last day of Golden Week. Families with boys fly koinobori.",
+                "holiday_jp_tanabata_tooltip": "Tanabata. People write wishes on tanzaku strips hung on bamboo.",
+                "holiday_jp_obon_mukaebi_tooltip": "Obon - Mukaebi. Welcome fires greet ancestral spirits; many return home.",
+                "holiday_jp_obon_okuribi_tooltip": "Obon - Okuribi. Bon dances and send-off fires see the spirits home, two days long.",
+                "holiday_jp_silverweek_tooltip": "Silver Week. A rare long weekend when Respect-for-the-Aged Day lines up with the autumn equinox.",
+                "holiday_jp_christmas_eve_tooltip": "Christmas Eve. In Japan more of a date night; dinner and cake reservations fill up.",
+                "holiday_jp_christmas_tooltip": "Christmas. Shopping streets glow with lights; families eat fried chicken and cake.",
+                "holiday_jp_omisoka_tooltip": "New Year's Eve. The year's last day; toshikoshi soba and Kohaku on TV.",
+
+                "season_spring_tooltip": "Spring. Cherry blossoms and returning warmth.",
+                "season_summer_tooltip": "Summer. Heat and cicada songs.",
+                "season_autumn_tooltip": "Autumn. Colorful leaves and the harvest.",
+                "season_winter_tooltip": "Winter. Cold and white snow.",
+                "season_hanabi_tooltip": "Fireworks Season. Summer festivals and fireworks displays everywhere."
             }
         }
     }

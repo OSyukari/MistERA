@@ -170,10 +170,11 @@ public class Character_Personality
     /// down to the ones fully valid (self/target/faction/Kojo) for this self/target/EP context, writing into the
     /// caller-owned results list instead of allocating a new one. A node only has its children checked if it
     /// validates itself (pruning), and only nodes with their own Result get added — pure branch nodes are invisible
-    /// in the output. Both member-type lists are folded into the same results.Clear()'d list in one pass so neither
-    /// overwrites the other; callers must not call this multiple times into the same results list.
+    /// in the output. Both member-type lists (and activityMods - the character's CurrentActiveActivity's, a recreation
+    /// visit's) are folded into the same results.Clear()'d list in one pass so none overwrites another; callers must not
+    /// call this multiple times into the same results list.
     /// </summary>
-    public void CollectApplicableAcceptanceMods(Character_Trainable self, bool isDoer, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results, List<PersonalityAcceptanceMod> memberTypeMods = null, List<PersonalityAcceptanceMod> memberTypeMods2 = null)
+    public void CollectApplicableAcceptanceMods(Character_Trainable self, bool isDoer, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results, List<PersonalityAcceptanceMod> memberTypeMods = null, List<PersonalityAcceptanceMod> memberTypeMods2 = null, List<PersonalityAcceptanceMod> activityMods = null)
     {
         results.Clear();
         if (AcceptanceMods != null)
@@ -187,6 +188,10 @@ public class Character_Personality
         if (memberTypeMods2 != null)
             foreach (var mod in memberTypeMods2)
                 CollectAcceptanceModRecursive(mod, self, target, ep, ref tooltip, results);
+
+        if (activityMods != null)
+            foreach (var mod in activityMods)
+                CollectAcceptanceModRecursive(mod, self, target, ep, ref tooltip, results);
     }
 
     private void CollectAcceptanceModRecursive(PersonalityAcceptanceMod node, Character_Trainable self, Character_Trainable target, EvaluationPackage ep, ref List<string> tooltip, List<PersonalityAcceptanceMod> results)
@@ -198,6 +203,25 @@ public class Character_Personality
         if (node.AcceptanceMods != null)
             foreach (var child in node.AcceptanceMods)
                 CollectAcceptanceModRecursive(child, self, target, ep, ref tooltip, results);
+    }
+
+    /// <summary>
+    /// Default dialogue event ID -> event IDs played instead when this personality's character is the one talked to
+    /// (tab_dialogue.Button_DialogueEvent via EventUtility.ResolveDialogueOverride). Tried in order, the first valid one
+    /// runs; none valid -> the default event. A list here replaces the fallback personality's list for that event.
+    /// Template data, never saved.
+    /// </summary>
+    public Dictionary<string, List<string>> dialogueEventOverrides = new Dictionary<string, List<string>>();
+
+    /// <summary>
+    /// This personality's override event IDs for defaultEventID (dialogueEventOverrides), else its fallback personality's
+    /// (recursively). Empty when nobody in the chain overrides it.
+    /// </summary>
+    public List<string> GetDialogueEventOverrides(string defaultEventID)
+    {
+        if (dialogueEventOverrides != null && dialogueEventOverrides.TryGetValue(defaultEventID, out var ids) && ids != null) return ids;
+        if (Fallback != null) return Fallback.GetDialogueEventOverrides(defaultEventID);
+        return new List<string>();
     }
 
     public Dictionary<PrideLevel, PrideMod> pride_increase = new Dictionary<PrideLevel, PrideMod>();

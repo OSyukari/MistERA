@@ -1148,14 +1148,17 @@ public static class UtilityEX
             tags.Add(activeParty.FactionID);
             tags.AddRange(activeParty.factionTags);
             tags.AddRange(activeParty.localeTags);
-            tags.AddRange(activeParty.GetMemberType(c).portraitTags);
+            tags.AddRange(activeParty.GetMemberType(c).Tags);
         }
         else if (activeFaction != null)
         {
             tags.Add(activeFaction.FactionID);
             tags.AddRange(activeFaction.factionTags);
             tags.AddRange(activeFaction.localeTags);
-            tags.AddRange(activeFaction.GetMemberType(c).portraitTags);
+            tags.AddRange(c.FactionManager.GetScheduledMemberType(activeFaction).Tags);
+            // a recreation visit's activity tags (RecreationActivity.Tags) on top of the MemberType's
+            var activity = c.FactionManager.GetScheduledActivity(activeFaction);
+            if (activity?.Tags != null) tags.AddRange(activity.Tags);
         }
         else if (c.CurrentRoom != null && c.CurrentRoom.FactionOwner != null)
         {
@@ -1404,7 +1407,19 @@ public static class UtilityEX
                     scr_UpdateHandler.current.ResetLogsFirstLine();
                     scr_System_Time.current.UpdateTime(advanceDays, 0, 0);
                     scr_System_CampaignManager.current.NotifyUpdate();
-                    SwitchToLogsIfPrinting();
+                    parsedSuccessful = true;
+                }
+                else
+                {
+                    Debug.LogError($"parse console command {parsed[0]} error");
+                }
+                break;
+            case "setCalendar":
+                if (parsed.Count() >= 4 && int.TryParse(parsed[1], out int calYear) && int.TryParse(parsed[2], out int calMonth) && int.TryParse(parsed[3], out int calDay))
+                {
+                    scr_UpdateHandler.current.ResetLogsFirstLine();
+                    scr_System_Time.current.SetCurrentDate(calYear, calMonth, calDay);
+                    scr_System_CampaignManager.current.NotifyUpdate();
                     parsedSuccessful = true;
                 }
                 else
@@ -1518,6 +1533,25 @@ public static class UtilityEX
                 Debug.Log($"debug_force_joinFaction_Agree = {scr_System_CentralControl.current.debug_force_joinFaction_Agree}");
                 parsedSuccessful = true;
                 break;
+            case "listallvalidbookings":
+                if (true)
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("listallvalidbookings: error target null");
+                        break;
+                    }
+                    if (parsed.Count() >= 2 && bool.TryParse(parsed[1], out bool replanBookings) && replanBookings)
+                    {
+                        var replanned = RecreationUtility.DebugReplan(target);
+                        Debug.Log($"listallvalidbookings [{target.RefID} {target.FullName}] replanned:\n{String.Join("\n", replanned)}");
+                    }
+                    var bookingIDs = RecreationUtility.ListValidBookingIDs(target);
+                    Debug.Log($"listallvalidbookings [{target.RefID} {target.FullName}] result {bookingIDs.Count}:\n{String.Join("\n", bookingIDs)}");
+                    parsedSuccessful = true;
+                }
+                break;
             case "inspectjob":
                 if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int targetjobref))
                 {
@@ -1593,7 +1627,6 @@ public static class UtilityEX
                         scr_UpdateHandler.current.ResetLogsFirstLine();
 
                         target.TickMenstruation(adv_year, adv_month, adv_day, true, true);
-                        SwitchToLogsIfPrinting();
                     }
                 }
                 break;
@@ -1727,7 +1760,15 @@ public static class UtilityEX
                 break;
         }
 
-        if (parsedSuccessful) Debug.Log(s);
+        if (parsedSuccessful)
+        {
+
+            SwitchToLogsIfPrinting();
+        }
+        else
+        {
+            Debug.LogError($"{s} parsed failure");
+        }
     }
 
     /// <summary>

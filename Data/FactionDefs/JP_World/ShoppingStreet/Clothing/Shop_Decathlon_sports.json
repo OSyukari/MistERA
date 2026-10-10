@@ -1,0 +1,318 @@
+{
+    "_doc": "Sportswear store on the JP_ShoppingStreet mall floor, selling both men's and women's athletic wear. Primary store name '迪卡○' (DECATHL○N) parodies the real sporting-goods chain DECATHLON. Dictionary carries alternate candidates (_alt1.._alt5), each with its own _tooltip explaining the real brand it parodies - pick one, delete the rest. Item tooltips reference the primary name; if another name is chosen, adjust those strings. Only small Stats_Derived_Bases bonuses (stamina/energy), no base stat modifiers. Sellable via salesInventory (currency_JPY). Tooltips live under '<id>_tooltip' keys (see Item_Base.Tooltip).",
+    "Items":{
+        "list":[
+        {
+            "id":"clothing_jp_dkn_sports_bra",
+            "displayName":"DECATHL○N Compression Sports Bra",
+            "Tags":["rarity_common"],
+            "value":2800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Skin",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_stamina_max",
+                                "modKey":"clothing_jp_dkn_sports_bra", "type":"addBase", "valueType":"number", "valueString":"3"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_racerback_tank",
+            "displayName":"DECATHL○N Racerback Tank Top",
+            "Tags":["rarity_common"],
+            "value":2200,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"],
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_energy_max",
+                                "modKey":"clothing_jp_dkn_racerback_tank", "type":"addBase", "valueType":"number", "valueString":"2"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_running_shorts",
+            "displayName":"DECATHL○N Running Shorts",
+            "Tags":["rarity_common"],
+            "value":2500,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "revealing":"ShapeReveal"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_yoga_leggings",
+            "displayName":"DECATHL○N Yoga Leggings",
+            "Tags":["rarity_common"],
+            "value":4200,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"],
+                        "revealing":"ShapeReveal",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_energy_max",
+                                "modKey":"clothing_jp_dkn_yoga_leggings", "type":"addBase", "valueType":"number", "valueString":"2"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_jersey_top",
+            "displayName":"DECATHL○N Mesh Jersey Top",
+            "Tags":["rarity_common"],
+            "value":3500,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_compression_shirt",
+            "displayName":"DECATHL○N Compression Shirt",
+            "Tags":["rarity_common"],
+            "value":3800,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"],
+                        "revealing":"ShapeReveal",
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_stamina_max",
+                                "modKey":"clothing_jp_dkn_compression_shirt", "type":"addBase", "valueType":"number", "valueString":"3"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_training_pants",
+            "displayName":"DECATHL○N Training Pants",
+            "Tags":["rarity_common"],
+            "value":4600,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"]
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":3,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Pierce","Slash"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_running_shoes",
+            "displayName":"DECATHL○N Cushion Running Shoes",
+            "Tags":["rarity_common"],
+            "value":8900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Feet"],
+                        "stat_modifiers":[
+                            {
+                                "statID":"stats_derived_stamina_max",
+                                "modKey":"clothing_jp_dkn_running_shoes", "type":"addBase", "valueType":"number", "valueString":"3"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "compType":"ItemComponent_Defense",
+                    "comp_Defense": {
+                        "integrity":4,
+                        "armorLayers":
+                        [
+                            { "applyToDamageTypes":["Slash"], "damageReductionValue":2 },
+                            { "applyToDamageTypes":["Pierce","Blunt"], "damageReductionValue":1 }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_sweat_headband",
+            "displayName":"DECATHL○N Sweat Headband",
+            "Tags":["rarity_common"],
+            "value":1200,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Hair"],
+                        "equipLayer":"Outer",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_jp_dkn_wrist_bands",
+            "displayName":"DECATHL○N Pair of Wrist Bands",
+            "Tags":["rarity_common"],
+            "value":900,
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Hand"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Hand"]
+                    }
+                }
+            ]
+        }
+    ]
+    },
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "zh-cn":
+            {
+        "shop_jp_dkn_name":"迪卡○",
+        "shop_jp_dkn_name_tooltip":"什么运动器材都卖、连马术和潜水都包圆的巨型运动超市「迪卡○」。原型：DECATHLON（迪卡侬），卖全品类运动服装、运动内衣、跑鞋与器材。被圆掉的那个字现在由一枚哑铃代替——店门口就立着，谁都能举。",
+        "shop_jp_dkn_name_alt1":"运动○威",
+        "shop_jp_dkn_name_alt1_tooltip":"「运动○威」(SPORTS AUTHOR○TY)。原型：SPORTS AUTHORITY（スポーツオーソリティ），综合运动用品卖场，卖各品牌运动服、球鞋、球类与户外器材。曾经的运动用品权威，如今权威只剩九个字母，依然很威。",
+        "shop_jp_dkn_name_alt2":"泽比○",
+        "shop_jp_dkn_name_alt2_tooltip":"「泽比○」(SUPER SPORTS XEBI○)。原型：ゼビオ/XEBIO，综合运动连锁，卖训练服、球类装备、跑鞋与护具。招牌上「SUPER SPORTS」占了七成宽度，剩下的部分负责被圆。",
+        "shop_jp_dkn_name_alt3":"阿尔○",
+        "shop_jp_dkn_name_alt3_tooltip":"「阿尔○」(ALP○N)。原型：Alpen（アルペン），主打滑雪、登山户外装备与运动服饰，兼卖健身服装。名字取自阿尔卑斯山，被圆掉的那个字是『卑』——店里确实没有卖卑鄙。",
+        "shop_jp_dkn_name_alt4":"运动DEP○",
+        "shop_jp_dkn_name_alt4_tooltip":"「运动DEP○」(SPORTS DEP○)。原型：アルペン旗下的 SPORTS DEPO（スポーツDEPO），仓库型运动折扣卖场，卖平价训练服、跑鞋与器材。DEPO 是仓库的意思，圆掉一个字母后仓库照常进货。",
+        "shop_jp_dkn_name_alt5":"美津○",
+        "shop_jp_dkn_name_alt5_tooltip":"「美津○」(MIZU○)。原型：MIZUNO（美津浓），运动品牌而非店铺，卖跑鞋、压缩衣、球衣与泳装。严格来说是品牌不是店铺，但那颗圆圈和跑鞋一样圆得漂亮。",
+
+        "clothing_jp_dkn_sports_bra":"运动内衣",
+        "clothing_jp_dkn_sports_bra_tooltip":"「迪卡○」的高强度压缩运动内衣，弹力布料把双乳牢牢地兜住、压平、固定，连晃动的余地都不留。穿脱时得从头上硬拽——布料刮过乳头的那一下总会让人莫名一软。汗湿之后布料贴着皮肤，胸罩的形状透过薄薄的运动T恤清晰地印出来，反而是健身房里最诚实的风景。",
+
+        "clothing_jp_dkn_racerback_tank":"工字背心",
+        "clothing_jp_dkn_racerback_tank_tooltip":"细肩带的工字运动背心，整片后背和两侧腋下都坦然敞开着。布料轻薄速干，汗水浸透后会软软地贴上躯干，把肋骨的起伏和腰线的收束一并出卖。弯腰做拉伸时宽大的领口垂下来，谁能忍住不看呢。",
+
+        "clothing_jp_dkn_running_shorts":"跑步短裤",
+        "clothing_jp_dkn_running_shorts_tooltip":"轻若无物的涤纶跑步短裤，裤脚只到大腿根部。内置的薄薄衬裤勉强兜住要害，外层布料却轻飘飘地随步伐掀动——每一次跨步都是一次敞开。侧边的开衩高得放肆，抬腿压腿时裤脚滑向腰际，仿佛随时会彻底缴械。",
+
+        "clothing_jp_dkn_yoga_leggings":"瑜伽紧身裤",
+        "clothing_jp_dkn_yoga_leggings_tooltip":"「迪卡○」的爆款高腰瑜伽裤，四向弹力布从脚踝一路裹到腰际，像第二层皮肤一样把臀肉的每一寸弧度、大腿的每一分形状忠实描摹。深蹲时布料绷到极限，臀缝的轮廓一览无余——健身房里所有『不经意』的视线，最终都会落在同一条裤子上。",
+
+        "clothing_jp_dkn_jersey_top":"网眼球衣",
+        "clothing_jp_dkn_jersey_top_tooltip":"宽大的网眼篮球背心改成的短袖球衣，网眼布料处处透光。汗水顺着锁骨滑进衣襟，湿透的布料半贴着胸膛，走动时洞开的袖窿里整侧胸廓忽隐忽现。男生穿是清爽，穿在合适的人身上就是挑衅。",
+
+        "clothing_jp_dkn_compression_shirt":"压缩衣",
+        "clothing_jp_dkn_compression_shirt_tooltip":"「迪卡○」的男式长袖压缩衣，高弹面料从手腕到腰腹寸寸箍紧，把胸肌和腹肌的形状直接印在身上——穿它的人约等于没穿。汗水让布料变成半透明的第二层皮肤，呼吸时肌理的起伏清清楚楚，让人很难把注意力放在训练上。",
+
+        "clothing_jp_dkn_training_pants":"训练长裤",
+        "clothing_jp_dkn_training_pants_tooltip":"速干涤纶的运动长裤，剪裁宽松却在臀部和大腿处服帖地收住。裤绳松松系在胯上，抽绳一拉裤腰便敞开——更衣室里那条被拉松的裤子下面藏着什么，从来都是最惹人的谜。",
+
+        "clothing_jp_dkn_running_shoes":"缓震跑鞋",
+        "clothing_jp_dkn_running_shoes_tooltip":"「迪卡○」的旗舰缓震跑鞋，厚软的中底像随时准备把人弹上天空。网面鞋身透气排汗，脚在鞋里微微发热的闷感反而让血液循环更畅。店员拍着胸脯保证：穿上它，你能一路跑到腿软。",
+
+        "clothing_jp_dkn_sweat_headband":"运动发带",
+        "clothing_jp_dkn_sweat_headband_tooltip":"毛圈布的运动发带，紧紧箍在额头上接住滑落的汗珠。运动到酣处，发带下缘浸出的汗水顺着鬓角滑向脖颈、没进衣领深处——那条若有似无的汗痕，比任何搭讪都更能让心跳加速。",
+
+        "clothing_jp_dkn_wrist_bands":"护腕",
+        "clothing_jp_dkn_wrist_bands_tooltip":"一对毛圈布护腕，松紧口牢牢箍住手腕最细的地方。抬手擦汗时它会蹭过脸颊和嘴唇，吸饱汗水与体温的布料带着微妙的湿热——互相帮忙戴护腕这个动作，在健身房里被公认是最接近暧昧的瞬间。"
+            },
+            "en-us":
+            {
+        "shop_jp_dkn_name":"DECATHL○N",
+
+        "shop_jp_dkn_name_tooltip":"'DECATHL○N', the mega sporting-goods superstore stocking everything from equestrian to diving. Parody of DECATHLON: full-range sportswear, sports bras, running shoes and equipment of every kind. The rounded-off letter has been replaced by a dumbbell — it stands at the entrance, and anyone may lift it.",
+
+        "shop_jp_dkn_name_alt1":"SPORTS AUTHOR○TY",
+        "shop_jp_dkn_name_alt1_tooltip":"'SPORTS AUTHOR○TY'. Parody of SPORTS AUTHORITY (スポーツオーソリティ), a general sporting-goods megastore: branded athletic wear, sneakers, balls and outdoor gear. Once the authority on all things sport; the authority is now nine letters short, still authoritative.",
+        "shop_jp_dkn_name_alt2":"SUPER SPORTS XEBI○",
+        "shop_jp_dkn_name_alt2_tooltip":"'SUPER SPORTS XEBI○'. Parody of XEBIO (ゼビオ), a general sports chain selling training wear, ball-sports gear, running shoes and guards. 'SUPER SPORTS' takes up seventy percent of the signboard; the remainder is in charge of being rounded.",
+        "shop_jp_dkn_name_alt3":"ALP○N",
+        "shop_jp_dkn_name_alt3_tooltip":"'ALP○N'. Parody of Alpen (アルペン): ski and outdoor-mountaineering equipment plus athletic apparel, fitness wear on the side. Named after the Alps; the rounded-off character was 'lowly' — the store indeed does not stock baseness.",
+        "shop_jp_dkn_name_alt4":"SPORTS DEP○",
+        "shop_jp_dkn_name_alt4_tooltip":"'SPORTS DEP○'. Parody of SPORTS DEPO (スポーツDEPO), the Alpen-group discount warehouse: budget training wear, running shoes and equipment. DEPO means depot; one letter rounded, the depot still takes deliveries.",
+        "shop_jp_dkn_name_alt5":"MIZU○",
+        "shop_jp_dkn_name_alt5_tooltip":"'MIZU○'. Parody of MIZUNO (美津濃): a sports brand rather than a store, selling running shoes, compression wear, jerseys and swimwear. Strictly a brand rather than a store, but that circle rounds as beautifully as its running shoes.",
+
+        "clothing_jp_dkn_sports_bra":"Compression Sports Bra",
+        "clothing_jp_dkn_sports_bra_tooltip":"DECATHL○N' high-impact compression bra: elastic weave gathers, flattens and locks the breasts in place, leaving not an inch of sway. It has to be tugged hard over the head — and the drag of fabric across the nipples on the way makes the knees mysteriously soft. Sweat-soaked, the material clings and prints the bra's shape through a thin workout tee: the most honest scenery in the gym.",
+
+        "clothing_jp_dkn_racerback_tank":"Racerback Tank Top",
+        "clothing_jp_dkn_racerback_tank_tooltip":"A racerback tank on slender straps, the whole back and both underarms frankly open. The quick-dry weave goes soft and clings when drenched in sweat, betraying the rise of every rib and the cinch of the waist. Bend into a stretch and the wide collar falls forward — who could possibly not look?",
+
+        "clothing_jp_dkn_running_shorts":"Running Shorts",
+        "clothing_jp_dkn_running_shorts_tooltip":"Featherweight polyester running shorts, hems ending at the very root of the thigh. A whisper-thin inner layer barely cradles what matters while the outer shell flutters open with every stride — each step an exposure. The side slits are scandalously high; lift a leg and the hem slides toward the waistband, as if one move from total surrender.",
+
+        "clothing_jp_dkn_yoga_leggings":"Yoga Leggings",
+        "clothing_jp_dkn_yoga_leggings_tooltip":"DECATHL○N' best-selling high-waist leggings: four-way stretch fabric wraps from ankle to waist like a second skin, faithfully tracing every curve of the rear and every line of the thighs. At the bottom of a squat the material strains to its limit and the cleft shows in full — every 'accidental' glance in the studio lands on the same pair.",
+
+        "clothing_jp_dkn_jersey_top":"Mesh Jersey Top",
+        "clothing_jp_dkn_jersey_top_tooltip":"A short-sleeved jersey cut from an oversized mesh basketball tank, the mesh letting light through everywhere. Sweat slides from the collarbone into the open placket; soaked, the cloth half-clings to the chest, and the whole flank flickers in and out of view through the gaping armhole. Refreshing on a man — a provocation on the right person.",
+
+        "clothing_jp_dkn_compression_shirt":"Compression Shirt",
+        "clothing_jp_dkn_compression_shirt_tooltip":"DECATHL○N' men's long-sleeve compression shirt: high-elastic fabric cinches from wrist to waist, stamping the shape of pecs and abs straight onto the surface — wearing it is practically wearing nothing. Sweat renders the weave translucent, a second skin where every ripple of muscle shows with each breath, making it very hard to focus on the workout.",
+
+        "clothing_jp_dkn_training_pants":"Training Pants",
+        "clothing_jp_dkn_training_pants_tooltip":"Quick-dry polyester track pants, cut roomy yet sitting close at hip and thigh. The drawstring rides loose across the hips — one pull and the waist gapes. What lies beneath a loosened pair in the changing room has always been the most tantalizing riddle.",
+
+        "clothing_jp_dkn_running_shoes":"Cushion Running Shoes",
+        "clothing_jp_dkn_running_shoes_tooltip":"DECATHL○N' flagship cushioned runners, the plush midsole springy enough to launch you skyward. The mesh upper breathes and wicks, and the warm stuffiness of a foot heating inside the shoe only pushes the blood along. The clerk swears by them: run until your legs give out.",
+
+        "clothing_jp_dkn_sweat_headband":"Sweat Headband",
+        "clothing_jp_dkn_sweat_headband_tooltip":"A terry headband cinched tight across the forehead to catch falling sweat. Mid-workout, the overflow wicks along the temples, down the neck, and into the depths of the collar — that faint damp trail quickens the heart more than any pickup line.",
+
+        "clothing_jp_dkn_wrist_bands":"Pair of Wrist Bands",
+        "clothing_jp_dkn_wrist_bands_tooltip":"A pair of terry wristbands, elastic cuffs gripping the narrowest part of the wrist. Raised to wipe sweat they brush cheek and lips, the fabric soaked through with warmth and a subtle humid heat — and helping someone put their wristbands on is, by gym consensus, the moment closest to an affair."
+            }
+        }
+    }
+
+}

@@ -1075,8 +1075,9 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     /// <param name="doers"></param>
     /// <param name="receivers"></param>
     /// <param name="masterRef"></param>
+    /// <param name="room">Room the package runs in when it is not job's ParentRoom (ActionPackage.SetRoom) - null = the job's.</param>
     /// <returns></returns>
-    public ActionPackage MakePackage(Job job, List<int> doers, List<int> receivers, int masterRef)
+    public ActionPackage MakePackage(Job job, List<int> doers, List<int> receivers, int masterRef, Room_Instance room = null)
     {
         ActionPackage returnValue = null;
         Manageable.ProductionOrder pOrder = null;
@@ -1105,11 +1106,21 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             case "ActionPackage_Talk":
                 returnValue = new ActionPackage_Talk(job, this, doers, receivers, masterRef);
                 break;
+            case "ActionPackage_WaitUntilNextHour":
+                returnValue = new ActionPackage_WaitUntilNextHour(job, this, doers, receivers, masterRef);
+                break;
+            case "ActionPackage_ActivityWait":
+                returnValue = new ActionPackage_ActivityWait(job, this, doers, receivers, masterRef);
+                break;
+            case "ActionPackage_GoToSchedule":
+                returnValue = new ActionPackage_GoToSchedule(job, this, doers, receivers, masterRef);
+                break;
             default:
                 break;
 
         }
         if (returnValue == null) Debug.LogError("Error making package for com " + ID);
+        else if (room != null) returnValue.SetRoom(room);
         return returnValue;
     }
 
@@ -1152,6 +1163,18 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
             {
                 case "ActionPackage_Interaction":
                     returnValue = new ActionPackage_Interaction(job, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+                case "ActionPackage_WaitUntilNextHour":
+                    returnValue = new ActionPackage_WaitUntilNextHour(job, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+                case "ActionPackage_ActivityWait":
+                    returnValue = new ActionPackage_ActivityWait(job, this, doers, receivers, masterRef);
+                    if (returnValue != null) returnValues.Add(returnValue);
+                    break;
+                case "ActionPackage_GoToSchedule":
+                    returnValue = new ActionPackage_GoToSchedule(job, this, doers, receivers, masterRef);
                     if (returnValue != null) returnValues.Add(returnValue);
                     break;
                 case "ActionPackage_ItemUse":

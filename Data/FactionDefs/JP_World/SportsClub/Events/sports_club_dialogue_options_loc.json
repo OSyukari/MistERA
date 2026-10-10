@@ -1,0 +1,20 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for sports_club_dialogue_options.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "jp_sports_center_Opt_Join": "Sign Up for Membership",
+                "jp_sports_center_Opt_Join_greeting": "\"Welcome! Are you here to sign up? It's 13,000 yen a month, and every facility is yours to use.\"",
+                "jp_sports_center_Opt_Join_question": "\"Who would like to sign up?\"",
+                "jp_sports_center_Opt_Join_done": "\"You're all signed up. Come train any time!\"",
+                "jp_sports_center_Opt_Cancel": "Cancel Membership",
+                "jp_sports_center_Opt_Cancel_question": "\"Who would like to cancel their membership?\"",
+                "jp_sports_center_Opt_Cancel_done": "\"The cancellation is done. We hope to see you again.\"",
+                "jp_sports_center_Opt_cancel": "Never mind",
+                "jp_sports_center_Opt_cancelLine": "\"Let me know if you need anything.\""
+            }
+        }
+    }
+}

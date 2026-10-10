@@ -26,12 +26,17 @@ public class scr_Menu_Daycount : MonoBehaviour
     }
 
     string text_dayCount, text_month, text_dateTooltip;
-    public TMP_Text Seasons;
+    public scr_HoverableText Seasons;
     public scr_HoverableText DayCount;
 
     private void observerUpdate(int updateOrder)
     {
         if (updateOrder == 0)   refreshCount();
+        else if (updateOrder == 1)
+        {
+            scr_System_Time.DrawSeasonHolidayInfo(Seasons);
+
+        }
     }
 
     private void refreshCount()
@@ -61,6 +66,8 @@ public class scr_Menu_Daycount : MonoBehaviour
             .Replace("$year$", currentTime.Year.ToString())
             .Replace("$month$", currentTime.Month.ToString())
             .Replace("$day$", currentTime.Day.ToString()));
+
+        scr_System_Time.DrawSeasonHolidayInfo(Seasons);
     }
 
 
