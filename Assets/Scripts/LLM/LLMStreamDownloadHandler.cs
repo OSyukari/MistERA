@@ -26,9 +26,16 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
     // OpenAI-envelope tool-call argument accumulation (toolcall/preferToolCallArguments strategies
     // stream the structured-output JSON as fragments of tool_calls[].function.arguments rather than
     // as delta.content - see LLMProviderProfile.responseFormatStrategy == "toolcall").
-    string toolCallId = null;
-    string toolCallName = null;
-    readonly StringBuilder toolCallArguments = new StringBuilder();
+    // A round can carry several parallel tool calls; their fragments interleave and are told apart
+    // only by each delta entry's "index", so each index gets its own accumulator (in first-seen order).
+    class ToolCallAccumulator
+    {
+        public string id;
+        public string name;
+        public readonly StringBuilder arguments = new StringBuilder();
+    }
+    readonly List<ToolCallAccumulator> toolCalls = new List<ToolCallAccumulator>();
+    readonly Dictionary<int, ToolCallAccumulator> toolCallsByIndex = new Dictionary<int, ToolCallAccumulator>();
     bool sawToolCallDelta = false;
 
     // Claude-envelope content_block_start bookkeeping: which index is "thinking" vs "text".
@@ -125,18 +132,51 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
         var contentDelta = delta["content"]?.Value<string>();
         if (!string.IsNullOrEmpty(contentDelta)) content.Append(contentDelta);
 
-        var toolCalls = delta["tool_calls"] as JArray;
-        if (toolCalls != null && toolCalls.Count > 0)
+        var toolCallDeltas = delta["tool_calls"] as JArray;
+        if (toolCallDeltas != null && toolCallDeltas.Count > 0)
         {
             sawToolCallDelta = true;
-            var tc = toolCalls[0];
-            var id = tc["id"]?.Value<string>();
-            if (!string.IsNullOrEmpty(id)) toolCallId = id;
-            var name = tc["function"]?["name"]?.Value<string>();
-            if (!string.IsNullOrEmpty(name)) toolCallName = name;
-            var args = tc["function"]?["arguments"]?.Value<string>();
-            if (!string.IsNullOrEmpty(args)) toolCallArguments.Append(args);
+            foreach (var tc in toolCallDeltas)
+            {
+                var acc = GetToolCallAccumulator(tc);
+                var id = tc["id"]?.Value<string>();
+                if (!string.IsNullOrEmpty(id)) acc.id = id;
+                var name = tc["function"]?["name"]?.Value<string>();
+                if (!string.IsNullOrEmpty(name)) acc.name = name;
+                var args = tc["function"]?["arguments"]?.Value<string>();
+                if (!string.IsNullOrEmpty(args)) acc.arguments.Append(args);
+            }
         }
+    }
+
+    /// <summary>
+    /// Resolves a tool_calls delta entry to its accumulator by "index". An endpoint that omits index
+    /// is treated as single-call-at-a-time: a delta carrying a new id opens a new call, anything else
+    /// continues the latest one.
+    /// </summary>
+    ToolCallAccumulator GetToolCallAccumulator(JToken tc)
+    {
+        var indexToken = tc["index"];
+        if (indexToken != null && indexToken.Type == JTokenType.Integer)
+        {
+            int index = indexToken.Value<int>();
+            if (!toolCallsByIndex.TryGetValue(index, out var byIndex))
+            {
+                byIndex = new ToolCallAccumulator();
+                toolCallsByIndex[index] = byIndex;
+                toolCalls.Add(byIndex);
+            }
+            return byIndex;
+        }
+
+        var id = tc["id"]?.Value<string>();
+        var last = toolCalls.Count > 0 ? toolCalls[toolCalls.Count - 1] : null;
+        if (last == null || (!string.IsNullOrEmpty(id) && last.id != null && last.id != id))
+        {
+            last = new ToolCallAccumulator();
+            toolCalls.Add(last);
+        }
+        return last;
     }
 
     void ProcessClaudeEvent(JObject obj)
@@ -214,13 +254,15 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
 
             if (sawToolCallDelta)
             {
-                message.tool_calls = new List<LLMMessage.ToolCall> {
-                    new LLMMessage.ToolCall {
-                        id = toolCallId,
+                message.tool_calls = new List<LLMMessage.ToolCall>();
+                foreach (var acc in toolCalls)
+                {
+                    message.tool_calls.Add(new LLMMessage.ToolCall {
+                        id = acc.id,
                         type = "function",
-                        function = new LLMMessage.FunctionCall { name = toolCallName, arguments = toolCallArguments.ToString() }
-                    }
-                };
+                        function = new LLMMessage.FunctionCall { name = acc.name, arguments = acc.arguments.ToString() }
+                    });
+                }
             }
             else
             {

@@ -75,6 +75,13 @@ public class LLMProviderProfile
     /// </summary>
     public string agentNudgeMessage = null;
 
+    /// <summary>
+    /// OpenAI-envelope agent mode: echo each assistant turn's reasoning_content back on the next
+    /// round's transcript. DeepSeek thinking mode rejects (HTTP 400) a tool-calling continuation
+    /// without it; off by default since other endpoints may reject the unknown message field.
+    /// </summary>
+    public bool echoReasoningContent = false;
+
     // ---- Streaming ----
     /// <summary>
     /// True if this provider's endpoint supports SSE streaming (stream: true) in a way this client

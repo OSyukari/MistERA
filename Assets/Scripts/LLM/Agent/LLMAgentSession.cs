@@ -23,6 +23,10 @@ public class LLMAgentTurn
     public string assistantContent;
     public List<LLMMessage.ToolCall> assistantToolCalls;
 
+    /// <summary>Assistant kind, OpenAI envelope: the round's reasoning_content, echoed back only for
+    /// profiles with echoReasoningContent (see BuildMessages).</summary>
+    public string assistantReasoning;
+
     /// <summary>
     /// Assistant kind, Claude envelope: the model's raw content[] blocks (text/thinking/tool_use),
     /// echoed back verbatim on the next round per Claude's continuation contract.
@@ -363,6 +367,7 @@ public class LLMAgentSession
             var message = raw.choices.Count > 0 ? raw.choices[0].message : null;
             turn.assistantContent = message?.content;
             turn.assistantToolCalls = message?.tool_calls;
+            turn.assistantReasoning = message?.reasoning_content;
         }
         turns.Add(turn);
     }
@@ -399,7 +404,13 @@ public class LLMAgentSession
                 case LLMAgentTurn.Kind.Assistant:
                     messages.Add(claude
                         ? new LLMMessage_Final_Claude { role = "assistant", contentBlocks = turn.assistantContentBlocks }
-                        : new LLMMessage_Final { role = "assistant", content = turn.assistantContent, tool_calls = turn.assistantToolCalls });
+                        : new LLMMessage_Final
+                        {
+                            role = "assistant",
+                            content = turn.assistantContent,
+                            tool_calls = turn.assistantToolCalls,
+                            reasoning_content = profile != null && profile.echoReasoningContent ? turn.assistantReasoning : null
+                        });
                     break;
 
                 case LLMAgentTurn.Kind.ToolResult:

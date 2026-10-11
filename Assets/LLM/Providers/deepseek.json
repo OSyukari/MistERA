@@ -19,6 +19,7 @@
   "streamIncludeUsage": true,
   "supportsAgentTools": true,
   "agentToolChoiceMode": "auto",
+  "echoReasoningContent": true,
   "_agentToolChoiceMode": "thinking mode rejects tool_choice \"required\" with HTTP 400 (\"Thinking mode does not support this tool_choice\") - \"auto\" relies on the agent loop's plain-text-final-answer resubmit nudge instead.",
   "endpointHints": ["deepseek.com"],
   "modelNameHints": ["deepseek"],

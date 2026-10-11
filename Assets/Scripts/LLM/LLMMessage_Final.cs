@@ -24,6 +24,13 @@ public class LLMMessage_Final
     /// </summary>
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public List<LLMMessage.ToolCall> tool_calls = null;
+
+    /// <summary>
+    /// Assistant turn's reasoning, echoed back only when the provider profile asks for it
+    /// (LLMProviderProfile.echoReasoningContent - DeepSeek thinking mode).
+    /// </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string reasoning_content = null;
 }
 
 /// <summary>
