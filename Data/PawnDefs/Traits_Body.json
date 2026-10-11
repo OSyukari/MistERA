@@ -1,0 +1,492 @@
+{
+    "Traits_Groups":{
+
+        "traits_BODY": [
+            {
+                "displayName":"Body Type",
+                "ID": "trait_BodyType_Female",
+                "entries": [
+                    {
+                        "trait_ID": "trait_BodyType_Female_slim",
+                        "trait_displayname": "Slim",
+                        "trait_score":-10,
+                        "trait_tooltip": "A thin and delicate body."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Female_slender",
+                        "trait_displayname": "Slender",
+                        "trait_score":-5,
+                        "trait_tooltip": "A lithe and graceful body with long lines."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Female_average",
+                        "trait_displayname": "Average",
+                        "trait_score":0,
+                        "isDisplayable":false,
+                        "trait_tooltip": "An average body."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Female_athletic",
+                        "trait_displayname": "Athletic",
+                        "trait_score":5,
+                        "trait_tooltip": "A toned and well-trained body."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Female_curvy",
+                        "trait_displayname": "Curvy",
+                        "trait_score":5,
+                        "trait_tooltip": "A full-figured body with pronounced curves at bust and hips."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Female_voluptuous",
+                        "trait_displayname": "Voluptuous",
+                        "trait_score":5,
+                        "trait_tooltip": "A soft, fleshy body, generous all over."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Female_plump",
+                        "trait_displayname": "Plump",
+                        "trait_score":-5,
+                        "trait_tooltip": "A soft and plump body."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Female_obese",
+                        "trait_displayname": "Obese",
+                        "trait_score":-20,
+                        "trait_tooltip": "A heavily overweight body."
+                    }
+                ],
+                "type": 8,
+                "SortType":"SortedList",
+                "neutralIndex": 2,
+                "requireAppearance": "Female_loose",
+                "requireRaceKeyword_any": ["humanrace", "humanoid"],
+                "group_tooltip": "Overall body shape and build (female)."
+            },
+            {
+                "displayName":"Body Type",
+                "ID": "trait_BodyType_Male",
+                "entries": [
+                    {
+                        "trait_ID": "trait_BodyType_Male_slim",
+                        "trait_displayname": "Slim",
+                        "trait_score":-10,
+                        "trait_tooltip": "A thin, slight body with little muscle."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Male_slender",
+                        "trait_displayname": "Slender",
+                        "trait_score":-5,
+                        "trait_tooltip": "A lean, long-limbed body."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Male_average",
+                        "trait_displayname": "Average",
+                        "trait_score":0,
+                        "isDisplayable":false,
+                        "trait_tooltip": "An average body."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Male_athletic",
+                        "trait_displayname": "Athletic",
+                        "trait_score":5,
+                        "trait_tooltip": "A fit, well-trained body."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Male_muscular",
+                        "trait_displayname": "Muscular",
+                        "trait_score":5,
+                        "trait_tooltip": "A body with large, well-defined muscles."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Male_burly",
+                        "trait_displayname": "Burly",
+                        "trait_score":5,
+                        "trait_tooltip": "A big, heavy-set and powerful frame."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Male_plump",
+                        "trait_displayname": "Chubby",
+                        "trait_score":-5,
+                        "trait_tooltip": "A soft body carrying some extra weight."
+                    },
+                    {
+                        "trait_ID": "trait_BodyType_Male_obese",
+                        "trait_displayname": "Obese",
+                        "trait_score":-20,
+                        "trait_tooltip": "A heavily overweight body."
+                    }
+                ],
+                "type": 8,
+                "SortType":"SortedList",
+                "neutralIndex": 2,
+                "requireAppearance": "Male_loose",
+                "requireRaceKeyword_any": ["humanrace", "humanoid"],
+                "group_tooltip": "Overall body shape and build (male)."
+            },
+            {
+                "displayName":"Skin Color",
+                "ID": "trait_SkinColor",
+                "entries": [
+                    {
+                        "trait_ID": "trait_SkinColor_pale",
+                        "trait_displayname": "Pale",
+                        "trait_score":0,
+                        "trait_tooltip": "Pale, almost porcelain-like skin."
+                    },
+                    {
+                        "trait_ID": "trait_SkinColor_fair",
+                        "trait_displayname": "Fair",
+                        "trait_score":0,
+                        "trait_tooltip": "Fair skin with a healthy tone."
+                    },
+                    {
+                        "trait_ID": "trait_SkinColor_tan",
+                        "trait_displayname": "Tan",
+                        "trait_score":0,
+                        "trait_tooltip": "Sun-kissed tan skin."
+                    },
+                    {
+                        "trait_ID": "trait_SkinColor_brown",
+                        "trait_displayname": "Brown",
+                        "trait_score":0,
+                        "trait_tooltip": "Warm brown skin."
+                    },
+                    {
+                        "trait_ID": "trait_SkinColor_dark",
+                        "trait_displayname": "Dark",
+                        "trait_score":0,
+                        "trait_tooltip": "Deep dark skin."
+                    }
+                ],
+                "type": 8,
+                "SortType":"UnsortedList",
+                "neutralIndex": 1,
+                "requireRaceKeyword_any": ["humanrace", "humanoid"],
+                "group_tooltip": "Skin color."
+            },
+            {
+                "displayName":"Hair Color",
+                "ID": "trait_HairColor",
+                "entries": [
+                    {
+                        "trait_ID": "trait_HairColor_black",
+                        "trait_displayname": "Black",
+                        "trait_score":0,
+                        "trait_tooltip": "Black hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_brown",
+                        "trait_displayname": "Brown",
+                        "trait_score":0,
+                        "trait_tooltip": "Brown hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_blonde",
+                        "trait_displayname": "Blonde",
+                        "trait_score":0,
+                        "trait_tooltip": "Golden blonde hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_red",
+                        "trait_displayname": "Red",
+                        "trait_score":0,
+                        "trait_tooltip": "Fiery red hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_silver",
+                        "trait_displayname": "Silver",
+                        "trait_score":0,
+                        "trait_tooltip": "Silver or white hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_blue",
+                        "trait_displayname": "Blue",
+                        "trait_score":0,
+                        "trait_tooltip": "Blue hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_green",
+                        "trait_displayname": "Green",
+                        "trait_score":0,
+                        "trait_tooltip": "Green hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_pink",
+                        "trait_displayname": "Pink",
+                        "trait_score":0,
+                        "trait_tooltip": "Pink hair."
+                    },
+                    {
+                        "trait_ID": "trait_HairColor_purple",
+                        "trait_displayname": "Purple",
+                        "trait_score":0,
+                        "trait_tooltip": "Purple hair."
+                    }
+                ],
+                "type": 8,
+                "SortType":"UnsortedList",
+                "neutralIndex": 0,
+                "requireRaceKeyword_any": ["humanrace", "humanoid"],
+                "group_tooltip": "Hair color."
+            },
+            {
+                "displayName":"Eye Color",
+                "ID": "trait_EyeColor",
+                "entries": [
+                    {
+                        "trait_ID": "trait_EyeColor_black",
+                        "trait_displayname": "Black",
+                        "trait_score":0,
+                        "trait_tooltip": "Deep black eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_brown",
+                        "trait_displayname": "Brown",
+                        "trait_score":0,
+                        "trait_tooltip": "Warm brown eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_amber",
+                        "trait_displayname": "Amber",
+                        "trait_score":0,
+                        "trait_tooltip": "Golden amber eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_blue",
+                        "trait_displayname": "Blue",
+                        "trait_score":0,
+                        "trait_tooltip": "Clear blue eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_green",
+                        "trait_displayname": "Green",
+                        "trait_score":0,
+                        "trait_tooltip": "Emerald green eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_purple",
+                        "trait_displayname": "Purple",
+                        "trait_score":0,
+                        "trait_tooltip": "Mysterious purple eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_red",
+                        "trait_displayname": "Red",
+                        "trait_score":0,
+                        "trait_tooltip": "Crimson red eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_silver",
+                        "trait_displayname": "Silver",
+                        "trait_score":0,
+                        "trait_tooltip": "Silver or grey eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_gold",
+                        "trait_displayname": "Gold",
+                        "trait_score":0,
+                        "trait_tooltip": "Shimmering golden eyes."
+                    },
+                    {
+                        "trait_ID": "trait_EyeColor_pink",
+                        "trait_displayname": "Pink",
+                        "trait_score":0,
+                        "trait_tooltip": "Soft pink eyes."
+                    }
+                ],
+                "type": 8,
+                "SortType":"UnsortedList",
+                "neutralIndex": 1,
+                "requireRaceKeyword_any": ["humanrace", "humanoid"],
+                "group_tooltip": "Eye (iris) color."
+            }
+        ]
+    },
+
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+
+            },
+            "zh-cn":
+            {
+
+                "trait_BodyType_Female":"体型",
+                "trait_BodyType_Female_tooltip":"角色的整体体型与身材（女性）。",
+                "trait_BodyType_Female_slim":"%%trait_BodyType_Female%%：纤瘦",
+                "trait_BodyType_Female_slim_tooltip":"%%trait_BodyType_Female_tooltip%%\n单薄纤细的身材。",
+                "trait_BodyType_Female_slender":"%%trait_BodyType_Female%%：苗条",
+                "trait_BodyType_Female_slender_tooltip":"%%trait_BodyType_Female_tooltip%%\n轻盈优雅、线条修长的身材。",
+                "trait_BodyType_Female_average":"%%trait_BodyType_Female%%：普通",
+                "trait_BodyType_Female_average_tooltip":"%%trait_BodyType_Female_tooltip%%\n普通的身材。",
+                "trait_BodyType_Female_athletic":"%%trait_BodyType_Female%%：健美",
+                "trait_BodyType_Female_athletic_tooltip":"%%trait_BodyType_Female_tooltip%%\n结实且经过锻炼的身材。",
+                "trait_BodyType_Female_curvy":"%%trait_BodyType_Female%%：前凸后翘",
+                "trait_BodyType_Female_curvy_tooltip":"%%trait_BodyType_Female_tooltip%%\n胸臀曲线明显的丰满身材。",
+                "trait_BodyType_Female_voluptuous":"%%trait_BodyType_Female%%：丰腴",
+                "trait_BodyType_Female_voluptuous_tooltip":"%%trait_BodyType_Female_tooltip%%\n全身柔软有肉感的身材。",
+                "trait_BodyType_Female_plump":"%%trait_BodyType_Female%%：微胖",
+                "trait_BodyType_Female_plump_tooltip":"%%trait_BodyType_Female_tooltip%%\n柔软圆润的微胖身材。",
+                "trait_BodyType_Female_obese":"%%trait_BodyType_Female%%：肥胖",
+                "trait_BodyType_Female_obese_tooltip":"%%trait_BodyType_Female_tooltip%%\n明显超重的身材。",
+
+                "trait_BodyType_Male":"体型",
+                "trait_BodyType_Male_tooltip":"角色的整体体型与身材（男性）。",
+                "trait_BodyType_Male_slim":"%%trait_BodyType_Male%%：瘦弱",
+                "trait_BodyType_Male_slim_tooltip":"%%trait_BodyType_Male_tooltip%%\n单薄、缺少肌肉的身材。",
+                "trait_BodyType_Male_slender":"%%trait_BodyType_Male%%：精瘦",
+                "trait_BodyType_Male_slender_tooltip":"%%trait_BodyType_Male_tooltip%%\n修长精干的身材。",
+                "trait_BodyType_Male_average":"%%trait_BodyType_Male%%：普通",
+                "trait_BodyType_Male_average_tooltip":"%%trait_BodyType_Male_tooltip%%\n普通的身材。",
+                "trait_BodyType_Male_athletic":"%%trait_BodyType_Male%%：健壮",
+                "trait_BodyType_Male_athletic_tooltip":"%%trait_BodyType_Male_tooltip%%\n匀称且经过锻炼的身材。",
+                "trait_BodyType_Male_muscular":"%%trait_BodyType_Male%%：肌肉发达",
+                "trait_BodyType_Male_muscular_tooltip":"%%trait_BodyType_Male_tooltip%%\n肌肉粗壮、线条分明的身材。",
+                "trait_BodyType_Male_burly":"%%trait_BodyType_Male%%：魁梧",
+                "trait_BodyType_Male_burly_tooltip":"%%trait_BodyType_Male_tooltip%%\n高大厚实、孔武有力的体格。",
+                "trait_BodyType_Male_plump":"%%trait_BodyType_Male%%：发福",
+                "trait_BodyType_Male_plump_tooltip":"%%trait_BodyType_Male_tooltip%%\n略有赘肉的柔软身材。",
+                "trait_BodyType_Male_obese":"%%trait_BodyType_Male%%：肥胖",
+                "trait_BodyType_Male_obese_tooltip":"%%trait_BodyType_Male_tooltip%%\n明显超重的身材。",
+
+                "trait_SkinColor":"肤色",
+                "trait_SkinColor_tooltip":"角色的肤色。",
+                "trait_SkinColor_pale":"%%trait_SkinColor%%：苍白",
+                "trait_SkinColor_pale_tooltip":"%%trait_SkinColor_tooltip%%\n近乎瓷器般苍白的皮肤。",
+                "trait_SkinColor_fair":"%%trait_SkinColor%%：白皙",
+                "trait_SkinColor_fair_tooltip":"%%trait_SkinColor_tooltip%%\n白皙而健康的皮肤。",
+                "trait_SkinColor_tan":"%%trait_SkinColor%%：小麦色",
+                "trait_SkinColor_tan_tooltip":"%%trait_SkinColor_tooltip%%\n阳光晒过的小麦色皮肤。",
+                "trait_SkinColor_brown":"%%trait_SkinColor%%：棕色",
+                "trait_SkinColor_brown_tooltip":"%%trait_SkinColor_tooltip%%\n温暖的棕色皮肤。",
+                "trait_SkinColor_dark":"%%trait_SkinColor%%：黑色",
+                "trait_SkinColor_dark_tooltip":"%%trait_SkinColor_tooltip%%\n深邃的黑色皮肤。",
+
+                "trait_HairColor":"发色",
+                "trait_HairColor_tooltip":"角色的头发颜色。",
+                "trait_HairColor_black":"%%trait_HairColor%%：黑色",
+                "trait_HairColor_black_tooltip":"%%trait_HairColor_tooltip%%\n黑色的头发。",
+                "trait_HairColor_brown":"%%trait_HairColor%%：棕色",
+                "trait_HairColor_brown_tooltip":"%%trait_HairColor_tooltip%%\n棕色的头发。",
+                "trait_HairColor_blonde":"%%trait_HairColor%%：金色",
+                "trait_HairColor_blonde_tooltip":"%%trait_HairColor_tooltip%%\n金色的头发。",
+                "trait_HairColor_red":"%%trait_HairColor%%：红色",
+                "trait_HairColor_red_tooltip":"%%trait_HairColor_tooltip%%\n火红的头发。",
+                "trait_HairColor_silver":"%%trait_HairColor%%：银白色",
+                "trait_HairColor_silver_tooltip":"%%trait_HairColor_tooltip%%\n银白或白色的头发。",
+                "trait_HairColor_blue":"%%trait_HairColor%%：蓝色",
+                "trait_HairColor_blue_tooltip":"%%trait_HairColor_tooltip%%\n蓝色的头发。",
+                "trait_HairColor_green":"%%trait_HairColor%%：绿色",
+                "trait_HairColor_green_tooltip":"%%trait_HairColor_tooltip%%\n绿色的头发。",
+                "trait_HairColor_pink":"%%trait_HairColor%%：粉色",
+                "trait_HairColor_pink_tooltip":"%%trait_HairColor_tooltip%%\n粉色的头发。",
+                "trait_HairColor_purple":"%%trait_HairColor%%：紫色",
+                "trait_HairColor_purple_tooltip":"%%trait_HairColor_tooltip%%\n紫色的头发。",
+
+                "trait_EyeColor":"瞳色",
+                "trait_EyeColor_tooltip":"角色的眼睛（虹膜）颜色。",
+                "trait_EyeColor_black":"%%trait_EyeColor%%：黑色",
+                "trait_EyeColor_black_tooltip":"%%trait_EyeColor_tooltip%%\n深邃的黑色眼眸。",
+                "trait_EyeColor_brown":"%%trait_EyeColor%%：棕色",
+                "trait_EyeColor_brown_tooltip":"%%trait_EyeColor_tooltip%%\n温暖的棕色眼眸。",
+                "trait_EyeColor_amber":"%%trait_EyeColor%%：琥珀色",
+                "trait_EyeColor_amber_tooltip":"%%trait_EyeColor_tooltip%%\n金色的琥珀色眼眸。",
+                "trait_EyeColor_blue":"%%trait_EyeColor%%：蓝色",
+                "trait_EyeColor_blue_tooltip":"%%trait_EyeColor_tooltip%%\n清澈的蓝色眼眸。",
+                "trait_EyeColor_green":"%%trait_EyeColor%%：绿色",
+                "trait_EyeColor_green_tooltip":"%%trait_EyeColor_tooltip%%\n翡翠般的绿色眼眸。",
+                "trait_EyeColor_purple":"%%trait_EyeColor%%：紫色",
+                "trait_EyeColor_purple_tooltip":"%%trait_EyeColor_tooltip%%\n神秘的紫色眼眸。",
+                "trait_EyeColor_red":"%%trait_EyeColor%%：红色",
+                "trait_EyeColor_red_tooltip":"%%trait_EyeColor_tooltip%%\n绯红的眼眸。",
+                "trait_EyeColor_silver":"%%trait_EyeColor%%：银灰色",
+                "trait_EyeColor_silver_tooltip":"%%trait_EyeColor_tooltip%%\n银灰色的眼眸。",
+                "trait_EyeColor_gold":"%%trait_EyeColor%%：金色",
+                "trait_EyeColor_gold_tooltip":"%%trait_EyeColor_tooltip%%\n闪烁的金色眼眸。",
+                "trait_EyeColor_pink":"%%trait_EyeColor%%：粉色",
+                "trait_EyeColor_pink_tooltip":"%%trait_EyeColor_tooltip%%\n柔和的粉色眼眸。"
+            },
+            "en-us":
+            {
+
+                "trait_BodyType":"Body Type",
+                "trait_BodyType_tooltip":"Overall body shape and build.",
+                "trait_BodyType_slim":"%%trait_BodyType%%: Slim",
+                "trait_BodyType_slim_tooltip":"%%trait_BodyType_tooltip%%\nA thin and delicate body.",
+                "trait_BodyType_slender":"%%trait_BodyType%%: Slender",
+                "trait_BodyType_slender_tooltip":"%%trait_BodyType_tooltip%%\nA lithe and graceful body.",
+                "trait_BodyType_average":"%%trait_BodyType%%: Average",
+                "trait_BodyType_average_tooltip":"%%trait_BodyType_tooltip%%\nAn average body.",
+                "trait_BodyType_athletic":"%%trait_BodyType%%: Athletic",
+                "trait_BodyType_athletic_tooltip":"%%trait_BodyType_tooltip%%\nA toned and well-trained body.",
+                "trait_BodyType_curvy":"%%trait_BodyType%%: Curvy",
+                "trait_BodyType_curvy_tooltip":"%%trait_BodyType_tooltip%%\nA full-figured body with pronounced curves.",
+                "trait_BodyType_plump":"%%trait_BodyType%%: Plump",
+                "trait_BodyType_plump_tooltip":"%%trait_BodyType_tooltip%%\nA soft and plump body.",
+                "trait_BodyType_obese":"%%trait_BodyType%%: Obese",
+                "trait_BodyType_obese_tooltip":"%%trait_BodyType_tooltip%%\nA heavily overweight body.",
+
+                "trait_SkinColor":"Skin Color",
+                "trait_SkinColor_tooltip":"Color of one's skin.",
+                "trait_SkinColor_pale":"%%trait_SkinColor%%: Pale",
+                "trait_SkinColor_pale_tooltip":"%%trait_SkinColor_tooltip%%\nPale, almost porcelain-like skin.",
+                "trait_SkinColor_fair":"%%trait_SkinColor%%: Fair",
+                "trait_SkinColor_fair_tooltip":"%%trait_SkinColor_tooltip%%\nFair skin with a healthy tone.",
+                "trait_SkinColor_tan":"%%trait_SkinColor%%: Tan",
+                "trait_SkinColor_tan_tooltip":"%%trait_SkinColor_tooltip%%\nSun-kissed tan skin.",
+                "trait_SkinColor_brown":"%%trait_SkinColor%%: Brown",
+                "trait_SkinColor_brown_tooltip":"%%trait_SkinColor_tooltip%%\nWarm brown skin.",
+                "trait_SkinColor_dark":"%%trait_SkinColor%%: Dark",
+                "trait_SkinColor_dark_tooltip":"%%trait_SkinColor_tooltip%%\nDeep dark skin.",
+
+                "trait_HairColor":"Hair Color",
+                "trait_HairColor_tooltip":"Color of one's hair.",
+                "trait_HairColor_black":"%%trait_HairColor%%: Black",
+                "trait_HairColor_black_tooltip":"%%trait_HairColor_tooltip%%\nBlack hair.",
+                "trait_HairColor_brown":"%%trait_HairColor%%: Brown",
+                "trait_HairColor_brown_tooltip":"%%trait_HairColor_tooltip%%\nBrown hair.",
+                "trait_HairColor_blonde":"%%trait_HairColor%%: Blonde",
+                "trait_HairColor_blonde_tooltip":"%%trait_HairColor_tooltip%%\nGolden blonde hair.",
+                "trait_HairColor_red":"%%trait_HairColor%%: Red",
+                "trait_HairColor_red_tooltip":"%%trait_HairColor_tooltip%%\nFiery red hair.",
+                "trait_HairColor_silver":"%%trait_HairColor%%: Silver",
+                "trait_HairColor_silver_tooltip":"%%trait_HairColor_tooltip%%\nSilver or white hair.",
+                "trait_HairColor_blue":"%%trait_HairColor%%: Blue",
+                "trait_HairColor_blue_tooltip":"%%trait_HairColor_tooltip%%\nBlue hair.",
+                "trait_HairColor_green":"%%trait_HairColor%%: Green",
+                "trait_HairColor_green_tooltip":"%%trait_HairColor_tooltip%%\nGreen hair.",
+                "trait_HairColor_pink":"%%trait_HairColor%%: Pink",
+                "trait_HairColor_pink_tooltip":"%%trait_HairColor_tooltip%%\nPink hair.",
+                "trait_HairColor_purple":"%%trait_HairColor%%: Purple",
+                "trait_HairColor_purple_tooltip":"%%trait_HairColor_tooltip%%\nPurple hair.",
+
+                "trait_EyeColor":"Eye Color",
+                "trait_EyeColor_tooltip":"Color of one's eyes (iris).",
+                "trait_EyeColor_black":"%%trait_EyeColor%%: Black",
+                "trait_EyeColor_black_tooltip":"%%trait_EyeColor_tooltip%%\nDeep black eyes.",
+                "trait_EyeColor_brown":"%%trait_EyeColor%%: Brown",
+                "trait_EyeColor_brown_tooltip":"%%trait_EyeColor_tooltip%%\nWarm brown eyes.",
+                "trait_EyeColor_amber":"%%trait_EyeColor%%: Amber",
+                "trait_EyeColor_amber_tooltip":"%%trait_EyeColor_tooltip%%\nGolden amber eyes.",
+                "trait_EyeColor_blue":"%%trait_EyeColor%%: Blue",
+                "trait_EyeColor_blue_tooltip":"%%trait_EyeColor_tooltip%%\nClear blue eyes.",
+                "trait_EyeColor_green":"%%trait_EyeColor%%: Green",
+                "trait_EyeColor_green_tooltip":"%%trait_EyeColor_tooltip%%\nEmerald green eyes.",
+                "trait_EyeColor_purple":"%%trait_EyeColor%%: Purple",
+                "trait_EyeColor_purple_tooltip":"%%trait_EyeColor_tooltip%%\nMysterious purple eyes.",
+                "trait_EyeColor_red":"%%trait_EyeColor%%: Red",
+                "trait_EyeColor_red_tooltip":"%%trait_EyeColor_tooltip%%\nCrimson red eyes.",
+                "trait_EyeColor_silver":"%%trait_EyeColor%%: Silver",
+                "trait_EyeColor_silver_tooltip":"%%trait_EyeColor_tooltip%%\nSilver or grey eyes.",
+                "trait_EyeColor_gold":"%%trait_EyeColor%%: Gold",
+                "trait_EyeColor_gold_tooltip":"%%trait_EyeColor_tooltip%%\nShimmering golden eyes.",
+                "trait_EyeColor_pink":"%%trait_EyeColor%%: Pink",
+                "trait_EyeColor_pink_tooltip":"%%trait_EyeColor_tooltip%%\nSoft pink eyes."
+            }
+        }
+    }
+}

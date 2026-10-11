@@ -867,6 +867,9 @@ public class Character_Factions
 
         if (Owner != null) booking.ownerRef = Owner.RefID;
         Bookings.Add(booking);
+        // the booked activity becomes a wardrobe key an outfit can be set for
+        // (resolved uncached - booking.GetActivity caches its first answer)
+        Owner?.Wardrobe?.RegisterActivity(booking.Faction.FactionID, RecreationUtility.ResolveActivity(this, booking));
         if (refresh) RefreshSchedule();
         return true;
     }

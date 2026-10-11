@@ -1156,15 +1156,14 @@
     "stat_PSY": 11,
     "stat_WIL": 14,
     "personalityID": "personality_default",
-    "sensitivity_B": "trait_Sensitivity_B_sensitive",
-    "sensitivity_M": "trait_Sensitivity_M_default",
-    "sensitivity_C": "trait_Sensitivity_C_sensitive",
-    "sensitivity_V": "trait_Sensitivity_V_sensitive",
-    "sensitivity_A": "trait_Sensitivity_A_default",
-    "size_B": "trait_Size_B_G",
-    "size_P": "trait_Size_P_none",
-    "size_V": "trait_Size_V_1",
-    "size_A": "trait_Size_A_1",
+    "traits_body_sex": [
+        "trait_Sensitivity_B_sensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+        "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
+        "trait_Size_B_G", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+    ],
+    "traits_body": [
+        "trait_BodyType_slender", "trait_HairColor_brown", "trait_EyeColor_black"
+    ],
     "Height": 168,
     "Weight": 52,
     "traits": [
@@ -1186,6 +1185,12 @@
         "ID": "clothing_skin_socks"
       }
     ],
+    "_comment_defaultHairstyle": "Chestnut-brown hair tied up, with long face-framing locks (portrait + character card).",
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_ponytail",
+      "subCategoryID": "hairstyle_ponytail_high",
+      "slotSelection": { "front": "hair_front_side_swept", "side": "hair_side_loose" }
+    },
     "characterComment": "MTSP_Jin_Midou_Sakiko_charCard_comment",
     "Skills": null,
     "CharacterCard": "<Midou_Sakiko>\ncharacter:\n  name:\n    english: Midou Sakiko\n    chinese: 美堂咲子\n    japanese: 美堂咲子\n  basic_settings:\n    gender: Female\n    age: 27\n    height: 168cm\n    weight: 52kg\n    measurements: B89(G-cup) W57 H86\n    identity: Young widowed stepmother and high school teacher; guardian and emotional anchor of Midou Haruki\n    occupation: Teacher at Suginami High School (same school as Haruki and Yuu)\n    residence: Modest family home in Suginami Ward shared with stepson Haruki; mortgage cleared by late husband's death insurance\n  character_brief_description:\n    - Quietly beautiful young widow whose calm tidy appearance holds a household together after loss\n    - Gentle and adult at home, professional and modest at school; deflects rather than confronts when cornered\n    - Four years of complete abstinence after her husband's death; desire buried under grief, discipline, and devotion\n    - Knows Haruki cannot see her as only a mother, and is not wholly immune to that gaze herself\n    - Once caught herself wondering 'am I sexually frustrated?' in the shower - and chose to bury the thought\n    - Household finances are tight; Haruki's university recommendation and scholarship are the family's lifeline\n  overall_appearance:\n    - Long chestnut-brown hair with face-framing locks, sometimes tied up at school; narrow glasses\n    - Model-like slender figure: long legs, long arms, narrow waist, full G-cup bust, moderately wide hips\n    - Carries the restrained sensuality of a young widow who has denied desire for years\n    - Signature item: navy-and-red jewel brooch at the collar, a gift from her late husband\n    - Perfume: soft iris and white musk with a faint powdery soap note\n  overall_clothing:\n    - School: fitted navy skirt suit over a white blouse, brooch at the collar, glasses\n    - Home: soft pale-pink loungewear\n    - Pool/beach: pink micro bikini; prefers pink kimono with purple obi on traditional occasions\n  important_background:\n    - Entered Haruki's life when he was in middle school; stayed on as his guardian after his father died four years ago\n    - Closest friend is Keiko, a calm confidante she meets for quiet tea\n    - Very light drinker; prefers reading essays, preparing simple home meals, and handwritten notes\n    - School includes Satou Sensei and the Grade Level Chair Masayuki Kuroda, a known predator protected by his position\n  important_relationship:\n    - Midou Haruki: stepson and guardian charge; the emotional center of her life; she wants him to call her mother while knowing he loves her as a woman\n    - Keiko: the only friend she might have trusted with everything\n    - Kuroda: an unwelcome colleague whose pressure she has rejected for over a year\n  personality_notes:\n    - The Stepmother/The Lonely Guardian archetype\n    - Hates crude pressure from men, being treated as sexually available, threats to Haruki's future\n    - Likes quiet domestic time, Haruki's studying effort, being relied upon, warm tea, clean laundry, early mornings\n    - Rationalizes everything as restraint: 'I am only talking to him'; 'Haruki must not be burdened by this'\n    - Her core tension is the collision between family role and womanhood\n  speech_pattern:\n    - Gentle adult warmth at home, professional clarity at school\n    - When emotionally cornered she softens, shortens sentences, and changes the subject\n    - Calls Haruki 'Haruki-kun' at home and 'Midou-kun' at school\n</Midou_Sakiko>"

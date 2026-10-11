@@ -92,7 +92,7 @@
         }
     ],
     "traits_WIL_SEX": [],
-    "traits_BODY": [
+    "traits_BODY_SEX": [
         {
             "displayName":"",
             "ID": "trait_Sensitivity_B",
@@ -126,7 +126,7 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_B", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 8,
+            "type": 10,
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Breast part sensitivity."
@@ -164,7 +164,7 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_M", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 8,
+            "type": 10,
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Mouth part sensitivity."
@@ -202,7 +202,7 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_C", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 8,
+            "type": 10,
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Clit/Penis part sensitivity. If a character has both vagina and penis, this applies to both."
@@ -240,7 +240,7 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_V", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 8,
+            "type": 10,
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Vagina part sensitivity."
@@ -278,7 +278,7 @@
                     "stat_modifiers":[ { "statID":"stats_derived_maxSensitivity_A", "modKey":"finalMod", "type":"setMult", "valueType":"number", "valueString":"1.5" } ]
                 }
             ],
-            "type": 8,
+            "type": 10,
             "SortType":"SortedList",
             "neutralIndex": 1,
             "group_tooltip": "Anal part sensitivity."
@@ -357,7 +357,7 @@
                     "trait_tooltip": "Has breast."
                 }
             ],
-            "type": 8,
+            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 4,
@@ -406,7 +406,7 @@
                     "trait_tooltip": "Has penis."
                 }
             ],
-            "type": 8,
+            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 3,
@@ -430,7 +430,7 @@
                     "trait_tooltip": "Has vagina and clitoris. Can engage in vagina or clitoris related activities.\nCan get pregnant via vagina related activities."
                 }
             ],
-            "type": 8,
+            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 1,
@@ -454,7 +454,7 @@
                     "trait_tooltip": "Has anus. Can engage in anus related activites."
                 }
             ],
-            "type": 8,
+            "type": 10,
             "allowPopulate":false,
             "SortType":"SortedList",
             "neutralIndex": 1,
@@ -480,6 +480,7 @@
 
 
                 "traits_BODY":"身体特质",
+                "traits_BODY_SEX":"性身体特质",
 
                 "trait_Sensitivity_B":"B敏感度",
                 "trait_Sensitivity_B_tooltip":"胸部的感度，影响胸部相关行为的快感强度。",

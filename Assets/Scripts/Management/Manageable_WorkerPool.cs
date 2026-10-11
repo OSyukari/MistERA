@@ -237,7 +237,7 @@ public static class FallbackWorkerManager
             if (!FactionUtility.TryGetMemberType(entry.memberTypeID, out var shiftType) || shiftType.workModule == null) continue;
 
             var module = shiftType.workModule;
-            bool shiftActive = module.IsActiveAt(hour);
+            bool shiftActive = module.IsActiveAt(hour, 0, establishment);   // a shift off on a day off (holidayPayoutMultiplier 0) needs no fallback
 
             if (!workersByType.TryGetValue(shiftType.ID, out var workers)) workers = new List<Character_Trainable>();
             workersByType.Remove(shiftType.ID);

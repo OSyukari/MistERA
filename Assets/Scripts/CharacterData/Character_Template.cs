@@ -49,7 +49,14 @@ public abstract class CharaTemplate
     public int stat_STR = 10, stat_CON = 10, stat_PSY = 10, stat_WIL = 10;
     public string personalityID = "personality_base";
     public string characterComment = "";
+    /// <summary> non-body traits </summary>
     public List<string> traits = new List<string>();
+    /// <summary> non-sexual body traits (skin, hair...), seed data copied onto Character_Body </summary>
+    public List<string> traits_body = new List<string>();
+    /// <summary> seed data copied onto Character_Body.hairstyle (null = random default hairstyle) </summary>
+    public Hairstyle_Instance defaultHairstyle = null;
+    /// <summary> preset wardrobe outfits, seed data copied onto Character_Wardrobe (by key, missing keys only) </summary>
+    public List<OutfitSet> outfits = new List<OutfitSet>();
     public List<string> actorKeyword = new List<string>();
     [JsonIgnore]
     public virtual bool isMale
@@ -85,6 +92,28 @@ public abstract class CharaTemplate
     [JsonIgnore] public abstract Traits Size_P { get; set; }
     [JsonIgnore] public abstract Traits Size_V { get; set; }
     [JsonIgnore] public abstract Traits Size_A { get; set; }
+
+    /// <summary>
+    /// Body traits this template seeds a new body with. Every id in traits / traits_body (and traits_body_sex)
+    /// is classified by its group type, so an id written in the wrong list still lands in the right place.
+    /// </summary>
+    public virtual void GetSeedBodyTraits(List<Traits> result)
+    {
+        CollectBodyTraits(traits, false, result);
+        CollectBodyTraits(traits_body, true, result);
+    }
+
+    protected void CollectBodyTraits(List<string> ids, bool expectBody, List<Traits> result)
+    {
+        if (ids == null) return;
+        foreach (var id in ids)
+        {
+            var t = BodyTraitUtility.Resolve(id);
+            if (t == null || t.Parent == null) continue;
+            if (t.Parent.isBodyTrait != expectBody) Debug.LogWarning($"template trait [{id}] is listed as {(expectBody ? "body" : "non-body")} trait but its group [{t.Parent.ID}] is {t.Parent.Type}");
+            if (t.Parent.isBodyTrait) result.Add(t);
+        }
+    }
 }
 
 public class presetInventory
@@ -168,16 +197,32 @@ public class CharaTrainableTemplate : CharaTemplate
     }
     public string CharacterCard = "";
 
-    [JsonProperty] public string sensitivity_B = "trait_Sensitivity_B_default";
-    [JsonProperty] public string sensitivity_M = "trait_Sensitivity_M_default";
-    [JsonProperty] public string sensitivity_C = "trait_Sensitivity_C_default";
-    [JsonProperty] public string sensitivity_V = "trait_Sensitivity_V_default";
-    [JsonProperty] public string sensitivity_A = "trait_Sensitivity_A_default";
+    /// <summary> sexual body traits (part size, sensitivity), seed data copied onto Character_Body </summary>
+    public List<string> traits_body_sex = new List<string>();
 
-    [JsonProperty] public string size_B = "trait_Size_B_none";
-    [JsonProperty] public string size_P = "trait_Size_P_none";
-    [JsonProperty] public string size_V = "trait_Size_V_none";
-    [JsonProperty] public string size_A = "trait_Size_A_none";
+    // legacy read shim: pre-refactor templates stored the 9 sexual body traits as separate fields.
+    // write-only, so old json (unmigrated data, players' custom characters) still loads, and is never written back.
+    [JsonProperty("sensitivity_B")] private string legacy_sensitivity_B { set { SetLegacy(BodyTraitUtility.Group_Sensitivity_B, value); } }
+    [JsonProperty("sensitivity_M")] private string legacy_sensitivity_M { set { SetLegacy(BodyTraitUtility.Group_Sensitivity_M, value); } }
+    [JsonProperty("sensitivity_C")] private string legacy_sensitivity_C { set { SetLegacy(BodyTraitUtility.Group_Sensitivity_C, value); } }
+    [JsonProperty("sensitivity_V")] private string legacy_sensitivity_V { set { SetLegacy(BodyTraitUtility.Group_Sensitivity_V, value); } }
+    [JsonProperty("sensitivity_A")] private string legacy_sensitivity_A { set { SetLegacy(BodyTraitUtility.Group_Sensitivity_A, value); } }
+    [JsonProperty("size_B")] private string legacy_size_B { set { SetLegacy(BodyTraitUtility.Group_Size_B, value); } }
+    [JsonProperty("size_P")] private string legacy_size_P { set { SetLegacy(BodyTraitUtility.Group_Size_P, value); } }
+    [JsonProperty("size_V")] private string legacy_size_V { set { SetLegacy(BodyTraitUtility.Group_Size_V, value); } }
+    [JsonProperty("size_A")] private string legacy_size_A { set { SetLegacy(BodyTraitUtility.Group_Size_A, value); } }
+
+    void SetLegacy(string groupID, string traitID)
+    {
+        // trait index may not be registered yet while json loads, SetInList falls back to the group prefix
+        BodyTraitUtility.SetInList(traits_body_sex, traitID, groupID);
+    }
+
+    public override void GetSeedBodyTraits(List<Traits> result)
+    {
+        base.GetSeedBodyTraits(result);
+        CollectBodyTraits(traits_body_sex, true, result);
+    }
 
     public override void SetGender(Humanoid_GenderAppearance gender)
     {
@@ -188,44 +233,35 @@ public class CharaTrainableTemplate : CharaTemplate
         this.Appearance = app;
         if (forceDefaultGenital && !scr_System_CentralControl.current.isSafeMode)
         {
-            switch (app)
-            {
-                case Humanoid_GenderAppearance.Male:
-                    Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").getNeutralinGroup();
-                    Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").entries[1];
-                    Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").entries[0];
-                    Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").getNeutralinGroup();
-                    break;
-                case Humanoid_GenderAppearance.Female:
-                    Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").entries[0];
-                    Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").getNeutralinGroup();
-                    Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").getNeutralinGroup();
-                    Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").getNeutralinGroup();
-                    break;
-                case Humanoid_GenderAppearance.Ambiguous:
-                    Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").getNeutralinGroup();
-                    Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").getNeutralinGroup();
-                    Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").getNeutralinGroup();
-                    Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").getNeutralinGroup();
-                    break;
-                //case Humanoid_GenderAppearance.Inhuman:
-                default:
-                    Size_P = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_P").entries[0];
-                    Size_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_B").entries[0];
-                    Size_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_V").entries[0];
-                    Size_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Size_A").entries[0];
-                    break;
-            }
+            Size_P = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Size_P, app);
+            Size_B = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Size_B, app);
+            Size_V = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Size_V, app);
+            Size_A = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Size_A, app);
         }
 
         if (forceDefaultSensitivity && !scr_System_CentralControl.current.isSafeMode)
         {
-            Sensitivity_B = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_B").getNeutralinGroup();
-            Sensitivity_M = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_M").getNeutralinGroup();
-            Sensitivity_C = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_C").getNeutralinGroup();
-            Sensitivity_V = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_V").getNeutralinGroup();
-            Sensitivity_A = scr_System_Serializer.current.GetByNameOrID_TraitsGroup("trait_Sensitivity_A").getNeutralinGroup();
+            Sensitivity_B = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Sensitivity_B, app);
+            Sensitivity_M = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Sensitivity_M, app);
+            Sensitivity_C = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Sensitivity_C, app);
+            Sensitivity_V = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Sensitivity_V, app);
+            Sensitivity_A = BodyTraitUtility.GetDefault(BodyTraitUtility.Group_Sensitivity_A, app);
         }
+    }
+
+    /// <summary>
+    /// Template seed value for a sexual body trait group; falls back to the gender default (same as the body does)
+    /// </summary>
+    protected Traits GetSexTrait(string groupID)
+    {
+        var t = BodyTraitUtility.FindInGroup(traits_body_sex, groupID);
+        if (t != null) return t;
+        return BodyTraitUtility.GetDefault(groupID, Appearance);
+    }
+    protected void SetSexTrait(Traits value)
+    {
+        if (value == null) return;
+        BodyTraitUtility.SetInList(traits_body_sex, value);
     }
 
     [JsonIgnore]
@@ -233,8 +269,8 @@ public class CharaTrainableTemplate : CharaTemplate
     {
         get
         {
-            if (this.Size_P.ID != "trait_Size_P_none") return true;
-            else return false;
+            var t = Size_P;
+            return t != null && t.ID != "trait_Size_P_none";
         }
     }
 
@@ -243,68 +279,22 @@ public class CharaTrainableTemplate : CharaTemplate
     {
         get
         {
-            if (this.Size_V.ID != "trait_Size_V_none") return true;
-            else return false;
+            var t = Size_V;
+            return t != null && t.ID != "trait_Size_V_none";
         }
     }
 
 
-    [JsonIgnore]
-    public override Traits Sensitivity_B
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_B); }
-        set { sensitivity_B = value.ID; }
-    }
-    [JsonIgnore]
-    public override Traits Sensitivity_M
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_M); }
-        set { sensitivity_M = value.ID; }
-    }
-    [JsonIgnore]
-    public override Traits Sensitivity_C
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_C); }
-        set { sensitivity_C = value.ID; }
-    }
-    [JsonIgnore]
-    public override Traits Sensitivity_V
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_V); }
-        set { sensitivity_V = value.ID; }
-    }
-    [JsonIgnore]
-    public override Traits Sensitivity_A
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(sensitivity_A); }
-        set { sensitivity_A = value.ID; }
-    }
+    [JsonIgnore] public override Traits Sensitivity_B { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_B); } set { SetSexTrait(value); } }
+    [JsonIgnore] public override Traits Sensitivity_M { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_M); } set { SetSexTrait(value); } }
+    [JsonIgnore] public override Traits Sensitivity_C { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_C); } set { SetSexTrait(value); } }
+    [JsonIgnore] public override Traits Sensitivity_V { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_V); } set { SetSexTrait(value); } }
+    [JsonIgnore] public override Traits Sensitivity_A { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_A); } set { SetSexTrait(value); } }
 
-
-    [JsonIgnore]
-    public override Traits Size_B
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_B); }
-        set { size_B = value.ID; }
-    }
-    [JsonIgnore]
-    public override Traits Size_P
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_P); }
-        set { size_P = value.ID; }
-    }
-    [JsonIgnore]
-    public override Traits Size_V
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_V); }
-        set { size_V = value.ID; }
-    }
-    [JsonIgnore]
-    public override Traits Size_A
-    {
-        get { return scr_System_Serializer.current.GetByNameOrID_Traits(size_A); }
-        set { size_A = value.ID; }
-    }
+    [JsonIgnore] public override Traits Size_B { get { return GetSexTrait(BodyTraitUtility.Group_Size_B); } set { SetSexTrait(value); } }
+    [JsonIgnore] public override Traits Size_P { get { return GetSexTrait(BodyTraitUtility.Group_Size_P); } set { SetSexTrait(value); } }
+    [JsonIgnore] public override Traits Size_V { get { return GetSexTrait(BodyTraitUtility.Group_Size_V); } set { SetSexTrait(value); } }
+    [JsonIgnore] public override Traits Size_A { get { return GetSexTrait(BodyTraitUtility.Group_Size_A); } set { SetSexTrait(value); } }
 
 
     public override void Load(CharaTemplate t)

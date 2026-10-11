@@ -668,6 +668,16 @@ public class scr_System_Serializer : MonoBehaviour
         return MasterList.BodyPartBases.GetInternalByID(name_or_id);
     }
 
+    public Hairstyle_Base GetByNameOrID_Hairstyle(string name_or_id)
+    {
+        return MasterList.BodyPartBases.GetHairstyleByID(name_or_id);
+    }
+
+    public Hairstyle_SlotOption GetByNameOrID_HairstyleOption(string name_or_id)
+    {
+        return MasterList.BodyPartBases.GetHairstyleOptionByID(name_or_id);
+    }
+
     public CharaSkill GetByNameOrID(string name_or_id)
     {
         return MasterList.Skills.GetByID(name_or_id);

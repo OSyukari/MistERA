@@ -1,0 +1,354 @@
+{
+    "BodyPartBases":
+    {
+        "BodyPart_HairstyleSlotOptions":
+        [
+            {
+                "id": "hair_front_none",
+                "keyword": "front",
+                "displayName": "No Bangs",
+                "tooltip": "Hairline fully exposed.",
+                "isDefault": false,
+                "promptTokens": [ "no bangs", "hair pulled back" ],                "tags": []
+            },
+            {
+                "id": "hair_front_straight_bangs",
+                "keyword": "front",
+                "displayName": "Straight Bangs",
+                "tooltip": "Even, straight-cut fringe across the forehead.",
+                "isDefault": true,
+                "promptTokens": [ "straight bangs" ],                "tags": []
+            },
+            {
+                "id": "hair_front_side_swept",
+                "keyword": "front",
+                "displayName": "Side-Swept Bangs",
+                "tooltip": "Fringe swept diagonally to one side.",
+                "isDefault": false,
+                "promptTokens": [ "side-swept bangs" ],                "tags": []
+            },
+            {
+                "id": "hair_front_center_part",
+                "keyword": "front",
+                "displayName": "Center Part",
+                "tooltip": "Hair parted down the middle, forehead exposed.",
+                "isDefault": false,
+                "promptTokens": [ "center part", "parted bangs" ],                "tags": []
+            },
+            {
+                "id": "hair_side_none",
+                "keyword": "side",
+                "displayName": "None",
+                "tooltip": "No distinct side hair.",
+                "isDefault": false,
+                "promptTokens": [],                "tags": []
+            },
+            {
+                "id": "hair_side_loose",
+                "keyword": "side",
+                "displayName": "Loose",
+                "tooltip": "Side locks hanging down naturally.",
+                "isDefault": true,
+                "promptTokens": [ "hair over shoulders" ],                "tags": []
+            },
+            {
+                "id": "hair_side_tucked",
+                "keyword": "side",
+                "displayName": "Tucked",
+                "tooltip": "Side locks tucked behind the ears.",
+                "isDefault": false,
+                "promptTokens": [ "hair tucked behind ear" ],                "tags": []
+            },
+            {
+                "id": "hair_accent_none",
+                "keyword": "accent",
+                "displayName": "None",
+                "tooltip": "No hair accent.",
+                "isDefault": true,
+                "promptTokens": [],                "tags": []
+            },
+            {
+                "id": "hair_accent_ahoge",
+                "keyword": "accent",
+                "displayName": "Ahoge",
+                "tooltip": "A single stubborn strand sticking up on top.",
+                "isDefault": false,
+                "promptTokens": [ "ahoge" ],                "tags": []
+            },
+            {
+                "id": "hair_accent_side_braid",
+                "keyword": "accent",
+                "displayName": "Side Braid",
+                "tooltip": "A thin braid woven at one side of the face.",
+                "isDefault": false,
+                "promptTokens": [ "side braid" ],                "tags": []
+            }
+        ],
+
+        "BodyPart_Hairstyles":
+        [
+            {
+                "id": "hairstyle_straight_long",
+                "displayName": "Long Straight Hair",
+                "tooltip": "Long, straight and flowing hair.",
+                "tags": [],                "isDefault": true,
+                "basePromptTokens": [ "long hair", "straight hair" ],
+                "subCategories": [],
+                "slots": [
+                    {
+                        "keyword": "front",
+                        "displayName": "Bangs",
+                        "tooltip": "Fringe style.",                        "defaultOptionID": "hair_front_straight_bangs"
+                    },
+                    {
+                        "keyword": "accent",
+                        "displayName": "Hair Accent",
+                        "tooltip": "Extra decorative strand.",                        "defaultOptionID": "hair_accent_none"
+                    }
+                ]
+            },
+            {
+                "id": "hairstyle_ponytail",
+                "displayName": "Ponytail",
+                "tooltip": "Hair gathered and tied into a tail.",
+                "tags": [],                "isDefault": false,
+                "basePromptTokens": [ "ponytail", "hair tied" ],
+                "subCategories": [
+                    {
+                        "id": "hairstyle_ponytail_high",
+                        "displayName": "High Ponytail",
+                        "tooltip": "Tied high on the back of the head.",
+                        "isDefault": true,
+                        "promptTokens": [ "high ponytail" ]                    },
+                    {
+                        "id": "hairstyle_ponytail_low",
+                        "displayName": "Low Ponytail",
+                        "tooltip": "Tied low near the nape.",
+                        "isDefault": false,
+                        "promptTokens": [ "low ponytail" ]                    },
+                    {
+                        "id": "hairstyle_ponytail_side",
+                        "displayName": "Side Ponytail",
+                        "tooltip": "Tied to one side over the shoulder.",
+                        "isDefault": false,
+                        "promptTokens": [ "side ponytail" ]                    }
+                ],
+                "slots": [
+                    {
+                        "keyword": "front",
+                        "displayName": "Bangs",
+                        "tooltip": "Fringe style.",                        "defaultOptionID": "hair_front_straight_bangs"
+                    },
+                    {
+                        "keyword": "side",
+                        "displayName": "Side Hair",
+                        "tooltip": "Side lock style.",                        "defaultOptionID": "hair_side_loose"
+                    }
+                ]
+            },
+            {
+                "id": "hairstyle_bob",
+                "displayName": "Bob Cut",
+                "tooltip": "Short hair cut at jaw or neck length.",
+                "tags": [],                "isDefault": false,
+                "basePromptTokens": [ "bob cut", "short hair" ],
+                "subCategories": [],
+                "slots": []
+            },
+            {
+                "id": "hairstyle_twintails",
+                "displayName": "Twin Tails",
+                "tooltip": "Hair parted in two and tied into tails on both sides.",
+                "tags": [],                "isDefault": false,
+                "basePromptTokens": [ "twintails", "two side up" ],
+                "subCategories": [
+                    {
+                        "id": "hairstyle_twintails_high",
+                        "displayName": "High Twin Tails",
+                        "tooltip": "Tied high on the sides of the head.",
+                        "isDefault": true,
+                        "promptTokens": [ "high twintails" ]                    },
+                    {
+                        "id": "hairstyle_twintails_low",
+                        "displayName": "Low Twin Tails",
+                        "tooltip": "Tied low near the nape.",
+                        "isDefault": false,
+                        "promptTokens": [ "low twintails" ]                    }
+                ],
+                "slots": [
+                    {
+                        "keyword": "front",
+                        "displayName": "Bangs",
+                        "tooltip": "Fringe style.",                        "defaultOptionID": "hair_front_straight_bangs"
+                    },
+                    {
+                        "keyword": "side",
+                        "displayName": "Side Hair",
+                        "tooltip": "Side lock style.",                        "defaultOptionID": "hair_side_loose"
+                    },
+                    {
+                        "keyword": "accent",
+                        "displayName": "Hair Accent",
+                        "tooltip": "Extra decorative strand.",                        "defaultOptionID": "hair_accent_none"
+                    }
+                ]
+            },
+            {
+                "id": "hairstyle_bun",
+                "displayName": "Hair Bun",
+                "tooltip": "Hair gathered and coiled into a bun on the head.",
+                "tags": [],                "isDefault": false,
+                "basePromptTokens": [ "hair bun", "hair up" ],
+                "subCategories": [],
+                "slots": [
+                    {
+                        "keyword": "front",
+                        "displayName": "Bangs",
+                        "tooltip": "Fringe style.",                        "defaultOptionID": "hair_front_straight_bangs"
+                    },
+                    {
+                        "keyword": "side",
+                        "displayName": "Side Hair",
+                        "tooltip": "Side lock style.",                        "defaultOptionID": "hair_side_loose"
+                    }
+                ]
+            },
+            {
+                "id": "hairstyle_braid",
+                "displayName": "Braid",
+                "tooltip": "Hair woven into one or two braids.",
+                "tags": [],                "isDefault": false,
+                "basePromptTokens": [ "braid", "braided hair" ],
+                "subCategories": [
+                    {
+                        "id": "hairstyle_braid_twin",
+                        "displayName": "Twin Braids",
+                        "tooltip": "Two braids, one on each side.",
+                        "isDefault": true,
+                        "promptTokens": [ "twin braids", "braided ponytails" ]                    },
+                    {
+                        "id": "hairstyle_braid_single",
+                        "displayName": "Single Braid",
+                        "tooltip": "A single braid hanging to one side.",
+                        "isDefault": false,
+                        "promptTokens": [ "single braid", "side braid" ]                    }
+                ],
+                "slots": [
+                    {
+                        "keyword": "front",
+                        "displayName": "Bangs",
+                        "tooltip": "Fringe style.",                        "defaultOptionID": "hair_front_straight_bangs"
+                    },
+                    {
+                        "keyword": "side",
+                        "displayName": "Side Hair",
+                        "tooltip": "Side lock style.",                        "defaultOptionID": "hair_side_loose"
+                    }
+                ]
+            },
+            {
+                "id": "hairstyle_wavy_long",
+                "displayName": "Long Wavy Hair",
+                "tooltip": "Long, softly waving hair.",
+                "tags": [],                "isDefault": false,
+                "basePromptTokens": [ "long hair", "wavy hair" ],
+                "subCategories": [],
+                "slots": [
+                    {
+                        "keyword": "front",
+                        "displayName": "Bangs",
+                        "tooltip": "Fringe style.",                        "defaultOptionID": "hair_front_straight_bangs"
+                    },
+                    {
+                        "keyword": "side",
+                        "displayName": "Side Hair",
+                        "tooltip": "Side lock style.",                        "defaultOptionID": "hair_side_loose"
+                    },
+                    {
+                        "keyword": "accent",
+                        "displayName": "Hair Accent",
+                        "tooltip": "Extra decorative strand.",                        "defaultOptionID": "hair_accent_none"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary":
+    {
+        "Entries":
+        {
+            "default":
+            {
+
+            },
+            "zh-cn":
+            {
+                "hairstyle_straight_long":"直长发",
+                "hairstyle_straight_long_tooltip":"垂顺的及腰直发。",
+
+                "hairstyle_ponytail":"马尾",
+                "hairstyle_ponytail_tooltip":"将头发束起扎成马尾。",
+                "hairstyle_ponytail_high":"高马尾",
+                "hairstyle_ponytail_high_tooltip":"%%hairstyle_ponytail_tooltip%%\n扎在头顶后侧较高的位置。",
+                "hairstyle_ponytail_low":"低马尾",
+                "hairstyle_ponytail_low_tooltip":"%%hairstyle_ponytail_tooltip%%\n扎在颈后较低的位置。",
+                "hairstyle_ponytail_side":"侧马尾",
+                "hairstyle_ponytail_side_tooltip":"%%hairstyle_ponytail_tooltip%%\n扎在肩侧。",
+
+                "hairstyle_bob":"波波头",
+                "hairstyle_bob_tooltip":"剪至下颌或颈部长度的短发。",
+
+                "hairstyle_twintails":"双马尾",
+                "hairstyle_twintails_tooltip":"头发分成两股，在两侧扎成马尾。",
+                "hairstyle_twintails_high":"高双马尾",
+                "hairstyle_twintails_high_tooltip":"%%hairstyle_twintails_tooltip%%\n扎在头部两侧较高的位置。",
+                "hairstyle_twintails_low":"低双马尾",
+                "hairstyle_twintails_low_tooltip":"%%hairstyle_twintails_tooltip%%\n扎在颈后两侧较低的位置。",
+
+                "hairstyle_bun":"发髻",
+                "hairstyle_bun_tooltip":"将头发束起盘成发髻。",
+
+                "hairstyle_braid":"辫子",
+                "hairstyle_braid_tooltip":"将头发编成辫子。",
+                "hairstyle_braid_twin":"双辫",
+                "hairstyle_braid_twin_tooltip":"%%hairstyle_braid_tooltip%%\n两侧各编一条辫子。",
+                "hairstyle_braid_single":"单辫",
+                "hairstyle_braid_single_tooltip":"%%hairstyle_braid_tooltip%%\n向一侧垂下的单条辫子。",
+
+                "hairstyle_wavy_long":"长卷发",
+                "hairstyle_wavy_long_tooltip":"波浪般起伏的长发。",
+
+                "hair_slot_front":"前发",
+                "hair_slot_front_tooltip":"刘海样式。",
+                "hair_slot_side":"侧发",
+                "hair_slot_side_tooltip":"两侧头发的样式。",
+                "hair_slot_accent":"发饰",
+                "hair_slot_accent_tooltip":"额外的装饰性发丝。",
+
+                "hair_front_none":"%%hair_slot_front%%：无刘海",
+                "hair_front_none_tooltip":"%%hair_slot_front_tooltip%%\n额头完全露出。",
+                "hair_front_straight_bangs":"%%hair_slot_front%%：齐刘海",
+                "hair_front_straight_bangs_tooltip":"%%hair_slot_front_tooltip%%\n横跨额头的平齐刘海。",
+                "hair_front_side_swept":"%%hair_slot_front%%：斜刘海",
+                "hair_front_side_swept_tooltip":"%%hair_slot_front_tooltip%%\n向一侧斜扫的刘海。",
+                "hair_front_center_part":"%%hair_slot_front%%：中分",
+                "hair_front_center_part_tooltip":"%%hair_slot_front_tooltip%%\n从中间分开，露出额头。",
+
+                "hair_side_none":"%%hair_slot_side%%：无",
+                "hair_side_none_tooltip":"%%hair_slot_side_tooltip%%\n没有明显的侧发。",
+                "hair_side_loose":"%%hair_slot_side%%：垂落",
+                "hair_side_loose_tooltip":"%%hair_slot_side_tooltip%%\n两侧头发自然垂下。",
+                "hair_side_tucked":"%%hair_slot_side%%：耳后别起",
+                "hair_side_tucked_tooltip":"%%hair_slot_side_tooltip%%\n两侧头发别在耳后。",
+
+                "hair_accent_none":"%%hair_slot_accent%%：无",
+                "hair_accent_none_tooltip":"%%hair_slot_accent_tooltip%%\n没有装饰性发丝。",
+                "hair_accent_ahoge":"%%hair_slot_accent%%：呆毛",
+                "hair_accent_ahoge_tooltip":"%%hair_slot_accent_tooltip%%\n头顶翘起的一根倔强的头发。",
+                "hair_accent_side_braid":"%%hair_slot_accent%%：侧边辫",
+                "hair_accent_side_braid_tooltip":"%%hair_slot_accent_tooltip%%\n编在脸侧的一条细辫子。"
+            }
+        }
+    }
+}

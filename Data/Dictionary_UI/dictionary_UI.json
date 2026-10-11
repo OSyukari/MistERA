@@ -963,6 +963,7 @@
 "ui_ap_CharaReqUtility_requireAction":"$name$当前无法行动",
 "ui_ap_CharaReqUtility_requireMovement":"需要$name$有移动的能力",
 "ui_ap_CharaReqUtility_requireUndressed":"需要$name$有衣物被脱下",
+"ui_ap_CharaReqUtility_requireOutfitChange":"需要$name$当前的安排要求更换服装",
 "ui_ap_CharaReqUtility_requireUndressedTags":"需要$name$的身体部位[$bodytags$]已被脱下",
 "ui_ap_CharaReqUtility_requireMale":"需要$name$为男性角色",
 "ui_ap_CharaReqUtility_requireFemale":"需要$name$为女性角色",

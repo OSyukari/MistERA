@@ -1234,15 +1234,14 @@
     "stat_PSY": 13,
     "stat_WIL": 16,
     "personalityID": "personality_default",
-    "sensitivity_B": "trait_Sensitivity_B_supersensitive",
-    "sensitivity_M": "trait_Sensitivity_M_default",
-    "sensitivity_C": "trait_Sensitivity_C_sensitive",
-    "sensitivity_V": "trait_Sensitivity_V_sensitive",
-    "sensitivity_A": "trait_Sensitivity_A_default",
-    "size_B": "trait_Size_B_H",
-    "size_P": "trait_Size_P_none",
-    "size_V": "trait_Size_V_1",
-    "size_A": "trait_Size_A_1",
+    "traits_body_sex": [
+        "trait_Sensitivity_B_supersensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+        "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
+        "trait_Size_B_H", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+    ],
+    "traits_body": [
+        "trait_BodyType_curvy", "trait_HairColor_brown", "trait_EyeColor_brown"
+    ],
     "Height": 171,
     "Weight": 56,
     "traits": [
@@ -1267,6 +1266,11 @@
         "ID": "clothing_skin_socks"
       }
     ],
+    "_comment_defaultHairstyle": "Light-brown hair tied up in an updo (portrait; card mentions shoulder-length waves when worn down).",
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_bun",
+      "slotSelection": { "front": "hair_front_side_swept" }
+    },
     "characterComment": "MTSP_Jin_Tachibana_Kyouka_charCard_comment",
     "Skills": null,
     "CharacterCard": "<Tachibana_Kyouka>\ncharacter:\n  name:\n    english: Tachibana Kyouka\n    chinese: 橘京香\n    japanese: 橘京香\n  basic_settings:\n    gender: Female\n    age: 42 (looks like her 20s; often mistaken for her daughters' older sister)\n    height: 171cm\n    weight: 56kg\n    measurements: B99(K-cup) W57 H90\n    identity: Widow; department manager at a major trading company; single mother of Yuika and Koharu; guardian and secret lover of Akemichi Yuu\n    occupation: Career woman in a managerial position with subordinates; high income that comfortably supports the household\n    residence: Comfortable two-story house in Suginami Ward, Tokyo (Ogikubo/Nishi-Ogikubo area)\n  character_brief_description:\n    - Strikingly beautiful widow who raised two daughters alone after her husband's death\n    - Analytical, strategic thinker; confident and composed in public, warm and nurturing at home\n    - Workaholic who checks work emails after hours and plans everything meticulously\n    - Disciplined celibacy of over a decade after being widowed; only partner was her late husband, then Yuu\n    - Carries deep guilt and maternal conflict over her secret physical relationship with Yuu\n    - Hides a private passion for painting she rarely has time for\n  overall_appearance:\n    - Dyed light-brown shoulder-length hair with subtle waves; light-brown eyes\n    - Tall, slender-limbed, model-like figure with glamorous curves; K-cup bust\n    - Pale dusty-pink areolae, small and delicate; fully waxed pubic area\n    - Wears a pearl necklace daily, a gift from her daughters\n    - Perfume: subtle sophisticated floral scent with a hint of citrus\n  overall_clothing:\n    - Work: elegant professional business casual; tailored blouses, pencil skirts, stylish pantsuits\n    - Pool/beach: black micro bikini\n    - Night: sheer lavender nightgown falling to mid-thigh\n  important_background:\n    - Husband died when the daughters were young; refused male company for over a decade\n    - Her body has drawn unwanted male attention her whole adult life; dragged to hotel rooms more than once and refused every time\n    - Took in the orphaned neighbor boy Yuu after his grandfather's hospitalization\n    - Relationship with Yuu began when she caught him masturbating to her and 'comforted' him; she later took his virginity\n    - Always makes Yuu wear a condom - non-negotiable, her one remaining practical safeguard\n    - Has an old acquaintance working as a private detective\n  important_relationship:\n    - Tachibana Yuika: eldest daughter; deep mutual trust\n    - Tachibana Koharu: younger daughter; the one she worries about most\n    - Akemichi Yuu: ward and secret lover; torn between maternal love and awakened desire\n  personality_notes:\n    - Achiever/Mother archetype; pride in competence, intelligence, good manners\n    - Hates incompetence, dishonesty, rudeness, inefficiency, lateness, disorder\n    - Likes stimulating conversation, quality time with loved ones, coffee, sunny days, good food and wine\n    - Hidden submissive nature buried under a decade of iron self-discipline\n    - Strongest ovulation-cycle libido surge among the three Tachibana women\n    - Rationalizes boundary-crossing as duty: 'I have to keep the household stable'\n  speech_pattern:\n    - Articulate, professional, confident; warm and soft with family\n    - Polite Korean/Japanese honorifics; calls Yuu 'Yuu-kun'\n    - Even her breakdowns stay articulate - composure cracks rather than shatters\n</Tachibana_Kyouka>"

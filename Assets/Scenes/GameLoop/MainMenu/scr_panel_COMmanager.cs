@@ -280,6 +280,8 @@ public class scr_panel_COMmanager : scr_Menu
         {
             if (i.Equippable) managedList.Add(i.RefID);
         }
+        // active outfit pieces taken off (virtual, not in the inventory)
+        if (chara.Wardrobe != null) foreach (var piece in chara.Wardrobe.ActivePieceItems) managedList.Add(piece.RefID);
         //managedList.AddRange(chara.Inventory.ContentRefs);
 
         managedList = managedList.Distinct().ToList();
@@ -3213,21 +3215,14 @@ public class scr_panel_COMmanager : scr_Menu
                 return false;
             }
 
+            // worn items stay in the inventory: the first layer (inner to outer) Redress would put something on
             for (int ii = (int)BodyEquipLayer.Skin; ii <= (int)BodyEquipLayer.Outer; ii++)
             {
                 layer = (BodyEquipLayer)ii;
-
-                if (chara.Inventory.Contents.Count < revealingScoreFilter) continue;
-
-                var list = chara.Inventory.Contents;
-                foreach (var i in list)
+                if (chara.CanRedress(layer))
                 {
-                    ItemComponent_Equippable comp = i.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
-                    if (comp != null && comp.equipLayer == layer)
-                    {
-                        this.text.SetText("%%comManager_com_redress_" + layer.ToString() + "%%");
-                        return true;
-                    }
+                    this.text.SetText("%%comManager_com_redress_" + layer.ToString() + "%%");
+                    return true;
                 }
             }
 
@@ -3273,18 +3268,13 @@ public class scr_panel_COMmanager : scr_Menu
                 return false;
             }
 
-            if (chara.Inventory.Contents.Count < 1)
+            // worn items stay in the inventory: valid while Redress would put something on
+            if (!chara.canRedress)
             {
-                this.tooltip += "all clothes are dressed";
+                this.tooltip = "all clothes are dressed";
                 return false;
             }
-
-            foreach(var i in chara.Inventory.Contents)
-            {
-                if (i.Equippable) return true;
-            }
-
-            return false;
+            return true;
         }
 
         public void OnClickButton()
@@ -3314,7 +3304,7 @@ public class scr_panel_COMmanager : scr_Menu
             this.chara = scr_System_CampaignManager.current.FindInstanceByID(charaRef);
             this.equipRef = equipRef;
             this.text = text;
-            item = scr_System_CampaignManager.current.FindItemInstanceByID(equipRef);
+            item = chara != null && chara.Body != null ? chara.Body.ResolveEquip(equipRef) : null;
             if (item != null) eq = item.GetComp_Equippable();
 
             text.isButtonToggle = true;
@@ -3334,7 +3324,8 @@ public class scr_panel_COMmanager : scr_Menu
 
             var equippedPart = chara.GetPartByEquipRef(equipRef);
 
-            isEquipped = !(chara.Inventory.Contains(item) || equippedPart == null);
+            // worn items stay in the inventory: worn = found in a body slot
+            isEquipped = equippedPart != null;
             isVisible = scr_System_CampaignManager.current.DebugMode || (!isEquipped || equippedPart.GetRevealingScore(eq.equipLayer) <= 1);
             allowDuringSex = !(chara.CurrentJob is Job_Sex_Group) || (int)eq.revealing <= 0;
 
@@ -3363,8 +3354,8 @@ public class scr_panel_COMmanager : scr_Menu
 
         public void OnClickButton()
         {
-            if (chara.Inventory.Contains(item)) chara.Reequip(item);
-            else chara.UnequipItem(equipRef, -1, true, true);
+            if (chara.GetPartByEquipRef(equipRef) != null) chara.UnequipItem(equipRef, -1, true, true);
+            else chara.Reequip(item);
             scr_System_CampaignManager.current.ChangeCurrentTarget(scr_System_CampaignManager.current.CurrentTargetRef, true);
         }
     }

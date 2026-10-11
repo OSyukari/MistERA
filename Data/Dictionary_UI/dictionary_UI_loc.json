@@ -302,7 +302,8 @@
                 "ui_videoEdit_actorsType_Support": "Supporting Cast",
 
                 "ui_worldmap_childWorldTooltip": "Contains: $list$",
-                "ui_worldmap_doorTooltip": "Estimated travel time: $time$ min"
+                "ui_worldmap_doorTooltip": "Estimated travel time: $time$ min",
+                "ui_ap_CharaReqUtility_requireOutfitChange": "Requires $name$'s current schedule to call for a change of outfit"
             }
         }
     }

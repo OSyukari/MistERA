@@ -367,6 +367,12 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
         return this.Comps.Find(x=>x.CompType == name);
     }
 
+    /// <summary>
+    /// True if a component keeps per-instance state (degradable, records, ingestible, furniture...). Items without
+    /// it are fully described by baseID + nameOverwrite (e.g. wardrobe outfit pieces).
+    /// </summary>
+    [JsonIgnore] public bool HasInstanceState { get { return compInstances.Count > 0; } }
+
     public void RegisterItem(int uid)
     {
         this.referenceID = uid;

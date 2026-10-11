@@ -469,7 +469,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         room.AddFurniture(MainExitWaitMarkerID);
     }
 
-    public MapPlan.WorkModuleInit GetActiveWorkModule(Character_Trainable c, int hour)
+    /// <summary>daysLookahead: the day hour belongs to (0 = today, -1 = yesterday - e.g. paying 23:00 at midnight).</summary>
+    public MapPlan.WorkModuleInit GetActiveWorkModule(Character_Trainable c, int hour, int daysLookahead = 0)
     {
         var type = GetMemberType(c);
         if (type == null) return null;
@@ -478,8 +479,17 @@ public class Manageable : I_Disposable, I_IsJobGiver
         // check customoverride if true then false
         if (c.FactionManager.IsWorkPaused(this)) return null;
 
-        if (!type.workModule.IsActiveAt(hour)) return null;
+        if (!type.workModule.IsActiveAt(hour, daysLookahead, HolidayCalendarFor(c))) return null;
         return type.workModule;
+    }
+
+    /// <summary>
+    /// The faction whose world's days off apply to c's workModule here (WorkModuleInit.IsActiveAt / PayoutMultiplierAt):
+    /// this one, or null (days off ignored) when this is one of c's home factions - a household's schedule ignores holidays.
+    /// </summary>
+    public Manageable HolidayCalendarFor(Character_Trainable c)
+    {
+        return c != null && c.FactionManager.HomeFactions.Contains(this) ? null : this;
     }
 
     public MemberType GetMemberType(Character_Trainable c)
@@ -1026,15 +1036,18 @@ public class Manageable : I_Disposable, I_IsJobGiver
             if (!IsOnShift(c, currentHour, paidDayOffset)) continue;
 
             List<ItemEntry> payout = null;
+            float payoutMultiplier = 1f;
             PaymentCadence cadence = PaymentCadence.Biweekly;
             string payoutSourceName = null;
             string paidEventID = "";
             string failedEventID = "";
 
-            var workModule = GetActiveWorkModule(c, currentHour);
+            var workModule = GetActiveWorkModule(c, currentHour, paidDayOffset);
             if (workModule != null && workModule.hourlyPayout != null)
             {
                 payout = workModule.hourlyPayout;
+                // holiday premium of the day the paid hour's shift started (WorkModuleInit.holidayPayoutMultiplier)
+                payoutMultiplier = workModule.PayoutMultiplierAt(currentHour, paidDayOffset, HolidayCalendarFor(c));
                 cadence = workModule.paymentCadence;
                 payoutSourceName = GetMemberType(c)?.DisplayName;
                 paidEventID = workModule.onPaidEventID;
@@ -1072,9 +1085,16 @@ public class Manageable : I_Disposable, I_IsJobGiver
             var salaryObligation = this.TradeManager.GetOrCreateSalaryObligation(targetFaction, cadence, payoutSourceName, c.RefID);
             foreach (var pay in payout)
             {
-                salaryObligation.AccrueHour(pay, paidEventID, failedEventID);
+                salaryObligation.AccrueHour(ScalePayout(pay, payoutMultiplier), paidEventID, failedEventID);
             }
         }
+    }
+
+    /// <summary>pay scaled by multiplier (rounded) as a copy - pay itself when the multiplier is 1 or pay is null.</summary>
+    public static ItemEntry ScalePayout(ItemEntry pay, float multiplier)
+    {
+        if (pay == null || multiplier == 1f) return pay;
+        return new ItemEntry(pay) { itemCount = Mathf.RoundToInt(pay.itemCount * multiplier) };
     }
 
     /// <summary>
@@ -1534,7 +1554,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     {
         if (c.FactionManager.IsWorkPaused(this)) return null;
         var module = GetMemberType(c).workModule;
-        if (module == null || !module.IsActiveAt(hour, daysLookahead)) return null;
+        if (module == null || !module.IsActiveAt(hour, daysLookahead, HolidayCalendarFor(c))) return null;
         return module.CachedSchedule;
     }
 
@@ -2182,6 +2202,8 @@ public class Manageable : I_Disposable, I_IsJobGiver
         _managerRefs = null;
 
         if (isNewMember) InitializeRelationshipsWithFaction(c);
+        // the membertype becomes a wardrobe key an outfit can be set for
+        c.Wardrobe?.RegisterMemberType(this, guestStatus);
 
         if (sendEvent && guestStatus.isPrisoner) FactionUtility.SendImprisonEvent(this, c);
         // set manager roles

@@ -51,8 +51,22 @@ public interface I_StatsManager
 
 public class StatsManager : I_StatsManager
 {
+    /// <summary>
+    /// trait requirements (race keywords / appearance) against the owner; no owner = no check
+    /// </summary>
+    bool IsTraitValid(Traits s)
+    {
+        if (Owner == null) return true;
+        return s.IsValidFor(Owner);
+    }
+
     public void AddTrait(Traits s) {
         if (s == null) return;
+        if (!IsTraitValid(s))
+        {
+            Debug.LogWarning($"AddTrait [{s.ID}] refused on {Owner.FirstName}: requirements not met");
+            return;
+        }
 
         if (s.Parent != null && (s.Parent.SortType == Trait_Group_Type.SortedList || s.Parent.SortType == Trait_Group_Type.UnsortedList))
         {
@@ -70,13 +84,16 @@ public class StatsManager : I_StatsManager
         }
 
         if (!Traits.Contains(s)) Traits.Add(s);
-        if (!traits.Contains(s.ID)) traits.Add(s.ID);
+        // body traits are owned (and saved) by Character_Body, only the runtime list holds them here
+        if (!(s.Parent != null && s.Parent.isBodyTrait) && !traits.Contains(s.ID)) traits.Add(s.ID);
+        _queryCache.Clear();
     }
     public void RemoveTrait(Traits s)
     {
         if (s == null) return;
         Traits.Remove(s);
         traits.Remove(s.ID);
+        _queryCache.Clear();
     }
 
     bool traits_init = false;
@@ -84,6 +101,23 @@ public class StatsManager : I_StatsManager
     public void RefreshTraits()
     {
         Traits.Clear();
+        _queryCache.Clear();
+
+        // saves from before the body traits refactor persisted sensitivity ids here; they now come from the body
+        // also drop traits whose requirements (race keywords / appearance) the owner no longer meets
+        traits.RemoveAll(id =>
+        {
+            var tr = scr_System_Serializer.current.MasterList.Traits_Groups.GetTraitByID(id);
+            if (tr == null) return false;
+            if (tr.Parent != null && tr.Parent.isBodyTrait) return true;
+            if (!IsTraitValid(tr))
+            {
+                Debug.Log($"Removing trait [{id}] from {Owner.FirstName}: requirements not met");
+                return true;
+            }
+            return false;
+        });
+
         if (Owner != null && Owner.Template != null)
         {
             foreach (var trait in Owner.Template.traits)
@@ -91,16 +125,16 @@ public class StatsManager : I_StatsManager
                 var tr = scr_System_Serializer.current.MasterList.Traits_Groups.GetTraitByID(trait);
                 if (tr != null)
                 {
+                    if (tr.Parent != null && tr.Parent.isBodyTrait) continue; // seeded into the body instead
+                    if (!IsTraitValid(tr)) continue;
                     AddTrait(tr);
                 }
             }
-
-            if (Owner.Template.Sensitivity_A != null) AddTrait(Owner.Template.Sensitivity_A);
-            if (Owner.Template.Sensitivity_B != null) AddTrait(Owner.Template.Sensitivity_B);
-            if (Owner.Template.Sensitivity_C != null) AddTrait(Owner.Template.Sensitivity_C);
-            if (Owner.Template.Sensitivity_M != null) AddTrait(Owner.Template.Sensitivity_M);
-            if (Owner.Template.Sensitivity_V != null) AddTrait(Owner.Template.Sensitivity_V);
-
+        }
+        if (Owner != null && Owner.Body != null)
+        {
+            // body traits still go into the runtime list so their stat_modifiers apply and displays / GetTraitByGroupID find them
+            foreach (var tr in Owner.Body.BodyTraits) AddTrait(tr);
         }
         var traitsCache = new List<string>(this.traits);
 
@@ -119,6 +153,7 @@ public class StatsManager : I_StatsManager
 
         traits.Clear();
         Traits.Clear();
+        _queryCache.Clear();
     }
 
 
@@ -131,15 +166,18 @@ public class StatsManager : I_StatsManager
                 $"Traits_Groups? {scr_System_Serializer.current.MasterList != null && scr_System_Serializer.current.MasterList.Traits_Groups != null} " +
                 $"traits_All? {scr_System_Serializer.current.MasterList != null && scr_System_Serializer.current.MasterList.Traits_Groups != null && scr_System_Serializer.current.MasterList.Traits_Groups.traits_All != null}");
         }
+        var raceKeywords = new List<string>();
+        Trait_Requirement.GetRaceKeywords(Owner, raceKeywords);
         foreach(var tgroup in scr_System_Serializer.current.MasterList.Traits_Groups.traits_All)
         {
             foreach(var tr in tgroup)
             {
                 if (tr.SortType != Trait_Group_Type.SortedList && tr.SortType != Trait_Group_Type.UnsortedList) continue;
-                //if (tr.Type == Trait_Type.Body) continue;
+                if (tr.isBodyTrait) continue; // Character_Body fills its own defaults
                 if (tr.tags.Contains("do_not_use")) continue;
                 if (!tr.allowPopulate) continue;
-                var neutral = tr.getNeutralinGroup();
+                // invalid group -> null, invalid neutral -> first valid entry
+                var neutral = Owner == null ? tr.getNeutralinGroup() : tr.GetNeutralValid(raceKeywords, Owner.Appearance);
                 if (neutral == null) continue;
                 foreach(var trr in tr.entries)
                 {
@@ -155,8 +193,8 @@ public class StatsManager : I_StatsManager
         }
     }
 
-    public bool HasTrait(Traits t) { return traits.Contains(t.ID); }
-    public bool HasTrait(string id) { return traits.Contains(id); }
+    public bool HasTrait(Traits t) { return HasTrait(t.ID); }
+    public bool HasTrait(string id) { return traits.Contains(id) || (Owner != null && Owner.Body != null && Owner.Body.HasBodyTrait(id)); }
     /// <summary>
     /// Return all status with id match
     /// </summary>
@@ -507,10 +545,10 @@ public class StatsManager : I_StatsManager
 
             foreach (var equipRef in Owner.EquippedItemRefs)    // addstatmod equipment
             {
-                var equip = scr_System_CampaignManager.current.FindItemInstanceByID(equipRef);
-                if (equip.GetComp_Equippable().statModifiers.Count > 0)
+                var comp = Owner.Body.ResolveEquip(equipRef)?.GetComp_Equippable();
+                if (comp != null && comp.statModifiers.Count > 0)
                 {
-                    AddStatModifier(equip.GetComp_Equippable().statModifiers);
+                    AddStatModifier(comp.statModifiers);
                 }
             }
 

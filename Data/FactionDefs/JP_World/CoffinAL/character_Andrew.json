@@ -43,15 +43,14 @@
         "stat_PSY": 10,
         "stat_WIL": 12,
         "personalityID": "personality_base",
-        "sensitivity_B": "trait_Sensitivity_B_default",
-        "sensitivity_M": "trait_Sensitivity_M_dull",
-        "sensitivity_C": "trait_Sensitivity_C_default",
-        "sensitivity_V": "trait_Sensitivity_V_default",
-        "sensitivity_A": "trait_Sensitivity_A_default",
-        "size_B": "trait_Size_B_AAA",
-        "size_P": "trait_Size_P_average",
-        "size_V": "trait_Size_V_none",
-        "size_A": "trait_Size_A_1",
+        "traits_body_sex": [
+            "trait_Sensitivity_B_default", "trait_Sensitivity_M_dull", "trait_Sensitivity_C_default",
+            "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
+            "trait_Size_B_AAA", "trait_Size_P_average", "trait_Size_V_none", "trait_Size_A_1"
+        ],
+        "traits_body": [
+            "trait_BodyType_slender", "trait_SkinColor_pale", "trait_HairColor_black", "trait_EyeColor_green"
+        ],
         "Height": 183,
         "Weight": 66,
         "traits": [
@@ -83,6 +82,10 @@
             }
         ],
         "initialInventory": [],
+        "_comment_defaultHairstyle": "Unruly black chin-length hair with jagged strands over the forehead (character card + portrait).",
+        "defaultHairstyle": {
+            "hairstyleID": "hairstyle_bob"
+        },
         "Skills": null
     },
     "firstName": "TCoAaL_Andrew_firstname",

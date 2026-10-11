@@ -178,7 +178,8 @@
             "Tags":["rarity_common","plumbing"],
             "givesJob": [
                 { "comTags":["furniture","bathroom"] },
-            { "comID":["com_furniture_restroom_fix"] } ]
+            { "comID":["com_furniture_restroom_fix"] },
+            { "comID":["com_furniture_changeOutfit"] } ]
         },
         {
             "ID":"furniture_toilet_shower_set",
@@ -190,7 +191,8 @@
             "givesJob":
             [ { "comTags":["furniture","bathroom"] },
             { "comTags":["furniture","shower"] },
-            { "comID":["com_furniture_restroom_fix"] } ]
+            { "comID":["com_furniture_restroom_fix"] },
+            { "comID":["com_furniture_changeOutfit"] } ]
         },
         {
             "ID":"furniture_table_1_chair_1",
@@ -355,7 +357,8 @@
             [   { "comTags":["furniture","bed"] },
                 { "comTags":["furniture","food_getmeal"] } ,
                 { "comTags":["furniture","food_meal"] },
-                { "comID":["com_furniture_restroom_fix"] } ]
+                { "comID":["com_furniture_restroom_fix"] },
+                { "comID":["com_furniture_changeOutfit"] } ]
         }
     ]
     },

@@ -79,6 +79,16 @@
                     "optionTextKey": "work_post_leaveOption",
                     "bindTargetKey": "worker"
                 },
+                "_comment_outfit": "Store uniform for every SunMart post (defined on the root, so all posts share the wardrobe key <faction>|membertype_jp_convenience_store_clerk). The uniform top replaces whatever is worn on the torso (Inner); the rest of the own clothes (bottoms, shoes, underwear) stay on. Coats / outer wear come off. Put on and taken off in the store's bathroom (limitToLocaleFaction).",
+                "outfit": {
+                    "pieces": [
+                        { "baseID": "clothing_jp_store_uniform" }
+                    ],
+                    "overrideSkin": false,
+                    "overrideInner": false,
+                    "overrideOuter": true,
+                    "limitToLocaleFaction": true
+                },
                 "childMemberTypes":
                 [
                     {
@@ -97,7 +107,9 @@
                                     "activeHours":[ 9,10,11,12,13,14,15,16],
                                     "activeDays":[1,1,1,1,1,0,0],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
-                                    "paymentCadence":"Monthly"
+                                    "paymentCadence":"Monthly",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -110,7 +122,9 @@
                                     "activeHours":[14,15,16,17,18,19,20,21],
                                     "activeDays":[0,0,1,1,1,1,1],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1350" } ],
-                                    "paymentCadence":"Monthly"
+                                    "paymentCadence":"Monthly",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -123,7 +137,9 @@
                                     "activeHours":[ 8, 9,10,11,12,13,14,15,16,17,18,19],
                                     "activeDays":[],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -136,7 +152,9 @@
                                     "activeHours":[20,21,22,23, 0, 1, 2, 3, 4, 5, 6, 7],
                                     "activeDays":[],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             }
                         ]
@@ -159,7 +177,9 @@
                                     "activeHours":[ 6, 7, 8],
                                     "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -171,7 +191,9 @@
                                     "activeHours":[ 6, 7, 8],
                                     "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -183,7 +205,9 @@
                                     "activeHours":[ 9,10,11,12,13,14,15,16],
                                     "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -195,7 +219,9 @@
                                     "activeHours":[ 9,10,11,12,13,14,15,16],
                                     "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -207,7 +233,9 @@
                                     "activeHours":[17,18,19,20,21],
                                     "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -219,7 +247,9 @@
                                     "activeHours":[17,18,19,20,21],
                                     "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1200" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -231,7 +261,9 @@
                                     "activeHours":[22,23, 0, 1, 2, 3, 4, 5],
                                     "activeDays":[1,1,1,1,0,0,0,1,1,1,0,0,0,0],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             },
                             {
@@ -243,7 +275,9 @@
                                     "activeHours":[22,23, 0, 1, 2, 3, 4, 5],
                                     "activeDays":[0,0,0,0,1,1,1,0,0,0,1,1,1,1],
                                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1500" } ],
-                                    "paymentCadence":"Daily"
+                                    "paymentCadence":"Daily",
+                                    "_comment_holiday": "Open 365 days - holiday shifts pay a 20% allowance.",
+                                    "holidayPayoutMultiplier": 1.2
                                 }
                             }
                         ]

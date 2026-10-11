@@ -4044,15 +4044,14 @@
     "stat_PSY": 13,
     "stat_WIL": 16,
     "personalityID": "personality_default",
-    "sensitivity_B": "trait_Sensitivity_B_supersensitive",
-    "sensitivity_M": "trait_Sensitivity_M_default",
-    "sensitivity_C": "trait_Sensitivity_C_sensitive",
-    "sensitivity_V": "trait_Sensitivity_V_sensitive",
-    "sensitivity_A": "trait_Sensitivity_A_default",
-    "size_B": "trait_Size_B_H",
-    "size_P": "trait_Size_P_none",
-    "size_V": "trait_Size_V_1",
-    "size_A": "trait_Size_A_1",
+    "traits_body_sex": [
+        "trait_Sensitivity_B_supersensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+        "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
+        "trait_Size_B_H", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+    ],
+    "traits_body": [
+        "trait_BodyType_curvy", "trait_HairColor_brown", "trait_EyeColor_brown"
+    ],
     "Height": 171,
     "Weight": 56,
     "traits": [

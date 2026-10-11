@@ -120,6 +120,32 @@ public static class HolidaySystem
         return (IReadOnlyList<SeasonDef>)result ?? NoSeasons;
     }
 
+    /// <summary>Default day-off tag: a holiday/season carrying it is a day off for work and recreation that observe it (MapPlan.WorkModuleInit.holidayTags_any).</summary>
+    public const string DayOffTag = "isHoliday";
+
+    /// <summary>
+    /// Whether this date's tags (its holiday's plus every covering season's) contain any of tagsAny (empty = no
+    /// requirement) and all of tagsAll (empty = no requirement). Both empty = any of [DayOffTag].
+    /// </summary>
+    public static bool DayMatchesTags(WorldPlan world, DateTime date, List<string> tagsAny, List<string> tagsAll)
+    {
+        if (world == null) return false;
+        bool hasAny = tagsAny != null && tagsAny.Count > 0;
+        bool hasAll = tagsAll != null && tagsAll.Count > 0;
+        var holiday = GetHoliday(world, date);
+        var seasons = GetSeasons(world, date);
+        bool HasTag(string tag)
+        {
+            if (holiday != null && holiday.tags != null && holiday.tags.Contains(tag)) return true;
+            foreach (var season in seasons) if (season.tags != null && season.tags.Contains(tag)) return true;
+            return false;
+        }
+        if (!hasAny && !hasAll) return HasTag(DayOffTag);
+        if (hasAny && !tagsAny.Exists(HasTag)) return false;
+        if (hasAll && !tagsAll.TrueForAll(HasTag)) return false;
+        return true;
+    }
+
     /// <summary>Whether any season whose tags contain seasonTag covers this date.</summary>
     public static bool InSeason(WorldPlan world, DateTime date, string seasonTag)
     {

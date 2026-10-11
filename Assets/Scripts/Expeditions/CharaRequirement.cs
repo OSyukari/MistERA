@@ -44,6 +44,8 @@ public class CharaReq
     public bool requireTimestopped = false;
     public bool addPartyMembers = false;
     public bool requireUndressed = false;
+    /// <summary> the current schedule wants a different outfit (Character_Wardrobe.NeedsOutfitChange) </summary>
+    public bool requireOutfitChange = false;
     public bool requireMovement = false;
     public bool requireCombat = false;
     public bool requireFullHP = false;
@@ -115,6 +117,7 @@ public class CharaReq
         this.requireNoTeammate = this.requireNoTeammate || req.requireNoTeammate;
 
         this.requireUndressed = this.requireUndressed || req.requireUndressed;
+        this.requireOutfitChange = this.requireOutfitChange || req.requireOutfitChange;
         this.requireCombat = this.requireCombat || req.requireCombat;
         this.requireFullHP = this.requireFullHP || req.requireFullHP;
         this.requireMissingHP = this.requireMissingHP || req.requireMissingHP;

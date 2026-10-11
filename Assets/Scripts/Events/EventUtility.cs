@@ -3114,11 +3114,24 @@ public static class EventUtility
             var mem = i.Memory.AddEntryMSG(stringmsg.Replace("$message$", kdnpmsg).Replace("$partyJob$", i.CurrentJob == null ? "" : i.CurrentJob.GetJobDescription(i.RefID)), new List<string>() { "forbidMerge","important" });
             mem.disableRoomName = true;
 
+            // MIA wardrobe: what the victim wears when taken becomes their outfit in the kidnappers' party (NPCs - the
+            // player is never auto-changed back after a rescue)
+            bool snapshotOutfit = i != scr_System_CampaignManager.current.Player && i.Wardrobe != null;
+            var mia = snapshotOutfit ? OutfitUtility.SnapshotWorn(i) : null;
+
             i.ChangeCurrentJob(null);
             scr_System_CampaignManager.current.MoveCharacterTo(i, kidnapLoc.MainExit);
             if (!i.FactionManager.isPartyLocked) i.FactionManager.CurrentActiveParty.NotifyCharaKidnapped(i, kidnapLoc, true);
             else if (i.FactionManager.CurrentActiveParty == victimsFaction) isLockedTransfer = true;
             i.FactionManager.AddToParty(kidnapLoc, status, false, true);
+
+            // put on right away (looks the same - the worn items become the party's virtual pieces, the own clothes stay
+            // in the inventory and come back on after the rescue)
+            if (snapshotOutfit)
+            {
+                kidnapLoc.SetOutfit(i, mia);
+                i.Wardrobe.ApplyOutfit(kidnapLoc.GetOutfit(i));
+            }
         }
 
         foreach (var i in kidnappers)

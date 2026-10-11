@@ -1157,15 +1157,14 @@
     "stat_PSY": 11,
     "stat_WIL": 8,
     "personalityID": "personality_default",
-    "sensitivity_B": "trait_Sensitivity_B_supersensitive",
-    "sensitivity_M": "trait_Sensitivity_M_default",
-    "sensitivity_C": "trait_Sensitivity_C_sensitive",
-    "sensitivity_V": "trait_Sensitivity_V_supersensitive",
-    "sensitivity_A": "trait_Sensitivity_A_default",
-    "size_B": "trait_Size_B_H",
-    "size_P": "trait_Size_P_none",
-    "size_V": "trait_Size_V_1",
-    "size_A": "trait_Size_A_1",
+    "traits_body_sex": [
+        "trait_Sensitivity_B_supersensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+        "trait_Sensitivity_V_supersensitive", "trait_Sensitivity_A_default",
+        "trait_Size_B_H", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+    ],
+    "traits_body": [
+        "trait_BodyType_curvy", "trait_HairColor_blonde", "trait_EyeColor_brown"
+    ],
     "Height": 170,
     "Weight": 65,
     "traits": [
@@ -1184,6 +1183,11 @@
         "ID": "clothing_skin_socks"
       }
     ],
+    "_comment_defaultHairstyle": "Dyed long wavy blonde hair, parted bangs (character card + portrait).",
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_wavy_long",
+      "slotSelection": { "front": "hair_front_center_part" }
+    },
     "characterComment": "MTSP_Jin_Tachibana_Koharu_charCard_comment",
     "Skills": null,
     "CharacterCard": "<Tachibana_Koharu>\ncharacter:\n  name:\n    english: Tachibana Koharu\n    chinese: 橘小春\n    japanese: 橘小春\n  basic_settings:\n    gender: Female\n    age: 20\n    height: 170cm\n    weight: 65kg\n    measurements: B103(K-cup, largest in the family) W64 H97\n    identity: Second daughter of the Tachibana household; university student; Yuu's affectionate childhood friend and lover\n    occupation: Student at Tokyo Kasei University majoring in Social Welfare (earlier canon: Education major, part-time tutor for children, aspiring teacher)\n    residence: Lives with mother Kyouka, sister Yuika, and Yuu in the Tachibana family home\n  character_brief_description:\n    - Gentle, soft-spoken, and slow-paced; the warm heart of the family\n    - Not stupid - her mind prioritizes feelings over analysis: where Kyouka reads situations and Yuika reads intentions, Koharu reads emotions\n    - Underdeveloped threat recognition: slow to suspect exploitation, little caution about male attention, unaware how exposed she appears\n    - Inherited her mother's inclusive warmth - can find compassion even for someone hurting her\n    - Near-total sexual innocence: almost never masturbated, largely unaware of her own sexuality\n    - Gave her virginity to Yuu during an intimate bath; the only time they have been together\n  overall_appearance:\n    - Dyed blonde long wavy hair; soft approachable features and a gentle smile; brown eyes\n    - The most voluptuous of the three Tachibana women - largest bust in the family, softest fullest curves\n    - Breasts renowned for exceptional softness and firmness; light cherry-blossom-pink areolae; fully waxed pubic area\n    - Round-rimmed glasses for nearsightedness, worn only occasionally\n  overall_clothing:\n    - Casual and comfortable: loose-fitting clothing, sweaters, comfortable dresses; prioritizes practicality over trends\n    - Pool/beach: yellow micro bikini\n    - Night: orange off-shoulder loose top with drawstring pants loungewear set\n  important_background:\n    - Father died when she was young; it left her with a deep desire for stable, harmonious relationships\n    - Secretly collects children's books and practices reading them aloud even when alone\n    - Privately worries she is not smart or capable enough compared to her mother and sister\n    - Ovulation-cycle hormone shift makes her skin flush and hypersensitive, but she never recognizes it as arousal\n  important_relationship:\n    - Tachibana Kyouka: mother; the one whose tears could persuade her through hard decisions\n    - Tachibana Yuika: admired older sister; warns her not to drink outside near her ovulation\n    - Akemichi Yuu: dear childhood friend and lover; calls him 'Yuu-chan'; invites him to bathe together without any sexual awareness\n  personality_notes:\n    - The Caregiver/The Innocent archetype\n    - Hates rudeness, aggression, conflict, harsh noises, seeing anyone hurt or upset\n    - Likes kindness, gentle humor, helping others, sunny days, the smell of books, soft blankets, warm drinks, children's laughter\n    - Apologizes even when not at fault; forgives easily; drifts into daydreams\n    - Rationalizes closeness as kindness: 'He looked lonely'; 'I only wanted to help'\n  speech_pattern:\n    - Gentle, soft-spoken, slow-paced; often stretches the ends of her words in a relaxed airy way\n    - Polite considerate language; hesitant and indirect about her own needs\n</Tachibana_Koharu>"

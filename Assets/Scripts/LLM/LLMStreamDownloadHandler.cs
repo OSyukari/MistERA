@@ -38,6 +38,14 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
     // Claude splits it across message_start (input/cache) and message_delta (output) - merged here.
     JObject usage = null;
 
+    // First RawTextCap chars of the raw body, kept verbatim. An HTTP error reply is a plain JSON
+    // error object rather than SSE `data:` lines, so ProcessLine drops it - this is the only copy.
+    const int RawTextCap = 8192;
+    readonly StringBuilder rawText = new StringBuilder();
+
+    /// <summary>Raw (non-SSE-parsed) response body, capped at RawTextCap chars - read on request failure.</summary>
+    public string RawText => rawText.ToString();
+
     void MergeUsage(JToken u)
     {
         if (!(u is JObject uo)) return;
@@ -58,6 +66,7 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
         char[] chars = new char[utf8Decoder.GetCharCount(data, 0, dataLength)];
         int charCount = utf8Decoder.GetChars(data, 0, dataLength, chars, 0);
         pendingLine.Append(chars, 0, charCount);
+        if (rawText.Length < RawTextCap) rawText.Append(chars, 0, Math.Min(charCount, RawTextCap - rawText.Length));
 
         // Drain complete lines, keep any trailing partial line buffered for next call.
         int newlineIndex;

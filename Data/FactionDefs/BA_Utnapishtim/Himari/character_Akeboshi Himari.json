@@ -70,15 +70,14 @@
       "stat_PSY": 16,
       "stat_WIL": 13,
       "personalityID": "personality_default",
-      "sensitivity_B": "trait_Sensitivity_B_sensitive",
-      "sensitivity_M": "trait_Sensitivity_M_default",
-      "sensitivity_C": "trait_Sensitivity_C_sensitive",
-      "sensitivity_V": "trait_Sensitivity_V_sensitive",
-      "sensitivity_A": "trait_Sensitivity_A_default",
-      "size_B": "trait_Size_B_A",
-      "size_P": "trait_Size_P_none",
-      "size_V": "trait_Size_V_1",
-      "size_A": "trait_Size_A_1",
+      "traits_body_sex": [
+          "trait_Sensitivity_B_sensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+          "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
+          "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+      ],
+      "traits_body": [
+          "trait_BodyType_slender", "trait_SkinColor_pale", "trait_HairColor_silver", "trait_EyeColor_silver"
+      ],
       "Height":162,
       "Weight":45,
       "initialRelationship":[
@@ -102,6 +101,11 @@
             { "ID":"clothing_outer_blanket_lower" },
             { "ID":"firearm_handgun" }
         ],
+      "_comment_defaultHairstyle": "Waist-length straight lavender-white hair with neat bangs (character card + portrait).",
+      "defaultHairstyle": {
+        "hairstyleID": "hairstyle_straight_long",
+        "slotSelection": { "front": "hair_front_straight_bangs" }
+      },
         "traits":[
             "trait_FatigueResistance_low",
             "trait_PhysicalVitality_low",

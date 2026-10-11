@@ -252,9 +252,15 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
     }
 
-    // temporary inventory for unequipped items
+    // owned items. worn items stay in here, the body slots only mark them worn
     //public List<int> inventory_ref = new List<int>();
     public CharacterInventory Inventory = new CharacterInventory();
+    /// <summary> false only in saves made before worn items stayed in the inventory (migrated on load) </summary>
+    [JsonProperty] bool equipInInventory = false;
+
+    [JsonProperty] Character_Wardrobe wardrobe = null;
+    /// <summary> outfits per schedule (faction membertype / activity) - see Character_Wardrobe </summary>
+    [JsonIgnore] public Character_Wardrobe Wardrobe { get { return wardrobe; } }
 
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
     public bool MovedInTimeStop = false;
@@ -291,6 +297,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         this.Appearance = Template.Appearance;
 
         //Debug.Log("Setting Appearance to " + this.Appearance);
+
+        this.Inventory.ReEstablishParent(this);
+        this.equipInInventory = true;
+        if (this.wardrobe == null) this.wardrobe = new Character_Wardrobe();
+        this.wardrobe.ReEstablishParent(this);
 
         if (this.Body == null) Body = new Character_Body(this);
         else Body.ReEstablishParent(this);
@@ -2284,13 +2295,26 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// This check ideally should be more complex.
     /// </summary>
     [JsonIgnore] public bool isUndressed { get { return canRedress; } }
-    [JsonIgnore] public bool canRedress { get
+    /// <summary>
+    /// Something the character owns and should wear is not worn and fits an empty slot: an unworn inventory clothing
+    /// item (layers the active outfit overrides excluded) or an unworn active outfit piece. See GetRedressCandidates.
+    /// </summary>
+    [JsonIgnore] public bool canRedress { get { return CanRedress(BodyEquipLayer.None); } }
+
+    /// <summary> Redress(layer) would put something on (None = any layer) </summary>
+    public bool CanRedress(BodyEquipLayer layer)
+    {
+        if (Body == null) return false;
+        foreach (var item in GetRedressCandidates(layer))
         {
-            return this.Inventory.Contents.Any(x=>x.GetComp_Equippable() != null);
-        } }
+            if (Body.CanEquipWithoutReplacing(item)) return true;
+        }
+        return false;
+    }
     [JsonIgnore] public bool shouldRedress { 
         get {
-            return canRedress && !FactionManager.isPartyLocked;
+            // not while sleeping / about to sleep: going to bed strips or changes clothes anyway (Character_Wardrobe.PrepareForSleep)
+            return canRedress && !FactionManager.isPartyLocked && !isSleeping && !shouldSleep;
             if (!canRedress) return false;
             foreach(var i in this.Inventory.Contents)
             {
@@ -2384,9 +2408,13 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         return null;
     }
 
+    /// <summary>
+    /// Put an item on. The item stays in the inventory (body slots only mark it worn); virtual outfit pieces
+    /// (negative ids) come from the wardrobe.
+    /// </summary>
     public bool EquipItem(int itemRefID, bool forceEquip = false)
     {
-        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+        Item_Instance item = Body.ResolveEquip(itemRefID);
 
         if (item != null)
         {
@@ -2396,6 +2424,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
                 //Stats.RefreshAllStats(true);
                 if ( Body.EquipItem(itemRefID, comp.equipCount, forceEquip))
                 {
+                    NotePutOn(itemRefID);
                     Skills.RefreshAvailableSkillChecks();
                     if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
                     this.PortraitManager.ClearHandlerCache();
@@ -2900,6 +2929,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         var memInst2 = new MemInstance(new List<int>() { }, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.None, LocalizeDictionary.QueryThenParse("ui_entry_memory_sleep_begin"));
         this.Memory.AddEntry(memInst2, new List<string>() { "forbidMerge" });
 
+        // sleep clothes on before the consciousness snapshot, so waking up doesn't read them as clothes removed in sleep
+        Wardrobe?.PrepareForSleep();
         Memory.ConsciousnessLost_TryStart();
 
         if (scr_System_CampaignManager.current.Player == this)
@@ -2922,14 +2953,20 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// <param name="unequipLocked"></param>
     public void UnequipItem(int itemRefID, int RevealingFilter = -1, bool unequipArmor = false, bool unequipLocked = false)
     {
-        var instance = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
-        var comp = instance.GetComp_Equippable();
+        var instance = Body.ResolveEquip(itemRefID);
+        var comp = instance?.GetComp_Equippable();
+        if (comp == null)
+        {
+            // dangling slot (item destroyed elsewhere): just clear it
+            Body.UnequipItem(itemRefID);
+            return;
+        }
         if (((int)comp.revealing >= RevealingFilter || comp.equipLayer == BodyEquipLayer.Outer) && (comp.revealing < Revealing.Armored || unequipArmor ) && (!comp.lockable || unequipLocked))
         {
+            // the item stays where it is owned (inventory / wardrobe); Redress puts it back on
             if (Body.UnequipItem(itemRefID))
             {
-                Inventory.AddItem(instance);
-                //inventory_ref.Add(itemRefID);
+                NoteTakenOff(itemRefID);
                 if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
                 Skills.RefreshAvailableSkillChecks();
                 this.PortraitManager.ClearHandlerCache();
@@ -2971,8 +3008,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
         foreach(var i in Body.EquippedItemRefs)
         {
-            var item = scr_System_CampaignManager.current.FindItemInstanceByID(i);
-            var comp = item.GetComp_Equippable();
+            var comp = Body.ResolveEquip(i)?.GetComp_Equippable();
             if (comp == null) continue;
             else if (comp.equipLayer <= includeLayer) continue;
             else if (comp.revealing < includeRating) continue;
@@ -3018,36 +3054,159 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
         else
         {
-            var contentrefs = new List<Item_Instance>( Inventory.Contents );
-            foreach (var refere in contentrefs)
+            // fill empty slots only: one candidate never pushes another worn item off
+            foreach (var item in GetRedressCandidates(layer))
             {
-                if (refere.Equippable) Reequip(refere, layer);
+                if (Body.CanEquipWithoutReplacing(item)) Reequip(item, layer);
             }
         }
     }
 
     /// <summary>
-    /// Reequip from own inventory ref
+    /// What the character should be wearing but isn't, for one layer (None = all): the active outfit's unworn pieces,
+    /// then every unworn clothing item of the inventory (the default outfit) except on layers the active outfit overrides.
     /// </summary>
-    /// <param name="itemRefID"></param>
-    public void Reequip(Item_Instance item, BodyEquipLayer layerFilter = BodyEquipLayer.None)
+    public List<Item_Instance> GetRedressCandidates(BodyEquipLayer layer)
     {
-       // Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
-        //Debug.Log("Redressing item ref " + item.DisplayName);
-        if (item != null && Inventory.Contains(item))
+        var result = new List<Item_Instance>();
+        if (Body == null) return result;
+        var worn = new HashSet<int>(Body.EquippedItemRefs);
+        var added = new HashSet<int>();
+
+        // what was taken off comes back first, latest first: a spare item of the same slot never takes its place
+        // (e.g. com_furniture_restroom undressing "lower", or the default clothes an outfit change took off)
+        for (int i = takenOffRefs.Count - 1; i >= 0; i--)
         {
-            ItemComponent_Equippable comp = item.GetComp("ItemComponent_Equippable") as ItemComponent_Equippable;
-            if (comp != null && (layerFilter == BodyEquipLayer.None || comp.equipLayer == layerFilter))
+            int id = takenOffRefs[i];
+            if (worn.Contains(id) || added.Contains(id)) continue;
+            Item_Instance item;
+            if (id <= -2) item = Wardrobe != null && Wardrobe.IsActivePiece(id) ? Wardrobe.GetVirtualItem(id) : null;
+            else
             {
-                if (Body.EquipItem(item.RefID, comp.equipCount, true))
-                {
-                    Skills.RefreshAvailableSkillChecks();
-                    if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
-                    Inventory.Remove(item);
-                    this.PortraitManager.ClearHandlerCache();
-                }
+                item = scr_System_CampaignManager.current.FindItemInstanceByID(id);
+                if (item != null && !Inventory.Contains(item)) item = null;
+            }
+            if (!IsRedressCandidate(item, layer, id <= -2)) continue;
+            result.Add(item);
+            added.Add(id);
+        }
+
+        if (Wardrobe != null)
+        {
+            foreach (var piece in Wardrobe.ActivePieceItems)
+            {
+                if (worn.Contains(piece.RefID) || added.Contains(piece.RefID)) continue;
+                if (!IsRedressCandidate(piece, layer, true)) continue;
+                result.Add(piece);
+                added.Add(piece.RefID);
             }
         }
+        foreach (var item in Inventory.Contents)
+        {
+            if (item == null || worn.Contains(item.RefID) || added.Contains(item.RefID)) continue;
+            if (!IsRedressCandidate(item, layer, false)) continue;
+            result.Add(item);
+            added.Add(item.RefID);
+        }
+        return result;
+    }
+
+    /// <summary> equippable, of the layer (None = any), and - for an inventory item - not on a layer the active outfit overrides </summary>
+    bool IsRedressCandidate(Item_Instance item, BodyEquipLayer layer, bool isOutfitPiece)
+    {
+        var comp = item?.GetComp_Equippable();
+        if (comp == null || (layer != BodyEquipLayer.None && comp.equipLayer != layer)) return false;
+        if (!isOutfitPiece && Wardrobe != null && Wardrobe.OverridesLayer(comp.equipLayer)) return false;
+        // a resting party puts some layers away until the rest is over (OutfitSet.restKeepLayers)
+        if (Wardrobe != null && Wardrobe.IsLayerStowed(comp.equipLayer)) return false;
+        return true;
+    }
+
+    /// <summary>
+    /// Items taken off and not put back yet, in the order they came off (inventory refIDs and active outfit piece ids).
+    /// Redress puts these back before anything else. Entries leave when worn again, lost, or no longer owned.
+    /// </summary>
+    [JsonProperty] List<int> takenOffRefs = new List<int>();
+
+    void NoteTakenOff(int id)
+    {
+        if (takenOffRefs == null) takenOffRefs = new List<int>();
+        takenOffRefs.Remove(id);
+        takenOffRefs.Add(id);
+    }
+
+    void NotePutOn(int id)
+    {
+        takenOffRefs?.Remove(id);
+    }
+
+    /// <summary> drop taken-off entries that are no longer owned (outfit pieces of an outfit taken off, items gone from the inventory) </summary>
+    public void PruneTakenOff()
+    {
+        if (takenOffRefs == null) { takenOffRefs = new List<int>(); return; }
+        takenOffRefs.RemoveAll(id =>
+        {
+            if (id <= -2) return Wardrobe == null || !Wardrobe.IsActivePiece(id);
+            var item = scr_System_CampaignManager.current.FindItemInstanceByID(id);
+            return item == null || !Inventory.Contains(item);
+        });
+    }
+
+    /// <summary>
+    /// Put an owned item (inventory item or active outfit piece) on, replacing what is in its slots.
+    /// The item stays in the inventory.
+    /// </summary>
+    public void Reequip(Item_Instance item, BodyEquipLayer layerFilter = BodyEquipLayer.None)
+    {
+        if (item == null) return;
+        bool owned = Inventory.Contains(item) || (Wardrobe != null && Wardrobe.IsActivePiece(item.RefID));
+        if (!owned) return;
+
+        ItemComponent_Equippable comp = item.GetComp_Equippable();
+        if (comp != null && (layerFilter == BodyEquipLayer.None || comp.equipLayer == layerFilter))
+        {
+            if (Body.EquipItem(item.RefID, comp.equipCount, true))
+            {
+                NotePutOn(item.RefID);
+                Skills.RefreshAvailableSkillChecks();
+                if (comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
+                this.PortraitManager.ClearHandlerCache();
+            }
+        }
+    }
+
+    /// <summary>
+    /// The inventory lost an item (traded, sold, used up...): if it was worn, take it off the body as well,
+    /// whatever its lock / armor state.
+    /// </summary>
+    public void OnInventoryItemLost(Item_Instance item)
+    {
+        if (item == null) return;
+        NotePutOn(item.RefID);  // gone: nothing to put back
+        if (Body == null || !Body.IsEquipped(item.RefID)) return;
+        if (!Body.UnequipItem(item.RefID)) return;
+        var comp = item.GetComp_Equippable();
+        if (comp != null && comp.statModifiers.Count > 0) this.Stats.RefreshAllStats(true);
+        Skills.RefreshAvailableSkillChecks();
+        this.PortraitManager.ClearHandlerCache();
+    }
+
+    /// <summary>
+    /// Saves made before worn items stayed in the inventory: worn registered items are added to the inventory
+    /// (CharacterInventory keeps a worn item unmerged). Unworn clothes already there are redressed as before.
+    /// </summary>
+    void MigrateEquipIntoInventory()
+    {
+        if (Body != null)
+        {
+            foreach (var id in Body.EquippedItemRefs)
+            {
+                if (id < 0) continue;
+                var item = scr_System_CampaignManager.current.FindItemInstanceByID(id);
+                if (item != null && !Inventory.Contains(item)) Inventory.AddItem(item);
+            }
+        }
+        equipInInventory = true;
     }
 
     [JsonIgnore] public bool Deleted = false;
@@ -3072,7 +3231,11 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     {
         string s = "Loaded Chara " + FullName + "\n";
         if (this.factionManager != null) FactionManager.ReEstablishParentData(this);
+        if (this.Inventory != null) Inventory.ReEstablishParent(this);
+        if (this.wardrobe == null) this.wardrobe = new Character_Wardrobe();
+        this.wardrobe.ReEstablishParent(this);
         if (this.Body != null) Body.ReEstablishParent(this);
+        if (!equipInInventory && this.Inventory != null) MigrateEquipIntoInventory();
         if (this.Memory != null) Memory.ReEstablishParent(this);
         if (this.Skills != null) Skills.ReEstablishParent(this);
         if (this.Stats != null) Stats.ReEstablishParent(this);  // stats require memory

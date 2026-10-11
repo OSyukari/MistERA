@@ -575,6 +575,7 @@ public class Manageable_Party : I_IsJobGiver
         else charaGuestStatus[c.RefID] = guestStatus.ID;
 
         if (!charaPartyComposition.ContainsKey(c.RefID)) charaPartyComposition.Add(c.RefID, PartyComposition.frontline);
+        // no membertype wardrobe key here: in a party only the party's own wardrobe counts (memberOutfits)
 
         // set manager roles
         if (!OwnerFaction.ManagedChara.Contains(c)) OwnerFaction.AddToFaction(c, guestStatus, false);
@@ -599,12 +600,48 @@ public class Manageable_Party : I_IsJobGiver
         c.FactionManager.UpdateSchedule(ref scheduleRefreshMsg);
     }
 
+    // ---------------- party wardrobe ---------------- //
+    // One outfit per member, worn while the character is in this party (Character_Wardrobe.WardrobeParty) - nothing else
+    // of the character's wardrobe applies then. Lives and dies with the party (party IDs get reused after a party is
+    // removed, so nothing of it is stored on the character but OutfitKey as the active key).
+
+    [JsonProperty] protected Dictionary<int, OutfitSet> memberOutfits = new Dictionary<int, OutfitSet>();
+
+    /// <summary> the wardrobe key of this party's outfits (party IDs are reused, the job's refID is unique while the party lives) </summary>
+    [JsonIgnore] public string OutfitKey { get { return "@party:" + (Job != null ? Job.RefID : -1); } }
+
+    /// <summary> c's outfit in this party, or null (c then wears the default clothes) </summary>
+    public OutfitSet GetOutfit(Character_Trainable c)
+    {
+        if (c == null || memberOutfits == null) return null;
+        return memberOutfits.TryGetValue(c.RefID, out var o) ? o : null;
+    }
+
+    /// <summary> set c's outfit in this party (a copy, keyed OutfitKey, worn anywhere). Applies at c's next change. </summary>
+    public void SetOutfit(Character_Trainable c, OutfitSet outfit)
+    {
+        if (c == null || outfit == null) return;
+        if (memberOutfits == null) memberOutfits = new Dictionary<int, OutfitSet>();
+        var copy = outfit.Clone();
+        copy.key = OutfitKey;
+        copy.limitToLocaleFaction = false;
+        memberOutfits[c.RefID] = copy;
+        c.Wardrobe?.NotifyOutfitEdited(copy.key);
+    }
+
+    public void RemoveOutfit(Character_Trainable c)
+    {
+        if (c == null || memberOutfits == null) return;
+        if (memberOutfits.Remove(c.RefID)) c.Wardrobe?.NotifyOutfitEdited(OutfitKey);
+    }
+
     [JsonProperty] protected bool _remove_dirty = false;
     protected bool DeletingBlocker = false;
     public void RemoveFromFaction(Character_Trainable c)
     {
         if (c == null) return;
         charaGuestStatus.Remove(c.RefID);
+        memberOutfits?.Remove(c.RefID);
 
         // c may still think this is their active party (e.g. UI-driven roster removal
         // does not route through Character_Factions.RemoveFromParty), which would let

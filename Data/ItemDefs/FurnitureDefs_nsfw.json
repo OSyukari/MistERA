@@ -7,7 +7,7 @@
             "value":150000,
             "Tags":["rarity_rare"],
             "givesJob":
-            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }, { "comID":["com_furniture_changeOutfit"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_2",
@@ -15,7 +15,7 @@
             "value":250000,
             "Tags":["rarity_rare"],
             "givesJob":
-            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }, { "comID":["com_furniture_changeOutfit"] }]
         },
         {
             "ID":"furniture_prison_containment_spot_4",
@@ -23,7 +23,7 @@
             "value":400000,
             "Tags":["rarity_rare"],
             "givesJob":
-            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }]
+            [ { "comTags":["furniture","prison"] }, { "comTags":["furniture","bed"] }, { "comID":["com_furniture_changeOutfit"] }]
         }
     ]
     },

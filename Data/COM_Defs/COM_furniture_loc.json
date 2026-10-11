@@ -1,0 +1,16 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for COM_furniture.json. Holds en-us entries for the wardrobe outfit change COM (com_furniture_changeOutfit). Wording matched to the com_furniture_restroom_fix siblings."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "com_furniture_changeOutfit_displayName_1": "Change outfit",
+                "com_furniture_changeOutfit_begin_1": "$doer.firstname$ starts changing their outfit",
+                "com_furniture_changeOutfit_ongoing_1": "$doer.firstname$ is changing their outfit",
+                "com_furniture_changeOutfit_onComplete_1": "$doer.firstname$ finished changing their outfit",
+                "com_furniture_changeOutfit": "Can be performed when the target's current schedule (faction post or activity) calls for a different outfit. Target will change into that outfit, or back into their default clothes, on command completion.\nNPC will look for a spot with a bathroom to change when needed."
+            }
+        }
+    }
+}

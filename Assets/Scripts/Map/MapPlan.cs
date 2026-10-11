@@ -460,15 +460,66 @@ public class MapPlan
         public bool IsActiveOnDay(int daysLookahead = 0) { return IsDayActive(activeDays, daysLookahead); }
 
         /// <summary>
+        /// On a day off (HolidaySystem.DayMatchesTags with holidayTags_any / holidayTags_all, in the calendar of the
+        /// faction's world): 0 = the module is off that day (no shift, no fallback staffing; a recreation activity can't be
+        /// booked); above 0 = it runs as usual and hourlyPayout is multiplied by this (1.35 = 35% holiday premium). Default
+        /// 1 = days off change nothing. Household factions ignore days off (Manageable.HolidayCalendarFor).
+        /// </summary>
+        public float holidayPayoutMultiplier = 1f;
+        /// <summary>Day-off tags, any of them (holiday or season tags of the day). Both lists empty = ["isHoliday"] (HolidaySystem.DayOffTag).</summary>
+        public List<string> holidayTags_any = new List<string>();
+        /// <summary>Day-off tags, all of them (holiday or season tags of the day).</summary>
+        public List<string> holidayTags_all = new List<string>();
+
+        /// <summary>Whether the day daysLookahead from today is a day off for this module in faction's world calendar (null faction = never).</summary>
+        public bool IsDayOff(Manageable faction, int daysLookahead)
+        {
+            if (faction == null) return false;
+            var worldID = Manageable.ResolveWorldID(faction);
+            if (string.IsNullOrEmpty(worldID)) return false;
+            var world = scr_System_Serializer.current?.GetByNameOrID_WorldPlan(worldID);
+            if (world == null) return false;
+            var date = scr_System_Time.current.getCurrentTime().Date.AddDays(daysLookahead);
+            return HolidaySystem.DayMatchesTags(world, date, holidayTags_any, holidayTags_all);
+        }
+
+        /// <summary>Whether the module runs on the day daysLookahead from today: not a day off, or its holidayPayoutMultiplier keeps it running.</summary>
+        public bool RunsOnDay(Manageable faction, int daysLookahead)
+        {
+            return holidayPayoutMultiplier > 0f || !IsDayOff(faction, daysLookahead);
+        }
+
+        /// <summary>Pay multiplier for the day daysLookahead from today: holidayPayoutMultiplier on a day off it runs on, else 1.</summary>
+        public float PayoutMultiplierOnDay(Manageable faction, int daysLookahead)
+        {
+            if (holidayPayoutMultiplier <= 0f || holidayPayoutMultiplier == 1f) return 1f;
+            return IsDayOff(faction, daysLookahead) ? holidayPayoutMultiplier : 1f;
+        }
+
+        /// <summary>Pay multiplier for hour, daysLookahead days from now - judged by the day its shift started (see IsActiveAt).</summary>
+        public float PayoutMultiplierAt(int hour, int daysLookahead, Manageable faction)
+        {
+            return PayoutMultiplierOnDay(faction, ShiftDayOffset(hour, daysLookahead));
+        }
+
+        /// <summary>
         /// Whether this module works at hour, daysLookahead days from now: hour is in activeHours and the day its shift
         /// started is active. An hour belonging to a shift that began before midnight (e.g. 03:00 of a 19:00-07:00
         /// night shift - its run of consecutive activeHours wraps from 23 to 0) is checked against the previous day,
         /// so an overnight shift follows activeDays as one shift instead of being split by the calendar day.
+        /// <br/>holidayFaction: the faction whose world's days off apply (RunsOnDay, same shift day) - null = ignore days off.
         /// </summary>
-        public bool IsActiveAt(int hour, int daysLookahead = 0)
+        public bool IsActiveAt(int hour, int daysLookahead = 0, Manageable holidayFaction = null)
         {
             if (!activeHours.Contains(hour)) return false;
-            return IsDayActive(activeDays, daysLookahead + (StartedPreviousDay(hour) ? -1 : 0));
+            int shiftDay = ShiftDayOffset(hour, daysLookahead);
+            return IsDayActive(activeDays, shiftDay) && RunsOnDay(holidayFaction, shiftDay);
+        }
+
+        /// <summary>daysLookahead of the day hour's shift started on (the previous day for the after-midnight part of an overnight shift).</summary>
+        int ShiftDayOffset(int hour, int daysLookahead)
+        {
+            return daysLookahead + (StartedPreviousDay(hour) ? -1 : 0);
         }
 
         /// <summary>Walking back through consecutive activeHours from hour reaches 23 (the shift started the day before).</summary>

@@ -250,6 +250,34 @@
             ]
         },
         {
+            "_comment":"prison garb top - membertype_prisoner's wardrobe outfit (Data/MemberDefs/memberTypes.json), worn as a virtual outfit piece",
+            "id":"clothing_inner_prison_top",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Arm","Arm"]
+                    }
+                }
+            ]
+        },
+        {
+            "_comment":"prison garb pants - membertype_prisoner's wardrobe outfit (Data/MemberDefs/memberTypes.json), worn as a virtual outfit piece",
+            "id":"clothing_inner_prison_pants",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Lower"],
+                        "equipLayer":"Inner",
+                        "coverSlot":["Leg","Leg"]
+                    }
+                }
+            ]
+        },
+        {
             "id":"clothing_inner_skirt",
             "itemComps_Template":[
                 {
@@ -515,6 +543,8 @@
         "clothing_inner_shoes":"鞋子",
         "clothing_inner_pants":"裤子",
         "clothing_inner_shirt":"衬衣",
+        "clothing_inner_prison_top":"囚服上衣",
+        "clothing_inner_prison_pants":"囚服裤子",
         "clothing_inner_hairpin":"发卡",
         "clothing_inner_skirt":"裙子",
         "clothing_outer_suit":"西装",

@@ -213,6 +213,8 @@ public class MemberType
     {
         if (_inheritanceApplied) return;
         _inheritanceApplied = true;
+        // before inheritance fills it: did this type's own JSON define an outfit (OutfitKeyType)
+        _ownsOutfit = outfit != null;
         if (Parent == null) return;
         Parent.ApplyInheritance();
 
@@ -235,6 +237,26 @@ public class MemberType
                 f.SetValue(this, Activator.CreateInstance(f.FieldType));
         }
     }
+
+    // ---------------- outfit ---------------- //
+
+    /// <summary>
+    /// Optional outfit (Character_Wardrobe) worn while this type is the character's active post. Copied into the
+    /// wardrobe of whoever gets the type (once per key; never removed when the type is lost, kept if the wardrobe already
+    /// has an outfit for the key). Its key is ignored - OutfitUtility.MemberTypeKey sets it. Inherited like any field.
+    /// </summary>
+    public OutfitSet outfit = null;
+
+    [JsonIgnore] bool _ownsOutfit = false;
+
+    /// <summary>The nearest of this type and its ancestors whose own JSON defines outfit, or null.</summary>
+    [JsonIgnore] public MemberType OutfitDefiner { get { return _ownsOutfit ? this : Parent?.OutfitDefiner; } }
+
+    /// <summary>
+    /// The type a wardrobe key is named after: the type defining the outfit (OutfitDefiner); without one, the direct
+    /// parent (posts like the shifts of one job share an outfit), else itself.
+    /// </summary>
+    [JsonIgnore] public MemberType OutfitKeyType { get { return OutfitDefiner ?? Parent ?? this; } }
 
     // ---------------- data ---------------- //
 

@@ -159,6 +159,12 @@ public static class CharaReqUtility
                                 .Replace("$name$", c.FirstName));
             return false;
         }
+        if (q.requireOutfitChange && (c.Wardrobe == null || !c.Wardrobe.NeedsOutfitChange))
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireOutfitChange")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
         if (q.requireUndressedTags.Count > 0 && c.Body.HasEquipByFilter(q.requireUndressedTags, q.clothingRequirement, q.minRevealingScore))
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireUndressedTags")

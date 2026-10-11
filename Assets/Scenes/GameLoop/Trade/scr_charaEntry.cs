@@ -213,15 +213,8 @@ public class scr_charaEntry : MonoBehaviour
             managedLists.Add(entry);
         }
 
-        foreach(var item in c.EquippedItemRefs)
-        {
-            var itemInst = scr_System_CampaignManager.current.FindItemInstanceByID(item);
-            if (itemInst == null) continue;
-            var entry = Instantiate(prefab_item);
-            entry.selfRect.SetParent(this.rect_charaInventory, false);
-            entry.InitItem(canvas, itemInst, isTeamA, targetInv, null, c);
-            managedLists.Add(entry);
-        }
+        // worn items are listed above: they stay in the inventory, and losing one there takes it off
+        // (CharacterInventory.Remove). Outfit pieces are the wardrobe's and never traded.
 
         neutral = scr_System_CentralControl.current.DisplaySetting.TextColor_neutral.Color;
         toggled = scr_System_CentralControl.current.DisplaySetting.TextColor_toggle.Color;

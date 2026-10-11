@@ -194,6 +194,289 @@ public class Character_Body
         this.ownerRefID = c.RefID;
 
         if (this.body != null) foreach (var i in this.body) i.ReEstablishParent(c);
+
+        // runs on creation and on load, before stats refresh their traits
+        FillMissingBodyTraits(c, c.Appearance);
+        EnsureHairstyle(c);
+    }
+
+    //---hairstyle----
+    // per-character copy of the template's default hairstyle. the template is only seed data.
+    [JsonProperty] private Hairstyle_Instance hairstyle = null;
+
+    /// <summary> the character's own hairstyle (in-game changes go here) </summary>
+    [JsonIgnore] public Hairstyle_Instance Hairstyle { get { return hairstyle; } }
+
+    /// <summary> hairstyle as currently seen: the active outfit's hairstyle override, else the own hairstyle </summary>
+    [JsonIgnore] public Hairstyle_Instance EffectiveHairstyle
+    {
+        get
+        {
+            var outfit = Owner?.Wardrobe?.ActiveOutfit;
+            if (outfit != null && outfit.hairstyleOverride != null && outfit.hairstyleOverride.GetBase() != null) return outfit.hairstyleOverride;
+            return hairstyle;
+        }
+    }
+
+    /// <summary>
+    /// Seed the hairstyle on creation / old saves: the template's default, else a random default hairstyle.
+    /// An existing hairstyle is only repaired against the current definitions, never replaced.
+    /// </summary>
+    protected void EnsureHairstyle(Character_Trainable c)
+    {
+        if (hairstyle != null)
+        {
+            hairstyle.Revalidate();
+            return;
+        }
+        var seed = c?.Template?.defaultHairstyle;
+        if (seed != null && seed.GetBase() != null)
+        {
+            hairstyle = seed.Clone();
+            hairstyle.Revalidate();
+        }
+        else
+        {
+            if (seed != null && !string.IsNullOrEmpty(seed.HairstyleID)) Debug.LogWarning($"{c?.FirstName}: template default hairstyle [{seed.HairstyleID}] not found, using a random default");
+            hairstyle = HairstyleUtility.GenerateDefault();
+        }
+    }
+
+    /// <summary> replace the own hairstyle (a copy is stored) </summary>
+    public void SetHairstyle(Hairstyle_Instance h)
+    {
+        if (h == null || h.GetBase() == null) return;
+        hairstyle = h.Clone();
+    }
+
+    /// <summary>
+    /// Body trait as currently seen: the active outfit's trait override of that group (display only, traits_BODY groups),
+    /// else the body's own trait. Stats and organs always use GetBodyTrait.
+    /// </summary>
+    public Traits GetEffectiveBodyTrait(string groupID)
+    {
+        var outfit = Owner?.Wardrobe?.ActiveOutfit;
+        if (outfit != null && outfit.bodyTraitOverrides != null)
+        {
+            foreach (var id in outfit.bodyTraitOverrides)
+            {
+                var t = BodyTraitUtility.Resolve(id);
+                if (t == null || t.Parent == null || t.Parent.ID != groupID) continue;
+                if (t.Parent.Type != Trait_Type.Body) continue;
+                if (Owner != null && !t.IsValidFor(Owner)) continue;
+                return t;
+            }
+        }
+        return GetBodyTrait(groupID);
+    }
+
+    //---body traits (traits_BODY / traits_BODY_SEX)----
+    // per-character copy of the template's body traits, stored by trait id. the template is only seed data.
+    [JsonProperty] private List<string> bodyTraits = new List<string>();
+    [JsonIgnore] private List<Traits> _cached_bodyTraits = null;
+    [JsonIgnore] private Dictionary<string, Traits> _cached_bodyTraitsByGroup = null;
+
+    void ClearBodyTraitCache()
+    {
+        _cached_bodyTraits = null;
+        _cached_bodyTraitsByGroup = null;
+    }
+
+    /// <summary>
+    /// Resolved body traits. Ids that can't be resolved (e.g. sexual traits in safe mode) are skipped but kept in storage.
+    /// </summary>
+    [JsonIgnore] public List<Traits> BodyTraits
+    {
+        get
+        {
+            if (_cached_bodyTraits == null)
+            {
+                _cached_bodyTraits = new List<Traits>();
+                _cached_bodyTraitsByGroup = new Dictionary<string, Traits>();
+                foreach (var id in bodyTraits)
+                {
+                    var t = BodyTraitUtility.Resolve(id);
+                    if (t == null || t.Parent == null) continue;
+                    _cached_bodyTraits.Add(t);
+                    _cached_bodyTraitsByGroup.TryAdd(t.Parent.ID, t);
+                }
+            }
+            return _cached_bodyTraits;
+        }
+    }
+
+    public Traits GetBodyTrait(string groupID)
+    {
+        if (_cached_bodyTraitsByGroup == null) _ = BodyTraits;
+        return _cached_bodyTraitsByGroup.TryGetValue(groupID, out var t) ? t : null;
+    }
+    public bool HasBodyTrait(string traitID) { return bodyTraits.Contains(traitID); }
+
+    [JsonIgnore] public Traits Size_B { get { return GetBodyTrait(BodyTraitUtility.Group_Size_B); } }
+    [JsonIgnore] public Traits Size_P { get { return GetBodyTrait(BodyTraitUtility.Group_Size_P); } }
+    [JsonIgnore] public Traits Size_V { get { return GetBodyTrait(BodyTraitUtility.Group_Size_V); } }
+    [JsonIgnore] public Traits Size_A { get { return GetBodyTrait(BodyTraitUtility.Group_Size_A); } }
+    [JsonIgnore] public Traits Sensitivity_B { get { return GetBodyTrait(BodyTraitUtility.Group_Sensitivity_B); } }
+    [JsonIgnore] public Traits Sensitivity_M { get { return GetBodyTrait(BodyTraitUtility.Group_Sensitivity_M); } }
+    [JsonIgnore] public Traits Sensitivity_C { get { return GetBodyTrait(BodyTraitUtility.Group_Sensitivity_C); } }
+    [JsonIgnore] public Traits Sensitivity_V { get { return GetBodyTrait(BodyTraitUtility.Group_Sensitivity_V); } }
+    [JsonIgnore] public Traits Sensitivity_A { get { return GetBodyTrait(BodyTraitUtility.Group_Sensitivity_A); } }
+
+    /// <summary>
+    /// organ gating: female organs (vagina/womb/urethra/breast). safe mode has no part traits, keep gender appearance
+    /// </summary>
+    [JsonIgnore] public bool HasFemaleParts
+    {
+        get
+        {
+            if (scr_System_CentralControl.current.isSafeMode) return Owner != null && Owner.Template != null && Owner.Template.isFemale;
+            var t = Size_V;
+            return t != null && t.ID != "trait_Size_V_none";
+        }
+    }
+    /// <summary>
+    /// organ gating: male organs (penis). safe mode has no part traits, keep gender appearance
+    /// </summary>
+    [JsonIgnore] public bool HasMaleParts
+    {
+        get
+        {
+            if (scr_System_CentralControl.current.isSafeMode) return Owner != null && Owner.Template != null && Owner.Template.isMale;
+            var t = Size_P;
+            return t != null && t.ID != "trait_Size_P_none";
+        }
+    }
+
+    /// <summary>
+    /// Drop stored traits that fail their requirements (race keywords / appearance), then fill every body trait
+    /// group the body has no entry for: valid template value first, then the valid group default.
+    /// Valid existing entries (including in-game changes) are never overwritten. A fresh body also takes the
+    /// template's singular body traits. Groups invalid for the character are not filled.
+    /// </summary>
+    protected void FillMissingBodyTraits(Character_Trainable c, Humanoid_GenderAppearance app)
+    {
+        if (c == null) return;
+        var raceKeywords = new List<string>();
+        Trait_Requirement.GetRaceKeywords(c, raceKeywords);
+
+        // unresolvable ids (sexual traits in safe mode) are kept
+        int removed = bodyTraits.RemoveAll(id =>
+        {
+            var t = BodyTraitUtility.Resolve(id);
+            if (t == null || t.IsValidFor(raceKeywords, app)) return false;
+            Debug.Log($"Removing body trait [{id}] from {c.FirstName}: requirements not met (appearance {app}, race keywords [{string.Join(",", raceKeywords)}])");
+            return true;
+        });
+        bool changed = removed > 0;
+
+        var groups = new List<scr_Traits_Group>();
+        BodyTraitUtility.GetAllBodyGroups(groups);
+        if (groups.Count > 0)
+        {
+            var seed = new List<Traits>();
+            if (c.Template != null) c.Template.GetSeedBodyTraits(seed);
+            seed.RemoveAll(t => !t.IsValidFor(raceKeywords, app));
+
+            bool fresh = bodyTraits.Count < 1;
+            foreach (var g in groups)
+            {
+                if (!g.IsValidFor(raceKeywords, app)) continue;
+                if (!BodyTraitUtility.IsExclusiveGroup(g))
+                {
+                    if (!fresh) continue;
+                    foreach (var t in seed)
+                    {
+                        if (t.Parent != g || bodyTraits.Contains(t.ID)) continue;
+                        bodyTraits.Add(t.ID);
+                        changed = true;
+                    }
+                    continue;
+                }
+                if (bodyTraits.Exists(x => BodyTraitUtility.IsInGroup(x, g.ID))) continue;
+
+                var trait = seed.Find(x => x.Parent == g);
+                if (trait == null) trait = BodyTraitUtility.GetDefaultValid(g, app, raceKeywords);
+                if (trait == null) continue;
+                bodyTraits.Add(trait.ID);
+                changed = true;
+            }
+        }
+        if (changed) ClearBodyTraitCache();
+    }
+
+    /// <summary>
+    /// Re-check stored traits after the character's race / race template / appearance changed:
+    /// invalid ones are removed and refilled, then stats are refreshed.
+    /// </summary>
+    public void RevalidateBodyTraits(bool refreshStats = true)
+    {
+        if (Owner == null) return;
+        FillMissingBodyTraits(Owner, Owner.Appearance);
+        _cached_internals_description = false;
+        if (refreshStats) RefreshOwnerTraitStats();
+    }
+
+    /// <summary>
+    /// Discard the body's traits and copy them again from the template (character editor / debug).
+    /// Caller refreshes stats afterwards.
+    /// </summary>
+    public void ResetBodyTraitsFromTemplate()
+    {
+        if (Owner == null) return;
+        bodyTraits.Clear();
+        ClearBodyTraitCache();
+        FillMissingBodyTraits(Owner, Owner.Template != null ? Owner.Template.Appearance : Owner.Appearance);
+        _cached_internals_description = false;
+    }
+
+    /// <summary>
+    /// The in-game mutation API for body traits (hair dye, breast growth, sensitivity training...).
+    /// Replaces the same-group entry and refreshes the owner's stats. Returns false if the trait was refused
+    /// (not a body trait, or requirements not met by the owner).
+    /// </summary>
+    public bool SetBodyTrait(Traits t, bool refreshStats = true)
+    {
+        if (t == null || t.Parent == null) return false;
+        if (!t.Parent.isBodyTrait)
+        {
+            Debug.LogError($"SetBodyTrait [{t.ID}] on {Owner?.FirstName}: group [{t.Parent.ID}] is not a body trait group");
+            return false;
+        }
+        if (Owner != null && !t.IsValidFor(Owner))
+        {
+            Debug.LogWarning($"SetBodyTrait [{t.ID}] on {Owner.FirstName}: requirements not met");
+            return false;
+        }
+        var old = GetBodyTrait(t.Parent.ID);
+        if (old == t) return true;
+        // organs are only built in AddMissing, so a part appearing/disappearing doesn't add/remove organs yet
+        if (t.Parent.ID.StartsWith("trait_Size_") && old != null && (old.ID.EndsWith("_none") != t.ID.EndsWith("_none")))
+            Debug.LogWarning($"SetBodyTrait {Owner?.FirstName}: [{old.ID}] -> [{t.ID}] changes part presence, organs are not rebuilt");
+
+        BodyTraitUtility.SetInList(bodyTraits, t);
+        ClearBodyTraitCache();
+        _cached_internals_description = false;
+        if (refreshStats) RefreshOwnerTraitStats();
+        return true;
+    }
+
+    /// <summary>
+    /// Remove a body trait. Only meant for singular groups; sorted/unsorted groups always hold one entry.
+    /// </summary>
+    public void RemoveBodyTrait(Traits t, bool refreshStats = true)
+    {
+        if (t == null) return;
+        if (!bodyTraits.Remove(t.ID)) return;
+        ClearBodyTraitCache();
+        _cached_internals_description = false;
+        if (refreshStats) RefreshOwnerTraitStats();
+    }
+
+    void RefreshOwnerTraitStats()
+    {
+        if (Owner == null || Owner.Stats == null) return;
+        Owner.Stats.RefreshTraits();
+        Owner.Stats.RefreshAllStats(true);
     }
 
     public void ClearLastInteractedRefs()
@@ -267,9 +550,59 @@ public class Character_Body
         foreach (var i in body) i.ReEstablishParent(Owner);
     }
 
+    /// <summary>
+    /// The item behind a body slot id: -1 = empty, >= 0 = a registered item (owned by the inventory),
+    /// &lt;= -2 = a virtual outfit piece of the owner's wardrobe (unregistered, see Character_Wardrobe).
+    /// Every reader of slot ids goes through this, never the global item registry directly.
+    /// </summary>
+    public Item_Instance ResolveEquip(int id)
+    {
+        if (id == -1) return null;
+        if (id >= 0) return scr_System_CampaignManager.current.FindItemInstanceByID(id);
+        return Owner?.Wardrobe?.GetVirtualItem(id);
+    }
+
+    public bool IsEquipped(int id)
+    {
+        if (id == -1) return false;
+        foreach (BodyPart_Instance part in Body)
+        {
+            if (part.EquippedRefIDs.Contains(id) || part.GetInternalByEquipRef(id) != null) return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// True if EquipItem would put the item on without displacing anything (mirrors EquipItem's slot choice).
+    /// Redress only fills such slots, so duplicate clothes never fight over one slot.
+    /// </summary>
+    public bool CanEquipWithoutReplacing(Item_Instance item)
+    {
+        if (item == null || item.GetComp_Equippable() == null) return false;
+        foreach (BodyPart_Instance part in Body)
+        {
+            if (part.PreviewEquip(item, out bool replaces)) return !replaces;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// True if EquipItem would put the item on but only by displacing another item (its slot is taken).
+    /// False when it fits an empty slot, and when the body has no slot for it at all.
+    /// </summary>
+    public bool IsBlockedByOtherItem(Item_Instance item)
+    {
+        if (item == null || item.GetComp_Equippable() == null) return false;
+        foreach (BodyPart_Instance part in Body)
+        {
+            if (part.PreviewEquip(item, out bool replaces)) return replaces;
+        }
+        return false;
+    }
+
     public bool EquipItem(int itemRefID, int count = 1, bool forceEquip = false)
     {
-        Item_Instance item = scr_System_CampaignManager.current.FindItemInstanceByID(itemRefID);
+        Item_Instance item = ResolveEquip(itemRefID);
         if (item == null) return false;
 
         var comp = item.GetComp_Equippable();

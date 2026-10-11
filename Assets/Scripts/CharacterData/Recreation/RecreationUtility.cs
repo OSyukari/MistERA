@@ -517,7 +517,9 @@ public static partial class RecreationUtility
         {
             string sourceName = !string.IsNullOrEmpty(module.jobPostID) ? LocalizeDictionary.QueryThenParse(module.jobPostID) : venue.FactionDisplayName;
             var wage = venue.TradeManager.GetOrCreateSalaryObligation(payer, module.paymentCadence, sourceName, c.RefID);
-            foreach (var pay in module.hourlyPayout) if (pay != null && pay.itemCount > 0) wage.AccrueHour(pay, module.onPaidEventID, module.onFailedEventID);
+            // holiday premium of the billed hour's day (it ended at midnight = yesterday's)
+            float multiplier = module.PayoutMultiplierOnDay(venue, scr_System_Time.current.getCurrentTime().Hour == 0 ? -1 : 0);
+            foreach (var pay in module.hourlyPayout) if (pay != null && pay.itemCount > 0) wage.AccrueHour(Manageable.ScalePayout(pay, multiplier), module.onPaidEventID, module.onFailedEventID);
         }
     }
 
@@ -743,7 +745,7 @@ public static partial class RecreationUtility
             {
                 if (activity == null || string.IsNullOrEmpty(activity.ID) || activity.daysInAdvance > maxAdvance) continue;
                 string key = source.faction.ID + ":" + activity.ID;
-                if (!ActivityAllows(ctx.f, ctx.day, key, activity)) continue;
+                if (!ActivityAllows(ctx.f, ctx.day, key, activity, source.faction)) continue;
                 // a mandatory session needs its required people (CanHost)
                 if (!CanHost(ctx, activity.invite, BookingCheck.ForActivity(source.faction.ID, activity.ID, ctx.day))) continue;
                 float weight = activity.baseWeight * WeeklyFactor(ctx, key, activity) * TravelFactor(home, source.faction) * PersonalityFactor(ctx.c, source.faction, activity);
@@ -756,9 +758,9 @@ public static partial class RecreationUtility
         {
             var activity = def.AsActivity;
             if (activity.daysInAdvance > maxAdvance) continue;
-            if (!OfferAllows(ctx.f, ctx.day, def) || !activity.AllowsDay(ctx.day - ctx.today)) continue;
-            if (!CanHost(ctx, def.invite, BookingCheck.ForOffer(def, ctx.day))) continue;
             var venue = scr_System_CampaignManager.current.FindFactionByID(def.factionID);
+            if (!OfferAllows(ctx.f, ctx.day, def) || !activity.AllowsDay(ctx.day - ctx.today, venue)) continue;
+            if (!CanHost(ctx, def.invite, BookingCheck.ForOffer(def, ctx.day))) continue;
             float weight = activity.baseWeight * WeeklyFactor(ctx, def.ID, activity) * TravelFactor(home, venue) * PersonalityFactor(ctx.c, venue, activity);
             if (weight <= 0f) continue;
             result.Add(new Candidate() { faction = venue, activity = activity, sourceKey = def.ID, memberTypeID = def.memberTypeID, weight = weight, source = RecreationBookingSource.Offer });
@@ -850,10 +852,10 @@ public static partial class RecreationUtility
     /// day allowed (activeDays), its cooldown clear, and no other reservation of it pending (HasPendingReservation;
     /// except = the session being checked, which doesn't count against itself).
     /// </summary>
-    static bool ActivityAllows(Character_Factions f, int day, string key, RecreationActivity activity, RecreationGroup except = null)
+    static bool ActivityAllows(Character_Factions f, int day, string key, RecreationActivity activity, Manageable venue, RecreationGroup except = null)
     {
         int ahead = day - scr_System_Time.current.getAbsoluteDay();
-        return activity.AllowsDay(ahead) && activity.AllowsAdvance(ahead) && CooldownAllows(f, day, key, activity.minDaysBetween)
+        return activity.AllowsDay(ahead, venue) && activity.AllowsAdvance(ahead) && CooldownAllows(f, day, key, activity.minDaysBetween)
             && !HasPendingReservation(f, key, except);
     }
 

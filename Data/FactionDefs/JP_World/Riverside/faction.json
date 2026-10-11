@@ -1,6 +1,6 @@
 {
     "_doc": "Public riverside park along the embankment. Minimal standalone faction: the world faction (Manageable_World) cannot own it - its only room is the world-map transit room, so a booking there would lead to that room, and world-map travel time is only measured between initializeFactions members with their own door. No floor plan: rooms are hideOnMap with no offsetX/offsetY, walking minutes as door cost (hospital pattern). No members and no staff.",
-    "_doc_recreation": "Anyone may stroll here (jp_riverside_relax: generic 'recreation', ungated). Fireworks viewing (jp_riverside_watch_fireworks) is open while the fireworks offer is under way (its requireActiveRecreationOffer gate). Both are offers (MapPlans.recreationOffers below: recreation_offer_jp_riverside_fireworks on its festival dates, recreation_offer_jp_riverside_stroll daily, or a SetRecreationBooking event with one as template). No MemberTypes: a booked visit runs on its offer's own workModule - the default behavior tree sandboxes its workCommands (TryFindScheduledJobNode's booked-visit branch).",
+    "_doc_recreation": "Anyone may stroll here (jp_riverside_relax: generic 'recreation', ungated). Fireworks viewing (jp_riverside_watch_fireworks) is open while the fireworks offer is under way (its requireActiveRecreationOffer gate). Both are offers (MapPlans.recreationOffers below: recreation_offer_jp_riverside_fireworks on Saturdays of the hanabi season, recreation_offer_jp_riverside_stroll daily, or a SetRecreationBooking event with one as template). No MemberTypes: a booked visit runs on its offer's own workModule - the default behavior tree sandboxes its workCommands (TryFindScheduledJobNode's booked-visit branch).",
 
     "MapPlans": {
         "factionInit": [
@@ -53,7 +53,7 @@
                 ]
             }
         ],
-        "_comment_recreationOffers": "This venue's public activities (RecreationOfferDef) - every world that initializes jp_tourist_riverside collects them (WorldPlan.AllRecreationOffers). Template data, reloaded every game load, never saved. No MemberType: each visit runs on its offer's own workModule (the default behavior tree sandboxes its workCommands); behaviorOverrides / Tags / AcceptanceMods could be added per offer. Fireworks dates are placeholders to tune (two summer festivals).",
+        "_comment_recreationOffers": "This venue's public activities (RecreationOfferDef) - every world that initializes jp_tourist_riverside collects them (WorldPlan.AllRecreationOffers). Template data, reloaded every game load, never saved. No MemberType: each visit runs on its offer's own workModule (the default behavior tree sandboxes its workCommands); behaviorOverrides / Tags / AcceptanceMods could be added per offer. Fireworks follow the world's hanabi season (seasonTags) on Saturdays (weekdays).",
         "recreationOffers": [
             {
                 "ID": "recreation_offer_jp_riverside_fireworks",
@@ -67,7 +67,9 @@
                 "weight": 3.0,
                 "participationChance": 0.6,
                 "daysInAdvance": 3,
-                "dates": ["07-26", "08-16"]
+                "_comment_calendar": "Every Saturday of the fireworks season (world.json season_hanabi) - most real hanabi taikai (e.g. Sumida River) are held on summer Saturday evenings.",
+                "seasonTags": ["hanabi"],
+                "weekdays": [0, 0, 0, 0, 0, 1, 0]
             },
             {
                 "_comment": "Everyday riverside stroll - a flexible offer: never posted, every eligible character may plan it into free time like a membership activity (2h, not two days running). Placement weight = weight.",

@@ -60,6 +60,10 @@ public static class ResultCharaUtility
                 //Debug.Log($"{c.FirstName} redress");
                 c.Redress();
                 break;
+            case CharaResultType.changeOutfit:
+                if (c.Wardrobe != null) c.Wardrobe.ApplyWanted();
+                else c.Redress();
+                break;
             case CharaResultType.undress:
                 if (r.tags.Count > 0)
                 {

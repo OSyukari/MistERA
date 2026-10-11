@@ -377,6 +377,53 @@ public partial class scr_UpdateHandler : MonoBehaviour
     }
 
     /// <summary>
+    /// Player-facing text for a failed LLM request: the status line plus the provider's own reason
+    /// pulled out of the (already key-redacted) response body - error.message for OpenAI/Claude/
+    /// DeepSeek/ZAI style bodies, the first entry's for Google's array form - falling back to the raw
+    /// body, truncated. Always starts with the status line so the result never parses as JSON and
+    /// UnwrapMessageJSON shows it verbatim as content_string.
+    /// </summary>
+    static string BuildLLMErrorMessage(UnityWebRequest request, string body)
+    {
+        string status = string.IsNullOrEmpty(request.error) ? $"HTTP {request.responseCode}" : request.error;
+        if (string.IsNullOrWhiteSpace(body)) return status;
+
+        string reason = null;
+        try
+        {
+            var token = JToken.Parse(body);
+            if (token is JArray arr && arr.Count > 0) token = arr[0];
+            var err = token["error"];
+            if (err is JValue) reason = err.ToString();
+            else if (err != null) reason = err["message"]?.ToString();
+            if (string.IsNullOrEmpty(reason)) reason = token["message"]?.ToString();
+        }
+        catch { /* not JSON (HTML error page, plain text) - fall through to the raw body */ }
+
+        if (string.IsNullOrEmpty(reason))
+        {
+            reason = body.Trim();
+            const int maxLength = 1000;
+            if (reason.Length > maxLength) reason = reason.Substring(0, maxLength) + "...";
+        }
+        return $"{status}\n{reason}";
+    }
+
+    /// <summary>
+    /// Scrubs the player's API key out of provider-supplied text before it is logged or displayed -
+    /// some providers/proxies echo the submitted key back in their auth error messages.
+    /// </summary>
+    static string RedactSecret(string text, string secret)
+    {
+        if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(secret)) return text;
+        text = text.Replace(secret, "[REDACTED]");
+        // also the trimmed form, in case the stored key carries stray whitespace the provider stripped
+        var trimmed = secret.Trim();
+        if (trimmed.Length > 0 && trimmed != secret) text = text.Replace(trimmed, "[REDACTED]");
+        return text;
+    }
+
+    /// <summary>
     /// Serializes the full response package to LLMResponse.json, same as the single-shot flow always
     /// has - extracted out of FinalizeLLMResponse so AgentLoop_Routine can also call it for every
     /// intermediate round's reply, not just the one that ends up finalizing.
@@ -497,8 +544,11 @@ public partial class scr_UpdateHandler : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError($"LLM Request Error: {request.error}");
-                    onResponseReceived?.Invoke(ParseLLMResponseText(false, request.error));
+                    // request.error is only the status line ("HTTP/1.1 400 Bad Request") - the provider's
+                    // actual reason lives in the response body, so surface that to the player too
+                    string body = RedactSecret(streaming ? streamHandler.RawText : request.downloadHandler?.text, apiKey);
+                    Debug.LogError($"LLM Request Error: {request.error} (code {request.responseCode})\n{body}");
+                    onResponseReceived?.Invoke(ParseLLMResponseText(false, BuildLLMErrorMessage(request, body)));
                 }
 
                 currentRequest = null;

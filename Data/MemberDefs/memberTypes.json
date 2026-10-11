@@ -82,6 +82,18 @@
                 "isPurgedOnPartyCleanup": true,
                 "isDisplayableInFactionUI": true,
                 "participatesInCombat": false,
+                "_comment_outfit": "Prison garb (wardrobe outfit, copied into the prisoner's wardrobe under <captor faction>|membertype_prisoner). Replaces the inner and outer layers (shoes, accessories and coats come off too), underwear stays, locked items stay. Worn wherever the prisoner is (limitToLocaleFaction false: a party has no rooms) and kept on to sleep. Changed at com_furniture_changeOutfit - the prison cells offer it (FurnitureDefs_nsfw.json), the behavior_changeOutfit override below lets prisoners search prison rooms.",
+                "outfit": {
+                    "pieces": [
+                        { "baseID": "clothing_inner_prison_top" },
+                        { "baseID": "clothing_inner_prison_pants" }
+                    ],
+                    "overrideSkin": false,
+                    "overrideInner": true,
+                    "overrideOuter": true,
+                    "limitToLocaleFaction": false,
+                    "sleepKeepLayers": [ "Skin", "Inner", "Outer" ]
+                },
                 "_comment_behaviorOverrides": "Narrows sleep/meal/cleaning/recreation/rest search to prison rooms upfront (via each node's own PrisonerJobRestriction.GetAllowedRoomRefs restrictRoomList) instead of relying on a blanket guestStatus-based check. Each override's filter mirrors its corresponding node's filter in Data/Personality/behavior.json, for otherwise-identical behavior (PathingRoomFilter.excludePrisonRooms defaults to false, so prison rooms are searched like any other room and no special flag is needed here - only nodes that want to actively exclude prison rooms would set excludePrisonRooms:true). Keys must match the behaviorOverrideID tagged on the corresponding node in Data/Personality/behavior.json. Deliberately NOT overridden: behavior_job (TryFindScheduledJobNode), the com_furniture_restroom TryFindJobByIDNode, and TryFindRestNode - prisoners aren't meant to be restricted for those (the latter two don't even have a behaviorOverrideID). Not yet consumed anywhere (the FindJobNodeRoot lookup that reads this dictionary isn't wired up yet) - this is staged ahead of that.",
                 "behaviorOverrides": {
                     "behavior_bedrest": {
@@ -151,6 +163,19 @@
                     "behavior_redress":
                     {
                         "$type": "TryFindRedressNode, Assembly-CSharp",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":false,
+                            "respectRoomGender":true
+                        }
+                    },
+                    "behavior_changeOutfit":
+                    {
+                        "$type": "TryFindOutfitChangeNode, Assembly-CSharp",
                         "evaluationHeuristic":"closest",
                         "filter": {
                             "checkBlacklist": true,

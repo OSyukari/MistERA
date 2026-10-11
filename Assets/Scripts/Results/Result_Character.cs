@@ -17,7 +17,9 @@ public enum CharaResultType
 {
     none,
     statMod_ST, statMod_EN, statMod_HP, statMod_MP,
-    redress, undress
+    redress, undress,
+    /// <summary> put on the outfit the current schedule wants (Character_Wardrobe.ApplyWanted) </summary>
+    changeOutfit
 
 }
 

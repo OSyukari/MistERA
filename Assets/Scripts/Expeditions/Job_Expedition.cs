@@ -377,11 +377,18 @@ public class Job_Expedition : Job
         }
         else if (this.status == ExpeditionStatus.active || this.status == ExpeditionStatus.resting)
         {
-
+            var previous = this.status;
             if (this.FactionOwner_Party.OwnerFaction.mealHours.Contains(currentHour)
-                    || ((this.FactionOwner_Party.AllowPassNight || this.FactionOwner_Party.BaseDuration > 23) 
+                    || ((this.FactionOwner_Party.AllowPassNight || this.FactionOwner_Party.BaseDuration > 23)
                             && (this.FactionOwner_Party.SleepHours.Contains(currentHour) || !this.FactionOwner_Party.OwnerFaction.IsActiveHour(currentHour)))) this.status = ExpeditionStatus.resting;
             else this.status = ExpeditionStatus.active;
+
+            // rest begins: members put away the party-gear layers not kept for rest (OutfitSet.restKeepLayers); Redress
+            // leaves them off while resting and puts them back once the party is active again
+            if (previous != ExpeditionStatus.resting && this.status == ExpeditionStatus.resting)
+            {
+                foreach (var c in this.FactionOwner.ManagedChara) c?.Wardrobe?.OnPartyRestStart();
+            }
         }
 
         if (this.status == ExpeditionStatus.active)
@@ -821,6 +828,13 @@ public class Job_Expedition : Job
             ss += "waiting for team to gather ||";
             return true;
         }
+        else if (NeedsPartyGearChange(c))
+        {
+            // under way and the party gear isn't on (yet / any more): let go, so the outfit change node sends the
+            // character to the camp's changing spot; TryFindPartyExplorationJob puts them back into this job afterwards
+            ss += "changing into party gear, liberating ||";
+            return false;
+        }
         else if (desiredCOM != null && c.NeedUndress(desiredCOM.requirements, true))
         {
             ActionPackage_Undress package = new ActionPackage_Undress(this, c.RefID, desiredCOM.requirements, true);
@@ -900,6 +914,19 @@ public class Job_Expedition : Job
     {
         return packageCooldown > 0;
     }
+    /// <summary>
+    /// An NPC member of this (unlocked) party has party gear set (Manageable_Party.GetOutfit) and the wardrobe wants a
+    /// change. Party gear is changed into after departure, at the camp. Kidnapped (locked) characters get their outfit
+    /// on the spot instead (EventUtility.Kidnap), the player is never auto-changed.
+    /// </summary>
+    bool NeedsPartyGearChange(Character_Trainable c)
+    {
+        if (c == null || c == scr_System_CampaignManager.current.Player || c.FactionManager.isPartyLocked) return false;
+        if (this.status != ExpeditionStatus.active) return false;
+        if (FactionOwner_Party == null || FactionOwner_Party.GetOutfit(c) == null) return false;
+        return c.Wardrobe != null && c.Wardrobe.NeedsOutfitChange;
+    }
+
     public bool ShouldRest(Character_Trainable c)
     {
         if (this.status == ExpeditionStatus.returning) return false;

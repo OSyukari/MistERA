@@ -144,7 +144,7 @@ public static partial class RecreationUtility
                     {
                         if (s.faction.ID != factionID) continue;
                         var activity = s.spec.GetActivity(activityID);
-                        if (activity == null || !ActivityAllows(f, day, sourceKey, activity, session)) continue;
+                        if (activity == null || !ActivityAllows(f, day, sourceKey, activity, s.faction, session)) continue;
                         typeID = s.memberTypeID;
                         return true;
                     }

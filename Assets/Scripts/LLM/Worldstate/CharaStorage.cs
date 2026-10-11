@@ -242,7 +242,8 @@ public partial class LLM_WorldState
                 // -- Equipments -- //
                 foreach (var equipref in c.Body.EquippedItemRefs)
                 {
-                    var equip = scr_System_CampaignManager.current.FindItemInstanceByID(equipref);
+                    var equip = c.Body.ResolveEquip(equipref);
+                    if (equip == null) continue;
                     var equiptooltip = equip.Base.Tooltip == "no_tooltip" ? "" : $": {equip.Base.Tooltip}";
                     equipments.Add($"{equip.DisplayName}, refID {equip.RefID}, {equiptooltip}");
                 }
@@ -276,7 +277,8 @@ public partial class LLM_WorldState
                 // -- Equipments -- //
                 foreach (var equipref in c.Body.EquippedItemRefs)
                 {
-                    var equip = scr_System_CampaignManager.current.FindItemInstanceByID(equipref);
+                    var equip = c.Body.ResolveEquip(equipref);
+                    if (equip == null) continue;
                     equipments.Add($"{equip.DisplayName}");
                 }
                 foreach (var kwd in c.Body.BodyDescription)

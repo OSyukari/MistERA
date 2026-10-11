@@ -904,6 +904,53 @@
                 "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_restroom_fix_onComplete_1"]}] }
             },
             {
+                "ID": "com_furniture_changeOutfit",
+                "ActionPackageClass": "ActionPackage_Interaction",
+                "displayName": "com_furniture_changeOutfit_displayName_1",
+                "timeScale": 10,
+                "HideWhenInvalid":true,
+                "comTags": [
+                    "furniture",
+                    "changingOutfit",
+                    "privacy"
+                ],
+                "requirements":{
+                    "requirement":{
+                        "req_Doers":{
+                            "requireOutfitChange" :true
+                        }  }  },
+                "variants": [
+                    {
+                        "requirements": {
+                            "requirement": {
+                                "doerCount": 1
+                            }
+                        },
+                        "displayName": "com_furniture_changeOutfit_displayName_1"
+                    }
+                ],
+                "results_EP": {
+                    "results_character": [
+                        {
+                            "entry_conditions": {
+                                "applyToDoer": true
+                            },
+                            "entry_results": {
+                                "type": "changeOutfit"
+                            }
+                        }
+                    ]
+                },
+
+                "AcceptanceCheck": {
+                    "baseAcceptanceValue": 25
+                },
+                "DifficultyCheck": { "baseD20Check": 0 },
+                "description_ongoing":{ "Entries":[{"texts":["com_furniture_changeOutfit_ongoing_1"]}], "keepLooking":false },
+                "description_begin":{ "Entries":[{"texts":["com_furniture_changeOutfit_begin_1"]}], "keepLooking":false },
+                "description_onComplete":{ "Entries":[{"keepLooking":true, "texts":["com_furniture_changeOutfit_onComplete_1"]}] }
+            },
+            {
                 "ID": "com_furniture_cryosleep",
                 "ActionPackageClass": "ActionPackage_Interaction",
                 "COMRepeat": true,
@@ -1286,6 +1333,12 @@
                 "com_furniture_restroom_fix_begin_1": "$doer.firstname$开始换衣物",
                 "com_furniture_restroom_fix_ongoing_1": "$doer.firstname$正在换衣服",
                 "com_furniture_restroom_fix": "当角色有衣物被脱下后可执行。指令结束时角色会穿上所有衣物\nNPC如果衣冠不整，会优先寻找合适的地点（有卫生间的地点）穿衣",
+
+                "com_furniture_changeOutfit_displayName_1": "更换服装",
+                "com_furniture_changeOutfit_begin_1": "$doer.firstname$开始更换服装",
+                "com_furniture_changeOutfit_ongoing_1": "$doer.firstname$正在更换服装",
+                "com_furniture_changeOutfit_onComplete_1": "$doer.firstname$换好了服装",
+                "com_furniture_changeOutfit": "当角色当前的安排（阵营身份或活动）要求换上另一套服装时可执行。指令结束时角色会换上该安排的服装，或换回默认服装\nNPC会在需要时前往有卫生间的地点换衣",
 
                 "com_furniture_getmeal": "用餐",
                 "com_furniture_getmeal_displayName": "用餐",

@@ -95,15 +95,14 @@
       "stat_PSY": 12,
       "stat_WIL": 12,
       "personalityID": "personality_default",
-      "sensitivity_B": "trait_Sensitivity_B_default",
-      "sensitivity_M": "trait_Sensitivity_M_default",
-      "sensitivity_C": "trait_Sensitivity_C_default",
-      "sensitivity_V": "trait_Sensitivity_V_default",
-      "sensitivity_A": "trait_Sensitivity_A_default",
-      "size_B": "trait_Size_B_A",
-      "size_P": "trait_Size_P_none",
-      "size_V": "trait_Size_V_1",
-      "size_A": "trait_Size_A_1",
+      "traits_body_sex": [
+          "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
+          "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
+          "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+      ],
+      "traits_body": [
+          "trait_BodyType_slim", "trait_HairColor_pink", "trait_EyeColor_green"
+      ],
       "Height":145,
       "Weight":38,
       "initialRelationship":[
@@ -129,6 +128,12 @@
             { "ID":"clothing_skin_bra" },
             { "ID":"firearm_handgun" }
         ],
+      "_comment_defaultHairstyle": "Pink fluffy high twin tails with parted bangs (full-body reference image).",
+      "defaultHairstyle": {
+        "hairstyleID": "hairstyle_twintails",
+        "subCategoryID": "hairstyle_twintails_high",
+        "slotSelection": { "front": "hair_front_center_part" }
+      },
       "Skills": null
     },
     "firstName": "Campaign1_Char_Momoka_FirstName",

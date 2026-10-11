@@ -63,6 +63,22 @@ public class TryFindRedressNode : TryFindJobByIDNode
         return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
     }
 }
+/// <summary>
+/// The schedule wants a different outfit (Character_Wardrobe.NeedsOutfitChange): go change at changing furniture of the
+/// current locale. None reachable = no change.
+/// </summary>
+public class TryFindOutfitChangeNode : TryFindJobByIDNode
+{
+    public TryFindOutfitChangeNode() : base("com_furniture_changeOutfit")
+    {
+
+    }
+    public override bool TryGetJob(Character_Trainable c, I_IsJobGiver currentJobFaction, I_IsJobGiver currentLocaleFaction, bool resetJob, int currentHour, List<string> s)
+    {
+        if (c.Wardrobe == null || !c.Wardrobe.NeedsOutfitChange) return false;
+        return base.TryGetJob(c, currentJobFaction, currentLocaleFaction, resetJob, currentHour, s);
+    }
+}
 public class TryFindSleepNode : TryFindJobByIDNode
 {
     public TryFindSleepNode() : base("com_furniture_sleep")

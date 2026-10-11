@@ -2588,7 +2588,12 @@ public class scr_System_CampaignManager : MonoBehaviour
     {
         var list = c.EquippedItemRefs;
         var results = new List<Item_Instance>(list.Count);
-        foreach(var i in list) if (Index_ItemReferenceID.TryGetValue(i, out var item)) results.Add(item);
+        // through the body: virtual outfit pieces are not in the registry
+        foreach (var i in list)
+        {
+            var item = c.Body.ResolveEquip(i);
+            if (item != null) results.Add(item);
+        }
         return results;
     }
 
@@ -3095,29 +3100,23 @@ public class scr_System_CampaignManager : MonoBehaviour
         //Debug.LogError("Adding charaRef "+c.RefID +" to roomRef "+room.RefID);
         //Debug.Log("CampaignManager: Instantiate character baseID [" + c.baseID + "] with refID [" + c.RefID + "] registered to room ["+room.RefID+"]");
 
+        // worn items stay in the inventory (body slots only mark them). equip first, so AddItem keeps the worn
+        // instance unmerged; a later item for the same slot replaces the earlier one (which stays in the inventory)
         foreach(presetInventory p in c.Template.initialInventory)
         {
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (i == null) continue;
+            if (i.GetComp_Equippable() != null) c.EquipItem(i.RefID, false);
             c.Inventory.AddItem(i);
-            if (i.GetComp_Equippable() != null && c.EquipItem(i.RefID, false))
-            {   // add to inv
-                c.Inventory.Remove(i);
-            }
         }
         foreach (presetInventory p in c.Template.overrideInventory)
         {
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (i == null) continue;
+            if (i.GetComp_Equippable() != null) c.EquipItem(i.RefID, false);
             c.Inventory.AddItem(i);
-            if (i.GetComp_Equippable() != null && c.EquipItem(i.RefID, false))
-            {   // add to inv
-                c.Inventory.Remove(i);
-            }
-
-
         }
 
         // the equips above can add stat modifiers that raise max values after

@@ -15,8 +15,9 @@ public enum Trait_Type
     Sexual_Constitution,
     Sexual_Psyche,
     Sexual_Willpower,
-    Body,
-    Untyped// affect physical and biological 
+    Body,       // non-sexual body traits (skin, hair...), stored on Character_Body, SFW
+    Untyped,// affect physical and biological
+    Body_Sex    // sexual body traits (part size, sensitivity), stored on Character_Body, NSFW. appended to keep json type numbers stable
 }
 
 public enum Trait_Group_Type
@@ -26,6 +27,63 @@ public enum Trait_Group_Type
     UnsortedList,
     Singular,
     Untyped
+}
+
+/// <summary>
+/// appearance requirement of a trait / trait group. loose also accepts Ambiguous, strict doesn't
+/// </summary>
+public enum Trait_AppearanceRequirement
+{
+    Any,
+    Female_strict,
+    Female_loose,
+    Male_strict,
+    Male_loose,
+    Ambiguous,
+    Inhuman
+}
+
+/// <summary>
+/// Requirement check shared by Traits and scr_Traits_Group (both carry the same flat json fields).
+/// Race keywords = Race.RaceType + RaceTemplate.actorKeyword.
+/// </summary>
+public static class Trait_Requirement
+{
+    public static void GetRaceKeywords(Character_Trainable c, List<string> result)
+    {
+        if (c == null) return;
+        var race = c.Race;
+        if (race != null) result.AddRange(race.RaceType);
+        var raceTemplate = c.RaceTemplate;
+        if (raceTemplate != null) result.AddRange(raceTemplate.actorKeyword);
+    }
+
+    public static bool IsAppearanceMet(Trait_AppearanceRequirement req, Humanoid_GenderAppearance app)
+    {
+        switch (req)
+        {
+            case Trait_AppearanceRequirement.Any: return true;
+            case Trait_AppearanceRequirement.Female_strict: return app == Humanoid_GenderAppearance.Female;
+            case Trait_AppearanceRequirement.Female_loose: return app == Humanoid_GenderAppearance.Female || app == Humanoid_GenderAppearance.Ambiguous;
+            case Trait_AppearanceRequirement.Male_strict: return app == Humanoid_GenderAppearance.Male;
+            case Trait_AppearanceRequirement.Male_loose: return app == Humanoid_GenderAppearance.Male || app == Humanoid_GenderAppearance.Ambiguous;
+            case Trait_AppearanceRequirement.Ambiguous: return app == Humanoid_GenderAppearance.Ambiguous;
+            case Trait_AppearanceRequirement.Inhuman: return app == Humanoid_GenderAppearance.Inhuman;
+            default: return true;
+        }
+    }
+
+    public static bool IsMet(List<string> any, List<string> all, Trait_AppearanceRequirement appReq, List<string> raceKeywords, Humanoid_GenderAppearance app)
+    {
+        if (!IsAppearanceMet(appReq, app)) return false;
+        bool hasAny = any != null && any.Count > 0;
+        bool hasAll = all != null && all.Count > 0;
+        if (!hasAny && !hasAll) return true;
+        if (raceKeywords == null) return false;
+        if (hasAny && !Utility.ListContainsLoose(raceKeywords, any)) return false;
+        if (hasAll && !Utility.ListContainsStrict(raceKeywords, all)) return false;
+        return true;
+    }
 }
 
 public class Traits
@@ -66,6 +124,11 @@ public class Traits
     public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
 
     public bool isDisplayable = true;
+
+    // requirements, checked together with the parent group's (see Trait_Requirement)
+    public List<string> requireRaceKeyword_any = new List<string>();
+    public List<string> requireRaceKeyword_all = new List<string>();
+    public Trait_AppearanceRequirement requireAppearance = Trait_AppearanceRequirement.Any;
     //-----------------
 
     public Traits GetNextInGroup()
@@ -77,6 +140,40 @@ public class Traits
     {
         if (Parent != null) return Parent.getPreviousinGroup(this);
         else return null;
+    }
+
+    /// <summary>
+    /// own requirements and the parent group's
+    /// </summary>
+    public bool IsValidFor(List<string> raceKeywords, Humanoid_GenderAppearance app)
+    {
+        if (Parent != null && !Parent.IsValidFor(raceKeywords, app)) return false;
+        return Trait_Requirement.IsMet(requireRaceKeyword_any, requireRaceKeyword_all, requireAppearance, raceKeywords, app);
+    }
+    public bool IsValidFor(Character_Trainable c)
+    {
+        var keywords = new List<string>();
+        Trait_Requirement.GetRaceKeywords(c, keywords);
+        return IsValidFor(keywords, c.Appearance);
+    }
+
+    /// <summary>
+    /// next/previous entry valid for the character, skipping invalid ones (wrap rules of the group unchanged)
+    /// </summary>
+    public Traits GetNextValidInGroup(Character_Trainable c) { return StepValid(c, true); }
+    public Traits GetPreviousValidInGroup(Character_Trainable c) { return StepValid(c, false); }
+    Traits StepValid(Character_Trainable c, bool next)
+    {
+        if (Parent == null) return null;
+        var keywords = new List<string>();
+        Trait_Requirement.GetRaceKeywords(c, keywords);
+        var t = next ? GetNextInGroup() : GetPreviousInGroup();
+        while (t != null && t != this)
+        {
+            if (t.IsValidFor(keywords, c.Appearance)) return t;
+            t = next ? t.GetNextInGroup() : t.GetPreviousInGroup();
+        }
+        return null;
     }
 
 }
@@ -102,20 +199,58 @@ public class scr_Traits_Group
 
     [JsonIgnore] public string GroupLabel = "";
     public List<Traits> entries = new List<Traits>();
+
+    // requirements for the whole group, see Trait_Requirement
+    public List<string> requireRaceKeyword_any = new List<string>();
+    public List<string> requireRaceKeyword_all = new List<string>();
+    public Trait_AppearanceRequirement requireAppearance = Trait_AppearanceRequirement.Any;
     //----------------------
+
+    public bool IsValidFor(List<string> raceKeywords, Humanoid_GenderAppearance app)
+    {
+        return Trait_Requirement.IsMet(requireRaceKeyword_any, requireRaceKeyword_all, requireAppearance, raceKeywords, app);
+    }
+    public bool IsValidFor(Character_Trainable c)
+    {
+        var keywords = new List<string>();
+        Trait_Requirement.GetRaceKeywords(c, keywords);
+        return IsValidFor(keywords, c.Appearance);
+    }
+
+    /// <summary>
+    /// neutral entry if valid, else the first valid entry, else null
+    /// </summary>
+    public Traits GetNeutralValid(List<string> raceKeywords, Humanoid_GenderAppearance app)
+    {
+        if (!IsValidFor(raceKeywords, app)) return null;
+        var neutral = getNeutralinGroup();
+        if (neutral == null) return null;
+        if (neutral.IsValidFor(raceKeywords, app)) return neutral;
+        return entries.Find(x => x.IsValidFor(raceKeywords, app));
+    }
 
     [JsonIgnore] 
     public bool isNSFW
     {
         get
         {
-            return type == Trait_Type.Body
+            return type == Trait_Type.Body_Sex
                 || type == Trait_Type.Sexual_Strength
                 || type == Trait_Type.Sexual_Psyche
                 || type == Trait_Type.Sexual_Constitution
                 || type == Trait_Type.Sexual_Willpower;
         }
     }
+
+    /// <summary>
+    /// body traits are owned by Character_Body, not by the persisted StatsManager trait list
+    /// </summary>
+    [JsonIgnore] public bool isBodyTrait { get { return type == Trait_Type.Body || type == Trait_Type.Body_Sex; } }
+
+    /// <summary>
+    /// group membership is decided by the index list the group is loaded into
+    /// </summary>
+    public void ForceType(Trait_Type t) { type = t; }
 
 
     public Trait_Group_Type SortType = Trait_Group_Type.Untyped;
@@ -178,6 +313,7 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
             this.traits_WIL.AddRange(l.traits_WIL);
             this.traits_WIL_SEX.AddRange(l.traits_WIL_SEX);
             this.traits_BODY.AddRange(l.traits_BODY);
+            this.traits_BODY_SEX.AddRange(l.traits_BODY_SEX);
 
 
 
@@ -197,6 +333,7 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
     public List<scr_Traits_Group> traits_PSY_SEX = new List<scr_Traits_Group>();
     public List<scr_Traits_Group> traits_WIL_SEX = new List<scr_Traits_Group>();
     public List<scr_Traits_Group> traits_BODY = new List<scr_Traits_Group>();
+    public List<scr_Traits_Group> traits_BODY_SEX = new List<scr_Traits_Group>();
 
     private List<List<scr_Traits_Group>> traitsall = null;
     [JsonIgnore]
@@ -216,6 +353,7 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
                 if (traits_PSY_SEX != null) traitsall.Add(traits_PSY_SEX);
                 if (traits_WIL_SEX != null) traitsall.Add(traits_WIL_SEX);
                 if (traits_BODY != null) traitsall.Add(traits_BODY);
+                if (traits_BODY_SEX != null) traitsall.Add(traits_BODY_SEX);
                 return traitsall;
             }
             else
@@ -226,6 +364,9 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
     }
     public void LateInitialize()
     {
+        if (traits_BODY != null) foreach (var group in traits_BODY) group.ForceType(Trait_Type.Body);
+        if (traits_BODY_SEX != null) foreach (var group in traits_BODY_SEX) group.ForceType(Trait_Type.Body_Sex);
+
         foreach (List<scr_Traits_Group> o in traitsall)
         {
             foreach (scr_Traits_Group s in o)
@@ -247,6 +388,7 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
         if (traits_PSY_SEX != null) foreach (var group in traits_PSY_SEX) group.GroupLabel = "traits_PSY_SEX";
         if (traits_WIL_SEX != null) foreach (var group in traits_WIL_SEX) group.GroupLabel = "traits_WIL_SEX";
         if (traits_BODY != null) foreach (var group in traits_BODY) group.GroupLabel = "traits_BODY";
+        if (traits_BODY_SEX != null) foreach (var group in traits_BODY_SEX) group.GroupLabel = "traits_BODY_SEX";
 
     }
 
@@ -308,7 +450,7 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
         traits_CON_SEX = null;
         traits_PSY_SEX = null;
         traits_WIL_SEX = null;
-        traits_BODY = null;
+        traits_BODY_SEX = null; // traits_BODY (skin, hair...) is SFW and stays
 
 
     }

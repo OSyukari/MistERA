@@ -43,15 +43,14 @@
         "stat_PSY": 14,
         "stat_WIL": 8,
         "personalityID": "personality_default",
-        "sensitivity_B": "trait_Sensitivity_B_sensitive",
-        "sensitivity_M": "trait_Sensitivity_M_default",
-        "sensitivity_C": "trait_Sensitivity_C_sensitive",
-        "sensitivity_V": "trait_Sensitivity_V_sensitive",
-        "sensitivity_A": "trait_Sensitivity_A_default",
-        "size_B": "trait_Size_B_C",
-        "size_P": "trait_Size_P_none",
-        "size_V": "trait_Size_V_1",
-        "size_A": "trait_Size_A_1",
+        "traits_body_sex": [
+            "trait_Sensitivity_B_sensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+            "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
+            "trait_Size_B_C", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+        ],
+        "traits_body": [
+            "trait_BodyType_slim", "trait_SkinColor_pale", "trait_HairColor_black", "trait_EyeColor_pink"
+        ],
         "Height": 160,
         "Weight": 47,
         "traits": [
@@ -81,6 +80,12 @@
             }
         ],
         "initialInventory": [],
+        "_comment_defaultHairstyle": "Black unruly hair in a loose low ponytail (character card + portrait).",
+        "defaultHairstyle": {
+            "hairstyleID": "hairstyle_ponytail",
+            "subCategoryID": "hairstyle_ponytail_low",
+            "slotSelection": { "front": "hair_front_side_swept" }
+        },
         "Skills": null
     },
     "firstName": "TCoAaL_Ashley_firstname",

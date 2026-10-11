@@ -254,35 +254,38 @@
                 "Workfactions":[]
             }
         ],
-        "_comment_holidayDefs": "One date resolves to at most ONE holiday (first entry wins on overlap) - multi-day festivals whose phases differ are split into separate entries sharing a theme tag. national_holiday = 放假, observance = 不放假. Rules: fixed (month/day), equinox (spring/autumn, computed), silverWeek (occurs only in years where respect-for-aged monday + bridge day + autumn equinox form one Mon-Wed run).",
+        "_comment_holidayDefs": "One date resolves to at most ONE holiday (first entry wins on overlap) - multi-day festivals whose phases differ are split into separate entries sharing a theme tag. national_holiday = 放假, observance = 不放假. isHoliday = day off for work/recreation workModules (MapPlan.WorkModuleInit.holidayPayoutMultiplier / holidayTags_any / holidayTags_all - default tag). Rules: fixed (month/day), equinox (spring/autumn, computed), silverWeek (occurs only in years where respect-for-aged monday + bridge day + autumn equinox form one Mon-Wed run).",
         "holidayDefs":
         [
-            { "ID":"holiday_jp_ganjitsu",        "tags":["newyear", "national_holiday"],     "rule":{ "type":"fixed", "month":1,  "day":1 } },
-            { "ID":"holiday_jp_shogatsu_d2",     "tags":["newyear", "national_holiday"],     "rule":{ "type":"fixed", "month":1,  "day":2 } },
-            { "ID":"holiday_jp_shogatsu_d3",     "tags":["newyear", "national_holiday"],     "rule":{ "type":"fixed", "month":1,  "day":3 } },
+            { "ID":"holiday_jp_ganjitsu",        "tags":["newyear", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":1,  "day":1 } },
+            { "ID":"holiday_jp_shogatsu_d2",     "tags":["newyear", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":1,  "day":2 } },
+            { "ID":"holiday_jp_shogatsu_d3",     "tags":["newyear", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":1,  "day":3 } },
             { "ID":"holiday_jp_valentine",       "tags":["valentine", "observance"],         "rule":{ "type":"fixed", "month":2,  "day":14 } },
             { "ID":"holiday_jp_white_day",       "tags":["whiteday", "observance"],          "rule":{ "type":"fixed", "month":3,  "day":14 } },
-            { "ID":"holiday_jp_spring_equinox",  "tags":["national_holiday"],                "rule":{ "type":"equinox", "equinox":"spring" } },
-            { "ID":"holiday_jp_gw_start",        "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":4,  "day":29 } },
-            { "ID":"holiday_jp_gw_mid1",         "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":5,  "day":3 } },
-            { "ID":"holiday_jp_gw_mid2",         "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":5,  "day":4 } },
-            { "ID":"holiday_jp_gw_end",          "tags":["goldenweek", "national_holiday"],  "rule":{ "type":"fixed", "month":5,  "day":5 } },
+            { "ID":"holiday_jp_spring_equinox",  "tags":["national_holiday", "isHoliday"], "rule":{ "type":"equinox", "equinox":"spring" } },
+            { "ID":"holiday_jp_gw_start",        "tags":["goldenweek", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":4,  "day":29 } },
+            { "ID":"holiday_jp_gw_mid1",         "tags":["goldenweek", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":5,  "day":3 } },
+            { "ID":"holiday_jp_gw_mid2",         "tags":["goldenweek", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":5,  "day":4 } },
+            { "ID":"holiday_jp_gw_end",          "tags":["goldenweek", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":5,  "day":5 } },
             { "ID":"holiday_jp_tanabata",        "tags":["tanabata", "observance"],          "rule":{ "type":"fixed", "month":7,  "day":7 } },
-            { "ID":"holiday_jp_obon_mukaebi",    "tags":["obon", "national_holiday"],        "rule":{ "type":"fixed", "month":8,  "day":13 } },
-            { "ID":"holiday_jp_obon_okuribi",    "tags":["obon", "national_holiday"],        "rule":{ "type":"fixed", "month":8,  "day":14 }, "durationDays":2 },
-            { "ID":"holiday_jp_silverweek",      "tags":["silverweek", "national_holiday"],  "rule":{ "type":"silverWeek" }, "durationDays":3 },
+            { "ID":"holiday_jp_obon_mukaebi",    "tags":["obon", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":8,  "day":13 } },
+            { "ID":"holiday_jp_obon_okuribi",    "tags":["obon", "national_holiday", "isHoliday"], "rule":{ "type":"fixed", "month":8,  "day":14 }, "durationDays":2 },
+            { "ID":"holiday_jp_silverweek",      "tags":["silverweek", "national_holiday", "isHoliday"], "rule":{ "type":"silverWeek" }, "durationDays":3 },
             { "ID":"holiday_jp_christmas_eve",   "tags":["christmas", "observance"],         "rule":{ "type":"fixed", "month":12, "day":24 } },
             { "ID":"holiday_jp_christmas",       "tags":["christmas", "observance"],         "rule":{ "type":"fixed", "month":12, "day":25 } },
             { "ID":"holiday_jp_omisoka",         "tags":["newyear_eve", "observance"],       "rule":{ "type":"fixed", "month":12, "day":31 } }
         ],
-        "_comment_seasonDefs": "Seasons are independent from holidays: a date resolves to at most one holiday but any number of seasons. Ranges may wrap around the year end (start month/day > end month/day).",
+        "_comment_seasonDefs": "Seasons are independent from holidays: a date resolves to at most one holiday but any number of seasons. Ranges may wrap around the year end (start month/day > end month/day). A season tagged isHoliday would be a day off for every workModule observing the default tag - school breaks use their own school_break tag instead (matched by the school's holidayTags_any).",
         "seasonDefs":
         [
             { "ID":"season_spring", "tags":["spring"],          "ranges":[{ "startMonth":3,  "startDay":1,  "endMonth":5,  "endDay":31 }] },
             { "ID":"season_summer", "tags":["summer"],          "ranges":[{ "startMonth":6,  "startDay":1,  "endMonth":8,  "endDay":31 }] },
             { "ID":"season_autumn", "tags":["autumn"],          "ranges":[{ "startMonth":9,  "startDay":1,  "endMonth":11, "endDay":30 }] },
             { "ID":"season_winter", "tags":["winter"],          "ranges":[{ "startMonth":12, "startDay":1,  "endMonth":2,  "endDay":28 }] },
-            { "ID":"season_hanabi", "tags":["hanabi", "summer_festival"], "ranges":[{ "startMonth":7, "startDay":1, "endMonth":8, "endDay":31 }] }
+            { "ID":"season_hanabi", "tags":["hanabi", "summer_festival"], "ranges":[{ "startMonth":7, "startDay":1, "endMonth":8, "endDay":31 }] },
+            { "ID":"season_school_spring_break", "tags":["school_break"], "ranges":[{ "startMonth":3,  "startDay":25, "endMonth":4, "endDay":5 }] },
+            { "ID":"season_school_summer_break", "tags":["school_break"], "ranges":[{ "startMonth":7,  "startDay":20, "endMonth":8, "endDay":31 }] },
+            { "ID":"season_school_winter_break", "tags":["school_break"], "ranges":[{ "startMonth":12, "startDay":25, "endMonth":1, "endDay":7 }] }
         ]
     }
 ],
@@ -388,6 +391,9 @@
                 "season_autumn": "秋季",
                 "season_winter": "冬季",
                 "season_hanabi": "花火大会季",
+                "season_school_spring_break": "春假",
+                "season_school_summer_break": "暑假",
+                "season_school_winter_break": "寒假",
 
                 "ui_holiday_today": "今天是 $name$",
                 "ui_season_start": "$name$开始了",
@@ -418,7 +424,10 @@
                 "season_summer_tooltip": "夏季。暑气与蝉鸣的季节。",
                 "season_autumn_tooltip": "秋季。红叶与丰收的季节。",
                 "season_winter_tooltip": "冬季。寒冷与白雪的季节。",
-                "season_hanabi_tooltip": "花火大会季。各地接连举办夏祭与花火大会。"
+                "season_hanabi_tooltip": "花火大会季。各地接连举办夏祭与花火大会。",
+                "season_school_spring_break_tooltip": "春假。学年交替之间的短假，学校停课。",
+                "season_school_summer_break_tooltip": "暑假。学校停课，学生们迎来漫长的夏天。",
+                "season_school_winter_break_tooltip": "寒假。跨年前后学校停课。"
             },
             "en-us": {
 
@@ -467,6 +476,9 @@
                 "season_autumn": "Autumn",
                 "season_winter": "Winter",
                 "season_hanabi": "Fireworks Season",
+                "season_school_spring_break": "Spring Break",
+                "season_school_summer_break": "Summer Vacation",
+                "season_school_winter_break": "Winter Break",
 
                 "ui_holiday_today": "Today is $name$",
                 "ui_season_start": "$name$ begins",
@@ -497,7 +509,10 @@
                 "season_summer_tooltip": "Summer. Heat and cicada songs.",
                 "season_autumn_tooltip": "Autumn. Colorful leaves and the harvest.",
                 "season_winter_tooltip": "Winter. Cold and white snow.",
-                "season_hanabi_tooltip": "Fireworks Season. Summer festivals and fireworks displays everywhere."
+                "season_hanabi_tooltip": "Fireworks Season. Summer festivals and fireworks displays everywhere.",
+                "season_school_spring_break_tooltip": "Spring Break. A short break between school years; no classes.",
+                "season_school_summer_break_tooltip": "Summer Vacation. No classes - a long summer for students.",
+                "season_school_winter_break_tooltip": "Winter Break. No classes around the New Year."
             }
         }
     }

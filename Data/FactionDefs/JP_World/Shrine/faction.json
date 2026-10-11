@@ -1,6 +1,6 @@
 {
     "_doc": "Local Shinto shrine. Minimal standalone faction (the world faction cannot own it - see JP_World/Riverside/faction.json _doc). No floor plan: rooms are hideOnMap with no offsetX/offsetY, walking minutes as door cost (hospital pattern). No members and no staff for now (a priest / miko staff could be added as shift MemberTypes later).",
-    "_doc_recreation": "Praying and drawing an omikuji are open to anyone any day (generic 'recreation', ungated). The new-year visit (MapPlans.recreationOffers below: recreation_offer_jp_shrine_hatsumode, 01-01..01-03) runs on the offer's own workModule: the default behavior tree keeps visitors on its workCommands (pray, omikuji) for the whole visit, it tags them shrine_worshipper, and it charges its entranceFee once per visit. No MemberType.",
+    "_doc_recreation": "Praying and drawing an omikuji are open to anyone any day (generic 'recreation', ungated). The new-year visit (MapPlans.recreationOffers below: recreation_offer_jp_shrine_hatsumode, every newyear-tagged holiday) runs on the offer's own workModule: the default behavior tree keeps visitors on its workCommands (pray, omikuji) for the whole visit, it tags them shrine_worshipper, and it charges its entranceFee once per visit. No MemberType.",
 
     "MapPlans": {
         "factionInit": [
@@ -68,7 +68,7 @@
                 ]
             }
         ],
-        "_comment_recreationOffers": "This venue's public activities (RecreationOfferDef) - every world that initializes jp_tourist_shrine collects them (WorldPlan.AllRecreationOffers). Template data, reloaded every game load, never saved. The new-year visit runs over 01-01..01-03, once per NPC thanks to minDaysBetween.",
+        "_comment_recreationOffers": "This venue's public activities (RecreationOfferDef) - every world that initializes jp_tourist_shrine collects them (WorldPlan.AllRecreationOffers). Template data, reloaded every game load, never saved. The new-year visit runs on the world's newyear-tagged holidays (01-01..01-03), once per NPC thanks to minDaysBetween.",
         "recreationOffers": [
             {
                 "ID": "recreation_offer_jp_shrine_hatsumode",
@@ -85,7 +85,8 @@
                 "participationChance": 0.7,
                 "daysInAdvance": 3,
                 "minDaysBetween": 3,
-                "_dates": ["01-01", "01-02", "01-03"]
+                "_comment_calendar": "Every day whose holiday carries the newyear tag (world.json: ganjitsu, shogatsu d2/d3).",
+                "holidayTags": ["newyear"]
             }
         ]
     },

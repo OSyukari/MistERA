@@ -1157,15 +1157,14 @@
     "stat_PSY": 11,
     "stat_WIL": 12,
     "personalityID": "personality_default",
-    "sensitivity_B": "trait_Sensitivity_B_sensitive",
-    "sensitivity_M": "trait_Sensitivity_M_default",
-    "sensitivity_C": "trait_Sensitivity_C_sensitive",
-    "sensitivity_V": "trait_Sensitivity_V_sensitive",
-    "sensitivity_A": "trait_Sensitivity_A_default",
-    "size_B": "trait_Size_B_H",
-    "size_P": "trait_Size_P_none",
-    "size_V": "trait_Size_V_1",
-    "size_A": "trait_Size_A_1",
+    "traits_body_sex": [
+        "trait_Sensitivity_B_sensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+        "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
+        "trait_Size_B_H", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+    ],
+    "traits_body": [
+        "trait_BodyType_athletic", "trait_HairColor_black", "trait_EyeColor_black"
+    ],
     "Height": 173,
     "Weight": 58,
     "traits": [
@@ -1186,6 +1185,11 @@
         "ID": "clothing_skin_socks"
       }
     ],
+    "_comment_defaultHairstyle": "Long straight black hair, neatly kept (character card + portrait).",
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_straight_long",
+      "slotSelection": { "front": "hair_front_straight_bangs" }
+    },
     "characterComment": "MTSP_Jin_Tachibana_Yuika_charCard_comment",
     "Skills": null,
     "CharacterCard": "<Tachibana_Yuika>\ncharacter:\n  name:\n    english: Tachibana Yuika\n    chinese: 橘结花\n    japanese: 橘結花\n  basic_settings:\n    gender: Female\n    age: 21\n    height: 173cm\n    weight: 58kg\n    measurements: B93(H-cup) W58 H91\n    identity: Eldest daughter of the Tachibana household; university student; Yuu's teasing childhood friend and secret lover\n    occupation: Student at Seijo University majoring in Fashion Business; part-time model/influencer work\n    residence: Lives with mother Kyouka, sister Koharu, and Yuu in the Tachibana family home\n  character_brief_description:\n    - Two-faced charm: cool beauty at university, bright teasing slightly-sadistic older sister at home\n    - High pride and quick wit; hides vulnerability behind confidence and verbal sparring\n    - Former kendo club member with strong competition results; toned athletic build\n    - Hypervigilant toward outside threats: scans unfamiliar places for hidden cameras, watches men who look at Koharu\n    - Kept her virginity for Yuu for years; actively seduced him after discovering his relationship with her mother\n    - Proposed the 'seeding trip' to settle who becomes Yuu's wife, secretly timing it to her ovulation\n  overall_appearance:\n    - Long straight black hair styled neatly; black eyes; sharp modern beauty inherited from her mother\n    - Tall, long-limbed, slender athletic frame with a compact H-cup bustline\n    - Soft rose-pink areolae; fully waxed pubic area\n    - Signature item: a black choker, often changing styles and materials\n    - Perfume: light floral with a hint of sweetness, youthful and modern\n  overall_clothing:\n    - Trendy sophisticated casual: stylish dresses, skirts with blouses, fashionable jeans and tops\n    - Pool/beach: red micro bikini\n    - Night: white cropped tank top and navy drawstring shorts\n    - Favorite home tease: walking around in nothing but a bath towel to fluster Yuu\n  important_background:\n    - Father died when she was young; grew up helping her mother hold the family together\n    - Writes poetry in private and secretly loves cute animals and sentimental romance movies\n    - Strong latent masochistic side she has not fully acknowledged herself\n    - Insists Yuu wear a condom - her way of keeping control of the relationship's terms\n  important_relationship:\n    - Tachibana Kyouka: mother she trusts unconditionally; also rival for Yuu's affection\n    - Tachibana Koharu: younger sister she protects from careless men\n    - Akemichi Yuu: childhood friend and lover; calls him simply 'Yuu'; teases him constantly\n  personality_notes:\n    - The Sophisticate/The Prideful One archetype\n    - Hates being underestimated, public criticism, losing control, being ignored by Yuu\n    - Likes intelligent conversation, stylish clothes, black coffee, rainy days, feeling admired\n    - Rationalizes attraction as a test: 'I'm only testing him; I can stop whenever I want'\n    - When flustered, her volume and aggression rise rather than fall\n  speech_pattern:\n    - Confident, lively, teasing; sharp comebacks and rhetorical hooks\n    - Softer cool register in public, expressive mischief at home\n</Tachibana_Yuika>"

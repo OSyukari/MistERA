@@ -208,7 +208,9 @@
                     "activeHours":[10,11,12,13,14,15,16,17,18,19,20,21],
                     "activeDays":[],
                     "hourlyPayout": [ { "itemID":"currency_JPY", "itemCount":"1150" } ],
-                    "paymentCadence":"Daily"
+                    "paymentCadence":"Daily",
+                    "_comment_holiday": "Shops stay open on holidays (peak days) - holiday shifts pay a 20% allowance.",
+                    "holidayPayoutMultiplier": 1.2
                 }
             }
         ]

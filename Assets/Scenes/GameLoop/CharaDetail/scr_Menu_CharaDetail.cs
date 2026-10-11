@@ -368,12 +368,10 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
                     {
                         if (ins.equipLayers.Contains(BodyEquipLayer.Skin))
                         {
-                            int i = ins.GetEquip(BodyEquipLayer.Skin, slot);
-                            //if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName + "[" + score + "]");
-                            if (i > 0)
+                            if (ins.TryGetEquip(out var equipped, BodyEquipLayer.Skin, slot))
                             {
                                 hasEquip = true;
-                                AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName);
+                                AddBox(buttonBox, box, equipped.DisplayName);
                             }
                             else
                             {
@@ -384,12 +382,10 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
                         if (ins.equipLayers.Contains(BodyEquipLayer.Inner))
                         {
-                            int i = ins.GetEquip(BodyEquipLayer.Inner, slot);
-                            //if (i > 0) AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName + "[" + score + "]");
-                            if (i > 0)
+                            if (ins.TryGetEquip(out var equipped, BodyEquipLayer.Inner, slot))
                             {
                                 hasEquip = true;
-                                AddBox(buttonBox, box, scr_System_CampaignManager.current.FindItemInstanceByID(i).DisplayName);
+                                AddBox(buttonBox, box, equipped.DisplayName);
                             }
                             else
                             {

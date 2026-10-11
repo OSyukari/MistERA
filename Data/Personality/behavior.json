@@ -29,6 +29,20 @@
                         }
                     },
                     {
+                        "$type": "TryFindOutfitChangeNode, Assembly-CSharp",
+                        "behaviorOverrideID":"behavior_changeOutfit",
+                        "_comment":"wardrobe: the schedule wants another outfit -> com_furniture_changeOutfit here; before TryChangeLocaleNode so work clothes come off at the workplace before leaving",
+                        "evaluationHeuristic":"closest",
+                        "filter": {
+                            "checkBlacklist": true,
+                            "skipPrivateRoom":false,
+                            "searchJobList":false,
+                            "searchNonJobList":true,
+                            "excludePrisonRooms":true,
+                            "respectRoomGender":true
+                        }
+                    },
+                    {
                         "$type": "TryChangeLocaleNode, Assembly-CSharp"
                     },
                     {

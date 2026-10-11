@@ -17,7 +17,16 @@
     "icon_path":"forbidCopy_Jitaku/Yuki/neutral.webp"
 }
 
-        ]
+        ],
+        "image_generation":{
+            "base":"",
+            "eyes":"",
+            "is_conscious":"",
+            "hair":"",
+            "skin":"",
+            "body":"",
+            "_comment":"body, skin, hair, eyes can all be represented by physical traits. clothing and armor can be represented by actual armors"
+        }
     },
     "Template": {
         "Appearance": "Female",
@@ -26,15 +35,14 @@
         "stat_PSY": 12,
         "stat_WIL": 12,
         "personalityID": "personality_default",
-        "sensitivity_B": "trait_Sensitivity_B_default",
-        "sensitivity_M": "trait_Sensitivity_M_default",
-        "sensitivity_C": "trait_Sensitivity_C_sensitive",
-        "sensitivity_V": "trait_Sensitivity_V_sensitive",
-        "sensitivity_A": "trait_Sensitivity_A_supersensitive",
-        "size_B": "trait_Size_B_D",
-        "size_P": "trait_Size_P_none",
-        "size_V": "trait_Size_V_1",
-        "size_A": "trait_Size_A_1",
+        "traits_body_sex": [
+            "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
+            "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_supersensitive",
+            "trait_Size_B_D", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+        ],
+        "traits_body": [
+            "trait_HairColor_brown", "trait_EyeColor_red"
+        ],
         "Height": 157,
         "Weight": 50,
         "traits": [
@@ -60,6 +68,11 @@
             }
         ],
         "initialInventory": [],
+        "_comment_defaultHairstyle": "Semi-long wavy brown hair worn down (portrait; source doc mentioned a ponytail but the portrait shows it loose).",
+        "defaultHairstyle": {
+            "hairstyleID": "hairstyle_wavy_long",
+            "slotSelection": { "front": "hair_front_side_swept" }
+        },
         "Skills": null
     },
     "firstName": "Jitaku_Yuki_firstname",

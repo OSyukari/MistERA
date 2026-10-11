@@ -336,14 +336,35 @@ public class CharacterInventory : Inventory
 
     public override bool AddItem(Item_Instance item)
     {
+        if (item == null) return false;
+        if (item.RefID <= -2)
+        {
+            // virtual outfit pieces belong to the wardrobe, never to an inventory
+            Debug.LogError($"CharacterInventory: refused virtual outfit piece [{item.DisplayName}] ({item.RefID}) for {ownerCache?.FirstName}");
+            return false;
+        }
         if (item.Comp_Weapon != null) _combatActions = null;
+        // a worn item keeps its own refID (the body slots point at it): never merge it into another stack
+        if (ownerCache != null && ownerCache.Body != null && ownerCache.Body.IsEquipped(item.RefID))
+        {
+            if (!contentRefs.Contains(item.RefID))
+            {
+                contentRefs.Add(item.RefID);
+                contents_cache = null;
+            }
+            return true;
+        }
         return base.AddItem(item);
     }
 
+    /// <summary> losing a worn item also takes it off the owner (worn items stay in the inventory) </summary>
     public override void Remove(Item_Instance item)
     {
+        if (item == null) return;
         if (item.Comp_Weapon != null) _combatActions = null;
+        bool had = contentRefs.Contains(item.RefID);
         base.Remove(item);
+        if (had && ownerCache != null) ownerCache.OnInventoryItemLost(item);
     }
 
     private Character_Trainable ownerCache = null;

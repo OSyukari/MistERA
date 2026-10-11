@@ -64,9 +64,23 @@ public static class FactionJoinUtility
         return BuildReachable(candidate, types, includeDisabled, joinOptionByTagTextKey);
     }
 
-    /// <summary>Tooltip header + one line per child post (childPostTextKey: $name$, $hours$, $days$) of a parent type's option.</summary>
+    /// <summary>Tooltip header + one line per child post (childPostTextKey: $name$, $hours$, $days$, $holiday$) of a parent type's option.</summary>
     public static string childPostsHeaderKey = "event_joinOption_childPosts";
     public static string childPostTextKey = "event_joinOption_childPost";
+    /// <summary>A post's day-off policy (FormatHolidayPolicy): off on days off / paid holidayPayoutMultiplier ($mult$) on them.</summary>
+    public static string holidayOffTextKey = "event_joinOption_holidayOff";
+    public static string holidayPayTextKey = "event_joinOption_holidayPay";
+
+    /// <summary>
+    /// module's day-off policy (WorkModuleInit.holidayPayoutMultiplier): holidayOffTextKey at 0, holidayPayTextKey with $mult$
+    /// above 1 or between 0 and 1; "" for no module, a module without shift hours, or 1 (days off change nothing).
+    /// </summary>
+    public static string FormatHolidayPolicy(MapPlan.WorkModuleInit module)
+    {
+        if (module == null || module.activeHours == null || module.activeHours.Count == 0 || module.holidayPayoutMultiplier == 1f) return "";
+        if (module.holidayPayoutMultiplier <= 0f) return LocalizeDictionary.QueryThenParse(holidayOffTextKey);
+        return LocalizeDictionary.QueryThenParse(holidayPayTextKey).Replace("$mult$", module.holidayPayoutMultiplier.ToString("0.##"));
+    }
 
     /// <summary>Every post under type (its leaf descendants) with its hours and days, for a join option's tooltip; "" for a type without children.</summary>
     public static string FormatChildPosts(MemberType type)
@@ -79,7 +93,8 @@ public static class FactionJoinUtility
             lines.Add(LocalizeDictionary.QueryThenParse(childPostTextKey)
                 .Replace("$name$", post.DisplayName)
                 .Replace("$hours$", module == null ? "" : Manageable.FormatHourRanges(module.activeHours))
-                .Replace("$days$", module == null ? "" : Manageable.FormatActiveDaysSimple(module.activeDays)));
+                .Replace("$days$", module == null ? "" : Manageable.FormatActiveDaysSimple(module.activeDays))
+                .Replace("$holiday$", FormatHolidayPolicy(module)));
         }
         return string.Join("\n", lines);
     }
@@ -174,7 +189,8 @@ public static class FactionJoinUtility
                 if (built.Count == 0 && includeDisabled && !string.IsNullOrEmpty(errorKey))
                     built.Add(type.ResolveJoinTarget().joinHandler.MakeDisabledOption(candidate, errorKey));
 
-                string childPosts = FormatChildPosts(type);
+                // a parent's posts each carry their own day-off policy; a single post's goes on its own line
+                string childPosts = type.Children.Count > 0 ? FormatChildPosts(type) : FormatHolidayPolicy(type.workModule);
                 foreach (var op in built)
                 {
                     if (op == null || (!includeDisabled && !string.IsNullOrEmpty(op.disabledReasonKey))) continue;

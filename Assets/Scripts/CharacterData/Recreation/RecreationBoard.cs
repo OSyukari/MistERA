@@ -12,7 +12,7 @@ public enum RecreationOfferMode { Fixed, Flexible }
 /// visit; no MemberType needed). Authored in the venue's data file ("MapPlans" -> "recreationOffers",
 /// Index_MapPlan) and collected by every world that initializes the venue (WorldPlan.AllRecreationOffers); template data, never saved.
 /// <br/>Fixed (fireworks, the new-year shrine visit): posted on the campaign's RecreationBoard by its calendar (dates /
-/// weekdays) or by the AddRecreationOffer event Result, each posting a hostless World session at its fixed time
+/// holiday and season tags / weekdays - MatchesCalendar) or by the AddRecreationOffer event Result, each posting a hostless World session at its fixed time
 /// (RecreationUtility.PostOfferSession) that everyone in the venue's world sees and decides on.
 /// <br/>Flexible (the riverside stroll): never posted; every eligible character gets it as a flexible candidate next to
 /// their membership activities (RecreationUtility.CollectCandidates), placed in free time with the placement fields
@@ -53,6 +53,8 @@ public class RecreationOfferDef
     public List<string> Tags = new List<string>();
     /// <summary>See RecreationActivity.AcceptanceMods.</summary>
     public List<PersonalityAcceptanceMod> AcceptanceMods = null;
+    /// <summary>See RecreationActivity.outfit (e.g. a yukata for a fireworks festival).</summary>
+    public OutfitSet outfit = null;
 
     /// <summary>Flexible: its weight among the character's other flexible candidates (RecreationActivity.baseWeight). Fixed: unused (sessions are ranked by preference).</summary>
     public float weight = 1f;
@@ -114,15 +116,27 @@ public class RecreationOfferDef
                     behaviorOverrides = behaviorOverrides,
                     Tags = Tags,
                     AcceptanceMods = AcceptanceMods,
+                    outfit = outfit,
                 };
             return _activity;
         }
     }
 
-    /// <summary>Calendar: "MM-DD" dates it is posted on every year.</summary>
+    /// <summary>Calendar source: "MM-DD" dates it is posted on every year.</summary>
     public List<string> dates = new List<string>();
-    /// <summary>Calendar: weekly days it is posted on, index 0 = Monday ... 6 = Sunday, 1 = posted (empty = none).</summary>
+    /// <summary>Calendar source: posted on a date whose holiday (HolidaySystem, the venue's world) has any of these tags - e.g. "newyear".</summary>
+    public List<string> holidayTags = new List<string>();
+    /// <summary>Calendar source: posted on a date covered by a season (HolidaySystem, the venue's world) with any of these tags - e.g. "hanabi".</summary>
+    public List<string> seasonTags = new List<string>();
+    /// <summary>
+    /// Calendar filter: weekly days a source date must fall on, index 0 = Monday ... 6 = Sunday, 1 = allowed (empty = every
+    /// day). With no source at all (no dates / holidayTags / seasonTags) it is the source itself: posted every allowed weekday.
+    /// </summary>
     public List<int> weekdays = new List<int>();
+    /// <summary>Calendar filter: never posted on a date whose holiday has any of these tags.</summary>
+    public List<string> excludeHolidayTags = new List<string>();
+    /// <summary>Calendar filter: never posted on a date covered by a season with any of these tags.</summary>
+    public List<string> excludeSeasonTags = new List<string>();
 
     /// <summary>The activity's name: its workModule.jobPostID localized (also the booking's schedule name), else its ID.</summary>
     [JsonIgnore] public string DisplayName
@@ -130,12 +144,35 @@ public class RecreationOfferDef
         get { return workModule != null && !string.IsNullOrEmpty(workModule.jobPostID) ? LocalizeDictionary.QueryThenParse(workModule.jobPostID) : ID; }
     }
 
-    /// <summary>Whether the calendar posts this offer on date (no dates and no weekdays = event-posted only).</summary>
-    public bool MatchesCalendar(DateTime date)
+    /// <summary>
+    /// Whether the calendar posts this offer on date in world (whose holidays/seasons the tags are checked against): any
+    /// source (dates / holidayTags / seasonTags) matches, then every filter (weekdays / excludeHolidayTags /
+    /// excludeSeasonTags) passes. No source and no weekdays = event-posted only.
+    /// </summary>
+    public bool MatchesCalendar(WorldPlan world, DateTime date)
     {
-        if (dates != null && dates.Contains(date.ToString("MM-dd"))) return true;
-        int weekday = ((int)date.DayOfWeek + 6) % 7;
-        return weekdays != null && weekday < weekdays.Count && weekdays[weekday] != 0;
+        bool hasDates = dates != null && dates.Count > 0;
+        bool hasHolidayTags = holidayTags != null && holidayTags.Count > 0;
+        bool hasSeasonTags = seasonTags != null && seasonTags.Count > 0;
+        bool hasWeekdays = weekdays != null && weekdays.Count > 0;
+        if (!hasDates && !hasHolidayTags && !hasSeasonTags && !hasWeekdays) return false;
+
+        if (hasDates || hasHolidayTags || hasSeasonTags)
+        {
+            bool source = (hasDates && dates.Contains(date.ToString("MM-dd")))
+                || (hasHolidayTags && holidayTags.Exists(t => HolidaySystem.HolidayHasTag(world, date, t)))
+                || (hasSeasonTags && seasonTags.Exists(t => HolidaySystem.InSeason(world, date, t)));
+            if (!source) return false;
+        }
+
+        if (hasWeekdays)
+        {
+            int weekday = ((int)date.DayOfWeek + 6) % 7;
+            if (weekday >= weekdays.Count || weekdays[weekday] == 0) return false;
+        }
+        if (excludeHolidayTags != null && excludeHolidayTags.Exists(t => HolidaySystem.HolidayHasTag(world, date, t))) return false;
+        if (excludeSeasonTags != null && excludeSeasonTags.Exists(t => HolidaySystem.InSeason(world, date, t))) return false;
+        return true;
     }
 
     public bool IsEligible(Character_Trainable c)
@@ -251,14 +288,22 @@ public class RecreationBoard
         lastCalendarDay = today;
         offers.RemoveAll(o => o.day < today - 1);   // yesterday's may still run past midnight
 
-        var defs = scr_System_CampaignManager.current.GetLoadedWorldPlans()
-            .SelectMany(w => w.AllRecreationOffers).Where(d => d != null && d.mode == RecreationOfferMode.Fixed).ToList();
-        foreach (var def in defs)
+        var campaign = scr_System_CampaignManager.current;
+        // each ID once, as the def that wins it (FindDef) - an overridden entry's calendar never posts
+        var ids = campaign.GetLoadedWorldPlans().SelectMany(w => w.AllRecreationOffers)
+            .Where(d => d != null && !string.IsNullOrEmpty(d.ID)).Select(d => d.ID).Distinct().ToList();
+        foreach (var id in ids)
         {
+            var def = FindDef(id);
+            if (def == null || def.mode != RecreationOfferMode.Fixed) continue;
+            // holiday/season tags are the venue's world's calendar (any of them, for a venue in several worlds); a venue
+            // no loaded world initializes falls back to the worlds listing the offer
+            var worlds = campaign.FindWorldsContainingFaction(def.factionID);
+            if (worlds.Count == 0) worlds = campaign.GetLoadedWorldPlans().Where(w => w.AllRecreationOffers.Exists(d => d != null && d.ID == id)).ToList();
             for (int ahead = 0; ahead <= Math.Max(0, def.daysInAdvance); ahead++)
             {
                 var date = scr_System_Time.current.getStartTime().Date.AddDays(today + ahead);
-                if (def.MatchesCalendar(date)) Post(def.ID, today + ahead);
+                if (worlds.Exists(w => def.MatchesCalendar(w, date))) Post(def.ID, today + ahead);
             }
         }
     }

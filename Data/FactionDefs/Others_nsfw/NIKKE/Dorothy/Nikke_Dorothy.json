@@ -126,15 +126,19 @@
       "stat_PSY": 12,
       "stat_WIL": 12,
       "personalityID": "personality_default",
-      "sensitivity_B": "trait_Sensitivity_B_default",
-      "sensitivity_M": "trait_Sensitivity_M_default",
-      "sensitivity_C": "trait_Sensitivity_C_default",
-      "sensitivity_V": "trait_Sensitivity_V_default",
-      "sensitivity_A": "trait_Sensitivity_A_default",
-      "size_B": "trait_Size_B_C",
-      "size_P": "trait_Size_P_none",
-      "size_V": "trait_Size_V_1",
-      "size_A": "trait_Size_A_1",
+      "traits_body_sex": [
+          "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
+          "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
+          "trait_Size_B_C", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+      ],
+      "traits_body": [
+          "trait_BodyType_curvy", "trait_HairColor_pink", "trait_EyeColor_purple"
+      ],
+      "_comment_defaultHairstyle": "Pink thigh-length loose hair with air bangs (character card).",
+      "defaultHairstyle": {
+          "hairstyleID": "hairstyle_straight_long",
+          "slotSelection": { "front": "hair_front_straight_bangs" }
+      },
       "Height":173,
       "Weight":63,
       "initialInventory":[

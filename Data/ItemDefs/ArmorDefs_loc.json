@@ -5,7 +5,9 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "clothing_inner_longdress": "Long Evening Gown"
+                "clothing_inner_longdress": "Long Evening Gown",
+                "clothing_inner_prison_top": "Prison Shirt",
+                "clothing_inner_prison_pants": "Prison Pants"
             }
         }
     }

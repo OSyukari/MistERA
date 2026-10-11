@@ -308,6 +308,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
     protected void SetGenderAppearance(Humanoid_GenderAppearance app)
     {
         c.Template.SetGender(app);
+        c.Appearance = app; // trait requirements check the character's appearance
     }
 
     /// <summary>
@@ -322,6 +323,10 @@ public class scr_Canvas_CharacterEditor : scr_Menu
     public RectTransform TraitBox_Single;
 
     Dictionary<int, Traits> Traits_getTraitbyID;
+    /// <summary>
+    /// trait groups this editor displayed; on save, the template's entries of these groups are replaced by the selection
+    /// </summary>
+    HashSet<scr_Traits_Group> Traits_editedGroups = new HashSet<scr_Traits_Group>();
     private int TraitID = 2000; // initialize at
     protected int GetTraitID
     {
@@ -367,6 +372,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             {
                 if (group.SortType == Trait_Group_Type.Singular)
                 {
+                    Traits_editedGroups.Add(group);
                     foreach(Traits entry in group.entries)
                     {
 
@@ -437,6 +443,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
     private void PopulateTraits_Spectrum_GroupList(RectTransform boxMiddle, scr_Traits_Group group)
     {
+        Traits_editedGroups.Add(group);
         Traits trait = null;
         foreach (Traits t in group.entries)
         {
@@ -452,7 +459,10 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             //if (tr.Type == Trait_Type.Body) continue;
             if (group.tags.Contains("do_not_use")) return;
             if (!group.allowPopulate) return;
-            var neutral = group.getNeutralinGroup();
+            // invalid groups are still shown (arrows disabled), with their plain neutral entry
+            var raceKeywords = new List<string>();
+            Trait_Requirement.GetRaceKeywords(Character, raceKeywords);
+            var neutral = group.IsValidFor(raceKeywords, Character.Appearance) ? group.GetNeutralValid(raceKeywords, Character.Appearance) : group.getNeutralinGroup();
             if (neutral == null) return;
 
             Character.Stats.AddTrait(neutral);
@@ -731,11 +741,22 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         c.Stats.ResetTrait();
 
+        // replace (not append) the template's entries of the groups this editor shows; entries of other groups
+        // (body traits, unresolvable ids such as sexual traits in safe mode) are kept. also cleans duplicates
+        // that older saves accumulated by appending on every save.
+        c.Template.traits.RemoveAll(id =>
+        {
+            var t = scr_System_Serializer.current.GetByNameOrID_Traits(id);
+            return t != null && t.Parent != null && Traits_editedGroups.Contains(t.Parent);
+        });
         foreach (var trait in Traits_getTraitbyID.Values)
         {
             c.Template.traits.Add(trait.ID);
         }
+        Utility.DistinctInPlace(c.Template.traits);
 
+        // sensitivity/size rows edited the template; the body holds the per-character copy
+        if (c.Body != null) c.Body.ResetBodyTraitsFromTemplate();
         c.Stats.RefreshTraits();
     }
 
@@ -912,6 +933,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         validatorsByID = new Dictionary<int, ButtonValidator>();
 
         Traits_getTraitbyID = new Dictionary<int, Traits>();
+        Traits_editedGroups.Clear();
 
         button_alwaysValid = new ButtonValidator_AlwaysTrue(this);
 
@@ -1166,15 +1188,15 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Sensitivity_B == null) return false;
-            if (isleft) return parent.Character.Template.Sensitivity_B.GetPreviousInGroup() != null;
-            else return parent.Character.Template.Sensitivity_B.GetNextInGroup() != null;
+            if (isleft) return parent.Character.Template.Sensitivity_B.GetPreviousValidInGroup(parent.Character) != null;
+            else return parent.Character.Template.Sensitivity_B.GetNextValidInGroup(parent.Character) != null;
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextInGroup();
+            //parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextValidInGroup(parent.Character);
             if (parent.Character.Template.Sensitivity_B == null) return;
-            if (isleft) parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetPreviousInGroup();
-            else parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextInGroup();
+            if (isleft) parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Sensitivity_B = parent.Character.Template.Sensitivity_B.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1191,14 +1213,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Sensitivity_M == null) return false;
-            if (isleft) return parent.Character.Template.Sensitivity_M.GetPreviousInGroup() != null;
-            else return parent.Character.Template.Sensitivity_M.GetNextInGroup() != null;
+            if (isleft) return parent.Character.Template.Sensitivity_M.GetPreviousValidInGroup(parent.Character) != null;
+            else return parent.Character.Template.Sensitivity_M.GetNextValidInGroup(parent.Character) != null;
         }
         public void OnClickButton()
         {
             if (parent.Character.Template.Sensitivity_M == null) return;
-            if (isleft) parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetPreviousInGroup();
-            else parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetNextInGroup();
+            if (isleft) parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Sensitivity_M = parent.Character.Template.Sensitivity_M.GetNextValidInGroup(parent.Character);
         }
     }
     class ButtonValidator_selectSensitivity_C : ButtonValidator, I_ButtonClickable
@@ -1214,15 +1236,15 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Sensitivity_C == null) return false;
-            if (isleft) return (parent.Character.Template.Sensitivity_C.GetPreviousInGroup() != null);
-            else return (parent.Character.Template.Sensitivity_C.GetNextInGroup() != null);
+            if (isleft) return (parent.Character.Template.Sensitivity_C.GetPreviousValidInGroup(parent.Character) != null);
+            else return (parent.Character.Template.Sensitivity_C.GetNextValidInGroup(parent.Character) != null);
         }
         public void OnClickButton()
         {
-            //parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousInGroup();
+            //parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousValidInGroup(parent.Character);
             if (parent.Character.Template.Sensitivity_C == null) return;
-            if (isleft) parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousInGroup();
-            else parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetNextInGroup();
+            if (isleft) parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Sensitivity_C = parent.Character.Template.Sensitivity_C.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1239,14 +1261,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Sensitivity_V == null) return false;
-            if (isleft) return (parent.Character.Template.Sensitivity_V.GetPreviousInGroup() != null);
-            else return (parent.Character.Template.Sensitivity_V.GetNextInGroup() != null);
+            if (isleft) return (parent.Character.Template.Sensitivity_V.GetPreviousValidInGroup(parent.Character) != null);
+            else return (parent.Character.Template.Sensitivity_V.GetNextValidInGroup(parent.Character) != null);
         }
         public void OnClickButton()
         {
             if (parent.Character.Template.Sensitivity_V == null) return;
-            if (isleft) parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetPreviousInGroup();
-            else parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetNextInGroup();
+            if (isleft) parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Sensitivity_V = parent.Character.Template.Sensitivity_V.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1264,14 +1286,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         {
             if (parent.Character.Template.Sensitivity_A == null) return false;
             //
-            if (isleft) return (parent.Character.Template.Sensitivity_A.GetPreviousInGroup() != null);
-            else return (parent.Character.Template.Sensitivity_A.GetNextInGroup() != null);
+            if (isleft) return (parent.Character.Template.Sensitivity_A.GetPreviousValidInGroup(parent.Character) != null);
+            else return (parent.Character.Template.Sensitivity_A.GetNextValidInGroup(parent.Character) != null);
         }
         public void OnClickButton()
         {
             if (parent.Character.Template.Sensitivity_A == null) return ;
-            if (isleft) parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetPreviousInGroup();
-            else parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetNextInGroup();
+            if (isleft) parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Sensitivity_A = parent.Character.Template.Sensitivity_A.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1289,14 +1311,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Size_B == null) return false;
-            if (isleft) return (parent.Character.Template.Size_B.GetPreviousInGroup() != null);
-            else return (parent.Character.Template.Size_B.GetNextInGroup() != null);
+            if (isleft) return (parent.Character.Template.Size_B.GetPreviousValidInGroup(parent.Character) != null);
+            else return (parent.Character.Template.Size_B.GetNextValidInGroup(parent.Character) != null);
         }
         public void OnClickButton()
         {
             if (parent.Character.Template.Size_B == null) return;
-            if (isleft) parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetPreviousInGroup();
-            else parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetNextInGroup();
+            if (isleft) parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Size_B = parent.Character.Template.Size_B.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1314,14 +1336,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Size_P == null) return false;
-            if (isleft) return (parent.Character.Template.Size_P.GetPreviousInGroup() != null);
-            else return (parent.Character.Template.Size_P.GetNextInGroup() != null);
+            if (isleft) return (parent.Character.Template.Size_P.GetPreviousValidInGroup(parent.Character) != null);
+            else return (parent.Character.Template.Size_P.GetNextValidInGroup(parent.Character) != null);
         }
         public void OnClickButton()
         {
             if (parent.Character.Template.Size_P == null) return;
-            if (isleft) parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetPreviousInGroup();
-            else parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetNextInGroup();
+            if (isleft) parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Size_P = parent.Character.Template.Size_P.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1339,14 +1361,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Size_V == null) return false;
-            if (isleft) return (parent.Character.Template.Size_V.GetPreviousInGroup() != null);
-            else return (parent.Character.Template.Size_V.GetNextInGroup() != null);
+            if (isleft) return (parent.Character.Template.Size_V.GetPreviousValidInGroup(parent.Character) != null);
+            else return (parent.Character.Template.Size_V.GetNextValidInGroup(parent.Character) != null);
         }
         public void OnClickButton()
         {
             if (parent.Character.Template.Size_V == null) return;
-            if (isleft) parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetPreviousInGroup();
-            else parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetNextInGroup();
+            if (isleft) parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Size_V = parent.Character.Template.Size_V.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1364,14 +1386,14 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
             if (parent.Character.Template.Size_A == null) return false;
-            if (isleft) return (parent.Character.Template.Size_A.GetPreviousInGroup() != null);
-            else return (parent.Character.Template.Size_A.GetNextInGroup() != null);
+            if (isleft) return (parent.Character.Template.Size_A.GetPreviousValidInGroup(parent.Character) != null);
+            else return (parent.Character.Template.Size_A.GetNextValidInGroup(parent.Character) != null);
         }
         public void OnClickButton()
         {
             if (parent.Character.Template.Size_A == null) return;
-            if (isleft) parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetPreviousInGroup();
-            else parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetNextInGroup();
+            if (isleft) parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetPreviousValidInGroup(parent.Character);
+            else parent.Character.Template.Size_A = parent.Character.Template.Size_A.GetNextValidInGroup(parent.Character);
         }
     }
 
@@ -1395,13 +1417,21 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         public override bool IsButtonValid()
         {
 
-            bool result = isLeft ? parent.Traits_GetTraitByID(buttonID).GetPreviousInGroup() != null : parent.Traits_GetTraitByID(buttonID).GetNextInGroup() != null;
+            var current_trait = parent.Traits_GetTraitByID(buttonID);
+            bool result = isLeft ? current_trait.GetPreviousValidInGroup(parent.Character) != null : current_trait.GetNextValidInGroup(parent.Character) != null;
             //if (result == false) return result;
 
             if (result != false)
             {
                 this.state = ButtonValidator_States.Valid;
                 this.tooltip = "";
+            }
+            else if (current_trait.Parent != null && !current_trait.Parent.IsValidFor(parent.Character))
+            {
+                // group shown but not selectable for this character
+                this.state = ButtonValidator_States.Invalid;
+                this.tooltip = LocalizeDictionary.QueryThenParse("char_editor_selectTrait_requirementNotMet");
+                return false;
             }
 
             Trait_Type current = parent.Traits_GetTraitByID(buttonID).type;
@@ -1453,11 +1483,11 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         {
             if (isLeft)
             {
-                trait = parent.Traits_GetTraitByID(buttonID).GetPreviousInGroup();
+                trait = parent.Traits_GetTraitByID(buttonID).GetPreviousValidInGroup(parent.Character);
             }
             else
             {
-                trait = parent.Traits_GetTraitByID(buttonID).GetNextInGroup();
+                trait = parent.Traits_GetTraitByID(buttonID).GetNextValidInGroup(parent.Character);
             }
 
             parent.Traits_SetTraitByID(buttonID, trait);
@@ -1520,6 +1550,15 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
         public override bool IsButtonValid()
         {
+            // trait requirements (race keywords / appearance); an already selected trait stays clickable so it can be removed
+            if (!trait.IsValidFor(parent.Character) && !parent.Traits_getTraitbyID.ContainsKey(buttonID))
+            {
+                this.state = ButtonValidator_States.Invalid;
+                this.tooltip = LocalizeDictionary.QueryThenParse("char_editor_selectTrait_requirementNotMet");
+                return false;
+            }
+            this.state = ButtonValidator_States.Valid;
+            this.tooltip = "";
             return true;
         }
 

@@ -6,6 +6,7 @@
         "Entries": {
             "en-us": {
                 "traits_BODY": "Body Traits",
+                "traits_BODY_SEX": "Sexual Body Traits",
                 "trait_Singular_Sadist": "Sadist",
                 "trait_Singular_Sadist_tooltip": "%%notimplemented%%",
                 "trait_Singular_Masochist": "Masochist",

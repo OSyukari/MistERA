@@ -93,6 +93,12 @@ public class RecreationActivity
     /// </summary>
     public List<PersonalityAcceptanceMod> AcceptanceMods = null;
 
+    /// <summary>
+    /// Optional outfit (Character_Wardrobe) worn during a visit of this activity - e.g. a swimsuit. Copied into the
+    /// visitor's wardrobe under OutfitUtility.ActivityKey (once per key; kept if the wardrobe already has one). Its key is ignored.
+    /// </summary>
+    public OutfitSet outfit = null;
+
     /// <summary>This activity's override for FindJobNode.behaviorOverrideID, or null.</summary>
     public FindJobNode GetBehaviorOverride(string behaviorOverrideID)
     {
@@ -129,10 +135,13 @@ public class RecreationActivity
     /// <summary>Who a character booking a visit invites along (null = RecreationInviteSpec.Default; solo = nobody).</summary>
     public RecreationInviteSpec invite = null;
 
-    /// <summary>Whether day (daysLookahead from today) is allowed by workModule.activeDays.</summary>
-    public bool AllowsDay(int daysLookahead)
+    /// <summary>
+    /// Whether day (daysLookahead from today) is allowed by workModule.activeDays, and - venue given - not a day off it is
+    /// closed on (workModule.holidayPayoutMultiplier 0, the venue's world calendar).
+    /// </summary>
+    public bool AllowsDay(int daysLookahead, Manageable venue = null)
     {
-        return workModule == null || MapPlan.WorkModuleInit.IsDayActive(workModule.activeDays, daysLookahead);
+        return workModule == null || (MapPlan.WorkModuleInit.IsDayActive(workModule.activeDays, daysLookahead) && workModule.RunsOnDay(venue, daysLookahead));
     }
 
     /// <summary>Whether hour of day may be covered by a visit (workModule.activeHours, empty = any).</summary>

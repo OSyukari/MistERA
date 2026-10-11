@@ -234,7 +234,9 @@
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                             "activeDays": [1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 1, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 6600 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -246,7 +248,9 @@
                             "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
                             "activeDays": [1, 1, 1, 1, 1, 1, 1,   1, 1, 1, 1, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 7560 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     }
                 ]
@@ -290,7 +294,9 @@
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 2500 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -302,7 +308,9 @@
                             "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 3340 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -314,7 +322,9 @@
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 2500 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -326,7 +336,9 @@
                             "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 3340 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     }
                 ]
@@ -363,7 +375,9 @@
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -375,7 +389,9 @@
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     }
                 ]
@@ -401,7 +417,9 @@
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -413,7 +431,9 @@
                             "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
                             "activeDays": [1, 1, 0, 0, 1, 1, 1,   0, 0, 1, 1, 0, 0, 0],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1490 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -425,7 +445,9 @@
                             "activeHours": [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1300 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     },
                     {
@@ -437,7 +459,9 @@
                             "activeHours": [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6],
                             "activeDays": [0, 0, 1, 1, 0, 0, 0,   1, 1, 0, 0, 1, 1, 1],
                             "hourlyPayout": [ { "itemID": "currency_JPY", "itemCount": 1490 } ],
-                            "paymentCadence": "Monthly"
+                            "paymentCadence": "Monthly",
+                            "_comment_holiday": "Wards are staffed every day - holiday work pays the 35% statutory premium.",
+                            "holidayPayoutMultiplier": 1.35
                         }
                     }
                 ]

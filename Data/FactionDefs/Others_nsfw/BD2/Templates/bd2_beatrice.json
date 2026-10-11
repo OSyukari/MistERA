@@ -32,15 +32,17 @@
       "stat_PSY": 12,
       "stat_WIL": 12,
       "personalityID": "personality_default",
-      "sensitivity_B": "trait_Sensitivity_B_default",
-      "sensitivity_M": "trait_Sensitivity_M_default",
-      "sensitivity_C": "trait_Sensitivity_C_default",
-      "sensitivity_V": "trait_Sensitivity_V_default",
-      "sensitivity_A": "trait_Sensitivity_A_default",
-      "size_B": "trait_Size_B_A",
-      "size_P": "trait_Size_P_none",
-      "size_V": "trait_Size_V_1",
-      "size_A": "trait_Size_A_1",
+      "traits_body_sex": [
+          "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
+          "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
+          "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+      ],
+      "traits_body": [ "trait_HairColor_brown" ],
+      "_comment_defaultHairstyle": "Grey-brown hair with a long single braid (Spine portrait).",
+      "defaultHairstyle": {
+          "hairstyleID": "hairstyle_braid",
+          "subCategoryID": "hairstyle_braid_single"
+      },
       "Height":145,
       "initialRelationship":[        ],
       "initialInventory":[        ],

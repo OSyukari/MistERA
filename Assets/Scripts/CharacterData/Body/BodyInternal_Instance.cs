@@ -123,7 +123,8 @@ public class BodyInternal_Instance
                 foreach (BodyPartEquipSlot slot in this.availableSlots)
                 {
                     var equip = this.GetEquip(layer, slot);
-                    if (equip > -1 && scr_System_CampaignManager.current.FindItemInstanceByID(equip).GetComp_Equippable().revealing >= revealingScoreFilter)
+                    var comp = equip == -1 ? null : Owner?.Body?.ResolveEquip(equip)?.GetComp_Equippable();
+                    if (comp != null && comp.revealing >= revealingScoreFilter)
                     {
                         UnequipItem(equip);
                     }
@@ -1113,11 +1114,9 @@ public class BodyInternal_Instance
             switch (this.traitID)
             {
                 case "B":
-                    if (this.Owner == null || this.Owner.Template == null) return null;
-                    return this.Owner.Template.Size_B;
                 case "P":
-                    if (this.Owner == null || this.Owner.Template == null) return null;
-                    return this.Owner.Template.Size_P;
+                    if (this.Owner == null || this.Owner.Body == null) return null;
+                    return this.Owner.Body.GetBodyTrait("trait_Size_" + this.traitID);
                 default:return null;
             }
         }
@@ -1612,6 +1611,39 @@ public class BodyInternal_Instance
         return equipped;
     }
 
+    /// <summary>
+    /// Mirrors EquipItem(item) without changing anything: true if this organ would take the item;
+    /// replaces = that would displace another item.
+    /// </summary>
+    public bool PreviewEquip(Item_Instance item, out bool replaces)
+    {
+        replaces = false;
+        var comp = item.GetComp_Equippable();
+        if (comp == null || contentsIndex == null) return false;
+        bool equipped = false, unequip = false, displaces = false;
+        foreach (var slot in comp.equipSlot)
+        {
+            string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
+            if (contentsIndex.TryGetValue(Tuple, out var current))
+            {
+                if (current == -1) equipped = true;
+                else if (current != item.RefID)
+                {
+                    equipped = true;
+                    displaces = true;
+                }
+            }
+            else
+            {
+                if (equipped) unequip = true;
+                equipped = false;
+            }
+        }
+        if (unequip) equipped = false;
+        replaces = equipped && displaces;
+        return equipped;
+    }
+
     public bool EquipItem(Item_Instance item, bool forceEquip = false)
     {
         var comp = item.GetComp_Equippable();
@@ -1710,6 +1742,15 @@ public class BodyInternal_Instance
 
         return returnVal;
         /// CODE END
+    }
+
+    /// <summary> the item in a slot, resolved through the owner's body (registered items and virtual outfit pieces) </summary>
+    public bool TryGetEquip(out Item_Instance value, BodyEquipLayer i, BodyPartEquipSlot j)
+    {
+        value = null;
+        var v = GetEquip(i, j);
+        if (v != -1 && Owner != null && Owner.Body != null) value = Owner.Body.ResolveEquip(v);
+        return value != null;
     }
 
     public int GetEquip(BodyEquipLayer i, BodyPartEquipSlot j)

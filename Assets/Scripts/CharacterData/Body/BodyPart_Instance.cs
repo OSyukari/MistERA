@@ -45,7 +45,7 @@ public class BodyPart_Instance : I_CombatItem
                     {
                         var refID = this.GetEquip(BodyEquipLayer.Outer, slot);
                         if (refID == -1) continue;
-                        var item = scr_System_CampaignManager.current.FindItemInstanceByID(refID);
+                        var item = ResolveEquip(refID);
                         if (item == null) continue;
 
                         if (!_combatActions.ContainsKey(item)) _combatActions.Add(item, new List<CombatAction>());
@@ -77,11 +77,11 @@ public class BodyPart_Instance : I_CombatItem
             if (s.Length < 1) continue;
             BodyInternal_Instance inter = new BodyInternal_Instance();
             if (!inter.Initialize(c, s, this)) continue;
-            else if ((inter.hasTag("vagina") || inter.hasTag("womb") || inter.hasTag("urethra")) && !Owner.Template.isFemale) { }
-            //else if (inter.hasTag("anus") && Owner.Template.Size_A.ID == "trait_Size_A_none") { }
-            else if (inter.hasTag("penis") && !Owner.Template.isMale) { }
-            else if (inter.hasTag("clit") && Owner.Template.isMale) { }
-            else if (inter.hasTag("breast") && !Owner.Template.isFemale) { }
+            else if ((inter.hasTag("vagina") || inter.hasTag("womb") || inter.hasTag("urethra")) && !Owner.Body.HasFemaleParts) { }
+            //else if (inter.hasTag("anus") && Owner.Body.Size_A.ID == "trait_Size_A_none") { }
+            else if (inter.hasTag("penis") && !Owner.Body.HasMaleParts) { }
+            else if (inter.hasTag("clit") && Owner.Body.HasMaleParts) { }
+            else if (inter.hasTag("breast") && !Owner.Body.HasFemaleParts) { }
             else
             {
                 this.internals.Add(inter);
@@ -208,7 +208,11 @@ public class BodyPart_Instance : I_CombatItem
             if (_equippedItems == null)
             {
                 _equippedItems = new List<Item_Instance>();
-                foreach (var i in EquippedRefIDs) _equippedItems.Add(scr_System_CampaignManager.current.FindItemInstanceByID(i));
+                foreach (var i in EquippedRefIDs)
+                {
+                    var item = ResolveEquip(i);
+                    if (item != null) _equippedItems.Add(item);
+                }
             }
             return _equippedItems;
         } }
@@ -405,6 +409,56 @@ public class BodyPart_Instance : I_CombatItem
         return equipped;
     }
 
+    /// <summary>
+    /// Mirrors EquipItem(item) without changing anything: true if this part (or one of its organs) would take the item;
+    /// replaces = that would displace another item.
+    /// </summary>
+    public bool PreviewEquip(Item_Instance item, out bool replaces)
+    {
+        replaces = false;
+        var comp = item.GetComp_Equippable();
+        if (comp == null) return false;
+        bool equipped = false, unequip = false, displaces = false;
+        foreach (var slot in comp.equipSlot)
+        {
+            string Tuple = comp.equipLayer.ToString() + "||" + slot.ToString();
+            if (contentsIndex.TryGetValue(Tuple, out var current))
+            {
+                if (current == -1) equipped = true;
+                else if (current != item.RefID)
+                {
+                    equipped = true;
+                    displaces = true;
+                }
+            }
+            else
+            {
+                if (equipped) unequip = true;
+                equipped = false;
+            }
+        }
+        if (unequip) equipped = false;
+        if (equipped)
+        {
+            replaces = displaces;
+            return true;
+        }
+        foreach (BodyInternal_Instance i in this.internals)
+        {
+            if (i.PreviewEquip(item, out replaces)) return true;
+        }
+        replaces = false;
+        return false;
+    }
+
+    /// <summary> the item behind a slot id - through the owner's body (registered items and virtual outfit pieces) </summary>
+    Item_Instance ResolveEquip(int id)
+    {
+        if (id == -1) return null;
+        if (Owner != null && Owner.Body != null) return Owner.Body.ResolveEquip(id);
+        return id >= 0 ? scr_System_CampaignManager.current.FindItemInstanceByID(id) : null;
+    }
+
     protected void ClearEquipCache()
     {
         _equippedItems = null;
@@ -460,7 +514,8 @@ public class BodyPart_Instance : I_CombatItem
                 foreach (BodyPartEquipSlot slot in this.availableSlots)
                 {
                     var equip = this.GetEquip(layer, slot);
-                    if (equip > -1 && scr_System_CampaignManager.current.FindItemInstanceByID(equip).GetComp_Equippable().revealing >= revealingScoreFilter)
+                    var comp = ResolveEquip(equip)?.GetComp_Equippable();
+                    if (comp != null && comp.revealing >= revealingScoreFilter)
                     {
                         Owner.UnequipItem(equip);
                     }
@@ -477,8 +532,8 @@ public class BodyPart_Instance : I_CombatItem
             if (layer <= layerFilter && layerFilter != BodyEquipLayer.None) continue;
             foreach (BodyPartEquipSlot slot in this.availableSlots)
             {
-                var equip = this.GetEquip(layer, slot);
-                if (equip > -1 && (int)scr_System_CampaignManager.current.FindItemInstanceByID(equip).GetComp_Equippable().revealing >= revealingScoreFilter) return true;
+                var comp = ResolveEquip(this.GetEquip(layer, slot))?.GetComp_Equippable();
+                if (comp != null && (int)comp.revealing >= revealingScoreFilter) return true;
             }
         }
         return false;
@@ -488,14 +543,14 @@ public class BodyPart_Instance : I_CombatItem
     {
         value = null;
         var v = GetEquip(i, j);
-        if (v != -1) value = scr_System_CampaignManager.current.FindItemInstanceByID(v);
+        if (v != -1) value = ResolveEquip(v);
         return value != null;
     }
     public bool TryGetCover(out Item_Instance value, BodyEquipLayer i, BodyPartEquipSlot j)
     {
         value = null;
         var v = GetCover(i, j);
-        if (v != -1) value = scr_System_CampaignManager.current.FindItemInstanceByID(v);
+        if (v != -1) value = ResolveEquip(v);
         return value != null;
     }
     protected int GetCover(BodyEquipLayer i, BodyPartEquipSlot j)
@@ -552,10 +607,16 @@ public class BodyPart_Instance : I_CombatItem
         {
 
             string Tuple = layer.ToString() + "||" + slot.ToString();
-            if (contentsIndex.TryGetValue(Tuple, out var content) && content > 0)
-                score += (int)(scr_System_CampaignManager.current.FindItemInstanceByID(content).GetComp("ItemComponent_Equippable") as ItemComponent_Equippable).revealing;
-            if (coversIndex.TryGetValue(Tuple, out var cover) && cover > 0)
-                score += (int)(scr_System_CampaignManager.current.FindItemInstanceByID(cover).GetComp("ItemComponent_Equippable") as ItemComponent_Equippable).revealing;
+            if (contentsIndex.TryGetValue(Tuple, out var content) && content != -1)
+            {
+                var comp = ResolveEquip(content)?.GetComp_Equippable();
+                if (comp != null) score += (int)comp.revealing;
+            }
+            if (coversIndex.TryGetValue(Tuple, out var cover) && cover != -1)
+            {
+                var comp = ResolveEquip(cover)?.GetComp_Equippable();
+                if (comp != null) score += (int)comp.revealing;
+            }
         }
         return score;
     }

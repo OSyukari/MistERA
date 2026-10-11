@@ -107,15 +107,14 @@
     "stat_PSY": 10,
     "stat_WIL": 10,
     "personalityID": "personality_default",
-    "sensitivity_B": "trait_Sensitivity_B_default",
-    "sensitivity_M": "trait_Sensitivity_M_default",
-    "sensitivity_C": "trait_Sensitivity_C_default",
-    "sensitivity_V": "trait_Sensitivity_V_default",
-    "sensitivity_A": "trait_Sensitivity_A_default",
-    "size_B": "trait_Size_B_E",
-    "size_P": "trait_Size_P_none",
-    "size_V": "trait_Size_V_1",
-    "size_A": "trait_Size_A_1",
+    "traits_body_sex": [
+        "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
+        "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
+        "trait_Size_B_E", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+    ],
+    "traits_body": [
+        "trait_HairColor_blue", "trait_EyeColor_blue"
+    ],
     "Height":174,
     "Weight":63,
     "initialRelationship":[
@@ -149,6 +148,11 @@
             { "ID":"clothing_skin_bra" },
             { "ID":"firearm_handgun" }
         ],
+    "_comment_defaultHairstyle": "Very long dark-blue hair, parted bangs and headband (canon look + portrait).",
+    "defaultHairstyle": {
+      "hairstyleID": "hairstyle_straight_long",
+      "slotSelection": { "front": "hair_front_center_part" }
+    },
     "Skills": null
     },
     "firstName": "Campaign1_Char_Rin_FirstName",
