@@ -58,6 +58,9 @@ public abstract class CharaTemplate
     /// <summary> preset wardrobe outfits, seed data copied onto Character_Wardrobe (by key, missing keys only) </summary>
     public List<OutfitSet> outfits = new List<OutfitSet>();
     public List<string> actorKeyword = new List<string>();
+    /// <summary> optional image prompt layer on top of the global default and race profiles (ActorPromptProfileUtility) </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ActorPromptProfile promptProfile = null;
     [JsonIgnore]
     public virtual bool isMale
     {
@@ -120,6 +123,11 @@ public class presetInventory
 {
     public string ID = "";
     public string nameOverwrite = "";
+    public List<string> promptTags = null;
+    /// <summary> replaces the base item's promptTags and promptTags_slots </summary>
+    public List<string> promptTags_baseOverride = null;
+    /// <summary> slot name -> tags shown while that slot is visible, see Item_Base.promptTags_slots </summary>
+    public Dictionary<string, List<string>> promptTags_slots = null;
 }
 
 public class CharaSafeTemplate : CharaTemplate
@@ -285,6 +293,9 @@ public class CharaTrainableTemplate : CharaTemplate
     }
 
 
+    /// <summary> optional; null = age hidden/defaulted, omitted when serialized </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public int? Age = null;
     [JsonIgnore] public override Traits Sensitivity_B { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_B); } set { SetSexTrait(value); } }
     [JsonIgnore] public override Traits Sensitivity_M { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_M); } set { SetSexTrait(value); } }
     [JsonIgnore] public override Traits Sensitivity_C { get { return GetSexTrait(BodyTraitUtility.Group_Sensitivity_C); } set { SetSexTrait(value); } }
@@ -319,6 +330,6 @@ public class CharaTrainableTemplate : CharaTemplate
         this.initialRelationship = new List<RelationshipManager.presetRelationship>(t.initialRelationship);
         this.initialExperiences = new List<string>(t.initialExperiences);
         this.basicExperience = t.basicExperience;
-
+        this.Age = (t as CharaTrainableTemplate)?.Age;
     }
 }

@@ -43,6 +43,104 @@
           "hairstyleID": "hairstyle_braid",
           "subCategoryID": "hairstyle_braid_twin"
       },
+      "promptProfile": {
+          "_comment": "Image prompt layer of this character, applied on top of the global 'default' profile (Data/RaceDefs/PromptProfiles.json) and the race's profile. Keywords = visible body slots: Hair Face Eyes Neck Torso Hand Arm Lower Leg Feet. Actor tags = UtilityEX.GetActorTag (unconscious, sleeping, timestop, actorKeyword, MemberType tags...).",
+
+          "_comment_prompts": "Always added, no conditions.",
+          "prompts": [ "arines (brown dust 2)", "1girl" ],
+
+          "_comment_disableRules": "Drop inherited rules by id. Applied before this layer's own rules.",
+          "disableRules": [ "eyes_closed" ],
+
+          "rules": [
+              {
+                  "_comment": "Same id as an inherited rule = replaces it. Keeps the default outputs (hairstyle + hair colour trait) and adds one more prompt.",
+                  "id": "hair",
+                  "requireKeywords": [ "Hair" ],
+                  "includeHairstyle": true,
+                  "traitGroups": [ "trait_HairColor" ],
+                  "prompts": [ "hair between eyes" ]
+              },
+              {
+                  "_comment": "Replaces the default eye rule: literal colour instead of the trait_EyeColor trait (this template sets no eye colour trait).",
+                  "id": "eyes_open",
+                  "requireKeywords": [ "Eyes" ],
+                  "excludeActorTags": [ "unconscious" ],
+                  "prompts": [ "blue eyes" ]
+              },
+              {
+                  "_comment": "Replaces the disabled 'eyes_closed' with two cases. Sleeping characters carry both 'sleeping' and 'unconscious'.",
+                  "id": "arines_asleep",
+                  "requireKeywords": [ "Eyes" ],
+                  "requireActorTags": [ "sleeping" ],
+                  "prompts": [ "closed eyes", "sleeping", "drooling" ]
+              },
+              {
+                  "_comment": "Unconscious but not asleep (knocked out). excludeActorTags filters the sleeping case out.",
+                  "id": "arines_knocked_out",
+                  "requireKeywords": [ "Eyes" ],
+                  "requireActorTags": [ "unconscious" ],
+                  "excludeActorTags": [ "sleeping" ],
+                  "prompts": [ "closed eyes", "unconscious" ]
+              },
+              {
+                  "_comment": "Actor tag only, no keyword: applies whatever she wears.",
+                  "id": "arines_timestop",
+                  "requireActorTags": [ "timestop" ],
+                  "prompts": [ "frozen", "motion stop" ]
+              },
+              {
+                  "_comment": "Keyword combinations: torso visible, lower body covered.",
+                  "id": "arines_topless",
+                  "requireKeywords": [ "Torso" ],
+                  "excludeKeywords": [ "Lower" ],
+                  "prompts": [ "topless" ]
+              },
+              {
+                  "id": "arines_bottomless",
+                  "requireKeywords": [ "Lower" ],
+                  "excludeKeywords": [ "Torso" ],
+                  "prompts": [ "bottomless" ]
+              },
+              {
+                  "_comment": "requireKeywords needs ALL listed slots visible.",
+                  "id": "arines_nude",
+                  "requireKeywords": [ "Torso", "Lower" ],
+                  "prompts": [ "completely nude" ]
+              },
+              {
+                  "_comment": "Single slot: no socks / shoes on the Feet slot.",
+                  "id": "arines_barefoot",
+                  "requireKeywords": [ "Feet" ],
+                  "prompts": [ "barefoot" ]
+              },
+              {
+                  "_comment": "Keyword + actor tag together: a body detail only drawn while visible AND awake.",
+                  "id": "arines_hand_gesture",
+                  "requireKeywords": [ "Hand" ],
+                  "excludeActorTags": [ "unconscious" ],
+                  "prompts": [ "v" ]
+              },
+              {
+                  "_comment": "Replaces the default 'body' rule: keeps the body type trait and adds a literal prompt. No conditions = always.",
+                  "id": "body",
+                  "traitGroups": [ "trait_BodyType" ],
+                  "prompts": [ "petite" ]
+              },
+              {
+                  "_comment": "Replaces the default 'skin' rule: the skin colour trait only once the game changed it from the template preset.",
+                  "id": "skin",
+                  "requireChangedTraits": [ "trait_SkinColor" ],
+                  "traitGroups": [ "trait_SkinColor" ]
+              },
+              {
+                  "_comment": "Literal skin prompt while the skin colour is still the template preset.",
+                  "id": "arines_skin_preset",
+                  "excludeChangedTraits": [ "trait_SkinColor" ],
+                  "prompts": [ "pale skin" ]
+              }
+          ]
+      },
       "Height":145,
       "initialRelationship":[        ],
       "initialInventory":[        ],

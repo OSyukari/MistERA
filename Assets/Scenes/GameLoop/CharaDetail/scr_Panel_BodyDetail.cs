@@ -51,7 +51,7 @@ public class scr_Panel_BodyDetail : MonoBehaviour
         }
 
         var size = instance.SizeTrait;
-        var sizestring = size == null || !size.isDisplayable ? "" : size.displayname;
+        var sizestring = size == null || !size.isDisplayable ? "" : size.displaynameFull;
         if (instance.canFuck) sizestring += (sizestring.Length > 0 ? " " : "") + instance.Size.ToString("N1");
         else if (instance.canBeFucked) sizestring += (sizestring.Length > 0 ? " " : "") + instance.Rank_Size + "[" + (instance.Size != 0 ? instance.Size.ToString("N1") + "/" + instance.MaxSize.ToString("N1") : " - ") + "]";
 
@@ -68,7 +68,7 @@ public class scr_Panel_BodyDetail : MonoBehaviour
         else
         {
             boxSensitivity.gameObject.SetActive(true);
-            boxSensitivity.SetText(sensitivityTrait.displayname, false, sensitivityTrait.TooltipID);
+            boxSensitivity.SetText(sensitivityTrait.displaynameFull, false, sensitivityTrait.TooltipID);
         }
 
         instance.Draw_FirstExperience(firstExp);

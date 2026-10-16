@@ -1,0 +1,23 @@
+{
+    "_doc": "en-us localization for Clients_nsfw/explorations.json (same folder convention).",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "expedition_erav_ntr_mia_politician": "Guarantee Labour: Hot-Spring Negotiation",
+                "expedition_erav_ntr_mia_politician_desc_1": "$names$ stays at a Hakone ryokan as the county councillor's \"accompanying secretary\".",
+                "expedition_erav_ntr_mia_producer": "Guarantee Labour: Final Interview",
+                "expedition_erav_ntr_mia_producer_desc_1": "$names$ takes the \"final interview\" in front of a talent agency president's camera.",
+                "expedition_erav_ntr_mia_sm_master": "Guarantee Labour: Temporary Toy",
+                "expedition_erav_ntr_mia_sm_master_desc_1": "$names$ is lent to a collector's suburban mansion and trained to his schedule.",
+                "expedition_erav_ntr_mia_sports": "Guarantee Labour: Team Attendant",
+                "expedition_erav_ntr_mia_sports_desc_1": "$names$ accompanies a visiting sports team - training, games and hotel, always with the squad.",
+                "expedition_erav_ntr_mia_celeb": "Guarantee Labour: Tour Escort",
+                "expedition_erav_ntr_mia_celeb_desc_1": "$names$ plays the tour group's \"Tokyo girlfriend\".",
+                "expedition_erav_ntr_mia_household": "Guarantee Labour: Household Maid",
+                "expedition_erav_ntr_mia_household_desc_1": "$names$ moves into a west-city manor as the family's live-in \"household helper\".",
+                "expedition_erav_ntr_mia_gang": "Guarantee Labour: The Prize",
+                "expedition_erav_ntr_mia_gang_desc_1": "$names$ is sent to the upper floor of an old inn and handed to the gumi's footsoldiers as their prize."
+            }
+        }
+    }
+}

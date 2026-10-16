@@ -1,0 +1,38 @@
+{
+    "_doc": {
+        "purpose": "Localization companion for ErAV_NTR_Punishment.json."
+    },
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "erav_ntr_punishment_kick_failed": "$factionName$ failed to repay $sourceName$ to $counterpartName$: $amount$ needed, but only has $available$.",
+                "erav_ntr_punishment_kick_failed_payee": "$factionName$ did not receive a repayment on $sourceName$ from $counterpartName$: $amount$ was due, but they only have $available$.",
+                "erav_ntr_punishment_notice": "Month's end.\nAn unstamped envelope is wedged in the office mailbox, the Kiryu-gumi diamond pressed into its wax seal.\nInside is a single sheet. This month's interest: $amount$.\nA line is drawn beneath the figure. Below the line, nothing is written.\nBut you know what it means. The promise from back then - miss the date, and the Kiryu-gumi has its own way of collecting.\n\n(The office's available funds: $available$)",
+                "erav_ntr_punishment_question": "Under the entryway light, the Kiryu-gumi man closes his roster and waits for you to speak.\nWho will you hand over?",
+                "erav_ntr_punishment_opt_victim": "Hand over $name$",
+                "erav_ntr_punishment_opt_player": "Offer yourself",
+                "erav_ntr_punishment_opt_player_invalid": "There is no way to offer yourself yet.",
+                "erav_ntr_punishment_farewell": "$kojo_farewell$",
+                "erav_ntr_punishment_departure": "$victim.name$ finishes changing and stands at the entryway.\nShe looks back at you once - as if about to say something, then only nods quietly.\nThe door opens and the night wind pours in. She follows the Kiryu-gumi men into the dark.",
+                "erav_ntr_punishment_nobody": "The man opens his roster, then closes it again. A line of people stands inside the door, but not one name can be written down.\n\"...I see.\"\nHe leaves with a single sentence: \"We will come again next month.\"",
+                "erav_ntr_punishment_payee": "$factionName$ logs a default by $counterpartName$. Collection is the gumi's business.",
+                "erav_ntr_mia_arrival": "The car stops in front of an unfamiliar building.\nThe Kiryu-gumi men lead $victim.name$ inside, and the door closes silently behind her.\nFrom today on, this is where she works off the debt.",
+                "erav_ntr_mia_arrival_politician": "The car winds up the Hakone road and stops in front of a ryokan's detached villa.\nThe councillor's shoes are already lined up in the entryway. Bowing, the proprietress leads $victim.name$ deep along the veranda -\nfrom tonight on, she is the villa's \"accompanying secretary\", until the negotiation is over.",
+                "erav_ntr_mia_arrival_producer": "In a rented meeting room above the agency, the fill lights are already set up.\nThe man who calls himself the president skims $victim.name$'s file, looks up with a smile, and points at the open floor in the middle of the room.\nThis is where the \"final interview\" begins.",
+                "erav_ntr_mia_arrival_sm_master": "The car turns into an unremarkable suburban mansion. The basement lights are on; the leather gear on the walls is sorted by body part, like an anatomy chart.\nThe old man in a cardigan adjusts his reading glasses and points at the weekly timetable filling the whiteboard.\n$victim.name$'s week has already been paid for.",
+                "erav_ntr_mia_arrival_sports": "The hotel suite is crowded with tall foreign players. The team manager skims the contract and tips his chin at $victim.name$.\nThe interpreter relays only half of what is said. From tonight on, she is the squad's \"team attendant\" - training, games and hotel, always with the team.",
+                "erav_ntr_mia_arrival_celeb": "The tour's manager carries in a whole rack of clothes and tosses her the most revealing pieces.\n\"Try them on. From today, your role is the group's 'Tokyo girlfriend'.\"\nBefore $victim.name$ can answer, the itinerary is already on the door - shopping by day, nightclubs by night, cameras the whole time.",
+                "erav_ntr_mia_arrival_household": "At the gate of the west-city manor, the housekeeper in a grey dress hands her an apron and a handwritten timetable.\n\"In this house you have no name. Everyone calls you 'little sis'.\"\n$victim.name$ looks down at the schedule - up at five thirty in the morning. Days off: none.",
+                "erav_ntr_mia_arrival_gang": "The whole top floor of the old inn has been booked out. The corridor reeks of smoke; in the room, seven or eight footsoldiers are gathered around a low table playing cards.\nThe young lieutenant slaps $victim.name$'s contract down on the table:\n\"Boys - this week's prize has arrived.\\",
+                "erav_ntr_mia_arrival_failed": "[ERROR] $self.name$ could not be taken to the Kiryu-gumi (CharaMIA failed - check the MIA faction / expedition / MemberType setup).",
+                "erav_ntr_mia_message": "$names$ was taken by the Kiryu-gumi to work off the debt as guarantee labour",
+                "erav_ntr_mia_release": "The agreed term is over.\nThe Kiryu-gumi men bring $victims.name$ back.",
+                "erav_ntr_mia_release_kojo": "$kojo_return$",
+                "expedition_erav_ntr_mia": "Kiryu-gumi: Guarantee Labour",
+                "expedition_erav_ntr_mia_desc_1": "$names$ is working off the debt wherever the Kiryu-gumi put her.",
+                "membertype_erav_kiryu_hostage_labour": "Guarantee Labour",
+                "membertype_erav_kiryu_hostage_labour_tooltip": "Taken by the Kiryu-gumi over a defaulted payment, working off the debt. Sent back once the term is up or the work is done."
+            }
+        }
+    }
+}

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -6,7 +8,7 @@ using UnityEngine;
 /// One piece of an outfit: only the item's identity. The worn piece is a virtual Item_Instance built from it
 /// (Character_Wardrobe.GetVirtualItem) - never instantiated through WorldManager, never registered or traded.
 /// </summary>
-[System.Serializable]
+
 public class OutfitPiece
 {
     public string baseID = "";
@@ -17,6 +19,21 @@ public class OutfitPiece
     {
         this.baseID = baseID ?? "";
         this.nameOverwrite = nameOverwrite ?? "";
+    }
+
+
+    string _name = null;
+    [JsonIgnore]
+    public string DisplayName
+    {
+        get
+        {
+            if (_name == null)
+            {
+                _name = nameOverwrite != "" ? LocalizeDictionary.QueryThenParse(nameOverwrite) : LocalizeDictionary.QueryThenParse(baseID);
+            }
+            return _name;
+        }
     }
 
     public OutfitPiece Clone() { return new OutfitPiece(baseID, nameOverwrite); }
@@ -34,10 +51,28 @@ public class OutfitPiece
 /// An outfit worn for one schedule key (OutfitUtility.MemberTypeKey / ActivityKey). Putting it on takes off the
 /// worn items of every overridden layer, then wears all pieces; the rest of the default clothes (inventory) stay on.
 /// </summary>
-[System.Serializable]
+
 public class OutfitSet
 {
     public string key = "";
+
+    string _cache_displayname = null;
+    [JsonIgnore]
+    public string DisplayName
+    {
+        get
+        {
+            if (_cache_displayname == null)
+            {
+                var split = key.Split("|");
+
+                _cache_displayname = LocalizeDictionary.QueryThenParse(split.Last());
+            }
+            return _cache_displayname;
+        }
+    }
+
+
     public List<OutfitPiece> pieces = new List<OutfitPiece>();
 
     public bool overrideSkin = false;
@@ -67,6 +102,33 @@ public class OutfitSet
     public Hairstyle_Instance hairstyleOverride = null;
     /// <summary> optional traits_BODY trait ids shown while the outfit is worn (display only, see Character_Body.GetEffectiveBodyTrait) </summary>
     public List<string> bodyTraitOverrides = new List<string>();
+    List<Traits> _cache_bodyTraitsOverride = null;
+    [JsonIgnore]
+    public List<Traits> BodyTraitsOverride
+    {
+        get
+        {
+            if (_cache_bodyTraitsOverride == null)
+            {
+                _cache_bodyTraitsOverride = new List<Traits>();
+                foreach(var i in bodyTraitOverrides)
+                {
+                    var trait = scr_System_Serializer.current.MasterList.Traits_Groups.GetTraitByID(i);
+                    if (trait != null) _cache_bodyTraitsOverride.Add(trait);
+                }
+            }
+            return _cache_bodyTraitsOverride;
+        }
+    }
+
+    public Traits GetTraitWithParentID(string ID)
+    {
+        foreach(var i in BodyTraitsOverride)
+        {
+            if (i.Parent.ID == ID) return i;
+        }
+        return null;
+    }
 
     /// <summary>
     /// Tag-conditional additions (season / holiday - OutfitUtility.GetContextTags), checked in order: a variant without
@@ -187,6 +249,11 @@ public class OutfitVariant
 
 public static class OutfitUtility
 {
+    public const string trait_BodyType = "trait_BodyType";
+    public const string trait_SkinColor = "trait_SkinColor";
+    public const string trait_HairColor = "trait_HairColor";
+    public const string trait_EyeColor = "trait_EyeColor";
+
     // character-own outfits (reserved keys): worn at the priority home / to sleep there. "_temp" = the priority home is
     // the temporary home; an empty _temp slot does not fall back to the regular one.
     public const string Key_Home = "#home";

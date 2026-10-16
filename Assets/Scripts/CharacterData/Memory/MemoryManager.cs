@@ -30,7 +30,7 @@ public class MemoryManager
                 if (part.Base.exposedKojoID != "")
                 {
                     if (!exposedBodyRefs.ContainsKey(part.baseID)) exposedBodyRefs.Add(part.baseID, 2);
-                    exposedBodyRefs[part.baseID] = Math.Min(part.Parent.GetRevealingScore(BodyEquipLayer.None), exposedBodyRefs[part.baseID]);
+                    exposedBodyRefs[part.baseID] = Math.Min(part.GetRevealingScore(BodyEquipLayer.None), exposedBodyRefs[part.baseID]);
                 }
 
                 if (part.canContain)

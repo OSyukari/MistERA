@@ -94,6 +94,18 @@ public class Expedition
     public string rescueEventLabel = "";
     [JsonIgnore] public bool CanBeRescued { get { return rescueEventID != ""; } }
 
+    /// <summary>
+    /// Non-player (MIA) party only: event banked once in the party's log when its own exploration progress reaches 0
+    /// (captives' own expedition events, see ActionPackage_Expedition) or the DurationHour countdown runs out
+    /// (Job_Expedition.TickSelfRelease). Clickable only after every other banked entry of the party is resolved; played
+    /// like any banked event (self = player), Targets["victims"] = every non-hidden, non-temporary captive. The event
+    /// releases them itself (TeleportToFaction, then ReleaseFromMIA). No new exploration events start once it is banked.
+    /// Empty = never self-releases. Leave rescueEventID empty with it, or own progress is clamped above 0.
+    /// </summary>
+    public string selfReleaseEventID = "";
+    public string selfReleaseEventLabel = "";
+    [JsonIgnore] public bool CanSelfRelease { get { return !string.IsNullOrEmpty(selfReleaseEventID); } }
+
     public int ForceStartHour = 0;
     public int DurationHour = 0;
     public float EventRate = 0.05f;

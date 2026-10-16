@@ -1,0 +1,134 @@
+{
+    "_doc": "ErAV NTR Part 3 placeholder scene - H celeb entourage, night club (Plan §4; Phase 1 skeleton). Group scene: enemy holds 2+1 entourage members; com_sex_oral_P / com_sex_P_missionary have multi-doer variants. 'Being photographed' stays narration-only (no COM exists). Same skeleton: banked exploration event + scene event, ResolveEvent ending.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_celeb_town",
+                "eventString_Ongoing": "exp_event_erav_celeb_town_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_town_result",
+                        "eventID": "event_erav_celeb_town",
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
+                            {
+                                "factionTemplate": "AlwaysHostile",
+                                "encounterTemplates": [
+                                    {
+                                        "encounterWeights": { "erav_enc_celebs_n": 1 },
+                                        "frontlineKeys": [ "enemy", "teamB_frontline" ],
+                                        "supportKeys": [ "enemy", "teamB_backline" ]
+                                    }
+                                ],
+                                "factionInventory": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_celeb_town",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ],
+                                    "enemy": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "line": "event_erav_celeb_town_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_town_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_town_03",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_town_04",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "portraitSelfTagsOverride": [ "sad", "relaxed" ] },
+                        "line": "event_erav_celeb_town_05",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_celeb_town_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_celeb_town": "晚上·夜店",
+                "exp_event_erav_celeb_town_ongoing": "$names$作为「日本女朋友」，跟着巡演团体进了夜店。",
+                "exp_event_erav_celeb_town_result": "夜店的卡座里，$names$被夹在了中间。",
+
+                "event_erav_celeb_town_01": "卡座的位置是研究过的：灯光刚好暗到「看不清但知道」。\n酒轮番地上。她被夹在领队和经纪人中间，手从裙摆底下探进来，当着满卡座人的面。\n白天街头的快门声还在耳朵里——潮牌店门口、扭蛋机前，指定的动作、行人的手机。她分不清那些素材会流到哪里去。",
+                "event_erav_celeb_town_02": "「表演时间。」\n她被命令站上茶几跳舞。裙摆下面什么都没穿，灯光扫过来的时候，整层楼的视线都落了过来。",
+                "event_erav_celeb_town_03": "她跪在沙发前，交替含着领队和随行的两个。其他人举着酒围观、吹口哨、举手机录。\n射灯扫到哪里，快门就响到哪里。",
+                "event_erav_celeb_town_04": "后半夜，二楼小厅被包下。她被按进沙发的角落，裙子卷到腰间，被领队从正面贯穿。\n周围的人没有散——有人凑近了看，有人伸手揉她的胸，有人把手机凑到最近处。\n被拽着头发仰起来：\"Face. ——Smile. Smile for camera.\"",
+                "event_erav_celeb_town_05": "散场的时候，经纪人替她理了理裙摆，像收拾件道具。\n\"Tokyo girls, so open! ——明天，行程照旧。\"",
+                "event_erav_celeb_town_err": "【错误】场景所需的目标不存在（party/enemy 缺失）。"
+            }
+        }
+    }
+}

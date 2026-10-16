@@ -47,6 +47,10 @@ public class CharaReq
     /// <summary> the current schedule wants a different outfit (Character_Wardrobe.NeedsOutfitChange) </summary>
     public bool requireOutfitChange = false;
     public bool requireMovement = false;
+    /// <summary> like requireMovement, but time stop does not fail it (Character_Trainable.canMoveIgnoringTimestop) </summary>
+    public bool requireMovement_ignoreTimestop = false;
+    /// <summary> the character's current action has no "privacy" target tag (RequestLeaveUtility.IsDoingPrivacyAction) </summary>
+    public bool requireNoPrivacyAction = false;
     public bool requireCombat = false;
     public bool requireFullHP = false;
     public bool requireMissingHP = false;
@@ -93,6 +97,8 @@ public class CharaReq
         requireConscious = requireConscious && req.requireConscious;
         requireUnrestrained = requireUnrestrained || req.requireUnrestrained;
         requireMovement = requireMovement || req.requireMovement;
+        requireMovement_ignoreTimestop = requireMovement_ignoreTimestop || req.requireMovement_ignoreTimestop;
+        requireNoPrivacyAction = requireNoPrivacyAction || req.requireNoPrivacyAction;
         requireAction = requireAction && req.requireAction;
         requireMale = this.requireMale || req.requireMale;
         requireFemale = this.requireFemale || req.requireFemale;

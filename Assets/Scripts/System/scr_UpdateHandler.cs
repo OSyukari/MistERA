@@ -578,6 +578,10 @@ public partial class scr_UpdateHandler : MonoBehaviour
         var baseTemplate = new LLMRequest();
         baseTemplate.model = llm.model;
 
+        // snapshotted onto the new session below - read from the setting, not LLMOutcomeRules.CurrentMode,
+        // which would still see the previous session here
+        var outcomeMode = scr_System_CentralControl.current.LLMSetting.outcomeMode;
+
         if (reserializeTemplate) scr_System_CentralControl.current.ResetLLMRequestTemplate();
 
         if (scr_System_CentralControl.current.CurrentPreset != null)
@@ -585,9 +589,10 @@ public partial class scr_UpdateHandler : MonoBehaviour
             // agentMode:true activates the preset's agent_only blocks (workflow contract) and skips
             // any single_shot_only ones - one preset file serves both modes.
             baseTemplate.LoadTemplate(scr_System_CentralControl.current.CurrentPreset, true);
-            // Dedicated agent slow-mode overlay (Request_Slow_Agent.json); fall back to the regular
-            // slow config when the agent file is absent so a missing file degrades, not breaks.
-            var agentSlow = scr_System_CentralControl.current.LLMAgentSlowModeConfig;
+            // Dedicated agent slow-mode overlay (Request_Slow_Agent[_Modifier|_Verdict].json, per outcome
+            // mode); fall back to the regular slow config when the agent file is absent so a missing file
+            // degrades, not breaks.
+            var agentSlow = scr_System_CentralControl.current.GetLLMAgentSlowModeConfig(outcomeMode);
             if (agentSlow != null) baseTemplate.LoadTemplate(agentSlow);
             else if (scr_System_CentralControl.current.LLMSlowModeConfig != null) baseTemplate.LoadTemplate(scr_System_CentralControl.current.LLMSlowModeConfig);
             var player = scr_System_CampaignManager.current.Player;
@@ -644,6 +649,7 @@ public partial class scr_UpdateHandler : MonoBehaviour
 
         CurrentAgentSession = new LLMAgentSession(Guid.NewGuid().ToString("N"), baseTemplate);
         CurrentAgentSession.originalUserInput = userInput;
+        CurrentAgentSession.outcomeMode = outcomeMode;
         CurrentAgentSession.startCheckpointPath = LLMCheckpointStore.WriteCheckpoint(CurrentAgentSession.sessionId, "session_start");
         Debug.Log($"[Agent] session {CurrentAgentSession.sessionId} started.");
 
@@ -818,6 +824,9 @@ public partial class scr_UpdateHandler : MonoBehaviour
                 var invalidReasons = new List<string>();
                 // agent plan steps execute for real: an unset command_result means "let the game roll"
                 if (response.JSON != null) response.JSON.gameRollsUnsetResults = true;
+                // same outcome-mode contract as execute_actions (mandatory verdict / modifier reasons),
+                // normalized before parsing since JoinAP compares the normalized fields
+                if (response.JSON != null) invalidReasons.AddRange(LLMOutcomeRules.Prepare(response.JSON.UpdateVariable, session.outcomeMode));
                 var packages = response.JSON?.GetActionPackages(out _) ?? new List<ActionPackage>();
                 foreach (var ap in packages)
                 {
@@ -904,7 +913,8 @@ public partial class scr_UpdateHandler : MonoBehaviour
                 {
                     int count = 0;
                     foreach (var ep in ap.epjson) count = Math.Max(count, ep.repeatCount);
-                    executedActions.Add($"{ap.DisplayName} x{count}");
+                    var gateNote = LLMOutcomeRules.GateOverrideNote(ap);
+                    executedActions.Add($"{ap.DisplayName} x{count}{(gateNote != null ? " - " + gateNote : "")}");
                     if (ap.capturedLog != null) resultMessages.AddRange(ap.capturedLog.DumpMessages());
                 }
                 resultMessages.AddRange(session.DrainInterceptedMessages());
@@ -1066,7 +1076,8 @@ public partial class scr_UpdateHandler : MonoBehaviour
 
     public bool CanLoadSave(SaveFileHolder save)
     {
-        return save.isValid && save.SafeMode == scr_System_CentralControl.current.isSafeMode;
+        // a save that needs a mod which isn't loaded is a hard fail (extra loaded mods are only a soft conflict, see scr_Canvas_LoadSave)
+        return save.isValid && save.SafeMode == scr_System_CentralControl.current.isSafeMode && ModLoader.DescribeMissingMods(save.Mods) == null;
     }
     protected void LoadSaveFile(SaveFile save, bool unloadCanvas = true)
     {

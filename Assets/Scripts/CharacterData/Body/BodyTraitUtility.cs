@@ -115,15 +115,15 @@ public static class BodyTraitUtility
 
     /// <summary>
     /// GetDefault respecting trait requirements: null if the group is invalid for the character;
-    /// if the default entry is invalid, the first valid entry. A group without default stays unset.
+    /// if the default entry is invalid, the nearest valid entry (going down first, see scr_Traits_Group.GetNearestValid).
+    /// A group without default stays unset.
     /// </summary>
     public static Traits GetDefaultValid(scr_Traits_Group group, Humanoid_GenderAppearance app, List<string> raceKeywords)
     {
         if (group == null || !group.IsValidFor(raceKeywords, app)) return null;
         var t = GetDefault(group, app);
         if (t == null) return null;
-        if (t.IsValidFor(raceKeywords, app)) return t;
-        return group.entries.Find(x => x.IsValidFor(raceKeywords, app));
+        return group.GetNearestValid(group.entries.IndexOf(t), raceKeywords, app);
     }
 
     /// <summary>

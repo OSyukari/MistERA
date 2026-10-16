@@ -1535,6 +1535,14 @@ public class BodyInternal_Instance
     [JsonIgnore] public List<BodyPartEquipSlot> availableSlots { get { return Base.AvailableSlots; } }
     [JsonIgnore] public List<BodyEquipLayer> equipLayers { get { return Base.equipLayers; } }
 
+    /// <summary> coverage of this organ: the parent part's Base.coverSlots (all parent slots if empty). Below 2 = visible </summary>
+    public int GetRevealingScore(BodyEquipLayer layer)
+    {
+        if (Parent == null) return 0;
+        var slots = Base.coverSlots != null && Base.coverSlots.Count > 0 ? Base.coverSlots : Parent.availableSlots;
+        return Parent.GetRevealingScore(layer, slots);
+    }
+
     public bool TransferContentTo(BodyInternal_Instance instance, bool fullDeflate, ExperienceLog m = null)
     {
         if (instance == null || !instance.canContain) return false;

@@ -50,10 +50,10 @@ public class Character_Body
         foreach(var part in this.Body)
         {
             if (part.internals.Count < 1) continue;
-            if (part.GetRevealingScore(BodyEquipLayer.None) > 0) continue;
             foreach(var i in part.internals)
             {
                 if (i.Base.exposedKojoID == "") continue;
+                if (i.GetRevealingScore(BodyEquipLayer.None) > 0) continue;
                 tempList.Add(i.sortOrder, i.Base.exposedKojoID);
                 if (!tempList2.ContainsKey(i.Base.exposedKojoID)) tempList2.Add(i.Base.exposedKojoID, new List<string>());
                 if (i.isExtremelyExpanded) tempList2[i.Base.exposedKojoID].Add("Expansion_Extreme");
@@ -359,18 +359,26 @@ public class Character_Body
         var raceKeywords = new List<string>();
         Trait_Requirement.GetRaceKeywords(c, raceKeywords);
 
-        // unresolvable ids (sexual traits in safe mode) are kept
+        var groups = new List<scr_Traits_Group>();
+        BodyTraitUtility.GetAllBodyGroups(groups);
+
+        // unresolvable ids of groups that aren't loaded (sexual traits in safe mode) are kept;
+        // unresolvable ids of a loaded group were removed from the data, drop them so the group gets refilled
         int removed = bodyTraits.RemoveAll(id =>
         {
             var t = BodyTraitUtility.Resolve(id);
-            if (t == null || t.IsValidFor(raceKeywords, app)) return false;
+            if (t == null)
+            {
+                if (!groups.Exists(g => id.StartsWith(g.ID + "_"))) return false;
+                Debug.Log($"Removing body trait [{id}] from {c.FirstName}: trait no longer exists");
+                return true;
+            }
+            if (t.IsValidFor(raceKeywords, app)) return false;
             Debug.Log($"Removing body trait [{id}] from {c.FirstName}: requirements not met (appearance {app}, race keywords [{string.Join(",", raceKeywords)}])");
             return true;
         });
         bool changed = removed > 0;
 
-        var groups = new List<scr_Traits_Group>();
-        BodyTraitUtility.GetAllBodyGroups(groups);
         if (groups.Count > 0)
         {
             var seed = new List<Traits>();
@@ -771,7 +779,7 @@ public class Character_Body
         var i = -1;
         foreach (BodyPart_Instance b in Body)
         {
-            if (b.hasTag(tag)) i = Math.Max(i, b.GetRevealingScore(layer));
+            i = Math.Max(i, b.GetRevealingScoreByTag(tag, layer));
         }
         return i;
     }

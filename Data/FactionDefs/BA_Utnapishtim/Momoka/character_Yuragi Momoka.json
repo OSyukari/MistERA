@@ -98,10 +98,10 @@
       "traits_body_sex": [
           "trait_Sensitivity_B_default", "trait_Sensitivity_M_default", "trait_Sensitivity_C_default",
           "trait_Sensitivity_V_default", "trait_Sensitivity_A_default",
-          "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+          "trait_Size_B_AA", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
       ],
       "traits_body": [
-          "trait_BodyType_slim", "trait_HairColor_pink", "trait_EyeColor_green"
+          "trait_BodyType_petite", "trait_HairColor_pink", "trait_EyeColor_turquoise"
       ],
       "Height":145,
       "Weight":38,
@@ -118,21 +118,37 @@
         ],
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },
-            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
-            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_SleevelessMinidress"  },
+            { "ID":"clothing_bluearchive_Navigator_Neckerchief" },
             { "ID":"clothing_bluearchive_Navigator_Glove" },
             { "ID":"clothing_bluearchive_Navigator_Boot" },
             { "ID":"clothing_skin_socks" },
             { "ID":"clothing_skin_panty" },
-            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_skin_hair_hairpin" },
             { "ID":"clothing_skin_bra" },
             { "ID":"firearm_handgun" }
         ],
-      "_comment_defaultHairstyle": "Pink fluffy high twin tails with parted bangs (full-body reference image).",
+    
+      "promptProfile": {
+          "prompts": [ "momoka_\\(blue_archive\\)" ],
+
+          "NEED FIXING: desired clothing prompt":"hairpin, hair ornament, garrison cap, sleeveless, white minidress, bare shoulders, white dress, black neckerchief, black necktie, white gloves, white boots, utnapishtim operator uniform \\(blue archive\\),",
+
+          "current prompt":"hair ribbon, hair bow, hat, peaked cap, cape, shoulder cape, sleeveless, minidress, bare shoulders, dress, flat chest, gloves, boots, momoka_\\(blue_archive\\), pink hair, twintails, two side up, high twintails, center part, parted bangs, hair over shoulders, green eyes, petite, small stature, narrow shoulders, light skin, halo",
+
+          "rules":[
+            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
+            { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "halo" ] },
+            { "_comment": "pointy ears on a non-elf: same id as the elf race rule", "id": "ears", "requireKeywords": [ "Hair" ], "requireBodyTags": [ "head" ], "prompts": [ "pointy ears" ] },
+            { "_comment": "horns, show under the cap", "id": "momoka_horns", "requireBodyTags": [ "head" ], "prompts": [ "horns" ] },
+            { "_comment": "tail, shows through clothes", "id": "momoka_tail", "requireBodyTags": [ "lower" ], "prompts": [ "dragon tail", "long tail" ] }
+          ]
+      },
+      "_comment_defaultHairstyle": "Short pink twin tails, short hair, ahoge, parted bangs (prompt feedback).",
       "defaultHairstyle": {
         "hairstyleID": "hairstyle_twintails",
-        "subCategoryID": "hairstyle_twintails_high",
-        "slotSelection": { "front": "hair_front_center_part" }
+        "subCategoryID": "hairstyle_twintails_short",
+        "slotSelection": { "length": "hair_length_short", "front": "hair_front_center_part", "accent": "hair_accent_ahoge" }
       },
       "Skills": null
     },

@@ -186,6 +186,10 @@
                 "ui_comPanel_LLM_agentMode": "<link=\"ui_llm_agentmode_toggle_tooltip\">Agent Mode</link>",
                 "ui_llm_agentmode_toggle_tooltip": "Toggle AI multi-step agent mode (can call in-game tools to look up info or execute actions) instead of a single structured reply\n\nIn this mode, the LLM submits actions automatically and the game executes them automatically.\nOnce all actions have been processed, the LLM generates more fitting narrative text based on the results.",
                 "ui_load_fileDescription": "$filename$\n$days$ days elapsed, Scenario: $scenarioName$, $hours$:$minutes$, $playerName$, $floor$, $room$",
+                "ui_load_tooltip_modMismatch": "This save's mod list differs from the current one, unexpected errors may occur",
+                "ui_load_tooltip_modMissing": "Cannot load: this save needs mods that are not loaded: $mods$",
+                "ui_load_tooltip_modAdded": "Not in the save: $mods$",
+                "ui_load_tooltip_modVersion": "Version changed: $mods$",
                 "ui_memory_llm_wrapper": "Interacted with $names$ (LLM)",
 
                 "ui_entry_memory_daystring_days": "$count$ day(s) ago",
@@ -303,7 +307,23 @@
 
                 "ui_worldmap_childWorldTooltip": "Contains: $list$",
                 "ui_worldmap_doorTooltip": "Estimated travel time: $time$ min",
-                "ui_ap_CharaReqUtility_requireOutfitChange": "Requires $name$'s current schedule to call for a change of outfit"
+                "ui_ap_CharaReqUtility_requireOutfitChange": "Requires $name$'s current schedule to call for a change of outfit",
+                "ui_prefs_immediateRunExpeditionEvent": "<link=ui_prefs_immediateRunExpeditionEvent_tooltip>Play expedition events immediately</link>",
+                "ui_prefs_immediateRunExpeditionEvent_tooltip": "When on, expedition events (including rescues and MIA returns) play as soon as they happen instead of waiting in the expedition log for you to open them. Events already waiting in the log are not affected. Events you postpone (e.g. \"prepare first\") go back to the log.",
+                "ui_management_expeditionJob_resolveOthersFirst": "<link=ui_management_expeditionJob_resolveOthersFirst_tooltip>Resolve the other events first</link>",
+                "ui_management_expeditionJob_resolveOthersFirst_tooltip": "This event can only be opened once every other event of this team has been resolved.",
+                "ui_management_expedition_selfReleaseText": "$names$ can return now.",
+                "ui_diceroll_judgedsuccess": "Judged Success",
+                "ui_diceroll_judgedfailure": "Judged Failure",
+                "ui_diceroll_roleplayMod": "Roleplay",
+                "ui_llm_outcomeMode_button": "Outcome: $mode$",
+                "ui_llm_outcomeMode_GameRolls": "Game Rolls",
+                "ui_llm_outcomeMode_RoleplayModifier": "Roleplay Modifier",
+                "ui_llm_outcomeMode_LLMVerdict": "LLM Verdict",
+                "ui_llm_outcomeMode_GameRolls_tooltip": "Action outcomes are decided entirely by the game's acceptance and DC rolls.",
+                "ui_llm_outcomeMode_RoleplayModifier_tooltip": "The game still rolls, but the LLM grades your roleplay into acceptance (up to ±25%) and DC (up to ±5) modifiers.",
+                "ui_llm_outcomeMode_LLMVerdict_tooltip": "The LLM rules each outcome directly from the numbers and your roleplay, without dice. A 0% or 100% acceptance rate still overrides it.",
+                "ui_llm_outcomeMode_needAgent": "Only available in agent mode."
             }
         }
     }

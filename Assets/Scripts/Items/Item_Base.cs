@@ -167,6 +167,9 @@ public class Index_Item_Base : I_IndexHasID, I_NeedLateInitialize, I_IndexMergea
 [System.Serializable]
 public class Item_Base
 {
+    public List<string> promptTags = null;
+    /// <summary> body slot name -> prompt tags shown only while that slot is visible above this item's layer (LLMUtils.CollectItemTags) </summary>
+    public Dictionary<string, List<string>> promptTags_slots = null;
     // serialize interface ? no
     public string id = "";
     [JsonIgnore] public string ID { get { return id; } }

@@ -1,0 +1,16 @@
+{
+    "name": "MistEra.WebpAnim",
+    "rootNamespace": "",
+    "references": [
+        "unity.webp"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -27,16 +27,18 @@
                 "id": "arm_android_base_L",
                 "displayName":"%%bodyPart_base_arm%%",
                 "tooltip":"An {0}'s arm.",
-                "AvailableSlots":["Hand","Arm"],
+                "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
+                "tagCoverSlots":{"arm":["Arm","Hand"]},
                 "sortOrder":2
             },
             {
                 "id": "arm_android_base_R",
                 "displayName":"%%bodyPart_base_arm%%",
                 "tooltip":"An {0}'s arm.",
-                "AvailableSlots":["Hand","Arm"],
+                "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
+                "tagCoverSlots":{"arm":["Arm","Hand"]},
                 "sortOrder":3
             },
             {
@@ -53,7 +55,7 @@
                 "id": "leg_android_base_L",
                 "displayName":"%%bodyPart_base_leg%%",
                 "tooltip":"An {0}'s leg.",
-                "AvailableSlots":["Leg","Feet"],
+                "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["leg","feet"],
                 "sortOrder":5
             },
@@ -61,7 +63,7 @@
                 "id": "leg_android_base_R",
                 "displayName":"%%bodyPart_base_leg%%",
                 "tooltip":"An {0}'s leg.",
-                "AvailableSlots":["Leg","Feet"],
+                "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["leg","feet"],
                 "sortOrder":6
             }

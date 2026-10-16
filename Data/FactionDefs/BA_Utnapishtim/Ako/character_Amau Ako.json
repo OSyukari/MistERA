@@ -103,23 +103,35 @@
 
       "initialInventory":[
         { "ID":"clothing_bluearchive_Navigator_Hat" },
-        { "ID":"clothing_bluearchive_Navigator_Dress", "nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+        { "ID":"clothing_bluearchive_Navigator_SleevelessMinidress"  },
+        { "ID":"clothing_bluearchive_Navigator_Neckerchief" },
         { "ID":"clothing_bluearchive_Navigator_Cape" },
         { "ID":"clothing_bluearchive_Navigator_Glove" },
         { "ID":"clothing_bluearchive_Navigator_Boot" },
         { "ID":"clothing_skin_socks" },
         { "ID":"clothing_skin_panty" },
         { "ID":"clothing_skin_earring" },
-        { "ID":"clothing_outer_wristcuff_single" },
+        { "ID":"clothing_outer_wristcuff_single", "promptTags_baseOverride":["single shackle"] },
         { "ID":"clothing_skin_clit_piercing" },
         { "ID":"clothing_skin_nipple_piercing" },
             { "ID":"firearm_handgun" }
     ],
-      "_comment_defaultHairstyle": "Low blue twin tails with an ahoge and side-swept fringe (portrait + character card).",
+    
+      "promptProfile": {
+          "prompts": [ "ako_\\(blue_archive\\)" ],
+
+          "NEED FIXING: desired clothing prompt":"garrison cap, earrings, white capelet, sleeveless, white minidress, bare shoulders, white dress, black neckerchief, black necktie, huge breasts, white gloves, single shackle, white boots, utnapishtim operator uniform \\(blue archive\\),",
+          "current prompt":"hat, peaked cap, earrings, cape, shoulder cape, sleeveless, minidress, bare shoulders, dress, huge breasts, gloves, handcuff, wrist cuffs, boots, ako_\\(blue_archive\\), blue hair, twintails, two side up, low twintails, side-swept bangs, hair over shoulders, ahoge, blue eyes, curvy, wide hips, narrow waist, light skin, blue halo, crescent halo",
+
+          "rules":[
+            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
+            { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "blue halo", "crescent halo" ] }
+          ]
+      },
+      "_comment_defaultHairstyle": "Medium wavy blue hair, double-parted bangs, sidelocks behind the ears, ahoge (prompt feedback).",
       "defaultHairstyle": {
-        "hairstyleID": "hairstyle_twintails",
-        "subCategoryID": "hairstyle_twintails_low",
-        "slotSelection": { "front": "hair_front_side_swept", "accent": "hair_accent_ahoge" }
+        "hairstyleID": "hairstyle_wavy_long",
+        "slotSelection": { "length": "hair_length_medium", "front": "hair_front_double_parted", "side": "hair_side_sidelocks", "accent": "hair_accent_ahoge" }
       },
     "characterComment":"Campaign1_students_charCard_comment",
       "Skills": null,

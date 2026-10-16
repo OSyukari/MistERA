@@ -92,10 +92,10 @@
       "traits_body_sex": [
           "trait_Sensitivity_B_supersensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
           "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
-          "trait_Size_B_C", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+          "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
       ],
       "traits_body": [
-          "trait_BodyType_slim", "trait_HairColor_black", "trait_EyeColor_amber"
+          "trait_BodyType_slim", "trait_HairColor_black", "trait_EyeColor_yellow"
       ],
       "Height":153,
       "Weight":46,
@@ -111,8 +111,8 @@
 
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },
-            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
-            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Neckerchief" },
             { "ID":"clothing_bluearchive_Navigator_Glove" },
             { "ID":"clothing_bluearchive_Navigator_Boot" },
             { "ID":"clothing_skin_socks" },
@@ -122,6 +122,21 @@
             { "ID":"clothing_skin_bra" },
             { "ID":"firearm_handgun" }
         ],
+    
+      "promptProfile": {
+          "prompts": [ "ayane_\\(blue_archive\\)" ],
+
+          "NEED FIXING: desired body prompt":"pointy ears, small breasts",
+          "NEED FIXING: desired clothing prompt":"hairpin, hair ornament, garrison cap, sleeveless, white minidress, bare shoulders, white dress, black neckerchief, black necktie, medium breasts, white gloves, white boots, utnapishtim operator uniform \\(blue archive\\),",
+
+          "current prompt":"hairpin, hair ornament, hat, peaked cap, cape, shoulder cape, sleeveless, minidress, bare shoulders, dress, medium breasts, gloves, boots, ayane_\\(blue_archive\\), black hair, bob cut, short hair, amber eyes, slim, narrow waist, light skin, halo",
+
+          "rules":[
+            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
+            { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "red halo" ] }
+          ]
+      },
+
       "_comment_defaultHairstyle": "Black bob cut with straight bangs (portrait + character card).",
       "defaultHairstyle": {
         "hairstyleID": "hairstyle_bob"

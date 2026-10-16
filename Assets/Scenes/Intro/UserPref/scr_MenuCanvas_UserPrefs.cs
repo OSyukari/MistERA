@@ -250,6 +250,8 @@ public class scr_MenuCanvas_UserPrefs : scr_Menu
 
                     case 0200: // Logs toggle clearlogs
                         button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.clearLogs)); break;
+                    case 0201: // Expedition toggle: banked expedition events run immediately (label ui_prefs_immediateRunExpeditionEvent)
+                        button.Initialize(this, new ButtonValidator_toggleBooleanText(this, button, scr_System_CentralControl.current.DisplaySetting.immediateRunExpeditionEvent)); break;
 
                     case 1000: // LLM enable button
                         button.Initialize(this, new buttonValidator_toggleLLM(this, button)); break;

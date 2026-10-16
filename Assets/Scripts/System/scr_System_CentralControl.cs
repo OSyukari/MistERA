@@ -13,6 +13,23 @@ public class scr_System_CentralControl_Serializable
     public ContentSettings ContentSettings;
     public DisplaySettings DisplaySettings;
     public DebugLogSettings DebugLogPref;
+    public ModSettings ModSettings;
+}
+
+[System.Serializable]
+public class ModSettings
+{
+    // key = asset pack folder name under Mods/Assetpacks, value = enabled. See AssetPackLoader.
+    public Dictionary<string, bool> AssetPacks = new Dictionary<string, bool>();
+    // data mods in load order (dependency-sorted at boot, written back). See ModLoader.Scan.
+    public List<ModSettingEntry> ModList = new List<ModSettingEntry>();
+}
+
+[System.Serializable]
+public class ModSettingEntry
+{
+    public string ModID;        // from Mods/<folder>/About/About.json
+    public bool enabled = true;
 }
 
 [System.Serializable]
@@ -130,36 +147,41 @@ public class scr_System_CentralControl : MonoBehaviour
         }
     }
 
-    LLMRequestTemplateData _llmAgentSlowModeConfig = null;
-    bool deactivate_llmAgentSlowModeConfig = false;
+    Dictionary<LLMOutcomeMode, LLMRequestTemplateData> _llmAgentSlowModeConfigs = new Dictionary<LLMOutcomeMode, LLMRequestTemplateData>();
     /// <summary>
-    /// Agent-mode's own slow-mode overlay (Assets/LLM/Request_Slow_Agent.json) - same shape as
-    /// LLMSlowModeConfig but with the task/rules replacements rewritten for the stepwise
-    /// execute_actions-then-submit_response workflow, plus the agent-mode feedback strings under
-    /// reserved replacement keys (agent_feedback_* / agent_nextStep_*), fetched at runtime by
-    /// scr_UpdateHandler.AgentText so no orchestrator prompt text lives in code. Self-deactivates
-    /// when the file is absent - callers fall back to the regular LLMSlowModeConfig there.
+    /// Agent-mode's own slow-mode overlay - same shape as LLMSlowModeConfig but with the task/rules
+    /// replacements rewritten for the stepwise execute_actions-then-submit_response workflow, plus the
+    /// agent-mode feedback strings under reserved replacement keys (agent_feedback_* / agent_nextStep_*),
+    /// fetched at runtime by scr_UpdateHandler.AgentText so no orchestrator prompt text lives in code.
+    /// One full file per LLMOutcomeMode (Request_Slow_Agent.json / _Modifier.json / _Verdict.json), for
+    /// the live session's snapshotted mode (LLMOutcomeRules.CurrentMode). Null when absent - callers
+    /// fall back to the regular LLMSlowModeConfig there.
     /// </summary>
-    public LLMRequestTemplateData LLMAgentSlowModeConfig
+    public LLMRequestTemplateData LLMAgentSlowModeConfig => GetLLMAgentSlowModeConfig(LLMOutcomeRules.CurrentMode);
+
+    public LLMRequestTemplateData GetLLMAgentSlowModeConfig(LLMOutcomeMode mode)
     {
-        get
+        if (_llmAgentSlowModeConfigs.TryGetValue(mode, out var cached)) return cached;
+
+        string suffix = mode == LLMOutcomeMode.RoleplayModifier ? "_Modifier" : mode == LLMOutcomeMode.LLMVerdict ? "_Verdict" : "";
+        string filePath = Application.dataPath + $"/LLM/Request_Slow_Agent{suffix}.json";
+        LLMRequestTemplateData data = null;
+        if (File.Exists(filePath)) data = JsonConvert.DeserializeObject<LLMRequestTemplateData>(File.ReadAllText(filePath), UtilityEX.SerializerSettings);
+        else if (mode != LLMOutcomeMode.GameRolls)
         {
-            if (_llmAgentSlowModeConfig == null && !deactivate_llmAgentSlowModeConfig)
-            {
-                string filePath = Application.dataPath + "/LLM/Request_Slow_Agent.json";
-                FileInfo file = new System.IO.FileInfo(filePath);
-                if (File.Exists(filePath)) _llmAgentSlowModeConfig = JsonConvert.DeserializeObject<LLMRequestTemplateData>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
-                else deactivate_llmAgentSlowModeConfig = true;
-            }
-            return _llmAgentSlowModeConfig;
+            // a missing mode file degrades to the base agent prompt; the tool schema still enforces the mode
+            Debug.LogWarning($"LLM agent template for {mode} not found at {filePath} - falling back to Request_Slow_Agent.json");
+            data = GetLLMAgentSlowModeConfig(LLMOutcomeMode.GameRolls);
         }
+        _llmAgentSlowModeConfigs[mode] = data;
+        return data;
     }
 
     public void ResetLLMRequestTemplate()
     {
         _llmPresetTemplate = null;
         _llmSlowModeConfig = null;
-        _llmAgentSlowModeConfig = null;
+        _llmAgentSlowModeConfigs.Clear();
         _llmPresets = null;
         _llmPresetsByID = null;
     }
@@ -419,6 +441,15 @@ public class scr_System_CentralControl : MonoBehaviour
             return _content;
         } }
 
+    protected ModSettings _mods = null;
+    public ModSettings ModSetting { get
+        {
+            if (_mods == null) _mods = new ModSettings();
+            if (_mods.AssetPacks == null) _mods.AssetPacks = new Dictionary<string, bool>();
+            if (_mods.ModList == null) _mods.ModList = new List<ModSettingEntry>();
+            return _mods;
+        } }
+
     [SerializeField] protected DisplaySettings _display = null;
     public DisplaySettings DisplaySetting { get
         {
@@ -502,6 +533,7 @@ public class scr_System_CentralControl : MonoBehaviour
 #endif
         this._content = obj.ContentSettings;
         this._display = obj.DisplaySettings;
+        this._mods = obj.ModSettings;
     }
 
     public Job CurrentInspectJob = null;
@@ -512,6 +544,7 @@ public class scr_System_CentralControl : MonoBehaviour
         obj.ContentSettings = isSafeMode ? null : ContentSetting;
         obj.DisplaySettings = DisplaySetting;
         obj.DebugLogPref = LogPrefs;
+        obj.ModSettings = ModSetting;
         return obj;
     }
 
@@ -1095,12 +1128,23 @@ public class scr_System_CentralControl : MonoBehaviour
             return;
         }
 
+        SaveFile save = JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(path), UtilityEX.SerializerSettings);
+
+        // no load browser here: a missing mod refuses the load (hard fail, before anything is wiped),
+        // other mod list differences are only logged
+        var modMissing = ModLoader.DescribeMissingMods(save.Mods);
+        if (modMissing != null)
+        {
+            Debug.LogError($"QuickLoad {path} refused: {modMissing}");
+            return;
+        }
+        var modMismatch = ModLoader.DescribeModListMismatch(save.Mods);
+        if (modMismatch != null) Debug.LogWarning($"QuickLoad {path}: {modMismatch}");
+
         // Regular-load wipe (user decision 2.2): QuickLoad bypasses scr_UpdateHandler.LoadSaveFile,
         // so the LLM comparison chain's wipe has to happen here explicitly - loading a save must
         // never resurrect a stale comparison chain.
         LLMSessionStore.Clear();
-
-        SaveFile save = JsonConvert.DeserializeObject<SaveFile>(File.ReadAllText(path), UtilityEX.SerializerSettings);
 
         save.LoadSave();
 
@@ -1111,12 +1155,23 @@ public class scr_System_CentralControl : MonoBehaviour
 }
 
 
+/// <summary>
+/// One enabled data mod as recorded in a save (see ModLoader.CurrentModList / DescribeModListMismatch).
+/// </summary>
+public class SaveModEntry
+{
+    public string ModID;
+    public string name;
+    public string version;
+}
+
 public class SaveFileHolder
 {
     public string Version;
     public string SaveDescription;
     public string Language;
     public bool SafeMode;
+    public List<SaveModEntry> Mods;     // null = save made before mods were recorded (treated as no mods)
 
     public string FilePath = "";
 
@@ -1142,6 +1197,9 @@ public class SaveFile
     public string Language;
     public string SaveDescription;
     public bool SafeMode;
+    // enabled data mods at save time. Must stay declared before Time: UtilityEX.ReadSaveHolder only reads the
+    // header fields and stops at "Time"
+    public List<SaveModEntry> Mods;
     public scr_System_Time_Serializable Time;
     public scr_System_CampaignManager_Serializable Campaign;
     public Dictionary<string, EventManager.EventCooldown> EventCooldowns;
@@ -1168,6 +1226,7 @@ public class SaveFile
                 .Replace("$room$", playerRoom.DisplayName)
                 .Replace("$scenarioName$", LocalizeDictionary.QueryThenParse(this.Campaign.campaignSettingID));
         this.SafeMode = scr_System_CentralControl.current.isSafeMode;
+        this.Mods = ModLoader.CurrentModList();
     }
     public void LoadSave()
     {   // external call to updatehandler notifySL
@@ -1206,6 +1265,10 @@ public class DisplaySettings
     public BoolSetting displayPlayerPortraitInLogs = new BoolSetting(true, "displayPlayerPortraitInLogs");
 
     public BoolSetting asciiRenderEnabled = new BoolSetting(false, "asciiRenderEnabled");
+
+    /// <summary> banked expedition events (exploration results, rescue events, MIA self release) run as soon as they are
+    /// created instead of waiting for the player's click (ExpeditionUtility.RunBankedEventNow). Not retroactive. </summary>
+    public BoolSetting immediateRunExpeditionEvent = new BoolSetting(false, "immediateRunExpeditionEvent");
 
     public Dictionary<string, string> FontSelection = new Dictionary<string, string>();
 }

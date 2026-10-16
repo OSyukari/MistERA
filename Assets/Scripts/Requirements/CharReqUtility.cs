@@ -153,6 +153,18 @@ public static class CharaReqUtility
                                 .Replace("$name$", c.FirstName));
             return false;
         }
+        if (q.requireMovement_ignoreTimestop && !c.canMoveIgnoringTimestop)
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireMovement")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
+        if (q.requireNoPrivacyAction && RequestLeaveUtility.IsDoingPrivacyAction(c))
+        {
+            if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireNoPrivacyAction")
+                                .Replace("$name$", c.FirstName));
+            return false;
+        }
         if (q.requireUndressed && !c.isUndressed)
         {
             if (logging) _tooltip.Add(LocalizeDictionary.QueryThenParse("ui_ap_CharaReqUtility_requireUndressed")

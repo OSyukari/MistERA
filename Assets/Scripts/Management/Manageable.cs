@@ -20,6 +20,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
 
     [JsonIgnore] public Manageable Faction { get { return this; } }
     [JsonIgnore] public bool isPlayerFaction { get { return this.ManagerRefs.Contains(0); } }
+    [JsonIgnore] public bool isPlayerManagedFaction { get { return this.ManagerRefs.Contains(0); } }
 
     public List<int> mealHours = new List<int>();
 
@@ -1687,7 +1688,9 @@ public class Manageable : I_Disposable, I_IsJobGiver
             }
         }
 
-        foreach(var i in this.SubFactions)
+        // copy: a party can delete itself while managed (an immediately run MIA self release -> ReleaseFromMIA ->
+        // CleanupDetection -> RemoveSubfaction), same as OnHourPreUpdate
+        foreach(var i in new List<Manageable_Party>(this.SubFactions))
         {
             i.Manage(currentHour, currentMinute);
         }

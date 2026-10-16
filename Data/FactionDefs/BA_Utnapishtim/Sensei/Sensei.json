@@ -85,13 +85,13 @@
 
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },
-            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
-            { "ID":"clothing_bluearchive_Navigator_Coat", "nameOverwrite":"clothing_bluearchive_Navigator_ShortCoat" },
+            { "ID":"clothing_bluearchive_Navigator_Dress"},
+            { "ID":"clothing_bluearchive_Navigator_Coat" },
             { "ID":"clothing_bluearchive_Navigator_Glove" },
             { "ID":"clothing_bluearchive_Navigator_Boot" },
             { "ID":"clothing_skin_socks" },
             { "ID":"clothing_skin_panty" },
-            { "ID":"clothing_skin_necklace", "nameOverwrite":"clothing_skin_neckribbon" },
+            { "ID":"clothing_skin_necklace", "nameOverwrite":"clothing_skin_neckribbon", "promptTags":["neck ribbon","ribbon"] },
             { "ID":"clothing_skin_earring" },
             { "ID":"clothing_skin_bra" },
             { "ID":"firearm_handgun" }

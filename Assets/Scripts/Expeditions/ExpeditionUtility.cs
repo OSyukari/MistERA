@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 public static class ExpeditionUtility
@@ -12,6 +13,80 @@ public static class ExpeditionUtility
        on combat/event resolve reinjiect into expResult
      
      */
+
+    /// <summary> user pref: banked expedition events run as soon as they are created (only for events banked from now on) </summary>
+    public static bool ImmediateRunEnabled
+    {
+        get
+        {
+            var control = scr_System_CentralControl.current;
+            if (control == null || control.DisplaySetting == null) return false;
+            var pref = control.DisplaySetting.immediateRunExpeditionEvent;
+            return pref != null && pref.value;
+        }
+    }
+
+    /// <summary>
+    /// Builds the event of a banked log entry (m.unresolved) the way the resolve button plays it: self = player, and the
+    /// ResolveEvent / RetryEvent / AddEventMessagePostResolve callbacks write back into m (ResolveEvent: resolved, result
+    /// text logged; RetryEvent: back to unresolved = stays banked). The caller starts it. Null if m holds no package.
+    /// </summary>
+    public static EventInstance PrepareBankedEvent(Job_Expedition job, ExpeditionMessageEntry m)
+    {
+        var package = m?.unresolved;
+        if (job == null || package == null || !package.isValid) return null;
+
+        var ev = EventUtility.StartEvent(job, package);
+        package.isResolved = true;
+
+        var callbacks1 = new List<Action>();
+        ev.FunctionCalls.Add("ResolveEvent", callbacks1);
+        callbacks1.Add(() => {
+            m.resolveEventName = package.DisplayName;
+            m.resolveMessage = ev.DumpCurrentLine;
+            package.isResolved = true;
+            m.unresolved = null;
+        });
+
+        var callbacks2 = new List<Action>();
+        ev.FunctionCalls.Add("RetryEvent", callbacks2);
+        callbacks2.Add(() => {
+            package.isResolved = false;
+        });
+
+        var callbacks3 = new List<Action>();
+        ev.FunctionCalls.Add("AddEventMessagePostResolve", callbacks3);
+        callbacks3.Add(() => {
+            if (ev.AppendStrings.ContainsKey("AddEventMessagePostResolve"))
+            {
+                m.resolveMessage = $"{m.resolveMessage}\n{String.Join("\n", ev.AppendStrings["AddEventMessagePostResolve"])}";
+            }
+        });
+        return ev;
+    }
+
+    /// <summary> immediateRunExpeditionEvent: plays a just-banked entry right away (same as clicking its button) </summary>
+    public static void RunBankedEventNow(Job_Expedition job, ExpeditionMessageEntry m)
+    {
+        var ev = PrepareBankedEvent(job, m);
+        if (ev != null) scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+    }
+
+    /// <summary> another banked entry of job still waits for the player (blocks the self release entry) </summary>
+    public static bool HasOtherUnresolved(Job_Expedition job, ExpeditionMessageEntry except)
+    {
+        if (job == null) return false;
+        foreach (var list in job.ExpeditionResults.Values)
+        {
+            foreach (var entry in list)
+            {
+                if (entry == except || entry.unresolved == null || entry.unresolved.isResolved) continue;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static ActionPackage_Expedition RandEvent(Character_Trainable c, ExpeditionInstance exp, Manageable_Party p)
     {
         var dict = new Dictionary<ActionPackage_Expedition, int>();

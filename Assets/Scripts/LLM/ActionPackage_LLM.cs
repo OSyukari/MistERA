@@ -105,7 +105,7 @@ public class ActionPackage_LLM : ActionPackage
 
     public override bool Tick(List<int> actorList, int tickDuration = 1, MessageCollect m = null)
     {
-        Debug.Log($"llm package ticked! currentDuration {this.Duration}, tick {tickDuration}, doers {String.Join(" ", DoerRefs)}, receivers {String.Join(" ", ReceiverRefs)}");
+        Debug.Log($"llm package ticked! currentDuration {this.Duration}, tick {tickDuration}, doers [{String.Join(" ", DoerRefs)}], receivers [{String.Join(" ", ReceiverRefs)}] pinned actors [{String.Join(" ", pinnedActorRefs)}]");
         return base.Tick(actorList, tickDuration, m);
     }
 
@@ -294,10 +294,11 @@ public class ActionPackage_LLM : ActionPackage
             else
             {
                 // began on the first tick but no longer valid at completion
+                Debug.LogWarning($"[LLM] {ap.DisplayName} (doers {String.Join(" ", ap.DoerRefs)}, receivers {String.Join(" ", ap.ReceiverRefs)}, results {String.Join(" ", ap.epjson.ConvertAll(x => x.command_result.ToString()))}) failed Validate at completion:\n{String.Join("\n", ap.tooltip)}");
                 ap.LogMessage_Begin_Abort(job.m);
                 ap.internalState = AP_Status.aborted;
                 RecordOutcome(ap, AP_Status.aborted);
-                execresult.Add($"{ap.DisplayName} no longer valid at completion, aborted");
+                execresult.Add($"{ap.DisplayName} no longer valid at completion, aborted: {String.Join("\n",ap.tooltip)}");
             }
             ap.DisablePackage();
             scr_System_CampaignManager.current.Unregister(ap);

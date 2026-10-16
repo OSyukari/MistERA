@@ -624,8 +624,8 @@ public class Event : I_SerializationCallbackReceiver
             WakeUp,
             Undress,
             /// <summary>
-            /// [string eventID, string selfLabel, string targetLabel] - registers a cooldown against
-            /// eventID's own cooldownTime/cooldownRestrictSelf/cooldownRestrictTarget/cooldownRestrictAND,
+            /// [string eventID, string selfLabel, string targetLabel, (int cooldownTime)] - registers a cooldown against
+            /// eventID's own cooldownTime (unless overridden)/cooldownRestrictSelf/cooldownRestrictTarget/cooldownRestrictAND,
             /// using selfLabel/targetLabel (each "self" or an owner.Targets key) as the self/target pair.
             /// Meant for events with manualCooldown=true, where the cooldown should only be applied on
             /// a specific outcome (e.g. refusal) rather than automatically on start.
@@ -1068,7 +1068,58 @@ public class Event : I_SerializationCallbackReceiver
             /// (RecreationUtility.CancelByRequest - quiet: daily report only, no booking-change notice event; refused for a
             /// forbidCancel booking). AppendStrings[resultAppendKey] = the cancelled booking's line. True if cancelled.
             /// </summary>
-            CancelSelectedBooking
+            CancelSelectedBooking,
+
+            /// <summary>
+            /// [string sourceKey, string destKey, optional string mode ("replace" default | "add")] <br/>
+            /// Copies the characters of sourceKey (TryResolveExecTargets: "self", "selfAndFollowers" or a target key) into
+            /// owner.Targets[destKey] of the same event - e.g. ["self", "victim"] so that self can also be addressed by a
+            /// target key. "add" appends to an existing destKey, skipping characters already in it. Results run after the
+            /// owning entry's text is interpolated, so call it in an entry before the one using destKey. False if sourceKey
+            /// resolves to nobody (destKey is then left untouched).
+            /// </summary>
+            CopyTargets,
+
+            /// <summary>
+            /// [A victimlabel, MIA_faction, kidnapExplorationID, kidnapMessage, kidnapStatus] <br/>
+            /// PartyMIA for a character that may not be in any party (e.g. taken from home): a victim in an active or locked
+            /// party goes exactly the PartyMIA way (incl. MIA -> MIA transfer); otherwise a new party of MIA_faction is created
+            /// and the victims are kidnapped into it without a source party (EventUtility.Kidnap with victimsFaction null,
+            /// which records the kidnap time on the victims' home factions directly).
+            /// </summary>
+            CharaMIA,
+
+            /// <summary>
+            /// [string scopeKey, optional string factionID] <br/>
+            /// Teleports every resolved character to the main exit of factionID (faction ID, or empty = the character's
+            /// priority home - FactionManager.HomeFactions[0], the temporary home if any). Interrupts the current job. Only moves the character, party membership is untouched: to bring
+            /// back an MIA captive, call it BEFORE ReleaseFromMIA (releasing the last captive deletes the MIA party's room).
+            /// True if anyone was moved.
+            /// </summary>
+            TeleportToFaction,
+
+            /// <summary>
+            /// [string scopeKey] <br/>
+            /// Releases every resolved character from their locked (MIA) party: completes the party's expedition when the last
+            /// non-temporary captive leaves (removeOnComplete), unlocks and removes them from the party (an empty non-player party
+            /// deletes itself, see Manageable_Party.CleanupDetection), clears their kidnap time and resets their job. Does not
+            /// move them - TeleportToFaction first. True if anyone was released.
+            /// </summary>
+            ReleaseFromMIA,
+
+            /// <summary>
+            /// [string storeKey, string id1, float weight1, string id2, float weight2, ...] <br/>
+            /// Rolls one id by weight and stores it as AppendStrings[storeKey] = [id] (replacing any value; also usable in
+            /// text as $storeKey$). Entries with a weight &lt;= 0 or an unreadable weight are skipped. False if nothing valid
+            /// was given. Branch on the result with AppendStringEquals.
+            /// </summary>
+            RollWeighted,
+
+            /// <summary>
+            /// [string storeKey, string value] - true if AppendStrings[storeKey] contains value. Put it first in a branch
+            /// option's Results so a mismatch falls through to the next option (e.g. after RollWeighted).
+            /// </summary>
+            AppendStringEquals
 
         }
     }

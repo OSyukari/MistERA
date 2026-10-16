@@ -24,6 +24,23 @@ public class scr_System_Serializer : MonoBehaviour
         }
     }
 
+    string _modsPath = "";
+    public static string ModsPath
+    {
+        get
+        {
+            if (current._modsPath == "") current._modsPath = Directory.GetParent(Application.dataPath).FullName + "/Mods";
+            return current._modsPath;
+        }
+    }
+
+    public static string AssetPacksPath { get { return $"{ModsPath}/Assetpacks"; } }
+
+    // filled at boot by AssetPackLoader.Scan, in load order
+    public List<AssetPackInfo> AssetPacks = new List<AssetPackInfo>();
+    // filled at boot by ModLoader.Scan, in load order (valid mods only, enabled or not)
+    public List<ModInfo> Mods = new List<ModInfo>();
+
     string _savePath = "";
     public static string SavePath
     {
@@ -120,6 +137,48 @@ public class scr_System_Serializer : MonoBehaviour
         return results;
     }
 
+    static bool IsImageExtension(string path)
+    {
+        var extension = Path.GetExtension(path).ToLower();
+        return extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".webp";
+    }
+
+    /// <summary>
+    /// True if key is a registered short address (see BuildAddressables) of an image file.
+    /// </summary>
+    public bool ImageFileExists(string key)
+    {
+        return ShortFileAddress.TryGetValue(key, out var fullPath) && IsImageExtension(fullPath);
+    }
+
+    /// <summary>
+    /// Every image short address that fully matches pattern (anchored, case-insensitive).
+    /// One file is registered under several keys (name, dir/name, parent/dir/name); only the first matching key per file is returned.
+    /// Returns an empty list if pattern is not a valid regex.
+    /// </summary>
+    public List<string> GetAllImageFilesByRegex(string pattern)
+    {
+        var results = new List<string>();
+        System.Text.RegularExpressions.Regex regex;
+        try
+        {
+            regex = new System.Text.RegularExpressions.Regex($"^(?:{pattern})$", System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+        }
+        catch (ArgumentException e)
+        {
+            Debug.LogWarning($"GetAllImageFilesByRegex invalid regex [{pattern}]: {e.Message}");
+            return results;
+        }
+        var seenFiles = new HashSet<string>();
+        foreach (var i in ShortFileAddress)
+        {
+            if (!IsImageExtension(i.Value)) continue;
+            if (!regex.IsMatch(i.Key)) continue;
+            if (seenFiles.Add(i.Value)) results.Add(i.Key);
+        }
+        return results;
+    }
+
     private void BuildAddressables(bool safeMode)
     {
        // var settings = AddressableAssetSettingsDefaultObject.Settings;
@@ -131,25 +190,65 @@ public class scr_System_Serializer : MonoBehaviour
         if (!Directory.Exists(path)) { Debug.LogError($"Error in LoadDefs, path [{path}] do not exist"); return; }
 
         DirectoryInfo d = new DirectoryInfo(path);
-        int appDataLen = d.Parent.Parent.FullName.Length + 1;
-        var safe = "safeOnly";
-
-        
 
         foreach (var file in d.GetFiles("*.*", SearchOption.AllDirectories))
         {   // all files must be index_com files
-            if (file.Extension == ".meta" || file.Extension == ".json") continue;
+            RegisterAddressableFile(file, safeMode, "Data", skippedFiles, errors);
+        }
 
-            bool skipped = false;
+        // data mods: non-json files registered as if inside Data, after Data, in load order (About/ and Patches/ excluded)
+        List<string> packSummary = new List<string>();
+        foreach (var mod in Mods)
+        {
+            if (!mod.enabled) continue;
+            int count = 0;
+            foreach (var file in new DirectoryInfo(mod.folderPath).GetFiles("*.*", SearchOption.AllDirectories))
+            {
+                if (!mod.IsDataFile(file)) continue;
+                if (RegisterAddressableFile(file, safeMode, mod.id, skippedFiles, errors)) count++;
+            }
+            packSummary.Add($"[mod {mod.id}] {mod.DisplayName}: {count} files");
+        }
+
+        // asset packs: registered after Data and mods, in load order. Conflicting keys are logged and ignored (first registration wins)
+        foreach (var pack in AssetPacks)
+        {
+            if (!pack.enabled)
+            {
+                packSummary.Add($"[{pack.id}] disabled");
+                continue;
+            }
+            int count = 0;
+            foreach (var file in new DirectoryInfo(pack.folderPath).GetFiles("*.*", SearchOption.AllDirectories))
+            {
+                if (AssetPackLoader.IsInAbout(pack, file)) continue;
+                if (RegisterAddressableFile(file, safeMode, pack.id, skippedFiles, errors)) count++;
+            }
+            packSummary.Add($"[{pack.id}] {pack.DisplayName}: {count} files");
+        }
+
+       // AssetDatabase.SaveAssets();
+        Debug.Log($"BuildAddressables Complete! \n-- Mods Count {Mods.Count}, Asset Packs Count {AssetPacks.Count} --\n{String.Join("\n", packSummary)}\n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}\n-- ERRORS COUNT {errors.Count} --\n{String.Join("\n", errors)}");
+
+    }
+
+    /// <summary>
+    /// Registers file under its short addresses (name, dir/name, parent/dir/name). Returns false if the file was filtered out.
+    /// source is only used for conflict messages (Data or asset pack id).
+    /// </summary>
+    private bool RegisterAddressableFile(FileInfo file, bool safeMode, string source, List<string> skippedFiles, List<string> errors)
+    {
+            const string safe = "safeOnly";
+            if (file.Extension == ".meta" || file.Extension == ".json") return false;
+
             if (safeMode)
             {
                 foreach (var s in nsfwKeywords)
                 {
                     if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        skipped = true;
                         skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
-                        break;
+                        return false;
                     }
                 }
             }
@@ -158,10 +257,9 @@ public class scr_System_Serializer : MonoBehaviour
                 if (file.Name.Contains(safe, StringComparison.InvariantCultureIgnoreCase) || file.DirectoryName.Contains(safe, StringComparison.InvariantCultureIgnoreCase))
                 {
                     skippedFiles.Add($"Skipping file {file.Name} due to not in safeMode");
-                    continue;
+                    return false;
                 }
             }
-            if (skipped) continue;
             //string guidPath = file.FullName.Remove(0, appDataLen).Replace("\\","/");
 
             //Debug.Log($"Reading json file {file.Name} into {filepath}, guid {guidPath}");
@@ -185,21 +283,18 @@ public class scr_System_Serializer : MonoBehaviour
             }
             if (!ShortFileAddress.TryAdd($"{file.Directory.Name}/{file.Name}", file.FullName))
             {
-                errors.Add($"conflict key {file.Directory.Name}/{file.Name}");
+                errors.Add($"conflict key {file.Directory.Name}/{file.Name} from [{source}], ignored");
             }
             if (!ShortFileAddress.TryAdd($"{file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}", file.FullName))
             {
-                errors.Add($"conflict key {file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}");
+                errors.Add($"conflict key {file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name} from [{source}], ignored");
             }
 
             //var entry = settings.CreateOrMoveEntry(guid, settings.DefaultGroup);
             //entry.address = filepath;
             //if (file.FullName.Contains("arin")) loadedFiles.Add($"Reading json file {file.FullName} into {file.Directory.Name}/{file.Name}");
             //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
-        }
-       // AssetDatabase.SaveAssets();
-        Debug.Log($"BuildAddressables Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}\n-- ERRORS COUNT {errors.Count} --\n{String.Join("\n", errors)}");
-
+            return true;
     }
 
 
@@ -225,6 +320,12 @@ public class scr_System_Serializer : MonoBehaviour
         CustomCalls();
 
         yield return null;
+        // user prefs are loaded by now (CentralControl.Start), so pack toggles are readable
+        AssetPacks = AssetPackLoader.Scan(AssetPacksPath);
+        Mods = ModLoader.Scan(ModsPath, Path.GetFileName(AssetPacksPath));
+        // pass 1: collect patches of enabled mods; they are applied to def json text in LoadDefs / LoadCharactersFoldersJSON
+        bool bootSafeMode = scr_System_CentralControl.current.isSafeMode;
+        ModLoader.LoadPatches(Mods, file => IsDefFileFiltered(file, bootSafeMode, out _));
         BuildAddressables(scr_System_CentralControl.current.isSafeMode);
 
         Observer_LoadProgress?.Invoke(0.10f, "Loading definitions...");
@@ -237,6 +338,7 @@ public class scr_System_Serializer : MonoBehaviour
         // parkour every file
         LoadCharactersFoldersJSON();
         LoadCharactersPresetsJSON();
+        ModLoader.ReportAndClear();
 
 #if UNITY_EDITOR
         Observer_LoadProgress?.Invoke(0.50f, "Updating localization tables...");
@@ -455,14 +557,22 @@ public class scr_System_Serializer : MonoBehaviour
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
         if (Directory.Exists(path))
         {
-            DirectoryInfo d = new DirectoryInfo(path);
-
-            //foreach (var file in d.GetFiles("*.json"))
-            foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
+            // Data + enabled mods; text is patched once (ModLoader cache) and shared by both passes
+            // a mod character re-declaring an existing baseID keeps the existing one (replace via patches instead)
+            bool ModClash(ModInfo mod, string baseID, FileInfo file)
             {
+                if (mod == null || !newIndex.baseCharacters.Exists(c => c.baseID == baseID)) return false;
+                Debug.LogWarning($"Mod [{mod.id}] character [{baseID}] in {file.Name} already exists, ignored");
+                skippedFiles.Add($"Skipping file {file.Name} from mod [{mod.id}] due to duplicate baseID [{baseID}]");
+                return true;
+            }
+
+            foreach (var (file, relativePath, mod) in GetDefJsonFiles())
+            {
+                string text = ModLoader.ReadPatched(file, relativePath);
                 if (safeMode)
                 {
-                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                    var i = JsonConvert.DeserializeObject<Character_SerializableSafe>(text, UtilityEX.SerializerSettings);
                     if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
 
                     bool skipped = false;
@@ -476,19 +586,21 @@ public class scr_System_Serializer : MonoBehaviour
                         }
                     }
                     if (skipped) continue;
+                    if (ModClash(mod, i.baseID, file)) continue;
 
                     newIndex.baseCharacters.Add(i);
 
-                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Safe>(text, UtilityEX.SerializerSettings);
                     if (ii.Template != null) newIndex.SetTemplateSafe(string.IsNullOrEmpty(ii.baseID) ? file.Name : ii.baseID, ii.Template);
                 }
                 else
                 {
-                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                    var i = JsonConvert.DeserializeObject<Character_SerializableTrainable>(text, UtilityEX.SerializerSettings);
                     if (i == null || i.baseID == null || i.baseID.Length < 1) continue;
+                    if (ModClash(mod, i.baseID, file)) continue;
                     newIndex.baseCharacters.Add(i);
 
-                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                    var ii = JsonConvert.DeserializeObject<CharaSerializableTemplate_Trainable>(text, UtilityEX.SerializerSettings);
                     //newIndex.SetTemplate(ii);
                     if (ii.Template != null) newIndex.SetTemplate(string.IsNullOrEmpty(ii.baseID) ? file.Name : ii.baseID, ii.Template);
                 }
@@ -575,37 +687,18 @@ public class scr_System_Serializer : MonoBehaviour
         MasterList.InitializeLists(true);
         if (!Directory.Exists(path)) { Debug.LogError($"Error in LoadDefs, path [{path}] do not exist"); return; }
 
-        var safe = "safeOnly";
-        DirectoryInfo d = new DirectoryInfo(path);
-        foreach (var file in d.GetFiles("*.json", SearchOption.AllDirectories))
+        foreach (var (file, relativePath, _) in GetDefJsonFiles())
         {   // all files must be index_com files
-            bool skipped = false;
-            if (safeMode)
+            if (IsDefFileFiltered(file, safeMode, out var reason))
             {
-                foreach(var s in nsfwKeywords) 
-                {
-                    if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.FullName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        skipped = true;
-                        skippedFiles.Add($"Skipping file {file.Name} due to safeMode toggle");
-                        break;
-                    }
-                }
+                skippedFiles.Add($"Skipping file {file.Name} due to {reason}");
+                continue;
             }
-            else
-            {
-                if (file.Name.Contains(safe, StringComparison.InvariantCultureIgnoreCase) || file.FullName.Contains(safe, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    skippedFiles.Add($"Skipping file {file.Name} due to not in safeMode");
-                    continue;
-                }
-            }
-            if (skipped) continue;
             //Debug.Log($"reading directory {file.Name} in {file.FullName} in {file.DirectoryName} in {file.DirectoryName}");
             MasterList l;
             try
             {
-                l = JsonConvert.DeserializeObject<MasterList>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
+                l = JsonConvert.DeserializeObject<MasterList>(ModLoader.ReadPatched(file, relativePath), UtilityEX.SerializerSettings);
             }
             catch (Exception e)
             {
@@ -620,6 +713,56 @@ public class scr_System_Serializer : MonoBehaviour
             }
         }
         Debug.Log($"LoadDefs Complete! \n-- Loaded Files Count {loadedFiles.Count} --\n{String.Join("\n", loadedFiles)}\n-- Skipped Files Count {skippedFiles.Count} --\n{String.Join("\n", skippedFiles)}");
+    }
+
+    /// <summary>
+    /// Every def json file: Data first, then each enabled mod in load order (About/ and Patches/ excluded).
+    /// relativePath is relative to Data or to the mod folder, '/' separated (used by the patch "file" filter). mod is null for Data.
+    /// </summary>
+    private List<(FileInfo file, string relativePath, ModInfo mod)> GetDefJsonFiles()
+    {
+        var results = new List<(FileInfo, string, ModInfo)>();
+        if (Directory.Exists(DataPath))
+        {
+            foreach (var file in new DirectoryInfo(DataPath).GetFiles("*.json", SearchOption.AllDirectories))
+                results.Add((file, ModLoader.RelativePath(DataPath, file), null));
+        }
+        foreach (var mod in Mods)
+        {
+            if (!mod.enabled) continue;
+            foreach (var file in new DirectoryInfo(mod.folderPath).GetFiles("*.json", SearchOption.AllDirectories))
+            {
+                if (!mod.IsDataFile(file)) continue;
+                results.Add((file, ModLoader.RelativePath(mod.folderPath, file), mod));
+            }
+        }
+        return results;
+    }
+
+    /// <summary>
+    /// Safe mode / safeOnly filter used for def json files (and mod patch files).
+    /// </summary>
+    private bool IsDefFileFiltered(FileInfo file, bool safeMode, out string reason)
+    {
+        const string safe = "safeOnly";
+        if (safeMode)
+        {
+            foreach (var s in nsfwKeywords)
+            {
+                if (file.Name.Contains(s, StringComparison.InvariantCultureIgnoreCase) || file.FullName.Contains(s, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    reason = "safeMode toggle";
+                    return true;
+                }
+            }
+        }
+        else if (file.Name.Contains(safe, StringComparison.InvariantCultureIgnoreCase) || file.FullName.Contains(safe, StringComparison.InvariantCultureIgnoreCase))
+        {
+            reason = "not in safeMode";
+            return true;
+        }
+        reason = null;
+        return false;
     }
   
     [NonSerialized]

@@ -99,12 +99,23 @@ public class EventManager
     /// Explicit-outcome cooldown registration for manualCooldown events (see Event.manualCooldown) -
     /// registers against eventDef's own cooldownTime, keyed by eventDef.ID, using the given self/target
     /// pair rather than whatever EventInstance happens to be resolving at the call site.
+    /// cooldownTime overrides eventDef's own when >= 0 (e.g. a shorter cooldown for one outcome).
     /// </summary>
-    public void AddCooldown(Event eventDef, Character_Trainable self, List<Character_Trainable> targets)
+    public void AddCooldown(Event eventDef, Character_Trainable self, List<Character_Trainable> targets, int cooldownTime = -1)
     {
-        if (eventDef == null || eventDef.cooldownTime < 1) return;
+        if (eventDef == null) return;
+        if (cooldownTime < 0) cooldownTime = eventDef.cooldownTime;
+        if (cooldownTime < 1) return;
         if (!eventCooldowns.ContainsKey(eventDef.ID)) eventCooldowns.Add(eventDef.ID, new EventCooldown());
-        eventCooldowns[eventDef.ID].AddCooldown(eventDef.cooldownTime, self, targets);
+        eventCooldowns[eventDef.ID].AddCooldown(cooldownTime, self, targets);
+    }
+
+    /// <summary>An active cooldown of eventID registered with self as self and target among its targets.
+    /// Lets a target validator drop just the targets already on cooldown (chara condition isOnEventCooldownWithSelf).</summary>
+    public bool hasCooldownWith(string eventID, Character_Trainable self, Character_Trainable target)
+    {
+        if (self == null || target == null || !eventCooldowns.TryGetValue(eventID, out var cd)) return false;
+        return cd.cooldowns.Exists(x => x.selfRef == self.RefID && x.targetRef.Contains(target.RefID));
     }
 
     public bool hasCooldown(EventInstance ev)
@@ -138,6 +149,13 @@ public class EventManager
         public int selfRef = -1;
         public string nextEventID = "";
         public int minutesUntilNext = 0;
+        /// <summary>
+        /// AppendStrings snapshot injected by the event that started the chain (StartEventChain's source
+        /// event, see StartChain) - every event the chain later starts inherits these entries
+        /// (TickEventChains), so a chain-delayed event keeps the string context ($amount$, $sourceName$,
+        /// $factionName$, ...) of whatever fired the chain. Saved with the chain (SaveFile.EventChains).
+        /// </summary>
+        public Dictionary<string, List<string>> appendStrings = new Dictionary<string, List<string>>();
         [Newtonsoft.Json.JsonIgnore] public EventInstance running = null;
     }
 
@@ -162,13 +180,24 @@ public class EventManager
         return true;
     }
 
-    /// <summary>Starts chainID on self with eventID running after delay minutes. False if unknown or already active on self.</summary>
-    public bool StartChain(string chainID, Character_Trainable self, string eventID, int delay)
+    /// <summary>Starts chainID on self with eventID running after delay minutes. False if unknown or already
+    /// active on self. If source is given, its AppendStrings are copied into the chain's dictionary (per-key
+    /// replace) so the chain's delayed events inherit that context - e.g. an obligation notice's
+    /// $amount$/$sourceName$ surviving the delay between the kicker event and the chain's event.</summary>
+    public bool StartChain(string chainID, Character_Trainable self, string eventID, int delay, EventInstance source = null)
     {
         if (self == null || !IsChainEvent(chainID, eventID)) return false;
         if (HasChain(chainID, self)) return false;
-        activeChains.Add(new ActiveEventChain() { chainID = chainID, selfRef = self.RefID, nextEventID = eventID, minutesUntilNext = Mathf.Max(1, delay) });
-        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event chain [{chainID}] started on {self.FirstName}, next [{eventID}] in {delay} min");
+        var ac = new ActiveEventChain() { chainID = chainID, selfRef = self.RefID, nextEventID = eventID, minutesUntilNext = Mathf.Max(1, delay) };
+        if (source != null)
+        {
+            foreach (var kvp in source.AppendStrings)
+            {
+                ac.appendStrings[kvp.Key] = new List<string>(kvp.Value);
+            }
+        }
+        activeChains.Add(ac);
+        if (scr_System_CentralControl.current.LogPrefs.DLog_Events) Debug.Log($"event chain [{chainID}] started on {self.FirstName}, next [{eventID}] in {delay} min, appendStrings [{string.Join(", ", ac.appendStrings.Keys)}]");
         return true;
     }
 
@@ -223,6 +252,12 @@ public class EventManager
             if (ac.minutesUntilNext > 0) continue;
 
             var ev = new EventInstance(self, ac.nextEventID, "");
+            // inherit the chain's AppendStrings snapshot (injected at StartChain) - add-if-missing so the
+            // event's own entries, if any, are never clobbered
+            foreach (var kvp in ac.appendStrings)
+            {
+                if (!ev.AppendStrings.ContainsKey(kvp.Key)) ev.AppendStrings.Add(kvp.Key, new List<string>(kvp.Value));
+            }
             string startedID = ac.nextEventID;
             ac.nextEventID = "";
             // set before starting: outside an update the event runs inside StartEvent and may already call SetChainNext
@@ -317,6 +352,8 @@ public class EventManager
         if (ev.EventCooldown > 0)
         {   // if has cooldowntime, then it must be in cooldowns
             if (hasCooldown(ev)) return true;
+            // a manualCooldown event registers nothing on start, so only the in-flight instance stops a same-tick repeat
+            if (ev.ManualCooldown && activeEvents.Exists(evs => evs.ConflictWith(ev))) return true;
         }
         else
         {   // forbid repeat trigger

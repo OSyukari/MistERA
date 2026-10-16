@@ -138,6 +138,10 @@ public class LLMAgentSession
     /// can silently reload startCheckpointPath and restart the whole run with the same input.</summary>
     public string originalUserInput;
 
+    /// <summary>LLM_Setting.outcomeMode snapshotted at session start (see LLMOutcomeRules.CurrentMode) -
+    /// the tool schema, the template and the APJSON contract all follow it for the whole run.</summary>
+    public LLMOutcomeMode outcomeMode = LLMOutcomeMode.GameRolls;
+
     /// <summary>Path written by LLMCheckpointStore.WriteCheckpoint right before round 1 - the state to
     /// roll back to on a whole-run "Regenerate", undoing everything Tool_ExecuteAP did for real.</summary>
     public string startCheckpointPath;
@@ -352,10 +356,17 @@ public class LLMAgentSession
             turn.assistantContentBlocks = new List<LLMClaudeContentBlock>();
             foreach (var block in raw.content)
             {
+                // Claude rejects empty text blocks in an echoed turn.
+                if (block.type == "text" && string.IsNullOrEmpty(block.text)) continue;
                 turn.assistantContentBlocks.Add(new LLMClaudeContentBlock
                 {
                     type = block.type,
                     text = block.type == "text" ? block.text : null,
+                    // Thinking blocks must keep their signature (thinking text may be "" when display
+                    // is omitted, but the field itself is required).
+                    thinking = block.type == "thinking" ? (block.thinking ?? "") : null,
+                    signature = block.type == "thinking" ? block.signature : null,
+                    data = block.type == "redacted_thinking" ? block.data : null,
                     id = block.type == "tool_use" ? block.id : null,
                     name = block.type == "tool_use" ? block.name : null,
                     input = block.type == "tool_use" ? block.input : null

@@ -24,7 +24,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Leg","Leg"]
+                        "coverSlot":["Thigh","Thigh","Leg","Leg"]
                     }
                 }
             ]
@@ -38,7 +38,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Outer",
-                        "coverSlot":["Arm","Arm","Lower"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm","Lower"]
                     }
                 }
             ]

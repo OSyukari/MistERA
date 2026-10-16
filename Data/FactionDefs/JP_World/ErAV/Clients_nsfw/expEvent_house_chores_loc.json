@@ -1,0 +1,19 @@
+{
+    "_doc": "en-us localization for expEvent_house_chores.json (same folder convention).",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_house_chores": "Daytime: Chores and the Young Masters",
+                "exp_event_erav_house_chores_ongoing": "$names$ ties on her apron and starts the manor's daytime cleaning.",
+                "exp_event_erav_house_chores_result": "Halfway through the mopping, the young masters call $names$ over.",
+
+                "event_erav_house_chores_01": "Nothing under the apron - that is the rule of this house.\nWhen she bends over to wipe the floor, any man of the household passing by flips her hem up in passing, the way one straightens a leaning vase.",
+                "event_erav_house_chores_02": "Wiping the study floor, the eldest young master presses her head down onto him. Afterwards she keeps wiping - that stretch of floor has to be done over.",
+                "event_erav_house_chores_03": "Halfway through the kitchen work the second young master takes her from behind; the dishes at her hand rattle along. When he is done she goes back to work.\nWhat he left drips down her thighs onto the freshly wiped floor - that spot has to be wiped again.",
+                "event_erav_house_chores_04": "The youngest wants her kneeling beside him with him in her mouth while he games.\n\"Keep it in and don't move. You move, I lose.\"\nTwenty-five minutes. A full round.",
+                "event_erav_house_chores_05": "Before dusk settles she wipes the floors clean again and sets the dishes straight again.\nIn this house, this is called \"a normal day\". The timetable says: on call at all times.",
+                "event_erav_house_chores_err": "[ERROR] Scene targets missing (no party/enemy)."
+            }
+        }
+    }
+}

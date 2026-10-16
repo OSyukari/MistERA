@@ -890,8 +890,8 @@ public class scr_System_CampaignManager : MonoBehaviour
                 actor.ChangeCurrentJob(actorjob);
             }
             actor.Stats.pauseLLMTicks = apLLM.Duration;
-            var waiting = new ActionPackage_Wait(actorjob, actorref, json.timeCost);
-            actorjob.AddPackage(new List<ActionPackage>() { waiting });
+            // injected, not AddPackage'd - see InjectLLMPin (a queued conflicting package would make the job drop it)
+            InjectLLMPin(actor, actorjob, json.timeCost);
         }
 
         player.ChangeCurrentJob(playerjob);
@@ -979,7 +979,7 @@ public class scr_System_CampaignManager : MonoBehaviour
         scr_System_CampaignManager.current.FreeUpdate(flushLogsOnly: true);
     }
 
-    [NonSerialized][JsonIgnore] Dictionary<int, (ActionPackage_Wait wait, Job job)> llmPinnedWaits = new Dictionary<int, (ActionPackage_Wait, Job)>();
+    [NonSerialized][JsonIgnore] Dictionary<int, (ActionPackage_LLMWait wait, Job job)> llmPinnedWaits = new Dictionary<int, (ActionPackage_LLMWait, Job)>();
 
     /// <summary>
     /// The re-pin at the heart of agent-mode stepwise execution: called on EVERY
@@ -988,9 +988,9 @@ public class scr_System_CampaignManager : MonoBehaviour
     /// ticking on the same job is REFILLED in place (ActionPackage_Wait.Refill - never stacked, so
     /// finished plans don't leave NPCs idling on leftover waits) to cover at least this round's
     /// whole remaining-plan duration, topping up whatever earlier rounds' event tails consumed. A
-    /// stale wait (expired, or the actor changed jobs since it was issued) is cleanly evicted via
-    /// Job.RemovePackage (disable + unregister + untrack - never a bare Remove) before a fresh one
-    /// is issued on the actor's current job.
+    /// stale wait (expired, paused/evicted, dropped, or the actor changed jobs since it was issued) is
+    /// cleanly evicted via Job.RemovePackage (disable + unregister + untrack from both package lists -
+    /// never a bare Remove) before a fresh one is issued on the actor's current job.
     /// </summary>
     void PinActorForLLMPlan(Character_Trainable actor, int minutes)
     {
@@ -1003,21 +1003,68 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         if (llmPinnedWaits.TryGetValue(actor.RefID, out var prev) && prev.wait != null)
         {
-            if (prev.job == actorjob && prev.wait.Duration > 0)
+            if (prev.job == actorjob && IsLivePin(prev.wait, prev.job))
             {
                 // live pin on the same job - refresh it, no stacking
                 prev.wait.Refill(minutes);
                 actor.Stats.pauseLLMTicks = Math.Max(actor.Stats.pauseLLMTicks, minutes);
                 return;
             }
-            // expired or stranded on an old job - evict cleanly before re-issuing
-            if (prev.job != null) prev.job.RemovePackage(prev.wait);
+            // expired, evicted or stranded on an old job - evict cleanly before re-issuing
+            if (prev.job != null) prev.job.RemovePackage(prev.wait, false);
+            llmPinnedWaits.Remove(actor.RefID);
         }
 
-        var waiting = new ActionPackage_Wait(actorjob, actor.RefID, minutes);
-        actorjob.AddPackage(new List<ActionPackage>() { waiting });
-        llmPinnedWaits[actor.RefID] = (waiting, actorjob);
+        llmPinnedWaits[actor.RefID] = (InjectLLMPin(actor, actorjob, minutes), actorjob);
         actor.Stats.pauseLLMTicks = minutes;
+    }
+
+    /// <summary>
+    /// Issues an ActionPackage_LLMWait room-pin on the given job, bypassing Job.AddPackage: that path
+    /// (Job_Furniture's override in particular) silently DROPS a non-player package that conflicts with
+    /// anything queued in packages_current - e.g. the actor's own pending movement - so the pin never
+    /// existed while the movement went ahead. Instead the actor's queued conflicting packages on this job
+    /// are evicted first, then the pin is injected straight into packages_previous + the room registry
+    /// (Job.InjectPackage), where CampaignManager.Register resolves it against already-running packages
+    /// by priority - its near player-command priority evicts a movement in progress, and a movement
+    /// queued on another job is paused when it tries to register later.
+    /// </summary>
+    ActionPackage_LLMWait InjectLLMPin(Character_Trainable actor, Job job, int minutes)
+    {
+        var waiting = new ActionPackage_LLMWait(job, actor.RefID, minutes);
+
+        var queued = job.CurrentPackages;
+        for (int i = queued.Count - 1; i >= 0; i--)
+        {
+            if (UtilityEX.DetectConflict(queued[i], waiting)) job.RemovePackage(queued[i], false);
+        }
+
+        waiting.SetActive(scr_System_Time.current.getCurrentTime());
+        job.InjectPackage(waiting, true);
+        return waiting;
+    }
+
+    /// <summary>
+    /// A pin that actually holds: its job still tracks it (it wasn't dropped or removed), it has time left
+    /// and it isn't paused/evicted.
+    /// </summary>
+    static bool IsLivePin(ActionPackage_LLMWait wait, Job job)
+    {
+        return wait != null && job != null && wait.Duration > 0 && !wait.isPaused && job.ActivePackages.Contains(wait);
+    }
+
+    /// <summary>
+    /// True while the actor holds a live LLM-plan pin (PinActorForLLMPlan, see IsLivePin) and is still on
+    /// the job it was issued on. Checked by Character_Trainable.TryGetJob so the actor's own job search
+    /// (schedule/sandbox/activity) can't pull it away mid-plan. Explicit job changes (events, medical,
+    /// player orders) don't go through TryGetJob and still apply; one that moves the actor to another job
+    /// releases the pin. A pin that never landed or was removed reads as not pinned, so it can never
+    /// freeze an actor's job search past the plan.
+    /// </summary>
+    public bool IsPinnedForLLMPlan(Character_Trainable actor)
+    {
+        if (actor == null || !llmPinnedWaits.TryGetValue(actor.RefID, out var pin)) return false;
+        return pin.job == actor.CurrentJob && IsLivePin(pin.wait, pin.job);
     }
 
     /// <summary>
@@ -3107,6 +3154,9 @@ public class scr_System_CampaignManager : MonoBehaviour
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (i == null) continue;
+            i.promptTags = p.promptTags;
+            i.promptTags_overrideBase = p.promptTags_baseOverride;
+            i.promptTags_slots = p.promptTags_slots;
             if (i.GetComp_Equippable() != null) c.EquipItem(i.RefID, false);
             c.Inventory.AddItem(i);
         }
@@ -3115,6 +3165,9 @@ public class scr_System_CampaignManager : MonoBehaviour
             Item_Instance i = WorldManager.Instantiate(p.ID, p.nameOverwrite);
             //Debug.Log("Instantiating chara equipping itemref " + i.RefID);
             if (i == null) continue;
+            i.promptTags = p.promptTags;
+            i.promptTags_overrideBase = p.promptTags_baseOverride;
+            i.promptTags_slots = p.promptTags_slots;
             if (i.GetComp_Equippable() != null) c.EquipItem(i.RefID, false);
             c.Inventory.AddItem(i);
         }

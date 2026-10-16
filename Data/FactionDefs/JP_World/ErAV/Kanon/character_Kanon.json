@@ -98,7 +98,7 @@
             }
         ],
         "initialInventory": [
-            { "ID": "clothing_inner_longdress", "nameOverwrite": "ErAV_kimono" },
+            { "ID": "clothing_inner_longdress", "nameOverwrite": "ErAV_kimono", "promptTags_baseOverride": ["kimono","japanese clothes"] },
             { "ID": "clothing_skin_panty" },
             { "ID": "clothing_skin_bra" },
             { "ID": "clothing_skin_socks" },

@@ -1,0 +1,21 @@
+{
+    "BodyPartBases":
+    {
+        "PromptProfiles":
+        [
+            {
+                "id": "default",
+                "prompts": [],
+                "rules":
+                [
+                    { "id": "hair",        "requireKeywords": ["Hair"], "includeHairstyle": true, "traitGroups": ["trait_HairColor"] },
+                    { "id": "hair_pattern", "requireKeywords": ["Hair"], "excludeTraits": ["trait_HairColorPattern_monotone"], "traitGroups": ["trait_HairColorPattern", "trait_HairColorSecondary"] },
+                    { "id": "eyes_open",   "requireKeywords": ["Eyes"], "excludeActorTags": ["unconscious"], "traitGroups": ["trait_EyeColor"] },
+                    { "id": "eyes_closed", "requireKeywords": ["Eyes"], "requireActorTags": ["unconscious"], "prompts": ["closed eyes"] },
+                    { "id": "body",        "traitGroups": ["trait_BodyType"] },
+                    { "id": "skin",        "traitGroups": ["trait_SkinColor"] }
+                ]
+            }
+        ]
+    }
+}

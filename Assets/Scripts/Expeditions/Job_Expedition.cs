@@ -32,6 +32,9 @@ public class ExpeditionMessageEntry
     public void NotifyCharaExit(int refID)
     {
         if (unresolved == null || unresolved.isResolved) return;
+        // the self release keeps its victims while they are off the job (asleep/eating) - releasing needs no job, and
+        // NotifyCharaReturn would only restore the "party" key, losing "victims"
+        if (unresolved.isSelfRelease) return;
         if (Characters.Remove(refID))
         {
             //Debug.LogError($"NotifyCharaExit {scr_System_CampaignManager.current.FindInstanceByID(refID).CallName} in {FullDescription} original {EventDescription}");
@@ -77,6 +80,12 @@ public class SerializableEventPackage
     /// Unique only for rescue events
     /// </summary>
     public int rescueJobID = -1;
+
+    /// <summary>
+    /// Expedition.selfReleaseEventID entry of an MIA party (Job_Expedition.TickSelfRelease): its button stays blocked while
+    /// any other banked entry of the job is unresolved, and its targets survive the victims leaving the job.
+    /// </summary>
+    public bool isSelfRelease = false;
 
     [JsonIgnore]
     public string DisplayName { get { return LocalizeDictionary.QueryThenParse(eventID); } }
@@ -226,9 +235,13 @@ public class Job_Expedition : Job
     }
     public void DumpLogInto(Job_Expedition other)
     {
+        // re-kidnapped into the same party: nothing to move (and adding into the dictionary being iterated would throw)
+        if (other == null || other == this) return;
         foreach(var i in this.ExpeditionResults)
         {
-            other.ExpeditionResults.Add(i.Key, i.Value);
+            // both logs can hold the same timestamp (e.g. this party's MIA notice and the new party's capture line)
+            if (other.ExpeditionResults.TryGetValue(i.Key, out var existing)) existing.AddRange(i.Value);
+            else other.ExpeditionResults.Add(i.Key, i.Value);
         }
         this.ExpeditionResults.Clear();
     }
@@ -299,7 +312,11 @@ public class Job_Expedition : Job
         }
 
         if (tickPackage) this.packageCooldown = Math.Max(this.packageCooldown - 1, 0);
-        if (!this.FactionOwner_Party.isPlayerFaction) return;
+        if (!this.FactionOwner_Party.isPlayerFaction)
+        {
+            TickSelfRelease(tickPackage);
+            return;
+        }
         bool begin = false;
         if (!ExpeditionActive || Expedition == null)
         {
@@ -461,6 +478,54 @@ public class Job_Expedition : Job
         }
     }
 
+    /// <summary> set once the self release entry was banked (reset when a new expedition is set). No new exploration
+    /// events are started after that. </summary>
+    [JsonProperty] protected bool selfReleaseFired = false;
+
+    /// <summary>
+    /// Non-player (MIA) parties only - their UpdateStatus stops before the countdown/returning logic. Opt-in through
+    /// Expedition.selfReleaseEventID: counts DurationHour down on game time (called every minute by Manage; tickPackage
+    /// false for the out-of-cycle calls) and, once progress or countdown reaches 0, banks the release event like an
+    /// exploration result (isSelfRelease: clickable only after every other banked entry is resolved). The event itself
+    /// moves and releases the captives. immediateRunExpeditionEvent runs it at once if nothing else is pending.
+    /// </summary>
+    protected void TickSelfRelease(bool tickPackage)
+    {
+        if (selfReleaseFired || this.Expedition == null || this.Expedition.Base == null || !this.Expedition.Base.CanSelfRelease) return;
+
+        if (RemainingMinutes > 0 && tickPackage) RemainingMinutes = Math.Max(0, RemainingMinutes - 1);
+        if (RemainingMinutes != 0 && this.Expedition.ExploreRate != 0) return;
+        if (!tickPackage) return;   // fire from the regular minute tick only
+
+        var victims = new List<Character_Trainable>();
+        foreach (var c in FactionOwner_Party.ManagedChara)
+        {
+            if (c == null || c.isTemporaryActor || FactionOwner_Party.GetMemberType(c).isHidden) continue;
+            victims.Add(c);
+        }
+        if (victims.Count < 1)
+        {
+            selfReleaseFired = true;
+            return;
+        }
+
+        var expBase = this.Expedition.Base;
+        var victimRefs = new List<int>();
+        foreach (var c in victims) victimRefs.Add(c.RefID);
+
+        var package = new SerializableEventPackage();
+        package.eventID = expBase.selfReleaseEventID;
+        package.eventLabel = expBase.selfReleaseEventLabel;
+        package.isSelfRelease = true;
+        package.Targets.Add("victims", new List<int>(victimRefs));
+
+        var entry = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_selfReleaseText"), new List<string>(), new List<int>(victimRefs));
+        entry.unresolved = package;
+        selfReleaseFired = true;
+
+        if (ExpeditionUtility.ImmediateRunEnabled && !ExpeditionUtility.HasOtherUnresolved(this, entry)) ExpeditionUtility.RunBankedEventNow(this, entry);
+    }
+
     protected void NotifyEventFailure()
     {
         foreach(var eventry in this.ExpeditionResults)
@@ -611,6 +676,7 @@ public class Job_Expedition : Job
     {
 
         _exp = null;
+        selfReleaseFired = false;
         if (exp == null) this.expeditionRefID = -1;
         else this.expeditionRefID = exp.RefID;
 
@@ -867,7 +933,7 @@ public class Job_Expedition : Job
             ss += "is being imprisoned, cannot explore ||";
             return true;
         }
-        else if (RemainingMinutes != 0 && Expedition.ExploreRate != 0)
+        else if (RemainingMinutes != 0 && Expedition.ExploreRate != 0 && !selfReleaseFired)
         {
             
 

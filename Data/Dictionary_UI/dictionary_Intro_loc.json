@@ -23,7 +23,9 @@
                 "char_editor_selectTrait_Psyche_scoreError": "%%stats_base_Psyche%% traits' total score cannot exceed this attribute's stat adjustment ($score$)",
 
                 "char_editor_selectTrait_requirementNotMet": "This character's race or appearance doesn't meet this trait's requirements",
-                "char_editor_selectTrait_STR": "<link=\"char_editor_selectTrait_STR_tooltip\">%%stats_base_Strength%% Traits - Total Stat Adjustment</link>",
+                "char_editor_hairstyle": "Hairstyle",
+                "char_editor_hairstyle_subtype": "Subtype",
+                "char_editor_hairstyle_random": "Random",                "char_editor_selectTrait_STR": "<link=\"char_editor_selectTrait_STR_tooltip\">%%stats_base_Strength%% Traits - Total Stat Adjustment</link>",
                 "char_editor_selectTrait_STR_tooltip": "%%stats_base_Strength_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
                 "char_editor_selectTrait_Strength_scoreError": "%%stats_base_Strength%% traits' total score cannot exceed this attribute's stat adjustment ($score$)",
 

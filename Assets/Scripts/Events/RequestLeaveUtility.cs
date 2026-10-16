@@ -8,9 +8,10 @@ public enum RequestLeaveReason
     None,
     /// <summary>Room has a gender preference, subject fits it and target is the opposite sex. Hard restriction, no exemptions.</summary>
     GenderedRoom,
-    /// <summary>Subject is doing a privacy-tagged action in a private room.</summary>
+    /// <summary>Subject is doing a privacy-tagged action in a private room. Anyone but the room's other owners can be asked.</summary>
     PrivateAction,
-    /// <summary>Subject owns the private room. Members linked to the subject (e.g. a patient's visitors) are welcome.</summary>
+    /// <summary>Subject owns the private room. Only strangers (no bio/personal/social relationship) can be asked, whatever subject
+    /// is doing; members linked to the subject (e.g. a patient's visitors) are welcome.</summary>
     PrivateRoom,
 }
 
@@ -56,7 +57,7 @@ public static class RequestLeaveUtility
 
         bool conscious = !subject.Stats.isConsciousnessUnconscious;
         if (conscious && room.GenderPreference != RoomGenderPreference.DontCare && !room.IsOppositeSex(subject)) reasons.Add(RequestLeaveReason.GenderedRoom);
-        if (room.isRoomPrivate && isDoingPrivacyAction(subject)) reasons.Add(RequestLeaveReason.PrivateAction);
+        if (room.isRoomPrivate && IsDoingPrivacyAction(subject)) reasons.Add(RequestLeaveReason.PrivateAction);
         if (conscious && room.isRoomPrivate && isRoomOwner(subject, room)) reasons.Add(RequestLeaveReason.PrivateRoom);
         return reasons;
     }
@@ -73,7 +74,7 @@ public static class RequestLeaveUtility
             case RequestLeaveReason.PrivateAction:
                 return target.canMove && !isRoomOwner(target, room);
             case RequestLeaveReason.PrivateRoom:
-                return !isRoomOwner(target, room) && !isLinkedTo(target, subject, room);
+                return !isRoomOwner(target, room) && !isLinkedTo(target, subject, room) && isStranger(subject, target);
             default:
                 return false;
         }
@@ -90,8 +91,9 @@ public static class RequestLeaveUtility
         return true;
     }
 
-    /// <summary>Same tags the Interrupt reaction reads as selfTags (Map.UpdateRoom2).</summary>
-    static bool isDoingPrivacyAction(Character_Trainable c)
+    /// <summary>The character's current action carries the "privacy" target tag (bath, toilet, changing...).
+    /// Same tags the Interrupt reaction reads as selfTags (Map.UpdateRoom2). Also CharaReq.requireNoPrivacyAction.</summary>
+    public static bool IsDoingPrivacyAction(Character_Trainable c)
     {
         UtilityEX.GetAPsFrom(c, out List<ActionPackage> aps);
         return aps.Exists(ap => ap.ActorTargetTags(c.RefID).Contains(PrivacyTag));
@@ -100,6 +102,23 @@ public static class RequestLeaveUtility
     static bool isRoomOwner(Character_Trainable c, Room_Instance room)
     {
         return room.FactionOwner != null && room.FactionOwner.RoomOwners(room.RefID).Contains(c.RefID);
+    }
+
+    /// <summary>
+    /// No bio, personal or social relationship between subject and target. Social = any faction managing both that gives a
+    /// relationship (Character_Relationship.UpdateSocialFactions, incl. the generic colleague/subordinate); the home-faction
+    /// stranger/acquaintance fallback for charas sharing no faction doesn't count. Peeks, so no relationship is created.
+    /// </summary>
+    static bool isStranger(Character_Trainable subject, Character_Trainable target)
+    {
+        var rel = subject.Relationships.PeekRelationshipWith(target);
+        if (rel != null && (rel.Relationship_Bio != null || rel.Relationship_Personal != null)) return false;
+        foreach (var faction in subject.FactionManager.Factions)
+        {
+            if (faction == null || !faction.isManagedChara(target.RefID)) continue;
+            if (faction.GetRelationshipBetween(subject.RefID, target.RefID, out _) != null) return false;
+        }
+        return true;
     }
 
     /// <summary>Member link (any type) from member to owner in the room's faction, e.g. a visitor to the patient they visit.</summary>

@@ -1,0 +1,139 @@
+{
+    "_doc": "ErAV NTR Part 3 placeholder scene - F toy collector, day-one 'inspection' in the basement playroom (Plan §4; Phase 1 skeleton). Same skeleton: banked exploration event + scene event, ResolveEvent ending. SM/toy/bondage COMs do not exist yet - Phase 2 maps what the data can express and reports the gaps.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sm_inspection",
+                "eventString_Ongoing": "exp_event_erav_sm_inspection_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_inspection_result",
+                        "eventID": "event_erav_sm_inspection",
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
+                            {
+                                "factionTemplate": "AlwaysHostile",
+                                "encounterTemplates": [
+                                    {
+                                        "encounterWeights": { "erav_enc_sm_master_1": 1 },
+                                        "frontlineKeys": [ "enemy", "teamB_frontline" ]
+                                    }
+                                ],
+                                "factionInventory": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sm_inspection",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ],
+                                    "enemy": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "line": "event_erav_sm_inspection_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_inspection_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_inspection_03",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_finger_insert_V" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "portraitSelfTagsOverride": [ "fear", "sad" ] },
+                        "line": "event_erav_sm_inspection_04"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_inspection_05",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary_A" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "portraitSelfTagsOverride": [ "sad", "relaxed" ] },
+                        "line": "event_erav_sm_inspection_06",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_sm_inspection_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sm_inspection": "初日·检查与开发",
+                "exp_event_erav_sm_inspection_ongoing": "$names$被带进地下调教室，开始「基础检查」。",
+                "exp_event_erav_sm_inspection_result": "$names$被固定在调教室的诊察台上。",
+
+                "event_erav_sm_inspection_01": "地下室的灯亮着。四壁挂着的皮鞭、缰绳和按尺寸码放的木制鞍具，让$victim.name$在楼梯上就迈不开步。\n穿开衫的老人坐在灯下做他的木工，头也不抬。\n「来了。先把这个看了。」\n白板上用端正的字迹写着周间时间表：检查与开发、肛门日、拘束耐受、侍奉训练……「我买下了你七天。这百六十八个钟头，每格都排了内容。」",
+                "event_erav_sm_inspection_02": "她被固定在诊察台样的架子上——手脚四点拘束，腰垫高，腿分开固定在腿托上。\n老人换上橡胶手套，像老医生样不紧不慢。\n「玩具在被使用之前，要先弄清楚自己的规格。忍着点，会凉。」",
+                "event_erav_sm_inspection_03": "润滑、窥器、手指——他把她的内部寸寸丈量过去，边检查边在记录本上写下：深度、松紧、敏感点的排序。",
+                "event_erav_sm_inspection_04": "「阴蒂：敏感。前庭：敏感。开发度三成。」他合上记录本，宣读了她的「规格」。\n「——没关系。百六十八个钟头，够了。」",
+                "event_erav_sm_inspection_05": "检查台翻下来变成调教架。「今天的课目：开发。」\n他让她趴在架上，从后面进入，依旧像在记录什么。\n「反射收缩还在，是个好现象——玩具要是彻底没反应，反而没意思了。」",
+                "event_erav_sm_inspection_06": "检查结束时，天色已经暗了。她的「规格」被填进了记录本末页，后面还留着大段空白。\n「明天，肛门日。迟到的话——就用加时来补。」",
+                "event_erav_sm_inspection_err": "【错误】场景所需的目标不存在（party/enemy 缺失）。"
+            }
+        }
+    }
+}

@@ -13,6 +13,8 @@ public class ItemComponentTemplate_Equippable : I_ItemComponentTemplate_Comp
     public List<string> equipTags = new List<string>();
     public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
 
+    public List<string> promptTags = new List<string>();
+
     [System.Serializable]
     public class PartialUndress
     {
@@ -85,6 +87,7 @@ public class ItemComponent_Equippable : ItemComponent_Base
 
     [JsonIgnore] public bool lockable { get { return CompTemplate.comp_Equippable.lockable; } }
 
+    [JsonIgnore] public List<string> promptTags { get { return CompTemplate.comp_Equippable.promptTags; } }
 
     public bool hasTag(string s)
     {

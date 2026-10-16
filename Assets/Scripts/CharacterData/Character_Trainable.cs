@@ -206,7 +206,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             return false;
         }
     }
-    [JsonIgnore] public bool canMove { get { return canAct && !isRestrained && !isImprisoned && !Stats.hasStatusEXTag(StatsUtility.Stat_Tag_Immobilized) && !Stats.hasStatusTag(StatsUtility.Stat_Tag_Immobilized); } }
+    [JsonIgnore] public bool canMove { get { return canMoveIgnoringTimestop && !isTimeStopped; } }
+    /// <summary> canMove without the time stop check: conscious, not restrained, not imprisoned, not Immobilized </summary>
+    [JsonIgnore] public bool canMoveIgnoringTimestop { get { return (Stats == null || !Stats.isConsciousnessUnconscious) && !isRestrained && !isImprisoned && !Stats.hasStatusEXTag(StatsUtility.Stat_Tag_Immobilized) && !Stats.hasStatusTag(StatsUtility.Stat_Tag_Immobilized); } }
     [JsonIgnore] public bool canLeave { get { return canMove && (CurrentJob == null || CurrentJob.CanBeInterrupted); } }
     [JsonIgnore] public Manageable.HourlySchedule currentHourSchedule { get {
             return GetJobPost(scr_System_Time.current.getCurrentTime().Hour);
@@ -262,6 +264,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     /// <summary> outfits per schedule (faction membertype / activity) - see Character_Wardrobe </summary>
     [JsonIgnore] public Character_Wardrobe Wardrobe { get { return wardrobe; } }
 
+
+
     [JsonIgnore] public bool CanActInTimeStop { get { return this.RefID == 0; } }
     public bool MovedInTimeStop = false;
     [JsonIgnore] public bool isTimeStopped { get { return scr_System_Time.current.TimeStopStrict && !CanActInTimeStop; } }
@@ -295,6 +299,8 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             Debug.LogError("Error template null!");
         }
         this.Appearance = Template.Appearance;
+        // set before the body is built: womb registration quickstarts the repro cycle off Age/isDefaultAge
+        this.age = (Template as CharaTrainableTemplate)?.Age;
 
         //Debug.Log("Setting Appearance to " + this.Appearance);
 
@@ -1694,9 +1700,9 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         }
     }
 
-    [JsonProperty]
-    protected int? age = null;
-
+    /// <summary> null = age unspecified (hidden, defaulted); omitted from save data </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    [SerializeField] protected int? age = null;
     [JsonIgnore] public int Age { get { return isDefaultAge || age.Value <= 0 ? 22 : age.Value; } }
     [JsonIgnore] public bool isDefaultAge { get { return age is null; } }
     [JsonProperty] private bool noAging = false;
@@ -1714,6 +1720,12 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
         if (RefID == 0)
         {
             if (CurrentJob != null && CurrentJob.hasActorCompletedJob(0)) ChangeCurrentJob(null);
+            return;
+        }
+        // pinned in the room by an LLM agent plan: skip the job search entirely until the pin lapses
+        if (scr_System_CampaignManager.current.IsPinnedForLLMPlan(this))
+        {
+            if (s != null) s.Add(FirstName + ": pinned by LLM plan, skipping job search");
             return;
         }
         if (fallbackPoolID != "" && FallbackWorkerManager.TryEnterDormancy(this))
@@ -2527,7 +2539,7 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             {
                 if (checkClothes && part.Base.exposedKojoID != "")
                 {
-                    var score = part.Parent.GetRevealingScore(BodyEquipLayer.None);
+                    var score = part.GetRevealingScore(BodyEquipLayer.None);
                     if (score < 1 && score < mem.exposedBodyRefs[part.baseID])
                     {
                         tags.Add(part.Base.exposedKojoID);

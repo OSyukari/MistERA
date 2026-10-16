@@ -284,6 +284,9 @@ public class Humanoid_Race
     public List<string> removeStatsKeyword = new List<string>();
     public List<Needs> needs = new List<Needs>();
     public List<string> RaceType = new List<string>();
+    /// <summary> optional image prompt layer between the global default and the character template (ActorPromptProfileUtility) </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ActorPromptProfile promptProfile = null;
 }
 
 

@@ -32,6 +32,8 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
     // side panels (current target data)
     public RectTransform topBar;
     public RectTransform panel_Equipment, panel_History, panel_Internals, panel_Schedules;
+    public scr_HoverableText equipDescription;
+
     public RectTransform content_Equipment, content_History, content_Internals, content_Wombs;
     public RectTransform prefab_BodyInstanceGear, prefab_Equipment;
     public TextMeshProUGUI prefab_TextBox, prefab_ButtonBox;
@@ -260,7 +262,7 @@ public class scr_Panel_SexComTarget : scr_Menu, IPointerEnterHandler, IPointerEx
         {
             case SubPanel.Equipment:
                 Utility.DestroyAllChildrenFrom(content_Equipment);
-                SideRectUtility.LoadEquipmentData(c, InstantiateGear, InstantiateEquip, InstantiateBox_Text, InstantiateBox_Button);
+                SideRectUtility.LoadEquipmentData(c, equipDescription, InstantiateGear, InstantiateEquip, InstantiateBox_Text, InstantiateBox_Button);
                 break;
             case SubPanel.History:
                 Utility.DestroyAllChildrenFrom(content_History);

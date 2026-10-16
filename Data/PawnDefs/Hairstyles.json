@@ -36,6 +36,30 @@
                 "promptTokens": [ "center part", "parted bangs" ],                "tags": []
             },
             {
+                "id": "hair_front_parted",
+                "keyword": "front",
+                "displayName": "Parted Bangs",
+                "tooltip": "Fringe split to both sides, without a sharp center line.",
+                "isDefault": false,
+                "promptTokens": [ "parted bangs" ],                "tags": []
+            },
+            {
+                "id": "hair_front_double_parted",
+                "keyword": "front",
+                "displayName": "Double-Parted Bangs",
+                "tooltip": "Fringe parted twice, a lock falling between the eyes.",
+                "isDefault": false,
+                "promptTokens": [ "double-parted bangs", "hair between eyes" ],                "tags": []
+            },
+            {
+                "id": "hair_front_blunt",
+                "keyword": "front",
+                "displayName": "Blunt Bangs",
+                "tooltip": "Thick fringe cut in one heavy straight line.",
+                "isDefault": false,
+                "promptTokens": [ "blunt bangs" ],                "tags": []
+            },
+            {
                 "id": "hair_side_none",
                 "keyword": "side",
                 "displayName": "None",
@@ -60,6 +84,14 @@
                 "promptTokens": [ "hair tucked behind ear" ],                "tags": []
             },
             {
+                "id": "hair_side_sidelocks",
+                "keyword": "side",
+                "displayName": "Sidelocks",
+                "tooltip": "Hair behind the ears, with long locks framing the face.",
+                "isDefault": false,
+                "promptTokens": [ "sidelocks", "hair behind ears" ],                "tags": []
+            },
+            {
                 "id": "hair_accent_none",
                 "keyword": "accent",
                 "displayName": "None",
@@ -76,12 +108,60 @@
                 "promptTokens": [ "ahoge" ],                "tags": []
             },
             {
+                "id": "hair_accent_side_none",
+                "keyword": "accent_side",
+                "displayName": "None",
+                "tooltip": "No side accent.",
+                "isDefault": true,
+                "promptTokens": [],                "tags": []
+            },
+            {
                 "id": "hair_accent_side_braid",
-                "keyword": "accent",
+                "keyword": "accent_side",
                 "displayName": "Side Braid",
                 "tooltip": "A thin braid woven at one side of the face.",
                 "isDefault": false,
                 "promptTokens": [ "side braid" ],                "tags": []
+            },
+            {
+                "id": "hair_length_none",
+                "keyword": "length",
+                "displayName": "Unspecified",
+                "tooltip": "Length left to the style itself.",
+                "isDefault": false,
+                "promptTokens": [],                "tags": []
+            },
+            {
+                "id": "hair_length_short",
+                "keyword": "length",
+                "displayName": "Short",
+                "tooltip": "Above the shoulders.",
+                "isDefault": false,
+                "promptTokens": [ "short hair" ],                "tags": []
+            },
+            {
+                "id": "hair_length_medium",
+                "keyword": "length",
+                "displayName": "Medium",
+                "tooltip": "Around the shoulders.",
+                "isDefault": false,
+                "promptTokens": [ "medium hair" ],                "tags": []
+            },
+            {
+                "id": "hair_length_long",
+                "keyword": "length",
+                "displayName": "Long",
+                "tooltip": "Down the back.",
+                "isDefault": true,
+                "promptTokens": [ "long hair" ],                "tags": []
+            },
+            {
+                "id": "hair_length_very_long",
+                "keyword": "length",
+                "displayName": "Very Long",
+                "tooltip": "Down to the waist or longer.",
+                "isDefault": false,
+                "promptTokens": [ "very long hair" ],                "tags": []
             }
         ],
 
@@ -89,12 +169,17 @@
         [
             {
                 "id": "hairstyle_straight_long",
-                "displayName": "Long Straight Hair",
-                "tooltip": "Long, straight and flowing hair.",
+                "displayName": "Straight Hair",
+                "tooltip": "Straight and flowing hair.",
                 "tags": [],                "isDefault": true,
-                "basePromptTokens": [ "long hair", "straight hair" ],
+                "basePromptTokens": [ "straight hair" ],
                 "subCategories": [],
                 "slots": [
+                    {
+                        "keyword": "length",
+                        "displayName": "Length",
+                        "tooltip": "Hair length.",                        "defaultOptionID": "hair_length_long"
+                    },
                     {
                         "keyword": "front",
                         "displayName": "Bangs",
@@ -102,8 +187,13 @@
                     },
                     {
                         "keyword": "accent",
-                        "displayName": "Hair Accent",
-                        "tooltip": "Extra decorative strand.",                        "defaultOptionID": "hair_accent_none"
+                        "displayName": "Top Accent",
+                        "tooltip": "Extra strand on top of the head.",                        "defaultOptionID": "hair_accent_none"
+                    },
+                    {
+                        "keyword": "accent_side",
+                        "displayName": "Side Accent",
+                        "tooltip": "Extra strand or braid at the side of the face.",                        "defaultOptionID": "hair_accent_side_none"
                     }
                 ]
             },
@@ -134,6 +224,11 @@
                         "promptTokens": [ "side ponytail" ]                    }
                 ],
                 "slots": [
+                    {
+                        "keyword": "length",
+                        "displayName": "Length",
+                        "tooltip": "Hair length.",                        "defaultOptionID": "hair_length_none"
+                    },
                     {
                         "keyword": "front",
                         "displayName": "Bangs",
@@ -173,9 +268,20 @@
                         "displayName": "Low Twin Tails",
                         "tooltip": "Tied low near the nape.",
                         "isDefault": false,
-                        "promptTokens": [ "low twintails" ]                    }
+                        "promptTokens": [ "low twintails" ]                    },
+                    {
+                        "id": "hairstyle_twintails_short",
+                        "displayName": "Short Twin Tails",
+                        "tooltip": "Short tails on both sides of the head.",
+                        "isDefault": false,
+                        "promptTokens": [ "short twintails" ]                    }
                 ],
                 "slots": [
+                    {
+                        "keyword": "length",
+                        "displayName": "Length",
+                        "tooltip": "Hair length.",                        "defaultOptionID": "hair_length_none"
+                    },
                     {
                         "keyword": "front",
                         "displayName": "Bangs",
@@ -188,8 +294,13 @@
                     },
                     {
                         "keyword": "accent",
-                        "displayName": "Hair Accent",
-                        "tooltip": "Extra decorative strand.",                        "defaultOptionID": "hair_accent_none"
+                        "displayName": "Top Accent",
+                        "tooltip": "Extra strand on top of the head.",                        "defaultOptionID": "hair_accent_none"
+                    },
+                    {
+                        "keyword": "accent_side",
+                        "displayName": "Side Accent",
+                        "tooltip": "Extra strand or braid at the side of the face.",                        "defaultOptionID": "hair_accent_side_none"
                     }
                 ]
             },
@@ -235,6 +346,11 @@
                 ],
                 "slots": [
                     {
+                        "keyword": "length",
+                        "displayName": "Length",
+                        "tooltip": "Hair length.",                        "defaultOptionID": "hair_length_none"
+                    },
+                    {
                         "keyword": "front",
                         "displayName": "Bangs",
                         "tooltip": "Fringe style.",                        "defaultOptionID": "hair_front_straight_bangs"
@@ -248,12 +364,17 @@
             },
             {
                 "id": "hairstyle_wavy_long",
-                "displayName": "Long Wavy Hair",
-                "tooltip": "Long, softly waving hair.",
+                "displayName": "Wavy Hair",
+                "tooltip": "Softly waving hair.",
                 "tags": [],                "isDefault": false,
-                "basePromptTokens": [ "long hair", "wavy hair" ],
+                "basePromptTokens": [ "wavy hair" ],
                 "subCategories": [],
                 "slots": [
+                    {
+                        "keyword": "length",
+                        "displayName": "Length",
+                        "tooltip": "Hair length.",                        "defaultOptionID": "hair_length_long"
+                    },
                     {
                         "keyword": "front",
                         "displayName": "Bangs",
@@ -266,8 +387,13 @@
                     },
                     {
                         "keyword": "accent",
-                        "displayName": "Hair Accent",
-                        "tooltip": "Extra decorative strand.",                        "defaultOptionID": "hair_accent_none"
+                        "displayName": "Top Accent",
+                        "tooltip": "Extra strand on top of the head.",                        "defaultOptionID": "hair_accent_none"
+                    },
+                    {
+                        "keyword": "accent_side",
+                        "displayName": "Side Accent",
+                        "tooltip": "Extra strand or braid at the side of the face.",                        "defaultOptionID": "hair_accent_side_none"
                     }
                 ]
             }
@@ -284,8 +410,8 @@
             },
             "zh-cn":
             {
-                "hairstyle_straight_long":"直长发",
-                "hairstyle_straight_long_tooltip":"垂顺的及腰直发。",
+                "hairstyle_straight_long":"直发",
+                "hairstyle_straight_long_tooltip":"垂顺的直发。",
 
                 "hairstyle_ponytail":"马尾",
                 "hairstyle_ponytail_tooltip":"将头发束起扎成马尾。",
@@ -305,6 +431,8 @@
                 "hairstyle_twintails_high_tooltip":"%%hairstyle_twintails_tooltip%%\n扎在头部两侧较高的位置。",
                 "hairstyle_twintails_low":"低双马尾",
                 "hairstyle_twintails_low_tooltip":"%%hairstyle_twintails_tooltip%%\n扎在颈后两侧较低的位置。",
+                "hairstyle_twintails_short":"短双马尾",
+                "hairstyle_twintails_short_tooltip":"%%hairstyle_twintails_tooltip%%\n两侧扎起的短发尾。",
 
                 "hairstyle_bun":"发髻",
                 "hairstyle_bun_tooltip":"将头发束起盘成发髻。",
@@ -316,15 +444,30 @@
                 "hairstyle_braid_single":"单辫",
                 "hairstyle_braid_single_tooltip":"%%hairstyle_braid_tooltip%%\n向一侧垂下的单条辫子。",
 
-                "hairstyle_wavy_long":"长卷发",
-                "hairstyle_wavy_long_tooltip":"波浪般起伏的长发。",
+                "hairstyle_wavy_long":"卷发",
+                "hairstyle_wavy_long_tooltip":"波浪般起伏的头发。",
 
+                "hair_slot_length":"长度",
+                "hair_slot_length_tooltip":"头发的长度。",
                 "hair_slot_front":"前发",
                 "hair_slot_front_tooltip":"刘海样式。",
                 "hair_slot_side":"侧发",
                 "hair_slot_side_tooltip":"两侧头发的样式。",
-                "hair_slot_accent":"发饰",
-                "hair_slot_accent_tooltip":"额外的装饰性发丝。",
+                "hair_slot_accent":"头顶发丝",
+                "hair_slot_accent_tooltip":"头顶额外的装饰性发丝。",
+                "hair_slot_accent_side":"侧边发丝",
+                "hair_slot_accent_side_tooltip":"脸侧额外的发丝或辫子。",
+
+                "hair_length_none":"%%hair_slot_length%%：未指定",
+                "hair_length_none_tooltip":"%%hair_slot_length_tooltip%%\n由发型本身决定。",
+                "hair_length_short":"%%hair_slot_length%%：短发",
+                "hair_length_short_tooltip":"%%hair_slot_length_tooltip%%\n不及肩。",
+                "hair_length_medium":"%%hair_slot_length%%：中长发",
+                "hair_length_medium_tooltip":"%%hair_slot_length_tooltip%%\n及肩左右。",
+                "hair_length_long":"%%hair_slot_length%%：长发",
+                "hair_length_long_tooltip":"%%hair_slot_length_tooltip%%\n垂至背部。",
+                "hair_length_very_long":"%%hair_slot_length%%：超长发",
+                "hair_length_very_long_tooltip":"%%hair_slot_length_tooltip%%\n及腰或更长。",
 
                 "hair_front_none":"%%hair_slot_front%%：无刘海",
                 "hair_front_none_tooltip":"%%hair_slot_front_tooltip%%\n额头完全露出。",
@@ -334,6 +477,12 @@
                 "hair_front_side_swept_tooltip":"%%hair_slot_front_tooltip%%\n向一侧斜扫的刘海。",
                 "hair_front_center_part":"%%hair_slot_front%%：中分",
                 "hair_front_center_part_tooltip":"%%hair_slot_front_tooltip%%\n从中间分开，露出额头。",
+                "hair_front_parted":"%%hair_slot_front%%：分刘海",
+                "hair_front_parted_tooltip":"%%hair_slot_front_tooltip%%\n刘海向两侧分开，没有明显的中线。",
+                "hair_front_double_parted":"%%hair_slot_front%%：双分刘海",
+                "hair_front_double_parted_tooltip":"%%hair_slot_front_tooltip%%\n刘海分成两道，一缕垂在双眼之间。",
+                "hair_front_blunt":"%%hair_slot_front%%：厚齐刘海",
+                "hair_front_blunt_tooltip":"%%hair_slot_front_tooltip%%\n厚重、剪成一条直线的刘海。",
 
                 "hair_side_none":"%%hair_slot_side%%：无",
                 "hair_side_none_tooltip":"%%hair_slot_side_tooltip%%\n没有明显的侧发。",
@@ -341,13 +490,17 @@
                 "hair_side_loose_tooltip":"%%hair_slot_side_tooltip%%\n两侧头发自然垂下。",
                 "hair_side_tucked":"%%hair_slot_side%%：耳后别起",
                 "hair_side_tucked_tooltip":"%%hair_slot_side_tooltip%%\n两侧头发别在耳后。",
+                "hair_side_sidelocks":"%%hair_slot_side%%：鬓发",
+                "hair_side_sidelocks_tooltip":"%%hair_slot_side_tooltip%%\n头发别在耳后，两缕长鬓发垂在脸侧。",
 
                 "hair_accent_none":"%%hair_slot_accent%%：无",
                 "hair_accent_none_tooltip":"%%hair_slot_accent_tooltip%%\n没有装饰性发丝。",
                 "hair_accent_ahoge":"%%hair_slot_accent%%：呆毛",
                 "hair_accent_ahoge_tooltip":"%%hair_slot_accent_tooltip%%\n头顶翘起的一根倔强的头发。",
-                "hair_accent_side_braid":"%%hair_slot_accent%%：侧边辫",
-                "hair_accent_side_braid_tooltip":"%%hair_slot_accent_tooltip%%\n编在脸侧的一条细辫子。"
+                "hair_accent_side_none":"%%hair_slot_accent_side%%：无",
+                "hair_accent_side_none_tooltip":"%%hair_slot_accent_side_tooltip%%\n没有侧边发丝。",
+                "hair_accent_side_braid":"%%hair_slot_accent_side%%：侧边辫",
+                "hair_accent_side_braid_tooltip":"%%hair_slot_accent_side_tooltip%%\n编在脸侧的一条细辫子。"
             }
         }
     }

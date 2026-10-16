@@ -1,0 +1,31 @@
+{
+    "_doc": "en-us localization for Clients_nsfw/clients.json (same folder convention).",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "erav_enc_politician_1": "County Councillor",
+                "erav_enc_politician_party": "The Councillor and His Negotiators",
+                "erav_enc_producer_1": "Talent Agency President",
+                "erav_enc_sm_master_1": "Toy Collector",
+                "erav_enc_athletes_n": "Visiting Team Players",
+                "erav_enc_celebs_n": "Tour Entourage",
+                "erav_enc_gang_n": "Kiryu-gumi Footsoldiers",
+                "erav_enc_household_sons": "The Manor's Three Young Masters",
+                "erav_enc_household_master": "The Manor's Old Master",
+                "erav_enc_household_guests": "The Young Masters' Friends",
+                "erav_enc_dog": "Household Dog",
+
+                "erav_client_title_politician": "County Councillor",
+                "erav_client_title_businessman": "Businessman",
+                "erav_client_title_producer": "Agency President",
+                "erav_client_title_sm_master": "Collector",
+                "erav_client_title_athlete": "Visiting Player",
+                "erav_client_title_celeb": "Tour Member",
+                "erav_client_title_gang": "Footsoldier",
+                "erav_client_title_household_master": "Old Master",
+                "erav_client_title_household_son": "Young Master",
+                "erav_client_title_housekeeper": "Housekeeper"
+            }
+        }
+    }
+}

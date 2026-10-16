@@ -105,6 +105,12 @@ public abstract class ActionPackage
                 error = "command_result DC outcome mismatch";
                 return false;
             }
+            // RoleplayModifier mode: the AP's rolls share one roleplay grading
+            if (ep.ac_modifier != ep2.ac_modifier || ep.dc_modifier != ep2.dc_modifier)
+            {
+                error = "roleplay modifier mismatch";
+                return false;
+            }
         }
 
         var actors = new List<Character_Trainable>();
@@ -1981,7 +1987,8 @@ public abstract class ActionPackage
 
                     // one DC roll per AP: skip it only when every merged entry is forced (JoinAP never mixes
                     // forced with None) - agent mode leaves command_result None to roll for real
-                    if (epjson.Count > 0 && epjson.TrueForAll(x => x.command_result != Memory_Response.None))
+                    // (a forced Refuse that a 100% hard gate overrode into acceptance has no DC opinion - roll for real)
+                    if (epjson.Count > 0 && epjson.TrueForAll(x => x.command_result != Memory_Response.None && !(x.hardGateOverride && x.command_result < Memory_Response.Accept)))
                     {
                         // Accept carries no DC opinion, so a forced DC outcome wins; JoinAP guarantees at most one
                         // distinct DC outcome per AP. Otherwise every entry shares an acceptance class - use it as-is.
@@ -1989,13 +1996,25 @@ public abstract class ActionPackage
                         injectResult = dcForced != null ? dcForced.command_result : epjson[0].command_result;
 
                         // no die was rolled - label the outcome as forced rather than faking a comparison
-                        checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20{(mods.Count > 0 ? $" + {bonus}" : "")} >=? {baseDC} = {LocalizeDictionary.QueryThenParse(injectResult >= Memory_Response.Success || injectResult == Memory_Response.Accept ? "ui_diceroll_forcedsuccess" : "ui_diceroll_forcedfailure")}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
+                        bool judged = epjson[0].outcomeMode == LLMOutcomeMode.LLMVerdict;
+                        bool forcedWin = injectResult >= Memory_Response.Success || injectResult == Memory_Response.Accept;
+                        string forcedKey = judged ? (forcedWin ? "ui_diceroll_judgedsuccess" : "ui_diceroll_judgedfailure") : (forcedWin ? "ui_diceroll_forcedsuccess" : "ui_diceroll_forcedfailure");
+                        checkResults_result = $"{targetCOM.DisplayName(COMVariantID)} D20{(mods.Count > 0 ? $" + {bonus}" : "")} >=? {baseDC} = {LocalizeDictionary.QueryThenParse(forcedKey)}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
                         checkResults_tooltips = String.Join("\n", mods);
                         checkResults_result_short = $"({targetCOM.DisplayName(COMVariantID)}): {LocalizeDictionary.QueryThenParse($"Memory_Response_{injectResult}")}";
                     }
                     else
                     {
                         int diceRoll = Dice(1, 21, 1);
+
+                        // RoleplayModifier mode: the roleplay DC bonus (JoinAP guarantees every merged entry shares it);
+                        // natural 1/20 still apply
+                        int roleplayDC = epjson.Count > 0 && epjson[0].outcomeMode == LLMOutcomeMode.RoleplayModifier ? epjson[0].dc_modifier : 0;
+                        if (roleplayDC != 0)
+                        {
+                            bonus += roleplayDC;
+                            mods.Add(LocalizeDictionary.QueryThenParse("ui_diceroll_roleplayMod") + roleplayDC.ToString("+0;-#"));
+                        }
 
                         if (baseDC == 0) injectResult = Memory_Response.Success;
                         else if (diceRoll >= 20) injectResult = Memory_Response.CriticalSuccess;

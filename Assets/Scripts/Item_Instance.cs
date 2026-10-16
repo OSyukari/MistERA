@@ -28,6 +28,12 @@ public class Item_Instance : IDisposable, I_Disposable, I_CombatItem
             if (_base == null && BaseID != "") _base = scr_System_Serializer.current.GetByNameOrID_Item_Base(BaseID);
             return _base; } }
 
+    public List<string> promptTags = null;
+    /// <summary> replaces the base item's promptTags and promptTags_slots </summary>
+    public List<string> promptTags_overrideBase = null;
+    /// <summary> added to the base's, see Item_Base.promptTags_slots </summary>
+    public Dictionary<string, List<string>> promptTags_slots = null;
+
     /// <summary>
     /// Currency stacks in particular can grow huge (stack-merging in Inventory.AddItem, wallets, etc.),
     /// so this adds via long math and clamps to [0, int.MaxValue] instead of letting the int addition

@@ -64,6 +64,12 @@
                     "overwritesNeedsIDs": []
                 }
             ],
+            "_comment_promptProfile": "Race layer of the image prompt profile (Data/RaceDefs/PromptProfiles.json). A non-elf with pointy ears uses the same rule id in its template.",
+            "promptProfile": {
+                "rules": [
+                    { "id": "ears", "requireKeywords": ["Hair"], "requireBodyTags": ["head"], "prompts": ["pointy ears"] }
+                ]
+            },
             "RaceType":["humanrace","playableRace"]
         },
         {

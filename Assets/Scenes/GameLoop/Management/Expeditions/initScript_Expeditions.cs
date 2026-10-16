@@ -666,8 +666,18 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
             //if (text == null) Debug.LogError("text null");
             if (!text.gameObject.activeInHierarchy) return false;
             if (parent.currentParty == null || parent.currentParty.Job == null || !parent.currentParty.Job.isActive) return false;
-            if (!parent.currentParty.isPlayerFaction) return false;
+            var party = parent.currentParty;
+            // an MIA party of the viewed player faction (its MIA list) can be resolved too
+            bool playerMIAParty = !party.isPlayerFaction && parent.CurrentFaction != null && parent.CurrentFaction.isPlayerFaction
+                                  && parent.CurrentFaction.KidnapFactions.Contains(party);
+            if (!party.isPlayerFaction && !playerMIAParty) return false;
             if (m.unresolved == null || m.unresolved.isResolved) return false;
+            if (m.unresolved.isSelfRelease && ExpeditionUtility.HasOtherUnresolved(party.Job, m))
+            {
+                state = ButtonValidator_States.Conflict;
+                text.SetText(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_resolveOthersFirst"));
+                return false;
+            }
             if (m.Characters.Count < 1)
             {
                 state = ButtonValidator_States.Conflict;
@@ -686,34 +696,9 @@ this.tooltip = $"RoomJobs:{(parent.currentParty == null ? "null" : String.Join("
         public void OnClickButton()
         {
             //scr_System_CampaignManager.current.ChangeCurrentViewMode(ViewMode.View_Logs);
-            var package = m.unresolved;
-            var ev = EventUtility.StartEvent(parent.currentParty.Job, package);
-            //scr_System_CampaignManager.current.FreeUpdate();
-            var callbacks1 = new List<Action>();
-            package.isResolved = true;
-
-            ev.FunctionCalls.Add("ResolveEvent", callbacks1);
-            callbacks1.Add(() => {
-                m.resolveEventName = package.DisplayName;
-                m.resolveMessage = ev.DumpCurrentLine;
-                package.isResolved = true;
-                m.unresolved = null;
-            });
-
-            var callbacks2 = new List<Action>();
-            ev.FunctionCalls.Add("RetryEvent", callbacks2);
-            callbacks2.Add(() => {
-                package.isResolved = false;
-            });
-
-            var callbacks3 = new List<Action>();
-            ev.FunctionCalls.Add("AddEventMessagePostResolve", callbacks3);
-            callbacks3.Add(() => {
-                if (ev.AppendStrings.ContainsKey("AddEventMessagePostResolve"))
-                {
-                    m.resolveMessage = $"{m.resolveMessage}\n{String.Join("\n", ev.AppendStrings["AddEventMessagePostResolve"])}";
-                }
-            });
+            // shared with immediateRunExpeditionEvent (ExpeditionUtility.RunBankedEventNow)
+            var ev = ExpeditionUtility.PrepareBankedEvent(parent.currentParty.Job, m);
+            if (ev == null) return;
 
             scr_System_CampaignManager.current.RegisterCanvasAnchorHideEventCallback(ev);
             scr_System_CampaignManager.current.HideCanvasAnchor();

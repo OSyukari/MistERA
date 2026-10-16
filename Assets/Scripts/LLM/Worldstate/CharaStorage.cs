@@ -263,7 +263,7 @@ public partial class LLM_WorldState
                 foreach (var i in c.Stats.Traits)
                 {
                     if (!i.isDisplayable) continue;
-                    Traits.Add($"{i.displayname}: {i.tooltip}");
+                    Traits.Add($"{i.displaynameFull}: {i.tooltip}");
                 }
             }
             else

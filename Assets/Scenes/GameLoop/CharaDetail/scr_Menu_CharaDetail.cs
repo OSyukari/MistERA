@@ -1,3 +1,4 @@
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,7 +29,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
             chara_refID = _chara.RefID;
         }
     }
-    public Image picture;
+    public UnityEngine.UI.Image picture;
 #pragma warning disable CS0436 // Type conflicts with imported type
     public ScrollRect pictureRect;
     public Scrollbar scrollbar_horizontal, scrollbar_vertical;
@@ -36,7 +37,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
     public ptDownTracker portraitTracker;
 
-    public Image bannerBGImage;
+    public UnityEngine.UI.Image bannerBGImage;
     public CanvasGroup bannerImage;
     public void InitializeWithArgument(int refID)
     {
@@ -293,14 +294,27 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
         return true;
     }
 
+    public void RegisterOutfit(scr_equip_wardrobe outfit)
+    {
+        outfit.btn_Edit.Initialize(this, new initScript_Equip.ButtonValidator_CanEditOutfit(this, outfit.btn_Edit, outfit.outfit));
+        outfit.btn_Edit.optionID = AssertUniqueHash(outfit.GetHashCode());
+
+        buttonsByID.Add(outfit.btn_Edit.optionID, outfit.btn_Edit);
+        validatorsByID.Add(outfit.btn_Edit.optionID, outfit.btn_Edit.Validator);
+    }
+    public void UnregisterOutfit(scr_equip_wardrobe outfit)
+    {
+        // TODO
+    }
+
     private void InitializeEquipment()
     {
         if (initialized_equip) return;
         else initialized_equip = true;
 
-        initScript_Equip.InitializeData(chara);
+        initScript_Equip.InitializeData(chara, this);
 
-        SideRectUtility.LoadEquipmentData(chara, instantiateGear, instantiateEquip, instantiateBox_Text, instantiateBox_Button);
+        SideRectUtility.LoadEquipmentData(chara, initScript_Equip.description, instantiateGear, instantiateEquip, instantiateBox_Text, instantiateBox_Button);
 
         /*
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
@@ -320,7 +334,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
                 if (slot != BodyPartEquipSlot.None) AddBox(textBox, box, LocalizeDictionary.QueryThenParse("equip_slot_"+Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)));
 
-                int score = b.GetRevealingScore(BodyEquipLayer.Skin);
+                int score = b.GetSlotRevealingScore(slot, BodyEquipLayer.Skin);
 
                 Item_Instance skin, inner, outer;
 
@@ -357,7 +371,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
                     if (slot != BodyPartEquipSlot.None) AddBox(textBox, box, LocalizeDictionary.QueryThenParse("equip_slot_" + Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)));
 
-                    int score = b.GetRevealingScore(BodyEquipLayer.Skin);
+                    int score = ins.GetRevealingScore(BodyEquipLayer.Skin);
                     if (score > 1 && !scr_System_CampaignManager.current.XrayMode)
                     {
                         AddBox(textBox, box, " " + score + " ");
@@ -514,7 +528,7 @@ public class scr_Menu_CharaDetail : scr_Menu, IPointerClickHandler
 
             scr_HoverableText box = Instantiate(prefab_text_link).GetComponent< scr_HoverableText>();
             box.transform.SetParent(initSexRecords.GetTraitGrid(si.Parent.GroupLabel), false);
-            box.SetText(si.displayname, false, si.TooltipID);
+            box.SetText(si.displaynameFull, false, si.TooltipID);
         }
 
         foreach (SkillInstance si in chara.Skills.GetSkills(true))

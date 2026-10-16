@@ -73,8 +73,10 @@
                 "equip_slot_Neck": "脖",
                 "equip_slot_Torso": "上身",
                 "equip_slot_Lower": "下身",
-                "equip_slot_Leg": "腿",
+                "equip_slot_Leg": "小腿",
                 "equip_slot_Feet": "足",
+                "equip_slot_Shoulder": "肩",
+                "equip_slot_Thigh": "大腿",
                 "equip_slot_Mouth": "嘴",
                 "equip_slot_Stomach": "胃",
 
@@ -172,8 +174,10 @@
                 "equip_slot_Neck": "Neck",
                 "equip_slot_Torso": "Torso",
                 "equip_slot_Lower": "Lower",
-                "equip_slot_Leg": "Leg",
+                "equip_slot_Leg": "Lower Leg",
                 "equip_slot_Feet": "Foot",
+                "equip_slot_Shoulder": "Shoulder",
+                "equip_slot_Thigh": "Thigh",
                 "equip_slot_Mouth": "Mouth",
                 "equip_slot_Stomach": "Stomach",
 

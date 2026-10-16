@@ -42,7 +42,7 @@
         ],
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },
-            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Dress" },
             { "ID":"clothing_bluearchive_Navigator_Cape" },
             { "ID":"clothing_bluearchive_Navigator_Glove" },
             { "ID":"clothing_bluearchive_Navigator_Boot" },

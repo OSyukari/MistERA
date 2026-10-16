@@ -128,6 +128,8 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         this.c = c;
 
         c.OnAfterDeserialize();
+        // preset json has no appearance (InitializeWithRefID copies it in game); trait requirements check the character's
+        if (c.Template != null) c.Appearance = c.Template.Appearance;
 
         UpdatePanel();
         UpdateAllTexts();
@@ -252,6 +254,9 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         // assign dynamic ID
 
         PopulateTraits_Single(TraitBox_Single);
+
+        PopulateHairstylePanel();
+        PopulateBodyTraits();
 
         PopulateAllSkills();
         RefreshAllSkills();
@@ -384,7 +389,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
                         comp.isButtonToggle = true;
 
                         comp.Initialize(this, validator);
-                        comp.SetText(entry.displayname);
+                        comp.SetText(entry.displaynameFull);
 
                         if (Character.Stats.Traits.Contains(entry))
                         {
@@ -473,7 +478,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         box.selfRect.SetParent(boxMiddle, false);
 
         box.traitMod.text = trait.trait_score.ToString("+0;-#");
-        box.centerText.SetText(trait.displayname, false, trait.TooltipID);
+        box.centerText.SetText(trait.displaynameFull, false, trait.TooltipID);
 
         var button_left = box.leftBTN;
         button_left.optionID = GetTraitID;
@@ -719,6 +724,9 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             }
         }
 
+        // gender / race changes can invalidate a selected body trait
+        RevalidateBodyTraitSelections();
+
         UpdateStatsBase();
         UpdateAllTexts();
         RefreshAllDerivedStats();
@@ -782,7 +790,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
             {
                 hastrait = true;
                 var a = Instantiate(prefab_text_link).GetComponent<scr_HoverableText>();
-                a.SetText(t.displayname, false, t.TooltipID);
+                a.SetText(t.displaynameFull, false, t.TooltipID);
                 a.transform.SetParent(panel_TraitsLeft.transform, false);
             }
         }
@@ -884,6 +892,8 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         RefreshTraitText(sensitivity_v, Character.Template.Sensitivity_V);
 
         RefreshTraitText(size_a, Character.Template.Size_A);
+
+        RefreshRightPanelTexts();
         RefreshTraitText(size_b, Character.Template.Size_B);
         RefreshTraitText(size_p, Character.Template.Size_P);
         RefreshTraitText(size_v, Character.Template.Size_V);
@@ -1492,7 +1502,7 @@ public class scr_Canvas_CharacterEditor : scr_Menu
 
             parent.Traits_SetTraitByID(buttonID, trait);
             box.traitMod.text = trait.trait_score.ToString("+0;-#");
-            box.centerText.SetText(trait.displayname, false, trait.TooltipID);
+            box.centerText.SetText(trait.displaynameFull, false, trait.TooltipID);
         }
     }
 
@@ -1628,6 +1638,171 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         }
     }
 
+    /// <summary>
+    /// Wrapping step through a list; index -1 (nothing found) steps to the first / last entry.
+    /// </summary>
+    static int StepIndex(int index, int count, bool isleft)
+    {
+        if (count < 1) return -1;
+        if (index < 0) return isleft ? count - 1 : 0;
+        return isleft ? (index - 1 + count) % count : (index + 1) % count;
+    }
+
+    /// <summary>
+    /// Hairstyle rows edit the template's defaultHairstyle: the preset save only writes the template, and the
+    /// editor's character has no body (Character_Body copies the template seed when the character is created).
+    /// The first entry is "random" (null seed = random default hairstyle on creation).
+    /// </summary>
+    class ButtonValidator_SelectHairstyle : ButtonValidator, I_ButtonClickable
+    {
+        protected new scr_Canvas_CharacterEditor parent;
+        bool isleft;
+        public ButtonValidator_SelectHairstyle(scr_Menu parent, bool isleft) : base(parent)
+        {
+            this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
+        }
+
+        public override bool IsButtonValid()
+        {
+            var list = parent.Hairstyles;
+            bool result = list != null && list.Count > 0;
+            this.state = result ? ButtonValidator_States.Valid : ButtonValidator_States.Invalid;
+            return result;
+        }
+
+        public void OnClickButton()
+        {
+            var list = parent.Hairstyles;
+            var template = parent.Character.Template;
+            if (list == null || list.Count < 1 || template == null) return;
+
+            // option 0 = random, option i + 1 = list[i]
+            var def = template.defaultHairstyle != null ? template.defaultHairstyle.GetBase() : null;
+            int i = StepIndex(def != null ? list.IndexOf(def) + 1 : 0, list.Count + 1, isleft);
+
+            if (i == 0) template.defaultHairstyle = null;
+            else
+            {
+                // subcategory and slot options start at the new definition's defaults
+                var instance = new Hairstyle_Instance();
+                instance.InitializeFromDef(list[i - 1]);
+                template.defaultHairstyle = instance;
+            }
+            parent.RebuildHairstyleRows();
+        }
+    }
+
+    class ButtonValidator_SelectHairstyleSubtype : ButtonValidator, I_ButtonClickable
+    {
+        protected new scr_Canvas_CharacterEditor parent;
+        bool isleft;
+        public ButtonValidator_SelectHairstyleSubtype(scr_Menu parent, bool isleft) : base(parent)
+        {
+            this.parent = parent as scr_Canvas_CharacterEditor;
+            this.isleft = isleft;
+        }
+
+        public override bool IsButtonValid()
+        {
+            var def = parent.TemplateHairstyleDef;
+            bool result = def != null && def.subCategories != null && def.subCategories.Count > 1;
+            this.state = result ? ButtonValidator_States.Valid : ButtonValidator_States.Invalid;
+            return result;
+        }
+
+        public void OnClickButton()
+        {
+            var instance = parent.Character.Template.defaultHairstyle;
+            var def = parent.TemplateHairstyleDef;
+            if (def == null || def.subCategories == null || def.subCategories.Count < 1) return;
+
+            int i = StepIndex(def.subCategories.FindIndex(x => x.ID == instance.SubCategoryID), def.subCategories.Count, isleft);
+            instance.SetSubCategory(def.subCategories[i].ID);
+        }
+    }
+
+    class ButtonValidator_SelectHairstyleSlot : ButtonValidator, I_ButtonClickable
+    {
+        protected new scr_Canvas_CharacterEditor parent;
+        string keyword;
+        bool isleft;
+        public ButtonValidator_SelectHairstyleSlot(scr_Menu parent, string keyword, bool isleft) : base(parent)
+        {
+            this.parent = parent as scr_Canvas_CharacterEditor;
+            this.keyword = keyword;
+            this.isleft = isleft;
+        }
+
+        public override bool IsButtonValid()
+        {
+            var def = parent.TemplateHairstyleDef;
+            var slot = def != null ? def.GetSlot(keyword) : null;
+            bool result = slot != null && slot.GetOptions().Count > 1;
+            this.state = result ? ButtonValidator_States.Valid : ButtonValidator_States.Invalid;
+            return result;
+        }
+
+        public void OnClickButton()
+        {
+            var instance = parent.Character.Template.defaultHairstyle;
+            var def = parent.TemplateHairstyleDef;
+            var slot = def != null ? def.GetSlot(keyword) : null;
+            if (slot == null) return;
+
+            var options = slot.GetOptions();
+            if (options.Count < 1) return;
+
+            var current = instance.GetSelectedSlotOption(keyword);
+            int i = StepIndex(current != null ? options.FindIndex(x => x.ID == current.ID) : -1, options.Count, isleft);
+            instance.SetSlotOption(keyword, options[i].ID);
+        }
+    }
+
+    /// <summary>
+    /// traits_BODY rows edit the template's traits_body (copied onto the body by ResetBodyTraitsFromTemplate on save).
+    /// The current entry is re-read every validation, so race / gender changes need no repopulation.
+    /// </summary>
+    class ButtonValidator_selectBodyTrait : ButtonValidator, I_ButtonClickable
+    {
+        protected new scr_Canvas_CharacterEditor parent;
+        scr_Traits_Group group;
+        bool isLeft;
+        public ButtonValidator_selectBodyTrait(scr_Menu parent, scr_Traits_Group group, bool isLeft) : base(parent)
+        {
+            this.parent = parent as scr_Canvas_CharacterEditor;
+            this.group = group;
+            this.isLeft = isLeft;
+        }
+
+        public override bool IsButtonValid()
+        {
+            var c = parent.Character;
+            if (!group.IsValidFor(c))
+            {
+                // group shown but not selectable for this character
+                this.state = ButtonValidator_States.Invalid;
+                this.tooltip = LocalizeDictionary.QueryThenParse("char_editor_selectTrait_requirementNotMet");
+                return false;
+            }
+
+            this.state = ButtonValidator_States.Valid;
+            this.tooltip = "";
+            var current = parent.GetTemplateBodyTrait(group);
+            if (current == null) return false;
+            return isLeft ? current.GetPreviousValidInGroup(c) != null : current.GetNextValidInGroup(c) != null;
+        }
+
+        public void OnClickButton()
+        {
+            var c = parent.Character;
+            var current = parent.GetTemplateBodyTrait(group);
+            if (current == null) return;
+
+            var next = isLeft ? current.GetPreviousValidInGroup(c) : current.GetNextValidInGroup(c);
+            if (next != null) BodyTraitUtility.SetInList(c.Template.traits_body, next);
+        }
+    }
     public TMP_InputField input_firstname, input_middlename, input_lastname;
 
     public void OnValueChanged_FirstName(string s)
@@ -1649,6 +1824,226 @@ public class scr_Canvas_CharacterEditor : scr_Menu
         UpdateNames();
     }
 
+    public rightPanel RightPanel;
 
+    /// <summary>
+    /// Right panel : main hairstyle, hairstyle subtypes / slot addons, non-sex body traits
+    /// </summary>
+    List<int> hairstyleMainIDs = new List<int>();
+    List<int> hairstyleDynamicIDs = new List<int>();
+    List<int> bodyTraitPanelIDs = new List<int>();
+
+    // boxes whose texts RefreshRightPanelTexts rewrites after every click
+    scr_traitSelectBox hairstyleSubtypeBox = null;
+    List<KeyValuePair<string, scr_traitSelectBox>> hairstyleSlotBoxes = new List<KeyValuePair<string, scr_traitSelectBox>>();
+    List<KeyValuePair<scr_Traits_Group, scr_traitSelectBox>> bodyTraitBoxes = new List<KeyValuePair<scr_Traits_Group, scr_traitSelectBox>>();
+
+    /// <summary>
+    /// After a click (gender / race change): a row whose stored entry is no longer valid while its group still is
+    /// gets the group default stored (e.g. curvy -> average when switching to male)
+    /// </summary>
+    void RevalidateBodyTraitSelections()
+    {
+        if (c == null || c.Template == null) return;
+        foreach (var pair in bodyTraitBoxes)
+        {
+            var group = pair.Key;
+            if (!group.IsValidFor(c)) continue;
+            var stored = BodyTraitUtility.FindInGroup(c.Template.traits_body, group.ID);
+            if (stored == null || stored.IsValidFor(c)) continue;
+            var t = GetTemplateBodyTrait(group);
+            if (t != null && t.IsValidFor(c)) BodyTraitUtility.SetInList(c.Template.traits_body, t);
+        }
+    }
+
+    List<Hairstyle_Base> Hairstyles
+    {
+        get
+        {
+            var master = scr_System_Serializer.current != null ? scr_System_Serializer.current.MasterList : null;
+            return master != null && master.BodyPartBases != null ? master.BodyPartBases.BodyPart_Hairstyles : null;
+        }
+    }
+
+    /// <summary> definition of the template's seed hairstyle; null = random default hairstyle </summary>
+    Hairstyle_Base TemplateHairstyleDef
+    {
+        get
+        {
+            var h = c != null && c.Template != null ? c.Template.defaultHairstyle : null;
+            return h != null ? h.GetBase() : null;
+        }
+    }
+
+    /// <summary>
+    /// The template's traits_BODY entry as the body will get it (FillMissingBodyTraits rules): the stored entry if
+    /// valid, else the group default. Invalid groups show their stored entry, else the neutral one.
+    /// </summary>
+    Traits GetTemplateBodyTrait(scr_Traits_Group group)
+    {
+        var stored = BodyTraitUtility.FindInGroup(c.Template.traits_body, group.ID);
+        if (stored != null && stored.IsValidFor(c)) return stored;
+
+        var raceKeywords = new List<string>();
+        Trait_Requirement.GetRaceKeywords(c, raceKeywords);
+        var def = BodyTraitUtility.GetDefaultValid(group, c.Appearance, raceKeywords);
+        if (def != null) return def;
+        return stored != null ? stored : group.getNeutralinGroup();
+    }
+
+    /// <summary>
+    /// Same init order as the scene buttons in InitializeWithArgument / PopulateTraits_* :
+    /// optionID, then Initialize (reads the serialized replaceText), only then SetText overwrites it.
+    /// Validate runs the validator once so texts and colors are correct immediately.
+    /// </summary>
+    protected void RegisterPanelButton(scr_SelectableText button, ButtonValidator validator, List<int> trackedIDs, string text = null)
+    {
+        button.optionID = GetTraitID;
+        button.Initialize(this, validator);
+        if (text != null) button.SetText(text);
+        buttonsByID.Add(button.optionID, button);
+        validatorsByID.Add(button.optionID, validator);
+        trackedIDs.Add(button.optionID);
+        button.Validate();
+    }
+
+    protected void UnregisterButtons(List<int> trackedIDs)
+    {
+        foreach (int id in trackedIDs)
+        {
+            buttonsByID.Remove(id);
+            validatorsByID.Remove(id);
+        }
+        trackedIDs.Clear();
+    }
+
+    protected void PopulateHairstylePanel()
+    {
+        var rp = RightPanel;
+        if (rp == null || rp.MainHairstyle == null) return;
+
+        UnregisterButtons(hairstyleMainIDs);
+        rp.MainHairstyle.title.SetText(LocalizeDictionary.QueryThenParse("char_editor_hairstyle", "Hairstyle"));
+        RegisterPanelButton(rp.MainHairstyle.left, new ButtonValidator_SelectHairstyle(this, true), hairstyleMainIDs, "<");
+        RegisterPanelButton(rp.MainHairstyle.right, new ButtonValidator_SelectHairstyle(this, false), hairstyleMainIDs, ">");
+
+        RebuildHairstyleRows();
+    }
+
+    /// <summary>
+    /// Subtype and slot rows depend on the selected hairstyle: unregister their buttons, destroy the boxes,
+    /// repopulate for the current definition
+    /// </summary>
+    public void RebuildHairstyleRows()
+    {
+        UnregisterButtons(hairstyleDynamicIDs);
+        hairstyleSubtypeBox = null;
+        hairstyleSlotBoxes.Clear();
+
+        var rp = RightPanel;
+        if (rp == null) return;
+        if (rp.Hairstyle_Subtype_rect != null) Utility.DestroyAllChildrenFrom(rp.Hairstyle_Subtype_rect);
+        if (rp.Hairstyle_Addon_rect != null) Utility.DestroyAllChildrenFrom(rp.Hairstyle_Addon_rect);
+        if (rp.optionPrefab == null) return;
+
+        var def = TemplateHairstyleDef;
+        if (def == null) return;
+
+        // the seed may predate a data change
+        c.Template.defaultHairstyle.Revalidate();
+
+        if (rp.Hairstyle_Subtype_rect != null && def.subCategories != null && def.subCategories.Count > 0)
+        {
+            var box = Instantiate(rp.optionPrefab);
+            box.transform.SetParent(rp.Hairstyle_Subtype_rect, false);
+            box.title.SetText(LocalizeDictionary.QueryThenParse("char_editor_hairstyle_subtype", "Subtype"));
+            RegisterPanelButton(box.left, new ButtonValidator_SelectHairstyleSubtype(this, true), hairstyleDynamicIDs, "<");
+            RegisterPanelButton(box.right, new ButtonValidator_SelectHairstyleSubtype(this, false), hairstyleDynamicIDs, ">");
+            hairstyleSubtypeBox = box;
+        }
+
+        if (rp.Hairstyle_Addon_rect != null)
+        {
+            foreach (var slot in HairstyleUtility.GetOrderedSlots(def))
+            {
+                var box = Instantiate(rp.optionPrefab);
+                box.transform.SetParent(rp.Hairstyle_Addon_rect, false);
+                box.title.SetText(slot.DisplayName, false, slot.LocKey + "_tooltip");
+                RegisterPanelButton(box.left, new ButtonValidator_SelectHairstyleSlot(this, slot.Keyword, true), hairstyleDynamicIDs, "<");
+                RegisterPanelButton(box.right, new ButtonValidator_SelectHairstyleSlot(this, slot.Keyword, false), hairstyleDynamicIDs, ">");
+                hairstyleSlotBoxes.Add(new KeyValuePair<string, scr_traitSelectBox>(slot.Keyword, box));
+            }
+        }
+    }
+
+    /// <summary>
+    /// One row per exclusive traits_BODY group (skin, hair color...). The sexual body trait groups have
+    /// their dedicated rows elsewhere in this canvas. Groups invalid for the character are shown with locked arrows.
+    /// </summary>
+    protected void PopulateBodyTraits()
+    {
+        UnregisterButtons(bodyTraitPanelIDs);
+        bodyTraitBoxes.Clear();
+
+        var rp = RightPanel;
+        if (rp == null || rp.optionPrefab == null || rp.BodyTraitsRect == null) return;
+        Utility.DestroyAllChildrenFrom(rp.BodyTraitsRect);
+
+        var index = scr_System_Serializer.current.index_TraitsAll;
+        if (index == null || index.traits_BODY == null) return;
+
+        foreach (var group in index.traits_BODY)
+        {
+            if (!BodyTraitUtility.IsExclusiveGroup(group)) continue;
+            if (group.tags.Contains("do_not_use")) continue;
+            if (!group.allowPopulate) continue;
+            if (!group.isDisplayable) continue;
+            if (group.entries.Count < 1) continue;
+
+            var box = Instantiate(rp.optionPrefab);
+            box.transform.SetParent(rp.BodyTraitsRect, false);
+            box.title.SetText(LocalizeDictionary.QueryThenParse(group.ID, group.displayName));
+            RegisterPanelButton(box.left, new ButtonValidator_selectBodyTrait(this, group, true), bodyTraitPanelIDs, "<");
+            RegisterPanelButton(box.right, new ButtonValidator_selectBodyTrait(this, group, false), bodyTraitPanelIDs, ">");
+            bodyTraitBoxes.Add(new KeyValuePair<scr_Traits_Group, scr_traitSelectBox>(group, box));
+        }
+    }
+
+    /// <summary>
+    /// Selection texts of the right panel, rewritten from the template after every click (UpdateAllTexts)
+    /// </summary>
+    protected void RefreshRightPanelTexts()
+    {
+        var rp = RightPanel;
+        if (rp == null || c == null || c.Template == null) return;
+
+        var h = c.Template.defaultHairstyle;
+        var def = TemplateHairstyleDef;
+        if (rp.MainHairstyle != null)
+        {
+            if (def != null) rp.MainHairstyle.traitName.SetText(def.DisplayName, false, def.ID + "_tooltip");
+            else rp.MainHairstyle.traitName.SetText(LocalizeDictionary.QueryThenParse("char_editor_hairstyle_random", "Random"));
+        }
+
+        if (hairstyleSubtypeBox != null && def != null)
+        {
+            var sub = h.GetSubCategory();
+            if (sub == null) sub = def.GetDefaultSubCategory();
+            hairstyleSubtypeBox.traitName.SetText(sub != null ? sub.DisplayName : " - ", false, sub != null ? sub.ID + "_tooltip" : "");
+        }
+
+        foreach (var pair in hairstyleSlotBoxes)
+        {
+            var opt = def != null ? h.GetSelectedSlotOption(pair.Key) : null;
+            pair.Value.traitName.SetText(opt != null ? opt.DisplayName : " - ", false, opt != null ? opt.ID + "_tooltip" : "");
+        }
+
+        // a group / trait failing its requirements is not applied to the body: show " - " until it is valid again
+        foreach (var pair in bodyTraitBoxes)
+        {
+            var t = pair.Key.IsValidFor(c) ? GetTemplateBodyTrait(pair.Key) : null;
+            if (t != null && t.IsValidFor(c)) pair.Value.traitName.SetText(t.displaynameFull, false, t.TooltipID);
+            else pair.Value.traitName.SetText(" - ");
+        }    }
 }
 

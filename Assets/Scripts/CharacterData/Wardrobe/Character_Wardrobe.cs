@@ -14,6 +14,57 @@ using UnityEngine;
 /// </summary>
 public class Character_Wardrobe
 {
+
+    [JsonIgnore]
+    public Hairstyle_Instance Hairstyle
+    {
+        get
+        {
+            return ActiveOutfit != null && ActiveOutfit.hairstyleOverride != null ? ActiveOutfit.hairstyleOverride : Owner.Body.Hairstyle;
+        }
+    }
+    [JsonIgnore]
+    public Traits EyeColor
+    {
+        get
+        {
+            var trait = ActiveOutfit != null ? ActiveOutfit.GetTraitWithParentID(OutfitUtility.trait_EyeColor) : null;
+            if (trait != null) return trait;
+            else return Owner.Stats.GetTraitByGroupID(OutfitUtility.trait_EyeColor);
+        }
+    }
+    [JsonIgnore]
+    public Traits HairColor
+    {
+        get
+        {
+            var trait = ActiveOutfit != null ? ActiveOutfit.GetTraitWithParentID(OutfitUtility.trait_HairColor) : null;
+            if (trait != null) return trait;
+            else return Owner.Stats.GetTraitByGroupID(OutfitUtility.trait_HairColor);
+        }
+    }
+    [JsonIgnore]
+    public Traits SkinColor
+    {
+        get
+        {
+            var trait = ActiveOutfit != null ? ActiveOutfit.GetTraitWithParentID(OutfitUtility.trait_SkinColor) : null;
+            if (trait != null) return trait;
+            else return Owner.Stats.GetTraitByGroupID(OutfitUtility.trait_SkinColor);
+        }
+    }
+    [JsonIgnore]
+    public Traits BodyType
+    {
+        get
+        {
+            var trait = ActiveOutfit != null ? ActiveOutfit.GetTraitWithParentID(OutfitUtility.trait_BodyType) : null;
+            if (trait != null) return trait;
+            else return Owner.Stats.GetTraitByGroupID(OutfitUtility.trait_BodyType);
+        }
+    }
+
+
     [JsonIgnore] Character_Trainable owner = null;
     [JsonIgnore] public Character_Trainable Owner { get { return owner; } }
 

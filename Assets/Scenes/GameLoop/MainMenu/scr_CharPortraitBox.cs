@@ -19,6 +19,22 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     public AspectRatioFitter picture_fitter;
     protected Vector2 _pictureAnchorMin, _pictureAnchorMax;
     public scr_SpineLoader spineLoader;
+    /// <summary>
+    /// Optional animated .webp player: its own slot, a sibling of picture laid out like it (same anchors/pivot in the prefab).
+    /// Activated only while it draws/shows; every other draw path deactivates it. Its optional fitter is used like picture_fitter
+    /// (keep it disabled in the prefab). Null: animated webp is drawn as its first frame through picture.
+    /// </summary>
+    public scr_WebpPlayer webpPlayer;
+    /// <summary>
+    /// Optional animated .webp player for the landscape slot: inside picture_landscape_group, covering picture_landscape (fixed, no offsets).
+    /// While it shows, the group is visible (isShowingLandscape) and picture_landscape is deactivated.
+    /// Null: landscape animated webp is drawn as its first frame through picture_landscape.
+    /// </summary>
+    public scr_WebpPlayer webpPlayer_landscape;
+    protected bool _showingWebp = false;
+    protected bool _showingWebpLandscape = false;
+    protected Vector2 _webpAnchorMin, _webpAnchorMax;
+    protected RectTransform WebpRect { get { return webpPlayer == null ? null : webpPlayer.transform as RectTransform; } }
     public Transform spineRect { get { return (spineLoader == null ? null : spineLoader.GetLoaderRect); } }
 
     public RectTransform box_Xray;
@@ -41,6 +57,11 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         {
             _pictureAnchorMin = picture.rectTransform.anchorMin;
             _pictureAnchorMax = picture.rectTransform.anchorMax;
+        }
+        if (webpPlayer != null && webpPlayer.fitter != null)
+        {
+            _webpAnchorMin = WebpRect.anchorMin;
+            _webpAnchorMax = WebpRect.anchorMax;
         }
 
         if (isCurrentTargetBox)
@@ -174,7 +195,11 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
         if (picture == null || picture.rectTransform == null) return;
         if (isShowingLandscape) return;
         //Debug.Log($"update anchor {x} {y} {size}");
-        if (UsePictureFitter(p))
+        if (isShowingWebp)
+        {
+            UpdateWebpAnchor(p);
+        }
+        else if (UsePictureFitter(p))
         {
             picture.rectTransform.localScale = Vector3.one;
             picture_fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
@@ -217,7 +242,123 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         if (picture_fitter == null || !(p is PortraitManager.CharaPortrait_Image)) return false;
         if (picture.sprite == null || picture.sprite.rect.height <= 0) return false;
+        return HasDefaultOffsets(p);
+    }
+
+    protected static bool HasDefaultOffsets(PortraitManager.CharaPortrait p)
+    {
         return Mathf.Approximately(p.portrait_offset_x, 0) && Mathf.Approximately(p.portrait_offset_y, 0) && Mathf.Approximately(p.portrait_offset_size, 0);
+    }
+
+    /// <summary>Same layout rules as the picture slot (fitter for default offsets, else native size + offsets), on the webp slot.</summary>
+    protected void UpdateWebpAnchor(PortraitManager.CharaPortrait p)
+    {
+        // size unknown while the player reloads (eg. box re-enabled): keep the current layout, it is still valid
+        if (webpPlayer.Height <= 0) return;
+        var rect = WebpRect;
+        var fitter = webpPlayer.fitter;
+        if (fitter != null && HasDefaultOffsets(p))
+        {
+            rect.localScale = Vector3.one;
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = (float)webpPlayer.Width / webpPlayer.Height;
+            fitter.enabled = true;
+        }
+        else
+        {
+            if (fitter != null)
+            {
+                // fitter stretches the anchors, put them back before manual offsets
+                fitter.enabled = false;
+                rect.anchorMin = _webpAnchorMin;
+                rect.anchorMax = _webpAnchorMax;
+            }
+            float size = Mathf.Approximately(p.portrait_offset_size, 0) ? 1 : p.portrait_offset_size;
+            rect.sizeDelta = new Vector2(webpPlayer.Width, webpPlayer.Height);  // native size
+            rect.localScale = new Vector3(size, size, size);
+            rect.anchoredPosition = new Vector2(p.portrait_offset_x, p.portrait_offset_y);
+        }
+        rect.localPosition = new Vector3(rect.localPosition.x, rect.localPosition.y, 0);
+    }
+
+    /// <summary>True while the portrait webp slot is the visible portrait (offsets apply).</summary>
+    public bool isShowingWebp { get { return _showingWebp && webpPlayer != null; } }
+    /// <summary>True while the landscape webp player is the visible portrait (fixed, isShowingLandscape is also true).</summary>
+    public bool isShowingWebpLandscape { get { return _showingWebpLandscape && webpPlayer_landscape != null; } }
+
+    /// <summary>True while either webp player is showing this path (it is not in the sprite cache, so redraw checks use this).</summary>
+    public bool IsShowingWebp(string path)
+    {
+        return (isShowingWebp && webpPlayer.CurrentPath == path)
+            || (isShowingWebpLandscape && webpPlayer_landscape.CurrentPath == path);
+    }
+
+    /// <summary>The path is an animated webp and this box has a player for that slot. Otherwise it is drawn as a still image.</summary>
+    public bool CanPlayAnimatedWebp(string path, bool landscape)
+    {
+        var player = landscape ? webpPlayer_landscape : webpPlayer;
+        return player != null && (!landscape || picture_landscape_group != null) && PortraitImageInfo.IsAnimatedWebp(path);
+    }
+
+    /// <summary>
+    /// Plays an animated webp in the portrait or landscape webp slot. The previous portrait stays visible until
+    /// the first frame is ready (the player keeps its RawImage hidden until then), then every other slot is hidden.
+    /// On failure only that player is stopped and deactivated, nothing else is touched and IsShowingWebp stays false,
+    /// so the caller can fall back to a still draw. Portrait offsets are not applied here (call UpdateAnchor after).
+    /// </summary>
+    public IEnumerator DrawAnimatedWebp(string path, bool landscape)
+    {
+        var player = landscape ? webpPlayer_landscape : webpPlayer;
+        player.gameObject.SetActive(true);
+        player.Play(path);
+        while (player.IsBusy) yield return null;
+
+        if (!player.IsShowing)
+        {
+            StopWebpPlayer(player);
+            if (landscape) _showingWebpLandscape = false;
+            else _showingWebp = false;
+            yield break;
+        }
+
+        picture.gameObject.SetActive(false);
+        if (spineRect != null) spineRect.gameObject.SetActive(false);
+        if (landscape)
+        {
+            StopWebpPlayer(webpPlayer);
+            _showingWebp = false;
+            _showingWebpLandscape = true;
+            if (picture_landscape != null) picture_landscape.gameObject.SetActive(false);
+            picture_landscape_group.alpha = 1;
+        }
+        else
+        {
+            StopWebpPlayer(webpPlayer_landscape);
+            _showingWebpLandscape = false;
+            if (picture_landscape != null) picture_landscape.gameObject.SetActive(true);
+            if (picture_landscape_group != null) picture_landscape_group.alpha = 0;
+            _showingWebp = true;
+        }
+    }
+
+    /// <summary>
+    /// Stops and deactivates both webp players (frees their decoders and textures) and gives the landscape slot back to
+    /// picture_landscape. Called by every non-webp draw.
+    /// </summary>
+    public void HideWebp()
+    {
+        _showingWebp = false;
+        _showingWebpLandscape = false;
+        StopWebpPlayer(webpPlayer);
+        StopWebpPlayer(webpPlayer_landscape);
+        if (picture_landscape != null) picture_landscape.gameObject.SetActive(true);
+    }
+
+    protected static void StopWebpPlayer(scr_WebpPlayer player)
+    {
+        if (player == null) return;
+        player.Stop();
+        player.gameObject.SetActive(false);
     }
 
     private void CheckCharaChange(PortraitManager newPortrait, I_hasPortrait handler = null)
@@ -332,6 +473,7 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             Debug.Log("updateImage null portrait disabling");
             picture.gameObject.SetActive(false);
             if(spineRect != null) spineRect.gameObject.SetActive(false);
+            HideWebp();
             return;
         }
 

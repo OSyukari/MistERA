@@ -151,10 +151,19 @@ public class AssetsLoader
             else
             {
                 // Use NativeWebP if available
-                var newTex = Texture2DExt.CreateTexture2DFromWebP(bytes, true, false, out var Error);
-                if (Error == Error.Success)
+                // it throws (instead of returning an error) on undecodable input such as animated webp
+                Texture2D newTex = null;
+                Error webpError = Error.InvalidHeader;
+                try { newTex = Texture2DExt.CreateTexture2DFromWebP(bytes, true, false, out webpError); }
+                catch (Exception e) { Debug.Log($"AssetsLoader still webp decode failed on [{fullPath}]: {e.Message}"); }
+                if (webpError == Error.Success)
                 {
                     tex = newTex;
+                }
+                else if (TryDecodeFirstAnimatedWebpFrame(bytes, out var firstFrame))
+                {
+                    // animated webp drawn as a still (WebPDecode rejects animations)
+                    tex = firstFrame;
                 }
                 else
                 {
@@ -165,6 +174,35 @@ public class AssetsLoader
             }
 
             onComplete?.Invoke(tex);
+        }
+    }
+
+    /// <summary>First frame of an animated webp as a bottom-up RGBA32 texture (no longer readable). False if not decodable.</summary>
+    private static bool TryDecodeFirstAnimatedWebpFrame(byte[] bytes, out Texture2D tex)
+    {
+        tex = null;
+        try
+        {
+            using (var session = new MistEra.Webp.WebpAnimSession(bytes))
+            {
+                if (!session.DecodeNext(out var frame)) return false;
+
+                // libwebp rows are top-down, Unity textures bottom-up
+                int stride = session.Width * 4;
+                var flipped = new byte[session.ByteSize];
+                for (int y = 0; y < session.Height; y++)
+                    System.Runtime.InteropServices.Marshal.Copy(IntPtr.Add(frame.Pixels, y * stride), flipped, (session.Height - 1 - y) * stride, stride);
+
+                tex = new Texture2D(session.Width, session.Height, TextureFormat.RGBA32, false);
+                tex.LoadRawTextureData(flipped);
+                tex.Apply(false, true);
+                return true;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"AssetsLoader animated webp first frame decode failed: {e.Message}");
+            return false;
         }
     }
 

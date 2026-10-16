@@ -312,7 +312,7 @@ public static class LLMProviderUtils
             }
             catch
             {
-                UnityEngine.Debug.LogError($"error failed to deserialize MessageJSON object from [{content}]");
+                UnityEngine.Debug.LogWarning($"error failed to deserialize MessageJSON object from [{content}]");
                 json = new MessageJSON();
                 json.content_string = content ?? "null";
                 return json;

@@ -3,6 +3,7 @@
         "list":[
         {
             "id":"clothing_outer_head_helmet",
+            "promptTags":["armor","helmet","covered face"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -16,6 +17,7 @@
             ]
         },{
             "id":"clothing_outer_breastplate",
+            "promptTags":["armor","breastplate","chest armor"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -29,6 +31,7 @@
             ]
         },{
             "id":"clothing_outer_waistplate",
+            "promptTags":["armor","waistplate","waist armor"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -41,6 +44,7 @@
             ]
         },{
             "id":"clothing_outer_gauntlet",
+            "promptTags":["armor","gauntlets","covered hands","covered arms"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -54,6 +58,7 @@
             ]
         },{
             "id":"clothing_outer_boots",
+            "promptTags":["armor","greaves","armored boots","covered legs"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -68,26 +73,28 @@
         },
 {
     "id":"clothing_outer_suit",
+    "promptTags":["suit","formal wear"],
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
             "comp_Equippable": {
                 "equipSlot":["Torso"],
                 "equipLayer":"Outer",
-                "coverSlot":["Arm","Arm"]
+                "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
             }
         }
     ]
 },
 {
     "id":"clothing_outer_longcoat",
+    "promptTags":["long coat","coat","outerwear"],
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
             "comp_Equippable": {
                 "equipSlot":["Torso"],
                 "equipLayer":"Outer",
-                "coverSlot":["Neck","Arm","Arm"]
+                "coverSlot":["Neck","Shoulder","Shoulder","Arm","Arm"]
             }
         },
         {
@@ -105,13 +112,14 @@
 },
 {
     "id":"clothing_inner_longdress",
+    "promptTags":["long dress","gown"],
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
             "comp_Equippable": {
                 "equipSlot":["Torso"],
                 "equipLayer":"Inner",
-                "coverSlot":["Arm","Arm","Lower","Leg","Leg"]
+                "coverSlot":["Shoulder","Shoulder","Arm","Arm","Lower","Thigh","Thigh","Leg","Leg"]
             }
         },
         {
@@ -129,6 +137,7 @@
 },
         {
             "id":"clothing_outer_hat",
+            "promptTags":["hat"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -151,6 +160,7 @@
         },
         {
             "id":"clothing_outer_waistAccessory",
+            "promptTags":["waist ornament"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -164,6 +174,7 @@
         },
         {
             "id":"clothing_outer_wristcuff_single",
+            "promptTags":["handcuff","wrist cuffs"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -177,6 +188,7 @@
         },
         {
             "id":"clothing_skin_bracelet_double",
+            "promptTags":["bracelet","pair of bracelets"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -191,6 +203,7 @@
         },
         {
             "id":"clothing_outer_blanket_lower",
+            "promptTags":["blanket","covered legs"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -198,20 +211,21 @@
                         "equipSlot":["Lower"],
                         "equipLayer":"Outer",
                         "allowHalfDressed":true,
-                        "coverSlot":["Leg","Leg"]
+                        "coverSlot":["Thigh","Thigh","Leg","Leg"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_inner_shirt",
+            "promptTags":["shirt"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Arm","Arm"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
                     }
                 },
         {
@@ -228,13 +242,14 @@
         },
         {
             "id":"clothing_inner_pants",
+            "promptTags":["pants"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Leg","Leg"]
+                        "coverSlot":["Thigh","Thigh","Leg","Leg"]
                     }
                 },
         {
@@ -252,13 +267,14 @@
         {
             "_comment":"prison garb top - membertype_prisoner's wardrobe outfit (Data/MemberDefs/memberTypes.json), worn as a virtual outfit piece",
             "id":"clothing_inner_prison_top",
+            "promptTags":["prison outfit","prison uniform"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Arm","Arm"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
                     }
                 }
             ]
@@ -266,19 +282,21 @@
         {
             "_comment":"prison garb pants - membertype_prisoner's wardrobe outfit (Data/MemberDefs/memberTypes.json), worn as a virtual outfit piece",
             "id":"clothing_inner_prison_pants",
+            "promptTags":["prison outfit","prison uniform"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Leg","Leg"]
+                        "coverSlot":["Thigh","Thigh","Leg","Leg"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_inner_skirt",
+            "promptTags":["skirt"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -292,6 +310,7 @@
         },
         {
             "id":"clothing_inner_hairpin",
+            "promptTags":["hairpin","hair ornament"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -305,6 +324,7 @@
         },
         {
             "id":"clothing_inner_glove",
+            "promptTags":["gloves"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -328,6 +348,7 @@
         },
         {
             "id":"clothing_inner_glove_lace",
+            "promptTags":["lace-trimmed gloves"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -342,6 +363,7 @@
         },
 {
     "id":"clothing_inner_shoes",
+    "promptTags":["shoes"],
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
@@ -367,6 +389,7 @@
 },
 {
     "id":"clothing_inner_boots",
+    "promptTags":["boots"],
     "itemComps_Template":[
         {
             "compType":"ItemComponent_Equippable",
@@ -391,6 +414,7 @@
 },
         {
             "id":"clothing_inner_hair_ribbon",
+            "promptTags":["hair ribbon","hair bow"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -404,6 +428,7 @@
         },
         {
             "id":"clothing_skin_hair_hairpin",
+            "promptTags":["hairpin","hair ornament"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -417,6 +442,7 @@
         },
         {
             "id":"clothing_inner_choker",
+            "promptTags":["choker"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -430,6 +456,7 @@
         },
         {
             "id":"clothing_inner_necktie",
+            "promptTags":["necktie"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -443,6 +470,7 @@
         },
         {
             "id":"clothing_skin_earring",
+            "promptTags":["earrings"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -456,6 +484,7 @@
         },
         {
             "id":"clothing_skin_contactlens",
+            "promptTags":[],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -470,6 +499,7 @@
 
         {
             "id":"clothing_skin_ring",
+            "promptTags":["ring"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -484,6 +514,7 @@
 
         {
             "id":"clothing_cape",
+            "promptTags":["cape"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -498,6 +529,7 @@
 
         {
             "id":"clothing_skin_socks",
+            "promptTags":["socks"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -512,6 +544,7 @@
         },
         {
             "id":"clothing_skin_necklace",
+            "promptTags":["necklace"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",

@@ -38,8 +38,25 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
     readonly Dictionary<int, ToolCallAccumulator> toolCallsByIndex = new Dictionary<int, ToolCallAccumulator>();
     bool sawToolCallDelta = false;
 
-    // Claude-envelope content_block_start bookkeeping: which index is "thinking" vs "text".
-    readonly Dictionary<int, string> claudeBlockTypes = new Dictionary<int, string>();
+    // Claude-envelope content blocks, one per stream "index" (in first-seen order). Each block is
+    // rebuilt in full - thinking text + signature, redacted_thinking data, tool_use id/name + streamed
+    // input JSON - since the agent loop echoes them back verbatim and Claude rejects a continuation
+    // whose thinking blocks lack their signature, and dispatches tool calls from the tool_use blocks.
+    class ClaudeBlockAccumulator
+    {
+        public string type;
+        public readonly StringBuilder text = new StringBuilder();
+        public readonly StringBuilder thinking = new StringBuilder();
+        public string signature;
+        public string data;
+        public string id;
+        public string name;
+        public JToken initialInput;
+        public readonly StringBuilder partialJson = new StringBuilder();
+    }
+    readonly List<ClaudeBlockAccumulator> claudeBlocks = new List<ClaudeBlockAccumulator>();
+    readonly Dictionary<int, ClaudeBlockAccumulator> claudeBlocksByIndex = new Dictionary<int, ClaudeBlockAccumulator>();
+    string claudeStopReason = null;
 
     // Token usage as reported inside the stream: OpenAI-envelope endpoints put it on the last chunk,
     // Claude splits it across message_start (input/cache) and message_delta (output) - merged here.
@@ -186,13 +203,20 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
         {
             case "content_block_start":
                 {
-                    int index = obj["index"]?.Value<int>() ?? 0;
-                    var blockType = obj["content_block"]?["type"]?.Value<string>();
-                    if (blockType != null) claudeBlockTypes[index] = blockType;
+                    var block = GetClaudeBlock(obj);
+                    var start = obj["content_block"];
+                    block.type = start?["type"]?.Value<string>();
+                    block.id = start?["id"]?.Value<string>();
+                    block.name = start?["name"]?.Value<string>();
+                    block.data = start?["data"]?.Value<string>();
+                    block.initialInput = start?["input"];
+                    var initialText = start?["text"]?.Value<string>();
+                    if (!string.IsNullOrEmpty(initialText)) block.text.Append(initialText);
                     break;
                 }
             case "content_block_delta":
                 {
+                    var block = GetClaudeBlock(obj);
                     var delta = obj["delta"];
                     var deltaType = delta?["type"]?.Value<string>();
                     if (deltaType == "thinking_delta")
@@ -200,14 +224,24 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
                         var text = delta["thinking"]?.Value<string>();
                         if (!string.IsNullOrEmpty(text))
                         {
+                            block.thinking.Append(text);
                             reasoning.Append(text);
                             onReasoningDelta?.Invoke(reasoning.ToString());
                         }
                     }
+                    else if (deltaType == "signature_delta")
+                    {
+                        block.signature = (block.signature ?? "") + delta["signature"]?.Value<string>();
+                    }
                     else if (deltaType == "text_delta")
                     {
                         var text = delta["text"]?.Value<string>();
-                        if (!string.IsNullOrEmpty(text)) content.Append(text);
+                        if (!string.IsNullOrEmpty(text)) block.text.Append(text);
+                    }
+                    else if (deltaType == "input_json_delta")
+                    {
+                        var partial = delta["partial_json"]?.Value<string>();
+                        if (!string.IsNullOrEmpty(partial)) block.partialJson.Append(partial);
                     }
                     break;
                 }
@@ -216,10 +250,42 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
                 break;
             case "message_delta":
                 MergeUsage(obj["usage"]);
+                var stopReason = obj["delta"]?["stop_reason"]?.Value<string>();
+                if (!string.IsNullOrEmpty(stopReason)) claudeStopReason = stopReason;
                 break;
             // content_block_stop / message_stop: no bookkeeping needed beyond what
             // content_block_start/delta already captured.
         }
+    }
+
+    ClaudeBlockAccumulator GetClaudeBlock(JObject evt)
+    {
+        int index = evt["index"]?.Value<int>() ?? 0;
+        if (!claudeBlocksByIndex.TryGetValue(index, out var block))
+        {
+            block = new ClaudeBlockAccumulator();
+            claudeBlocksByIndex[index] = block;
+            claudeBlocks.Add(block);
+        }
+        return block;
+    }
+
+    /// <summary>
+    /// A tool_use block's input arrives as input_json_delta fragments of one JSON object; a call with
+    /// no arguments may send none at all, leaving content_block_start's (empty) input as the value.
+    /// </summary>
+    static JToken BuildToolInput(ClaudeBlockAccumulator block)
+    {
+        if (block.partialJson.Length > 0)
+        {
+            try { return JToken.Parse(block.partialJson.ToString()); }
+            catch
+            {
+                UnityEngine.Debug.LogError($"LLM stream: failed to parse tool_use input for '{block.name}' from [{block.partialJson}]");
+                return new JObject();
+            }
+        }
+        return block.initialInput ?? new JObject();
     }
 
     protected override void CompleteContent()
@@ -244,8 +310,29 @@ public class LLMStreamDownloadHandler : DownloadHandlerScript
         if (usage != null) response.usage = usage.ToObject<LLMResponse.usages>();
         if (profile != null && profile.responseEnvelope == "claude")
         {
-            if (reasoning.Length > 0) response.content.Add(new LLMResponse.choice_claude { type = "thinking", thinking = reasoning.ToString() });
-            response.content.Add(new LLMResponse.choice_claude { type = "text", text = content.ToString() });
+            response.stop_reason = claudeStopReason;
+            foreach (var block in claudeBlocks)
+            {
+                switch (block.type)
+                {
+                    case "thinking":
+                        response.content.Add(new LLMResponse.choice_claude { type = "thinking", thinking = block.thinking.ToString(), signature = block.signature });
+                        break;
+                    case "redacted_thinking":
+                        response.content.Add(new LLMResponse.choice_claude { type = "redacted_thinking", data = block.data });
+                        break;
+                    case "tool_use":
+                        response.content.Add(new LLMResponse.choice_claude { type = "tool_use", id = block.id, name = block.name, input = BuildToolInput(block) });
+                        break;
+                    case "text":
+                        response.content.Add(new LLMResponse.choice_claude { type = "text", text = block.text.ToString() });
+                        break;
+                    // other block types (server tools etc.) are never requested by this client
+                }
+            }
+            // Keep the old always-has-a-text-block shape for non-tool replies (LLMResponse.JSON reads it).
+            if (!response.content.Exists(c => c.type == "text" || c.type == "tool_use"))
+                response.content.Add(new LLMResponse.choice_claude { type = "text", text = "" });
         }
         else
         {

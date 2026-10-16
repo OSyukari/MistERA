@@ -1,0 +1,53 @@
+{
+    "_doc": "口上loose entry文件（Character_Personalities.looselist），供事件 erav_ntr_punishment_select（Data/FactionDefs/JP_World/ErAV/Events/ErAV_NTR_Punishment.json）通过 GetKojoEntry 执行器检索。\n\n== 该文件特有语境 ==\n场景：ErAV NTR惩罚链。玩家作为监督，在月末欠款违约后被迫把自己阵营的一名女性成员交给桐生组「抵账」（期限约一周的担保劳务）。ErAV_NTRPunishment_farewell：被选中者（victim，女性）离开前的道别口上，听者是玩家。说话者处境：已做好心理准备、压抑着不安，尽量不把恐惧表现出来；对玩家没有怨恨（或至少不表现出来），可能夹杂对家里/工作的交代。ErAV_NTRPunishment_return：担保劳务结束、被送回时对玩家说的第一句话（事件 erav_ntr_mia_release）。禁止旁白与动作描写，台词1~2句。TODO: 奏/歌音等特定角色的专属条目后续按 personality ID 追加；归还口上按客户类型（Part 3）区分。",
+    "Character_Personalities": {
+        "looselist": [
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "ErAV_NTRPunishment_farewell",
+                    "_comment": "触发时机：事件erav_ntr_punishment_select中，玩家选定victim之后、离开叙述（departure）之前。场景：被选中者对玩家做最后的道别。内容要求：克制、简短，可以有对日常事务的交代（家务、工作安排）或对玩家的叮嘱，不带哭腔、不控诉，可以暗示「会平安回来」。说话者：女性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused":false, 
+                            "displayType":"AlwaysDisplay",
+                            "requirement":{
+                                "requireSelfAction":false,
+                                "requireTargetAction":false
+                            },
+                            "responses": [
+                                "\"……我走了。家里的事，这段时间就拜托你了。\"",
+                                "\"别露出那种表情。就几天而已……我会好好回来的。\"",
+                                "\"晚饭的食材我提前备好了，在冰箱第二层。……那个，别的就没什么了。\"",
+                                "\"不用担心我。比起这个，把钱的事想办法解决掉……我很快就回来。\""
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "ID": "personality_default",
+                "Entry": {
+                    "ID": "ErAV_NTRPunishment_return",
+                    "_comment": "触发时机：事件erav_ntr_mia_release中，担保劳务期满、被桐生组送回时（玩家打开银行事件后）。场景：被送回者见到玩家后的第一句话。内容要求：疲惫、勉强维持平常的语气，不细说这几天发生了什么（回避、含糊带过），可以有「我回来了」式的确认或对家里的关心；不控诉玩家。说话者：女性NPC，听者：玩家。",
+                    "variants": [
+                        {
+                            "hideWhenNotFocused":false,
+                            "displayType":"AlwaysDisplay",
+                            "requirement":{
+                                "requireSelfAction":false,
+                                "requireTargetAction":false
+                            },
+                            "responses": [
+                                "\"……我回来了。嗯，没事的，只是有点累。\"",
+                                "\"别问了……拜托。先让我洗个澡，好吗？\"",
+                                "\"家里……还好吗？我不在的这几天，你有好好吃饭吧。\"",
+                                "\"约好的日子，总算是熬过去了。……这个月的钱，没问题了吧？\""
+                            ]
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

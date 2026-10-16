@@ -1092,22 +1092,6 @@ public class Job : IDisposable, I_Disposable
         this.packages_placeholder.Add(ap);
     }
 
-    /// <summary>
-    /// Evicts one specific package from current tracking: disable + unregister + untrack, the exact
-    /// teardown AddPackage's conflict-eviction path performs (Job.AddPackage) - never just Remove, or
-    /// the package lingers in the campaign manager's room registry with a frozen positive Duration.
-    /// Used by the LLM-plan re-pin (scr_System_CampaignManager.PinActorForLLMPlan) to retire a stale
-    /// wait-package before issuing its replacement on a different job. Returns false if the package
-    /// wasn't currently tracked by this job.
-    /// </summary>
-    public bool RemovePackage(ActionPackage ap)
-    {
-        if (ap == null || !packages_current.Remove(ap)) return false;
-        ap.DisablePackage();
-        scr_System_CampaignManager.current.Unregister(ap);
-        return true;
-    }
-
     public virtual void AddPackage(List<ActionPackage> packages, bool isPlayerCOM = false)
     {
         ActionPackage p1, p2;
@@ -1159,10 +1143,15 @@ public class Job : IDisposable, I_Disposable
     }
 
     //inject without conflict detection
-    public void InjectPackage(ActionPackage ap)
+    //skipExistingActors: don't re-AddActor actors already in the job (Job_Sex.AddActor would reset its ongoing packages)
+    public void InjectPackage(ActionPackage ap, bool skipExistingActors = false)
     {
         this.packages_previous.Add(ap);
-        foreach (int actorref in ap.actorRefs) AddActor(actorref);
+        foreach (int actorref in ap.actorRefs)
+        {
+            if (skipExistingActors && actorRefID.Contains(actorref)) continue;
+            AddActor(actorref);
+        }
          scr_System_CampaignManager.current.Register(ap, false);
         Debug.Log($"Injectpackage {ap.DisplayName}, repeat? {ap.PackageRepeat}");
     }

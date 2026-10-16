@@ -3,6 +3,7 @@
         "list":[
         {
             "id":"weapon_simple_cutlass",
+            "promptTags":["cutlass","sword","holding weapon","holding sword"],
             "Tags":["blade","thrust","melee","simple"],
             "itemComps_Template":[
                 {
@@ -22,6 +23,7 @@
         },
         {
             "id":"weapon_simple_cleaver",
+            "promptTags":["cleaver","holding weapon"],
             "Tags":["blade","melee","simple"],
             "itemComps_Template":[
                 {
@@ -41,6 +43,7 @@
         },
         {
             "id":"weapon_simple_scythe",
+            "promptTags":["scythe","holding weapon","holding scythe"],
             "Tags":["blade","melee","simple"],
             "itemComps_Template":[
                 {
@@ -60,6 +63,7 @@
         },
         {
             "id":"weapon_simple_club",
+            "promptTags":["club","holding weapon"],
             "Tags":["blunt","melee","simple"],
             "itemComps_Template":[
                 {

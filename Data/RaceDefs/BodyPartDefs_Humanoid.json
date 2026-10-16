@@ -21,22 +21,25 @@
                 "childID":["lower_humanoid_base", "arm_humanoid_base_L", "arm_humanoid_base_R"],
                 "internalID":["stomach_humanoid_base","breasts_humanoid_base"],
                 "tags":["torso"],
+                "tagCoverSlots":{"torso":["Torso"]},
                 "sortOrder":1
             },
             {
                 "id": "arm_humanoid_base_L",
                 "displayName":"%%bodyPart_base_arm%%",
                 "tooltip":"An {0}'s arm.",
-                "AvailableSlots":["Hand","Arm"],
+                "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
+                "tagCoverSlots":{"arm":["Arm","Hand"]},
                 "sortOrder":2
             },
             {
                 "id": "arm_humanoid_base_R",
                 "displayName":"%%bodyPart_base_arm%%",
                 "tooltip":"An {0}'s arm.",
-                "AvailableSlots":["Hand","Arm"],
+                "AvailableSlots":["Shoulder","Arm","Hand"],
                 "tags":["arm"],
+                "tagCoverSlots":{"arm":["Arm","Hand"]},
                 "sortOrder":3
             },
             {
@@ -53,16 +56,18 @@
                 "id": "leg_humanoid_base_L",
                 "displayName":"%%bodyPart_base_leg%%",
                 "tooltip":"An {0}'s leg.",
-                "AvailableSlots":["Leg","Feet"],
+                "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["knee","leg","feet"],
+                "tagCoverSlots":{"knee":["Leg"],"leg":["Thigh","Leg"],"feet":["Feet"]},
                 "sortOrder":5
             },
             {
                 "id": "leg_humanoid_base_R",
                 "displayName":"%%bodyPart_base_leg%%",
                 "tooltip":"An {0}'s leg.",
-                "AvailableSlots":["Leg","Feet"],
+                "AvailableSlots":["Thigh","Leg","Feet"],
                 "tags":["knee","leg","feet"],
+                "tagCoverSlots":{"knee":["Leg"],"leg":["Thigh","Leg"],"feet":["Feet"]},
                 "sortOrder":6
             }
         ],
@@ -76,6 +81,7 @@
                 "AvailableSlots":["Mouth"],
                 "equipLayers":["Skin"],
                 "tags":["mouth","internal"],
+                "coverSlots":["Face"],
                 "tag_directionIn":"ext",
                 "tag_directionOut":"stomach",
                 "sensitivityClassString":"M",
@@ -110,6 +116,7 @@
                 "displayName":"%%bodyPart_internal_stomach%%",
                 "tooltip":"An {0}'s stomach.",
                 "tags":["stomach","internal"],
+                "coverSlots":["Torso"],
                 "tag_directionIn":"mouth",
                 "tag_directionOut":"guts",
 
@@ -140,6 +147,7 @@
                 "AvailableSlots":["Nipples"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","breast","nipple"],
+                "coverSlots":["Torso"],
                 "sensitivityClassString":"B",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_B",
                 "sortOrder":2,

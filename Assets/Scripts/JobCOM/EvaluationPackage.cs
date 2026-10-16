@@ -817,7 +817,9 @@ public partial class EvaluationPackage : I_ResultStorage
             UtilityEX.StringReplace(this, ref s);
             s = targetCOM.Replace(s);
             return s; } }
-    [JsonIgnore] public string Description_Ongoing { get { 
+    [JsonIgnore] public string Description_Ongoing { get {
+            // an AP that failed Validate() (e.g. agent-mode aborted-at-completion, recorded via ActionPackageRecords) has no variant
+            if (VariantID < 0) return "";
             string s = targetCOM.variants[VariantID].GetDescription_Ongoing(targetCOM, this);
             if (s.Contains("$DEFAULT$")) s = s.Replace("$DEFAULT$", Package.job.ep_ongoing);
             UtilityEX.StringReplace(this, ref s);
@@ -865,11 +867,12 @@ public partial class EvaluationPackage : I_ResultStorage
     /// or the caller passed an explicit forceSuccess override e.g. via ForceRespond()/强行要求 or an
     /// LLM-injected epjson.command_result),
     /// or null when the normal dice-roll text should be shown instead.
+    /// judged: the forceSuccess came from an LLMVerdict-mode ruling - labeled as judged, not forced.
     /// </summary>
-    private string DiceRollAutoText(int rate, Memory_Response forcedResponse, Memory_Response forceSuccess = Memory_Response.None)
+    private string DiceRollAutoText(int rate, Memory_Response forcedResponse, Memory_Response forceSuccess = Memory_Response.None, bool judged = false)
     {
-        if (forceSuccess >= Memory_Response.Accept) return diceroll_forcedsuccess;
-        if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) return diceroll_forcedfailure;
+        if (forceSuccess >= Memory_Response.Accept) return judged ? LocalizeDictionary.QueryThenParse("ui_diceroll_judgedsuccess") : diceroll_forcedsuccess;
+        if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) return judged ? LocalizeDictionary.QueryThenParse("ui_diceroll_judgedfailure") : diceroll_forcedfailure;
         if (forcedResponse >= Memory_Response.Accept || rate >= 100) return diceroll_autosuccess;
         if ((forcedResponse > Memory_Response.None && forcedResponse < Memory_Response.Accept) || rate <= 0) return diceroll_autofailure;
         return null;
@@ -884,33 +887,42 @@ public partial class EvaluationPackage : I_ResultStorage
         bool returnVal = true;
         int diceroll = Dice(1, 21, 0);
 
-        int reverseRate = 20 - (int)(requestRate / 5);
-
         if (this.Doer.isTemporaryActor) forceSuccess = Memory_Response.Accept;
 
         // A Doer acting on their own (no Master, or Master == Doer) at rate 100 ignores an injected Refuse. A
         // Master-ordered Doer at rate 100 (restrained/cannotRefuse/...) must still honor it, so it falls
-        // through to the epjson branch below.
+        // through to the epjson branch below - except in the LLMOutcomeMode hard-gate modes, where 100 wins.
         bool masterOrdered = p.Master != null && p.Master != Doer;
         bool injectedRefuse = epjson != null && epjson.command_result != Memory_Response.None && epjson.command_result < Memory_Response.Accept;
-        bool injectOverridesMax = masterOrdered && injectedRefuse;
+        bool hardGates = LLMOutcomeRules.RespectsHardGates(epjson);
+        bool injectOverridesMax = masterOrdered && injectedRefuse && !hardGates;
 
-        if (requestRate <= 0) returnVal = false;
-        else if (requestRate >= 100 && !injectOverridesMax) returnVal = true;
+        // RoleplayModifier mode: the roleplay acceptance bonus, never moving a 0/100 gate. A self-acting
+        // doer's automatic 100 is their own will, not a game gate.
+        int rate = LLMOutcomeRules.ApplyACModifier(requestRate, epjson, masterOrdered || requestRate <= 0);
+        int reverseRate = 20 - (int)(rate / 5);
+
+        if (rate <= 0) returnVal = false;
+        else if (rate >= 100 && !injectOverridesMax) returnVal = true;
         else
         {
-            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = requestRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 20 : 1;
+            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = rate >= scr_System_CampaignManager.current.DeterministicThreshold ? 20 : 1;
 
             if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = epjson.command_result >= Memory_Response.Accept;
             else if (forceSuccess >= Memory_Response.Accept) returnVal = true;
             else if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) returnVal = false;
             else if (forcedResponse_doer != Memory_Response.None) returnVal = forcedResponse_doer >= Memory_Response.Accept;
-            else if (requestRate >= 100) returnVal = true;
-            else if (requestRate <= 0) returnVal = false;
-            else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure 
+            else if (rate >= 100) returnVal = true;
+            else if (rate <= 0) returnVal = false;
+            else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure
             else if (diceroll >= 20) returnVal = true; // rate >= 5 allow crit success
             else returnVal = diceroll >= reverseRate;
         }
+
+        // LLMVerdict: a real gate (0%, or a Master-ordered 100%) contradicting the ruling - report it back
+        if (hardGates && epjson.command_result != Memory_Response.None && (masterOrdered || rate <= 0)
+            && (rate <= 0 || rate >= 100) && returnVal != (epjson.command_result >= Memory_Response.Accept))
+            epjson.hardGateOverride = true;
 
         RollAttitude(ref attitudeRate_pos_doer, ref attitudeRate_neg_doer, ref attitude_doer, true);
 
@@ -918,13 +930,15 @@ public partial class EvaluationPackage : I_ResultStorage
         else response = Memory_Response.Refuse;
 
         List<string> mods = modifiers.GetModifiersByRefID(Doer.RefID);
+        if (rate != requestRate) mods.Add(LocalizeDictionary.QueryThenParse("ui_diceroll_roleplayMod") + epjson.ac_modifier.ToString("+0;-#"));
         // an LLM-injected result outranks forceSuccess above, but only takes effect inside the rate extremes
         // (plus the Master-ordered Refuse-at-100 case)
-        var injectedDoer = (epjson != null && requestRate > 0 && (requestRate < 100 || injectOverridesMax)) ? epjson.command_result : Memory_Response.None;
-        var autoDoer = DiceRollAutoText(requestRate, forcedResponse_doer, injectedDoer != Memory_Response.None ? injectedDoer : forceSuccess);
+        var injectedDoer = (epjson != null && rate > 0 && (rate < 100 || injectOverridesMax)) ? epjson.command_result : Memory_Response.None;
+        bool judged = injectedDoer != Memory_Response.None && epjson.outcomeMode == LLMOutcomeMode.LLMVerdict;
+        var autoDoer = DiceRollAutoText(rate, forcedResponse_doer, injectedDoer != Memory_Response.None ? injectedDoer : forceSuccess, judged);
         //if (forceSuccess != Memory_Response.None) Debug.LogError("forceSuccess");
         checkResults_doer = $"{Doer.FirstName}: D20{(mods.Count > 0 ? " + "+ String.Join(" + ", mods) : "")} = {(autoDoer ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}" )}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_doer})";
-        checkResults_doer_short = $"({Doer.FirstName}) {targetCOM.DisplayName(VariantID)}: {(autoDoer ?? $"({requestRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
+        checkResults_doer_short = $"({Doer.FirstName}) {targetCOM.DisplayName(VariantID)}: {(autoDoer ?? $"({rate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
         return returnVal;
     }
@@ -954,32 +968,43 @@ public partial class EvaluationPackage : I_ResultStorage
         }
         else
         {
-            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = responseRate >= scr_System_CampaignManager.current.DeterministicThreshold ? 20 : 1;
-            
-            int reverseRate = 20 - (int)(responseRate / 5);
+            // RoleplayModifier mode: the roleplay acceptance bonus, never moving a 0/100 gate
+            int rate = LLMOutcomeRules.ApplyACModifier(responseRate, epjson);
 
-            if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = epjson.command_result >= Memory_Response.Accept;
+            if (scr_System_CampaignManager.current.DeterministicRolls) diceroll = rate >= scr_System_CampaignManager.current.DeterministicThreshold ? 20 : 1;
+
+            int reverseRate = 20 - (int)(rate / 5);
+
+            // LLMOutcomeMode hard-gate modes: a 0/100 rate outranks the injected result (0% can mean the
+            // receiver is incapable of the action for game reasons). GameRolls keeps the legacy order.
+            bool gated = LLMOutcomeRules.RespectsHardGates(epjson) && (rate <= 0 || rate >= 100);
+
+            if (gated) returnVal = rate >= 100;
+            else if (epjson != null && epjson.command_result != Memory_Response.None) returnVal = epjson.command_result >= Memory_Response.Accept;
             else if (forceSuccess >= Memory_Response.Accept) returnVal = true;
             else if (forceSuccess > Memory_Response.None && forceSuccess < Memory_Response.Accept) returnVal = false;
             else if (forcedResponse_receiver != Memory_Response.None) returnVal = forcedResponse_receiver >= Memory_Response.Accept;
-            else if (responseRate == 0) returnVal = false;
-            else if (responseRate == 100) returnVal = true;
-            else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure 
+            else if (rate == 0) returnVal = false;
+            else if (rate == 100) returnVal = true;
+            else if (diceroll <= 1) returnVal = false; // rate <= 95 allow crit failure
             else if (diceroll >= 20) returnVal = true; // rate >= 5 allow crit success
             else returnVal = diceroll >= reverseRate;
+
+            if (gated && epjson.command_result != Memory_Response.None && returnVal != (epjson.command_result >= Memory_Response.Accept))
+                epjson.hardGateOverride = true;
 
             if (returnVal) response = Memory_Response.Accept;
             else response = Memory_Response.Refuse;
 
             RollAttitude(ref attitudeRate_pos_receiver, ref attitudeRate_neg_receiver, ref attitude_receiver, false);
             List<string> mods = modifiers.GetModifiersByRefID(Receiver.RefID);
+            if (rate != responseRate) mods.Add(LocalizeDictionary.QueryThenParse("ui_diceroll_roleplayMod") + epjson.ac_modifier.ToString("+0;-#"));
 
-
-
-            var injectedReceiver = epjson != null ? epjson.command_result : Memory_Response.None;
-            var autoReceiver = DiceRollAutoText(responseRate, forcedResponse_receiver, injectedReceiver != Memory_Response.None ? injectedReceiver : forceSuccess);
+            var injectedReceiver = (epjson != null && !gated) ? epjson.command_result : Memory_Response.None;
+            bool judged = injectedReceiver != Memory_Response.None && epjson.outcomeMode == LLMOutcomeMode.LLMVerdict;
+            var autoReceiver = DiceRollAutoText(rate, forcedResponse_receiver, injectedReceiver != Memory_Response.None ? injectedReceiver : forceSuccess, judged);
             checkResults_receiver = $"{Receiver.FirstName}: D20{(mods.Count > 0 ? " + "+String.Join(" + ", mods) : "")} = {(autoReceiver ?? $"{diceroll} {(returnVal ? ">=" : "<")} {reverseRate}")}, {LocalizeDictionary.QueryThenParse($"Memory_Response_{Response}")} ({attitude_receiver})";
-            checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(autoReceiver ?? $"({responseRate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
+            checkResults_receiver_short = $"({Doer.FirstName}{(Receiver == null || Receiver == Doer ? "" : " -> " + Receiver.FirstName)}) {targetCOM.DisplayName(VariantID)}: {(autoReceiver ?? $"({rate}%) => {(returnVal ? diceroll_success : diceroll_failure)}, {(Response > Memory_Response.Refuse ? (ReceiverAttitude > Memory_Attitude.None ? ReceiverAttitude.ToString() : DoerAttitude.ToString()) : Response.ToString())}")}";
 
         }
         return returnVal;

@@ -152,6 +152,8 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
         scr_SelectableText text;
 
         SaveFileHolder s;
+        string modMissing;      // hard: save needs mods that aren't loaded (null = none)
+        string modMismatch;     // soft: extra loaded mods / version changes (null = none)
         public ButtonValidator_LoadSave(scr_Canvas_LoadSave parent, FileInfo file, scr_SelectableText text, bool isAutosave) : base(parent)
         {
             this.parent = parent;
@@ -159,6 +161,8 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
             this.text = text;
 
             s = UtilityEX.ReadSaveHolder(file);
+            modMissing = ModLoader.DescribeMissingMods(s.Mods);
+            modMismatch = ModLoader.DescribeModListMismatch(s.Mods);
             //s = JsonConvert.DeserializeObject<SaveFileHolder>(File.ReadAllText(file.FullName), UtilityEX.SerializerSettings);
             //s.FilePath = file.FullName;
             this.text.SetText(s.SaveDescription.Replace("$filename$", isAutosave? LocalizeDictionary.QueryThenParse("ui_load_autosave") : file.Name));
@@ -173,16 +177,18 @@ public class scr_Canvas_LoadSave : scr_Menu, IPointerClickHandler
             }
             else if (!scr_UpdateHandler.current.CanLoadSave(s))
             {
-                tooltip = "savefile cannot be loaded due to missing data, or version mismatch";
+                tooltip = modMissing ?? "savefile cannot be loaded due to missing data, or version mismatch";
                 return false;
             }
             else
             {
-                if (LocalizeDictionary.Instance.Index.cachedLang != s.Language)
-                {
-                    tooltip = Utility.WrapTextColor("savefile is in another language, unforseen errors might occur", scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color);
-                    
-                }
+                // loadable, but flag conflicts (language, mod list) in the tooltip
+                var conflicts = new List<string>();
+                if (LocalizeDictionary.Instance.Index.cachedLang != s.Language) conflicts.Add("savefile is in another language, unforseen errors might occur");
+                if (modMismatch != null) conflicts.Add(modMismatch);
+                tooltip = conflicts.Count > 0
+                    ? Utility.WrapTextColor(string.Join("\n", conflicts), scr_System_CentralControl.current.DisplaySetting.TextColor_conflict.Color)
+                    : "";
                 return true;
             }
         }

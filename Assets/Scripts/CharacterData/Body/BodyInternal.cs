@@ -22,6 +22,13 @@ public class BodyInternal_Base
 
     public List<BodyPartEquipSlot> AvailableSlots = new List<BodyPartEquipSlot>();
     public List<BodyEquipLayer> equipLayers = new List<BodyEquipLayer>();
+    /// <summary> the parent part's slots whose coverage decides this organ's visibility (e.g. mouth -> Face). Empty = all parent slots </summary>
+    public List<BodyPartEquipSlot> coverSlots = new List<BodyPartEquipSlot>();
+
+    /// <summary> image prompt tags added while this organ is visible (see LLMUtils.CollectActorTags) </summary>
+    public List<string> promptTags = new List<string>();
+    /// <summary> image prompt tags added regardless of visibility </summary>
+    public List<string> promptTags_always = new List<string>();
 
     public List<string> childID = new List<string>();
 

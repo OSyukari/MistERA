@@ -16,6 +16,15 @@ public class LLMClaudeContentBlock
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string text = null;
 
+    // type=="thinking" carries `thinking`/`signature`, type=="redacted_thinking" carries `data` -
+    // echoed back unchanged from the assistant's own prior turn.
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string thinking = null;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string signature = null;
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public string data = null;
+
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public string id = null;
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

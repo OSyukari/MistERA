@@ -3,6 +3,7 @@
         "list":[
         {
             "id":"clothing_inner_killerheels",
+            "promptTags":["high heels"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -18,6 +19,7 @@
 
         {
             "id":"clothing_skin_bra",
+            "promptTags":["bra"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -30,6 +32,7 @@
         },
         {
             "id":"clothing_skin_panty",
+            "promptTags":["panties"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -43,6 +46,7 @@
 
         {
             "id":"clothing_skin_panty_opencrotch",
+            "promptTags":["panties","crotchless panties","exposed crotch"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -57,6 +61,7 @@
         },
         {
             "id":"clothing_skin_stocking",
+            "promptTags":["stockings","thighhighs"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -64,6 +69,20 @@
                         "equipSlot":["Feet","Leg"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough",
+                        "coverSlot":["Feet","Leg","Thigh","Thigh"]
+                    }
+                }
+            ]
+        },
+        {
+            "id":"clothing_skin_thermaltights_opencrotch",
+            "promptTags":["thermal tights with crotch cutout"],
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Feet","Leg","Thigh","Thigh"],
+                        "equipLayer":"Skin",
                         "coverSlot":["Feet","Leg"]
                     }
                 }
@@ -73,6 +92,7 @@
 
         {
             "id":"clothing_skin_nipple_piercing",
+            "promptTags":["nipple piercing","piercing"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -86,6 +106,7 @@
         },
         {
             "id":"clothing_skin_clit_piercing",
+            "promptTags":["clitoral piercing","piercing"],
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
@@ -113,7 +134,8 @@
         "clothing_skin_stocking_pantyhose":"连裤袜",
         "clothing_skin_bra":"胸罩",
         "clothing_skin_panty":"内裤",
-        "clothing_skin_panty_opencrotch":"开裆裤"
+        "clothing_skin_panty_opencrotch":"开裆裤",
+        "clothing_skin_tights_opencrotch":"开裆保暖连裤袜"
             },
             "en-us":
             {

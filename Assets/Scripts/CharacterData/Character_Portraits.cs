@@ -416,10 +416,10 @@ public class PortraitManager
             scr_System_CampaignManager.current.CurrentTargetEXPortrait = box.currentHandler;
             box.Draw(handler.DrawPortrait(box, path));
         }
-        else if (path != "" && !(handler is CharaPortrait_Spine) && !scr_System_CentralControl.current.GetSprite(path, out _))
+        else if (path != "" && !(handler is CharaPortrait_Spine) && !box.IsShowingWebp(path) && !scr_System_CentralControl.current.GetSprite(path, out _))
         {
             // same portrait as before, but its cached sprite lapsed while still on screen - reload it
-            // (spine handlers don't route their main portrait through the sprite cache, so they're excluded)
+            // (spine handlers and playing animated webp don't route their main portrait through the sprite cache, so they're excluded)
             box.Draw(handler.DrawPortrait(box, path));
         }
     }
@@ -457,10 +457,10 @@ public class PortraitManager
             //box.currentPortrait = _cache_CombatPortrait_path;
             box.Draw( _cache_CombatPortrait.DrawPortrait(box, _cache_CombatPortrait_path));
         }
-        else if (_cache_CombatPortrait_path != "" && !(_cache_CombatPortrait is CharaPortrait_Spine) && !scr_System_CentralControl.current.GetSprite(_cache_CombatPortrait_path, out _))
+        else if (_cache_CombatPortrait_path != "" && !(_cache_CombatPortrait is CharaPortrait_Spine) && !box.IsShowingWebp(_cache_CombatPortrait_path) && !scr_System_CentralControl.current.GetSprite(_cache_CombatPortrait_path, out _))
         {
             // same portrait as before, but its cached sprite lapsed while still on screen - reload it
-            // (spine handlers don't route their main portrait through the sprite cache, so they're excluded)
+            // (spine handlers and playing animated webp don't route their main portrait through the sprite cache, so they're excluded)
             box.Draw(_cache_CombatPortrait.DrawPortrait(box, _cache_CombatPortrait_path));
         }
     }
@@ -535,10 +535,10 @@ public class PortraitManager
                 _cache_ActivityPortrait_path = ppath;
                 box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
             }
-            else if (_cache_ActivityPortrait_path != "" && !(_cache_ActivityPortrait is CharaPortrait_Spine) && !scr_System_CentralControl.current.GetSprite(_cache_ActivityPortrait_path, out _))
+            else if (_cache_ActivityPortrait_path != "" && !(_cache_ActivityPortrait is CharaPortrait_Spine) && !box.IsShowingWebp(_cache_ActivityPortrait_path) && !scr_System_CentralControl.current.GetSprite(_cache_ActivityPortrait_path, out _))
             {
                 // same portrait as before, but its cached sprite lapsed while still on screen - reload it
-                // (spine handlers don't route their main portrait through the sprite cache, so they're excluded)
+                // (spine handlers and playing animated webp don't route their main portrait through the sprite cache, so they're excluded)
                 box.Draw(_cache_ActivityPortrait.DrawPortrait(box, _cache_ActivityPortrait_path, lowPriority));
             }
             else
@@ -664,7 +664,8 @@ public class PortraitManager
 
         /// <summary>
         /// Image handlers only (Image / LandscapeImage): PortraitVariantData resolved into image paths.
-        /// Entries with an image extension are kept as file paths, anything else is searched as a folder.
+        /// Each entry is resolved in order: an existing image address (kept as is), else a folder (every image under it),
+        /// else a regex fully matched against image addresses. Image paths that do not exist are dropped.
         /// Variants are shared by reference between copied handlers: the result depends only on this variant's data,
         /// so it is identical for every sharer, and a rebuild swaps in a new list instead of editing the old one in place.
         /// Read only - do not modify the returned list.
@@ -679,17 +680,32 @@ public class PortraitManager
         }
         [JsonIgnore] protected List<string> _imagePaths = null;
 
+        static readonly List<string> _emptyPaths = new List<string>();
+
         public void RebuildImagePaths()
         {
+            if (PortraitVariantData == null || PortraitVariantData.Count == 0)
+            {   // no entries: share one empty list, no per-variant allocation
+                _imagePaths = _emptyPaths;
+                _portraitOnlyImagePaths = _emptyPaths;
+                return;
+            }
             var result = new List<string>();
             if (PortraitVariantData != null)
             {
                 foreach (var entry in PortraitVariantData)
                 {
                     if (string.IsNullOrEmpty(entry)) continue;
-                    var extension = System.IO.Path.GetExtension(entry).ToLower();
-                    if (extension == ".png" || extension == ".jpg" || extension == ".jpeg" || extension == ".webp") result.Add(entry);
-                    else result.AddRange(scr_System_Serializer.current.GetAllImageFilesInFolder(entry.TrimEnd('/')));
+                    var serializer = scr_System_Serializer.current;
+                    // 1. exact image address - added only if the file exists
+                    if (serializer.ImageFileExists(entry)) { result.Add(entry); continue; }
+                    // 2. folder - every image under it
+                    var folderImages = serializer.GetAllImageFilesInFolder(entry.TrimEnd('/'));
+                    if (folderImages.Count > 0) { result.AddRange(folderImages); continue; }
+                    // 3. regex over image addresses, e.g. "Aemeath\/happy[_0-9]*\.(png|jpeg|webp|jpg)"
+                    var regexImages = serializer.GetAllImageFilesByRegex(entry);
+                    if (regexImages.Count > 0) { result.AddRange(regexImages); continue; }
+                    if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.LogWarning($"PortraitVariant entry [{entry}] matched no image file, folder or regex");
                 }
             }
             Utility.DistinctInPlace(result);
@@ -820,6 +836,7 @@ public class PortraitManager
         public virtual IEnumerator DrawPortrait(scr_CharPortraitBox portraitBox, string pathOverride, bool lowPriority = false)
         {
             Debug.Log($"null drawportrait [{pathOverride}]");
+            portraitBox.HideWebp();
             portraitBox.picture.gameObject.SetActive(true);
             if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
             if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
@@ -960,7 +977,8 @@ public class PortraitManager
             if (this.Variants != null)
             {
                 if (tags.Count > 0 && scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"Validating variants with tags {String.Join("|", tags)}");
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.ImagePaths.Count > 0) return Utility.GetRandomElement(i.ImagePaths);
+                // image count first: variants with no images are skipped before the (costlier) tag/chara validation
+                foreach (var i in this.Variants) if (i.ImagePaths.Count > 0 && i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner)) return Utility.GetRandomElement(i.ImagePaths);
             }
             if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
             else return portrait_path;
@@ -976,7 +994,8 @@ public class PortraitManager
 
             if (this.Variants != null)
             {
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitOnlyImagePaths.Count > 0) return Utility.GetRandomElement(i.PortraitOnlyImagePaths);
+                // ImagePaths.Count first skips empty variants cheaply; PortraitOnlyImagePaths stays last since building it reads file headers
+                foreach (var i in this.Variants) if (i.ImagePaths.Count > 0 && i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitOnlyImagePaths.Count > 0) return Utility.GetRandomElement(i.PortraitOnlyImagePaths);
             }
             var portraitOnlyRandom = PortraitOnlyRandomPaths;
             if (portraitOnlyRandom.Count > 0) return Utility.GetRandomElement(portraitOnlyRandom);
@@ -1016,6 +1035,24 @@ public class PortraitManager
             {
                // Debug.Log($"image drawportrait [{pathOverride}]");
 
+                // animated webp: played in the portrait or landscape webp slot (orientation from the file header);
+                // no player for that slot, or a failed load, falls through to a still draw of its first frame
+                if (PortraitImageInfo.IsAnimatedWebp(pathOverride))
+                {
+                    bool landscape = UseLandscape(portraitBox, PortraitImageInfo.IsLandscape(pathOverride));
+                    if (portraitBox.CanPlayAnimatedWebp(pathOverride, landscape))
+                    {
+                        yield return portraitBox.DrawAnimatedWebp(pathOverride, landscape);
+                        if (portraitBox.IsShowingWebp(pathOverride))
+                        {
+                            portraitBox.currentPortrait = pathOverride;
+                            if (!landscape) portraitBox.UpdateAnchor(this);  // landscape is fixed
+                            portraitBox.NotifyEndDraw();
+                            yield break;
+                        }
+                    }
+                }
+
                 if (!scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
                 {
                     Texture2D loaded = null;
@@ -1026,6 +1063,7 @@ public class PortraitManager
                 if (UseLandscape(portraitBox, sprite))
                 {
                     // landscape images are fixed: no UpdateAnchor, offsets are not applied
+                    portraitBox.HideWebp();
                     portraitBox.picture_landscape.sprite = sprite;
                     if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
                     portraitBox.picture.gameObject.SetActive(false);
@@ -1034,6 +1072,7 @@ public class PortraitManager
                 }
                 else
                 {
+                    portraitBox.HideWebp();
                     portraitBox.picture.sprite = sprite;
                     portraitBox.picture.gameObject.SetActive(true);
                     if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
@@ -1054,12 +1093,18 @@ public class PortraitManager
         /// </summary>
         protected bool UseLandscape(scr_CharPortraitBox portraitBox, Sprite sprite)
         {
+            return UseLandscape(portraitBox, sprite != null && sprite.rect.width > sprite.rect.height);
+        }
+
+        /// <summary>Same rule, with the auto decision given directly (eg. from the file header for animated webp).</summary>
+        protected bool UseLandscape(scr_CharPortraitBox portraitBox, bool isWide)
+        {
             if (!BoxAcceptsLandscape(portraitBox)) return false;
             switch (image_orientation)
             {
                 case ImageOrientation.landscape: return true;
                 case ImageOrientation.portrait: return false;
-                default: return sprite != null && sprite.rect.width > sprite.rect.height;
+                default: return isWide;
             }
         }
 
@@ -1275,6 +1320,7 @@ public class PortraitManager
                 // Debug.Log($"spine drawportrait [{pathOverride}]");
                 //Debug.LogError($"PortraitAnimation name {PortraitAnimName}");
                 if (portraitBox == null || portraitBox.spineRect == null || !portraitBox.spineRect.gameObject.activeInHierarchy) yield break;
+                portraitBox.HideWebp();
                 portraitBox.spineRect.gameObject.SetActive(true);
                 if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 0;
                 portraitBox.picture.gameObject.SetActive(false);
@@ -1341,7 +1387,7 @@ public class PortraitManager
         {
             if (this.Variants != null)
             {
-                foreach (var i in this.Variants) if (i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.ImagePaths.Count > 0) return Utility.GetRandomElement(i.ImagePaths);
+                foreach (var i in this.Variants) if (i.ImagePaths.Count > 0 && i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner)) return Utility.GetRandomElement(i.ImagePaths);
             }
             if (this.random_portrait_path.Count > 0) return Utility.GetRandomElement(this.random_portrait_path);
             else return portrait_path;
@@ -1382,6 +1428,18 @@ public class PortraitManager
             }
             else
             {
+                // animated webp in the landscape webp slot; no player or a failed load falls through to a still draw of its first frame
+                if (portraitBox.CanPlayAnimatedWebp(pathOverride, true))
+                {
+                    yield return portraitBox.DrawAnimatedWebp(pathOverride, true);
+                    if (portraitBox.IsShowingWebp(pathOverride))
+                    {
+                        portraitBox.currentPortrait = pathOverride;
+                        portraitBox.NotifyEndDraw();
+                        yield break;
+                    }
+                }
+
                 if (scr_System_CentralControl.current.GetSprite(pathOverride, out var sprite))
                 {
                     portraitBox.picture_landscape.sprite = sprite;
@@ -1394,6 +1452,7 @@ public class PortraitManager
                 }
 
                 //portraitBox.picture_landscape.SetNativeSize();
+                portraitBox.HideWebp();
                 if (portraitBox.spineRect != null) portraitBox.spineRect.gameObject.SetActive(false);
                 portraitBox.picture.gameObject.SetActive(false);
                 if (portraitBox.picture_landscape_group != null) portraitBox.picture_landscape_group.alpha = 1;

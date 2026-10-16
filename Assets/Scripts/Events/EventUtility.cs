@@ -380,6 +380,13 @@ public static class EventUtility
                     }
                     return RequestLeaveUtility.CanRequestLeave(requester, c, out _);
                 }
+            case "isOnEventCooldownWithSelf":
+                // [eventID, bool] - c = target; a cooldown of eventID registered with ev.Self as self and c among its targets is active (EventManager.hasCooldownWith)
+                if (r.parameters.Count >= 3 && bool.TryParse(r.parameters[2], out bool onCooldown))
+                {
+                    return scr_UpdateHandler.current.EventHandler.hasCooldownWith(r.parameters[1], ev.Self, c) == onCooldown;
+                }
+                else return false;
             case "isOppositeSexForRoom":
                 // [bool] - Room_Instance.IsOppositeSex against c's current room gender preference
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isOppositeSex))
@@ -391,6 +398,13 @@ public static class EventUtility
                 if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool canMove))
                 {
                     return Utility.CompareValue(c.canMove, LogicalOperand.eq, canMove);
+                }
+                else return false;
+            case "isPartyLocked":
+                // isPartyLocked [bool] - held in a locked party (kidnapped / MIA), regardless of MemberType or sleep
+                if (r.parameters.Count >= 2 && bool.TryParse(r.parameters[1], out bool isPartyLocked))
+                {
+                    return c.FactionManager.isPartyLocked == isPartyLocked;
                 }
                 else return false;
             case "hasJoinableAP":
@@ -1317,10 +1331,15 @@ public static class EventUtility
                     }
                     if (exec.arguments[2].Length < 1 || exec.arguments[3].Length < 1) return false;
                     List<string> texts = new List<string>();
+                    List<string> texts_debug = new List<string>();
                     foreach(var i in requestlist)
                     {
                         var randtarget = Utility.GetRandomElement(targetlist);
                         var rel = i.Relationships.FindRelationshipWith(randtarget);
+                        if (rel != null)
+                        {
+                            texts_debug.Add($"fetching kojo self {rel.Owner.FirstName} targe {rel.Target.FirstName} ID {exec.arguments[2]}");
+                        }
                         var kol = new KojoCollector(i, exec.arguments[2]);
                         kol.LoadRel(rel);
                         kol = i.Relationships.GetKOJOMessage_Suffix(kol, null);
@@ -1337,7 +1356,7 @@ public static class EventUtility
                     var storeMode = exec.arguments.Count >= 5 ? exec.arguments[4] : "";
                     StoreKojoAppendStrings(owner, exec.arguments[3], texts, storeMode);
 
-                    Debug.Log($"GetKojoEntry result {exec.arguments[3]} : {String.Join(" | ", texts)}");
+                    Debug.Log($"GetKojoEntry result {exec.arguments[3]} : [{String.Join(" | ", texts)}] debugmsg [{String.Join("|", texts_debug)}]");
                     return texts.Count > 0;
                 }
                 else return false;
@@ -1695,7 +1714,7 @@ public static class EventUtility
                 if (exec.arguments.Count < 4 || !int.TryParse(exec.arguments[2], out var delayMin) || !int.TryParse(exec.arguments[3], out var delayMax)) return false;
                 int delay = UnityEngine.Random.Range(Math.Min(delayMin, delayMax), Math.Max(delayMin, delayMax) + 1);
                 var chains = scr_UpdateHandler.current.EventHandler;
-                if (exec.Type == Event.EventEntry.ExecutionType.StartEventChain) return chains.StartChain(exec.arguments[0], owner.Self, exec.arguments[1], delay);
+                if (exec.Type == Event.EventEntry.ExecutionType.StartEventChain) return chains.StartChain(exec.arguments[0], owner.Self, exec.arguments[1], delay, owner);
                 // always true: a refused request must not make a branch option fall through to the next option
                 if (!chains.SetChainNext(exec.arguments[0], owner.Self, exec.arguments[1], delay, owner))
                     Debug.LogWarning($"SetChainNext refused: chain [{exec.arguments[0]}] not active on {owner.Self?.FirstName} or not run by this event");
@@ -2448,7 +2467,8 @@ public static class EventUtility
                         : owner.Targets.TryGetValue(exec.arguments[2], out var cdTargetList) ? cdTargetList
                         : new List<Character_Trainable>();
 
-                    scr_UpdateHandler.current.EventHandler.AddCooldown(cooldownEventDef, cdSelf, cdTargets);
+                    int cdTime = exec.arguments.Count >= 4 && int.TryParse(exec.arguments[3], out var cdOverride) ? cdOverride : -1;
+                    scr_UpdateHandler.current.EventHandler.AddCooldown(cooldownEventDef, cdSelf, cdTargets, cdTime);
                     return true;
                 }
                 return false;
@@ -2813,10 +2833,20 @@ public static class EventUtility
                 }
                 else return false;
             case Event.EventEntry.ExecutionType.PartyMIA:
+            case Event.EventEntry.ExecutionType.CharaMIA:
+                // CharaMIA: same path - a victim without any party resolves victimsFaction to a non-party faction, so a new
+                // party is created and Kidnap runs with victimsFaction null (no source party)
                 if (exec.arguments.Count >= 5)
                 {
                     Manageable kidnapFaction = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
                     if (kidnapFaction == null) return false;
+                    // missing expedition (e.g. an nsfw def skipped in safe mode): fail before a party is created, so a branch
+                    // option falls through to its next option
+                    if (Expeditions.ExpeditionEntry.GetByID(exec.arguments[2]) == null)
+                    {
+                        Debug.LogError($"{exec.Type}: expedition [{exec.arguments[2]}] not found");
+                        return false;
+                    }
 
                     if (owner.Targets.TryGetValue(exec.arguments[0], out var victims) && FactionUtility.TryGetMemberType(exec.arguments[4], out var status))
                     {
@@ -3076,6 +3106,112 @@ public static class EventUtility
                     return true;
                 }
                 else return false;
+            case Event.EventEntry.ExecutionType.CopyTargets:
+            {
+                if (exec.arguments.Count < 2 || string.IsNullOrEmpty(exec.arguments[1])) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var copySource) || copySource == null) return false;
+                var copied = copySource.FindAll(x => x != null);
+                if (copied.Count < 1) return false;
+
+                bool copyAdd = exec.arguments.Count >= 3 && exec.arguments[2] == "add";
+                if (copyAdd && owner.Targets.TryGetValue(exec.arguments[1], out var copyDest) && copyDest != null)
+                {
+                    foreach (var c in copied) if (!copyDest.Contains(c)) copyDest.Add(c);
+                }
+                else owner.Targets[exec.arguments[1]] = new List<Character_Trainable>(copied);
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.TeleportToFaction:
+            {
+                if (exec.arguments.Count < 1) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var tpChars) || tpChars == null) return false;
+                var tpFactionID = exec.arguments.Count >= 2 ? exec.arguments[1] : "";
+                Manageable tpFixed = null;
+                if (!string.IsNullOrEmpty(tpFactionID))
+                {
+                    tpFixed = scr_System_CampaignManager.current.FindFactionByID(tpFactionID);
+                    if (tpFixed == null)
+                    {
+                        Debug.LogError($"TeleportToFaction: faction [{tpFactionID}] not found");
+                        return false;
+                    }
+                }
+
+                bool tpAny = false;
+                foreach (var c in tpChars)
+                {
+                    if (c == null) continue;
+                    var tpDest = tpFixed ?? (c.FactionManager.HomeFactions.Count > 0 ? c.FactionManager.HomeFactions[0] : null);
+                    if (tpDest == null || tpDest.MainExit == null)
+                    {
+                        Debug.LogError($"TeleportToFaction: no destination for [{c.CallName}] (faction [{(tpDest == null ? "none" : tpDest.ID)}] has no main exit)");
+                        continue;
+                    }
+                    c.ChangeCurrentJob(null);
+                    scr_System_CampaignManager.current.MoveCharacterTo(c, tpDest.MainExit);
+                    tpAny = true;
+                }
+                return tpAny;
+            }
+            case Event.EventEntry.ExecutionType.ReleaseFromMIA:
+            {
+                if (exec.arguments.Count < 1) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var releaseChars) || releaseChars == null) return false;
+
+                bool releasedAny = false;
+                foreach (var c in new List<Character_Trainable>(releaseChars))
+                {
+                    if (c == null) continue;
+                    var miaParty = c.FactionManager.CurrentLockedParty;
+                    if (miaParty == null) continue;
+
+                    // last real captive leaving: complete the expedition so removeOnComplete can drop the instance
+                    bool lastCaptive = true;
+                    foreach (var other in miaParty.ManagedChara)
+                    {
+                        if (other == null || other == c || other.isTemporaryActor || miaParty.GetMemberType(other).isHidden) continue;
+                        lastCaptive = false;
+                        break;
+                    }
+                    if (lastCaptive && miaParty.Job != null && miaParty.Job.Expedition != null) miaParty.Job.Expedition.CompleteProgress();
+
+                    c.ChangeCurrentJob(null);
+                    // unlock + RemoveFromFaction (party outfit dropped; an emptied non-player party deletes itself)
+                    c.FactionManager.RemoveFromParty(miaParty, false, true);
+                    foreach (var f in c.FactionManager.Factions) f.FactionOwnerRoot.NotifyCharaRescued(c);
+                    releasedAny = true;
+                }
+                return releasedAny;
+            }
+            case Event.EventEntry.ExecutionType.RollWeighted:
+            {
+                if (exec.arguments.Count < 3 || string.IsNullOrEmpty(exec.arguments[0])) return false;
+                var rollIDs = new List<string>();
+                var rollWeights = new List<float>();
+                float rollTotal = 0f;
+                for (int i = 1; i + 1 < exec.arguments.Count; i += 2)
+                {
+                    if (string.IsNullOrEmpty(exec.arguments[i])) continue;
+                    if (!float.TryParse(exec.arguments[i + 1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var w) || w <= 0f) continue;
+                    rollIDs.Add(exec.arguments[i]);
+                    rollWeights.Add(w);
+                    rollTotal += w;
+                }
+                if (rollIDs.Count < 1) return false;
+
+                float roll = UnityEngine.Random.Range(0f, rollTotal);
+                string picked = rollIDs[rollIDs.Count - 1];
+                for (int i = 0; i < rollIDs.Count; i++)
+                {
+                    if (roll < rollWeights[i]) { picked = rollIDs[i]; break; }
+                    roll -= rollWeights[i];
+                }
+                owner.AppendStrings[exec.arguments[0]] = new List<string>() { picked };
+                return true;
+            }
+            case Event.EventEntry.ExecutionType.AppendStringEquals:
+                if (exec.arguments.Count < 2) return false;
+                return owner.AppendStrings.TryGetValue(exec.arguments[0], out var appendValues) && appendValues != null && appendValues.Contains(exec.arguments[1]);
             default: return true;
 
         }
@@ -3086,6 +3222,7 @@ public static class EventUtility
         if (kidnapLoc == null || kidnapLoc.MainExit == null) return false;
 
         ExpeditionInstance kidnapExp = scr_System_CampaignManager.current.CreateExpedition(kidnapExpID);
+        if (kidnapExp == null) return false;   // unknown expedition ID (CreateExpedition already logged it)
         kidnapLoc.SetExpedition(kidnapExp);
         kidnapLoc.ForceStartExpedition();
         kidnapLoc.FactionDisplayName = kidnapExp.Base.DisplayName;
@@ -3094,13 +3231,26 @@ public static class EventUtility
         var stringmsg = LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_notifyMemoryKidnapped");
         var kdnpmsg = LocalizeDictionary.QueryThenParse(kidnapMessage).Replace("$names$", "");
 
-        bool kidnapExtra = true;
+        // victimsFaction null = victims taken without a source party (CharaMIA on a character at home)
+        bool kidnapExtra = victimsFaction != null;
         List<Character_Trainable> victims_extra = new List<Character_Trainable>();
-        foreach (var i in victimsFaction.ManagedChara)
+        if (victimsFaction != null)
         {
-            if (victims.Contains(i)) continue;
-            if (victimsFaction.isPrisoner(i)) victims_extra.Add(i);
-            else if (victimsFaction.isMember(i)) kidnapExtra = false;
+            // source is an MIA (non-player) party: every other captive goes along regardless of MemberType, except
+            // the hidden kidnappers and temporary actors (left for the hourly CleanupDetection)
+            bool fromMIAParty = !victimsFaction.isPlayerFaction;
+            foreach (var i in victimsFaction.ManagedChara)
+            {
+                if (i == null || victims.Contains(i)) continue;
+                if (fromMIAParty)
+                {
+                    if (victimsFaction.GetMemberType(i).isHidden) continue;   // captors, not team members
+                    if (victimsFaction.isMember(i)) kidnapExtra = false;
+                    else if (!i.isTemporaryActor) victims_extra.Add(i);
+                }
+                else if (victimsFaction.isPrisoner(i)) victims_extra.Add(i);
+                else if (victimsFaction.isMember(i)) kidnapExtra = false;
+            }
         }
 
         if (kidnapExtra && victims_extra.Count > 0)
@@ -3121,7 +3271,14 @@ public static class EventUtility
 
             i.ChangeCurrentJob(null);
             scr_System_CampaignManager.current.MoveCharacterTo(i, kidnapLoc.MainExit);
-            if (!i.FactionManager.isPartyLocked) i.FactionManager.CurrentActiveParty.NotifyCharaKidnapped(i, kidnapLoc, true);
+            if (!i.FactionManager.isPartyLocked)
+            {
+                var activeParty = i.FactionManager.CurrentActiveParty;
+                if (activeParty != null) activeParty.NotifyCharaKidnapped(i, kidnapLoc, true);
+                // no party to relay it (taken from home): record the kidnap time on the home factions directly
+                // (Manageable.NotifyCharaKidnapped keeps an already recorded time)
+                else foreach (var home in i.FactionManager.HomeFactions) home.NotifyCharaKidnapped(i);
+            }
             else if (i.FactionManager.CurrentActiveParty == victimsFaction) isLockedTransfer = true;
             i.FactionManager.AddToParty(kidnapLoc, status, false, true);
 

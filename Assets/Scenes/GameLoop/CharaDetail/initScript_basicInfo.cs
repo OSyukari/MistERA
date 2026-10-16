@@ -132,7 +132,7 @@ public class initScript_basicInfo : MonoBehaviour
             if (trait.Parent.isNSFW) continue;
             if (!scr_System_CampaignManager.current.DebugMode && !trait.isDisplayable) continue;
             scr_HoverableText link = Instantiate(linkBox_resize).GetComponent<scr_HoverableText>();
-            link.SetText(trait.displayname, false, trait.TooltipID);
+            link.SetText(trait.displaynameFull, false, trait.TooltipID);
             link.GetComponent<RectTransform>().SetParent(traitsList, false);
         }
 

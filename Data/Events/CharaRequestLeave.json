@@ -70,7 +70,7 @@
             },
             {
                 "ID": "RequestLeave_Room",
-                "_comment": "self = requester; targets = whoever self may ask to leave (RequestLeaveUtility.CanRequestLeave: gendered room, privacy action, private room ownership)",
+                "_comment": "self = requester; targets = whoever self may ask to leave (RequestLeaveUtility.CanRequestLeave: gendered room, privacy action, private room ownership - strangers only)",
                 "cooldownRestrictTarget": false,
                 "TargetValidators": [
                     {
@@ -101,10 +101,11 @@
             },
             {
                 "ID": "CharaLeaveRoom",
-                "_comment": "unified response for every RequestLeave_* source. self = chara asked to leave, requestFrom = requester. Cooldown is per leaver and registered on start, so multiple sources/requesters on the same tick produce one request",
+                "_comment": "unified response for every RequestLeave_* source. self = chara asked to leave, requestFrom = requester. Cooldown is per leaver: 30 min when they stay (refuse, busy, can't get away), 1 min when they accept and leave. While a request is in flight, another for the same leaver is dropped (EventManager.CheckConflict), so multiple sources/requesters on the same tick produce one request",
                 "cooldownTime": 30,
                 "cooldownRestrictSelf": true,
                 "cooldownRestrictTarget": false,
+                "manualCooldown": true,
                 "SelfValidator": {
                     "room_conditions": [
                         {
@@ -125,6 +126,7 @@
                                 ],
                                 "option": "silent branch: NPC on a work job stays without being asked, no refusal penalty",
                                 "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "CharaLeaveRoom", "self", "" ] },
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
@@ -185,6 +187,7 @@
                             {
                                 "option": "event_CharaLeaveRoom_ev01_op2",
                                 "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "CharaLeaveRoom", "self", "" ] },
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [
@@ -223,6 +226,7 @@
                                 ],
                                 "option": "silent branch for successful interrupt of all jobs",
                                 "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "CharaLeaveRoom", "self", "", "1" ] },
                                     {
                                         "Type": "InterruptAP",
                                         "arguments": [
@@ -243,6 +247,7 @@
                             {
                                 "option": "silent branch for failed interrupt and force exit",
                                 "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "CharaLeaveRoom", "self", "" ] },
                                     {
                                         "Type": "JumpToLabel",
                                         "arguments": [

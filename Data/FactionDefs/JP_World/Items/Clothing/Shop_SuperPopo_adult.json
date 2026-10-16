@@ -4,6 +4,7 @@
         "list":[
         {
             "id":"clothing_jp_popo_lace_babydoll",
+            "promptTags":["babydoll","negligee","sheer","lace-trimmed","see-through"],
             "displayName":"Super P○po Sheer Lace Babydoll",
             "Tags":["nsfw","rarity_common"],
             "value":5800,
@@ -28,6 +29,7 @@
         },
         {
             "id":"clothing_jp_popo_crotchless_panty",
+            "promptTags":["panties","thong","crotchless panties","exposed crotch"],
             "displayName":"Super P○po Crotchless T-Back Panty",
             "Tags":["nsfw","rarity_common"],
             "value":1900,
@@ -50,6 +52,7 @@
         },
         {
             "id":"clothing_jp_popo_garter_belt",
+            "promptTags":["garter belt","garter straps","lace-trimmed"],
             "displayName":"Super P○po Lace Garter Belt",
             "Tags":["nsfw","rarity_common"],
             "value":3400,
@@ -66,6 +69,7 @@
         },
         {
             "id":"clothing_jp_popo_fishnet_stockings",
+            "promptTags":["fishnets","stockings","thighhighs"],
             "displayName":"Super P○po Fishnet Stockings",
             "Tags":["nsfw","rarity_common"],
             "value":2200,
@@ -76,7 +80,7 @@
                         "equipSlot":["Feet","Leg"],
                         "equipLayer":"Skin",
                         "revealing":"SeeThrough",
-                        "coverSlot":["Feet","Leg"],
+                        "coverSlot":["Feet","Leg","Thigh","Thigh"],
                         "stat_modifiers":[
                             {
                                 "statID":"stats_derived_maxSensitivity_W",
@@ -89,6 +93,7 @@
         },
         {
             "id":"clothing_jp_popo_bunny_leotard",
+            "promptTags":["bunny girl","highleg leotard","leotard","playboy bunny"],
             "displayName":"Super P○po Bunny Girl Leotard",
             "Tags":["nsfw","rarity_common"],
             "value":6900,
@@ -113,6 +118,7 @@
         },
         {
             "id":"clothing_jp_popo_nurse_costume",
+            "promptTags":["nurse","nurse costume","miniskirt","white dress","red cross"],
             "displayName":"Super P○po Naughty Nurse Costume",
             "Tags":["nsfw","rarity_common"],
             "value":7800,
@@ -130,6 +136,7 @@
         },
         {
             "id":"clothing_jp_popo_cutout_bodysuit",
+            "promptTags":["bodysuit","see-through","mesh","cutout","exposed nipples"],
             "displayName":"Super P○po Cutout Mesh Bodysuit",
             "Tags":["nsfw","rarity_common"],
             "value":6200,
@@ -148,6 +155,7 @@
         },
         {
             "id":"clothing_jp_popo_opencup_bra",
+            "promptTags":["bra","open-cup bra","shelf bra","exposed nipples","underbust"],
             "displayName":"Super P○po Open-Cup Shelf Bra",
             "Tags":["nsfw","rarity_common"],
             "value":2600,
@@ -170,6 +178,7 @@
         },
         {
             "id":"clothing_jp_popo_bell_collar",
+            "promptTags":["collar","choker","bell"],
             "displayName":"Super P○po Bell Choker Collar",
             "Tags":["nsfw","rarity_common"],
             "value":3100,
@@ -192,6 +201,7 @@
         },
         {
             "id":"clothing_jp_popo_thighhigh_heelboots",
+            "promptTags":["thighhighs","boots","high heel boots","thigh boots","zettai ryouiki"],
             "displayName":"Super P○po Thigh-High Heel Boots",
             "Tags":["nsfw","rarity_common"],
             "value":9800,
@@ -201,7 +211,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Feet","Leg"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Feet","Leg"],
+                        "coverSlot":["Feet","Leg","Thigh","Thigh"],
                         "revealing":"ShapeReveal"
                     }
                 }

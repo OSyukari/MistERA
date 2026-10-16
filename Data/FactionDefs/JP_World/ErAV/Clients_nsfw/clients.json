@@ -1,0 +1,419 @@
+{
+    "_doc": "ErAV NTR punishment Part 3 - client NPC generators + encounters (Plans/Handoff_NTR_Punishment_Part3_ClientEvents.md, Plan §3.1). All human clients are generated from jp_generic_adult_base like JP_World/Characters/templates.json's jp_generic_adult_male (Japanese nameGen, Appearance Male); they differ in setHeight/setWeight, title and clothing. The household housekeeper is the only female (non-interactive - never referenced by any scene encounter, narration only). The dog reuses the RaceDefs/dog generator creature_animal_dog inside erav_enc_dog. Ages (60s/40s/young) have no generator field - they live in the titles and the scene text. This folder name contains 'nsfw', so safe mode skips the whole directory.",
+
+    "Character_Bases": {
+        "generators": [
+            {
+                "_comment": "B - county councillor (draft: 60s, 168/74, yukata at the ryokan / suit by day).",
+                "ID": "erav_client_politician",
+                "title": "erav_client_title_politician",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 168,
+                "setWeight": 74,
+                "heightVariation": 4,
+                "weightVariation": 6,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_necktie" },
+                    { "ID": "clothing_outer_suit" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "B - the councillor's negotiators / business acquaintances (fill erav_enc_politician_party).",
+                "ID": "erav_client_businessman",
+                "title": "erav_client_title_businessman",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 172,
+                "setWeight": 70,
+                "heightVariation": 6,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_outer_suit" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "D - talent agency producer (draft: 40s, casual suit, no tie).",
+                "ID": "erav_client_producer",
+                "title": "erav_client_title_producer",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 175,
+                "setWeight": 72,
+                "heightVariation": 5,
+                "weightVariation": 7,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_outer_suit" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "F - toy collector / SM master (draft: 60s, small and thin, 160/55, cardigan = longcoat).",
+                "ID": "erav_client_sm_master",
+                "title": "erav_client_title_sm_master",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 160,
+                "setWeight": 55,
+                "heightVariation": 4,
+                "weightVariation": 4,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_outer_longcoat" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "G - visiting foreign athletes (draft: 190/95); three IDs for body variety.",
+                "ID": "erav_client_athlete_a",
+                "title": "erav_client_title_athlete",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 3, "con_var": 3, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "english", "nameGen_lastName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "Appearance": "Male",
+                "setHeight": 190,
+                "setWeight": 95,
+                "heightVariation": 5,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "ID": "erav_client_athlete_b",
+                "title": "erav_client_title_athlete",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 3, "con_var": 3, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "english", "nameGen_lastName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "Appearance": "Male",
+                "setHeight": 188,
+                "setWeight": 92,
+                "heightVariation": 5,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "ID": "erav_client_athlete_c",
+                "title": "erav_client_title_athlete",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 3, "con_var": 3, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "english", "nameGen_lastName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "Appearance": "Male",
+                "setHeight": 192,
+                "setWeight": 98,
+                "heightVariation": 5,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "H - foreign celebrity entourage (draft: english names, trendy stage clothes).",
+                "ID": "erav_client_celeb",
+                "title": "erav_client_title_celeb",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 3, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "english", "nameGen_lastName": "english",
+                "nameDisplayFormat": "chara_fullname_firstToLast",
+                "Appearance": "Male",
+                "setHeight": 178,
+                "setWeight": 70,
+                "heightVariation": 7,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_outer_longcoat" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_outer_boots" }
+                ]
+            },
+            {
+                "_comment": "J - Kiryu-gumi young footsoldiers (draft: 3-4 IDs for the floor party).",
+                "ID": "erav_client_gang_a",
+                "title": "erav_client_title_gang",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 173,
+                "setWeight": 68,
+                "heightVariation": 7,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "ID": "erav_client_gang_b",
+                "title": "erav_client_title_gang",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 176,
+                "setWeight": 72,
+                "heightVariation": 7,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_necktie" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "ID": "erav_client_gang_c",
+                "title": "erav_client_title_gang",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 170,
+                "setWeight": 65,
+                "heightVariation": 7,
+                "weightVariation": 8,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "I - the household's old master.",
+                "ID": "erav_client_household_master",
+                "title": "erav_client_title_household_master",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 165,
+                "setWeight": 70,
+                "heightVariation": 4,
+                "weightVariation": 6,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_outer_suit" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "I - the three adult young masters (draft: eldest/middle/youngest).",
+                "ID": "erav_client_household_son_a",
+                "title": "erav_client_title_household_son",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 177,
+                "setWeight": 71,
+                "heightVariation": 5,
+                "weightVariation": 7,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "ID": "erav_client_household_son_b",
+                "title": "erav_client_title_household_son",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 174,
+                "setWeight": 68,
+                "heightVariation": 5,
+                "weightVariation": 7,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "ID": "erav_client_household_son_c",
+                "title": "erav_client_title_household_son",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Male",
+                "setHeight": 172,
+                "setWeight": 66,
+                "heightVariation": 5,
+                "weightVariation": 7,
+                "basicExperienceOverride": [ "exp_collection_boy_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_shirt" },
+                    { "ID": "clothing_inner_pants" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            },
+            {
+                "_comment": "I - the female housekeeper (draft: 50s, grey dress). NON-INTERACTIVE: she must never be generated into 'enemy' for a sex command; no scene encounter references her. Kept here only so the household's identity stays complete.",
+                "ID": "erav_client_housekeeper",
+                "title": "erav_client_title_housekeeper",
+                "targetBaseIDs": [ "jp_generic_adult_base" ],
+                "str_var": 2, "con_var": 2, "psy_var": 2, "wil_var": 2,
+                "useNameGen": true, "nameGen_firstName": "japanese", "nameGen_lastName": "japanese",
+                "nameDisplayFormat": "chara_fullname_lastToFirst",
+                "Appearance": "Female",
+                "setHeight": 158,
+                "setWeight": 52,
+                "heightVariation": 4,
+                "weightVariation": 5,
+                "basicExperienceOverride": [ "exp_collection_girl_hetero" ],
+                "inventoryOverride": [
+                    { "ID": "clothing_inner_longdress" },
+                    { "ID": "clothing_skin_socks" },
+                    { "ID": "clothing_inner_shoes" }
+                ]
+            }
+        ]
+    },
+
+    "Encounters": {
+        "list": [
+            {
+                "ID": "erav_enc_politician_1",
+                "frontline": [ "erav_client_politician" ],
+                "support": []
+            },
+            {
+                "_comment": "The councillor plus the four negotiators he 'closed the deal' with (mix bath scene).",
+                "ID": "erav_enc_politician_party",
+                "frontline": [ "erav_client_politician", "erav_client_businessman", "erav_client_businessman", "erav_client_businessman", "erav_client_businessman" ],
+                "support": []
+            },
+            {
+                "ID": "erav_enc_producer_1",
+                "frontline": [ "erav_client_producer" ],
+                "support": []
+            },
+            {
+                "ID": "erav_enc_sm_master_1",
+                "frontline": [ "erav_client_sm_master" ],
+                "support": []
+            },
+            {
+                "_comment": "5 players on the floor, 1 waiting in support.",
+                "ID": "erav_enc_athletes_n",
+                "frontline": [ "erav_client_athlete_a", "erav_client_athlete_b", "erav_client_athlete_c", "erav_client_athlete_a", "erav_client_athlete_b" ],
+                "support": [ "erav_client_athlete_c" ]
+            },
+            {
+                "_comment": "Lead + manager on the floor, one more in support.",
+                "ID": "erav_enc_celebs_n",
+                "frontline": [ "erav_client_celeb", "erav_client_celeb" ],
+                "support": [ "erav_client_celeb" ]
+            },
+            {
+                "_comment": "The reward floor: about 7 footsoldiers.",
+                "ID": "erav_enc_gang_n",
+                "frontline": [ "erav_client_gang_a", "erav_client_gang_b", "erav_client_gang_c", "erav_client_gang_a", "erav_client_gang_b" ],
+                "support": [ "erav_client_gang_c", "erav_client_gang_a" ]
+            },
+            {
+                "ID": "erav_enc_household_sons",
+                "frontline": [ "erav_client_household_son_a", "erav_client_household_son_b", "erav_client_household_son_c" ],
+                "support": []
+            },
+            {
+                "ID": "erav_enc_household_master",
+                "frontline": [ "erav_client_household_master" ],
+                "support": []
+            },
+            {
+                "_comment": "The young masters' overnight guests.",
+                "ID": "erav_enc_household_guests",
+                "frontline": [ "erav_client_household_son_a", "erav_client_gang_a", "erav_client_gang_b", "erav_client_gang_c" ],
+                "support": []
+            },
+            {
+                "_comment": "The household's German shepherd - generator from Data/RaceDefs/dog/template.json.",
+                "ID": "erav_enc_dog",
+                "frontline": [ "creature_animal_dog" ],
+                "support": []
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "erav_enc_politician_1": "县议员",
+                "erav_enc_politician_party": "议员与商谈众人",
+                "erav_enc_producer_1": "艺能事务所社长",
+                "erav_enc_sm_master_1": "玩具收藏家",
+                "erav_enc_athletes_n": "访日球队成员",
+                "erav_enc_celebs_n": "巡演团体随行",
+                "erav_enc_gang_n": "桐生组组员们",
+                "erav_enc_household_sons": "大宅的三位少爷",
+                "erav_enc_household_master": "大宅的老爷",
+                "erav_enc_household_guests": "少爷的朋友们",
+                "erav_enc_dog": "家养大型犬",
+
+                "erav_client_title_politician": "县议员",
+                "erav_client_title_businessman": "实业家",
+                "erav_client_title_producer": "社长",
+                "erav_client_title_sm_master": "收藏家",
+                "erav_client_title_athlete": "访日球员",
+                "erav_client_title_celeb": "巡演成员",
+                "erav_client_title_gang": "组员",
+                "erav_client_title_household_master": "老爷",
+                "erav_client_title_household_son": "少爷",
+                "erav_client_title_housekeeper": "女管家"
+            }
+        }
+    }
+}

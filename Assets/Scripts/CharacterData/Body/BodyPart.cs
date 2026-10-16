@@ -12,6 +12,8 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public List<BodyInternal_Base> BodyInternal_Base = new List<BodyInternal_Base>();
     public List<Hairstyle_Base> BodyPart_Hairstyles = new List<Hairstyle_Base>();
     public List<Hairstyle_SlotOption> BodyPart_HairstyleSlotOptions = new List<Hairstyle_SlotOption>();
+    /// <summary> image prompt profiles by id; "default" is the global layer (ActorPromptProfileUtility) </summary>
+    public List<ActorPromptProfile> PromptProfiles = new List<ActorPromptProfile>();
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -23,6 +25,7 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
             this.BodyInternal_Base.AddRange(l.BodyInternal_Base);
             if (l.BodyPart_Hairstyles != null) this.BodyPart_Hairstyles.AddRange(l.BodyPart_Hairstyles);
             if (l.BodyPart_HairstyleSlotOptions != null) this.BodyPart_HairstyleSlotOptions.AddRange(l.BodyPart_HairstyleSlotOptions);
+            if (l.PromptProfiles != null) this.PromptProfiles.AddRange(l.PromptProfiles);
         }
     }
 
@@ -31,9 +34,17 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     Dictionary<string, Hairstyle_Base> ID_Dictionary3 = new Dictionary<string, Hairstyle_Base>();
     Dictionary<string, Hairstyle_SlotOption> ID_Dictionary4 = new Dictionary<string, Hairstyle_SlotOption>();
     Dictionary<string, List<Hairstyle_SlotOption>> hairstyleOptionsByKeyword = new Dictionary<string, List<Hairstyle_SlotOption>>();
+    Dictionary<string, ActorPromptProfile> ID_Dictionary5 = new Dictionary<string, ActorPromptProfile>();
     public void RegisterAllID(List<string> messages)
     {
-        messages.Add("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count + "]+[" + BodyInternal_Base.Count + "]+[" + BodyPart_Hairstyles.Count + "]+[" + BodyPart_HairstyleSlotOptions.Count + "]");
+        messages.Add("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count + "]+[" + BodyInternal_Base.Count + "]+[" + BodyPart_Hairstyles.Count + "]+[" + BodyPart_HairstyleSlotOptions.Count + "]+[" + PromptProfiles.Count + "]");
+
+        ID_Dictionary5.Clear();
+        foreach (ActorPromptProfile o in this.PromptProfiles)
+        {
+            if (o == null || string.IsNullOrEmpty(o.id)) continue;
+            if (!ID_Dictionary5.TryAdd(o.id, o)) Debug.Log($"failed to add Index_BodyPartBase prompt profile id [{o.id}] due to duplicate");
+        }
 
         foreach (BodyPart_Base o in this.BodyPart_Base)
         {
@@ -111,6 +122,7 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public BodyInternal_Base GetInternalByID(string id) { return ID_Dictionary2.ContainsKey(id) ? ID_Dictionary2[id] : null; }
     public Hairstyle_Base GetHairstyleByID(string id) { return ID_Dictionary3.ContainsKey(id) ? ID_Dictionary3[id] : null; }
     public Hairstyle_SlotOption GetHairstyleOptionByID(string id) { return ID_Dictionary4.ContainsKey(id) ? ID_Dictionary4[id] : null; }
+    public ActorPromptProfile GetPromptProfileByID(string id) { return id != null && ID_Dictionary5.TryGetValue(id, out var p) ? p : null; }
     static readonly List<Hairstyle_SlotOption> emptyHairstyleOptions = new List<Hairstyle_SlotOption>();
     /// <summary> all options of a slot keyword. read only, don't modify the returned list </summary>
     public List<Hairstyle_SlotOption> GetHairstyleOptionsByKeyword(string keyword)
@@ -162,7 +174,15 @@ public class BodyPart_Base
 
     public int sortOrder = 99;
     public List<string> tags = new List<string>();
+    /// <summary> part tag -> the slots whose coverage decides that tag's visibility (e.g. "feet" -> Feet). A tag not listed = all slots </summary>
+    public Dictionary<string, List<BodyPartEquipSlot>> tagCoverSlots = new Dictionary<string, List<BodyPartEquipSlot>>();
     //public List<ItemComponent_Data> Comps = new List<ItemComponent_Data>();
+
+    public List<BodyPartEquipSlot> GetTagCoverSlots(string tag)
+    {
+        if (tagCoverSlots != null && tagCoverSlots.TryGetValue(tag, out var slots) && slots != null && slots.Count > 0) return slots;
+        return AvailableSlots;
+    }
 
     public List<string> GetAllChildsID()
     {

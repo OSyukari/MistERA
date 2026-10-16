@@ -4,6 +4,7 @@
         "list":[
         {
             "id":"clothing_jp_gu_offshoulder_onepiece",
+            "promptTags":["off-shoulder dress","black dress","velvet dress","knee-length dress"],
             "displayName":"G○ Off-Shoulder One-Piece",
             "Tags":["rarity_common"],
             "value":6800,
@@ -21,6 +22,7 @@
         },
         {
             "id":"clothing_jp_gu_floral_longdress",
+            "promptTags":["floral print","maxi dress","long dress","high slit"],
             "displayName":"G○ Floral Maxi Dress",
             "Tags":["rarity_common"],
             "value":7900,
@@ -30,13 +32,14 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Arm","Arm","Lower","Leg","Leg"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm","Lower","Leg","Leg"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_jp_gu_chiffon_blouse",
+            "promptTags":["blouse","chiffon","lace-trimmed","see-through"],
             "displayName":"G○ Lace Chiffon Blouse",
             "Tags":["rarity_common"],
             "value":3900,
@@ -46,13 +49,14 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Arm","Arm"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_jp_gu_highwaist_skirt",
+            "promptTags":["high-waist skirt","pencil skirt","tight skirt"],
             "displayName":"G○ High-Waist Skirt",
             "Tags":["rarity_common"],
             "value":4500,
@@ -69,6 +73,7 @@
         },
         {
             "id":"clothing_jp_gu_pleated_miniskirt",
+            "promptTags":["pleated skirt","miniskirt"],
             "displayName":"G○ Pleated Miniskirt",
             "Tags":["rarity_common"],
             "value":3200,
@@ -85,6 +90,7 @@
         },
         {
             "id":"clothing_jp_gu_skinny_jeans",
+            "promptTags":["jeans","skinny jeans","denim","tight pants"],
             "displayName":"G○ Skinny Jeans",
             "Tags":["rarity_common"],
             "value":4900,
@@ -94,7 +100,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Leg","Leg"]
+                        "coverSlot":["Thigh","Thigh","Leg","Leg"]
                     }
                 },
                 {
@@ -111,6 +117,7 @@
         },
         {
             "id":"clothing_jp_gu_cardigan",
+            "promptTags":["cardigan","open cardigan","sweater","off shoulder"],
             "displayName":"G○ Loose Cardigan",
             "Tags":["rarity_common"],
             "value":5500,
@@ -127,6 +134,7 @@
         },
         {
             "id":"clothing_jp_gu_ribbon_headband",
+            "promptTags":["headband","hair ribbon","pink headwear"],
             "displayName":"G○ Ribbon Headband",
             "Tags":["rarity_common"],
             "value":1600,
@@ -143,6 +151,7 @@
         },
         {
             "id":"clothing_jp_gu_ballet_flats",
+            "promptTags":["ballet flats","flat footwear"],
             "displayName":"G○ Ballet Flats",
             "Tags":["rarity_common"],
             "value":4400,
@@ -160,6 +169,7 @@
         },
         {
             "id":"clothing_jp_gu_lace_ankle_socks",
+            "promptTags":["ankle socks","lace-trimmed socks","white socks"],
             "displayName":"G○ Lace Ankle Socks",
             "Tags":["rarity_common"],
             "value":1200,

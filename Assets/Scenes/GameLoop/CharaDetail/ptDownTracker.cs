@@ -18,6 +18,8 @@ public class ptDownTracker : MonoBehaviour, IScrollHandler//, IDragHandler
 
     protected void UpdatePosition()
     {
+        if (!Application.isPlaying) return;
+
         var p = scr_System_CampaignManager.current.CurrentTargetEXPortrait;
         if (p != currentPortrait) SetRectPosition(p);
         var box = scr_System_CampaignManager.current.CurrentTargetEX_Box;

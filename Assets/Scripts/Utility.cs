@@ -139,15 +139,25 @@ public static class UtilityEX
         {
             string _version = string.Empty, _desc = string.Empty, _lang = string.Empty, _path = file.FullName;
             bool _safe = false, _readSafe = false;
+            List<SaveModEntry> _mods = null;
+            bool headerEnd = false;
 
 
-
-            while (reader.Read())
+            while (!headerEnd && reader.Read())
             {
                 if (reader.TokenType == JsonToken.PropertyName)
                 {
                     switch (reader.Value.ToString())
                     {
+                        case "Mods":
+                            reader.Read();
+                            if (reader.TokenType == JsonToken.StartArray)
+                                _mods = Newtonsoft.Json.Linq.JArray.Load(reader).ToObject<List<SaveModEntry>>();
+                            break;
+                        case "Time":
+                            // first non-header field of SaveFile: header done (old saves have no Mods)
+                            headerEnd = true;
+                            break;
                         case "Version":
                             reader.Read();
                             _version = reader.Value?.ToString();
@@ -172,7 +182,6 @@ public static class UtilityEX
                             _readSafe = true;
                             break;
                     }
-                    if (_version != string.Empty && _desc != string.Empty && _lang != string.Empty && _readSafe) break;
                 }
             }
 
@@ -182,6 +191,7 @@ public static class UtilityEX
             holder.SaveDescription = _desc;
             holder.FilePath = _path;
             holder.SafeMode = _safe;
+            holder.Mods = _mods;
             return holder;
         }
     }
@@ -1552,6 +1562,21 @@ public static class UtilityEX
                     parsedSuccessful = true;
                 }
                 break;
+            case "collectActorTags":
+                {
+                    var target = scr_System_CampaignManager.current.CurrentTarget;
+                    if (target == null)
+                    {
+                        Debug.LogError("collectActorTags: error target null");
+                        break;
+                    }
+                    // optional second arg enables the combat branch (inventory weapon tags)
+                    bool combat = parsed.Count() >= 2 && bool.TryParse(parsed[1], out bool combatArg) && combatArg;
+                    var tags = LLMUtils.CollectActorTags(target, combat, out var visibleSlots);
+                    Debug.Log($"collectActorTags [{target.RefID} {target.FullName}] isCombat {combat} visible slots [{String.Join(", ", visibleSlots)}] result {tags.Count}:\n{String.Join(", ", tags)}");
+                    parsedSuccessful = true;
+                }
+                break;
             case "inspectjob":
                 if (parsed.Count() >= 2 && int.TryParse(parsed[1], out int targetjobref))
                 {
@@ -1585,6 +1610,7 @@ public static class UtilityEX
                     var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;
 
                     c.FactionManager.SetTempHomeFaction(addTofaction.ID, FactionUtility.MemberType_Visitor);
+                    parsedSuccessful = true;
                 }
                 break;
             case "spawnCharaPrisoner":
@@ -1606,6 +1632,7 @@ public static class UtilityEX
                     var addTofaction = scr_System_CampaignManager.current.Player.FactionManager.CurrentlyActiveFaction;
 
                     c.FactionManager.SetTempHomeFaction(addTofaction.ID, FactionUtility.MemberType_Prisoner);
+                    parsedSuccessful = true;
                 }
                 break;
             case "advReproCycle":
@@ -1672,7 +1699,11 @@ public static class UtilityEX
                             if (pp != null)
                             {
                                 var cum = pp.Cum(amount);
-                                if (cum != null) targetwb.source.Ingest(cum, null, true);
+                                if (cum != null)
+                                {
+                                    targetwb.source.Ingest(cum, null, true);
+                                    parsedSuccessful = true;
+                                }
                                 else Debug.LogError($"error {pp.DisplayNameFull} cannot cum");
                             }
                             else Debug.LogError($"error {father.FirstName} cannot cum");
@@ -1703,10 +1734,11 @@ public static class UtilityEX
                         Item_Instance_Cum cum = WorldManager.Instantiate(parsed[3], parsed[4], parsed[5]);
                         cum.CumAmount = amount;
                         targetwb.source.Ingest(cum, null, true);
+                        parsedSuccessful = true;
                     }
                     else
                     {
-                        Debug.LogError("parsing argument");
+                        Debug.LogError("parsing argument failure");
                         break;
                     }
                 }
@@ -1755,6 +1787,7 @@ public static class UtilityEX
                     {
                         womb.ovulation(true);
                     }
+                    parsedSuccessful = true;
                 }
 
                 break;

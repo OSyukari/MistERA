@@ -386,6 +386,8 @@ public class Job_Sex_Group : Job
         {
             // unregister and re-register all
             if (packages_previous[i].Duration == 0) continue;
+            // COM-less packages (wait / LLM pins injected via Job.InjectPackage) have nothing to reset or re-validate
+            if (packages_previous[i].targetCOM == null) continue;
             scr_System_CampaignManager.current.Unregister(packages_previous[i]);
             packages_previous[i].Reset();
             if (packages_previous[i].Validate())

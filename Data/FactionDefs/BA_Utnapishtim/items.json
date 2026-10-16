@@ -2,7 +2,10 @@
     "Items":{
         "list":[
         {
+            "_comment":"Utnapishtim operator minidress. Necktie and sailor collar are part of it (covers Neck, shown while no outer layer covers the neck); the skirt part is gated on Lower. Sleeveless characters add Arm / Shoulder tags on their inventory entry.",
             "id":"clothing_bluearchive_Navigator_Dress",
+            "promptTags":["white dress","utnapishtim operator uniform \\(blue archive\\)"],
+            "promptTags_slots":{ "Lower":["white minidress"], "Neck":["black necktie","white sailor collar"] },
             "displayName":"Navigator's Dress",
             "itemComps_Template":[
                 {
@@ -11,7 +14,7 @@
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
                         "allowHalfDressed":true,
-                        "coverSlot":["Lower"],
+                        "coverSlot":["Lower","Neck"],
                         "equipTags":[],
                         "stat_modifiers":[
                             {
@@ -24,7 +27,62 @@
             ]
         },
         {
+            "id":"clothing_bluearchive_Navigator_SleevelessMinidress",
+            "promptTags":["white dress","utnapishtim operator uniform \\(blue archive\\)"],
+            "promptTags_slots": {
+                "Lower": [
+                    "white minidress"
+                ],
+                "Neck": [
+                    "black necktie",
+                    "white sailor collar"
+                ],
+                "Arm": [
+                    "sleeveless"
+                ],
+                "Shoulder": [
+                    "bare shoulders"
+                ]
+            },
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Torso"],
+                        "equipLayer":"Inner",
+                        "allowHalfDressed":true,
+                        "coverSlot":["Lower","Neck"],
+                        "equipTags":[],
+                        "stat_modifiers":[
+                            {
+                                "statID":"Strength",
+                                "modKey":"clothing_bluearchive_Navigator_SleevelessMinidress", "type":"addBase", "valueType":"number", "valueString":"0.5"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "_comment":"Neckerchief worn with the Navigator's Dress. Occupies Neck/Inner (the dress only covers Neck, so both fit); an inner item doesn't hide the dress's Neck tags, so necktie and sailor collar stay. Hidden like them when an outer layer covers the neck.",
+            "id":"clothing_bluearchive_Navigator_Neckerchief",
+            "promptTags":[],
+            "promptTags_slots":{ "Neck":["black neckerchief"] },
+            "displayName":"Navigator's Neckerchief",
+            "itemComps_Template":[
+                {
+                    "compType":"ItemComponent_Equippable",
+                    "comp_Equippable": {
+                        "equipSlot":["Neck"],
+                        "equipLayer":"Inner",
+                        "revealing":"SeeThrough"
+                    }
+                }
+            ]
+        },
+        {
             "id":"clothing_bluearchive_Navigator_Boot",
+            "promptTags":["white boots"],
             "displayName":"Navigator's Boot",
             "itemComps_Template":[
                 {
@@ -45,6 +103,7 @@
         },
         {
             "id":"clothing_bluearchive_Navigator_Cape",
+            "promptTags":["white capelet","utnapishtim operator uniform \\(blue archive\\)"],
             "displayName":"Navigator's Cape",
             "itemComps_Template":[
                 {
@@ -59,6 +118,7 @@
         },
         {
             "id":"clothing_bluearchive_Navigator_Hat",
+            "promptTags":["garrison cap","utnapishtim operator uniform \\(blue archive\\)"],
             "displayName":"Navigator's Hat",
             "itemComps_Template":[
                 {
@@ -83,19 +143,24 @@
         },
         {
             "id":"clothing_bluearchive_Navigator_Coat",
+            "_comment":"Short-sleeved jacket: covers the shoulders (hides 'bare shoulders'), leaves the arms (a sleeveless dress stays sleeveless).",
+            "promptTags":["white jacket", "short sleeves", "utnapishtim operator uniform \\(blue archive\\)"],
             "displayName":"Navigator's Coat",
             "itemComps_Template":[
                 {
                     "compType":"ItemComponent_Equippable",
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
-                        "equipLayer":"Outer"
+                        "equipLayer":"Outer",
+                        "coverSlot":["Shoulder","Shoulder"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_bluearchive_Navigator_Longcoat",
+            "_comment":"Open-front long coat: covers shoulders and arms, not the lower body (the minidress stays visible).",
+            "promptTags":["white coat","collared coat","utnapishtim operator uniform \\(blue archive\\)"],
             "displayName":"Captain's Long Coat",
             "itemComps_Template":[
                 {
@@ -103,13 +168,14 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Outer",
-                        "coverSlot":["Lower"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_bluearchive_Navigator_Glove",
+            "promptTags":["white gloves"],
             "displayName":"Navigator's Glove",
             "itemComps_Template":[
                 {
@@ -133,11 +199,12 @@
             "zh-cn":
             {
         "clothing_bluearchive_Navigator_Hat":"帽子",
-        "clothing_bluearchive_Navigator_Dress":"连衣裙",
+        "clothing_bluearchive_Navigator_Neckerchief":"领巾",
         "clothing_bluearchive_Navigator_SleevelessMinidress":"无袖迷你连衣裙",
+        "clothing_bluearchive_Navigator_Dress":"迷你连衣裙",
         "clothing_bluearchive_Navigator_Minidress":"迷你连衣裙",
-        "clothing_bluearchive_Navigator_Coat":"大衣",
         "clothing_bluearchive_Navigator_Cape":"披肩",
+        "clothing_bluearchive_Navigator_Coat":"短袖外衣",
         "clothing_bluearchive_Navigator_ShortCoat":"短袖外衣",
         "clothing_bluearchive_Navigator_Longcoat":"舰长的外衣",
         "clothing_bluearchive_Navigator_Glove":"手套",
@@ -149,12 +216,11 @@
             "en-us":
             {
         "clothing_bluearchive_Navigator_Hat": "Hat",
-        "clothing_bluearchive_Navigator_Dress": "Dress",
+        "clothing_bluearchive_Navigator_Neckerchief": "Neckerchief",
         "clothing_bluearchive_Navigator_SleevelessMinidress": "Sleeveless Minidress",
-        "clothing_bluearchive_Navigator_Minidress": "Mini Dress",
-        "clothing_bluearchive_Navigator_Coat": "Coat",
+        "clothing_bluearchive_Navigator_Dress": "Mini Dress",
         "clothing_bluearchive_Navigator_Cape": "Cape",
-        "clothing_bluearchive_Navigator_ShortCoat": "Short Coat",
+        "clothing_bluearchive_Navigator_Coat": "Short Coat",
         "clothing_bluearchive_Navigator_Longcoat": "Captain's Coat",
         "clothing_bluearchive_Navigator_Glove": "Glove",
         "clothing_bluearchive_Navigator_HeelBoot": "Heeled Boots",

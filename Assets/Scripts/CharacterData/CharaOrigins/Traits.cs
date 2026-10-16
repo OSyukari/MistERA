@@ -95,6 +95,10 @@ public class Traits
 
     [JsonIgnore] public scr_Traits_Group Parent = null;
 
+    /// <summary> image prompt tags. For organ size traits (trait_Size_*) only added while the organ is visible </summary>
+    public List<string> promptTags = new List<string>();
+    /// <summary> image prompt tags of organ size traits added regardless of visibility (e.g. breast size through clothes) </summary>
+    public List<string> promptTags_always = new List<string>();
 
     //-serialized data--
 
@@ -106,14 +110,34 @@ public class Traits
     [JsonProperty] private string trait_displayname = "";
     public string trait_tooltip = "";
 
+
+    string? cached_displayNameFull = null;
+    [JsonIgnore]
+    public string displaynameFull
+    {
+        get
+        {
+            if (cached_displayNameFull == null)
+            {
+                
+                cached_displayNameFull = (Parent != null ? LocalizeDictionary.QueryThenParse("trait_displayName_full") : "$name$") 
+                    .Replace("$name$", displayname)
+                    .Replace("$parent$", LocalizeDictionary.QueryThenParse( Parent.ID, Parent.displayName));
+            }
+            return cached_displayNameFull;
+        }
+    }
+
+
     string? cached_displayName = null;
-    string? cached_tooltip = null;
     [JsonIgnore] public string displayname { get {
             if (cached_displayName == null) 
             {
                 cached_displayName = LocalizeDictionary.QueryThenParse(trait_ID, trait_displayname);
             }
-            return cached_displayName;} }
+            return cached_displayName;}
+    }
+    string? cached_tooltip = null;
     [JsonIgnore] public string tooltip { get {
             if (cached_tooltip == null)
             {
@@ -182,7 +206,10 @@ public class Traits
 public class scr_Traits_Group
 {
     //-SerializedData-------
-    public int neutralIndex = -1;
+    /// <summary> trait ID of the group's default entry ("" = no default) </summary>
+    public string neutralID = "";
+    // legacy read shim: older data / mods pointed at the default by list position. only used when neutralID is empty
+    [JsonProperty("neutralIndex")] private int legacy_neutralIndex = -1;
     public bool allowPopulate = true;
     public string group_tooltip = "";
     public List<string> tags = new List<string>();
@@ -218,15 +245,26 @@ public class scr_Traits_Group
     }
 
     /// <summary>
-    /// neutral entry if valid, else the first valid entry, else null
+    /// neutral entry if valid, else the nearest valid entry (see GetNearestValid), else null
     /// </summary>
     public Traits GetNeutralValid(List<string> raceKeywords, Humanoid_GenderAppearance app)
     {
         if (!IsValidFor(raceKeywords, app)) return null;
-        var neutral = getNeutralinGroup();
-        if (neutral == null) return null;
-        if (neutral.IsValidFor(raceKeywords, app)) return neutral;
-        return entries.Find(x => x.IsValidFor(raceKeywords, app));
+        int neutral = NeutralEntryIndex;
+        if (neutral < 0) return null;
+        return GetNearestValid(neutral, raceKeywords, app);
+    }
+
+    /// <summary>
+    /// entry at index if valid, else the first valid entry going down from index, else the first going up. null if none
+    /// </summary>
+    public Traits GetNearestValid(int index, List<string> raceKeywords, Humanoid_GenderAppearance app)
+    {
+        if (entries.Count < 1) return null;
+        index = Math.Clamp(index, 0, entries.Count - 1);
+        for (int i = index; i >= 0; i--) if (entries[i].IsValidFor(raceKeywords, app)) return entries[i];
+        for (int i = index + 1; i < entries.Count; i++) if (entries[i].IsValidFor(raceKeywords, app)) return entries[i];
+        return null;
     }
 
     [JsonIgnore] 
@@ -255,10 +293,20 @@ public class scr_Traits_Group
 
     public Trait_Group_Type SortType = Trait_Group_Type.Untyped;
 
+    /// <summary> list position of the default entry (neutralID, else the legacy neutralIndex), -1 if none </summary>
+    [JsonIgnore] public int NeutralEntryIndex
+    {
+        get
+        {
+            if (!string.IsNullOrEmpty(neutralID)) return entries.FindIndex(x => x.ID == neutralID);
+            return legacy_neutralIndex >= 0 && legacy_neutralIndex < entries.Count ? legacy_neutralIndex : -1;
+        }
+    }
+
     public Traits getNeutralinGroup()
     {
-        if (entries.Count < 1 || neutralIndex < 0) return null;
-        return entries[neutralIndex];
+        int i = NeutralEntryIndex;
+        return i < 0 ? null : entries[i];
     }
 
     public Traits getNextinGroup(Traits trait)
@@ -376,6 +424,8 @@ public class Traits_Group_Index : I_IndexHasID, I_NeedLateInitialize, I_IndexMer
                     t.type = s.Type;
                     t.Parent = s;
                 }
+                if (!string.IsNullOrEmpty(s.neutralID) && s.NeutralEntryIndex < 0)
+                    Debug.LogError($"trait group [{s.ID}]: neutralID [{s.neutralID}] is not an entry of the group, group has no default");
 
             }
         }

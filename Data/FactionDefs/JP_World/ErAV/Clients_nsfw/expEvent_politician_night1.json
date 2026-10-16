@@ -1,0 +1,139 @@
+{
+    "_doc": "ErAV NTR Part 3 placeholder scene - B politician, first night at the Hakone ryokan (Plan §4; Phase 1 skeleton, fully written in Phase 2). Exploration event banks the scene event for the player (no runImmediate); the scene event runs with self = player, Targets: party = the victim (exactly one), enemy = the generated clients. Ends with ResolveEvent, never RetryEvent.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_politician_night1",
+                "eventString_Ongoing": "exp_event_erav_politician_night1_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_night1_result",
+                        "eventID": "event_erav_politician_night1",
+                        "overrideTargetGeneration": true,
+                        "TargetGenerations": [
+                            {
+                                "factionTemplate": "AlwaysHostile",
+                                "encounterTemplates": [
+                                    {
+                                        "encounterWeights": { "erav_enc_politician_1": 1 },
+                                        "frontlineKeys": [ "enemy", "teamB_frontline" ]
+                                    }
+                                ],
+                                "factionInventory": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_politician_night1",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ],
+                                    "enemy": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "line": "event_erav_politician_night1_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_night1_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_night1_03",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "portraitSelfTagsOverride": [ "fear", "sad" ] },
+                        "line": "event_erav_politician_night1_04"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_night1_05",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_cowgirl" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "portraitSelfTagsOverride": [ "sad", "relaxed" ] },
+                        "line": "event_erav_politician_night1_06",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_politician_night1_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_politician_night1": "初夜·陪睡",
+                "exp_event_erav_politician_night1_ongoing": "$names$的初夜，属于温泉旅馆别栋的寝室。",
+                "exp_event_erav_politician_night1_result": "$names$被议员唤进了别栋的寝室。",
+
+                "event_erav_politician_night1_01": "晚饭撤下之后，议员让$victim.name$站到灯下，亲手把浴衣的带子缓缓解开，解到半途停下来端详片刻，再继续。\n「议员的工作，七成是应酬。应酬的秘诀，是身边永远要有件让人心平气和的东西。」\n折扇点了点自己的膝头。「陪睡，是字面意思。」",
+                "event_erav_politician_night1_02": "浴衣从肩头滑落。灯下的她无处可躲，只能任由那道目光慢慢丈量。",
+                "event_erav_politician_night1_03": "被褥之间，他慢条斯理地压了上来，长辈样居高临下的体位，不慌不忙，直到深夜。",
+                "event_erav_politician_night1_04": "深夜，她被从浅眠里推醒。\n「秘书要懂得察言观色。我还没醒透，你就该知道该做什么。」\n她撑起身，跨坐了上去。",
+                "event_erav_politician_night1_05": "黎明前的房间里，只剩下她压抑着的轻喘。",
+                "event_erav_politician_night1_06": "天亮之前，他射在她体内，让她保持着姿势别动，自己接着睡了。\n她夹着满腹的滚烫，动也不敢动地躺到天亮。",
+                "event_erav_politician_night1_err": "【错误】场景所需的目标不存在（party/enemy 缺失）。"
+            }
+        }
+    }
+}

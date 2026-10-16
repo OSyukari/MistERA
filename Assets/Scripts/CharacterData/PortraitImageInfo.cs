@@ -21,6 +21,44 @@ public static class PortraitImageInfo
         return result;
     }
 
+    static readonly Dictionary<string, bool> _isAnimatedWebp = new Dictionary<string, bool>();
+
+    /// <summary>
+    /// True for an animated WebP (VP8X chunk with the animation flag), read from the header only.
+    /// Still WebP / other formats / unreadable files are false.
+    /// </summary>
+    public static bool IsAnimatedWebp(string path)
+    {
+        if (string.IsNullOrEmpty(path)) return false;
+        if (_isAnimatedWebp.TryGetValue(path, out var cached)) return cached;
+
+        bool result = false;
+        if (scr_System_Serializer.current != null)
+        {
+            var fullPath = scr_System_Serializer.current.GetFullPath(path);
+            if (File.Exists(fullPath))
+            {
+                try
+                {
+                    using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        var header = new byte[21];
+                        int read = stream.Read(header, 0, header.Length);
+                        result = read >= 21
+                            && header[0] == 'R' && header[1] == 'I' && header[2] == 'F' && header[3] == 'F'
+                            && header[8] == 'W' && header[9] == 'E' && header[10] == 'B' && header[11] == 'P'
+                            && header[12] == 'V' && header[13] == 'P' && header[14] == '8' && header[15] == 'X'
+                            && (header[20] & 0x02) != 0;    // VP8X flags: animation bit
+                    }
+                }
+                catch (IOException) { }
+                catch (System.UnauthorizedAccessException) { }
+            }
+        }
+        _isAnimatedWebp[path] = result;
+        return result;
+    }
+
     public static bool TryGetSize(string path, out int width, out int height)
     {
         width = 0;

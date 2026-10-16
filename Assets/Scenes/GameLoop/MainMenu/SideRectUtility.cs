@@ -146,13 +146,24 @@ public static class SideRectUtility
         }
     }
 
-    public static void LoadEquipmentData(Character_Trainable chara, 
+    public static void LoadEquipmentData(
+        Character_Trainable chara, 
+        scr_HoverableText description,
         Func<RectTransform> instantiate_gear, 
         Func<RectTransform, RectTransform> instantiate_equip,
         Func<RectTransform, string, bool,bool> AddText,
         Func<RectTransform, string, bool, bool> AddButton)
     {
         bool safeMode = scr_System_CentralControl.current.isSafeMode;
+
+        var desctext = LocalizeDictionary.QueryThenParse("charaDetail_description_text")
+            .Replace("$hairStyle$", chara.Wardrobe?.Hairstyle?.DisplayName)
+            .Replace("$hairColor$", chara.Wardrobe?.HairColor?.displayname)
+            .Replace("$eyeColor$", chara.Wardrobe?.EyeColor?.displayname)
+            .Replace("$bodyType$", chara.Wardrobe?.BodyType?.displayname)
+            .Replace("$skinColor$", chara.Wardrobe?.SkinColor?.displayname);
+
+        description.SetText(desctext);
 
         foreach (BodyPart_Instance b in chara.Body.Body)
         {
@@ -167,7 +178,7 @@ public static class SideRectUtility
 
                 if (slot != BodyPartEquipSlot.None) AddText.Invoke(box, LocalizeDictionary.QueryThenParse("equip_slot_" + Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)), false);
 
-                int score = b.GetRevealingScore(BodyEquipLayer.Skin);
+                int score = b.GetSlotRevealingScore(slot, BodyEquipLayer.Skin);
 
                 Item_Instance skin, inner, outer;
 
@@ -209,7 +220,7 @@ public static class SideRectUtility
 
                     if (slot != BodyPartEquipSlot.None) AddText.Invoke(box, LocalizeDictionary.QueryThenParse("equip_slot_" + Utility.GetEnumString(typeof(BodyPartEquipSlot), slot)), false);
 
-                    int score = b.GetRevealingScore(BodyEquipLayer.Skin);
+                    int score = ins.GetRevealingScore(BodyEquipLayer.Skin);
                     if (score > 1 && !scr_System_CampaignManager.current.XrayMode)
                     {
                         AddText.Invoke(box, " " + score + " ", false);

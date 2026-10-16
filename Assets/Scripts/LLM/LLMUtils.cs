@@ -16,7 +16,15 @@ public class LLM_Setting
     /// the single-shot path - see scr_UpdateHandler.cs. Persisted via the same encrypted llmSetting.json
     /// round-trip as the rest of LLM_Setting (StoreLLMSetting/LoadLLMSetting).
     /// </summary>
-    public bool useAgentMode = false;
+    public bool useAgentMode = true;
+
+    /// <summary>
+    /// Agent mode only: who decides action outcomes - see LLMOutcomeRules. Snapshotted onto
+    /// LLMAgentSession.outcomeMode at session start, so flipping it mid-run never changes the rules of
+    /// a session already in flight.
+    /// </summary>
+    [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+    public LLMOutcomeMode outcomeMode = LLMOutcomeMode.GameRolls;
 
     public class ChatCompletion
     {
@@ -755,6 +763,21 @@ public class APJSON
     public int source_content_text_Index;
     public int repeatCount = 1;
 
+    /// <summary>RoleplayModifier mode: roleplay bonus on the acceptance rolls (request + response), in d20
+    /// pips (1 = 5%), clamped to LLMOutcomeRules.ModifierMin..ModifierMax. Never moves a 0/100 rate.</summary>
+    public int ac_modifier = 0;
+    /// <summary>RoleplayModifier mode: roleplay bonus on the DifficultyCheck roll, raw d20 bonus, same clamp.</summary>
+    public int dc_modifier = 0;
+    /// <summary>RoleplayModifier/LLMVerdict mode: the model's one-line justification for its modifiers/verdict.</summary>
+    public string outcome_reason = "";
+
+    /// <summary>Set by LLMOutcomeRules.Prepare - the outcome mode this entry was submitted under. GameRolls
+    /// (default) keeps the legacy injected-result behavior; the other two respect the 0/100 hard gates.</summary>
+    [JsonIgnore] public LLMOutcomeMode outcomeMode = LLMOutcomeMode.GameRolls;
+    /// <summary>Set during the rolls when a 0/100 hard gate overrode the LLM's verdict or made its
+    /// acceptance modifier moot - reported back to the model by Tool_ExecuteAP.</summary>
+    [JsonIgnore] public bool hardGateOverride = false;
+
     [JsonIgnore]
     public COM innerCOM
     {
@@ -810,6 +833,14 @@ public class LLMResponse
         /// Claude extended-thinking block text, populated only when type == "thinking".
         /// </summary>
         public string thinking;
+
+        /// <summary>
+        /// Thinking block's opaque signature (type == "thinking"), or a redacted_thinking block's
+        /// encrypted payload (type == "redacted_thinking"). Both must be echoed back unchanged on an
+        /// agent-mode continuation or Claude rejects the request.
+        /// </summary>
+        public string signature;
+        public string data;
 
         /// <summary>
         /// Tool-use block fields, populated only when type == "tool_use" - see
@@ -885,10 +916,16 @@ public class LLMResponse
         get
         {
             if (choices.Count > 0) return choices[0].JSON;
-            var textBlock = content.FirstOrDefault(c => c.type == "text");
-            return textBlock?.JSON;
+            // Claude can split one answer across several text blocks (e.g. around interleaved thinking).
+            // The blocks stay separate in content[] since the agent loop echoes them back verbatim;
+            // the answer itself is their concatenation.
+            var textBlocks = content.Where(c => c.type == "text").ToList();
+            if (textBlocks.Count <= 1) return textBlocks.FirstOrDefault()?.JSON;
+            if (mergedClaudeText == null) mergedClaudeText = new choice_claude { type = "text", text = string.Concat(textBlocks.Select(c => c.text)) };
+            return mergedClaudeText.JSON;
         }
     }
+    [JsonIgnore] choice_claude mergedClaudeText = null;
 
     /// <summary>
     /// Reasoning/thinking text pulled from whichever envelope shape is populated - OpenAI-compatible
@@ -1390,6 +1427,161 @@ public static class LLMUtils
         }
 
     }
+
+    public static List<string> CollectItemTags(Item_Instance item)
+    {
+        return CollectItemTags(item, null);
+    }
+
+    /// <summary>
+    /// Prompt tags of an item: instance promptTags, instance promptTags_slots, then the base's promptTags + promptTags_slots
+    /// (or the instance's promptTags_overrideBase instead of both). A promptTags_slots entry is added only while its slot
+    /// is visible above the item's own layer on body (see IsSlotVisibleAbove); without a body (weapons) none are added.
+    /// </summary>
+    public static List<string> CollectItemTags(Item_Instance item, Character_Body body, bool xray = false)
+    {
+        var list = new List<string>();
+        var layer = item.GetComp_Equippable()?.equipLayer ?? BodyEquipLayer.Outer;
+
+        if (item.promptTags != null) list.AddRange(item.promptTags);
+        AddSlotTags(list, item.promptTags_slots, body, layer, xray);
+        if (item.promptTags_overrideBase != null) list.AddRange(item.promptTags_overrideBase);
+        else if (item.Base != null)
+        {
+            if (item.Base.promptTags != null) list.AddRange(item.Base.promptTags);
+            AddSlotTags(list, item.Base.promptTags_slots, body, layer, xray);
+        }
+        Utility.DistinctInPlace(list);
+
+        return list;
+    }
+
+    static void AddSlotTags(List<string> list, Dictionary<string, List<string>> slotTags, Character_Body body, BodyEquipLayer layer, bool xray)
+    {
+        if (slotTags == null || body == null) return;
+        foreach (var kvp in slotTags)
+        {
+            if (kvp.Value == null || kvp.Value.Count == 0) continue;
+            if (!System.Enum.TryParse(kvp.Key, true, out BodyPartEquipSlot slot))
+            {
+                UnityEngine.Debug.LogWarning($"promptTags_slots: unknown body slot [{kvp.Key}]");
+                continue;
+            }
+            if (xray || IsSlotVisibleAbove(body, slot, layer)) list.AddRange(kvp.Value);
+        }
+    }
+
+    /// <summary> the slot is uncovered (coverage below 2) by the layers above layer on at least one body part that has it </summary>
+    public static bool IsSlotVisibleAbove(Character_Body body, BodyPartEquipSlot slot, BodyEquipLayer layer)
+    {
+        if (body?.Body == null) return false;
+        foreach (var part in body.Body)
+        {
+            if (part.availableSlots.Contains(slot) && part.GetSlotRevealingScore(slot, layer) < 2) return true;
+        }
+        return false;
+    }
+
+    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat = false)
+    {
+        return CollectActorTags(c, isCombat, out _);
+    }
+
+    /// <summary>
+    /// Image prompt tags of an actor. keywords = the visible body slots (BodyPartEquipSlot names, coverage below 2),
+    /// which drive the prompt profile rules (ActorPromptProfileUtility). Organs add their own and their size trait's
+    /// (trait_Size_{traitID}) promptTags_always always and promptTags only while visible.
+    /// </summary>
+    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat, out HashSet<string> keywords)
+    {
+        // order: profile prompts (character tag) -> profile rules (hair, eyes, body, halo...) -> worn items + organs
+        // (part order, head to feet) -> weapons. The body walk runs first because the rules need its keywords.
+        var list = new List<string>();
+        var gear = new List<string>();
+        keywords = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+
+        if (c.Body != null)
+        {
+            // collect equipped item prompts with the same visibility rules as
+            // SideRectUtility.LoadEquipmentData's !safeMode block: walk part/slot/layer instead
+            // of the flat EquippedItemRefs list, so gear hidden under opaque coverage does not
+            // leak into the tags. Cover-only registrations (TryGetCover) are skipped - the
+            // covering item is always equipped on its own slot too, so it is collected there.
+            bool xray = scr_System_CampaignManager.current.XrayMode;
+            bool debugMode = scr_System_CampaignManager.current.DebugMode;
+            var layers = new[] { BodyEquipLayer.Skin, BodyEquipLayer.Inner, BodyEquipLayer.Outer };
+
+            foreach (var part in c.Body.Body)
+            {
+                foreach (var slot in part.availableSlots)
+                {
+                    int score = part.GetSlotRevealingScore(slot, BodyEquipLayer.Skin);
+                    if (score <= 1 || xray) keywords.Add(slot.ToString());
+                    foreach (var layer in layers)
+                    {
+                        // skin-level gear is invisible under opaque coverage; inner/outer always drawn
+                        if (layer == BodyEquipLayer.Skin && score > 1 && !xray && !debugMode) continue;
+                        if (part.TryGetEquip(out var item, layer, slot) && item?.Base != null)
+                            gear.AddRange(CollectItemTags(item, c.Body, xray));
+                    }
+                }
+
+                // internals (piercings etc.): same block's stricter gate - only Xray reveals them
+                foreach (var ins in part.internals)
+                {
+                    var sizeTrait = string.IsNullOrEmpty(ins.traitID) ? null : c.Body.GetEffectiveBodyTrait("trait_Size_" + ins.traitID);
+                    if (ins.Base.promptTags_always != null) gear.AddRange(ins.Base.promptTags_always);
+                    if (sizeTrait?.promptTags_always != null) gear.AddRange(sizeTrait.promptTags_always);
+
+                    // organs lie under the Skin layer: underwear covers them too (None = Skin + Inner + Outer)
+                    if (ins.GetRevealingScore(BodyEquipLayer.None) > 1 && !xray) continue;
+                    if (ins.Base.promptTags != null) gear.AddRange(ins.Base.promptTags);
+                    if (sizeTrait?.promptTags != null) gear.AddRange(sizeTrait.promptTags);
+
+                    foreach (var slot in ins.availableSlots)
+                    {
+                        foreach (var layer in layers)
+                        {
+                            if (!ins.equipLayers.Contains(layer)) continue;
+                            if (ins.TryGetEquip(out var item, layer, slot) && item?.Base != null)
+                                gear.AddRange(CollectItemTags(item, c.Body, xray));
+                        }
+                    }
+                }
+            }
+        }
+
+        // default / race / template prompts and the rules on visible slots + actor state (hair, eyes, halo...), before the gear
+        ActorPromptProfileUtility.CollectPrompts(c, keywords, list);
+        list.AddRange(gear);
+
+        if (isCombat)
+        {
+            // collect weapon prompts
+            foreach(var item in c.Inventory.Contents)
+            {
+                if (c.EquippedItemRefs.Contains(item.RefID)) continue;
+                if (item.Comp_Weapon == null) continue;
+                list.AddRange(CollectItemTags(item));
+            }
+        }
+
+        Utility.DistinctInPlace(list);
+        // then, perform tags replacement
+
+
+        //
+
+        return list;
+    }
+    public static List<string> CollectInteractionTags(ActionPackage ap)
+    {
+        // TODO
+        var list = new List<string>();
+        return list;
+    }
+
+
 
     /// <summary>
     /// Only collect player relevant info. do not check for npc-npc.

@@ -425,6 +425,7 @@ public class scr_panel_COMmanager : scr_Menu
                 case -6512: button.Initialize(this, new ButtonValidator_ChangeShorterLogs(this, COMFilter.ShorterLogs, button)); break;
                 case -6513: button.Initialize(this, new Button_ToggleLLM(this, COMFilter.LLM, button)); break;
                 case -6514: button.Initialize(this, new ButtonValidator_ToggleAgentMode(this, button)); break;
+                case -6515: button.Initialize(this, new ButtonValidator_CycleOutcomeMode(this, button)); break;
 
             case -6509:
                 if (safeMode) button.gameObject.SetActive(false);
@@ -3326,7 +3327,12 @@ public class scr_panel_COMmanager : scr_Menu
 
             // worn items stay in the inventory: worn = found in a body slot
             isEquipped = equippedPart != null;
-            isVisible = scr_System_CampaignManager.current.DebugMode || (!isEquipped || equippedPart.GetRevealingScore(eq.equipLayer) <= 1);
+            // coverage of the item's own slots (or of the organ it sits on), not the whole part
+            var equippedOrgan = isEquipped ? equippedPart.GetInternalByEquipRef(equipRef) : null;
+            int coverScore = !isEquipped ? 0
+                : equippedOrgan != null ? equippedOrgan.GetRevealingScore(eq.equipLayer)
+                : equippedPart.GetRevealingScore(eq.equipLayer, eq.equipSlot);
+            isVisible = scr_System_CampaignManager.current.DebugMode || coverScore <= 1;
             allowDuringSex = !(chara.CurrentJob is Job_Sex_Group) || (int)eq.revealing <= 0;
 
             bool returnVal = true;

@@ -1461,6 +1461,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
                 case 1003: button.Initialize(this, new Button_Regenerate(this, button)); break;
                 case 1004: button.Initialize(this, new Button_ToggleReasoning(this, button)); break;
                 case 1005: button.Initialize(this, new Button_ToggleAgentMode(this, button)); break;
+                case 1006: button.Initialize(this, new ButtonValidator_CycleOutcomeMode(this, button)); break;
                 default:
                     button.Initialize(this, button_alwaysValid);
                     break;

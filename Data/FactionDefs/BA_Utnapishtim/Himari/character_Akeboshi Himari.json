@@ -73,10 +73,10 @@
       "traits_body_sex": [
           "trait_Sensitivity_B_sensitive", "trait_Sensitivity_M_default", "trait_Sensitivity_C_sensitive",
           "trait_Sensitivity_V_sensitive", "trait_Sensitivity_A_default",
-          "trait_Size_B_A", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
+          "trait_Size_B_AA", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
       ],
       "traits_body": [
-          "trait_BodyType_slender", "trait_SkinColor_pale", "trait_HairColor_silver", "trait_EyeColor_silver"
+          "trait_BodyType_slender", "trait_SkinColor_pale", "trait_HairColor_white", "trait_EyeColor_purple"
       ],
       "Height":162,
       "Weight":45,
@@ -89,22 +89,41 @@
         ],
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },
-            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
-            { "ID":"clothing_bluearchive_Navigator_Coat", "nameOverwrite":"clothing_bluearchive_Navigator_ShortCoat" },
+            { "ID":"clothing_bluearchive_Navigator_SleevelessMinidress" },
+            { "ID":"clothing_bluearchive_Navigator_Coat" },
             { "ID":"clothing_bluearchive_Navigator_Glove" },
             { "ID":"clothing_bluearchive_Navigator_Boot" },
-            { "ID":"clothing_skin_hair_hairpin" },
-            { "ID":"clothing_inner_hair_ribbon" },
-            { "ID":"clothing_skin_bra" },
-            { "ID":"clothing_skin_socks" },
-            { "ID":"clothing_skin_panty_opencrotch" },
-            { "ID":"clothing_outer_blanket_lower" },
+            { "ID":"clothing_skin_hair_hairpin", "promptTags_baseOverride":["hair flower","hair ornament"] },
+            { "ID":"clothing_inner_hair_ribbon", "promptTags_baseOverride":["black hair tubes"] },
+            { "ID":"clothing_skin_earring", "promptTags_baseOverride":["earclip"] },
+            { "ID":"clothing_skin_bra" , "promptTags_baseOverride":["white bra"] },
+            { "ID":"clothing_skin_panty" , "promptTags_baseOverride":["white panties"] },
+            { "ID":"clothing_skin_thermaltights_opencrotch", "promptTags_baseOverride":["thick white thermal tights with crotch cutout"] },
+            { "ID":"clothing_outer_blanket_lower", "promptTags_baseOverride":["warm beige blanket over legs","covered legs","covered thighs"] },
             { "ID":"firearm_handgun" }
         ],
-      "_comment_defaultHairstyle": "Waist-length straight lavender-white hair with neat bangs (character card + portrait).",
+    
+      "promptProfile": {
+          "prompts": [ "himari_\\(blue_archive\\)" ],
+
+          "NEED FIXING: desired body prompt":"sitting in wheelchair, purple eyes, white iris, slender, pointy ears, earclip, mole",
+          "NEED FIXING: desired clothing prompt":"warm beige blanket over legs , covered legs, covered thighs, hair tubes, hair ornament, hair flower, garrison cap, sleeveless, white dress, black necktie, white jacket, short sleeves, small breasts, white gloves, white boots, utnapishtim operator uniform \\(blue archive\\),",
+
+
+          "current prompt":"hairpin, hair ornament, hair ribbon, hair bow, hat, peaked cap, sleeveless, minidress, bare shoulders, dress, short coat, short sleeves, coat, outerwear, small breasts, gloves, blanket, covered legs, boots, himari_\\(blue_archive\\), white hair, silver hair, long hair, straight hair, straight bangs, grey eyes, slender, long legs, pale skin, light skin, halo",
+
+          "rules":[
+            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
+            { "_comment": "replaces the default eyes_open: eye colour trait + white iris", "id": "eyes_open", "requireKeywords": [ "Eyes" ], "excludeActorTags": [ "unconscious" ], "traitGroups": [ "trait_EyeColor" ], "prompts": [ "white iris" ] },
+            { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "black and white halo", "two-tone halo" ] },
+            { "_comment": "mole, seen with the face", "id": "himari_mole", "requireBodyTags": [ "head" ], "requireKeywords": [ "Face" ], "prompts": [ "mole" ] },
+            { "_comment": "in her wheelchair while awake and able to move (not restrained / imprisoned / immobilized), not while doing something private (bath, toilet...); time stop keeps it", "id": "himari_wheelchair", "excludeActorTags": [ "unconscious" ], "charaReq": { "requireMovement_ignoreTimestop": true, "requireNoPrivacyAction": true }, "prompts": [ "sitting in wheelchair" ] }
+          ]
+      },
+      "_comment_defaultHairstyle": "Long wavy white hair with blunt bangs (prompt feedback).",
       "defaultHairstyle": {
-        "hairstyleID": "hairstyle_straight_long",
-        "slotSelection": { "front": "hair_front_straight_bangs" }
+        "hairstyleID": "hairstyle_wavy_long",
+        "slotSelection": { "front": "hair_front_blunt" }
       },
         "traits":[
             "trait_FatigueResistance_low",

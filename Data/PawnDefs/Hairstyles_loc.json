@@ -5,8 +5,8 @@
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "hairstyle_straight_long": "Long Straight Hair",
-                "hairstyle_straight_long_tooltip": "Long, straight and flowing hair.",
+                "hairstyle_straight_long": "Straight Hair",
+                "hairstyle_straight_long_tooltip": "Straight and flowing hair.",
 
                 "hairstyle_ponytail": "Ponytail",
                 "hairstyle_ponytail_tooltip": "Hair gathered and tied into a tail.",
@@ -26,6 +26,8 @@
                 "hairstyle_twintails_high_tooltip": "%%hairstyle_twintails_tooltip%%\nTied high on the sides of the head.",
                 "hairstyle_twintails_low": "Low Twin Tails",
                 "hairstyle_twintails_low_tooltip": "%%hairstyle_twintails_tooltip%%\nTied low near the nape.",
+                "hairstyle_twintails_short": "Short Twin Tails",
+                "hairstyle_twintails_short_tooltip": "%%hairstyle_twintails_tooltip%%\nShort tails on both sides of the head.",
 
                 "hairstyle_bun": "Hair Bun",
                 "hairstyle_bun_tooltip": "Hair gathered and coiled into a bun on the head.",
@@ -37,15 +39,30 @@
                 "hairstyle_braid_single": "Single Braid",
                 "hairstyle_braid_single_tooltip": "%%hairstyle_braid_tooltip%%\nA single braid hanging to one side.",
 
-                "hairstyle_wavy_long": "Long Wavy Hair",
-                "hairstyle_wavy_long_tooltip": "Long, softly waving hair.",
+                "hairstyle_wavy_long": "Wavy Hair",
+                "hairstyle_wavy_long_tooltip": "Softly waving hair.",
 
+                "hair_slot_length": "Length",
+                "hair_slot_length_tooltip": "Hair length.",
                 "hair_slot_front": "Bangs",
                 "hair_slot_front_tooltip": "Fringe style.",
                 "hair_slot_side": "Side Hair",
                 "hair_slot_side_tooltip": "Side lock style.",
-                "hair_slot_accent": "Hair Accent",
-                "hair_slot_accent_tooltip": "Extra decorative strand.",
+                "hair_slot_accent": "Top Accent",
+                "hair_slot_accent_tooltip": "Extra strand on top of the head.",
+                "hair_slot_accent_side": "Side Accent",
+                "hair_slot_accent_side_tooltip": "Extra strand or braid at the side of the face.",
+
+                "hair_length_none": "%%hair_slot_length%%: Unspecified",
+                "hair_length_none_tooltip": "%%hair_slot_length_tooltip%%\nLength left to the style itself.",
+                "hair_length_short": "%%hair_slot_length%%: Short",
+                "hair_length_short_tooltip": "%%hair_slot_length_tooltip%%\nAbove the shoulders.",
+                "hair_length_medium": "%%hair_slot_length%%: Medium",
+                "hair_length_medium_tooltip": "%%hair_slot_length_tooltip%%\nAround the shoulders.",
+                "hair_length_long": "%%hair_slot_length%%: Long",
+                "hair_length_long_tooltip": "%%hair_slot_length_tooltip%%\nDown the back.",
+                "hair_length_very_long": "%%hair_slot_length%%: Very Long",
+                "hair_length_very_long_tooltip": "%%hair_slot_length_tooltip%%\nDown to the waist or longer.",
 
                 "hair_front_none": "%%hair_slot_front%%: No Bangs",
                 "hair_front_none_tooltip": "%%hair_slot_front_tooltip%%\nHairline fully exposed.",
@@ -55,6 +72,12 @@
                 "hair_front_side_swept_tooltip": "%%hair_slot_front_tooltip%%\nFringe swept diagonally to one side.",
                 "hair_front_center_part": "%%hair_slot_front%%: Center Part",
                 "hair_front_center_part_tooltip": "%%hair_slot_front_tooltip%%\nHair parted down the middle, forehead exposed.",
+                "hair_front_parted": "%%hair_slot_front%%: Parted Bangs",
+                "hair_front_parted_tooltip": "%%hair_slot_front_tooltip%%\nFringe split to both sides, without a sharp center line.",
+                "hair_front_double_parted": "%%hair_slot_front%%: Double-Parted Bangs",
+                "hair_front_double_parted_tooltip": "%%hair_slot_front_tooltip%%\nFringe parted twice, a lock falling between the eyes.",
+                "hair_front_blunt": "%%hair_slot_front%%: Blunt Bangs",
+                "hair_front_blunt_tooltip": "%%hair_slot_front_tooltip%%\nThick fringe cut in one heavy straight line.",
 
                 "hair_side_none": "%%hair_slot_side%%: None",
                 "hair_side_none_tooltip": "%%hair_slot_side_tooltip%%\nNo distinct side hair.",
@@ -62,13 +85,17 @@
                 "hair_side_loose_tooltip": "%%hair_slot_side_tooltip%%\nSide locks hanging down naturally.",
                 "hair_side_tucked": "%%hair_slot_side%%: Tucked",
                 "hair_side_tucked_tooltip": "%%hair_slot_side_tooltip%%\nSide locks tucked behind the ears.",
+                "hair_side_sidelocks": "%%hair_slot_side%%: Sidelocks",
+                "hair_side_sidelocks_tooltip": "%%hair_slot_side_tooltip%%\nHair behind the ears, with long locks framing the face.",
 
                 "hair_accent_none": "%%hair_slot_accent%%: None",
                 "hair_accent_none_tooltip": "%%hair_slot_accent_tooltip%%\nNo hair accent.",
                 "hair_accent_ahoge": "%%hair_slot_accent%%: Ahoge",
                 "hair_accent_ahoge_tooltip": "%%hair_slot_accent_tooltip%%\nA single stubborn strand sticking up on top.",
-                "hair_accent_side_braid": "%%hair_slot_accent%%: Side Braid",
-                "hair_accent_side_braid_tooltip": "%%hair_slot_accent_tooltip%%\nA thin braid woven at one side of the face."
+                "hair_accent_side_none": "%%hair_slot_accent_side%%: None",
+                "hair_accent_side_none_tooltip": "%%hair_slot_accent_side_tooltip%%\nNo side accent.",
+                "hair_accent_side_braid": "%%hair_slot_accent_side%%: Side Braid",
+                "hair_accent_side_braid_tooltip": "%%hair_slot_accent_side_tooltip%%\nA thin braid woven at one side of the face."
             }
         }
     }

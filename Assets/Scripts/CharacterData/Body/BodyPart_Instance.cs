@@ -63,6 +63,31 @@ public class BodyPart_Instance : I_CombatItem
         this.ownerRefID = c.RefID;
 
         foreach (var i in internals) i.ReEstablishParent(this);
+        EnsureSlotIndexes();
+    }
+
+    /// <summary>
+    /// equip / cover index entry for every layer + slot of the base. Existing entries are kept, so a save made before
+    /// a slot was added to the base (e.g. Shoulder, Thigh) gets the new empty slot on load.
+    /// </summary>
+    private void EnsureSlotIndexes()
+    {
+        if (Base == null) return;
+        var seen = new HashSet<string>();
+        foreach (BodyEquipLayer i in equipLayers)
+        {
+            foreach (BodyPartEquipSlot j in availableSlots)
+            {
+                var key = i.ToString() + "||" + j.ToString();
+                if (!seen.Add(key))
+                {
+                    Debug.LogError($"{OwnerName} error in initializing bodypartInstance {baseID}, duplicate equipslot key {key} in {String.Join("|", equipLayers)} {String.Join("|", availableSlots)}");
+                    continue;
+                }
+                if (!contentsIndex.ContainsKey(key)) contentsIndex.Add(key, -1);
+                if (!coversIndex.ContainsKey(key)) coversIndex.Add(key, -1);
+            }
+        }
     }
     public void Initialize(string baseID, Character_Trainable c)
     {
@@ -119,21 +144,7 @@ public class BodyPart_Instance : I_CombatItem
                 }
             }
         }
-
-        foreach (BodyEquipLayer i in equipLayers)
-        {
-            foreach (BodyPartEquipSlot j in availableSlots)
-            {
-                var key = i.ToString() + "||" + j.ToString();
-                if (!contentsIndex.ContainsKey(key)) contentsIndex.Add(key, -1);
-                else
-                {
-                    Debug.LogError($"{c.FirstName} error in initializing bodypartInstance {baseID}, duplicate equipslot key {key} in {String.Join("|",equipLayers)} {String.Join("|", availableSlots)}");
-                }
-                if (!coversIndex.ContainsKey(key)) coversIndex.Add(key, -1);
-
-            }
-        }
+        // equip / cover indexes: created by ReEstablishParent above (EnsureSlotIndexes)
     }
 
     private int ownerRefID = -1;
@@ -577,22 +588,50 @@ public class BodyPart_Instance : I_CombatItem
         return null;
     }
 
+    /// <summary>
+    /// Coverage of the whole part: the most covered slot. Coverage is per slot (a hat on Hair does not cover Face),
+    /// so callers asking about one slot / organ / part tag should use the slot-aware overloads instead.
+    /// </summary>
     public int GetRevealingScore(BodyEquipLayer layer)
+    {
+        return GetRevealingScore(layer, this.availableSlots);
+    }
+
+    /// <summary> most covered of the given slots (slots this part doesn't have are ignored); 0 if none </summary>
+    public int GetRevealingScore(BodyEquipLayer layer, IEnumerable<BodyPartEquipSlot> slots)
+    {
+        int score = 0;
+        bool any = false;
+        foreach (var slot in slots)
+        {
+            if (!this.availableSlots.Contains(slot)) continue;
+            int s = GetSlotRevealingScore(slot, layer);
+            if (!any || s > score) score = s;
+            any = true;
+        }
+        return score;
+    }
+
+    /// <summary>
+    /// Coverage of one slot by the layers above layer (None counts Skin+Inner+Outer, Skin counts Inner+Outer, ...),
+    /// equipped and cover entries both. Below 2 = visible.
+    /// </summary>
+    public int GetSlotRevealingScore(BodyPartEquipSlot slot, BodyEquipLayer layer)
     {
         int score = 0;
         switch (layer)
         {
             case BodyEquipLayer.None:
-                score += SumRevealingBy(BodyEquipLayer.Skin);
+                score += SlotRevealingBy(slot, BodyEquipLayer.Skin);
                 goto case BodyEquipLayer.Skin;
             case BodyEquipLayer.Skin:
-                score += SumRevealingBy(BodyEquipLayer.Inner);
+                score += SlotRevealingBy(slot, BodyEquipLayer.Inner);
                 goto case BodyEquipLayer.Inner;
             case BodyEquipLayer.Inner:
-                score += SumRevealingBy(BodyEquipLayer.Outer);
+                score += SlotRevealingBy(slot, BodyEquipLayer.Outer);
                 goto case BodyEquipLayer.Outer;
             case BodyEquipLayer.Outer:
-            /*    score += SumRevealingBy(BodyEquipLayer.Shell);
+            /*    score += SlotRevealingBy(slot, BodyEquipLayer.Shell);
                 goto case BodyEquipLayer.Shell;
             case BodyEquipLayer.Shell:*/
                 break;
@@ -600,23 +639,34 @@ public class BodyPart_Instance : I_CombatItem
         return score;
     }
 
-    private int SumRevealingBy(BodyEquipLayer layer)
+    private int SlotRevealingBy(BodyPartEquipSlot slot, BodyEquipLayer layer)
     {
         int score = 0;
-        foreach (BodyPartEquipSlot slot in this.availableSlots)
+        string Tuple = layer.ToString() + "||" + slot.ToString();
+        if (contentsIndex.TryGetValue(Tuple, out var content) && content != -1)
         {
+            var comp = ResolveEquip(content)?.GetComp_Equippable();
+            if (comp != null) score += (int)comp.revealing;
+        }
+        if (coversIndex.TryGetValue(Tuple, out var cover) && cover != -1)
+        {
+            var comp = ResolveEquip(cover)?.GetComp_Equippable();
+            if (comp != null) score += (int)comp.revealing;
+        }
+        return score;
+    }
 
-            string Tuple = layer.ToString() + "||" + slot.ToString();
-            if (contentsIndex.TryGetValue(Tuple, out var content) && content != -1)
-            {
-                var comp = ResolveEquip(content)?.GetComp_Equippable();
-                if (comp != null) score += (int)comp.revealing;
-            }
-            if (coversIndex.TryGetValue(Tuple, out var cover) && cover != -1)
-            {
-                var comp = ResolveEquip(cover)?.GetComp_Equippable();
-                if (comp != null) score += (int)comp.revealing;
-            }
+    /// <summary>
+    /// Coverage of whatever on this part carries the tag: the part's own tag uses the slots from Base.tagCoverSlots
+    /// (all slots if not listed), an organ's tag uses that organ's cover slots. Most covered match, -1 if nothing matches.
+    /// </summary>
+    public int GetRevealingScoreByTag(string tag, BodyEquipLayer layer)
+    {
+        int score = -1;
+        if (Base.tags.Contains(tag)) score = Math.Max(score, GetRevealingScore(layer, Base.GetTagCoverSlots(tag)));
+        foreach (BodyInternal_Instance i in internals)
+        {
+            if (i.hasTag(tag)) score = Math.Max(score, i.GetRevealingScore(layer));
         }
         return score;
     }

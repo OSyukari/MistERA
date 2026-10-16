@@ -97,15 +97,15 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
 
         }
 
-        foreach(var str in validConsoleCommands) MakeCommandButton(str);
+        foreach(var str in validConsoleCommands) MakeCommandButton(str, rect_validConsoleCommands);
 
         if (!scr_System_CentralControl.current.isSafeMode)
         {
-            foreach (var str in devConsoleCommands) MakeCommandButton(str);
+            foreach (var str in devConsoleCommands) MakeCommandButton(str, rect_nsfwConsoleCommands);
         }
 
 #if UNITY_EDITOR
-        foreach (var str in editorConsoleCommands) MakeCommandButton(str);
+        foreach (var str in editorConsoleCommands) MakeCommandButton(str, rect_editorConsoleCommands);
 #endif
 
         ValidateAll();
@@ -115,12 +115,12 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     }
 
 
-    public RectTransform ConsoleButtonList;
+    public RectTransform rect_validConsoleCommands, rect_nsfwConsoleCommands, rect_editorConsoleCommands;
     public consoleEntry consolebtnprefab;
-    protected void MakeCommandButton(string s)
+    protected void MakeCommandButton(string s, RectTransform rect)
     {
         var btn = Instantiate(consolebtnprefab);
-        btn.selfRect.SetParent(ConsoleButtonList);
+        btn.selfRect.SetParent(rect);
 
         btn.selfButton.Initialize(this, new ButtonValidator_ConsoleButton(this, btn.selfButton, s));
         btn.selfButton.SetText(s);
@@ -164,7 +164,8 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
     {
         "debug_refuse_salary_payment",
         "debug_force_joinFaction_Agree",
-        "listallvalidbookings"
+        "listallvalidbookings",
+        "collectActorTags"
     };
 
     protected void ActivateUI()

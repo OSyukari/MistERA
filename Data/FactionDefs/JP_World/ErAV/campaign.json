@@ -150,6 +150,52 @@
         "memberRelations": [
             { "memberTypeA": "membertype_erav_miyama_household_actor", "memberTypeB": "membertype_family_leader", "relationshipID": "relationship_family_guardian" },
             { "memberTypeA": "membertype_erav_miyama_household_actor", "memberTypeB": "membertype_family_member", "relationshipID": "relationship_family" }
+        ],
+            "clienteleDefs": [
+        {
+            "_comment": "AV buyers - every evaluated recording (item_records + its evaluator tag, see ItemComponent_Records.GetTags). Segments split the audience by genre taste; a tape only sells to segments with affinity for its evaluator.",
+            "ID": "salesclientele_av",
+            "itemReq": { "requireTags": [ "item_records" ] },
+            "tags": [ "AV", "nsfw" ],
+            "_comment_limitedAudience": "each buyer buys a title once: potential buyers per segment = population x ratio x market share x segment weight x affinity x quality; 200000 x 0.15 x 1% = 300 buyers across all segments",
+            "limitedAudience": true,
+            "dailyPurchaseRate": 0.03,
+            "ratio": 0.15,
+            "fluctuation": 0.15,
+            "popularityInfluence": 5.0,
+            "usePopularityCurve": true,
+            "curvePeakDay": 5,
+            "curveDecayPerDay": 0.1,
+            "curveFloorRatio": 0.3,
+            "segments": [
+                {
+                    "ID": "seg_proper_av",
+                    "weight": 0.6,
+                    "affinity": { "receval_proper_av": 1.0, "receval_homemade_tape": 0.2, "receval_voyeur": 0.2 }
+                },
+                {
+                    "ID": "seg_amateur",
+                    "weight": 0.15,
+                    "affinity": { "receval_homemade_tape": 1.0, "receval_voyeur": 0.5, "receval_proper_av": 0.2 }
+                },
+                {
+                    "ID": "seg_voyeur",
+                    "weight": 0.25,
+                    "affinity": { "receval_voyeur": 1.0, "receval_homemade_tape": 0.5 }
+                }
+            ]
+        }
+    ],
+        "debtClasses": [
+            {
+                "_comment": "Kanon/Kiryu-gumi joint-guarantor debt (Opening_ErAV) - flat Y450,000/month interest, compounds every month regardless of payment, principal payable at the player's own pace (no auto-charged installment). onFailedEventID overrides the generic OnDebtFailed notice: a failed monthly collection starts erav_ntr_punishment_kick, a silent event that only launches the 'erav_ntr_punishment' chain (delayed a few minutes) so the interactive selection event doesn't interrupt other events mid payment-resolve - see Data/FactionDefs/JP_World/ErAV/Events/ErAV_NTR_Punishment.json.",
+                "ID": "debtclass_erav_kanon",
+                "onFailedEventID": "erav_ntr_punishment_kick",
+                "debtName": "debtname_erav_kanon",
+                "interestRatePercent": 0,
+                "interestFlatAmount": { "itemID": "currency_JPY", "itemCount": 450000 },
+                "cadence": "Monthly"
+            }
         ]
     },
 

@@ -4,6 +4,7 @@
         "list":[
         {
             "id":"clothing_jp_aoy_dress_shirt",
+            "promptTags":["dress shirt","white shirt","button-up shirt"],
             "displayName":"Yofuku no Ao○ama Fitted Dress Shirt",
             "Tags":["rarity_common"],
             "value":4500,
@@ -13,13 +14,14 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Arm","Arm"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_jp_aoy_polo_shirt",
+            "promptTags":["polo shirt","navy shirt","collared shirt"],
             "displayName":"Yofuku no Ao○ama Pique Polo Shirt",
             "Tags":["rarity_common"],
             "value":3500,
@@ -29,13 +31,14 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Arm","Arm"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
                     }
                 }
             ]
         },
         {
             "id":"clothing_jp_aoy_slim_suit",
+            "promptTags":["suit jacket","business suit","slim-fit suit","charcoal jacket"],
             "displayName":"Yofuku no Ao○ama Slim Suit Jacket",
             "Tags":["rarity_common"],
             "value":22800,
@@ -45,7 +48,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Outer",
-                        "coverSlot":["Arm","Arm"]
+                        "coverSlot":["Shoulder","Shoulder","Arm","Arm"]
                     }
                 },
                 {
@@ -62,6 +65,7 @@
         },
         {
             "id":"clothing_jp_aoy_chino_pants",
+            "promptTags":["chinos","khaki pants","tapered pants"],
             "displayName":"Yofuku no Ao○ama Tapered Chinos",
             "Tags":["rarity_common"],
             "value":4900,
@@ -71,7 +75,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Leg","Leg"]
+                        "coverSlot":["Thigh","Thigh","Leg","Leg"]
                     }
                 },
                 {
@@ -88,6 +92,7 @@
         },
         {
             "id":"clothing_jp_aoy_denim_jeans",
+            "promptTags":["jeans","denim","straight jeans"],
             "displayName":"Yofuku no Ao○ama Straight Denim Jeans",
             "Tags":["rarity_common"],
             "value":5900,
@@ -97,7 +102,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Lower"],
                         "equipLayer":"Inner",
-                        "coverSlot":["Leg","Leg"]
+                        "coverSlot":["Thigh","Thigh","Leg","Leg"]
                     }
                 },
                 {
@@ -114,6 +119,7 @@
         },
         {
             "id":"clothing_jp_aoy_bomber_jacket",
+            "promptTags":["bomber jacket","black jacket","zipper"],
             "displayName":"Yofuku no Ao○ama Bomber Jacket",
             "Tags":["rarity_common"],
             "value":8900,
@@ -123,7 +129,7 @@
                     "comp_Equippable": {
                         "equipSlot":["Torso"],
                         "equipLayer":"Outer",
-                        "coverSlot":["Neck","Arm","Arm"]
+                        "coverSlot":["Neck","Shoulder","Shoulder","Arm","Arm"]
                     }
                 },
                 {
@@ -141,6 +147,7 @@
         },
         {
             "id":"clothing_jp_aoy_boxer_briefs",
+            "promptTags":["boxer briefs","male underwear"],
             "displayName":"Yofuku no Ao○ama Boxer Briefs",
             "Tags":["rarity_common"],
             "value":1800,
@@ -156,6 +163,7 @@
         },
         {
             "id":"clothing_jp_aoy_leather_belt",
+            "promptTags":["belt","leather belt"],
             "displayName":"Yofuku no Ao○ama Leather Belt",
             "Tags":["rarity_common"],
             "value":3900,
@@ -172,6 +180,7 @@
         },
         {
             "id":"clothing_jp_aoy_silk_necktie",
+            "promptTags":["necktie","silk necktie"],
             "displayName":"Yofuku no Ao○ama Silk Necktie",
             "Tags":["rarity_common"],
             "value":2900,
@@ -188,6 +197,7 @@
         },
         {
             "id":"clothing_jp_aoy_casual_sneakers",
+            "promptTags":["sneakers","white footwear","low-top shoes"],
             "displayName":"Yofuku no Ao○ama Low-Top Sneakers",
             "Tags":["rarity_common"],
             "value":6900,

@@ -3,6 +3,7 @@
         "list":[
         {
             "id":"weapon_simple_sling",
+            "promptTags":["sling","holding weapon"],
             "Tags":["ranged","simple"],
             "itemComps_Template":[
                 {
@@ -22,6 +23,7 @@
         },
         {
             "id":"weapon_simple_shortbow",
+            "promptTags":["bow","holding bow","archery"],
             "Tags":["simple","ranged"],
             "itemComps_Template":[
                 {
@@ -41,6 +43,7 @@
         },
         {
             "id":"weapon_simple_lightcrossbow",
+            "promptTags":["crossbow","holding weapon"],
             "Tags":["simple","ranged"],
             "itemComps_Template":[
                 {

@@ -113,7 +113,8 @@
         "trait_Size_B_E", "trait_Size_P_none", "trait_Size_V_1", "trait_Size_A_1"
     ],
     "traits_body": [
-        "trait_HairColor_blue", "trait_EyeColor_blue"
+        "trait_BodyType_curvy",
+        "trait_HairColor_blue", "trait_HairColorPattern_two_tone", "trait_HairColorSecondary_black", "trait_EyeColor_blue"
     ],
     "Height":174,
     "Weight":63,
@@ -133,25 +134,42 @@
             "trait_SleepQuality_shallow"
         ],
     "initialInventory":[
-            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_SleevelessMinidress" },
-            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_SleevelessMinidress" },
             { "ID":"clothing_bluearchive_Navigator_Longcoat" },
-            { "ID":"clothing_bluearchive_Navigator_Boot", "nameOverwrite":"clothing_bluearchive_Navigator_CaptainsHHBoot" },
+            { "ID":"clothing_bluearchive_Navigator_Boot", "nameOverwrite":"clothing_bluearchive_Navigator_CaptainsHHBoot", "promptTags_baseOverride":["white heeled boots","high heel long boots"] },
 
             { "ID":"clothing_skin_earring" },
             { "ID":"clothing_skin_contactlens" },
-            { "ID":"clothing_outer_waistAccessory", "nameOverwrite":"clothing_bluearchive_Navigator_CaptainsGunHolster" },
+            { "ID":"clothing_outer_waistAccessory", "nameOverwrite":"clothing_bluearchive_Navigator_CaptainsGunHolster", "promptTags":["gun holster","holster"] },
 
             { "ID":"clothing_skin_socks" },
             { "ID":"clothing_skin_panty" },
-            { "ID":"clothing_inner_hair_ribbon" },
+            { "ID":"clothing_inner_hair_ribbon", "promptTags_baseOverride":["golden hair ribbon"] },
+            { "ID":"clothing_skin_hair_hairpin", "promptTags_baseOverride":["golden hairclip","hair ornament"] },
             { "ID":"clothing_skin_bra" },
             { "ID":"firearm_handgun" }
         ],
-    "_comment_defaultHairstyle": "Very long dark-blue hair, parted bangs and headband (canon look + portrait).",
+    
+      "promptProfile": {
+          "prompts": [ "rin_\\(blue_archive\\)" ],
+
+          "NEED FIXING: desired clothing prompt":"earrings, hair ornament, golden hairclip, golden hair ribbon, white minidress, white dress, black necktie, hands, collared coat, white coat, arms, hands, large breasts, gun holster, holster, waist ornament, white heeled boots, high heel long boots, utnapishtim operator uniform \\(blue archive\\),",
+
+
+          "current prompt":"hair ribbon, hair bow, earrings, cape, shoulder cape, sleeveless, minidress, bare shoulders, dress, long coat, military uniform, captain's coat, large breasts, gun holster, holster, waist ornament, heeled boots, high heel boots, captain's boots, boots, rin_\\(blue_archive\\), blue hair, long hair, straight hair, center part, parted bangs, blue eyes, curvy, wide hips, narrow waist, light skin, cyan halo",
+
+          "rules":[
+            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
+            { "_comment": "replaces the default eyes_open: eye colour trait + slit pupils", "id": "eyes_open", "requireKeywords": [ "Eyes" ], "excludeActorTags": [ "unconscious" ], "traitGroups": [ "trait_EyeColor" ], "prompts": [ "slit pupils" ] },
+            { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "cyan halo" ] },
+            { "_comment": "the long coat makes the model drop the arms: force them while both arms are covered", "id": "rin_arms", "requireBodyTags": [ "arm" ], "excludeKeywords": [ "Arm" ], "prompts": [ "hands", "arms" ] }
+          ]
+      },
+    "_comment_hairColor": "Two-tone hair: blue with black as the second colour.",
+    "_comment_defaultHairstyle": "Very long two-tone ponytail with a center part (prompt feedback).",
     "defaultHairstyle": {
-      "hairstyleID": "hairstyle_straight_long",
-      "slotSelection": { "front": "hair_front_center_part" }
+      "hairstyleID": "hairstyle_ponytail",
+      "slotSelection": { "length": "hair_length_very_long", "front": "hair_front_center_part" }
     },
     "Skills": null
     },

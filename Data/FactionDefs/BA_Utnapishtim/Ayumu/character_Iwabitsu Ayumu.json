@@ -120,18 +120,33 @@
         ],
       "initialInventory":[
             { "ID":"clothing_bluearchive_Navigator_Hat" },
-            { "ID":"clothing_bluearchive_Navigator_Dress","nameOverwrite":"clothing_bluearchive_Navigator_Minidress" },
-            { "ID":"clothing_bluearchive_Navigator_Cape" },
+            { "ID":"clothing_bluearchive_Navigator_Dress" },
             { "ID":"clothing_bluearchive_Navigator_Glove" },
-            { "ID":"clothing_bluearchive_Navigator_Boot", "nameOverwrite":"clothing_bluearchive_Navigator_HeelBoot" },
+            { "ID":"clothing_bluearchive_Navigator_Boot", "nameOverwrite":"clothing_bluearchive_Navigator_HeelBoot", "promptTags_baseOverride":["white heeled boots","high heel boots"] },
             { "ID":"clothing_skin_socks" },
             { "ID":"clothing_skin_panty" },
             { "ID":"clothing_skin_bra" },
             { "ID":"firearm_handgun" }
         ],
-      "_comment_defaultHairstyle": "Long wavy blonde hair (Spine portrait).",
+    
+      "promptProfile": {
+          "prompts": [ "ayumu_\\(blue_archive\\)" ],
+
+          "NEED FIXING: desired clothing prompt":"garrison cap, white minidress, white dress, black necktie, huge breasts, white gloves, white heeled boots, high heel boots, utnapishtim operator uniform \\(blue archive\\),",
+
+          "current prompt":"hat, peaked cap, cape, shoulder cape, minidress, short dress, dress, huge breasts, gloves, heeled boots, high heel boots, boots, ayumu_\\(blue_archive\\), blonde hair, long hair, wavy hair, straight bangs, hair over shoulders, green eyes, curvy, wide hips, narrow waist, light skin, gold halo",
+
+          "rules":[
+            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
+            { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "gold halo" ] },
+            { "_comment": "forehead jewel, seen with the face", "id": "ayumu_forehead_jewel", "requireBodyTags": [ "head" ], "requireKeywords": [ "Face" ], "prompts": [ "forehead blue jewel" ] },
+            { "_comment": "low wings at the hips, show through clothes", "id": "ayumu_wings", "requireBodyTags": [ "lower" ], "prompts": [ "black wings", "feathered wings", "low wings" ] }
+          ]
+      },
+      "_comment_defaultHairstyle": "Very long wavy blonde hair with parted bangs (prompt feedback).",
       "defaultHairstyle": {
-        "hairstyleID": "hairstyle_wavy_long"
+        "hairstyleID": "hairstyle_wavy_long",
+        "slotSelection": { "length": "hair_length_very_long", "front": "hair_front_parted" }
       },
       "Skills": null
     },

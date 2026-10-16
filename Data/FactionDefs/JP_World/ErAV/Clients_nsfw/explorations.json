@@ -1,0 +1,148 @@
+{
+    "_doc": "ErAV NTR punishment Part 3 - one MIA expedition def per client type (Plans/Handoff_NTR_Punishment_Part3_ClientEvents.md, Plan §3.2). Copies of expedition_erav_ntr_mia (ErAV/Events/ErAV_NTR_Punishment.json) with their own EventIDs/description/background; all share selfReleaseEventID erav_ntr_mia_release. rescueEventID stays empty (nobody rescues), canExplore false, FeatureKeywords nsfw. MaxExplorationRate/EventRate are skeleton values - final numbers are proposed in the Part 3 report and balanced in game. The dictionary key of each ExpeditionID is the MIA party's shown name. Safe mode skips this folder, so CharaMIA on these IDs fails there and the arrival falls back to the generic skeleton def.",
+
+    "ExpeditionEntry": {
+        "list": [
+            {
+                "_comment": "B - county councillor: two-day-one-night 'accompanying secretary' business trip at a Hakone ryokan.",
+                "ExpeditionID": "expedition_erav_ntr_mia_politician",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "DurationHour": 168,
+                "MaxExplorationRate": 900,
+                "rescueEventID": "",
+                "canExplore": false,
+                "selfReleaseEventID": "erav_ntr_mia_release",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_RyokanRestLounge_Night.jpg",
+                "EventRate": 0.1,
+                "EventIDs": [ "exp_event_erav_politician_night1" ],
+                "DescriptionText": [ "expedition_erav_ntr_mia_politician_desc_1" ],
+                "keywords": [],
+                "FeatureKeywords": [ "nsfw" ]
+            },
+            {
+                "_comment": "D - talent agency president: the 'final interview'.",
+                "ExpeditionID": "expedition_erav_ntr_mia_producer",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "DurationHour": 168,
+                "MaxExplorationRate": 900,
+                "rescueEventID": "",
+                "canExplore": false,
+                "selfReleaseEventID": "erav_ntr_mia_release",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_SchaleOperationRoom.jpg",
+                "EventRate": 0.1,
+                "EventIDs": [ "exp_event_erav_producer_interview" ],
+                "DescriptionText": [ "expedition_erav_ntr_mia_producer_desc_1" ],
+                "keywords": [],
+                "FeatureKeywords": [ "nsfw" ]
+            },
+            {
+                "_comment": "F - toy collector: a week as his 'temporary toy' in the basement playroom.",
+                "ExpeditionID": "expedition_erav_ntr_mia_sm_master",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "DurationHour": 168,
+                "MaxExplorationRate": 900,
+                "rescueEventID": "",
+                "canExplore": false,
+                "selfReleaseEventID": "erav_ntr_mia_release",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_Storage_Night.jpg",
+                "EventRate": 0.1,
+                "EventIDs": [ "exp_event_erav_sm_inspection" ],
+                "DescriptionText": [ "expedition_erav_ntr_mia_sm_master_desc_1" ],
+                "keywords": [],
+                "FeatureKeywords": [ "nsfw" ]
+            },
+            {
+                "_comment": "G - visiting foreign sports team: 'team attendant' for the whole squad.",
+                "ExpeditionID": "expedition_erav_ntr_mia_sports",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "DurationHour": 168,
+                "MaxExplorationRate": 900,
+                "rescueEventID": "",
+                "canExplore": false,
+                "selfReleaseEventID": "erav_ntr_mia_release",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_SchoolGround.jpg",
+                "EventRate": 0.1,
+                "EventIDs": [ "exp_event_erav_sports_training" ],
+                "DescriptionText": [ "expedition_erav_ntr_mia_sports_desc_1" ],
+                "keywords": [],
+                "FeatureKeywords": [ "nsfw" ]
+            },
+            {
+                "_comment": "H - foreign celebrity entourage: 'Tokyo girlfriend' escort duty on tour.",
+                "ExpeditionID": "expedition_erav_ntr_mia_celeb",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "DurationHour": 168,
+                "MaxExplorationRate": 900,
+                "rescueEventID": "",
+                "canExplore": false,
+                "selfReleaseEventID": "erav_ntr_mia_release",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_ShoppingDistrict_Night.jpg",
+                "EventRate": 0.1,
+                "EventIDs": [ "exp_event_erav_celeb_town" ],
+                "DescriptionText": [ "expedition_erav_ntr_mia_celeb_desc_1" ],
+                "keywords": [],
+                "FeatureKeywords": [ "nsfw" ]
+            },
+            {
+                "_comment": "I - rich family's household toy: live-in maid for the manor's master and sons.",
+                "ExpeditionID": "expedition_erav_ntr_mia_household",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "DurationHour": 168,
+                "MaxExplorationRate": 900,
+                "rescueEventID": "",
+                "canExplore": false,
+                "selfReleaseEventID": "erav_ntr_mia_release",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_VillaComplex_Night.jpg",
+                "EventRate": 0.1,
+                "EventIDs": [ "exp_event_erav_house_chores" ],
+                "DescriptionText": [ "expedition_erav_ntr_mia_household_desc_1" ],
+                "keywords": [],
+                "FeatureKeywords": [ "nsfw" ]
+            },
+            {
+                "_comment": "J - gang reward: handed to the footsoldiers as the week's 'prize', top floor of an old inn.",
+                "ExpeditionID": "expedition_erav_ntr_mia_gang",
+                "HasStartHour": false,
+                "removeOnComplete": true,
+                "DurationHour": 168,
+                "MaxExplorationRate": 900,
+                "rescueEventID": "",
+                "canExplore": false,
+                "selfReleaseEventID": "erav_ntr_mia_release",
+                "backgroundImagePath": "Media_UI_Scenario_Background/BG_Warehouse.jpg",
+                "EventRate": 0.1,
+                "EventIDs": [ "exp_event_erav_gang_daily" ],
+                "DescriptionText": [ "expedition_erav_ntr_mia_gang_desc_1" ],
+                "keywords": [],
+                "FeatureKeywords": [ "nsfw" ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "expedition_erav_ntr_mia_politician": "担保劳务·温泉商谈随行",
+                "expedition_erav_ntr_mia_politician_desc_1": "$names$在箱根的温泉旅馆，作为县议员的「随行秘书」陪同商谈。",
+                "expedition_erav_ntr_mia_producer": "担保劳务·最终面试",
+                "expedition_erav_ntr_mia_producer_desc_1": "$names$在艺能事务所社长的镜头前接受「最终面试」。",
+                "expedition_erav_ntr_mia_sm_master": "担保劳务·临时玩具",
+                "expedition_erav_ntr_mia_sm_master_desc_1": "$names$被借给郊外宅邸的收藏家，按时间表接受调教。",
+                "expedition_erav_ntr_mia_sports": "担保劳务·随队陪同",
+                "expedition_erav_ntr_mia_sports_desc_1": "$names$作为随队女性陪同访日球队，训练、比赛、酒店全程跟队。",
+                "expedition_erav_ntr_mia_celeb": "担保劳务·随行陪同",
+                "expedition_erav_ntr_mia_celeb_desc_1": "$names$作为巡演团体的「日本女朋友」随行陪玩。",
+                "expedition_erav_ntr_mia_household": "担保劳务·家用女仆",
+                "expedition_erav_ntr_mia_household_desc_1": "$names$住进城西大宅，做这户人家的「家政助手」。",
+                "expedition_erav_ntr_mia_gang": "担保劳务·犒劳",
+                "expedition_erav_ntr_mia_gang_desc_1": "$names$被当作犒劳品送进旧旅馆的包层，交给组里的小弟们。"
+            }
+        }
+    }
+}

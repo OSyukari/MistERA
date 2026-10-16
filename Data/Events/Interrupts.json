@@ -4,6 +4,12 @@
             {
                 "ID": "OnEnterRoom_interrupt",
                 "trigger": "OnEnterRoom",
+                "_comment": "Keep Moving sets a 5 min cooldown for self with these targets only; targets still on it are dropped from the validator, so newcomers in the room still trigger",
+                "cooldownTime": 5,
+                "cooldownRestrictSelf": true,
+                "cooldownRestrictTarget": true,
+                "cooldownRestrictAND": true,
+                "manualCooldown": true,
                 "SelfValidator": {
                     "chara_conditions": [
                         {
@@ -27,7 +33,10 @@
                             "targets"
                         ],
                         "baseScope": "AllCharaInSelfRoom_ExcludeSelf",
-                        "minTargetCount": 1
+                        "minTargetCount": 1,
+                        "chara_conditions": [
+                            { "parameters": [ "isOnEventCooldownWithSelf", "OnEnterRoom_interrupt", "false" ] }
+                        ]
                     }
                 ],
                 "events": [
@@ -41,7 +50,10 @@
                         "options": [
                             {
                                 "option": "event_OnEnterRoom_interrupt_ev01_op1",
-                                "isDefaultCancel": true
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "AddCooldown", "arguments": [ "OnEnterRoom_interrupt", "self", "targets" ] }
+                                ]
                             },
                             {
                                 "option": "event_OnEnterRoom_interrupt_ev01_op2",

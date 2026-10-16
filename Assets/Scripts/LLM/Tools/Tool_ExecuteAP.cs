@@ -40,6 +40,11 @@ public class Tool_ExecuteAP : ILLMTool
         public int masterRef = -1;
         public int repeatCount = 1;
         [JsonConverter(typeof(StringEnumConverter))] public Memory_Response commandResult = Memory_Response.None;
+        /// <summary>RoleplayModifier mode only (see LLMOutcomeRules) - APJSON.ac_modifier / dc_modifier.</summary>
+        public int acModifier = 0;
+        public int dcModifier = 0;
+        /// <summary>RoleplayModifier/LLMVerdict mode - APJSON.outcome_reason.</summary>
+        public string reason = "";
     }
 
     /// <summary>
@@ -60,7 +65,10 @@ public class Tool_ExecuteAP : ILLMTool
                 receiverRefID = ep.receiver_RefID,
                 masterRef = ep.master_RefID,
                 repeatCount = ep.repeatCount,
-                commandResult = ep.command_result
+                commandResult = ep.command_result,
+                acModifier = ep.ac_modifier,
+                dcModifier = ep.dc_modifier,
+                reason = ep.outcome_reason
             });
         }
         return list;
@@ -81,6 +89,9 @@ public class Tool_ExecuteAP : ILLMTool
         /// </summary>
         public bool executed;
         public List<string> messages = new List<string>();
+        /// <summary>Set when a 0/100 hard gate overrode the model's verdict / ignored its acceptance
+        /// modifier (LLMOutcomeRules.GateOverrideNote) - the narrative must follow the real result.</summary>
+        public string hardGateNote;
     }
 
     class Result
@@ -120,9 +131,35 @@ public class Tool_ExecuteAP : ILLMTool
             { "receiverRefID", new LLMFormatSchema.Type_Simple("integer", "RefID of the character receiving the action, or -1 if none.") },
             { "masterRef", new LLMFormatSchema.Type_Simple("integer", "RefID of the character ordering the action. Default -1 = inactive (the doer acts on their own intent). If set and different from the doer, the action is NOT the doer's own choice but an order from that master - the doer may then refuse the master's order and remembers being ordered.") },
             { "repeatCount", new LLMFormatSchema.Type_Simple("integer", "How many times to repeat the action. Defaults to 1.") },
-            { "commandResult", new LLMFormatSchema.Type_Enum(new List<string> { "None", "Refuse", "Accept", "CriticalFailure", "Failure", "Success", "CriticalSuccess" },
-                "Outcome override. None (default) = the game performs the real acceptance and DifficultyCheck rolls - use this unless you deliberately intend to force the outcome. Refuse = force the action to be refused. Accept = force acceptance and skip the DifficultyCheck roll, should only applied to commands without DC. CriticalFailure/Failure/Success/CriticalSuccess = force acceptance AND force that DifficultyCheck outcome.") }
         }, "One action to execute.");
+
+        // the outcome fields follow the session's LLMOutcomeMode (see LLMOutcomeRules) - the matching
+        // server-side checks live in LLMOutcomeRules.Prepare
+        switch (LLMOutcomeRules.CurrentMode)
+        {
+            case LLMOutcomeMode.RoleplayModifier:
+                itemSchema.properties["acModifier"] = new LLMFormatSchema.Type_Simple("integer",
+                    $"Mandatory. Integer {LLMOutcomeRules.ModifierMin}..{LLMOutcomeRules.ModifierMax}: how much the player's roleplay changes the participants' willingness to go along with this action (the receiver's acceptance, and the doer's when ordered by a master). Each point = 5% acceptance; the game still rolls. 0 = the roleplay neither helps nor hurts (plain or neutral requests). Has no effect when the acceptance rate is 0% or 100% (hard game limits).");
+                itemSchema.properties["dcModifier"] = new LLMFormatSchema.Type_Simple("integer",
+                    $"Mandatory. Integer {LLMOutcomeRules.ModifierMin}..{LLMOutcomeRules.ModifierMax}, added to this action's DifficultyCheck d20 roll: how much the player's described approach, technique or preparation makes the action itself easier or harder. Use 0 for commands without a DifficultyCheck or when the input adds nothing.");
+                itemSchema.properties["reason"] = new LLMFormatSchema.Type_Simple("string",
+                    "One sentence naming the part of the player's roleplay that justifies the modifiers. Required whenever acModifier or dcModifier is not 0.");
+                itemSchema.required.AddRange(new[] { "acModifier", "dcModifier" });
+                break;
+
+            case LLMOutcomeMode.LLMVerdict:
+                itemSchema.properties["commandResult"] = new LLMFormatSchema.Type_Enum(new List<string> { "Refuse", "Accept", "CriticalFailure", "Failure", "Success", "CriticalSuccess" },
+                    "Mandatory: your ruling of this action's outcome. Refuse = the action is refused. Accept = accepted, only for commands WITHOUT a DifficultyCheck. CriticalFailure/Failure/Success/CriticalSuccess = accepted with that DifficultyCheck outcome. A 0% or 100% acceptance rate is a hard game limit and overrides your ruling.");
+                itemSchema.properties["reason"] = new LLMFormatSchema.Type_Simple("string",
+                    "Mandatory. One sentence justifying the ruling: the acceptance rate/DifficultyCheck baseline and what in the player's roleplay moved it.");
+                itemSchema.required.AddRange(new[] { "commandResult", "reason" });
+                break;
+
+            default:
+                itemSchema.properties["commandResult"] = new LLMFormatSchema.Type_Enum(new List<string> { "None", "Refuse", "Accept", "CriticalFailure", "Failure", "Success", "CriticalSuccess" },
+                    "Outcome override. None (default) = the game performs the real acceptance and DifficultyCheck rolls - use this unless you deliberately intend to force the outcome. Refuse = force the action to be refused. Accept = force acceptance and skip the DifficultyCheck roll, should only applied to commands without DC. CriticalFailure/Failure/Success/CriticalSuccess = force acceptance AND force that DifficultyCheck outcome.");
+                break;
+        }
         var schema = new LLMFormatSchema();
         schema.properties["actions"] = new LLMFormatSchema.Type_Array(itemSchema,
             "The actions to execute, in intended execution order. All-or-nothing validation: if ANY action is invalid, nothing executes and the error names each offending entry.");
@@ -152,8 +189,20 @@ public class Tool_ExecuteAP : ILLMTool
                 receiver_RefID = args.actions[i].receiverRefID,
                 master_RefID = args.actions[i].masterRef,
                 repeatCount = Math.Max(1, args.actions[i].repeatCount),
-                command_result = args.actions[i].commandResult
+                command_result = args.actions[i].commandResult,
+                ac_modifier = args.actions[i].acModifier,
+                dc_modifier = args.actions[i].dcModifier,
+                outcome_reason = args.actions[i].reason
             });
+        }
+
+        // outcome-mode contract (mandatory verdict / modifier reasons) - normalized before parsing since
+        // JoinAP compares the normalized fields
+        var modeErrors = LLMOutcomeRules.Prepare(json.UpdateVariable, LLMOutcomeRules.CurrentMode);
+        if (modeErrors.Count > 0)
+        {
+            done?.Invoke(LLMToolResult.Error(call, String.Join("\n", modeErrors)));
+            yield break;
         }
 
         var packages = json.GetActionPackages(out _);
@@ -223,7 +272,7 @@ public class Tool_ExecuteAP : ILLMTool
         {
             int count = 0;
             foreach (var ep in ap.epjson) count = Math.Max(count, ep.repeatCount);
-            var entry = new ActionResult { action = $"{ap.DisplayName} x{count}", executed = ap.capturedLog != null };
+            var entry = new ActionResult { action = $"{ap.DisplayName} x{count}", executed = ap.capturedLog != null, hardGateNote = LLMOutcomeRules.GateOverrideNote(ap) };
             if (ap.capturedLog != null)
             {
                 entry.messages.AddRange(ap.capturedLog.DumpMessages());

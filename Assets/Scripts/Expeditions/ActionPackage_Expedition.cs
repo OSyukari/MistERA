@@ -248,6 +248,8 @@ public class ActionPackage_Expedition : ActionPackage
                 else if (r != null)
                 {
                     r.unresolved = package;
+                    // user pref: play it now, exactly as if its button was clicked (RetryEvent leaves it banked)
+                    if (ExpeditionUtility.ImmediateRunEnabled) ExpeditionUtility.RunBankedEventNow(jobb, r);
                 }
                 else
                 {

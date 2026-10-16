@@ -1059,6 +1059,8 @@ public class Manageable_Party : I_IsJobGiver
                     // scope target everybody as enemy
 
                     r1.unresolved = package;
+                    // user pref: the rescuing team plays it now, as if its button was clicked (RetryEvent leaves it banked)
+                    if (ExpeditionUtility.ImmediateRunEnabled) ExpeditionUtility.RunBankedEventNow(this.Job, r1);
 
                     // this must not be. on save load these 2 will not be the same thing
                    // r2.unresolved = package;

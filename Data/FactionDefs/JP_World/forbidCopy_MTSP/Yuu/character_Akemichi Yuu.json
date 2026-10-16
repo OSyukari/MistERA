@@ -14,7 +14,7 @@
         "trait_Size_B_AAA", "trait_Size_P_small", "trait_Size_V_none", "trait_Size_A_1"
     ],
     "traits_body": [
-        "trait_BodyType_slim", "trait_HairColor_brown", "trait_EyeColor_brown"
+        "trait_BodyType_thin", "trait_HairColor_brown", "trait_EyeColor_brown"
     ],
     "Height": 165,
     "Weight": 50,

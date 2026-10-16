@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -167,6 +168,18 @@ public class Hairstyle_Instance
 
     [JsonIgnore] public string HairstyleID { get { return hairstyleID; } }
     [JsonIgnore] public string SubCategoryID { get { return subCategoryID; } }
+
+    [JsonIgnore]
+    public string DisplayName
+    {
+        get
+        {
+            var main = subCategoryID == "" ? LocalizeDictionary.QueryThenParse(hairstyleID) : LocalizeDictionary.QueryThenParse(subCategoryID);
+            List<string> options = new List<string>();
+            foreach (var vs in slotSelection) options.Add(LocalizeDictionary.QueryThenParse(vs.Value));
+            return $"{main}{String.Join("", options)}";
+        }
+    }
 
     public Hairstyle_Base GetBase()
     {

@@ -104,7 +104,9 @@
 
                 "char_editor_selectTrait_none":"无",
                 "char_editor_selectTrait_requirementNotMet":"该角色的种族或外观不满足此特质的需求",
-
+                "char_editor_hairstyle":"发型",
+                "char_editor_hairstyle_subtype":"子类型",
+                "char_editor_hairstyle_random":"随机",
                 "char_editor_selectTrait_STR":"<link=\"char_editor_selectTrait_STR_tooltip\">%%stats_base_Strength%%系特质 - 总属性调整</link>",
                 "char_editor_selectTrait_STR_tooltip":"%%stats_base_Strength_tooltip%%\n\n%%char_editor_selectTrait_spectrum_tooltip%%",
                 "char_editor_selectTrait_CON":"<link=\"char_editor_selectTrait_CON_tooltip\">%%stats_base_Constitution%%系特质 - 总属性调整</link>",
