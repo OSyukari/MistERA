@@ -29,6 +29,8 @@ Assets/*
 
 **/forbidCopy
 **/forbidCopy.*
+**/*forbidCopy*/
+**/*forbidCopy*/**
 
 
 *.yml
