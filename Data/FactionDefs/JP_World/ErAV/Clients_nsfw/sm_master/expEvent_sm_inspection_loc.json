@@ -1,0 +1,20 @@
+{
+    "_doc": "en-us localization for expEvent_sm_inspection.json (same folder convention).",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_sm_inspection": "Day One: Inspection and Development",
+                "exp_event_erav_sm_inspection_ongoing": "$names$ is led into the basement playroom for the \"basic inspection\".",
+                "exp_event_erav_sm_inspection_result": "$names$ is strapped onto the examination table in the playroom.",
+
+                "event_erav_sm_inspection_01": "The basement lights hum. The whips, reins and wooden saddles racked by size on every wall stop $party.name$ cold on the stairs.\nThe old man in the cardigan sits under a lamp doing his woodwork, not looking up.\n\"You're here. Read this first.\"\nOn the whiteboard, in neat handwriting: inspection and development, anal day, bondage endurance, service training... \"I bought you for seven days. Every one of these hundred and sixty-eight hours has a subject assigned.\"",
+                "event_erav_sm_inspection_02": "She is fixed onto a frame like an examination table - wrists and ankles in four-point restraint, hips raised, legs spread and locked into the stirrups.\nThe old man pulls on rubber gloves, as unhurried as an old country doctor.\n\"Before a toy is used, it must learn its own specifications. Bear with it. It will feel cold.\"",
+                "event_erav_sm_inspection_03": "Lubricant, speculum, fingers - he measures her inside inch by inch, noting depth, tightness, and the ranking of her sensitive points in his ledger as he goes.",
+                "event_erav_sm_inspection_04": "\"Clitoris: sensitive. Vestibule: sensitive. Development: thirty percent.\" He closes the ledger and reads out her \"specifications\".\n\"- No matter. A hundred and sixty-eight hours is enough.\"",
+                "event_erav_sm_inspection_05": "The examination table folds down into a training rack. \"Today's subject: development.\"\nHe takes her from behind across the rack, still writing, as if recording observations.\n\"The reflex contraction is still there - a good sign. A toy with no reaction at all would be boring.\"",
+                "event_erav_sm_inspection_06": "By the time the inspection ends, it is already dark outside. Her \"specifications\" are entered on the last page of the ledger, with long blank lines left below.\n\"Tomorrow: anal day. Be late, and the time comes out of your rest.\"",
+                "event_erav_sm_inspection_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

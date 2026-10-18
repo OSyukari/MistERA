@@ -1,0 +1,174 @@
+{
+    "_doc": "ErAV NTR Part 3 - B politician, SMALL events (handoff 'Small event template'). Text-only events write their resultText to the MIA party's log without a click; the quick act's result also starts its hidden event at once (runImmediate, empty lines, no flush, no ResolveEvent, releases its keys on every path). Weights: 4 full scenes at weight 1 each vs small events 3+3+2+3 = 11 -> scene share 4/15 (~27%, about one scene per 3-4 h of her stay).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_politician_small_sake",
+                "eventString_Ongoing": "exp_event_erav_politician_small_sake_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_politician_small_sake_result_1"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_politician_small_sake_result_2"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_small_sake_result_3"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_politician_small_bath",
+                "eventString_Ongoing": "exp_event_erav_politician_small_bath_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_small_bath_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_small_bath_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_politician_small_yukata",
+                "eventString_Ongoing": "exp_event_erav_politician_small_yukata_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_small_yukata_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_small_yukata_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_politician_small_quickie",
+                "eventString_Ongoing": "exp_event_erav_politician_small_quickie_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_small_quickie_result",
+                        "eventID": "event_erav_politician_small_quickie",
+                        "runImmediate": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_politician_small_quickie",
+                "_comment": "Hidden (runImmediate): empty lines only, no flush. self = player, party = the victim.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_politician", "erav_client_politician", "1", "true" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "client", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "act" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "fail" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "act",
+                        "line": "",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "client", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "fail",
+                        "line": "",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_politician_small_sake": "斟酒与侍坐",
+                "exp_event_erav_politician_small_sake_ongoing": "$names$以随行秘书的身份，伺候旅馆里的应酬。",
+                "exp_event_erav_politician_small_sake_result_1": "$names$跪坐着替满座的客人斟酒，酒瓶倾倒的角度被纠正了三遍，直到议员点头为止。",
+                "exp_event_erav_politician_small_sake_result_2": "$names$被叫到议员的膝下侍坐，他的手隔着浴衣在她腿上慢慢巡查过去，像在清点随身行李。",
+                "exp_event_erav_politician_small_sake_result_3": "应酬的间隙，$names$被指去给议员扇扇子。扇着扇着，浴衣的领口被人顺手拉开了半边。",
+
+                "exp_event_erav_politician_small_bath": "陪浴",
+                "exp_event_erav_politician_small_bath_ongoing": "$names$被唤去旅馆的浴场陪浴。",
+                "exp_event_erav_politician_small_bath_result_1": "浴场里，$names$跪在池边替议员搓背。搓到腰际，头顶被按着转了方向——「先搓正面」。",
+                "exp_event_erav_politician_small_bath_result_2": "$names$陪议员泡在池中，被他抱坐在膝上洗。说是洗，手上的动作更像是清点。",
+
+                "exp_event_erav_politician_small_yukata": "旅馆的规矩",
+                "exp_event_erav_politician_small_yukata_ongoing": "旅馆的走廊上，$names$被仲居拦了下来。",
+                "exp_event_erav_politician_small_yukata_result_1": "仲居替$names$重新系过浴衣的带子——系法是议员房里教的那套，裙裾之内不许有别的东西，这是「旅馆的规矩」。",
+                "exp_event_erav_politician_small_yukata_result_2": "$names$被仲居领着去给各房间送茶。每间房的客人都多看了她两眼，没人觉得奇怪——她胸口的牌子上写着「议员的随行」。",
+
+                "exp_event_erav_politician_small_quickie": "午间传唤",
+                "exp_event_erav_politician_small_quickie_ongoing": "房间里传出议员的声音，叫$names$过去。",
+                "exp_event_erav_politician_small_quickie_result": "午休的间隙，议员把$names$唤进房间，让她跪在矮桌边伺候了片刻，完事了才让她退下继续当值。"
+            }
+        }
+    }
+}

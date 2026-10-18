@@ -217,6 +217,7 @@ public class KojoCollector : I_ResultStorage, I_Records
         newinstance.comVariantID = comVariantID;
         newinstance.selfTags = new List<string>(selfTags);
         newinstance.targetTags = new List<string>(targetTags);
+        newinstance.actionTags = new List<string>(actionTags);
         newinstance.rightAlign = rightAlign;
         newinstance.isDoer = isDoer;
         newinstance.selfRef = selfRef;
@@ -252,6 +253,12 @@ public class KojoCollector : I_ResultStorage, I_Records
     [JsonProperty] protected List<string> selfTags = new List<string>();
     [JsonIgnore] public List<string> TargetTags { get { return targetTags; } }
     [JsonProperty] protected List<string> targetTags = new List<string>();
+    /// <summary>
+    /// Owner's action tags from the loaded EP (EvaluationPackage.GetActorEPTags: COM tags + EP extra tags, eg. sex, kiss).
+    /// Portrait only - added to the kojo's self portrait tags, never used for kojo requirement matching.
+    /// </summary>
+    [JsonIgnore] public List<string> ActionTags { get { return actionTags; } }
+    [JsonProperty] protected List<string> actionTags = new List<string>();
 
     public bool requireAnimate = true;
 
@@ -360,12 +367,19 @@ public class KojoCollector : I_ResultStorage, I_Records
             else this.selfTags = ep.DoerSelfTag;
 
             UtilityEX.GetActorTag(ref this.selfTags, Owner);
+            this.actionTags = new List<string>(ep.DoerTargetTag);
+            // portrait role (global portrait role blocks require doer/receiver); solo acts have no role
+            if (ep.Receiver != null && !ep.Receiver.Match(Owner)) this.actionTags.Add("doer");
+            UtilityEX.AddPortraitDisplayTags(this.actionTags);
         }
         else if (ep.Receiver != null && ep.Receiver.Match(Owner))
         {
             this.selfTags = ep.ReceiverSelfTag;
 
             UtilityEX.GetActorTag(ref this.selfTags, Owner);
+            this.actionTags = new List<string>(ep.ReceiverTargetTag);
+            this.actionTags.Add("receiver");
+            UtilityEX.AddPortraitDisplayTags(this.actionTags);
         }
 
         if (ep.Receiver != null)
@@ -401,6 +415,15 @@ public class KojoCollector : I_ResultStorage, I_Records
         {
             this.commandID = ep.commandID;
             this.comVariantID = ep.comVariantID;
+        }
+
+        // COM portrait-only pose keywords, only when Owner is this EP's doer/receiver (actionTags filled above)
+        if (this.actionTags.Count > 0 && ep.commandID != "")
+        {
+            var com = scr_System_Serializer.current.MasterList.COMs.GetByID(ep.commandID);
+            string role = this.actionTags.Contains("receiver") ? "receiver" : this.actionTags.Contains("doer") ? "doer" : "";
+            if (com != null) com.AddPortraitTags(this.actionTags, role);
+            Utility.DistinctInPlace(this.actionTags);
         }
 
         if (Target == null && targetCandidate != null)
@@ -462,6 +485,9 @@ public class KojoCollector : I_ResultStorage, I_Records
             }
             doerAttitude = ep.DoerAttitude;
         }
+
+        // portrait only - empty when Owner is not this EP's doer/receiver (live action tags are used instead)
+        this.actionTags = UtilityEX.GetEPPortraitActionTags(ep, Owner);
 
         if (ep.Master != null) masterRef = ep.Master.RefID;
         else if (ep.Doer != null) masterRef = ep.Doer.RefID;

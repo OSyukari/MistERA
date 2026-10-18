@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public static class ExpeditionUtility
 {
@@ -87,16 +88,164 @@ public static class ExpeditionUtility
         return false;
     }
 
+    /// <summary> exploration pick for a member on the job: exploration events + the current day/night list </summary>
     public static ActionPackage_Expedition RandEvent(Character_Trainable c, ExpeditionInstance exp, Manageable_Party p)
     {
         var dict = new Dictionary<ActionPackage_Expedition, int>();
-        foreach (var i in exp.AllEvents)
+        int hour = scr_System_Time.current.getCurrentTime().Hour;
+        foreach (var i in exp.GetEventPool(true, hour))
         {
             var ii = new ActionPackage_Expedition(new List<Character_Trainable>() { c }, p.Job , i);
             if (ii.weight < 1) continue;
             dict.Add(ii, ii.weight);
         }
         return Utility.WeightedRandInDict(dict);
+    }
+
+    /// <summary>
+    /// Off-time pick (Job_Expedition.TickOffTimeEvents) for a member off the job: the current day/night list only,
+    /// team requirements validated in off-time mode. Null = nothing pickable.
+    /// </summary>
+    public static ExpEvents RandOffTimeEvent(Character_Trainable c, ExpeditionInstance exp, Manageable_Party p)
+    {
+        var dict = new Dictionary<ExpEvents, int>();
+        int hour = scr_System_Time.current.getCurrentTime().Hour;
+        var actors = new List<Character_Trainable>() { c };
+        foreach (var ev in exp.GetEventPool(false, hour))
+        {
+            int weight = GetEventWeight(ev, actors, p, hour, true);
+            if (weight < 1) continue;
+            dict.Add(ev, weight);
+        }
+        return dict.Count > 0 ? Utility.WeightedRandInDict(dict) : null;
+    }
+
+    /// <summary>
+    /// Event weight: baseWeight + team weightMods, time-of-day mods (ExpEvents.timeWeightMods), then the def's keyword
+    /// weightModifiers. -1 if the team requirement fails. Same order as ActionPackage_Expedition's weight.
+    /// </summary>
+    public static int GetEventWeight(ExpEvents ev, List<Character_Trainable> actors, Manageable_Party p, int hour, bool offTime)
+    {
+        if (ev == null) return -1;
+        int weight = ev.baseWeight;
+        if (!ev.teamRequirement.Validate(actors, p, out var tooltip, out var hardlock, offTime)) return -1;
+        foreach (var wmod in ev.weightMods)
+        {
+            if (wmod.teamRequirement.Validate(actors, p, out var discard, out hardlock, offTime)) weight += wmod.modValue;
+        }
+        weight = ev.ApplyTimeWeight(weight, hour);
+        var exp = p == null || p.Job == null ? null : p.Job.Expedition;
+        if (exp != null) weight = exp.GetWeightModifiers(ev.tags, weight);
+        return weight;
+    }
+
+    /// <summary>
+    /// Rolls and applies a result of ev for actors (log line, costs, results_characters, memory, faction results, then the
+    /// result's event: runImmediate / banked / immediateRunExpeditionEvent). Shared by the exploration action
+    /// (ActionPackage_Expedition.Execution, which then applies progress and cooldown) and off-time events (offTime: no
+    /// progress, no cooldown, and a banked entry keeps its targets while they stay off the job). Null = no result.
+    /// </summary>
+    public static ExpResults ApplyResult(Job_Expedition jobb, ExpEvents ev, List<Character_Trainable> actors, string memEntryName, bool offTime)
+    {
+        if (jobb == null || ev == null || actors == null || actors.Count < 1) return null;
+        var result = RandResult(ev, jobb.FactionOwner_Party, actors, offTime);
+        if (result == null) return null;
+
+        var actorRefs = new List<int>();
+        foreach (var i in actors) actorRefs.Add(i.RefID);
+
+        var r = jobb.AddResult($"{LocalizeDictionary.QueryThenParse(result.resultText)}", new List<string>(), new List<int>(actorRefs));
+
+        foreach (var i in actors)
+        {
+            ev.teamRequirement.ApplyCost(i, r == null ? null : r.Tooltips);
+
+            foreach (var j in result.results_characters)
+            {
+                ResultCharaUtility.Apply(j, jobb.FactionOwner_Party, i, r == null ? null : r.Tooltips);
+            }
+
+            if (result.logCharaMemory)
+            {
+                var ids = new List<int>();
+                var names2 = new List<string>();
+                foreach (var j in actors)
+                {
+                    if (j == i) continue;
+                    ids.Add(j.RefID);
+                    names2.Add(j.CallName);
+                }
+                var newMem = new MemInstance(ids, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral,
+                                    LocalizeDictionary.QueryThenParse(result.resultText).Replace("$names$", names2.Count > 0 ?
+                                        LocalizeDictionary.QueryThenParse("exp_event_active_memory_teammates").Replace("$team$", String.Join(", ", names2)) : ""));
+                var entry = i.Memory.AddEntry(newMem, new List<string>() { "expedition" });
+                entry.entryDescription = memEntryName;
+                entry.disableRoomName = true;
+            }
+        }
+
+        foreach (var j in result.results_factions)
+        {
+            ResultFactionUtility.Apply(j, jobb, r == null ? null : r.Tooltips);
+        }
+
+        if (result.eventID != "")
+        {
+            var package = new SerializableEventPackage();
+            package.eventID = result.eventID;
+            package.eventLabel = result.eventLabel;
+            package.keepTargetsOffJob = offTime;
+            if (result.eventAppendStringKey != "")
+            {
+                var list = new List<string>();
+                if (result.eventAppendString != "") list.Add(result.eventAppendString);
+                else list.Add(result.resultText);
+
+                package.AppendStrings.Add(result.eventAppendStringKey, list);
+            }
+
+            List<int> party = new List<int>(), frontline = new List<int>(), backline = new List<int>();
+            foreach (var i in actors)
+            {
+                party.Add(i.RefID);
+                switch (jobb.FactionOwner_Party.GetTeamComp(i.RefID))
+                {
+                    case Manageable_Party.PartyComposition.frontline:
+                        frontline.Add(i.RefID);
+                        break;
+                    case Manageable_Party.PartyComposition.backline:
+                        backline.Add(i.RefID);
+                        break;
+                    default: break;
+
+                }
+            }
+            package.Targets.Add("party", party);
+            package.Targets.Add("teamA_frontline", frontline);
+            package.Targets.Add("teamA_backline", backline);
+            package.overrideTargetScope = result.overrideTargetScope;
+            package.targetScopes = result.TargetValidators;
+            package.overrideTargetGen = result.overrideTargetGeneration;
+            package.targetGens = result.TargetGenerations;
+
+            if (package.isValid && result.runImmediate)
+            {
+                Debug.Log("event runimmediate start");
+                var evInst = EventUtility.StartEvent(jobb, package);
+                scr_UpdateHandler.current.EventHandler.StartEvent(evInst, false);
+            }
+            else if (r != null)
+            {
+                r.unresolved = package;
+                // user pref: play it now, exactly as if its button was clicked (RetryEvent leaves it banked)
+                if (ImmediateRunEnabled) RunBankedEventNow(jobb, r);
+            }
+            else
+            {
+                Debug.LogError("ExpResult flagged for no_logging but has unresolved package.");
+            }
+        }
+        return result;
     }
 
     /// <summary>
@@ -115,13 +264,13 @@ public static class ExpeditionUtility
         return Utility.DiceUntil(100, 60-currentMin, (int)(exp.Base.EventRate * 100));
     }
 
-    public static ExpResults RandResult(ExpEvents exp, Manageable_Party party, ActionPackage_Expedition p)
+    public static ExpResults RandResult(ExpEvents exp, Manageable_Party party, List<Character_Trainable> actors, bool offTime = false)
     {
         var dict = new Dictionary<ExpResults, int>();
 
         string lockedFaction = "";
 
-        foreach(var c in p.Actors)
+        foreach(var c in actors)
         {
             if (c.FactionManager.isPartyLocked)
             {
@@ -135,7 +284,7 @@ public static class ExpeditionUtility
             if (i.TargetGenerations.Count > 0)
             {
                 //bool targetGenValid = true;
-                string factionTemplate = p.Job_Expedition == null ? "" : p.Job_Expedition.FactionOwner_Party.OwnerFaction.ID;
+                string factionTemplate = party == null ? "" : party.OwnerFaction.ID;
                 /*
                 foreach(var gen in i.TargetGenerations)
                 {
@@ -158,21 +307,21 @@ public static class ExpeditionUtility
                 }*/
                 // check if targetgen conflict with p.
             }
-            var ii = GetWeight(p.Actors, i, party);
+            var ii = GetWeight(actors, i, party, offTime);
             if (ii < 1) continue;
             dict.Add(i, ii);
         }
         return Utility.WeightedRandInDict(dict);
     }
 
-    public static int GetWeight(List<Character_Trainable> targets, ExpResults ev, Manageable_Party p)
+    public static int GetWeight(List<Character_Trainable> targets, ExpResults ev, Manageable_Party p, bool offTime = false)
     {
         int weight = ev.baseWeight;
 
-        if (!ev.teamRequirement.Validate(targets, p, out var result, out bool hardlock)) return -1;
+        if (!ev.teamRequirement.Validate(targets, p, out var result, out bool hardlock, offTime)) return -1;
         foreach (var wmod in ev.weightMods)
         {
-            if (wmod.teamRequirement.Validate(targets, p, out var result2, out hardlock))
+            if (wmod.teamRequirement.Validate(targets, p, out var result2, out hardlock, offTime))
             {
                 weight += wmod.modValue;
             }

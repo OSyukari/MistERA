@@ -42,6 +42,11 @@ public class BodyInternal_Instance
 
     [JsonIgnore] public bool HasUnawareExperience { get { return this.unawareExperience != 0; } }
 
+    /// <summary> this part can lose its virginity at all (has a first-experience text and virginityLossTags) </summary>
+    [JsonIgnore] public bool CanLoseVirginity { get { return Base != null && Base.firstExperienceDesc != "" && Base.virginityLossTags.Count > 0; } }
+    /// <summary> can lose it and has neither an aware nor an unaware first experience. Plain fields only (safe on a detached copy). </summary>
+    [JsonIgnore] public bool IsVirgin { get { return CanLoseVirginity && this.firstExperience == 0 && this.unawareExperience == 0; } }
+
     /// <summary>
     /// Unaware loss desc rebuilt under current localization, falls back to the stored snapshot when the
     /// COM / target body part definition no longer exists.
@@ -150,6 +155,18 @@ public class BodyInternal_Instance
         get
         {
             return womb != null && womb.isPregnant;
+        }
+    }
+
+    /// <summary>
+    /// Pregnant and the contents (foetus + anything else) visibly expand this organ (isVisiblyExpanded)
+    /// </summary>
+    [JsonIgnore]
+    public bool isVisiblyPregnant
+    {
+        get
+        {
+            return isPregnant && isVisiblyExpanded;
         }
     }
 

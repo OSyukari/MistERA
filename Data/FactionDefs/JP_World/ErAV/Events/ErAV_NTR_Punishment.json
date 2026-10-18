@@ -1,5 +1,5 @@
 {
-    "_doc": "ErAV NTR punishment chain, Part 1 + Part 2 (Plans/Plan_NTR_Punishment_MIA.md). debtclass_erav_kanon's onFailedEventID (ErAV/campaign.json) fires erav_ntr_punishment_kick when the monthly cycle fails to collect (Obligation_Debt.HandlePaymentEvent -> TradeManager.FireObligationEvent). The kick is deliberately silent and only starts the 'erav_ntr_punishment' event chain (StartEventChain, delayed a few minutes - Data/RaceDefs/nsfw_Labor_Events.json's 'labor' chain is the reference) so the interactive selection event doesn't land in the middle of the payment-resolve update batch and interrupt other running events. Like Data/Events/Obligation_Debt.json, the payer firing starts at the first entry (self = player) and the payee firing starts at the 'payee' labeled entry (self = Kiryu-gumi's manager, silent no-op so the chain is only ever started on the player). The chain then starts erav_ntr_punishment_select on self = player. Candidates: female, non-player members of ErAV_miyama_Household / ErAV_KiryuGumi_Filmstudio, excluding anyone still held in a locked party (isPartyLocked false - a previous victim still MIA; canMove is NOT usable here, the event runs at midnight while most NPCs sleep). Selection uses Options.forEachTargetKey (one option per candidate, $name$ interpolated, picked character bound as Targets[victim]). The player option references a target key that is never populated, so isValid fails and it renders greyed-out with invalidTooltip (same authored-disabled pattern as Opt_ArrangeJoin_Recreation's leave option). After the farewell kojo (GetKojoEntry - Kojo/ErAV_NTR_Punishment.json), StartEvent hands the victim to erav_ntr_mia_arrival (Part 2, self = victim) with the player injected as 'supervisor'. Part 2: arrival copies self into Targets[victim] (CopyTargets) and takes her into a new MIA party (CharaMIA) on expedition_erav_ntr_mia; she is released by its selfReleaseEventID erav_ntr_mia_release once her own expedition progress or the DurationHour countdown runs out (TeleportToFaction home, then ReleaseFromMIA). Both terminal paths (departure / no_candidates) call EndEventChain explicitly (same convention as nsfw_Labor_Events).",
+    "_doc": "ErAV NTR punishment chain, Part 1 + Part 2 (Docs/Expeditions/Plan_NTR_Punishment_MIA.md). debtclass_erav_kanon's onFailedEventID (ErAV/campaign.json) fires erav_ntr_punishment_kick when the monthly cycle fails to collect (Obligation_Debt.HandlePaymentEvent -> TradeManager.FireObligationEvent). The kick is deliberately silent and only starts the 'erav_ntr_punishment' event chain (StartEventChain, delayed a few minutes - Data/RaceDefs/nsfw_Labor_Events.json's 'labor' chain is the reference) so the interactive selection event doesn't land in the middle of the payment-resolve update batch and interrupt other running events. Like Data/Events/Obligation_Debt.json, the payer firing starts at the first entry (self = player) and the payee firing starts at the 'payee' labeled entry (self = Kiryu-gumi's manager, silent no-op so the chain is only ever started on the player). The chain then starts erav_ntr_punishment_select on self = player. Candidates: female, non-player members of ErAV_miyama_Household / ErAV_KiryuGumi_Filmstudio, excluding anyone still held in a locked party (isPartyLocked false - a previous victim still MIA; canMove is NOT usable here, the event runs at midnight while most NPCs sleep). Selection uses Options.forEachTargetKey (one option per candidate, $name$ interpolated, picked character bound as Targets[victim]). The player option references a target key that is never populated, so isValid fails and it renders greyed-out with invalidTooltip (same authored-disabled pattern as Opt_ArrangeJoin_Recreation's leave option). After the farewell kojo (GetKojoEntry - Kojo/ErAV_NTR_Punishment.json), StartEvent hands the victim to erav_ntr_mia_arrival (Part 2, self = victim) with the player injected as 'supervisor'. Part 2: arrival copies self into Targets[victim] (CopyTargets) and takes her into a new MIA party (CharaMIA) on expedition_erav_ntr_mia; she is released by its selfReleaseEventID erav_ntr_mia_release once her own expedition progress or the DurationHour countdown runs out (TeleportToFaction home, then ReleaseFromMIA). Both terminal paths (departure / no_candidates) call EndEventChain explicitly (same convention as nsfw_Labor_Events).",
 
     "Events": {
         "list": [
@@ -177,7 +177,7 @@
             },
             {
                 "ID": "erav_ntr_mia_arrival",
-                "_comment": "Part 2/3 entry point. Self = victim, Targets[supervisor] = player (injected by Part 1's StartEvent). Setup branch copies self into Targets[victim] (CopyTargets - self is not a target key on its own) and rolls the client type once (RollWeighted into client_type). The pick branch has one option per type: AppendStringEquals gates on the rolled value, CharaMIA takes her into a new MIA party on that type's expedition def (Clients_nsfw/explorations.json), then jumps to that type's arrival narration. A failed CharaMIA (e.g. safe mode skips the nsfw folder, or a def ID typo) fails the option and falls through; all other types' AppendStringEquals are false, so execution lands on _generic -> the generic skeleton def expedition_erav_ntr_mia (its EventIDs are empty = countdown-only) -> arrival_generic. MIA faction is a placeholder (ErAV_KiryuGumi_Office) until the dedicated MIA faction is decided.",
+                "_comment": "Part 2/3 entry point. Self = victim, Targets[supervisor] = player (injected by Part 1's StartEvent). Setup branch copies self into Targets[victim] (CopyTargets - self is not a target key on its own) and rolls the client type once (RollWeighted into client_type). The pick branch only jumps: one option per type gated by AppendStringEquals -> mia_<type> (a branch option runs ALL its Results even after one fails, so no side effect may sit behind the gate). mia_<type> runs CharaMIA into a new MIA party on that type's expedition def (Clients_nsfw/explorations.json) and jumps to that type's arrival narration; if CharaMIA fails (e.g. safe mode skips the nsfw folder, or a def ID typo) its _fallback option jumps to mia_generic -> the generic skeleton def expedition_erav_ntr_mia (its EventIDs are empty = countdown-only) -> arrival_generic. Clients are not held for the stay: each scene borrows them from the Kiryu-gumi fallback-worker pool (RequestFallbackWorker) and parks them again. MIA faction is a placeholder (ErAV_KiryuGumi_Office) until the dedicated MIA faction is decided.",
                 "SelfValidator": {
                     "chara_conditions": [
                         { "parameters": [ "exists" ] }
@@ -206,67 +206,206 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
                         "label": "pick",
-                        "_comment": "Keep the rolled type IDs, the AppendStringEquals values and the expedition ID suffixes in sync (Clients_nsfw/explorations.json).",
+                        "_comment": "Jump only - an option runs ALL its Results even after AppendStringEquals fails, so the CharaMIA lives in the per-type mia_<type> branch. Keep the rolled type IDs, the AppendStringEquals values, the mia_/arrival_ labels and the expedition ID suffixes in sync (Clients_nsfw/explorations.json).",
                         "options": [
                             {
                                 "option": "_politician",
                                 "Results": [
                                     { "Type": "AppendStringEquals", "arguments": [ "client_type", "politician" ] },
-                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_politician", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_politician" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_politician" ] }
                                 ]
                             },
                             {
                                 "option": "_producer",
                                 "Results": [
                                     { "Type": "AppendStringEquals", "arguments": [ "client_type", "producer" ] },
-                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_producer", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_producer" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_producer" ] }
                                 ]
                             },
                             {
                                 "option": "_sm_master",
                                 "Results": [
                                     { "Type": "AppendStringEquals", "arguments": [ "client_type", "sm_master" ] },
-                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_sm_master", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_sm_master" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_sm_master" ] }
                                 ]
                             },
                             {
                                 "option": "_sports",
                                 "Results": [
                                     { "Type": "AppendStringEquals", "arguments": [ "client_type", "sports" ] },
-                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_sports", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_sports" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_sports" ] }
                                 ]
                             },
                             {
                                 "option": "_celeb",
                                 "Results": [
                                     { "Type": "AppendStringEquals", "arguments": [ "client_type", "celeb" ] },
-                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_celeb", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_celeb" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_celeb" ] }
                                 ]
                             },
                             {
                                 "option": "_household",
                                 "Results": [
                                     { "Type": "AppendStringEquals", "arguments": [ "client_type", "household" ] },
-                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_household", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_household" ] }
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_household" ] }
                                 ]
                             },
                             {
                                 "option": "_gang",
                                 "Results": [
                                     { "Type": "AppendStringEquals", "arguments": [ "client_type", "gang" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_gang" ] }
+                                ]
+                            },
+                            {
+                                "option": "_generic",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_politician",
+                        "options": [
+                            {
+                                "option": "_mia",
+                                "Results": [
+                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_politician", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_politician" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "_comment": "CharaMIA failed (safe mode skips the nsfw expedition def, or an ID typo) - generic skeleton def instead.",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_producer",
+                        "options": [
+                            {
+                                "option": "_mia",
+                                "Results": [
+                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_producer", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_producer" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_sm_master",
+                        "options": [
+                            {
+                                "option": "_mia",
+                                "Results": [
+                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_sm_master", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_sm_master" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_sports",
+                        "options": [
+                            {
+                                "option": "_mia",
+                                "Results": [
+                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_sports", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_sports" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_celeb",
+                        "options": [
+                            {
+                                "option": "_mia",
+                                "Results": [
+                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_celeb", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_celeb" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_household",
+                        "options": [
+                            {
+                                "option": "_mia",
+                                "Results": [
+                                    { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_household", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "arrival_household" ] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_gang",
+                        "options": [
+                            {
+                                "option": "_mia",
+                                "Results": [
                                     { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia_gang", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_gang" ] }
                                 ]
                             },
                             {
-                                "option": "_generic",
-                                "_comment": "Fallback: generic skeleton def (safe mode, old saves). All AppendStringEquals above were false or their CharaMIA failed.",
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "mia_generic" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "mia_generic",
+                        "_comment": "Fallback: generic skeleton def (safe mode, old saves) - expedition_erav_ntr_mia, EventIDs empty = countdown only.",
+                        "options": [
+                            {
+                                "option": "_mia",
                                 "Results": [
                                     { "Type": "CharaMIA", "arguments": [ "victim", "ErAV_KiryuGumi_Office", "expedition_erav_ntr_mia", "erav_ntr_mia_message", "membertype_erav_kiryu_hostage_labour" ] },
                                     { "Type": "JumpToLabel", "arguments": [ "", "arrival_generic" ] }
@@ -348,7 +487,32 @@
             },
             {
                 "ID": "erav_ntr_mia_release",
-                "_comment": "selfReleaseEventID of expedition_erav_ntr_mia (and the Part 3 client type defs). Job_Expedition.TickSelfRelease banks it in the MIA party's log once the captives' own expedition progress or the DurationHour countdown reaches 0; the player opens it from the MIA list after every other banked event of the party is resolved (or it runs at once with immediateRunExpeditionEvent). Played like any banked event: self = player, Targets[victims] = every captive. The setup branch copies self into Targets[supervisor] (listener of the return kojo) and fetches the kojo before the lines display; no kojo found -> the narration-only path. TeleportToFaction must run before ReleaseFromMIA (releasing the last captive deletes the MIA party and its room). TODO: numeric settlement, per client type text (Part 3).",
+                "_comment": "selfReleaseEventID of expedition_erav_ntr_mia (and the Part 3 client type defs). Job_Expedition.TickSelfRelease banks it in the MIA party's log once the captives' own expedition progress or the DurationHour countdown reaches 0; the player opens it from the MIA list after every other banked event of the party is resolved (or it runs at once with immediateRunExpeditionEvent). Played like any banked event: self = player, Targets[victims] = every captive. Only the 'term over' notice - the return scene, kojo and 'how she changed' text are the homecoming (returnEventID erav_ntr_mia_homecoming, started by ReleaseFromMIA). Order matters: DisruptSleep (asleep -> woken with sleep debt, back to bed at home if it is her sleep time), TeleportToFaction before ReleaseFromMIA (releasing the last captive deletes the MIA party and its room), Redress after ReleaseFromMIA (the MIA outfit is virtual and only dropped by the release; Redress then puts her own inventory clothes into the empty slots, items an event put on her stay). TODO: numeric settlement.",
+                "SelfValidator": {
+                    "chara_conditions": [
+                        { "parameters": [ "exists" ] }
+                    ]
+                },
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "return",
+                        "UISpec": { "portraitRefKey": "victims" },
+                        "line": "erav_ntr_mia_release",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "DisruptSleep", "arguments": [ "victims" ] },
+                            { "Type": "TeleportToFaction", "arguments": [ "victims", "" ] },
+                            { "Type": "ReleaseFromMIA", "arguments": [ "victims" ] },
+                            { "Type": "Redress", "arguments": [ "victims" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            },
+            {
+                "ID": "erav_ntr_mia_homecoming",
+                "_comment": "returnEventID of expedition_erav_ntr_mia and the Part 3 client type defs. Started by ReleaseFromMIA right after erav_ntr_mia_release, once per released victim: self = her (home, awake, redressed), Targets[supervisor] = the player. Her kidnap snapshot (a copy of her as she was when taken) is still there until her next hourly update, so the mia* conditions compare her now with then: miaLostVirginity [bodyTag], miaBecamePregnant, miaGainedExperience [expID] [op] [value], miaExpedition [expeditionID]. Current state: isPregnant, isHungry, isVirgin, experience, getStat, and charaReq (status severity / inflation). Skeleton: arrival + return kojo -> one 'changed' check after another -> one 'current state' check after another -> closing line. Each check is a branch whose matching option only jumps to its line (branch options run all their Results), the last option skips to the next check. Writers add checks / texts here; nsfw-heavy texts can move to a Clients_nsfw event later. Thresholds are placeholders.",
                 "SelfValidator": {
                     "chara_conditions": [
                         { "parameters": [ "exists" ] }
@@ -361,48 +525,196 @@
                             {
                                 "option": "_with_kojo",
                                 "Results": [
-                                    { "Type": "CopyTargets", "arguments": [ "self", "supervisor" ] },
-                                    { "Type": "GetKojoEntry", "arguments": [ "victims", "supervisor", "ErAV_NTRPunishment_return", "kojo_return" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "return" ] }
+                                    { "Type": "CopyTargets", "arguments": [ "self", "victim" ] },
+                                    { "Type": "GetKojoEntry", "arguments": [ "victim", "supervisor", "ErAV_NTRPunishment_return", "kojo_return" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "home" ] }
                                 ]
                             },
                             {
                                 "option": "_no_kojo",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "return_nokojo" ] }
+                                    { "Type": "CopyTargets", "arguments": [ "self", "victim" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "home_nokojo" ] }
                                 ]
                             }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "return",
-                        "UISpec": { "portraitRefKey": "victims" },
-                        "line": "erav_ntr_mia_release",
-                        "nextEntryLabel": "return_kojo"
+                        "label": "home",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_arrive",
+                        "nextEntryLabel": "home_kojo"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "return_kojo",
-                        "UISpec": { "portraitRefKey": "victims" },
-                        "line": "erav_ntr_mia_release_kojo",
-                        "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "TeleportToFaction", "arguments": [ "victims", "" ] },
-                            { "Type": "ReleaseFromMIA", "arguments": [ "victims" ] }
-                        ],
-                        "isLast": true
+                        "label": "home_kojo",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_kojo",
+                        "nextEntryLabel": "chg_virgin"
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "return_nokojo",
-                        "UISpec": { "portraitRefKey": "victims" },
-                        "line": "erav_ntr_mia_release",
-                        "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "TeleportToFaction", "arguments": [ "victims", "" ] },
-                            { "Type": "ReleaseFromMIA", "arguments": [ "victims" ] }
-                        ],
+                        "label": "home_nokojo",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_arrive",
+                        "nextEntryLabel": "chg_virgin"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "chg_virgin",
+                        "options": [
+                            {
+                                "option": "_yes",
+                                "self_chara_conditions": [ { "parameters": [ "miaLostVirginity", "vagina" ] } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "chg_virgin_line" ] } ]
+                            },
+                            {
+                                "option": "_no",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "chg_pregnant" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "chg_virgin_line",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_lostVirginity",
+                        "nextEntryLabel": "chg_pregnant"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "chg_pregnant",
+                        "options": [
+                            {
+                                "option": "_yes",
+                                "self_chara_conditions": [ { "parameters": [ "miaBecamePregnant" ] } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "chg_pregnant_line" ] } ]
+                            },
+                            {
+                                "option": "_no",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "chg_used" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "chg_pregnant_line",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_becamePregnant",
+                        "nextEntryLabel": "chg_used"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "chg_used",
+                        "options": [
+                            {
+                                "option": "_yes",
+                                "self_chara_conditions": [ { "parameters": [ "miaGainedExperience", "experience_sex_male", "gte", "20" ] } ],
+                                "Results": [
+                                    { "Type": "StoreMIAExperienceGain", "arguments": [ "self", "experience_sex_male", "gain_sex_male" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "chg_used_line" ] }
+                                ]
+                            },
+                            {
+                                "option": "_no",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "st_tired" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "chg_used_line",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_usedHeavily",
+                        "nextEntryLabel": "st_tired"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "st_tired",
+                        "options": [
+                            {
+                                "option": "_yes",
+                                "self_chara_conditions": [ {
+                                    "charaReq": {
+                                        "requireConscious": false,
+                                        "requireAction": false,
+                                        "requireStatusValue": [ { "statusID": "chara_status_sleep_deprived", "checkExistOnly": true } ]
+                                    }
+                                } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "st_tired_line" ] } ]
+                            },
+                            {
+                                "option": "_no",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "st_hungry" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "st_tired_line",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_tired",
+                        "nextEntryLabel": "st_hungry"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "st_hungry",
+                        "options": [
+                            {
+                                "option": "_yes",
+                                "self_chara_conditions": [ { "parameters": [ "isHungry" ] } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "st_hungry_line" ] } ]
+                            },
+                            {
+                                "option": "_no",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "st_inflated" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "st_hungry_line",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_hungry",
+                        "nextEntryLabel": "st_inflated"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "st_inflated",
+                        "options": [
+                            {
+                                "option": "_yes",
+                                "self_chara_conditions": [ {
+                                    "charaReq": {
+                                        "requireConscious": false,
+                                        "requireAction": false,
+                                        "requireInflatedBodyTags": [ "womb" ]
+                                    }
+                                } ],
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "st_inflated_line" ] } ]
+                            },
+                            {
+                                "option": "_no",
+                                "Results": [ { "Type": "JumpToLabel", "arguments": [ "", "end" ] } ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "st_inflated_line",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_inflated",
+                        "nextEntryLabel": "end"
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "end",
+                        "UISpec": { "portraitRefKey": "self" },
+                        "line": "erav_ntr_mia_homecoming_end",
                         "isLast": true
                     }
                 ]
@@ -449,6 +761,7 @@
                 "rescueEventID": "",
                 "canExplore": false,
                 "selfReleaseEventID": "erav_ntr_mia_release",
+                "returnEventID": "erav_ntr_mia_homecoming",
                 "DescriptionText": [ "expedition_erav_ntr_mia_desc_1" ],
                 "EventIDs": [],
                 "keywords": [],
@@ -482,7 +795,15 @@
                 "erav_ntr_mia_arrival_failed": "【错误】$self.name$未能被带往桐生组（CharaMIA 失败，请检查 MIA faction / expedition / MemberType 设置）。",
                 "erav_ntr_mia_message": "$names$被桐生组带走，作为担保劳务抵账",
                 "erav_ntr_mia_release": "约定的期限到了。\n$victims.name$被桐生组的人送了回来。",
-                "erav_ntr_mia_release_kojo": "$kojo_return$",
+                "erav_ntr_mia_homecoming_arrive": "傍晚，玄关的门被推开了。\n$victim.name$回来了。她在门口站了好久，像是在确认这里真的是自己的家。",
+                "erav_ntr_mia_homecoming_kojo": "$kojo_return$",
+                "erav_ntr_mia_homecoming_lostVirginity": "她什么也没说。但从她走路的样子你看得出来——离开时还完整的东西，这次没有带回来。",
+                "erav_ntr_mia_homecoming_becamePregnant": "她的手不时地覆在小腹上，自己却像是没有察觉。这几天留在她身上的，不只是记忆。",
+                "erav_ntr_mia_homecoming_usedHeavily": "她身上还留着这几天的痕迹，眼神也比离开时空了许多。（经验 +$gain_sex_male$）",
+                "erav_ntr_mia_homecoming_tired": "她的眼下是深深的青黑。这几天，她几乎没能好好睡过。",
+                "erav_ntr_mia_homecoming_hungry": "她的肚子小声地叫了起来。她红着脸低下了头。",
+                "erav_ntr_mia_homecoming_inflated": "她的小腹微微隆起，动作也比平时迟缓。",
+                "erav_ntr_mia_homecoming_end": "担保劳务结束了。\n$victim.name$回到了她的日常——至少，表面上是这样。",
                 "expedition_erav_ntr_mia": "桐生组·担保劳务",
                 "expedition_erav_ntr_mia_desc_1": "$names$正在桐生组安排的地方抵账。",
                 "membertype_erav_kiryu_hostage_labour": "担保劳务",

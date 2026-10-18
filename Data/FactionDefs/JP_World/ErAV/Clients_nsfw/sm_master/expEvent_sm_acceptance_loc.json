@@ -1,0 +1,18 @@
+{
+    "_doc": "en-us localization for expEvent_sm_acceptance.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_sm_acceptance": "Day Seven: Acceptance",
+                "exp_event_erav_sm_acceptance_ongoing": "On the final day the old man finishes the wooden gag with his own hands - built to her measurements.",
+                "exp_event_erav_sm_acceptance_result": "The acceptance begins. $names$ is fitted with the perfectly-sized gag.",
+
+                "event_erav_sm_acceptance_01": "On the last day the old man completes the wooden gag by hand - sized from the measurements taken at her first-day inspection, fitting without a gap.\n\"Acceptance subject: present this week's lessons - to your supervisor.\"\n(Note: the return report at the end of her stay belongs to the release event. For now, the master inspects the goods himself.)",
+                "event_erav_sm_acceptance_02": "The demonstration over, he puts on his reading glasses, lays her on the mat at the very center of the playroom and performs the final inspection himself - the way a craftsman tries his own work before it leaves the shop.",
+                "event_erav_sm_acceptance_03": "He stamps her 'toy registration card' - the card signed the day she entered the house, printed with her specifications and usage record.\n\"Qualified. Feel, endurance, etiquette - all in order.\"",
+                "event_erav_sm_acceptance_04": "\"There's a colleagues' gathering in a week. I'll borrow you again then. Have the Kiryu-gumi forward the rent. ...Go home.\"\nIn the car back she stares at the card the whole way. Specifications, depth, tolerance, sensitivity rankings - her body's data laid out in neat print, and on the last page a blank waiting to be filled:\n\"Next scheduled use: ______\"",
+                "event_erav_sm_acceptance_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

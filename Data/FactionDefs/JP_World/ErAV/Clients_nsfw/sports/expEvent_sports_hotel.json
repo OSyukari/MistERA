@@ -1,0 +1,130 @@
+{
+    "_doc": "ErAV NTR Part 3 - G sports team, night at the hotel suite (draft G). Group scene: the entry branch borrows the lead (client, athlete_a) and the squad (support, athlete_b x2 + athlete_c x2) from the Kiryu-gumi fallback-worker pool, copies both into enemy and moves them into her room; every ending (error path included) runs ResolveEvent and releases client + support. COMs: com_sex_oral_P_Force / com_sex_P_doggy (multi-doer variants). 'Being translated' and the untranslated remark stay narration.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sports_hotel",
+                "eventString_Ongoing": "exp_event_erav_sports_hotel_ongoing",
+                "DurationMinutes": 120,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_sports_hotel_result",
+                        "eventID": "event_erav_sports_hotel"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sports_hotel",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_a", "erav_client_athlete_a", "1", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_b", "erav_client_athlete_b", "2", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_c", "erav_client_athlete_c", "2", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
+                        "line": "event_erav_sports_hotel_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sports_hotel_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "fear", "sad" ] },
+                        "line": "event_erav_sports_hotel_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sports_hotel_04",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_sports_hotel_05",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_sports_hotel_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sports_hotel": "晚上·酒店套房",
+                "exp_event_erav_sports_hotel_ongoing": "回到酒店套房，球员们已经聚齐了。",
+                "exp_event_erav_sports_hotel_result": "套房大床的中央，$names$被摆在了被褥中间。",
+
+                "event_erav_sports_hotel_01": "套房里喝酒、打游戏、互相打闹，$party.name$被拉来搂去，坐在谁腿上就归谁摸——对这支队伍来说，她不是客人，是随队的公共设施。\n到了睡觉的点，正戏开始。",
+                "event_erav_sports_hotel_02": "她跪在床中央，轮番伺候围拢来的球员。做完的坐到旁边歇着看，歇够的排到后面等着。\n翻译模样的家伙坐在床头举着手机，学给刚进门的队友看：「看，Japanese water girl。」",
+                "event_erav_sports_hotel_03": "体格差是这个夜晚的全部：每寸都在撑开，深到顶住最里面，插入时小腹会鼓起个弧。\n她扶着床头才能不被顶跑。",
+                "event_erav_sports_hotel_04": "轮换没有秩序。整夜，床单换了两次。\n「Good girl. ……Next.」",
+                "event_erav_sports_hotel_05": "天快亮时，套房里此起彼伏的鼾声替她数着人数。\n床单团在墙角。她的应援裙被叠好放在枕边——明早还要穿。赛程表上，这支队伍后面还有两场客场比赛。",
+                "event_erav_sports_hotel_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

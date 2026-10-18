@@ -1,0 +1,125 @@
+{
+    "_doc": "ErAV NTR Part 3 - B politician, evening: the call home to his daughter and the 'daddy' night (draft B). Single client (the councillor), borrowed via RequestFallbackWorker -> client -> enemy; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COMs: com_sex_oral_P_Force, com_sex_P_missionary.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_politician_call_daughter",
+                "eventString_Ongoing": "exp_event_erav_politician_call_daughter_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_call_daughter_result",
+                        "eventID": "event_erav_politician_call_daughter"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_politician_call_daughter",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_politician", "erav_client_politician", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "scheming", "happy" ] },
+                        "line": "event_erav_politician_call_daughter_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_call_daughter_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
+                        "line": "event_erav_politician_call_daughter_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_call_daughter_04",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_politician_call_daughter_05",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_politician_call_daughter_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_politician_call_daughter": "傍晚·家里的电话",
+                "exp_event_erav_politician_call_daughter_ongoing": "商谈散了，$names$被议员唤到走廊的电话前。",
+                "exp_event_erav_politician_call_daughter_result": "议员拨通家里电话，同时用眼神给她下了命令。",
+
+                "event_erav_politician_call_daughter_01": "旅馆的走廊电话前，议员拨了个号——是打给家里的。\n「喂，是我。……嗯，在箱根，和组里的朋友谈点事，明晚回去。……哎，小百合呢？让她接电话。」\n电话那头传来少女的声音，稚气地汇报着学校的琐事。他靠在木柱上笑呵呵地应着，同时用眼神给她下了命令。",
+                "event_erav_politician_call_daughter_02": "她跪在他面前，含住他的东西。\n「——是嘛，期末考第几名？哦哦，不愧是我女儿。……嗯，爸爸这里切切都好，同事都很照顾我。」\n他听着女儿的声音，按着她的头加深，到喉咙深处。",
+                "event_erav_politician_call_daughter_03": "「……乖。爸爸给你带箱根的果子回去。嗯，挂了。」\n挂断电话，他在她喉咙深处释放，看着她被迫吞咽完，才慢悠悠地开口。\n「刚才那个，尝出来了吧——她小时候，就是用这张嘴给我含过药的。你和她，年纪、嘴型，都像。所以这几天，」他弹了弹她的脸颊。「——你管我叫爸爸。」",
+                "event_erav_politician_call_daughter_04": "晚上的陪睡，加了条新的规矩。今晚叫爸爸。不叫，就自己回去把利息补上。\n「爸爸……」「哎。乖女儿。」\n他让「女儿」趴着叫爸爸，边缓慢贯穿边数落：家里的事不用她操心，好好伺候爸爸，比什么都强——还是太生涩了，小百合都更懂事。",
+                "event_erav_politician_call_daughter_05": "到深处时她泣不成声，泣声里还夹着那声变了调的「爸爸——」。\n「哎。爸爸在。」\n他伏下来，在她耳边，边送上最后的顶弄边温和地应着。",
+                "event_erav_politician_call_daughter_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

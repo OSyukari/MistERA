@@ -1,0 +1,113 @@
+{
+    "_doc": "ErAV NTR Part 3 - F toy collector, day three: 'bondage endurance' (draft F). Narration-only scene: no COM exists for restraint play, so the scene has no ExecuteAPOnSingleChara - only Undress and text. Single client borrowed -> client -> enemy; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COM gap reported.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sm_bondage",
+                "eventString_Ongoing": "exp_event_erav_sm_bondage_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_bondage_result",
+                        "eventID": "event_erav_sm_bondage"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sm_bondage",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_sm_master", "erav_client_sm_master", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "focused", "serious" ] },
+                        "line": "event_erav_sm_bondage_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_bondage_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "pain", "sad" ] },
+                        "line": "event_erav_sm_bondage_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_sm_bondage_04",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_sm_bondage_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sm_bondage": "第三天·拘束耐受",
+                "exp_event_erav_sm_bondage_ongoing": "今天的课目写在白板上：拘束耐受。",
+                "exp_event_erav_sm_bondage_result": "$names$被摆成新的姿势缚了起来，沙漏翻了个面。",
+
+                "event_erav_sm_bondage_01": "「今天的课目不在身上，在耐性上。」\n悬吊、折鹤、椅子缚、海老缚——每种缚法解开之前都有计时。老人坐在旁做他的木工，打磨声沙沙地响，偶尔抬头看眼沙漏。",
+                "event_erav_sm_bondage_02": "衣料被绳子替她褪开。缚到最后种的时候，她被折成两折吊在半空，姿势维持到双腿失去知觉才被放下来。",
+                "event_erav_sm_bondage_03": "血回流的瞬间，从脚尖到股间密密麻麻的针刺感让她满地蜷缩。他蹲下来，等她抽完这阵，才递上杯水。\n「血液不通会麻，麻过之后会痛，痛过之后会热。三个阶段都记住。玩具要了解自己的每种状态。」\n「……记住了？好。下个姿势。」",
+                "event_erav_sm_bondage_04": "收工时，老人在她的记录本上落了笔：耐受合格，血行恢复快。\n「明天，侍奉训练。嘴巴，是玩具的脸面。」",
+                "event_erav_sm_bondage_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

@@ -1176,15 +1176,57 @@ public static class UtilityEX
         }
 
         if (scr_System_Time.current.TimeResume && !c.CanActInTimeStop) tags.Add("timeResume");
-        else if(c.isTimeStopped) tags.Add("timestop");
+        else if (c.isTimeStopped)
+        {
+            tags.Add("timestop");
+            // frozen actor: portrait expression keywords, so every kojo/portrait of a timestopped actor picks them up
+            tags.Add("timestopped");
+            tags.Add("doll");
+            tags.Add("empty");
+        }
         if (c.isSleeping) {
             tags.Add("sleeping");
             tags.Add("unconscious");
         }
         else if (c.Stats.isConsciousnessUnconscious) tags.Add("unconscious");
 
+        // portrait keywords (GlobalPortraitTemplate): the player's images are the pov category, visible pregnancy picks _pregnant variants
+        if (scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.Player == c) tags.Add("pov");
+        if (c.isVisiblyPregnant) tags.Add("pregnant");
+
         Utility.DistinctInPlace(tags);
         //if (c.Climaxing) tags.Add("climax");  this will make it too easy to get climax exp
+    }
+
+    /// <summary>
+    /// Portrait display only - never call on tags used for requirements/exp/memory.
+    /// service acts display as sex (the _noSex COM clones have "sex" stripped from comTags).
+    /// </summary>
+    public static void AddPortraitDisplayTags(List<string> tags)
+    {
+        if (tags == null) return;
+        if (tags.Contains("service") && !tags.Contains("sex")) tags.Add("sex");
+    }
+
+    /// <summary>
+    /// Portrait display only: owner's action tags in this EP (COM tags + EP extra tags + COM portraitTags) + portrait role
+    /// (global portrait role blocks require doer/receiver; solo acts have none) + AddPortraitDisplayTags.
+    /// Empty when owner is not this EP's doer/receiver (eg. a _Joined observer) - callers fall back to live action tags.
+    /// </summary>
+    public static List<string> GetEPPortraitActionTags(EvaluationPackage ep, Character_Trainable owner)
+    {
+        var tags = new List<string>();
+        if (ep == null || owner == null) return tags;
+        if (ep.Doer != owner && ep.Receiver != owner) return tags;
+        tags.AddRange(ep.GetActorEPTags(owner.RefID));
+        string role = "";
+        if (ep.Receiver == owner && ep.Doer != owner) role = "receiver";
+        else if (ep.Doer == owner && ep.Receiver != null && ep.Receiver != owner) role = "doer";
+        if (role != "") tags.Add(role);
+        if (ep.targetCOM != null) ep.targetCOM.AddPortraitTags(tags, role);
+        AddPortraitDisplayTags(tags);
+        Utility.DistinctInPlace(tags);
+        return tags;
     }
 
     public static void RemoveConflictTags(ref List<string> tags)

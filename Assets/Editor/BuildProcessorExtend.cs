@@ -16,8 +16,8 @@ class BuildProcessorExtend : IPostprocessBuildWithReport, IPreprocessBuildWithRe
 
     public List<string> nsfwKeywords = new List<string>() { "nsfw", "unsafe", "sex", "initSex", "endSex", "massage", "do_not_use" };
     public List<string> sfwKeywords = new List<string>() { "safeOnly" };
-    public List<string> safeExtensiosn = new List<string>() { ".meta", ".json", ".asset", ".mat" };
-    public List<string> allExtensiosn = new List<string>() { ".meta", ".asset", ".mat" };
+    public List<string> safeExtensiosn = new List<string>() { ".meta", ".json", ".asset", ".mat", ".md" };
+    public List<string> allExtensiosn = new List<string>() { ".meta", ".asset", ".mat", ".md" };
 
     public List<string> ForbidCopy = new List<string>() { "forbidCopy", "forbid", "unused" };
 

@@ -14,6 +14,7 @@
                     "position_face",
                     "position_equal","missionary"
                 ],
+                "portraitTags": ["missionary"],
                 "requirements": {
                     "requirement": {
                         "req_Doers": {

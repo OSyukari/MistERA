@@ -1,0 +1,117 @@
+{
+    "_doc": "ErAV NTR Part 3 - H celeb entourage, daytime street escort duty (draft H; Phase 2 rewrite of the Phase 1 placeholder, whose club content moved to expEvent_celeb_club.json). Group scene: the entry branch borrows the lead (client) and one more entourage member (support, same role - RequestFallbackWorker never hands the same character out twice in one event) and moves them into her room. Narration-only: the daytime beats are exposure, groping and photography - no COM fits, no sex command (reported). 'Being photographed' stays narration (no COM exists).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_celeb_town",
+                "eventString_Ongoing": "exp_event_erav_celeb_town_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_celeb_town_result",
+                        "eventID": "event_erav_celeb_town"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_celeb_town",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "smug", "happy" ] },
+                        "line": "event_erav_celeb_town_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_town_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
+                        "line": "event_erav_celeb_town_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_celeb_town_04",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_celeb_town_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_celeb_town": "白天·当街陪玩",
+                "exp_event_erav_celeb_town_ongoing": "$names$领着巡演团体，开始今天的「导游」工作。",
+                "exp_event_erav_celeb_town_result": "原宿的人潮里，$names$被夹在队伍正中间往前走。",
+
+                "event_erav_celeb_town_01": "白天的工作是「导游」：透视上衣下面是真空，超短裙里只穿了条细绳。她走在人群正中间，被轮流搂着肩、搭着腰，手从裙摆底下伸进来扶「怕她摔倒」。\n原宿、涩谷、表参道——行程表排得满，快门声没有停过。",
+                "event_erav_celeb_town_02": "潮牌店门口、扭蛋机前，她被搂着合影，被摆出各种手势。\n领队的 rapper 兴起了，就要她在店门口拉低领口、把嘴张成特定的形状。她照做。周围的行人举起手机——没人觉得奇怪，大概以为这是哪个节目在拍。",
+                "event_erav_celeb_town_03": "路人的手机、团里随行的手机、经纪人专门举着的手机——她分不清哪些会流到哪里去。\n「See? Tokyo girls, so open!」",
+                "event_erav_celeb_town_04": "傍晚收工，经纪人替她理好裙摆，像收拾件道具。\n「明晚，夜店。穿昨天那条短的。」\n行程单上，「日本女朋友」的后头跟着整周排满的「行程」。",
+                "event_erav_celeb_town_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

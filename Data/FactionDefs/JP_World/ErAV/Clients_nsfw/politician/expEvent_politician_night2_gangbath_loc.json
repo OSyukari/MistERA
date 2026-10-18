@@ -1,0 +1,18 @@
+{
+    "_doc": "en-us localization for expEvent_politician_night2_gangbath.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_politician_night2_gangbath": "Night Two: Bathhouse Entertainment",
+                "exp_event_erav_politician_night2_gangbath_ongoing": "Late at night, $names$ is helped down into the open-air mixed bath.",
+                "exp_event_erav_politician_night2_gangbath_result": "The men the councillor closed deals with tonight are not done - the last entertainment is arranged in the pool.",
+
+                "event_erav_politician_night2_gangbath_01": "Late at night, the ryokan's open-air mixed bath. The contacts the councillor closed with tonight arrange their final entertainment in the water.\nShe is helped in until the hot spring covers her chest. Her soaked body turns soft and sensitive - and is pressed against the pool's edge from behind.\nThe councillor sits at the poolside in his yukata, pouring his own sake, watching each man take his turn descending into the water to 'give thanks'.",
+                "event_erav_politician_night2_gangbath_02": "The spring water makes every intrusion slick and deep. Braced on the pool's edge, she serves the heated men one after another, the splashing mixed into the night insects' song.",
+                "event_erav_politician_night2_gangbath_03": "Held from behind, she is taken while the spring water slops over the edge wave after wave.\nThe finished men soak in the same water she was just filled in, clinking cups across the surface:\n\"To the honourable councillor - kanpai!\"",
+                "event_erav_politician_night2_gangbath_04": "The councillor raises his cup in return, his gaze crossing the rim of the sake to land on her, the fan swaying gently.\n\"Ah, thanks to you all. And to this little lady - back home I shall write in my report: this negotiation's accompanying secretary performed excellently. Unanimous approval.\"",
+                "event_erav_politician_night2_gangbath_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

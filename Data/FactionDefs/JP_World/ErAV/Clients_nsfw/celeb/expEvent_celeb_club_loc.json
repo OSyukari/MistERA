@@ -1,0 +1,19 @@
+{
+    "_doc": "en-us localization for expEvent_celeb_club.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_celeb_club": "Night: The Club",
+                "exp_event_erav_celeb_club_ongoing": "$names$ follows the touring entourage into the club.",
+                "exp_event_erav_celeb_club_result": "In the club's booth, $names$ is wedged into the middle.",
+
+                "event_erav_celeb_club_01": "The booth's spot was chosen with care: lighting dim enough that 'you can't see, but you know'.\nThe drinks come round after round. Wedged between the lead and the manager, she takes hands under her skirt in front of the whole booth.",
+                "event_erav_celeb_club_02": "\"Showtime.\"\nShe is ordered up onto the coffee table to dance. Nothing beneath the skirt; when the sweep of a spotlight crosses her, the whole floor's gazes land at once.",
+                "event_erav_celeb_club_03": "She kneels before the sofa, taking the lead and the two entourage men in turn. The rest watch over their drinks, whistle, film with their phones.\nWherever the sweep of the spotlights goes, the shutters follow.",
+                "event_erav_celeb_club_04": "Late in the night the second-floor annex is bought out. She is pressed into the corner of the sofa, skirt rolled to her waist, taken face-up by the lead.\nThe crowd doesn't disperse - some lean in to watch, some reach for her chest, some bring their phones to point-blank range.\nHer hair is pulled, tilting her face up: \"Face. - Smile. Smile for camera.\"",
+                "event_erav_celeb_club_05": "At closing, the manager smooths her skirt down like putting away a prop.\n\"Tokyo girls, so open! - Tomorrow, same itinerary.\"",
+                "event_erav_celeb_club_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

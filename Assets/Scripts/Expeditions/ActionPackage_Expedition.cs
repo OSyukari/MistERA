@@ -47,7 +47,8 @@ public class ActionPackage_Expedition : ActionPackage
                 weight += wmod.modValue;
             }
         }
-        return weight;
+        // time of day (ExpEvents.timeWeightMods), at the world hour the action is picked
+        return SourceEV.ApplyTimeWeight(weight, scr_System_Time.current.getCurrentTime().Hour);
     }
 
     public int weight = 0;
@@ -162,101 +163,12 @@ public class ActionPackage_Expedition : ActionPackage
         // pick EVResult, and if can resolve, resolve it.
         // else, store the AP in a message for player later manual resolve
 
-        var result = ExpeditionUtility.RandResult(SourceEV, this.Job_Expedition.FactionOwner_Party, this);
         var jobb = this.job as Job_Expedition;
-        if (result != null && jobb != null)
+        if (jobb == null) return;
+        // shared with off-time events (Job_Expedition.TickOffTimeEvents); only the exploration action costs progress
+        var result = ExpeditionUtility.ApplyResult(jobb, SourceEV, this.Actors, memEntryName, false);
+        if (result != null)
         {
-            var r = jobb.AddResult($"{LocalizeDictionary.QueryThenParse(result.resultText)}", new List<string>(), this.actorRefs);
-
-            foreach (var i in this.Actors)
-            {
-                SourceEV.teamRequirement.ApplyCost(i, r == null ? null : r.Tooltips);
-
-                foreach(var j in result.results_characters)
-                {
-                    ResultCharaUtility.Apply(j, jobb.FactionOwner_Party, i, r == null ? null : r.Tooltips);
-                }
-
-                if (result.logCharaMemory)
-                {
-                    var ids = new List<int>();
-                    var names2 = new List<string>();
-                    foreach (var j in this.Actors)
-                    {
-                        if (j == i) continue;
-                        ids.Add(j.RefID);
-                        names2.Add(j.CallName);
-                    }
-                    var newMem = new MemInstance(ids, new List<string>(), "", -1, -1, true, Memory_Response.Accept, Memory_Attitude.Neutral,
-                                        LocalizeDictionary.QueryThenParse(result.resultText).Replace("$names$", names2.Count > 0 ?
-                                            LocalizeDictionary.QueryThenParse("exp_event_active_memory_teammates").Replace("$team$", String.Join(", ", names2)) : ""));
-                    var entry = i.Memory.AddEntry(newMem, new List<string>() { "expedition" });
-                    entry.entryDescription = memEntryName;
-                    entry.disableRoomName = true;
-                }
-            }
-
-            foreach (var j in result.results_factions)
-            {
-                ResultFactionUtility.Apply(j, jobb, r == null ? null : r.Tooltips);
-            }
-
-            if (result.eventID != "")
-            {
-                var package = new SerializableEventPackage();
-                package.eventID = result.eventID;
-                package.eventLabel = result.eventLabel;
-                if (result.eventAppendStringKey != "")
-                {
-                    var list = new List<string>();
-                    if (result.eventAppendString != "") list.Add(result.eventAppendString);
-                    else list.Add(result.resultText);
-
-                    package.AppendStrings.Add(result.eventAppendStringKey, list);
-                }
-
-                List<int> party = new List<int>(), frontline = new List<int>(), backline = new List<int>();
-                foreach(var i in this.Actors)
-                {
-                    party.Add(i.RefID);
-                    switch (jobb.FactionOwner_Party.GetTeamComp(i.RefID))
-                    {
-                        case Manageable_Party.PartyComposition.frontline:
-                            frontline.Add(i.RefID);
-                            break;
-                        case Manageable_Party.PartyComposition.backline:
-                            backline.Add(i.RefID);
-                            break;
-                        default:break;
-
-                    }
-                }
-                package.Targets.Add("party", party);
-                package.Targets.Add("teamA_frontline", frontline);
-                package.Targets.Add("teamA_backline", backline);
-                package.overrideTargetScope = result.overrideTargetScope;
-                package.targetScopes = result.TargetValidators;
-                package.overrideTargetGen = result.overrideTargetGeneration;
-                package.targetGens = result.TargetGenerations;
-
-                if (package.isValid && result.runImmediate)
-                {
-                    Debug.Log("event runimmediate start");
-                    var ev = EventUtility.StartEvent(this.Job_Expedition, package);
-                    scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
-                }
-                else if (r != null)
-                {
-                    r.unresolved = package;
-                    // user pref: play it now, exactly as if its button was clicked (RetryEvent leaves it banked)
-                    if (ExpeditionUtility.ImmediateRunEnabled) ExpeditionUtility.RunBankedEventNow(jobb, r);
-                }
-                else
-                {
-                    Debug.LogError("ExpResult flagged for no_logging but has unresolved package.");
-                }
-            }
-
             jobb.FactionOwner_Party.NotifyExpeditionProgress(-SourceEV.DurationMinutes, this.actorRefs);
 
             jobb.StartCooldown();

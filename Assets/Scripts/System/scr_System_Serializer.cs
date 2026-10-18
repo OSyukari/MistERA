@@ -113,6 +113,15 @@ public class scr_System_Serializer : MonoBehaviour
     }
 
     public Dictionary<string, string> ShortFileAddress = new Dictionary<string, string>();
+
+    /// <summary>
+    /// Global portrait template (GlobalPortraitTemplate.Initialize at boot): handler list as JSON with $foldername$, null = disabled
+    /// </summary>
+    [System.NonSerialized] public string GlobalPortraitTemplateJson = null;
+    /// <summary>
+    /// Global portrait template expanded and resolved per character folder (GlobalPortraitTemplate.GetHandlers), filled on first use
+    /// </summary>
+    [System.NonSerialized] public Dictionary<string, List<PortraitManager.CharaPortrait>> GlobalPortraitByFolder = new Dictionary<string, List<PortraitManager.CharaPortrait>>(StringComparer.OrdinalIgnoreCase);
     public string GetFullPath(string p)
     {
         return ShortFileAddress.ContainsKey(p) ? ShortFileAddress[p] : p;
@@ -416,6 +425,7 @@ public class scr_System_Serializer : MonoBehaviour
         Observer_LoadProgress?.Invoke(0.55f, "Finalizing definitions...");
         yield return null;
         MasterList.Initialize();
+        GlobalPortraitTemplate.Initialize(this);
 
         Observer_LoadProgress?.Invoke(0.60f, "Preparing fonts...");
         scr_System_FontManager.Observer_FontProgress += OnFontProgress;

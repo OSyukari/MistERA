@@ -226,6 +226,14 @@ public class Event_CharaCondition
     /// relationshipTargetKey (unlike requireKojoVariable), since it isn't scoped to any character.
     /// </summary>
     public RequireFactionDebt requireFactionDebt = null;
+
+    /// <summary>
+    /// Optional character requirement checked with CharaReqUtility.Validate (no job context), e.g. requireStatusValue
+    /// (status severity: sleep deprived, pain...), requireInflatedBodyTags / requireExtremeInflatedBodyTags,
+    /// requireUnconscious. Checked before parameters; both must pass when both are set. Note CharaReq defaults
+    /// requireConscious and requireAction to true - set them false to test a sleeping / unconscious character.
+    /// </summary>
+    public CharaReq charaReq = null;
 }
 public class Event : I_SerializationCallbackReceiver
 {
@@ -1118,8 +1126,63 @@ public class Event : I_SerializationCallbackReceiver
             /// <summary>
             /// [string storeKey, string value] - true if AppendStrings[storeKey] contains value. Put it first in a branch
             /// option's Results so a mismatch falls through to the next option (e.g. after RollWeighted).
+            /// NOTE: an option runs ALL its Results even after one fails (the option only counts as failed), so never put an
+            /// action with side effects after it in the same option - jump to a label that does the action instead.
             /// </summary>
-            AppendStringEquals
+            AppendStringEquals,
+
+            /// <summary>
+            /// [string storeKey, string establishmentFactionID, string memberTypeID, string templateID,
+            /// optional int count (default 1), optional bool allowReuse (default true)] <br/>
+            /// Borrows count fallback workers holding memberTypeID (a valid, non-parent MemberType) at the establishment
+            /// (FallbackWorkerManager.RequestOnDemand). If the establishment's pool doesn't supply that MemberType yet, it is
+            /// added as an event-requested role. allowReuse: free workers of the role are lent first, whatever template made
+            /// them, and new ones are generated from templateID only when none is free; false = always new ones. No cap.
+            /// Adds them to Targets[storeKey] (appending to an existing key). They are woken but stay in the pool room - move
+            /// them with MoveToTargetRoom. Every path that requested workers must end with ReleaseFallbackWorker. False if
+            /// fewer than count could be lent (the ones lent are still stored - release them on the error path).
+            /// </summary>
+            RequestFallbackWorker,
+
+            /// <summary>
+            /// [string scopeKey] <br/>
+            /// Sends every pooled fallback worker resolved from scopeKey straight back to their pool room and parks them
+            /// (FallbackWorkerManager.ReleaseToPool); anyone else is left alone. True if anyone was released.
+            /// </summary>
+            ReleaseFallbackWorker,
+
+            /// <summary>
+            /// [string moversKey, string anchorKey] <br/>
+            /// Moves every character resolved from moversKey into the room the first character of anchorKey is in
+            /// (TryResolveExecTargets for both - "self" works). Interrupts their current job and wakes dormant movers.
+            /// True if anyone was moved.
+            /// </summary>
+            MoveToTargetRoom,
+
+            /// <summary>
+            /// [string scopeKey] <br/>
+            /// Wakes every sleeping character resolved from scopeKey (TryResolveExecTargets - "self" works) the way a
+            /// disturbed sleep ends: the sleep still owed becomes chara_status_sleep_deprived, so afterwards the sleep node
+            /// puts them back to bed while it is still their sleep time (Character_Trainable.DisruptSleep). Unlike WakeUp
+            /// (self only, no sleep debt). True if every resolved character is awake afterwards.
+            /// </summary>
+            DisruptSleep,
+
+            /// <summary>
+            /// [string scopeKey, optional string layer = "None" (all)] <br/>
+            /// Character_Trainable.Redress for everyone resolved from scopeKey: their own unworn clothes (inventory, taken-off
+            /// items first) go into EMPTY slots; nothing worn is replaced. After ReleaseFromMIA this puts back what she wore
+            /// when taken (the MIA outfit was virtual and is gone), keeping items an event put on her. True if anyone resolved.
+            /// </summary>
+            Redress,
+
+            /// <summary>
+            /// [string scopeKey, string experienceID, string appendKey] <br/>
+            /// Writes how much experienceID the first character of scopeKey gained since her MIA snapshot (current count -
+            /// count at kidnap, Character_Trainable.MIASnapshot) into AppendStrings[appendKey] for $appendKey$ in text.
+            /// False if she has no snapshot.
+            /// </summary>
+            StoreMIAExperienceGain
 
         }
     }

@@ -1,0 +1,17 @@
+{
+    "_doc": "en-us localization for expEvent_sports_drugged.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_sports_drugged": "The Drugged Night",
+                "exp_event_erav_sports_drugged_ongoing": "Tonight's drinks taste unusually sweet. $names$'s cup was never changed.",
+                "exp_event_erav_sports_drugged_result": "Her limbs gone soft, $names$ is carried to the center of the bed and arranged.",
+
+                "event_erav_sports_drugged_01": "Whatever was in the drink hits hard. Under the drug her body leaks helplessly while her waking mind watches the wall of bodies take turns pressing down -\nlegs that want to close cannot; the jaw that wants to clench hangs open; her own body spares the men the effort.",
+                "event_erav_sports_drugged_02": "One wraps her hand around himself and guides it; another bends her over by the window - the floor-to-ceiling glass faces the city night, and in it glitters her own reflection, jolting with each thrust.\nShutter clicks blur into the dark; whose phone, no telling.",
+                "event_erav_sports_drugged_03": "The last memory before her mind slips away: her own hips moving. Nobody holding, nobody pushing - her body had learned the rhythm on its own.\nShe wakes the next morning in dry pajamas, her hair combed smooth. The fingermarks inside her thighs piece the night back together. The schedule turns to a new page; nobody mentions it.",
+                "event_erav_sports_drugged_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

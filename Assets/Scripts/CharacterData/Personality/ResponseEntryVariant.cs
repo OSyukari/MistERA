@@ -40,7 +40,12 @@ public partial class ResponseEntry
         public List<string> tags = new List<string>();
         public List<string> extraSelfPortraitTags = new List<string>();
         public List<string> extraTargetPortraitTags = new List<string>();
-        public bool useActiveTags = false;
+        /// <summary>
+        /// Ongoing action tags on the self portrait: the kojo's EP action tags (UtilityEX.GetEPPortraitActionTags: COM tags, role, sex for service)
+        /// when the EP has the owner as doer/receiver, else the owner's live action tags (PortraitManager.GetOwnerActionTagsByPriority).
+        /// <br/>false: neither - the variant's extraSelfPortraitTags are its custom ongoing tags.
+        /// </summary>
+        public bool useActiveTags = true;
         public bool forbidPortaitDisplay = false;
         public Requirement requirement = new Requirement();
         public List<string> responses = new List<string>();
@@ -137,7 +142,8 @@ public partial class ResponseEntry
                         returnV2.targetPortraitTag.AddRange(extraTargetPortraitTags);
                         returnV2.selfPortraitTag.AddRange(kol.SelfTags);
                         returnV2.targetPortraitTag.AddRange(kol.TargetTags);
-                        if (useActiveTags) returnV2.selfPortraitTag.AddRange(kol.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        // EP action tags when the kojo's EP has the owner as doer/receiver, else live action tags
+                        if (useActiveTags) returnV2.selfPortraitTag.AddRange(kol.ActionTags.Count > 0 ? kol.ActionTags : kol.Owner.PortraitManager.GetOwnerActionTagsByPriority());
                         Utility.DistinctInPlace(returnV2.selfPortraitTag);
                         Utility.DistinctInPlace(returnV2.targetPortraitTag);
                     }
@@ -219,7 +225,12 @@ public partial class ResponseEntry
                         returnV2.selfPortraitTag.AddRange(selfTags);
                         returnV2.targetPortraitTag.AddRange(targetTags);
 
-                        if (useActiveTags) returnV2.selfPortraitTag.AddRange(rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        // EP action tags when the EP has the owner as doer/receiver, else live action tags
+                        if (useActiveTags)
+                        {
+                            var epTags = UtilityEX.GetEPPortraitActionTags(ep, rel.Owner);
+                            returnV2.selfPortraitTag.AddRange(epTags.Count > 0 ? epTags : rel.Owner.PortraitManager.GetOwnerActionTagsByPriority());
+                        }
 
                         Utility.DistinctInPlace(returnV2.selfPortraitTag);
                         Utility.DistinctInPlace(returnV2.targetPortraitTag);

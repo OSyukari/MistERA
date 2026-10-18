@@ -1,0 +1,174 @@
+{
+    "_doc": "ErAV NTR Part 3 - G sports team, SMALL events (handoff 'Small event template'). Weights: scenes training 2 + hotel 2 + drugged 1 = 5 vs small events 3+3+3+2 = 11 -> scene share 5/16 (~31%, about one scene per 3-4 h of the 5-day stay). Text-only events write to the MIA log without a click; the locker-room quick act's result also starts its hidden event at once (runImmediate, empty lines, no flush, no ResolveEvent, releases its keys on every path).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sports_small_cheer",
+                "eventString_Ongoing": "exp_event_erav_sports_small_cheer_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_sports_small_cheer_result_1"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_sports_small_cheer_result_2"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sports_small_cheer_result_3"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_sports_small_water",
+                "eventString_Ongoing": "exp_event_erav_sports_small_water_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sports_small_water_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sports_small_water_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_sports_small_locker",
+                "eventString_Ongoing": "exp_event_erav_sports_small_locker_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sports_small_locker_result",
+                        "eventID": "event_erav_sports_small_locker",
+                        "runImmediate": true
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_sports_small_suite",
+                "eventString_Ongoing": "exp_event_erav_sports_small_suite_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sports_small_suite_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sports_small_suite_result_2"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sports_small_locker",
+                "_comment": "Hidden (runImmediate): empty lines only, no flush. self = player, party = the victim.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_a", "erav_client_athlete_a", "1", "true" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "client", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "act" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "fail" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "act",
+                        "line": "",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "client", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "fail",
+                        "line": "",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sports_small_cheer": "应援服巡游",
+                "exp_event_erav_sports_small_cheer_ongoing": "$names$穿着拉拉队短裙，在场边按队方的指定路线走动应援。",
+                "exp_event_erav_sports_small_cheer_result_1": "走快些裙摆就兜风。场内的视线全程粘在她裙底——按规定，裙里什么都不能穿。",
+                "exp_event_erav_sports_small_cheer_result_2": "$names$被叫去领操。抬手的动作带得裙子起伏，看台上的快门声就没停过——队伍的宣传照，也是业务。",
+                "exp_event_erav_sports_small_cheer_result_3": "中场休息，$names$被指定站在球员通道口送每个人上场。击掌的时候，总有手「失误」落在裙摆底下。",
+
+                "exp_event_erav_sports_small_water": "递水",
+                "exp_event_erav_sports_small_water_ongoing": "训练暂停，$names$拎着水箱进场递水。",
+                "exp_event_erav_sports_small_water_result_1": "递到第三个，水瓶换成了他的运动饮料，递法也换了——「Kneel. 用嘴递。」翻译没转译，可手势转译了。",
+                "exp_event_erav_sports_small_water_result_2": "$names$挨个替歇下来的球员递水擦汗。擦到腰腹时，毛巾被人按着往下按，「那里也汗。」",
+
+                "exp_event_erav_sports_small_locker": "更衣室待命",
+                "exp_event_erav_sports_small_locker_ongoing": "更衣室里传出口哨声，叫$names$进去「帮忙放松」。",
+                "exp_event_erav_sports_small_locker_result": "半场哨响，$names$被叫进更衣室，替刚下场的主力「帮忙放松」。完事出来，第二节的比赛刚好开球。",
+
+                "exp_event_erav_sports_small_suite": "套房陪坐",
+                "exp_event_erav_sports_small_suite_ongoing": "晚上，$names$被叫去套房「陪队里坐坐」。",
+                "exp_event_erav_sports_small_suite_result_1": "$names$被指定坐在领队腿上陪酒。酒过三巡，领队学Chinese祝酒词学得兴起，手下的动作倒是从不需要翻译。",
+                "exp_event_erav_sports_small_suite_result_2": "打游戏输了的人有「惩罚游戏」：罚的是$names$坐到赢家腿上，被隔着裙子捏了个遍。输了的下把照样起哄。"
+            }
+        }
+    }
+}

@@ -33,8 +33,9 @@ public class ExpeditionMessageEntry
     {
         if (unresolved == null || unresolved.isResolved) return;
         // the self release keeps its victims while they are off the job (asleep/eating) - releasing needs no job, and
-        // NotifyCharaReturn would only restore the "party" key, losing "victims"
-        if (unresolved.isSelfRelease) return;
+        // NotifyCharaReturn would only restore the "party" key, losing "victims". Off-time events were banked while
+        // their targets were off the job already, and keep them the same way.
+        if (unresolved.isSelfRelease || unresolved.keepTargetsOffJob) return;
         if (Characters.Remove(refID))
         {
             //Debug.LogError($"NotifyCharaExit {scr_System_CampaignManager.current.FindInstanceByID(refID).CallName} in {FullDescription} original {EventDescription}");
@@ -86,6 +87,12 @@ public class SerializableEventPackage
     /// any other banked entry of the job is unresolved, and its targets survive the victims leaving the job.
     /// </summary>
     public bool isSelfRelease = false;
+
+    /// <summary>
+    /// Banked by an off-time event (Job_Expedition.TickOffTimeEvents): its targets are kept while they are off the job
+    /// (asleep/eating), so the entry stays clickable then. Waking them is up to the event (DisruptSleep).
+    /// </summary>
+    public bool keepTargetsOffJob = false;
 
     [JsonIgnore]
     public string DisplayName { get { return LocalizeDictionary.QueryThenParse(eventID); } }
@@ -315,6 +322,7 @@ public class Job_Expedition : Job
         if (!this.FactionOwner_Party.isPlayerFaction)
         {
             TickSelfRelease(tickPackage);
+            TickOffTimeEvents(tickPackage);
             return;
         }
         bool begin = false;
@@ -428,6 +436,8 @@ public class Job_Expedition : Job
             }
         }
 
+        TickOffTimeEvents(tickPackage);
+
         if (this.status == ExpeditionStatus.returning)
         {
             for(var i = packages_previous.Count - 1; i >= 0; i--)
@@ -524,6 +534,72 @@ public class Job_Expedition : Job
         selfReleaseFired = true;
 
         if (ExpeditionUtility.ImmediateRunEnabled && !ExpeditionUtility.HasOtherUnresolved(this, entry)) ExpeditionUtility.RunBankedEventNow(this, entry);
+    }
+
+    /// <summary>
+    /// Per member: minutes left before her next off-time roll (the last off-time event's DurationMinutes). Only members
+    /// currently off time have an entry.
+    /// </summary>
+    [JsonProperty] protected Dictionary<int, int> offTimeCooldown = new Dictionary<int, int>();
+
+    /// <summary>
+    /// Off-time events (Expedition.offTimeEventRate > 0), every party, minute tick only: each of this party's own members
+    /// who is off time - asleep, or off this job while the party rests / she needs rest (non-player parties: whenever she
+    /// is off this job) - rolls offTimeEventRate per minute for an event from the current day/night list
+    /// (ExpeditionUtility.RandOffTimeEvent). The result is applied at once like an exploration result but costs no
+    /// progress; a banked scene keeps her as target while she stays off the job. Her state is untouched - an event that
+    /// needs her awake wakes her itself (DisruptSleep).
+    /// </summary>
+    protected void TickOffTimeEvents(bool tickPackage)
+    {
+        if (!tickPackage) return;
+        var exp = this.Expedition;
+        if (exp == null || exp.Base == null || exp.Base.offTimeEventRate <= 0f || !isActive
+            || selfReleaseFired || RemainingMinutes == 0 || exp.ExploreRate == 0)
+        {
+            offTimeCooldown.Clear();
+            return;
+        }
+        bool playerParty = FactionOwner_Party.isPlayerFaction;
+        if (playerParty ? (status != ExpeditionStatus.active && status != ExpeditionStatus.resting) : status == ExpeditionStatus.returning)
+        {
+            offTimeCooldown.Clear();
+            return;
+        }
+
+        var offTime = new List<Character_Trainable>();
+        foreach (var c in FactionOwner_Party.ManagedChara)
+        {
+            if (c == null || c.isTemporaryActor || c == scr_System_CampaignManager.current.Player) continue;
+            var memberType = FactionOwner_Party.GetMemberType(c);
+            if (memberType == null || memberType.isHidden) continue;
+            if (c.InteractionJob != null && c.InteractionJob.isActive) continue;   // already in an interaction (e.g. a scene's command)
+
+            bool offJob = c.CurrentJob != this;
+            bool isOffTime = c.isSleeping
+                || (offJob && (!playerParty || status == ExpeditionStatus.resting || ShouldRest(c)));
+            if (isOffTime) offTime.Add(c);
+        }
+
+        // members back on the job (or gone) lose their wait
+        var stale = new List<int>();
+        foreach (var refID in offTimeCooldown.Keys) if (!offTime.Exists(x => x.RefID == refID)) stale.Add(refID);
+        foreach (var refID in stale) offTimeCooldown.Remove(refID);
+
+        foreach (var c in offTime)
+        {
+            if (offTimeCooldown.TryGetValue(c.RefID, out var wait) && wait > 0)
+            {
+                offTimeCooldown[c.RefID] = wait - 1;
+                continue;
+            }
+            if (!Utility.RandomChance(exp.Base.offTimeEventRate)) continue;
+
+            var ev = ExpeditionUtility.RandOffTimeEvent(c, exp, FactionOwner_Party);
+            if (ev == null) continue;
+            ExpeditionUtility.ApplyResult(this, ev, new List<Character_Trainable>() { c }, this.DisplayName, true);
+            offTimeCooldown[c.RefID] = Math.Max(0, ev.DurationMinutes);
+        }
     }
 
     protected void NotifyEventFailure()
@@ -677,6 +753,7 @@ public class Job_Expedition : Job
 
         _exp = null;
         selfReleaseFired = false;
+        offTimeCooldown.Clear();
         if (exp == null) this.expeditionRefID = -1;
         else this.expeditionRefID = exp.RefID;
 

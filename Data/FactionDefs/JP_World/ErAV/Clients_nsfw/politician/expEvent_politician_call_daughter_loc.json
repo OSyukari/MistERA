@@ -1,0 +1,19 @@
+{
+    "_doc": "en-us localization for expEvent_politician_call_daughter.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_politician_call_daughter": "Evening: The Call Home",
+                "exp_event_erav_politician_call_daughter_ongoing": "The meeting over, the councillor summons $names$ to the corridor telephone.",
+                "exp_event_erav_politician_call_daughter_result": "The councillor dials his home - and gives her an order with his eyes.",
+
+                "event_erav_politician_call_daughter_01": "At the corridor telephone the councillor dials a number - it is his home.\n\"It's me. ...Mm, in Hakone, discussing something with friends from the organisation. Back tomorrow night. ...Oh, Sayuri there? Put her on.\"\nA girl's voice chatters through the receiver about school trivia. He leans on the wooden post, answering warmly - and gives her his order with his eyes.",
+                "event_erav_politician_call_daughter_02": "She kneels before him and takes him into her mouth.\n\"Is that so, top of the class in finals? Well done, that's my daughter. ...Mm, everything is fine here at Daddy's work, my colleagues take good care of me.\"\nListening to his daughter's voice, he presses her head deeper, down to the throat.",
+                "event_erav_politician_call_daughter_03": "\"...Good girl. Daddy will bring you Hakone sweets. Mm, bye now.\"\nHe hangs up, spends himself deep in her throat, watches her swallow it all - then speaks at his leisure.\n\"You tasted that, didn't you. When she was small, it was this mouth that gave Daddy her medicine. You and she - the same age, the same mouth. So for these days,\" he flicks her cheek, \"- you call me Daddy.\"",
+                "event_erav_politician_call_daughter_04": "The night's bedding adds a new rule: tonight, call me Daddy. Refuse, and go settle the interest yourself.\n\"Daddy...\" \"Yes. Good girl.\"\nHe makes his 'daughter' lie face-down calling Daddy, taking her slowly while lecturing her - family affairs are not her concern; serve Daddy well and nothing else matters - still too green; Sayuri was more practised.",
+                "event_erav_politician_call_daughter_05": "When he goes deepest she breaks into sobs - and inside them the pitch-warped cry of \"Daddy-\".\n\"Yes. Daddy's here.\"\nHe leans down and answers gently by her ear, driving in the last of it.",
+                "event_erav_politician_call_daughter_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

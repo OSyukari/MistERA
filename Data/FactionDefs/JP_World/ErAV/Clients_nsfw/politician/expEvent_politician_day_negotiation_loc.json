@@ -1,0 +1,19 @@
+{
+    "_doc": "en-us localization for expEvent_politician_day_negotiation.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_politician_day_negotiation": "Negotiation Day: The Accompanying Secretary",
+                "exp_event_erav_politician_day_negotiation_ongoing": "$names$ sits in on the negotiation as the 'accompanying secretary'.",
+                "exp_event_erav_politician_day_negotiation_result": "The talks stall - and the councillor's folding fan taps twice beneath the low table.",
+
+                "event_erav_politician_day_negotiation_01": "Seven or eight men fill the tatami room: the Kiryu-gumi's contacts, secretarial staff, executives of the other company.\n$party.name$'s seat is at the councillor's knees, before the opened alcove - where every gaze in the room falls most easily.\nTen minutes in, above the low table, ordinances, interest rates and kickback ledgers are discussed in perfect order.",
+                "event_erav_politician_day_negotiation_02": "Beneath the table she crawls into its shadow, kneels between his knees, undoes his belt and takes him into her mouth.\n\"As for that rate, you've seen the pressure from above.\"\nThe fan in the councillor's hand taps the tabletop with the rhythm of her throat.",
+                "event_erav_politician_day_negotiation_03": "Halfway through, the talks deadlock. The councillor claps his hands.\n\"Gentlemen, money talk spoils the mood. Some entertainment. - Open your clothes. Turn around. Cheer them up.\"\nThe moment the fabric slides from her shoulders, the whole negotiation changes channel. In the laughter and wolf whistles the stuck terms come loose. When the deal closes the room applauds - and in that applause she is ordered to stay bare, kneeling, pouring sake for every man present.",
+                "event_erav_politician_day_negotiation_04": "The afternoon brings a video call with the prefecture, then a phone call. A call can be taken lying down - he leans against the bedding, receiver on his shoulder, pulls her over and enters her from behind.\n\"Mm. Mm, that number works. ...Yes, I'm sincere.\"\nHis pace rises and falls with his telephone voice: gentle while joking, deep and hard when he leans on a price. Flat on the bedding, she can only let her moans slip through the gaps in his sentences.",
+                "event_erav_politician_day_negotiation_05": "As the meeting breaks up, the councillor adds a line to his draft report: accompanying secretary - excellent performance, unanimous approval.\n\"Tomorrow night, a mixed bath.\"",
+                "event_erav_politician_day_negotiation_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

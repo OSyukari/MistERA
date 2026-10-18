@@ -305,6 +305,13 @@ public static class EventUtility
             return r.requireKojoVariable.Validate(rel);
         }
 
+        if (r.charaReq != null)
+        {
+            if (c == null) return false;
+            List<string> reqTooltip = null;   // no tooltip text needed
+            if (!CharaReqUtility.Validate(r.charaReq, ref reqTooltip, c, out var reqHardlock)) return false;
+        }
+
         if (r.parameters.Count < 1) return true;
         else if (c == null) return false;
 
@@ -435,6 +442,43 @@ public static class EventUtility
                     Debug.LogError("canLeave parse error");
                     return false;
                 }
+            case "experience":
+            {
+                // experience [expID] [operator] [value] -- current experience count
+                if (r.parameters.Count < 4 || !Enum.TryParse<LogicalOperand>(r.parameters[2], false, out var expOp)
+                    || !float.TryParse(r.parameters[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var expValue)) return false;
+                c.Skills.FinalizeExperience();
+                return Utility.CompareValue(c.Skills.GetExperienceLevel(r.parameters[1]), expOp, expValue);
+            }
+            case "isVirgin":
+                // isVirgin [bodyTag] -- that body part never had a first experience (aware or unaware)
+                return r.parameters.Count >= 2 && IsVirginAt(c, r.parameters[1]);
+            case "isPregnant":
+                return IsPregnantAny(c);
+            case "isHungry":
+                return c.canEat;
+            case "miaGainedExperience":
+            {
+                // miaGainedExperience [expID] [operator] [value] -- gained since the MIA snapshot (false without one)
+                if (r.parameters.Count < 4 || !Enum.TryParse<LogicalOperand>(r.parameters[2], false, out var gainOp)
+                    || !float.TryParse(r.parameters[3], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var gainValue)) return false;
+                return TryGetMIAExperienceGain(c, r.parameters[1], out int gained) && Utility.CompareValue(gained, gainOp, gainValue);
+            }
+            case "miaLostVirginity":
+            {
+                // miaLostVirginity [bodyTag] -- virgin there at the MIA snapshot, not any more
+                if (r.parameters.Count < 2) return false;
+                var before = c.MIASnapshot;
+                return before != null && IsVirginAt(before, r.parameters[1]) && !IsVirginAt(c, r.parameters[1]);
+            }
+            case "miaBecamePregnant":
+            {
+                var before = c.MIASnapshot;
+                return before != null && !IsPregnantAny(before) && IsPregnantAny(c);
+            }
+            case "miaExpedition":
+                // miaExpedition [expeditionID] -- her MIA snapshot was taken on that expedition def
+                return r.parameters.Count >= 2 && c.HasMIASnapshot && c.MIASnapshotExpeditionID == r.parameters[1];
             case "getStat":
                 // getstat [statID] [operator] [value]
                 float value = 0f;
@@ -3173,6 +3217,7 @@ public static class EventUtility
                         lastCaptive = false;
                         break;
                     }
+                    var miaExpBase = miaParty.Job == null || miaParty.Job.Expedition == null ? null : miaParty.Job.Expedition.Base;
                     if (lastCaptive && miaParty.Job != null && miaParty.Job.Expedition != null) miaParty.Job.Expedition.CompleteProgress();
 
                     c.ChangeCurrentJob(null);
@@ -3180,6 +3225,20 @@ public static class EventUtility
                     c.FactionManager.RemoveFromParty(miaParty, false, true);
                     foreach (var f in c.FactionManager.Factions) f.FactionOwnerRoot.NotifyCharaRescued(c);
                     releasedAny = true;
+
+                    // homecoming (Expedition.returnEventID): self = her, supervisor = the player; queued, so it plays after
+                    // this event. Her kidnap snapshot is dropped on her next hourly update, after the homecoming read it.
+                    c.NotifyMIASnapshotReleased();
+                    if (miaExpBase != null && !string.IsNullOrEmpty(miaExpBase.returnEventID))
+                    {
+                        var homecoming = new EventInstance(c, miaExpBase.returnEventID, miaExpBase.returnEventLabel ?? "");
+                        // it tells the player she is back: shown even though the player can't see her (an NPC-self event
+                        // is otherwise only displayed while she is visible to the player - she was just teleported home)
+                        homecoming.displayOverride = true;
+                        var player = scr_System_CampaignManager.current.Player;
+                        if (player != null) homecoming.Targets["supervisor"] = new List<Character_Trainable>() { player };
+                        scr_UpdateHandler.current.EventHandler.StartEvent(homecoming, false);
+                    }
                 }
                 return releasedAny;
             }
@@ -3212,9 +3271,147 @@ public static class EventUtility
             case Event.EventEntry.ExecutionType.AppendStringEquals:
                 if (exec.arguments.Count < 2) return false;
                 return owner.AppendStrings.TryGetValue(exec.arguments[0], out var appendValues) && appendValues != null && appendValues.Contains(exec.arguments[1]);
+            case Event.EventEntry.ExecutionType.RequestFallbackWorker:
+            {
+                if (exec.arguments.Count < 4 || string.IsNullOrEmpty(exec.arguments[0])) return false;
+                var requestFrom = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
+                if (requestFrom == null)
+                {
+                    Debug.LogError($"RequestFallbackWorker: faction [{exec.arguments[1]}] not found");
+                    return false;
+                }
+                int requestCount = 1;
+                if (exec.arguments.Count >= 5 && !int.TryParse(exec.arguments[4], out requestCount)) return false;
+                bool allowReuse = true;
+                if (exec.arguments.Count >= 6 && !bool.TryParse(exec.arguments[5], out allowReuse)) return false;
+
+                // never hand out the same worker twice within one event (e.g. lead + support from the same role)
+                var held = new HashSet<Character_Trainable>();
+                foreach (var heldList in owner.Targets.Values) if (heldList != null) held.UnionWith(heldList);
+
+                var lent = FallbackWorkerManager.RequestOnDemand(requestFrom, exec.arguments[2], exec.arguments[3], requestCount, allowReuse, held);
+                if (lent.Count > 0)
+                {
+                    if (!owner.Targets.TryGetValue(exec.arguments[0], out var lentInto) || lentInto == null)
+                        owner.Targets[exec.arguments[0]] = lentInto = new List<Character_Trainable>();
+                    foreach (var c in lent) if (!lentInto.Contains(c)) lentInto.Add(c);
+                }
+                return lent.Count >= requestCount;
+            }
+            case Event.EventEntry.ExecutionType.ReleaseFallbackWorker:
+            {
+                if (exec.arguments.Count < 1) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var releaseWorkers) || releaseWorkers == null) return false;
+                bool releasedWorker = false;
+                foreach (var c in releaseWorkers) releasedWorker = FallbackWorkerManager.ReleaseToPool(c) || releasedWorker;
+                return releasedWorker;
+            }
+            case Event.EventEntry.ExecutionType.MoveToTargetRoom:
+            {
+                if (exec.arguments.Count < 2) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var movers) || movers == null) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[1], out var anchors) || anchors == null) return false;
+                var anchor = anchors.Find(x => x != null);
+                if (anchor == null) return false;
+                var anchorRoom = scr_System_CampaignManager.current.Map.FindRoomByChara(anchor.RefID);
+                if (anchorRoom == null) return false;
+
+                bool movedAny = false;
+                foreach (var c in movers)
+                {
+                    if (c == null || c == anchor) continue;
+                    if (c.IsDormant) c.SetDormant(false);
+                    c.ChangeCurrentJob(null);
+                    scr_System_CampaignManager.current.MoveCharacterTo(c, anchorRoom);
+                    movedAny = true;
+                }
+                return movedAny;
+            }
+            case Event.EventEntry.ExecutionType.DisruptSleep:
+            {
+                if (exec.arguments.Count < 1) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var sleepers) || sleepers == null) return false;
+                bool allAwake = true;
+                foreach (var c in sleepers)
+                {
+                    if (c == null) continue;
+                    c.DisruptSleep();
+                    allAwake = allAwake && !c.isSleeping;
+                }
+                return allAwake;
+            }
+            case Event.EventEntry.ExecutionType.Redress:
+            {
+                if (exec.arguments.Count < 1) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var dressers) || dressers == null) return false;
+                var redressLayer = BodyEquipLayer.None;
+                if (exec.arguments.Count >= 2 && exec.arguments[1] != "" && !Enum.TryParse(exec.arguments[1], out redressLayer))
+                {
+                    Debug.LogError($"Redress: unknown layer [{exec.arguments[1]}]");
+                    return false;
+                }
+                bool dressedAny = false;
+                foreach (var c in dressers)
+                {
+                    if (c == null) continue;
+                    c.Redress(redressLayer);
+                    dressedAny = true;
+                }
+                return dressedAny;
+            }
+            case Event.EventEntry.ExecutionType.StoreMIAExperienceGain:
+            {
+                if (exec.arguments.Count < 3 || exec.arguments[2] == "") return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var gainChars) || gainChars == null) return false;
+                var gainChara = gainChars.Find(x => x != null);
+                if (gainChara == null || !TryGetMIAExperienceGain(gainChara, exec.arguments[1], out int gained)) return false;
+                owner.AppendStrings[exec.arguments[2]] = new List<string>() { gained.ToString() };
+                return true;
+            }
             default: return true;
 
         }
+    }
+
+    // ── MIA snapshot / body state helpers (conditions + StoreMIAExperienceGain). Plain data only, so they also work on
+    // the detached snapshot copy (Character_Trainable.MIASnapshot). ──
+
+    /// <summary> current experience count - count in her MIA snapshot. False without a snapshot. </summary>
+    public static bool TryGetMIAExperienceGain(Character_Trainable c, string expID, out int gained)
+    {
+        gained = 0;
+        var before = c == null ? null : c.MIASnapshot;
+        if (before == null || string.IsNullOrEmpty(expID)) return false;
+        c.Skills.FinalizeExperience();
+        gained = c.Skills.GetExperienceLevel(expID) - before.Skills.GetExperienceLevel(expID);
+        return true;
+    }
+
+    /// <summary> body internals matching bodyTag (a tag of the internal's def, e.g. vagina / anus / mouth, or its def ID) </summary>
+    static List<BodyInternal_Instance> FindInternals(Character_Trainable c, string bodyTag)
+    {
+        var result = new List<BodyInternal_Instance>();
+        if (c == null || c.Body == null || string.IsNullOrEmpty(bodyTag)) return result;
+        foreach (var part in c.Body.Internals)
+        {
+            if (part == null || part.Base == null) continue;
+            if (part.Base.ID == bodyTag || part.Base.tags.Contains(bodyTag)) result.Add(part);
+        }
+        return result;
+    }
+
+    /// <summary> every matching internal that can lose its virginity still has it; false if none can </summary>
+    public static bool IsVirginAt(Character_Trainable c, string bodyTag)
+    {
+        var parts = FindInternals(c, bodyTag).FindAll(x => x.CanLoseVirginity);
+        return parts.Count > 0 && parts.TrueForAll(x => x.IsVirgin);
+    }
+
+    public static bool IsPregnantAny(Character_Trainable c)
+    {
+        if (c == null || c.Body == null) return false;
+        foreach (var part in c.Body.Internals) if (part != null && part.isPregnant) return true;
+        return false;
     }
 
     internal static bool Kidnap(List<Character_Trainable> victims, Manageable_Party victimsFaction, List<Character_Trainable> kidnappers, Manageable_Party kidnapLoc, string kidnapExpID, MemberType status, string kidnapMessage)
@@ -3260,6 +3457,11 @@ public static class EventUtility
         }
         foreach (var i in victims)
         {
+            // homecoming "how she changed": a copy of her as she was, taken on the first kidnap only (MIA -> MIA keeps it),
+            // and only for expeditions that have a homecoming (Expedition.returnEventID)
+            if (!string.IsNullOrEmpty(kidnapExp.Base.returnEventID) && !i.FactionManager.isPartyLocked && !i.isTemporaryActor)
+                i.TakeMIASnapshot(kidnapExpID);
+
             //Debug.Log($"Kidnap message {i.CallName} {finalMSG}");
             var mem = i.Memory.AddEntryMSG(stringmsg.Replace("$message$", kdnpmsg).Replace("$partyJob$", i.CurrentJob == null ? "" : i.CurrentJob.GetJobDescription(i.RefID)), new List<string>() { "forbidMerge","important" });
             mem.disableRoomName = true;

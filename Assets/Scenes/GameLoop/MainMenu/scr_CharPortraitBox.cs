@@ -1,11 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using TMPro;
 using UnityEngine.UI;
-using System.IO;
-using System.Runtime.InteropServices;
 
 public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {

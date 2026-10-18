@@ -176,6 +176,22 @@ public class COM: I_SerializationCallbackReceiver, hasCategory
     //public int moodModValue = 0, stressModValue = 0, lustModValue = 0;
 
     public List<string> comTags = new List<string>();
+    /// <summary>
+    /// Portrait display only (pose keywords of the global portrait template, eg. cunnilingus, blowjob) - added to the
+    /// actors' EP portrait action tags (UtilityEX.GetEPPortraitActionTags), never to comTags/EP tags used by game logic.
+    /// <br/>portraitTags: both doer and receiver. _Doer / _Receiver: that role only (eg. receiver spread_pussy on oral_V).
+    /// </summary>
+    public List<string> portraitTags = new List<string>();
+    public List<string> portraitTags_Doer = new List<string>();
+    public List<string> portraitTags_Receiver = new List<string>();
+
+    /// <summary> role: "doer" / "receiver" / "" (solo act: portraitTags only) </summary>
+    public void AddPortraitTags(List<string> tags, string role)
+    {
+        tags.AddRange(portraitTags);
+        if (role == "doer") tags.AddRange(portraitTags_Doer);
+        else if (role == "receiver") tags.AddRange(portraitTags_Receiver);
+    }
     public List<string> conflictTags = new List<string>();
 
     [JsonIgnore] public bool isSexCOM { get { return comTags.Contains("sex"); } }

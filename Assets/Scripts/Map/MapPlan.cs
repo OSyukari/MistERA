@@ -352,6 +352,7 @@ public class MapPlan
     /// Per-shift staffing targets for this (non-player) faction, one entry per shift MemberType. Each hour
     /// FallbackWorkerManager.UpdateStaffing counts the real members covering that shift and wakes up to
     /// maxFallback pooled fallback workers to fill the gap, generating new ones from templateID as needed.
+    /// Event-requested roles are not listed here - the pool adds them on request (FallbackWorkerManager.RequestOnDemand).
     /// See Manageable_WorkerPool.
     /// </summary>
     public List<FallbackWorkerInit> fallbackWorkers = new List<FallbackWorkerInit>();

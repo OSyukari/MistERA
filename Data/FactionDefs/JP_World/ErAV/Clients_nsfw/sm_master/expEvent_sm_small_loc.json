@@ -1,0 +1,32 @@
+{
+    "_doc": "en-us localization for expEvent_sm_small.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_sm_small_schedule": "The Schedule",
+                "exp_event_erav_sm_small_schedule_ongoing": "The whiteboard schedule governs the basement's hours - and governs $names$.",
+                "exp_event_erav_sm_small_schedule_result_1": "$names$ kneels ready at the playroom door per the schedule. As the wall clock strikes the hour, the door opens - \"Two minutes late. Noted: time added.\"",
+                "exp_event_erav_sm_small_schedule_result_2": "The ledger of added time is read aloud to her: two extensions for late bedtimes, three for loosened positions. He closes the notebook. \"A toy must know its own debts.\"",
+
+                "exp_event_erav_sm_small_display": "Bound Display",
+                "exp_event_erav_sm_small_display_ongoing": "No training today. The old man is merely 'putting things in order'.",
+                "exp_event_erav_sm_small_display_result_1": "$names$ is bound into a fixed pose and placed on the basement's display rack, shelved with the lacquered wooden saddles. He sits nearby sanding wood, glancing up now and then to check her condition.",
+                "exp_event_erav_sm_small_display_result_2": "The playroom lights dim. $names$ is bound to the rack facing the door - \"When guests arrive, the exhibits stand in the most visible spot.\"",
+
+                "exp_event_erav_sm_small_toy": "A Toy's Daily Round",
+                "exp_event_erav_sm_small_toy_ongoing": "The tail plug and an apron make up today's entire 'outfit'.",
+                "exp_event_erav_sm_small_toy_result_1": "$names$ carries tea and bows across the whole basement with the tail plug seated. The spilled portion of the tea will be repaid kneeling on the rack.",
+                "exp_event_erav_sm_small_toy_result_2": "The old man swaps in a larger plug and pats her back like tightening a screw on furniture. \"Sit straight. It doesn't drop today.\"",
+
+                "exp_event_erav_sm_small_maintenance": "Maintenance Hour",
+                "exp_event_erav_sm_small_maintenance_ongoing": "He does his woodwork; $names$ does 'maintenance'.",
+                "exp_event_erav_sm_small_maintenance_result_1": "$names$ washes, dries and shelves each used toy by size. For any misplaced piece, the old man demonstrates its use on her all over again.",
+                "exp_event_erav_sm_small_maintenance_result_2": "Amid the sanding, she is called over to test a new toy's grip - \"Fingers, not hips. You only hold it. Whether it works well is for me to say.\"",
+
+                "exp_event_erav_sm_small_check": "Spot Re-Check",
+                "exp_event_erav_sm_small_check_ongoing": "\"Come here.\" The old man sets down his carving knife and beckons.",
+                "exp_event_erav_sm_small_check_result": "He puts his work aside and runs an impromptu re-check on the spot: rubber gloves, lubricant, segment by segment. He adds a line to the record and says nothing at all."
+            }
+        }
+    }
+}

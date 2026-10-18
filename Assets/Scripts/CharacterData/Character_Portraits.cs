@@ -102,6 +102,7 @@ public class PortraitManager
         serializedBanner = null;
         serializedBannerBGColor = null;
         _portraitCache = null;
+        _generatedHandlers = null;
         _bannerCache = null;
         _bannerCacheInit = false;
         colorInit = false;
@@ -135,6 +136,139 @@ public class PortraitManager
 
     public string portraitBaseIDOverride = "";
 
+    /// <summary>
+    /// One source of generated handlers (GlobalPortraitTemplate): a character (variant) folder whose category folders hold the classified images
+    /// </summary>
+    public class GlobalHandlerEntry
+    {
+        /// <summary>
+        /// The folder holding the category folders: its name (eg. "Aemeath") or a longer path ending in it (eg. "cinderella/cinderella_after",
+        /// matched against the file's full path, so a same-named folder elsewhere is not picked up)
+        /// </summary>
+        public string path = "";
+        /// <summary> added to RequireSelfContextKeys of every handler generated from this folder (eg. ["corrupted"]) </summary>
+        public List<string> selfKeys = new List<string>();
+    }
+
+    /// <summary>
+    /// Character template data only: global portrait template sources in priority order (all handlers of the first entry, then the next...).
+    /// Instances read it from their portrait template and never store it.
+    /// </summary>
+    [JsonIgnore] public List<GlobalHandlerEntry> useGlobalHandler = null;
+
+    /// <summary>
+    /// Read-only JSON hook for useGlobalHandler: no getter, so it is never written (never in save files). Values that are not an array
+    /// (eg. the legacy string an old save stored on an instance) are ignored; instances never use their own value anyway (GlobalHandlerEntries)
+    /// </summary>
+    [JsonProperty("useGlobalHandler")] protected Newtonsoft.Json.Linq.JToken UseGlobalHandlerJson
+    {
+        set { useGlobalHandler = value is Newtonsoft.Json.Linq.JArray a ? a.ToObject<List<GlobalHandlerEntry>>() : null; }
+    }
+
+    static readonly List<GlobalHandlerEntry> _noGlobalHandler = new List<GlobalHandlerEntry>();
+
+    /// <summary>
+    /// Template (no Owner): its own useGlobalHandler. Instance: always its portrait template's (portraitBaseIDOverride, else Owner's BaseID)
+    /// </summary>
+    [JsonIgnore] public List<GlobalHandlerEntry> GlobalHandlerEntries
+    {
+        get
+        {
+            if (Owner == null) return useGlobalHandler ?? _noGlobalHandler;
+            var bases = scr_System_Serializer.current?.MasterList?.Character_Bases;
+            if (bases == null) return _noGlobalHandler;
+            Character_SerializableBase template = null;
+            if (!string.IsNullOrEmpty(portraitBaseIDOverride)) template = bases.GetByID(portraitBaseIDOverride);
+            if (template == null && Owner != null) template = bases.GetByID(Owner.BaseID);
+            if (template == null || template.Portrait == null || template.Portrait.useGlobalHandler == null) return _noGlobalHandler;
+            return template.Portrait.useGlobalHandler;
+        }
+    }
+
+    /// <summary>
+    /// Handlers generated from the global portrait template, matched before portraitPriorityList. Never saved:
+    /// not part of serializedData / _portraitCache, so MarkCustomized and Prepend only ever see the original handlers.
+    /// </summary>
+    [JsonIgnore] public List<CharaPortrait> GeneratedHandlers
+    {
+        get
+        {
+            if (_generatedHandlers == null)
+            {
+                _generatedHandlers = new List<CharaPortrait>();
+                var neutral = NeutralHandler;
+                foreach (var entry in GlobalHandlerEntries)
+                {
+                    if (entry == null || string.IsNullOrEmpty(entry.path)) continue;
+                    foreach (var pp in GlobalPortraitTemplate.GetHandlers(entry.path))
+                    {
+                        // Copy shares the already resolved Variants; no RebuildInternal (see CharaPortrait_Image.RebuildInternal)
+                        var copy = pp.Copy();
+                        if (copy == null) continue;
+                        copy.isGenerated = true;
+                        copy.Owner = this;
+                        // Copy shares the key lists: build a new one when this entry adds self keys
+                        if (entry.selfKeys != null && entry.selfKeys.Count > 0)
+                            copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
+                        // generated handlers have no icon of their own: use the neutral handler's
+                        if (neutral != null && copy is CharaPortrait_Image img)
+                        {
+                            img.icon_path = IconPathOf(neutral);
+                            img.icon_offset_x = neutral.icon_offset_x;
+                            img.icon_offset_y = neutral.icon_offset_y;
+                            img.icon_offset_size = neutral.icon_offset_size;
+                        }
+                        _generatedHandlers.Add(copy);
+                    }
+                }
+            }
+            return _generatedHandlers;
+        }
+    }
+    protected List<CharaPortrait> _generatedHandlers = null;
+
+    /// <summary>
+    /// The original handler a draw without context keys picks: first enabled one with no Require*ContextKeys, else the last (GetValidPortrait's fallback)
+    /// </summary>
+    [JsonIgnore] public CharaPortrait NeutralHandler
+    {
+        get
+        {
+            var list = portraitPriorityList;
+            if (list.Count < 1) return null;
+            foreach (var i in list)
+            {
+                if (i == null || !i.isValid()) continue;
+                if (i.RequireSelfContextKeys.Count > 0 || i.RequireTargetContextKeys.Count > 0) continue;
+                return i;
+            }
+            return list[list.Count - 1];
+        }
+    }
+
+    static string IconPathOf(CharaPortrait p)
+    {
+        switch (p)
+        {
+            case CharaPortrait_Image i: return i.icon_path;
+            case CharaPortrait_Spine s: return s.icon_path;
+            case CharaPortrait_LandscapeImage l: return l.icon_path;
+            default: return "";
+        }
+    }
+
+    /// <summary>
+    /// Matching order: generated handlers first, then the original handlers
+    /// </summary>
+    [JsonIgnore] public IEnumerable<CharaPortrait> ActivePortraits
+    {
+        get
+        {
+            foreach (var i in GeneratedHandlers) yield return i;
+            foreach (var i in portraitPriorityList) yield return i;
+        }
+    }
+
     public PortraitManager()
     {
         //Debug.Log("PortraitManager instantiate on null call");
@@ -153,6 +287,7 @@ public class PortraitManager
     public void RebuildInternal(Character_Trainable c)
     {
         _owner = c;
+        _generatedHandlers = null;
         if (serializedData != null)
         {
             foreach (var i in serializedData)
@@ -269,6 +404,7 @@ public class PortraitManager
         MarkCustomized();
         this.portraitPriorityList.Insert(0,cm);
         cm.Owner = this;
+        _generatedHandlers = null;  // the neutral handler (generated handlers' icon) may have changed
 
         //Debug.Log("new portrait, owner ["+Owner.FirstName+"] cmOwner["+cm.Owner.Owner.FirstName+"] isImage[" + (cm is PortraitManager.CharaPortrait_Image) + "] listCount["+portraitPriorityList.Count+"] variantsCount [" + cm.Variants.Count + "] isvalid[" + (cm.isValid()) + "] portraitPath[" + (cm as PortraitManager.CharaPortrait_Image).PortraitPath + "]");
     }
@@ -288,13 +424,13 @@ public class PortraitManager
         handler = null;
         portrait = "";
         icon = "";
-        if (portraitPriorityList.Count < 1)
+        if (portraitPriorityList.Count < 1 && GeneratedHandlers.Count < 1)
         {
             handler = Transparent;
         }
         else
         {
-            foreach (var i in portraitPriorityList)
+            foreach (var i in ActivePortraits)
             {
                 if (!i.isValid()) continue;
                 if (!i.isValidForBox(box)) continue;
@@ -332,11 +468,17 @@ public class PortraitManager
                 handler = i;
                 break;
             }
-            if (handler == null)
-            {
+            if (handler == null && portraitPriorityList.Count > 0)
+            {   // fallback: the last original handler (generated handlers are never the fallback)
                 handler = portraitPriorityList[portraitPriorityList.Count - 1];
                 portrait = handler.PortraitPath(keywords, box);
                 icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
+            }
+            else if (handler == null)
+            {
+                handler = Transparent;
+                portrait = "";
+                icon = "";
             }
         }
     }
@@ -426,7 +568,7 @@ public class PortraitManager
 
     public void CollectAllTags(List<string> s, List<string> s2)
     {
-        foreach(var portrait in this.portraitPriorityList)
+        foreach(var portrait in this.ActivePortraits)
         {
             s.AddRange(portrait.RequireSelfContextKeys);
             s2.AddRange(portrait.RequireTargetContextKeys);
@@ -560,17 +702,35 @@ public class PortraitManager
         if (Owner == null || Owner.InteractionJob == null) return result;
 
         UtilityEX.GetActorTag(ref result, Owner);
+        var packages = new List<ActionPackage>();
         if (Owner.InteractionJob.isActive)
         {
-            Owner.InteractionJob.GetActorAPTags(Owner.RefID, result);
+            Owner.InteractionJob.GetActorAPTags(Owner.RefID, result, packages);
             //if (result.Count > 0) return result;
         }
         if (Owner.CurrentJob != null)
         {
             var tag = Owner.CurrentJob.JobTypeTag(Owner);
             if (tag != null) result.AddRange(tag);
-            Owner.CurrentJob.GetActorAPTags(Owner.RefID, result);
+            Owner.CurrentJob.GetActorAPTags(Owner.RefID, result, packages);
         }
+        // portrait role (global portrait role blocks require doer/receiver): receiver in any EP wins, solo acts have no role
+        // + COM portrait-only pose keywords of the EPs Owner acts in
+        bool isReceiver = false, isDoer = false;
+        foreach (var ap in packages)
+        {
+            foreach (var ep in ap.ListEP)
+            {
+                if (ep.Doer != Owner && ep.Receiver != Owner) continue;
+                string role = "";
+                if (ep.Receiver == Owner && ep.Doer != Owner) { isReceiver = true; role = "receiver"; }
+                else if (ep.Doer == Owner && ep.Receiver != null && ep.Receiver != Owner) { isDoer = true; role = "doer"; }
+                if (ep.targetCOM != null) ep.targetCOM.AddPortraitTags(result, role);
+            }
+        }
+        if (isReceiver) result.Add("receiver");
+        else if (isDoer) result.Add("doer");
+        UtilityEX.AddPortraitDisplayTags(result);
         result = result.Distinct().ToList();
         return result;
     }
@@ -714,6 +874,16 @@ public class PortraitManager
         }
 
         /// <summary>
+        /// ImagePaths resolved elsewhere (GlobalPortraitTemplate resolves its regexes against one character folder's keys only).
+        /// Swapped in as a new list like RebuildImagePaths.
+        /// </summary>
+        public void SetImagePaths(List<string> paths)
+        {
+            _imagePaths = paths ?? _emptyPaths;
+            _portraitOnlyImagePaths = null;
+        }
+
+        /// <summary>
         /// ImagePaths without landscape images (by file header), for boxes that cannot show landscape.
         /// Built on first use and swapped in as a new list like ImagePaths. Read only.
         /// </summary>
@@ -775,6 +945,11 @@ public class PortraitManager
         }
 
         [JsonIgnore] public PortraitManager Owner;
+
+        /// <summary>
+        /// Built from the global portrait template (PortraitManager.GeneratedHandlers): never saved, offsets never overridden
+        /// </summary>
+        [JsonIgnore] public bool isGenerated = false;
 
         public float portrait_offset_x;
         public float portrait_offset_y;
@@ -882,6 +1057,7 @@ public class PortraitManager
 
         public override void RebuildInternal()
         {
+            if (isGenerated) return;    // variants already resolved by GlobalPortraitTemplate, PortraitVariantData holds unresolved regexes
             if (this.random_portrait_folder != "")
             {
                 this.random_portrait_path = scr_System_Serializer.current.GetAllImageFilesInFolder(this.random_portrait_folder);
@@ -1111,6 +1287,7 @@ public class PortraitManager
         public override void SetPortraitOffsets(float offsetX, float offsetY, float offsetSize)
         {
             if (image_orientation == ImageOrientation.landscape) return;    // landscape images are fixed
+            if (isGenerated) return;    // generated handlers are never overridden (and never saved)
             Owner?.MarkCustomized();
             this.portrait_offset_x = offsetX;
             this.portrait_offset_y = offsetY;

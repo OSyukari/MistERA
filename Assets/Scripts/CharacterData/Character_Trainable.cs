@@ -562,6 +562,14 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
             }
         }
 
+        // MIA snapshot: dropped on the first hourly update after the release (ReleaseFromMIA flags it - the homecoming has
+        // read it by then). No longer MIA without that flag (e.g. rescued another way): flag now, drop next hour.
+        if (HasMIASnapshot)
+        {
+            if (miaSnapshotReleased) ClearMIASnapshot();
+            else if (!FactionManager.isPartyLocked) miaSnapshotReleased = true;
+        }
+
         this.Body.UpdateTimeHour(t);
         this.TickWomb();
         this.TickLabor();
@@ -1106,6 +1114,18 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     }
 
     [JsonIgnore] public List<BodyInternal_Womb> wombs = new List<BodyInternal_Womb>();
+    /// <summary>
+    /// Any womb organ is pregnant and visibly expanded (BodyInternal_Instance.isVisiblyPregnant); drives the "pregnant" actor tag
+    /// </summary>
+    [JsonIgnore] public bool isVisiblyPregnant
+    {
+        get
+        {
+            if (wombs == null) return false;
+            foreach (var wb in wombs) if (wb?.source != null && wb.source.isVisiblyPregnant) return true;
+            return false;
+        }
+    }
     public void RegisterWomb(BodyInternal_Womb wb)
     {
         if (wb == null) return;
@@ -1148,6 +1168,65 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
     [JsonProperty] protected int timeSinceLastSleep = 0;
     [JsonProperty] protected int timeSinceLastEat = 24;
     [JsonProperty] public int ScheduledSleepMissingMinutes = 0;
+
+    // ── MIA snapshot ──────────────────────────────────────────────────────
+    // A serialized copy of the character taken when first kidnapped onto an expedition with a homecoming
+    // (EventUtility.Kidnap, Expedition.returnEventID), so events can compare her now with her before. Deleted on her
+    // first hourly update after the release.
+    [JsonProperty] protected string miaSnapshot = "";
+    [JsonProperty] protected string miaSnapshotExpeditionID = "";
+    [JsonProperty] protected DateTime miaSnapshotTime;
+    [JsonProperty] protected bool miaSnapshotReleased = false;
+    [JsonIgnore] Character_Trainable _miaSnapshotCache = null;
+
+    [JsonIgnore] public bool HasMIASnapshot { get { return !string.IsNullOrEmpty(miaSnapshot); } }
+    /// <summary> MIA expedition def she was taken to with the snapshot ("" = none) </summary>
+    [JsonIgnore] public string MIASnapshotExpeditionID { get { return HasMIASnapshot ? miaSnapshotExpeditionID : ""; } }
+    [JsonIgnore] public DateTime MIASnapshotTime { get { return miaSnapshotTime; } }
+
+    /// <summary>
+    /// The character as she was when kidnapped, or null. A DETACHED copy: never registered, OnAfterDeserialize /
+    /// ReEstablishParent never called, so it has no observers or jobs - read plain data only (experience logs, body
+    /// internals' first-experience fields, womb eggs). Parent-based lookups (e.g. Body.Owner falls back to
+    /// FindInstanceByID) would land on the live character.
+    /// </summary>
+    [JsonIgnore] public Character_Trainable MIASnapshot
+    {
+        get
+        {
+            if (_miaSnapshotCache == null && HasMIASnapshot)
+            {
+                try { _miaSnapshotCache = JsonConvert.DeserializeObject<Character_Trainable>(miaSnapshot, UtilityEX.SerializerSettings); }
+                catch (Exception e) { Debug.LogError($"{FirstName}: MIA snapshot cannot be read, dropped\n{e}"); ClearMIASnapshot(); }
+            }
+            return _miaSnapshotCache;
+        }
+    }
+
+    /// <summary> Kidnap: replace any previous snapshot with a copy of her as she is now </summary>
+    public void TakeMIASnapshot(string expeditionID)
+    {
+        ClearMIASnapshot();   // a snapshot never contains another one
+        Skills.FinalizeExperience();
+        miaSnapshot = JsonConvert.SerializeObject(this, UtilityEX.SerializerSettings);
+        miaSnapshotExpeditionID = expeditionID ?? "";
+        miaSnapshotTime = scr_System_Time.current.getCurrentTime();
+    }
+
+    /// <summary> ReleaseFromMIA: the snapshot is deleted on her next hourly update (after the homecoming read it) </summary>
+    public void NotifyMIASnapshotReleased()
+    {
+        if (HasMIASnapshot) miaSnapshotReleased = true;
+    }
+
+    void ClearMIASnapshot()
+    {
+        miaSnapshot = "";
+        miaSnapshotExpeditionID = "";
+        miaSnapshotReleased = false;
+        _miaSnapshotCache = null;
+    }
+
     private void Observer_GlobalDay_0(int updateOrder)
     {
         if (updateOrder != 0) return;
@@ -2611,6 +2690,22 @@ public class Character_Trainable : ScriptableObject, I_Disposable, I_CharaGen
 
 
 
+
+    /// <summary>
+    /// Ends the sleep right now like a disturbed sleep (same debt as the sleep status reaching 0 severity in
+    /// Character_StatsManager): the remaining sleep + ScheduledSleepMissingMinutes become chara_status_sleep_deprived,
+    /// so shouldSleep stays true and the sleep node puts the character back to bed while it is still sleep time.
+    /// No-op if not asleep. Used by the DisruptSleep execution.
+    /// </summary>
+    public void DisruptSleep()
+    {
+        if (!isSleeping) return;
+        var sleeping = Stats.GetStatusByStringMatch(StatsUtility.Status_Sleeping);
+        float missing = (sleeping != null && sleeping.duration > 0 ? sleeping.duration : 0) + ScheduledSleepMissingMinutes;
+        if (missing > 0) Stats.AddOrModStatus(StatsUtility.Status_SleepDeprived, missing, (int)(missing * 0.5f));
+        ScheduledSleepMissingMinutes = 0;
+        WakeUp(true);
+    }
 
     /// <summary>
     /// If not immediate, then queue event and over <br/>

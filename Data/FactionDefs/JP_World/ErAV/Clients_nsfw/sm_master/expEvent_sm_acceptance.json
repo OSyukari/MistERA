@@ -1,0 +1,116 @@
+{
+    "_doc": "ErAV NTR Part 3 - F toy collector, day seven: 'acceptance' (draft F). Single client; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COM: com_sex_P_missionary. The 'demonstration for the supervisor' beat stays narration (the return demo belongs to the release event). The 'toy registration card' is narration only (no data hook).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sm_acceptance",
+                "eventString_Ongoing": "exp_event_erav_sm_acceptance_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_acceptance_result",
+                        "eventID": "event_erav_sm_acceptance"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sm_acceptance",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_sm_master", "erav_client_sm_master", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "focused", "serious" ] },
+                        "line": "event_erav_sm_acceptance_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_acceptance_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_sm_acceptance_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "broken", "sad" ] },
+                        "line": "event_erav_sm_acceptance_04",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_sm_acceptance_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sm_acceptance": "第七天·验收",
+                "exp_event_erav_sm_acceptance_ongoing": "第七天，老人亲手做完了那只木质口枰，照着她的尺寸。",
+                "exp_event_erav_sm_acceptance_result": "验收开始。$names$被戴上了那只严丝合缝的口枰。",
+
+                "event_erav_sm_acceptance_01": "第七天，老人亲手做完了那只木质口枰——尺寸是照她头天检查时量下的数据，严丝合缝。\n「验收科目：把这周学的，做给监督看。」\n（※滞留期满的归还报告，挂在释放事件里。眼下，先由主人本人验货。）",
+                "event_erav_sm_acceptance_02": "演示结束，他戴上老花镜，让她躺到调教室正中的软垫上，亲自做了最后的复核——像工匠出厂前，亲手试过自己的成品。",
+                "event_erav_sm_acceptance_03": "他在她的「玩具登录证」上盖了章——那张她入宅当天就被签好的卡片，印着她的规格数据和使用记录。\n「合格。手感、耐性、礼数，都在线。」",
+                "event_erav_sm_acceptance_04": "「周后我还有个同行聚会，到时候再借你回。租金让桐生组转交。……回去吧。」\n回去的车上，她抱着登录证看了全程。规格、深度、耐受、敏感点排序——她身体的数据被印刷体排得整整齐齐，末页留着待填的空白：\n「下次使用预定：＿＿＿＿」",
+                "event_erav_sm_acceptance_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

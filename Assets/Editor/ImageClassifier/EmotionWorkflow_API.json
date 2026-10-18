@@ -1,0 +1,16 @@
+{
+    "1": {
+        "class_type": "MisteraFaceEmotion",
+        "inputs": {
+            "image_paths": "",
+            "face_model": "ultralytics/segm/99coins_anime_girl_face_m_seg.pt",
+            "face_padding": 0.35,
+            "tagger_model": "wd-eva02-large-tagger-v3",
+            "tag_threshold": 0.2,
+            "vlm_model": "clip/Qwen2.5-VL-7B-Instruct-abliterated.Q4_K_M.gguf",
+            "vlm_mmproj": "clip/Qwen2.5-VL-7B-Instruct-abliterated.mmproj-f16.gguf",
+            "labels": "",
+            "prompt": ""
+        }
+    }
+}

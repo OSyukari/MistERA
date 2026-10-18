@@ -1,0 +1,119 @@
+{
+    "_doc": "ErAV NTR Part 3 - I household, ten o'clock 'goodnight service' for the old master (draft I). Single client (household_master); every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COMs: com_sex_oral_P_Force, com_sex_P_cowgirl (she does the moving, per the draft). The master never speaks; the housekeeper is narration-only.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_house_master",
+                "eventString_Ongoing": "exp_event_erav_house_master_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_house_master_result",
+                        "eventID": "event_erav_house_master"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_house_master",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_household_master", "erav_client_household_master", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "resting", "serious" ] },
+                        "line": "event_erav_house_master_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_house_master_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_house_master_03",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_cowgirl" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_house_master_04",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_house_master_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_house_master": "夜里·晚安侍奉",
+                "exp_event_erav_house_master_ongoing": "夜里十点，$names$按作息表去伺候老爷就寝。",
+                "exp_event_erav_house_master_result": "老爷的房门没有锁。这是雷打不动的「晚安侍奉」。",
+
+                "event_erav_house_master_01": "老爷不说话。他解开袴，往床沿坐，膝头拍了拍。\n全程没有多余的指令——作息表上写着：夜里，侍奉老爷就寝。她跪上去，开始伺候。",
+                "event_erav_house_master_02": "伺候到硬了，老爷往床里躺，手枕在脑后，闭着眼，往床面上拍了两下。\n她就自己骑上去动。全程只负责动——老爷的神情，像在给件工具做例行保养。",
+                "event_erav_house_master_03": "偶尔老爷兴起，会翻个花样：让她趴好，从后面慢慢进去，缓慢的抽送持续半个时辰，不言不语。\n这种夜，她的腰第二天直不起来。",
+                "event_erav_house_master_04": "结束后，老爷推开她，抬手指了下门口——伺候完了，可以滚了。\n她跪着退出去，带上门。走廊尽头，女管家看了眼挂钟，在作息表上打了个钩。",
+                "event_erav_house_master_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

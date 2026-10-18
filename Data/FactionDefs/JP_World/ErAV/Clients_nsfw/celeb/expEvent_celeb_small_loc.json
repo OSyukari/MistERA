@@ -1,0 +1,27 @@
+{
+    "_doc": "en-us localization for expEvent_celeb_small.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_celeb_small_fitting": "Costume Fitting",
+                "exp_event_erav_celeb_small_fitting_ongoing": "The manager arrives hauling a rack of clothes - today is 'wardrobe day'.",
+                "exp_event_erav_celeb_small_fitting_result_1": "$names$ is dressed in the sheer top; the manager lifts her hem with two fingers, checks underneath, and snaps his fingers in approval. \"Tokyo girlfriend. - Perfect.\"",
+                "exp_event_erav_celeb_small_fitting_result_2": "The too-tall heels stay on the list too. The manager circles the newly dressed $names$ filming a clip. \"The fans love this.\"",
+
+                "exp_event_erav_celeb_small_photo": "Photo Ops",
+                "exp_event_erav_celeb_small_photo_ongoing": "The tour's publicity shoot begins, and $names$ is pulled into the frame.",
+                "exp_event_erav_celeb_small_photo_result_1": "In the group photos $names$ is hugged into peace signs, smile with teeth - \"fan service.\" In the gaps when the photographer pauses, the arm around her tightens twice on purpose.",
+                "exp_event_erav_celeb_small_photo_result_2": "\"Behind-the-scenes too.\" The camera cuts to the changing breaks: $names$'s back as she fixes her outfit is filmed and captioned with something cute.",
+
+                "exp_event_erav_celeb_small_pose": "Assigned Poses",
+                "exp_event_erav_celeb_small_pose_ongoing": "The lead rapper's mood strikes again, and he snaps his fingers at $names$.",
+                "exp_event_erav_celeb_small_pose_result_1": "At the storefront she is told to flip her skirt and pull her collar low. Passersby raise their phones; nobody finds it odd - it must be some show filming.",
+                "exp_event_erav_celeb_small_pose_result_2": "At the gacha machines she is arranged into the assigned pose and expression under a hail of shutter clicks. When it's done, the rapper tips his chin and makes her 'hold that face' for another half minute.",
+
+                "exp_event_erav_celeb_small_quickie": "Backstage Time",
+                "exp_event_erav_celeb_small_quickie_ongoing": "The dressing room door locks behind them; the lead beckons $names$ over with a crooked finger.",
+                "exp_event_erav_celeb_small_quickie_result": "In the dressing room before doors, the lead presses $names$ against the vanity and is done hastily - just enough time to repair the make-up after."
+            }
+        }
+    }
+}

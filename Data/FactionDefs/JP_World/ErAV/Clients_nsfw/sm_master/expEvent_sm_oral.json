@@ -1,0 +1,125 @@
+{
+    "_doc": "ErAV NTR Part 3 - F toy collector, day four: 'service training' (draft F). Single client; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COM: com_sex_oral_P_Force (forced deep-throat; doer penis -> receiver mouth). The etiquette drill and the seven-pass exam are narration.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sm_oral",
+                "eventString_Ongoing": "exp_event_erav_sm_oral_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_oral_result",
+                        "eventID": "event_erav_sm_oral"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sm_oral",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_sm_master", "erav_client_sm_master", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "focused", "serious" ] },
+                        "line": "event_erav_sm_oral_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_oral_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "tearful", "sad" ] },
+                        "line": "event_erav_sm_oral_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_oral_04",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_sm_oral_05",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_sm_oral_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sm_oral": "第四天·侍奉训练",
+                "exp_event_erav_sm_oral_ongoing": "调教架前架好了那根可调深度的喉枷，$names$被按着跪好。",
+                "exp_event_erav_sm_oral_result": "「嘴巴是玩具的脸面。今天，练这个。」",
+
+                "event_erav_sm_oral_01": "训练用的道具是根可调深度的喉枷。她跪在调教架前，东西抵到咽喉，每咽下深寸，锁扣就拧紧档。\n她干呕的眼泪串串往下掉，老人的手稳得像在教书法。\n「呼吸用鼻子。舌面放平。咽的时机跟着我的手——对了。就是这个位置，保持住。」",
+                "event_erav_sm_oral_02": "上午练深喉，下午练「服务礼仪」：侍奉前要先亲吻东西的根部、行礼、报数——「第几次侍奉，请多关照」。\n礼数错了就重来。重来，再重来。",
+                "event_erav_sm_oral_03": "傍晚的考核：他端坐椅上，她要全程独立完成整套侍奉流程。\n中途干呕，就从头再来。她做了七遍，才通过。",
+                "event_erav_sm_oral_04": "「合格。……哦，对了，刚才每遍都要谢谢你吧。补上。」\n「……谢谢、谢谢主人的调教……」\n「嗯。舌头还是硬的。明天接着练。」",
+                "event_erav_sm_oral_05": "夜里，她的喉咙哑得咽水都疼。记录本上添了行：深喉达标，礼仪仍需打磨。\n白板上，明天的科目写着：乳与腰。",
+                "event_erav_sm_oral_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

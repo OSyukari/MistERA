@@ -1,0 +1,174 @@
+{
+    "_doc": "ErAV NTR Part 3 - I household, SMALL events (handoff 'Small event template'). Weights: scenes chores 1 + master 2 + friends 1 + dog 1 = 5 vs small events 3+3+2+2 = 10 -> scene share 5/15 (~33%, about one scene per 3-4 h of the 7-day stay). Text-only events write to the MIA log without a click; the son-call quick act's result also starts its hidden event at once (runImmediate, empty lines, no flush, no ResolveEvent, releases its keys on every path).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_house_small_apron",
+                "eventString_Ongoing": "exp_event_erav_house_small_apron_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_house_small_apron_result_1"
+                    },
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_house_small_apron_result_2"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_house_small_apron_result_3"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_house_small_son_call",
+                "eventString_Ongoing": "exp_event_erav_house_small_son_call_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_house_small_son_call_result",
+                        "eventID": "event_erav_house_small_son_call",
+                        "runImmediate": true
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_house_small_night_bath",
+                "eventString_Ongoing": "exp_event_erav_house_small_night_bath_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_house_small_night_bath_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_house_small_night_bath_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_house_small_housekeeper",
+                "eventString_Ongoing": "exp_event_erav_house_small_housekeeper_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_house_small_housekeeper_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_house_small_housekeeper_result_2"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_house_small_son_call",
+                "_comment": "Hidden (runImmediate): empty lines only, no flush. self = player, party = the victim.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_household_son_c", "erav_client_household_son_c", "1", "true" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "client", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "act" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "fail" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "act",
+                        "line": "",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "client", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "fail",
+                        "line": "",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_house_small_apron": "围裙之下",
+                "exp_event_erav_house_small_apron_ongoing": "$names$系着围裙做全屋清洁，随叫随到。",
+                "exp_event_erav_house_small_apron_result_1": "擦地弯腰的时候裙摆兜了风，路过的男性成员顺手把它掀回去，像扶正盆栽歪掉的枝。",
+                "exp_event_erav_house_small_apron_result_2": "晾被子时够不到横杆，被路过的人托住腰——手顺势在围裙底下巡了整圈，然后什么都没发生样地走了。",
+                "exp_event_erav_house_small_apron_result_3": "端茶穿过走廊，被叫住添茶。添茶的工夫，肩膀上多了只不肯挪开的手。",
+
+                "exp_event_erav_house_small_son_call": "随叫随到",
+                "exp_event_erav_house_small_son_call_ongoing": "游戏房里传出三少爷的喊声，叫$names$进去。",
+                "exp_event_erav_house_small_son_call_result": "三少爷打游戏要人跪在旁边含着，喊$names$进去伺候了整局二十五分钟，「含着别动，动了就输了」。",
+
+                "exp_event_erav_house_small_night_bath": "夜里的杂务",
+                "exp_event_erav_house_small_night_bath_ongoing": "浴场的灯还亮着，今晚轮到$names$值守。",
+                "exp_event_erav_house_small_night_bath_result_1": "$names$替晚归的老爷放洗澡水，试水温的手被按着在水里多泡了会儿，「再试试，还烫。」",
+                "exp_event_erav_house_small_night_bath_result_2": "浴场里，$names$被随手使唤着搓背递毛巾。搓到最后，这天的澡总算伺候完了。",
+
+                "exp_event_erav_house_small_housekeeper": "女管家的检查",
+                "exp_event_erav_house_small_housekeeper_ongoing": "女管家把$names$叫到偏厅，像交接家务那样打量她。",
+                "exp_event_erav_house_small_housekeeper_result_1": "女管家围着$names$走了圈，理正她的围裙带子，拍了拍裙摆的灰。「这家的门面。明天见客，别丢了份。」",
+                "exp_event_erav_house_small_housekeeper_result_2": "女管家例行检查$names$的膝盖和腿间，皱眉记了两笔。「药在柜子里，自己上。……去把晾的床单收了。」"
+            }
+        }
+    }
+}

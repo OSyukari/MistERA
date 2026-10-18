@@ -1,0 +1,132 @@
+{
+    "_doc": "ErAV NTR Part 3 - F toy collector, days five and six: 'breasts and hips' / 'review' (draft F). Single client; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COMs: com_sex_oral_P_Force, com_sex_P_doggy. Nipple training / whipping are narration only (no COMs exist - reported).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sm_review",
+                "eventString_Ongoing": "exp_event_erav_sm_review_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_review_result",
+                        "eventID": "event_erav_sm_review"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sm_review",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_sm_master", "erav_client_sm_master", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "focused", "serious" ] },
+                        "line": "event_erav_sm_review_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_review_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "pain", "sad" ] },
+                        "line": "event_erav_sm_review_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_review_04",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sm_review_05",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_sm_review_06",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_sm_review_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sm_review": "第五六天·乳与腰·总复习",
+                "exp_event_erav_sm_review_ongoing": "白板上的科目翻到了「乳与腰」，之后是「总复习」。",
+                "exp_event_erav_sm_review_result": "吸阴器和钳式乳夹在小桌上排开，像套手术器械。",
+
+                "event_erav_sm_review_01": "第五天轮到上身。吸阴器把乳首吸肿到平常的三倍大，再戴上开发用的钳式乳夹，坠着小锤，让重量替她「锻炼」。\n「乳首是开关。开关练灵敏了，身体才好用。」\n细鞭的鞭尖下下挑着肿起的乳首，每下都落在同个点上，直到那点碰到空气都会让她发抖。",
+                "event_erav_sm_review_02": "第六天是总复习——把前五天的科目串起来：拘束着灌肠、塞着尾做侍奉、含着深喉的尺寸接受抽打。\n老人翻着记录本逐项打钩，像在验收批货。",
+                "event_erav_sm_review_03": "「嗯。五天前那个只会哭的普通货色，现在能接连做完整套了。进步很大。」\n他搁下笔。「总复习的最后，加考。」",
+                "event_erav_sm_review_04": "加考的头项：侍奉。她跪在架前，按礼仪亲吻、行礼、报数，然后含住，做到底。",
+                "event_erav_sm_review_05": "加考的第二项：后入。拘束带还扣在腕上，她趴在架上是「玩具的默认摆放方式」。\n他进去得慢，抽查样逐段确认着这几天的开发成果。",
+                "event_erav_sm_review_06": "复查完毕，记录本上的待办只剩最后项。\n「明天，验收。把这周学的，做给监督看。」",
+                "event_erav_sm_review_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

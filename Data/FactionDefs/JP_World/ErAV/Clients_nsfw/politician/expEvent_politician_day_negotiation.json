@@ -1,0 +1,125 @@
+{
+    "_doc": "ErAV NTR Part 3 - B politician, day two: the negotiation in the ryokan's largest room (draft B, handoff 'Scene template'). The entry branch borrows the councillor from the Kiryu-gumi fallback-worker pool (RequestFallbackWorker -> client, copied into enemy) and moves him into her room; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COMs: com_sex_oral_P_Force (forced oral, doer penis -> receiver mouth), com_sex_P_doggy. The 'exhibition for the guests' beat is narration only (no COM exists).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_politician_day_negotiation",
+                "eventString_Ongoing": "exp_event_erav_politician_day_negotiation_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_day_negotiation_result",
+                        "eventID": "event_erav_politician_day_negotiation"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_politician_day_negotiation",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_politician", "erav_client_politician", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "scheming", "serious" ] },
+                        "line": "event_erav_politician_day_negotiation_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_day_negotiation_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
+                        "line": "event_erav_politician_day_negotiation_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_day_negotiation_04",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_politician_day_negotiation_05",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_politician_day_negotiation_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_politician_day_negotiation": "商谈日·随行秘书",
+                "exp_event_erav_politician_day_negotiation_ongoing": "$names$作为「随行秘书」，列席和室里的商谈。",
+                "exp_event_erav_politician_day_negotiation_result": "商谈僵持之际，议员的折扇在矮桌下点了两下。",
+
+                "event_erav_politician_day_negotiation_01": "和室里坐了七八个男人：组里的关系户、秘书处的职员、对方公司的干部。\n$party.name$的座位在议员的膝下，隔扇拉开的壁龛前——全屋视线最容易落下的位置。\n商谈开始十分钟，矮桌上面，条例、利率、回扣的走账科目谈得有条不紊。",
+                "event_erav_politician_day_negotiation_02": "矮桌下面，她钻进桌影里，跪行到他的膝间，解开他的裤带含住。\n「——这个利率嘛，贵社也看到了，上面有压力呀。」\n议员的折扇随着她吞吐的节奏，用扇骨轻轻叩着桌面。",
+                "event_erav_politician_day_negotiation_03": "商谈过半，双方在条件上僵住了。议员忽然拍了拍手。\n「诸位，谈钱伤感情。来点余兴如何。——把衣服打开，转圈，给诸位助兴。」\n布料从肩上滑下去的时候，满屋的谈判改换了频道。哄笑和口哨里，僵住的条件重新松动。谈妥的瞬间，全屋鼓掌，掌声里她被命令保持全裸，跪坐着给每个人斟了遍酒。",
+                "event_erav_politician_day_negotiation_04": "下午是与县厅方面的视频会谈，之后是电话。电话可以躺着接——他侧身靠在被褥上，话筒夹在肩上，把她拉过去从后面进入。\n「——嗯，嗯，那个数字可以。……嗯，我很有诚意。」\n抽送的节奏随他通话的语气起落：谈笑时轻缓，压价加重语气时深而狠。她趴在被褥上，连呻吟都要掐着他说话的间隙才能漏出来。",
+                "event_erav_politician_day_negotiation_05": "商谈散场，议员在报告草稿上添了行小字：随行秘书，表现良好，全票通过。\n「明晚，还有场混浴。」",
+                "event_erav_politician_day_negotiation_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

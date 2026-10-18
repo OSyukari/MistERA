@@ -1,0 +1,114 @@
+{
+    "_doc": "ErAV NTR Part 3 - H celeb entourage, the drugged night at the hotel (draft H). Group scene, same borrow pattern (client + support, role celeb). COMs: com_sex_P_doggy (multi-doer). Fragmented-memory narration only for the drug itself - no status command exists in events (reported). The leaked-footage state is narration too (no data hook).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_celeb_drugged",
+                "eventString_Ongoing": "exp_event_erav_celeb_drugged_ongoing",
+                "DurationMinutes": 120,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_drugged_result",
+                        "eventID": "event_erav_celeb_drugged"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_celeb_drugged",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "2", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "unaware", "sad" ] },
+                        "line": "event_erav_celeb_drugged_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_drugged_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "empty", "sad" ] },
+                        "line": "event_erav_celeb_drugged_03",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_celeb_drugged_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_celeb_drugged": "下药的夜晚",
+                "exp_event_erav_celeb_drugged_ongoing": "今晚的行程改成了旅馆里的「私人聚会」。",
+                "exp_event_erav_celeb_drugged_result": "和室的酒杯里，后劲比往常大得多。",
+
+                "event_erav_celeb_drugged_01": "记忆是断的：\n头段：她跪坐在榻榻米中央，被四五双手从四面剥光，酒洒在皮肤上被舌头舔掉。\n再往后：她趴在某个人的身上，背后又压上来个人，前后同时被填满，闪光灯在眼前炸开。",
+                "event_erav_celeb_drugged_02": "最清楚的那段记忆，是她自己张开了腿。不记得是谁的命令，也不记得为什么要张开。\n快门声、笑声、劝酒声，都隔着很远。",
+                "event_erav_celeb_drugged_03": "醒来时在旅馆的浴缸里。洗干净了，头发被人梳顺了。\n身体各处的痕迹替她拼回了昨晚：大腿内侧的指印、唇角的干涸、下腹深处被灌满过的坠胀感。\n经纪人在浴缸边举着手机：「Morning, girlfriend. 昨天的素材，粉丝会喜欢的。」",
+                "event_erav_celeb_drugged_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

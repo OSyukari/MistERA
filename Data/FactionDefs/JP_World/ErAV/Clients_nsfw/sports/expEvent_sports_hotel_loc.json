@@ -1,0 +1,19 @@
+{
+    "_doc": "en-us localization for expEvent_sports_hotel.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_sports_hotel": "Night: The Hotel Suite",
+                "exp_event_erav_sports_hotel_ongoing": "Back at the hotel suite, the squad has already gathered.",
+                "exp_event_erav_sports_hotel_result": "$names$ is laid in the middle of the suite's great bed.",
+
+                "event_erav_sports_hotel_01": "Drinking, gaming, horsing around - $party.name$ is pulled from lap to lap, belonging to whoever she sits on. To this team she is not a guest; she is the traveling amenity.\nWhen lights-out comes, the main event begins.",
+                "event_erav_sports_hotel_02": "She kneels at the bed's center, serving the players as they close in. The finished sit to the side and watch; the rested queue up behind.\nThe interpreter-looking one perches at the headboard with his phone, showing a teammate just coming in: \"Look. Japanese water girl.\"",
+                "event_erav_sports_hotel_03": "The size difference is the whole of the night: every inch stretching, bottoming out against her deepest place, her lower belly rounding with each thrust.\nShe grips the headboard to keep from being pushed away.",
+                "event_erav_sports_hotel_04": "The rotation has no order. Over the whole night, the sheets are changed twice.\n\"Good girl. ...Next.\"",
+                "event_erav_sports_hotel_05": "Toward dawn the overlapping snores count the squad for her.\nThe sheets wad in the corner. Her cheerleading dress is folded neatly by her pillow - it must be worn in the morning. On the schedule, two more away games follow this one.",
+                "event_erav_sports_hotel_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

@@ -1,0 +1,131 @@
+{
+    "_doc": "ErAV NTR Part 3 - I household, the family dog (draft I lottery event 2; content-gated). The entry branch borrows the second son (son_b, who sends her to the kennel) and the dog (membertype_erav_client_household_dog, generator creature_animal_dog). The dog's ExecuteAPOnSingleChara sits inside a branch option with a skip fallback: whether the COM succeeds or fails (creature content off), both options jump to after_dog and the scene ends normally. Every ending (error path included) runs ResolveEvent and releases son_b + dog. The female housekeeper is narration-only.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_house_dog",
+                "eventString_Ongoing": "exp_event_erav_house_dog_ongoing",
+                "DurationMinutes": 120,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_house_dog_result",
+                        "eventID": "event_erav_house_dog"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_house_dog",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "son_b", "ErAV_KiryuGumi_Office", "membertype_erav_client_household_son_b", "erav_client_household_son_b", "1", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "dog", "ErAV_KiryuGumi_Office", "membertype_erav_client_household_dog", "creature_animal_dog", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "son_b", "enemy" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "son_b", "selfTags": [ "smug", "happy" ] },
+                        "line": "event_erav_house_dog_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "fear", "sad" ] },
+                        "line": "event_erav_house_dog_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_try_dog",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": [ "dog", "party", "com_sex_P_doggy" ] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "after_dog" ] }
+                                ]
+                            },
+                            {
+                                "option": "_skip_dog",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "after_dog" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "after_dog",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_house_dog_03",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "son_b" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_house_dog_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "son_b" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_house_dog": "家犬侍奉",
+                "exp_event_erav_house_dog_ongoing": "晚饭桌上，二少爷忽然想起什么似的开了口。",
+                "exp_event_erav_house_dog_result": "「哈根好几天没遛了。小妹，今晚你去伺候伺候它。」全家没有人觉得这话有任何问题。",
+
+                "event_erav_house_dog_01": "「对了，哈根好几天没遛了。小妹，今晚你去伺候伺候它。」\n二少爷说这话的语气，和让人添饭的语气没有区别。全家人都听见了，没有人抬头。\n女管家把她领到后院，蹲身检查犬舍的门闩，语气是交代家务的语气：「它认人，头回会咬着不放。两只手扶着它的身子，别躲——越躲它越急。」",
+                "event_erav_house_dog_02": "落地窗后面，餐厅的灯亮着。全家人端着酒杯坐在窗边。\n湿热的、不属于人类的东西抵上来的时候，她攥紧了犬舍的栏杆。",
+                "event_erav_house_dog_03": "完事后，女管家递来热毛巾，例行检查她的膝盖和大腿内侧，皱了皱眉。\n「内侧抓破了皮。上点药。……去把客厅的灯关了，老规矩。」\n餐厅那边传来碰杯声。二少爷在夸哈根今晚状态好。",
+                "event_erav_house_dog_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

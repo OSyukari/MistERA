@@ -1,0 +1,34 @@
+{
+    "_doc": "en-us localization for expEvent_gang_small.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_gang_small_errand": "Errands",
+                "exp_event_erav_gang_small_errand_ongoing": "$names$ is sent on errands for the card table.",
+                "exp_event_erav_gang_small_errand_result_1": "Sent out for cigarettes, $names$ returns to find her skirt flipped up for a thorough inspection, inside and out.",
+                "exp_event_erav_gang_small_errand_result_2": "Weaving between the low tables with beer, every table she passes lands a few slaps on her rear.",
+
+                "exp_event_erav_gang_small_quickie": "End of the Hallway",
+                "exp_event_erav_gang_small_quickie_ongoing": "In a lull of the game, somebody crooks a finger at $names$.",
+                "exp_event_erav_gang_small_quickie_result": "Somebody drags $names$ to the end of the hallway and is done hastily; the hand hasn't finished dealing by the time she's back.",
+
+                "exp_event_erav_gang_small_meal": "Mealtime",
+                "exp_event_erav_gang_small_meal_ongoing": "Delivery's here. Mealtimes gather the whole floor - the only ceasefire of the day.",
+                "exp_event_erav_gang_small_meal_result_1": "$names$ is assigned a seat: some guy's lap. Halfway through feeding her he takes her chin and turns her to face him. \"Open. Ah-\" - the bite is his.",
+                "exp_event_erav_gang_small_meal_result_2": "Chopsticks count as fed only after passing through $names$'s mouth; beer bottles get poured with her lips on the neck. When one of them pulls her over the table mid-meal, the wakagashira smacks his head - \"It's dinner! Leave it. Finish eating first!\"",
+                "exp_event_erav_gang_small_meal_result_3": "Her own bento portion she's allowed to eat herself. The whole table watching makes her chopsticks slower and slower - \"Eat, will ya. ...Wait, no - my drumstick first.\"",
+
+                "exp_event_erav_gang_small_bath": "The Big Bath",
+                "exp_event_erav_gang_small_bath_ongoing": "The twice-weekly group bath: $names$ is required to scrub every man's back.",
+                "exp_event_erav_gang_small_bath_result_1": "Kneeling in the bathhouse working down the line, scrub after scrub, she is seized wherever the hand happens to be - \"Soaking just does this to me. Can't help it.\"",
+                "exp_event_erav_gang_small_bath_result_2": "Splashing and urging echo through the steam: \"Water's getting cold - hurry up!\" By the time the bath ends, the bunkroom's next round is already waiting.",
+
+                "exp_event_erav_gang_small_night": "The Bunkroom",
+                "exp_event_erav_gang_small_night_ongoing": "Lights out: $names$ sleeps in the dead center of the bunks - the wakagashira's rule, 'for the guys who need her at night'.",
+                "exp_event_erav_gang_small_night_result_1": "Shaken awake in the small hours, she is arranged and entered half-asleep. When it's over he pats her hip and is snoring before she settles.",
+                "exp_event_erav_gang_small_night_result_2": "\"...Mm...\" \"Shh. Sleep.\" She saves the strength of opening her eyes, her body meeting the motion on its own - and before dawn, the next one in line is waiting."
+            }
+        }
+    }
+}
+

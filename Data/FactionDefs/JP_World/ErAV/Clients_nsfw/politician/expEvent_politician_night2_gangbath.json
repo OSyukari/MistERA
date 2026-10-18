@@ -1,0 +1,123 @@
+{
+    "_doc": "ErAV NTR Part 3 - B politician, night two: the mixed-bath gang thank-you in the open-air pool (draft B). Group scene: the entry branch borrows the councillor (client) and his negotiating acquaintances (support, businessman x4) from the Kiryu-gumi fallback-worker pool, copies both into enemy and moves them into her room; every ending (error path included) runs ResolveEvent and releases client + support. COMs: com_sex_oral_P_Force and com_sex_P_doggy both have multi-doer variants (doerCount 99).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_politician_night2_gangbath",
+                "eventString_Ongoing": "exp_event_erav_politician_night2_gangbath_ongoing",
+                "DurationMinutes": 120,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_politician_night2_gangbath_result",
+                        "eventID": "event_erav_politician_night2_gangbath"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_politician_night2_gangbath",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_politician", "erav_client_politician", "1", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_businessman", "erav_client_businessman", "4", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "smug", "happy" ] },
+                        "line": "event_erav_politician_night2_gangbath_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_night2_gangbath_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_politician_night2_gangbath_03",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_politician_night2_gangbath_04",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_politician_night2_gangbath_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_politician_night2_gangbath": "第二晚·混浴余兴",
+                "exp_event_erav_politician_night2_gangbath_ongoing": "深夜的露天混浴池，$names$被扶进了池子。",
+                "exp_event_erav_politician_night2_gangbath_result": "今晚谈成的「关系户」们意犹未尽，把余兴安排在了池子里。",
+
+                "event_erav_politician_night2_gangbath_01": "深夜，旅馆的露天混浴池。议员今晚谈成的「关系户」们意犹未尽，把最后的余兴安排在了池子里。\n她被温泉水没到胸口地扶进池中。泡开的身体又软又敏感，随即被从背后按上了池沿。\n议员坐在池边，披着浴衣，给自己斟着酒，看每个人轮流下池「谢恩」。",
+                "event_erav_politician_night2_gangbath_02": "温泉水让每次进入都又滑又深。她扶着池沿，轮番伺候着泡热的男人们，水声混在夜里的虫鸣里。",
+                "event_erav_politician_night2_gangbath_03": "她被从背后按住，温泉水随着撞击波波漫过池沿。\n轮完下池的干部们泡在她刚被灌满的同池水里，举杯隔水相碰：\n「为议员阁下的健康——干杯！」",
+                "event_erav_politician_night2_gangbath_04": "议员举杯回敬，视线越过酒杯落在她身上，扇子轻轻摇。\n「哎，托各位的福。也托这位小姑娘的福——回去之后，我要在报告里写上：本次商谈，随行秘书表现良好，全票通过。」",
+                "event_erav_politician_night2_gangbath_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

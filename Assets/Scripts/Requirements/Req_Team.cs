@@ -13,6 +13,10 @@ public class Requirement_Manageable_Party
     public bool allowHidden = false;
     public bool allowPrisoner = false;
     public bool requireCombat = true;
+    /// <summary> member must be asleep (chara_status_sleeping) - sleep-only off-time events </summary>
+    public bool requireSleeping = false;
+    /// <summary> member must not be asleep </summary>
+    public bool requireAwake = false;
 
     public string debug_teamNameMatch = "";
 
@@ -28,6 +32,8 @@ public class Requirement_Manageable_Party
         this.allowHidden = this.allowHidden || parent.allowHidden;
         this.allowPrisoner = this.allowPrisoner || parent.allowPrisoner;
         this.requireCombat = this.requireCombat && parent.requireCombat;
+        this.requireSleeping = this.requireSleeping || parent.requireSleeping;
+        this.requireAwake = this.requireAwake || parent.requireAwake;
     }
 
     public void ApplyCost(Character_Trainable c, List<string> tooltip = null)
@@ -37,7 +43,11 @@ public class Requirement_Manageable_Party
         if (charaReq_All != null) CharaReqUtility.ApplyCost(charaReq_All, c, tooltip);
     }
 
-    public bool Validate(List<Character_Trainable> list, I_IsJobGiver p, out List<string> tooltip, out bool hardlock)
+    /// <summary>
+    /// offTime: members are validated while off the party job (asleep / eating / resting - Job_Expedition.TickOffTimeEvents),
+    /// so the "current job cannot be interrupted" check is skipped.
+    /// </summary>
+    public bool Validate(List<Character_Trainable> list, I_IsJobGiver p, out List<string> tooltip, out bool hardlock, bool offTime = false)
     {
         tooltip = new List<string>();
         hardlock = false;
@@ -55,9 +65,19 @@ public class Requirement_Manageable_Party
 
         foreach (var i in list)
         {
-            if ((pp == null || pp.Job != i.CurrentJob) && !i.CurrentJob.CanBeInterrupted)
+            if (!offTime && (pp == null || pp.Job != i.CurrentJob) && i.CurrentJob != null && !i.CurrentJob.CanBeInterrupted)
             {
                 tooltip.Add($"{i.CallName} current job cannot be interrupted");
+                continue;
+            }
+            if (requireSleeping && !i.isSleeping)
+            {
+                tooltip.Add($"{i.CallName} is not asleep");
+                continue;
+            }
+            if (requireAwake && i.isSleeping)
+            {
+                tooltip.Add($"{i.CallName} is asleep");
                 continue;
             }
             var status = p.GetMemberType(i);

@@ -1,0 +1,200 @@
+{
+    "_doc": "ErAV NTR Part 3 - J gang reward, SMALL events (handoff 'Small event template'). Small events are never banked and need no click: when the exploration action ends, the result's resultText is written to the MIA party's log and her memory. (1) small_errand = text only. (2) small_quickie = text + a quick act: its result also starts event_erav_gang_small_quickie at once (runImmediate) - a HIDDEN event (every line empty, no FlushMessage*) that borrows gang_b, undresses both, runs ExecuteAPOnSingleChara (experience / pregnancy / climax apply even unprinted) and returns him on every path; no ResolveEvent. (3)(4)(5) small_meal / small_bath / small_night = text-only beats from the draft's eat / wash / sleep loop. Weights: scenes gang_daily 3 + gang_exception 1 = 4 vs small events 3+3+3+2+2 = 13 -> scene share ~24%.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_gang_small_errand",
+                "eventString_Ongoing": "exp_event_erav_gang_small_errand_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_errand_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_errand_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_gang_small_quickie",
+                "eventString_Ongoing": "exp_event_erav_gang_small_quickie_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_quickie_result",
+                        "eventID": "event_erav_gang_small_quickie",
+                        "runImmediate": true
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_gang_small_meal",
+                "eventString_Ongoing": "exp_event_erav_gang_small_meal_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_meal_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_meal_result_2"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_meal_result_3"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_gang_small_bath",
+                "eventString_Ongoing": "exp_event_erav_gang_small_bath_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_bath_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_bath_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_gang_small_night",
+                "eventString_Ongoing": "exp_event_erav_gang_small_night_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_night_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_gang_small_night_result_2"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_gang_small_quickie",
+                "_comment": "Hidden (runImmediate): empty lines only, no flush. self = player, party = the victim.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_b", "erav_client_gang_b", "1", "true" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "client", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "act" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "fail" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "act",
+                        "line": "",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "client", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_P_doggy" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "fail",
+                        "line": "",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_gang_small_errand": "跑腿",
+                "exp_event_erav_gang_small_errand_ongoing": "$names$被打发去给牌桌跑腿。",
+                "exp_event_erav_gang_small_errand_result_1": "$names$被叫去便利店给牌桌买烟，回来时裙摆被人掀起来，里外检查了个遍。",
+                "exp_event_erav_gang_small_errand_result_2": "$names$端着啤酒在矮桌间穿行，每走过张桌子，屁股都要挨上几巴掌。",
+
+                "exp_event_erav_gang_small_quickie": "走廊尽头",
+                "exp_event_erav_gang_small_quickie_ongoing": "牌局间隙，有人朝$names$勾了勾手指。",
+                "exp_event_erav_gang_small_quickie_result": "牌局间隙，有人把$names$拽到走廊尽头草草解决了，回来时牌还没发完。",
+
+                "exp_event_erav_gang_small_meal": "吃饭",
+                "exp_event_erav_gang_small_meal_ongoing": "外卖到了，饭点是把人聚齐的时候——也是全体休战的时候。",
+                "exp_event_erav_gang_small_meal_result_1": "$names$被指定了座位——某个小弟的腿。饭喂到半就被捏着下巴转过去对视，「张嘴，啊——」喂的是他。",
+                "exp_event_erav_gang_small_meal_result_2": "筷子都得先从$names$嘴里过才算喂过；啤酒瓶口要她含着倒。有谁兴起隔着桌饭就把她捞了过去，被若头拍了下头——「吃饭呢！放着，吃完再干！」",
+                "exp_event_erav_gang_small_meal_result_3": "分到的那份便当，$names$被允许自己吃。整桌人都盯着，看得她筷子越来越慢——「自己吃啊喂。……诶，不是，先喂我那个鸡腿。」",
+
+                "exp_event_erav_gang_small_bath": "大浴场",
+                "exp_event_erav_gang_small_bath_ongoing": "两天次的集体洗澡，$names$被要求伺候所有小弟搓背。",
+                "exp_event_erav_gang_small_bath_result_1": "$names$跪在浴场里挨个搓背，搓到第几个就被按住几个——「泡着泡着就硬了，没办法吧？」",
+                "exp_event_erav_gang_small_bath_result_2": "雾气里此起彼伏的水声和催促声：「水会凉啊喂——快点弄完！」洗完回房，通铺上的新拨人已经候上了。",
+
+                "exp_event_erav_gang_small_night": "通铺",
+                "exp_event_erav_gang_small_night_ongoing": "熄灯后，$names$睡在通铺正中间——若头定的规矩，「方便半夜有需要的哥们」。",
+                "exp_event_erav_gang_small_night_result_1": "半夜她被推醒，半梦半醒间被摆好姿势、被进入。完事后对方拍拍她的腰倒头就睡。",
+                "exp_event_erav_gang_small_night_result_2": "「……唔……」「嘘。睡你的。」她在黑暗里省掉睁眼的力气，身体自己配合着起伏，天亮前后头的人已经候上了。"
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "_doc": "en-us localization for expEvent_producer_small.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_producer_small_photo": "Camera Practice",
+                "exp_event_erav_producer_small_photo_ongoing": "$names$ is called under the fill lights to practice her 'camera presence'.",
+                "exp_event_erav_producer_small_photo_result_1": "$names$ is made to cycle expressions for the lens: aggrieved, lost, on the verge of tears. Each new one earns a burst of shutter clicks.\n\"Don't dodge the lens. Dodge it and you're worthless.\"",
+                "exp_event_erav_producer_small_photo_result_2": "The president circles $names$ with his phone held low, shooting up her skirt. \"Reference material for the project. ...Yes. Reference.\"",
+                "exp_event_erav_producer_small_photo_result_3": "$names$ holds an awkward pose until her legs go numb. Where the photos get sent, she doesn't dare ask.",
+
+                "exp_event_erav_producer_small_styling": "Styling Direction",
+                "exp_event_erav_producer_small_styling_ongoing": "The president arrives with a clothes rack - today is 'costume fitting'.",
+                "exp_event_erav_producer_small_styling_result_1": "$names$ is changed through three outfits, each with the same rule: keep the innocent parts, open the rest.",
+                "exp_event_erav_producer_small_styling_result_2": "The president undoes two buttons of $names$'s blouse himself, steps back to appraise, then undoes the third. \"The branding is 'pure'. But a pure girl who understands things.\"",
+
+                "exp_event_erav_producer_small_schedule": "Agency Schedule",
+                "exp_event_erav_producer_small_schedule_ongoing": "The president walks in on a call, gesturing $names$ to keep quiet.",
+                "exp_event_erav_producer_small_schedule_result_1": "On the phone, the president books her 'slots' with other production committees. He pats her head as he hangs up: \"All good projects. Don't be nervous.\"",
+                "exp_event_erav_producer_small_schedule_result_2": "$names$ tidies his proposals and card case, and is corrected on their order. \"Secretary basics. Transfer agencies someday and you'll use all of it.\"",
+
+                "exp_event_erav_producer_small_quickie": "Impromptu Audition",
+                "exp_event_erav_producer_small_quickie_ongoing": "The president snaps his proposal shut: \"Oh, right - one more impromptu segment.\"",
+                "exp_event_erav_producer_small_quickie_result": "The president presses $names$ under the fill lights for an 'impromptu audition', and only remembers to add \"this take doesn't get recorded\" afterward. His phone, meanwhile, sits on its stand, steady as ever."
+            }
+        }
+    }
+}

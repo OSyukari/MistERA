@@ -106,6 +106,15 @@ public class Expedition
     public string selfReleaseEventLabel = "";
     [JsonIgnore] public bool CanSelfRelease { get { return !string.IsNullOrEmpty(selfReleaseEventID); } }
 
+    /// <summary>
+    /// MIA homecoming: started by ReleaseFromMIA for each character released from a party on this expedition, after the
+    /// release (she is home), with self = her and Targets["supervisor"] = the player, always displayed (displayOverride -
+    /// the player usually can't see her at that moment). Her kidnap snapshot
+    /// (Character_Trainable.MIASnapshot) is still there for the mia* conditions. Empty = no homecoming.
+    /// </summary>
+    public string returnEventID = "";
+    public string returnEventLabel = "";
+
     public int ForceStartHour = 0;
     public int DurationHour = 0;
     public float EventRate = 0.05f;
@@ -139,9 +148,28 @@ public class Expedition
     }
 
     /// <summary>
-    /// key: event, value: weight, total weight is sum of all individual weights
+    /// Exploration events: only picked for a member actively exploring (on the expedition job), together with the
+    /// map-feature events and the current DayEventIDs / NightEventIDs list.
     /// </summary>
     public List<string> EventIDs = new List<string>();
+
+    /// <summary> Day hours (world time) for DayEventIDs / NightEventIDs. Empty = every hour is day. </summary>
+    public List<int> ActiveHours = new List<int>();
+    /// <summary> Picked during ActiveHours, while exploring and (offTimeEventRate) while off the job. </summary>
+    public List<string> DayEventIDs = new List<string>();
+    /// <summary> Picked outside ActiveHours, while exploring and (offTimeEventRate) while off the job. </summary>
+    public List<string> NightEventIDs = new List<string>();
+    /// <summary>
+    /// Off-time events (Job_Expedition.TickOffTimeEvents): chance per minute that a member off the job (asleep, eating,
+    /// resting) rolls an event from the current day/night list (0.01 = about once per 100 minutes off the job). After
+    /// an event her rolls pause for its DurationMinutes. 0 = never. Off-time events cost no progress.
+    /// </summary>
+    public float offTimeEventRate = 0f;
+
+    public bool IsDayHour(int hour)
+    {
+        return ActiveHours == null || ActiveHours.Count == 0 || ActiveHours.Contains(hour);
+    }
 
     public List<string> keywords = new List<string>();
     public List<string> FeatureKeywords = new List<string>();

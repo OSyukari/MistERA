@@ -1,0 +1,12 @@
+{
+    "1": {
+        "class_type": "WD14TaggerScoredPath",
+        "inputs": {
+            "image_paths": "",
+            "model": "wd-eva02-large-tagger-v3",
+            "threshold": 0.2,
+            "character_threshold": 0.85,
+            "exclude_tags": ""
+        }
+    }
+}

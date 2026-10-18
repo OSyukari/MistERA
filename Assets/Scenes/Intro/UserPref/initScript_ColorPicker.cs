@@ -1,9 +1,6 @@
 using HSVPicker;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class initScript_ColorPicker: MonoBehaviour
 {

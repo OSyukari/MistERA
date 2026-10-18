@@ -1,6 +1,10 @@
 {
     "baseID": "Campaign1_Char_Ako",
     "Portrait":{
+        "useGlobalHandler": [
+            { "path": "ako/ako_dress", "selfKeys": ["dress"] },
+            { "path": "ako/ako" }
+        ],
         "portraitPriorityList":[
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",

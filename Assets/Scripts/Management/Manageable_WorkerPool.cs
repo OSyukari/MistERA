@@ -53,6 +53,21 @@ public class Manageable_WorkerPool : Manageable
     /// </summary>
     [JsonProperty] protected Dictionary<int, string> assignedEstablishments = new Dictionary<int, string>();
 
+    /// <summary>
+    /// Event-requested roles (MemberType IDs) this pool supplies, added by the first RequestFallbackWorker that asks for
+    /// one (FallbackWorkerManager.RequestOnDemand). Their workers hold that MemberType at the establishment, are never
+    /// staffed or retired by UpdateStaffing, and are lent out / parked only by events.
+    /// </summary>
+    [JsonProperty] protected List<string> onDemandRoles = new List<string>();
+
+    [JsonIgnore] public bool HasOnDemandRoles { get { return onDemandRoles != null && onDemandRoles.Count > 0; } }
+    public bool IsOnDemandRole(string memberTypeID) { return onDemandRoles != null && onDemandRoles.Contains(memberTypeID); }
+    public void AddOnDemandRole(string memberTypeID)
+    {
+        if (onDemandRoles == null) onDemandRoles = new List<string>();
+        if (!onDemandRoles.Contains(memberTypeID)) onDemandRoles.Add(memberTypeID);
+    }
+
     /// <summary>USED FOR SERIALIZER ONLY DO NOT MANUALLY CALL</summary>
     public Manageable_WorkerPool() { }
 
@@ -192,9 +207,11 @@ public static class FallbackWorkerManager
     public static void UpdateStaffing(Manageable establishment)
     {
         if (establishment == null || establishment is Manageable_WorkerPool || establishment.isPlayerFaction) return;
-        if (string.IsNullOrEmpty(establishment.mapPlanID)) return;
-        var plan = scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(establishment.mapPlanID);
-        if (plan == null || plan.fallbackWorkers == null || plan.fallbackWorkers.Count == 0) return;
+        var plan = string.IsNullOrEmpty(establishment.mapPlanID) ? null : scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(establishment.mapPlanID);
+        bool hasShifts = plan != null && plan.fallbackWorkers != null && plan.fallbackWorkers.Count > 0;
+        // an establishment with no shifts may still have event-requested roles (RequestOnDemand) in an existing pool
+        var existingPool = hasShifts ? null : scr_System_CampaignManager.current.FindFactionByID(PoolIDFor(establishment)) as Manageable_WorkerPool;
+        if (!hasShifts && (existingPool == null || !existingPool.HasOnDemandRoles)) return;
         if (establishment.MainExit == null) return;
         if (!FactionUtility.TryGetMemberType(MemberTypeID_FallbackWorker, out var poolType))
         {
@@ -202,7 +219,7 @@ public static class FallbackWorkerManager
             return;
         }
 
-        var pool = GetOrCreatePool(establishment);
+        var pool = hasShifts ? GetOrCreatePool(establishment) : existingPool;
         if (pool == null || pool.Room == null) return;
 
         int hour = scr_System_Time.current.getCurrentTime().Hour;
@@ -228,11 +245,19 @@ public static class FallbackWorkerManager
             if (w.FactionManager.Faction_Home_Temporary != null) continue;
             var typeID = pool.GetAssignedMemberType(w);
             if (string.IsNullOrEmpty(typeID)) { retired.Add(w); continue; }
+            // event-requested role (RequestOnDemand): never staffed or retired here - keep their membership and park one an
+            // event never released (stray safety net)
+            if (pool.IsOnDemandRole(typeID))
+            {
+                if (FactionUtility.TryGetMemberType(typeID, out var roleType)) EnsureAssignment(establishment, w, roleType);
+                SendHomeSafety(pool, w);
+                continue;
+            }
             if (!workersByType.TryGetValue(typeID, out var list)) workersByType[typeID] = list = new List<Character_Trainable>();
             list.Add(w);
         }
 
-        foreach (var entry in plan.fallbackWorkers)
+        foreach (var entry in hasShifts ? plan.fallbackWorkers : new List<MapPlan.FallbackWorkerInit>())
         {
             if (!FactionUtility.TryGetMemberType(entry.memberTypeID, out var shiftType) || shiftType.workModule == null) continue;
 
@@ -257,7 +282,7 @@ public static class FallbackWorkerManager
 
             while (workers.Count < needed)
             {
-                var generated = Generate(establishment, pool, poolType, shiftType, entry.templateID);
+                var generated = Generate(establishment, pool, poolType, shiftType.ID, shiftType, entry.templateID);
                 if (generated == null) break;
                 workers.Add(generated);
             }
@@ -387,14 +412,18 @@ public static class FallbackWorkerManager
         return pool;
     }
 
-    static Character_Trainable Generate(Manageable establishment, Manageable_WorkerPool pool, MemberType poolType, MemberType shiftType, string templateID)
+    /// <summary>
+    /// assignedTypeID = the shift / event-requested role the worker is pinned to; workShift = the MemberType they join
+    /// the establishment as (null = no work-faction membership).
+    /// </summary>
+    static Character_Trainable Generate(Manageable establishment, Manageable_WorkerPool pool, MemberType poolType, string assignedTypeID, MemberType workShift, string templateID)
     {
         if (string.IsNullOrEmpty(templateID)
             || (scr_System_Serializer.current.MasterList.Character_Bases.GetGeneratorByID(templateID) == null
                 && scr_System_Serializer.current.index_Characters_Bases.GetChara(templateID) == null))
         {
             if (reportedMissingTemplates.Add($"{establishment.ID}|{templateID}"))
-                Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] cannot generate fallback worker for [{shiftType.ID}], template [{templateID}] not found");
+                Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] cannot generate fallback worker for [{assignedTypeID}], template [{templateID}] not found");
             return null;
         }
 
@@ -402,12 +431,123 @@ public static class FallbackWorkerManager
         if (c == null) return null;
 
         c.fallbackPoolID = pool.ID;
-        pool.SetAssignedMemberType(c, shiftType.ID);
+        pool.SetAssignedMemberType(c, assignedTypeID);
         pool.SetAssignedEstablishment(c, establishment);
         c.FactionManager.SetHomeFaction(pool.ID, poolType, false);
         pool.AddRoomOwnership(c.RefID, pool.Room.RefID);
-        c.FactionManager.AddWorkFaction(establishment.ID, shiftType, false);
-        Debug.Log($"FallbackWorkerManager: generated fallback worker {c.FirstName} [{c.RefID}] for {establishment.ID} / {shiftType.ID}");
+        if (workShift != null) c.FactionManager.AddWorkFaction(establishment.ID, workShift, false);
+        Debug.Log($"FallbackWorkerManager: generated fallback worker {c.FirstName} [{c.RefID}] for {establishment.ID} / {assignedTypeID}");
         return c;
+    }
+
+    /// <summary>
+    /// RequestFallbackWorker: lends count workers holding MemberType memberTypeID at establishment to an event. The first
+    /// request for a MemberType the establishment's pool doesn't supply yet adds it as an event-requested role
+    /// (Manageable_WorkerPool.AddOnDemandRole). allowReuse: free workers of that role are lent first, whatever template
+    /// made them (parked ones before ones idling awake in the pool room); otherwise - or when none is free - new ones are
+    /// generated from templateID (no cap). Workers are woken (not dormant) and left in the pool room - move them with
+    /// MoveToTargetRoom, park them again with ReleaseToPool. exclude = characters the event already holds (never handed
+    /// out twice to the same event). Returns the lent workers (may be fewer than count, empty on error).
+    /// </summary>
+    public static List<Character_Trainable> RequestOnDemand(Manageable establishment, string memberTypeID, string templateID, int count, bool allowReuse, ICollection<Character_Trainable> exclude)
+    {
+        var result = new List<Character_Trainable>();
+        if (establishment == null || establishment is Manageable_WorkerPool || establishment.isPlayerFaction || count < 1) return result;
+        if (!FactionUtility.TryGetMemberType(memberTypeID, out var roleType))
+        {
+            Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] requested unknown MemberType [{memberTypeID}]");
+            return result;
+        }
+        // a parent is never held (joining as it joins as its first child) - the role must be the held type itself
+        if (roleType.Children.Count > 0)
+        {
+            Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] requested parent MemberType [{memberTypeID}] - request one of its children");
+            return result;
+        }
+        // a shift the hourly staffing manages can't also be lent to events
+        var plan = string.IsNullOrEmpty(establishment.mapPlanID) ? null : scr_System_Serializer.current.MasterList.MapPlans.GetByID_MapPlan(establishment.mapPlanID);
+        if (plan?.fallbackWorkers != null && plan.fallbackWorkers.Exists(x => x.memberTypeID == memberTypeID))
+        {
+            Debug.LogError($"FallbackWorkerManager: [{establishment.ID}] [{memberTypeID}] is a staffed fallbackWorkers shift, not requestable");
+            return result;
+        }
+        if (!FactionUtility.TryGetMemberType(MemberTypeID_FallbackWorker, out var poolType))
+        {
+            Debug.LogError($"FallbackWorkerManager: missing MemberType [{MemberTypeID_FallbackWorker}]");
+            return result;
+        }
+
+        var pool = GetOrCreatePool(establishment);
+        if (pool == null || pool.Room == null) return result;
+        pool.PruneAssignments();
+        pool.AddOnDemandRole(memberTypeID);
+
+        if (allowReuse)
+        {
+            var free = new List<Character_Trainable>();
+            foreach (var w in pool.ManagedChara)
+            {
+                if (!pool.IsPooledWorker(w) || pool.GetAssignedEstablishmentID(w) != establishment.ID || pool.GetAssignedMemberType(w) != memberTypeID) continue;
+                if (exclude != null && exclude.Contains(w)) continue;
+                if (IsFreeForRequest(pool, w)) free.Add(w);
+            }
+
+            // parked first: an awake one in the pool room may just have been handed to another event
+            Utility.Shuffle(free);
+            free = free.OrderByDescending(x => x.IsDormant).ToList();
+            foreach (var w in free)
+            {
+                if (result.Count >= count) break;
+                result.Add(w);
+            }
+        }
+        while (result.Count < count)
+        {
+            var generated = Generate(establishment, pool, poolType, memberTypeID, roleType, templateID);
+            if (generated == null) break;
+            result.Add(generated);
+        }
+
+        foreach (var w in result)
+        {
+            pool.strayHours.Remove(w.RefID);
+            w.SetDormant(false);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Free to lend: not held by a temp home / party / the player's party, and parked or idling in the pool room
+    /// (a worker awake elsewhere is still out on another event).
+    /// </summary>
+    static bool IsFreeForRequest(Manageable_WorkerPool pool, Character_Trainable w)
+    {
+        if (w.FactionManager.Faction_Home_Temporary != null) return false;
+        if (w.FactionManager.CurrentParty != null || w.FactionManager.isPartyLocked) return false;
+        if (scr_System_CampaignManager.current.PlayerPartyMembers.Contains(w.RefID)) return false;
+        if (w.IsDormant) return true;
+        return w.CurrentJob == null && scr_System_CampaignManager.current.Map.FindRoomByChara(w.RefID) == pool.Room;
+    }
+
+    /// <summary>
+    /// ReleaseFallbackWorker: sends a lent pooled worker straight back into its pool room and parks them (dormant).
+    /// False (left alone) for anyone who is not a pooled worker, or is held by a temp home / party / the player's party,
+    /// or is currently allowed to work a staffed shift.
+    /// </summary>
+    public static bool ReleaseToPool(Character_Trainable c)
+    {
+        if (c == null || string.IsNullOrEmpty(c.fallbackPoolID)) return false;
+        var pool = scr_System_CampaignManager.current.FindFactionByID(c.fallbackPoolID) as Manageable_WorkerPool;
+        if (pool == null || !pool.IsPooledWorker(c) || pool.Room == null) return false;
+        if (c.FactionManager.Faction_Home_Temporary != null) return false;
+        if (c.FactionManager.CurrentParty != null || c.FactionManager.isPartyLocked) return false;
+        if (scr_System_CampaignManager.current.PlayerPartyMembers.Contains(c.RefID)) return false;
+        if (pool.AllowWorkFaction(c)) return false;
+
+        pool.strayHours.Remove(c.RefID);
+        c.ChangeCurrentJob(null);
+        scr_System_CampaignManager.current.MoveCharacterTo(c, pool.Room, true);
+        c.SetDormant(true);
+        return true;
     }
 }

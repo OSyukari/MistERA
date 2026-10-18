@@ -1,0 +1,194 @@
+{
+    "_doc": "ErAV NTR Part 3 - F toy collector, SMALL events (handoff 'Small event template'). Weights: 6 full scenes at weight 1 each vs small events 3+2+3+2+3 = 13 -> scene share 6/19 (~32%, about one scene per 3-4 h of the 7-day stay). Text-only events write to the MIA log without a click; the 'check' quick act's result also starts its hidden event at once (runImmediate, empty lines, no flush, no ResolveEvent, releases its keys on every path).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sm_small_schedule",
+                "eventString_Ongoing": "exp_event_erav_sm_small_schedule_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_schedule_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_schedule_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_sm_small_display",
+                "eventString_Ongoing": "exp_event_erav_sm_small_display_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_display_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_display_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_sm_small_toy",
+                "eventString_Ongoing": "exp_event_erav_sm_small_toy_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_toy_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_toy_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_sm_small_maintenance",
+                "eventString_Ongoing": "exp_event_erav_sm_small_maintenance_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_maintenance_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_maintenance_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_sm_small_check",
+                "eventString_Ongoing": "exp_event_erav_sm_small_check_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sm_small_check_result",
+                        "eventID": "event_erav_sm_small_check",
+                        "runImmediate": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sm_small_check",
+                "_comment": "Hidden (runImmediate): empty lines only, no flush. self = player, party = the victim.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_sm_master", "erav_client_sm_master", "1", "true" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "client", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "act" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "fail" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "act",
+                        "line": "",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_finger_insert_V" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "fail",
+                        "line": "",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sm_small_schedule": "时间表",
+                "exp_event_erav_sm_small_schedule_ongoing": "白板上的时间表支配着地下室的钟点，也支配着$names$。",
+                "exp_event_erav_sm_small_schedule_result_1": "$names$按时间表在调教室门口跪好等用。墙上的钟走到整点，门开了——「迟到两分钟。记录：加时。」",
+                "exp_event_erav_sm_small_schedule_result_2": "加时账目被念给她听：本月累计，晚睡加时两回，姿势松动加时三回。老人念完合上本子，「玩具要对自个的欠账有数。」",
+
+                "exp_event_erav_sm_small_display": "拘束展示",
+                "exp_event_erav_sm_small_display_ongoing": "老人今天不训练，只是「归置」。",
+                "exp_event_erav_sm_small_display_result_1": "$names$被缚成固定的姿势，摆进地下室的展示架，和上过漆的木制鞍具排在同层。老人坐在旁打磨木料，偶尔抬眼看看她的成色。",
+                "exp_event_erav_sm_small_display_result_2": "调教室的灯调暗了，$names$被缚在架子上面向门口——「客人来的时候，陈列品要在最显眼的位置。」",
+
+                "exp_event_erav_sm_small_toy": "玩具的日常",
+                "exp_event_erav_sm_small_toy_ongoing": "尾塞和围裙是今天全部的「着装」。",
+                "exp_event_erav_sm_small_toy_result_1": "$names$含着尾塞端茶行礼，横穿整个地下室。茶洒出来的部分，回头要跪在架子上补回来。",
+                "exp_event_erav_sm_small_toy_result_2": "老人给$names$换了个更大的尾塞，拍了拍她的背，像给家具拧紧了颗螺丝。「坐正。今天它不许掉。」",
+
+                "exp_event_erav_sm_small_maintenance": "维护时间",
+                "exp_event_erav_sm_small_maintenance_ongoing": "老人在做木工，$names$在旁边做「维护」。",
+                "exp_event_erav_sm_small_maintenance_result_1": "$names$把用过的玩具逐件清洗、擦干、按尺寸归位。哪件放错了格子，老人就把它重新用遍。",
+                "exp_event_erav_sm_small_maintenance_result_2": "打磨声里，$names$被叫过去试新玩具的握把——「手指出力，别用腰。你只管含着，好不好用我说了算。」",
+
+                "exp_event_erav_sm_small_check": "临时复查",
+                "exp_event_erav_sm_small_check_ongoing": "「过来。」老人放下刻刀，朝$names$招手。",
+                "exp_event_erav_sm_small_check_result": "老人放下手里的活，就地给她做了趟临时复查：橡胶手套、润滑、逐段确认。检查完在记录本上添了笔，什么也没说。"
+            }
+        }
+    }
+}

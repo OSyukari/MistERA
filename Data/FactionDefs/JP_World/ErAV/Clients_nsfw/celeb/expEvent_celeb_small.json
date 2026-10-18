@@ -1,0 +1,169 @@
+{
+    "_doc": "ErAV NTR Part 3 - H celeb entourage, SMALL events (handoff 'Small event template'). Weights: scenes town 2 + club 2 + drugged 1 = 5 vs small events 3+3+2+3 = 11 -> scene share 5/16 (~31%, about one scene per 3-4 h of the 5-day stay). Text-only events write to the MIA log without a click; the fitting-room quick act's result also starts its hidden event at once (runImmediate, empty lines, no flush, no ResolveEvent, releases its keys on every path).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_celeb_small_fitting",
+                "eventString_Ongoing": "exp_event_erav_celeb_small_fitting_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_small_fitting_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_small_fitting_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_celeb_small_photo",
+                "eventString_Ongoing": "exp_event_erav_celeb_small_photo_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_small_photo_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_small_photo_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_celeb_small_pose",
+                "eventString_Ongoing": "exp_event_erav_celeb_small_pose_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_small_pose_result_1"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_small_pose_result_2"
+                    }
+                ]
+            },
+            {
+                "eventID": "exp_event_erav_celeb_small_quickie",
+                "eventString_Ongoing": "exp_event_erav_celeb_small_quickie_ongoing",
+                "DurationMinutes": 60,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 3,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_celeb_small_quickie_result",
+                        "eventID": "event_erav_celeb_small_quickie",
+                        "runImmediate": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_celeb_small_quickie",
+                "_comment": "Hidden (runImmediate): empty lines only, no flush. self = player, party = the victim.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "client", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "act" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "fail" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "act",
+                        "line": "",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "client", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "fail",
+                        "line": "",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_celeb_small_fitting": "试装",
+                "exp_event_erav_celeb_small_fitting_ongoing": "经纪人拎着挂满衣服的衣架杆来了，说今天是「定装」。",
+                "exp_event_erav_celeb_small_fitting_result_1": "$names$被换上透视上衣，经纪人用两根手指拎起裙摆看了看里面，满意地打响指。「Tokyo girlfriend.——完美。」",
+                "exp_event_erav_celeb_small_fitting_result_2": "细得站不稳的高跟也被留在了单子上。经纪人绕着换完装的$names$拍了圈视频，「粉丝爱看这个。」",
+
+                "exp_event_erav_celeb_small_photo": "合影",
+                "exp_event_erav_celeb_small_photo_ongoing": "巡演的宣传照开拍，$names$被拉进了构图。",
+                "exp_event_erav_celeb_small_photo_result_1": "合影里$names$被搂着比手势，笑要露齿——「fan service」。摄影师喊停的间隙，搂着的手顺势收紧了两下。",
+                "exp_event_erav_celeb_small_photo_result_2": "「花絮也拍。」镜头切到换装间隙，$names$背对着镜头整理裙装的背影被拍了下来，配上了可爱的字幕。",
+
+                "exp_event_erav_celeb_small_pose": "指定动作",
+                "exp_event_erav_celeb_small_pose_ongoing": "领队的 rapper 又兴起了，朝$names$打了个响指。",
+                "exp_event_erav_celeb_small_pose_result_1": "店门口，她被要求掀下裙摆、拉低领口。行人举起了手机，没人觉得奇怪——大概以为这是哪个节目在拍。",
+                "exp_event_erav_celeb_small_pose_result_2": "扭蛋机前，她被摆出指定的姿势和表情，快门响个不停。拍完，rapper 挑着下巴让她「保持那个表情」多待了半分钟。",
+
+                "exp_event_erav_celeb_small_quickie": "后台时间",
+                "exp_event_erav_celeb_small_quickie_ongoing": "后台的化妆间门锁上了，领队朝$names$勾了勾手指。",
+                "exp_event_erav_celeb_small_quickie_result": "开场前的化妆间，领队把$names$按在梳妆台边草草解决过，补妆的工夫刚好够弄乱再理好。"
+            }
+        }
+    }
+}

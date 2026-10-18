@@ -1,0 +1,130 @@
+{
+    "_doc": "ErAV NTR Part 3 - H celeb entourage, night at the club (draft H; content adapted from the Phase 1 celeb_town placeholder). Group scene: the entry branch borrows the lead (client) and one more entourage member (support, same role) and moves them into her room; every ending (error path included) runs ResolveEvent and releases client + support. COMs: com_sex_oral_P_Force / com_sex_P_missionary (multi-doer variants). Filming stays narration.",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_celeb_club",
+                "eventString_Ongoing": "exp_event_erav_celeb_club_ongoing",
+                "DurationMinutes": 90,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 2,
+                "possibleResults": [
+                    {
+                        "baseWeight": 2,
+                        "resultText": "exp_event_erav_celeb_club_result",
+                        "eventID": "event_erav_celeb_club"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_celeb_club",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "smug", "happy" ] },
+                        "line": "event_erav_celeb_club_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_club_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_club_03",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_celeb_club_04",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
+                        "line": "event_erav_celeb_club_05",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_celeb_club_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_celeb_club": "晚上·夜店",
+                "exp_event_erav_celeb_club_ongoing": "$names$跟着巡演团体进了夜店。",
+                "exp_event_erav_celeb_club_result": "夜店的卡座里，$names$被夹在了中间。",
+
+                "event_erav_celeb_club_01": "卡座的位置是研究过的：灯光刚好暗到「看不清但知道」。\n酒轮番地上。她被夹在领队和经纪人中间，手从裙摆底下探进来，当着满卡座人的面。",
+                "event_erav_celeb_club_02": "「表演时间。」\n她被命令站上茶几跳舞。裙摆下面什么都没穿，灯光扫过来的时候，整层楼的视线都落了过来。",
+                "event_erav_celeb_club_03": "她跪在沙发前，交替含着领队和随行的两个。其他人举着酒围观、吹口哨、举手机录。\n射灯扫到哪里，快门就响到哪里。",
+                "event_erav_celeb_club_04": "后半夜，二楼小厅被包下。她被按进沙发的角落，裙子卷到腰间，被领队从正面贯穿。\n周围的人没有散——有人凑近了看，有人伸手揉她的胸，有人把手机凑到最近处。\n被拽着头发仰起来：\"Face. ——Smile. Smile for camera.\"",
+                "event_erav_celeb_club_05": "散场的时候，经纪人替她理了理裙摆，像收拾件道具。\n\"Tokyo girls, so open! ——明天，行程照旧。\"",
+                "event_erav_celeb_club_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

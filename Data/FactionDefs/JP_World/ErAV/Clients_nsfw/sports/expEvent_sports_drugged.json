@@ -1,0 +1,115 @@
+{
+    "_doc": "ErAV NTR Part 3 - G sports team, the drugged night (draft G; plan marks it low weight and repeatable - 'once per stay' gating cannot be done in data). Group scene, same borrow pattern as the hotel night (client athlete_a + support athlete_b x2 + athlete_c x2). COMs: com_sex_P_doggy (multi-doer). The drug state itself is narration only - no status command exists in events (reported).",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_erav_sports_drugged",
+                "eventString_Ongoing": "exp_event_erav_sports_drugged_ongoing",
+                "DurationMinutes": 120,
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "allowPrisoner": true,
+                    "requireCombat": false
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_sports_drugged_result",
+                        "eventID": "event_erav_sports_drugged"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_sports_drugged",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_a", "erav_client_athlete_a", "1", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_b", "erav_client_athlete_b", "2", "true" ] },
+                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_c", "erav_client_athlete_c", "2", "true" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
+                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "scene",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "unaware", "sad" ] },
+                        "line": "event_erav_sports_drugged_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_erav_sports_drugged_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "empty", "sad" ] },
+                        "line": "event_erav_sports_drugged_03",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_erav_sports_drugged_err",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "exp_event_erav_sports_drugged": "下药的夜晚",
+                "exp_event_erav_sports_drugged_ongoing": "今晚的酒格外甜。$names$的杯子没有换过。",
+                "exp_event_erav_sports_drugged_result": "四肢发软的$names$被扶到床中央，摆好了。",
+
+                "event_erav_sports_drugged_01": "酒里的东西后劲很大。药效里她的身体不受控制地流水，意识却清醒地看着排成人墙的身影轮流压上来——\n想合拢的腿合不上，想咬紧的牙关松开着，自己的身体在替对方省力。",
+                "event_erav_sports_drugged_02": "有人用她的手包住自己引导着进出；有人让她趴在窗边——落地窗对着城市的夜景，玻璃上映着她被贯穿的、抽抽着的表情。\n快门声混在夜色里，分不清是谁的手机。",
+                "event_erav_sports_drugged_03": "意识离场前的最后记忆：她自己的腰在动。没有人扶，没有人按——身体自己记住了节奏。\n次晨醒来，睡衣是干的，头发被梳顺了。大腿内侧的指印，替她拼回了昨夜。日程表翻到了新页，没有人提起。",
+                "event_erav_sports_drugged_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+            }
+        }
+    }
+}

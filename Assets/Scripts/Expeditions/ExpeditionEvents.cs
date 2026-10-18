@@ -57,6 +57,31 @@ public class ExpEvents
         public Requirement_Manageable_Party teamRequirement = new Requirement_Manageable_Party();
     }
 
+    /// <summary>
+    /// Time-of-day weight: every mod whose hours contain the current world hour adds modValue, then multiplies by
+    /// weightMult. A final weight below 1 = not pickable at that hour. No team requirement (unlike weightMods).
+    /// </summary>
+    public List<TimeWeightModifier> timeWeightMods = new List<TimeWeightModifier>();
+    public class TimeWeightModifier
+    {
+        public List<int> hours = new List<int>();
+        public int modValue = 0;
+        public float weightMult = 1f;
+    }
+
+    public int ApplyTimeWeight(int weight, int hour)
+    {
+        if (timeWeightMods == null || timeWeightMods.Count == 0) return weight;
+        float add = 0, mult = 1;
+        foreach (var mod in timeWeightMods)
+        {
+            if (mod.hours == null || !mod.hours.Contains(hour)) continue;
+            add += mod.modValue;
+            mult *= mod.weightMult;
+        }
+        return (int)((weight + add) * mult);
+    }
+
     public List<ExpResults> possibleResults = new List<ExpResults>();
 
 

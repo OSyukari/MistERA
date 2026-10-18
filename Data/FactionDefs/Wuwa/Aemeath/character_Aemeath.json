@@ -2,6 +2,7 @@
 {
     "baseID": "Wuwa_Aemeath",
     "Portrait":{
+        "useGlobalHandler": [ { "path": "Aemeath" } ],
         "portraitPriorityList":[
             {
                 "$type":"PortraitManager+CharaPortrait_Spine, Assembly-CSharp",

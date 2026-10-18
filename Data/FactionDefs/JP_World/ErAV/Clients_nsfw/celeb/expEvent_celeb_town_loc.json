@@ -1,0 +1,18 @@
+{
+    "_doc": "en-us localization for expEvent_celeb_town.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_celeb_town": "Daytime: Street Escort",
+                "exp_event_erav_celeb_town_ongoing": "$names$ leads the touring entourage through today's 'guide' duties.",
+                "exp_event_erav_celeb_town_result": "In Harajuku's crowds, $names$ walks at the very center of the pack.",
+
+                "event_erav_celeb_town_01": "The daytime job is 'tour guide': a sheer top worn over nothing, a microskirt over a single string. She walks in the middle of the group, shoulder grasped, waist held in turns, with hands slipping up under the skirt to steady her - 'so she doesn't fall'.\nHarajuku, Shibuya, Omotesando - the itinerary is packed, and the shutters never stop.",
+                "event_erav_celeb_town_02": "At streetwear shops and gacha machines she is hugged into group photos, arranged into gestures.\nWhen the lead rapper's mood strikes, she is told to pull her neckline low at the storefront and shape her mouth a certain way. She complies. Passersby raise their phones - nobody finds it odd; it must be some show filming.",
+                "event_erav_celeb_town_03": "Strangers' phones, the entourage's phones, the manager's ever-raised phone - she cannot tell which footage goes where.\n\"See? Tokyo girls, so open!\"",
+                "event_erav_celeb_town_04": "At day's end the manager smooths her skirt down like putting away a prop.\n\"Tomorrow night, the club. Wear yesterday's shorter one.\"\nOn the itinerary, 'Japanese girlfriend' is followed by a whole week of fully booked 'engagements'.",
+                "event_erav_celeb_town_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

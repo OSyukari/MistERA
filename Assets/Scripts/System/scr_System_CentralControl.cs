@@ -1268,7 +1268,7 @@ public class DisplaySettings
 
     /// <summary> banked expedition events (exploration results, rescue events, MIA self release) run as soon as they are
     /// created instead of waiting for the player's click (ExpeditionUtility.RunBankedEventNow). Not retroactive. </summary>
-    public BoolSetting immediateRunExpeditionEvent = new BoolSetting(false, "immediateRunExpeditionEvent");
+    public BoolSetting immediateRunExpeditionEvent = new BoolSetting(true, "immediateRunExpeditionEvent");
 
     public Dictionary<string, string> FontSelection = new Dictionary<string, string>();
 }

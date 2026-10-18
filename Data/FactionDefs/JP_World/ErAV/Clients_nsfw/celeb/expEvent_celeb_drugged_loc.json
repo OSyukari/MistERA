@@ -1,0 +1,17 @@
+{
+    "_doc": "en-us localization for expEvent_celeb_drugged.json.",
+    "Dictionary": {
+        "Entries": {
+            "en-us": {
+                "exp_event_erav_celeb_drugged": "The Drugged Night",
+                "exp_event_erav_celeb_drugged_ongoing": "Tonight's itinerary changed to a 'private party' at the hotel.",
+                "exp_event_erav_celeb_drugged_result": "The sake in the tatami room hits far harder than usual.",
+
+                "event_erav_celeb_drugged_01": "Memory comes in fragments:\nAn early one: kneeling in the middle of the tatami, stripped by four or five hands from every side, sake poured on her skin and licked off.\nLater: lying atop somebody while another presses down from behind, filled from both ends at once, flashbulbs bursting before her eyes.",
+                "event_erav_celeb_drugged_02": "The clearest fragment of all is of her own legs opening. She doesn't remember whose order, nor why she opened them.\nShutters, laughter, urging to drink - all of it very far away.",
+                "event_erav_celeb_drugged_03": "She wakes in the hotel's bathtub. Washed clean, her hair combed smooth.\nThe marks over her body piece the night back together: fingermarks inside her thighs, the dried crust at the corner of her mouth, the deep bloated fullness in her lower belly.\nThe manager holds his phone over the tub: \"Morning, girlfriend. The fans will love yesterday's footage.\"",
+                "event_erav_celeb_drugged_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+            }
+        }
+    }
+}

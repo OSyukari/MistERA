@@ -128,6 +128,7 @@ public class ExpeditionInstance
         } }
 
     List<ExpEvents> _allEvents = null;
+    /// <summary> every event of the def (exploration + day + night), e.g. for listing </summary>
     [JsonIgnore]
     public List<ExpEvents> AllEvents
     {
@@ -135,22 +136,66 @@ public class ExpeditionInstance
         {
             if (_allEvents == null)
             {
-                _allEvents = new List<ExpEvents>();
-                var strKeys = new List<string>(Base.EventIDs);
+                _allEvents = new List<ExpEvents>(ExplorationEvents);
+                _allEvents.AddRange(DayEvents);
+                _allEvents.AddRange(NightEvents);
+                _allEvents = _allEvents.Distinct().ToList();
+            }
+            return _allEvents;
+        }
+    }
 
+    List<ExpEvents> _explorationEvents = null;
+    /// <summary> Base.EventIDs + map-feature events: only while actively exploring </summary>
+    [JsonIgnore]
+    public List<ExpEvents> ExplorationEvents
+    {
+        get
+        {
+            if (_explorationEvents == null)
+            {
+                var strKeys = new List<string>(Base.EventIDs);
                 foreach (var feature in Features)
                 {
                     strKeys.AddRange(feature.featureEventIDs);
                 }
-                strKeys = strKeys.Distinct().ToList();
-
-                foreach (var i in strKeys)
-                {
-                    _allEvents.Add(Expeditions.ExplorationEvents.GetByID(i));
-                }
+                _explorationEvents = ResolveEvents(strKeys);
             }
-            return _allEvents;
+            return _explorationEvents;
         }
+    }
+
+    List<ExpEvents> _dayEvents = null;
+    [JsonIgnore] public List<ExpEvents> DayEvents { get { return _dayEvents ??= ResolveEvents(Base.DayEventIDs); } }
+    List<ExpEvents> _nightEvents = null;
+    [JsonIgnore] public List<ExpEvents> NightEvents { get { return _nightEvents ??= ResolveEvents(Base.NightEventIDs); } }
+
+    static List<ExpEvents> ResolveEvents(List<string> ids)
+    {
+        var results = new List<ExpEvents>();
+        if (ids == null) return results;
+        foreach (var i in ids.Distinct())
+        {
+            var ev = Expeditions.ExplorationEvents.GetByID(i);
+            if (ev == null) Debug.LogError($"ExpeditionInstance: exploration event [{i}] does not exist");
+            else results.Add(ev);
+        }
+        return results;
+    }
+
+    /// <summary>
+    /// Events that can be picked at this world hour: the day or night list (Base.IsDayHour), plus the exploration
+    /// events when the member is actively exploring.
+    /// </summary>
+    public List<ExpEvents> GetEventPool(bool exploring, int hour)
+    {
+        var pool = new List<ExpEvents>();
+        if (exploring) pool.AddRange(ExplorationEvents);
+        foreach (var ev in Base.IsDayHour(hour) ? DayEvents : NightEvents)
+        {
+            if (!pool.Contains(ev)) pool.Add(ev);
+        }
+        return pool;
     }
 
     public int GetWeightModifiers(List<string> keywords, float weight)
