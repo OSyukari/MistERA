@@ -1139,14 +1139,14 @@ public class BodyInternal_Instance
         }
     }
 
-    protected void AddExperience(float amount, List<string> extra = null, ExperienceLog m = null)
+    protected void AddExperience(float amount, List<string> extra = null, ExperienceLog m = null, ISet<string> forbiddenExperienceIDs = null)
     {
         var tags = new List<string>();
         tags.AddRange(this.Base.tags);
         if (extra != null) tags.AddRange(extra);
         if (Owner.Body.isClimaxing(false, true)) tags.Add("climax");
         if (this.Sensitivity != "") tags.Add(this.Sensitivity);
-        Owner.Skills.CheckExperienceGain(tags, amount, m);
+        Owner.Skills.CheckExperienceGain(tags, amount, m, forbiddenExperienceIDs);
     }
 
     /*
@@ -1255,7 +1255,7 @@ public class BodyInternal_Instance
     //   2. Try directionIn (same expanding-capacity rule, recursive).
     //   3. directionIn exhausted → fits in max capacity → ingest here.
     //   4. Over max capacity → ingest here, push existing cum out via directionOut.
-    public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null, bool ignoreClimaxAppend = false)
+    public bool Ingest(Item_Instance item, ExperienceLog m = null, bool forceFill = false, List<BodyInternal_Instance> fillHistory = null, bool ignoreClimaxAppend = false, ISet<string> forbiddenExperienceIDs = null)
     {
         if (!this.canContain) return false;
         var comp = item.GetComp_Ingestible();
@@ -1267,7 +1267,7 @@ public class BodyInternal_Instance
             if (!com.experienceTicked)
             {
                 com.experienceTicked = true;
-                AddExperience(comp.amount, new List<string>() { "cum" }, m);
+                AddExperience(comp.amount, new List<string>() { "cum" }, m, forbiddenExperienceIDs);
                 if (cumStimulation != 0)
                 {
                     string s = Sensitivity;
@@ -1300,7 +1300,7 @@ public class BodyInternal_Instance
 
         if (dirIn != null && dirIn != this && dirIn.canContain && !fillHistory.Contains(dirIn))
         {
-            if (dirIn.Ingest(item, m, false, fillHistory, ignoreClimaxAppend: ignoreClimaxAppend)) return true;
+            if (dirIn.Ingest(item, m, false, fillHistory, ignoreClimaxAppend: ignoreClimaxAppend, forbiddenExperienceIDs: forbiddenExperienceIDs)) return true;
         }
 
         // Phase 3: directionIn chain exhausted — try max capacity.
@@ -1826,7 +1826,6 @@ public class Sexperience
 
 // global sexp : best sex, worst sex, most sex, 
 // global sexp based on whole sex session
-
 
 
 

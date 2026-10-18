@@ -37,6 +37,11 @@ public class ActionPackage_Expedition : ActionPackage
 
     protected int GetWeight(Manageable_Party p, out List<string> tooltip)
     {
+        if (p != null && p.HasExplorationEventCooldown(SourceEV.eventID))
+        {
+            tooltip = new List<string>();
+            return -1;
+        }
         int weight = SourceEV.baseWeight;
 
         if (!SourceEV.teamRequirement.Validate(doer, p, out tooltip, out var hadlock)) return -1;

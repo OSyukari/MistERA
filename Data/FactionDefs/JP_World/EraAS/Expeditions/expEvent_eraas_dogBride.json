@@ -1,0 +1,764 @@
+{
+    "_doc": "EraAS X01 犬の花嫁（原作 RPG_802_犬の花嫁.ERB，5 阶段，原文见 forbidCopy_EraAS/通用NPC事件文本全集.md §3.2）。探索事件把场景事件入队给玩家（无 runImmediate）；场景事件 Targets[party] = 调查角色（恰好一人，teamRequirement maxTeamCount 1 + strictPartyCount（按全队 roster 校验人数，多人队伍时事件完全不触发）+ requireFemale）。阶段推进存放在角色自身 relationship 的 kojo 变量 dogBrideStage（0=S1 遭遇，1=S2 怀柔，2=S3 予兆，3=S4 性交，>=4=S5 花嫁），沿用原版规则：只有推进选项 +1，离开选项不 +1（同阶段可重刷）。_start 用 RequestFallbackWorkerFromLocalWorld 按 party 所在位置的世界借用临时狗 actor（本文件定义 membertype_eraas_survey_dog，generator creature_animal_dog），随后 MoveToTargetRoom 将狗传送至 party 所在房间，再 dispatch 到各阶段；借用或传送失败走 error 路径。全部阶段均可通过 dog 引用角色或立绘，每条结尾均释放狗。S4/S5 对 party 指令脱衣后执行 com_sex_P_doggy（branch 内 try/skip：COM 失败也照常收尾），FlushMessageExpAll 打印 EXP，结尾 Redress 穿回。妊娠/失贞/经验/初对象全部走引擎自带系统，不实装原版卵子耐久骰子。每条结尾（含 error 路径）ResolveEvent 并 ReleaseFallbackWorker。立绘约定：狗在场的互动行 targetTags=[\"dog\"]（命中 Image_Generation_Config 的 dog 类别，RequireTargetContextKeys=[\"dog\"]）；性互动行 selfTags 追加 sex+receiver（receiver 角色块 selfKeys）与插入行追加 doggy（com_sex_P_doggy 的 portraitTags，对应 doggystyle 变体），不含 pov 以免误入 dog_pov 类别。",
+
+    "ExplorationEvents": {
+        "list": [
+            {
+                "eventID": "exp_event_eraas_dogBride",
+                "eventString_Ongoing": "exp_event_eraas_dogBride_ongoing",
+                "DurationMinutes": 60,
+                "cooldownHours": 12,
+                "tags": [
+                    "dog"
+                ],
+                "teamRequirement": {
+                    "minTeamCount": 1,
+                    "maxTeamCount": 1,
+                    "strictPartyCount": true,
+                    "allowPrisoner": true,
+                    "requireCombat": false,
+                    "charaReq_Select": { "requireFemale": true }
+                },
+                "baseWeight": 1,
+                "possibleResults": [
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_eraas_dogBride_result",
+                        "eventID": "event_eraas_dogBride"
+                    }
+                ]
+            }
+        ]
+    },
+
+    "MapPlans": {
+        "memberTypes": [
+            {
+                "ID": "membertype_eraas_survey_dog",
+                "socialStandingKey": "membertype_eraas_survey_dog",
+                "isHidden": true,
+                "isDisplayableInFactionUI": false,
+                "participatesInCombat": false,
+                "canBeTransferred": false,
+                "initiallyForbidWork": true
+            }
+        ]
+    },
+
+    "Events": {
+        "list": [
+            {
+                "ID": "event_eraas_dogBride",
+                "showEventHeader": "event_eraas_dogBride_header",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_start",
+                                "target_chara_conditions": {
+                                    "party": [ { "parameters": [ "exists" ] } ]
+                                },
+                                "Results": [
+                                    { "Type": "RequestFallbackWorkerFromLocalWorld", "arguments": [ "dog", "party", "membertype_eraas_survey_dog", "creature_animal_dog", "1", "true" ] },
+                                    { "Type": "MoveToTargetRoom", "arguments": [ "dog", "party" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "dispatch" ] }
+                                ]
+                            },
+                            {
+                                "option": "_error",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "dispatch",
+                        "options": [
+                            {
+                                "option": "_stage1",
+                                "target_chara_conditions": {
+                                    "party": [
+                                        { "relationshipTargetKey": "party", "requireKojoVariable": { "isDailyVariable": false, "variableID": "dogBrideStage", "operand": "eq", "value": 0 } }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s1" ] }
+                                ]
+                            },
+                            {
+                                "option": "_stage2",
+                                "target_chara_conditions": {
+                                    "party": [
+                                        { "relationshipTargetKey": "party", "requireKojoVariable": { "isDailyVariable": false, "variableID": "dogBrideStage", "operand": "eq", "value": 1 } }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s2" ] }
+                                ]
+                            },
+                            {
+                                "option": "_stage3",
+                                "target_chara_conditions": {
+                                    "party": [
+                                        { "relationshipTargetKey": "party", "requireKojoVariable": { "isDailyVariable": false, "variableID": "dogBrideStage", "operand": "eq", "value": 2 } }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s3" ] }
+                                ]
+                            },
+                            {
+                                "option": "_stage4",
+                                "target_chara_conditions": {
+                                    "party": [
+                                        { "relationshipTargetKey": "party", "requireKojoVariable": { "isDailyVariable": false, "variableID": "dogBrideStage", "operand": "eq", "value": 3 } }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s4" ] }
+                                ]
+                            },
+                            {
+                                "option": "_stage5",
+                                "target_chara_conditions": {
+                                    "party": [
+                                        { "relationshipTargetKey": "party", "requireKojoVariable": { "isDailyVariable": false, "variableID": "dogBrideStage", "operand": "gte", "value": 4 } }
+                                    ]
+                                },
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s5" ] }
+                                ]
+                            },
+                            {
+                                "option": "_silent_fail",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                ]
+                            }
+                        ]
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s1",
+                        "UISpec": { "portraitRefKey": "dog" },
+                        "line": "event_eraas_dogBride_s1_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question": "event_eraas_dogBride_s1_q",
+                        "options": [
+                            {
+                                "option": "event_eraas_dogBride_s1_q_op1",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s1_feed" ] }
+                                ]
+                            },
+                            {
+                                "option": "event_eraas_dogBride_s1_q_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s1_ignore" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s1_feed",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed", "happy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s1_feed_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed", "happy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s1_feed_02",
+                        "Results": [
+                            { "Type": "SetSelfKojoVariable", "arguments": [ "party", "false", "dogBrideStage", "1" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s1_feed_summary",
+                        "line": "event_eraas_dogBride_summary_s1_feed",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s1_ignore",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "serious" ] },
+                        "line": "event_eraas_dogBride_s1_ignore",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s1_ignore_summary",
+                        "line": "event_eraas_dogBride_summary_s1_ignore",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s2",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed" ] },
+                        "line": "event_eraas_dogBride_s2_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question": "event_eraas_dogBride_s2_q",
+                        "options": [
+                            {
+                                "option": "event_eraas_dogBride_s2_q_op1",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s2_visit" ] }
+                                ]
+                            },
+                            {
+                                "option": "event_eraas_dogBride_s2_q_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s2_ignore" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s2_visit",
+                        "UISpec": { "portraitRefKey": "dog" },
+                        "line": "event_eraas_dogBride_s2_visit_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed", "happy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s2_visit_02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "surprise" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s2_visit_03",
+                        "Results": [
+                            { "Type": "SetSelfKojoVariable", "arguments": [ "party", "false", "dogBrideStage", "2" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s2_visit_summary",
+                        "line": "event_eraas_dogBride_summary_s2_visit",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s2_ignore",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "serious" ] },
+                        "line": "event_eraas_dogBride_s2_ignore",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s2_ignore_summary",
+                        "line": "event_eraas_dogBride_summary_s2_ignore",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s3",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed", "happy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s3_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "dog" },
+                        "line": "event_eraas_dogBride_s3_02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "dog", "selfTags": [ "sex" ] },
+                        "line": "event_eraas_dogBride_s3_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question": "event_eraas_dogBride_s3_q",
+                        "options": [
+                            {
+                                "option": "event_eraas_dogBride_s3_q_op1",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s3_play" ] }
+                                ]
+                            },
+                            {
+                                "option": "event_eraas_dogBride_s3_q_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s3_leave" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s3_play",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed", "happy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s3_play",
+                        "Results": [
+                            { "Type": "SetSelfKojoVariable", "arguments": [ "party", "false", "dogBrideStage", "3" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s3_play_summary",
+                        "line": "event_eraas_dogBride_summary_s3_play",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s3_leave",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad" ] },
+                        "line": "event_eraas_dogBride_s3_leave",
+                        "Results": [
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s3_leave_summary",
+                        "line": "event_eraas_dogBride_summary_s3_leave",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s4",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "serious" ] },
+                        "line": "event_eraas_dogBride_s4_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "line": "event_eraas_dogBride_s4_02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "question": "event_eraas_dogBride_s4_q",
+                        "options": [
+                            {
+                                "option": "event_eraas_dogBride_s4_q_op1",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s4_go" ] }
+                                ]
+                            },
+                            {
+                                "option": "event_eraas_dogBride_s4_q_op2",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s4_leave" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s4_go",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_01_1"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "dog", "selfTags": [ "sex" ] },
+                        "line": "event_eraas_dogBride_s4_go_02"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "cunnilingus", "spread_pussy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "cunnilingus", "spread_pussy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_03_1"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "cunnilingus", "spread_pussy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_03_2",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "dog", "None", "SeeThrough", "true" ] },
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "dog", "party", "com_sex_oral_V", "1" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "cunnilingus", "spread_pussy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_03_3",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "dog", "party", "com_sex_oral_V", "5" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "spread_pussy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_04"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "spread_pussy" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_04_1"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "doggy", "fear", "sad" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_05"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "doggy", "fear", "sad" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_05_1",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "dog", "party", "com_sex_P_doggy", "1" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "doggy", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_05_2",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "dog", "party", "com_sex_P_doggy", "2" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "doggy", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_05_3",
+                        "Results": [
+                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "dog", "party", "com_sex_P_doggy", "3" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "doggy", "cum", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_05_4",
+                        "Results": [
+                            { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": [ "dog", "party", "com_sex_P_doggy", "100", "dog" ] },
+                            { "Type": "FlushMessageExpAll" }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "s4_climax_outcome",
+                        "options": [
+                            {
+                                "option": "_party_climaxed",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": [ "party_climaxed", "true" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s4_party_climaxed" ] }
+                                ]
+                            },
+                            {
+                                "option": "_party_not_climaxed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s4_after" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s4_party_climaxed",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "doggy", "cum", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_05_4_climaxed",
+                        "nextEntryLabel": "s4_after"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s4_after",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "cum", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_go_05_5"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s4_end",
+                        "Results": [
+                            { "Type": "SetSelfKojoVariable", "arguments": [ "party", "false", "dogBrideStage", "4" ] },
+                            { "Type": "Redress", "arguments": [ "party" ] },
+                            { "Type": "Redress", "arguments": [ "dog" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s4_after_summary",
+                        "line": "event_eraas_dogBride_summary_s4_after",
+                        "Results": [
+                            { "Type": "SetMemoryNameOverride", "arguments": [ "party", "event_eraas_dogBride_summary_s4_after_memory", "event_eraas_dogBride_memory_s4_description", "false" ] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s4_leave",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "serious" ] },
+                        "line": "event_eraas_dogBride_s4_leave",
+                        "Results": [
+                            { "Type": "Redress", "arguments": [ "party" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s4_leave_summary",
+                        "line": "event_eraas_dogBride_summary_s4_leave",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s5",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad" ] },
+                        "line": "event_eraas_dogBride_s5_01"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s5_02",
+                        "Results": [
+                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
+                            { "Type": "Undress", "arguments": [ "dog", "None", "SeeThrough", "true" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "doggy", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s5_03"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "options": [
+                            {
+                                "option": "_try_doggy",
+                                "Results": [
+                                    { "Type": "ExecuteSexAPOnSingleCharaTillClimax", "arguments": [ "dog", "party", "com_sex_P_doggy", "100", "dog" ] },
+                                    { "Type": "FlushMessageExpAll" },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s5_climax_outcome" ] }
+                                ]
+                            },
+                            {
+                                "option": "_skip_doggy",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s5_climax_outcome" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "s5_climax_outcome",
+                        "options": [
+                            {
+                                "option": "_party_climaxed",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": [ "party_climaxed", "true" ] },
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s5_party_climaxed" ] }
+                                ]
+                            },
+                            {
+                                "option": "_party_not_climaxed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": [ "", "s5_party_not_climaxed" ] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s5_party_climaxed",
+                        "line": "",
+                        "nextEntryLabel": "s5_after"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s5_party_not_climaxed",
+                        "line": "",
+                        "nextEntryLabel": "s5_after"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s5_after",
+                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sex", "receiver", "sad", "relaxed" ], "targetTags": [ "dog" ] },
+                        "line": "event_eraas_dogBride_s5_end",
+                        "Results": [
+                            { "Type": "SetSelfKojoVariable", "arguments": [ "party", "false", "dogBrideStage", "4" ] },
+                            { "Type": "Redress", "arguments": [ "party" ] },
+                            { "Type": "Redress", "arguments": [ "dog" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "s5_after_summary",
+                        "line": "event_eraas_dogBride_summary_s5_after",
+                        "Results": [
+                            { "Type": "SetMemoryNameOverride", "arguments": [ "party", "event_eraas_dogBride_summary_s5_after_memory", "event_eraas_dogBride_memory_s5_description", "false" ] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    },
+
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error",
+                        "line": "event_eraas_dogBride_err",
+                        "Results": [
+                            { "Type": "Redress", "arguments": [ "party" ] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": [ "dog" ] }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "error_summary",
+                        "line": "event_eraas_dogBride_summary_error",
+                        "Results": [
+                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] }
+                        ],
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "membertype_eraas_survey_dog": "调查地野狗",
+                "event_eraas_dogBride_header": "[%%exp_event_eraas_dogBride%%] $currentTime$, $location$ $actorNames$",
+                "exp_event_eraas_dogBride": "调查事件：狗的新娘",
+                "exp_event_eraas_dogBride_ongoing": "$names$在都市境界线的废墟地带进行调查。",
+                "exp_event_eraas_dogBride_result": "$names$在废弃仓库附近，发现了一只慢吞吞走动的野狗。",
+
+                "event_eraas_dogBride_summary_s1_feed": "$party.name$喂饱了仓库里的野狗，随后继续调查。",
+                "event_eraas_dogBride_summary_s1_ignore": "$party.name$没有理会野狗，继续调查。",
+                "event_eraas_dogBride_summary_s2_visit": "$party.name$再次喂食野狗，陪它玩耍后继续调查。",
+                "event_eraas_dogBride_summary_s2_ignore": "$party.name$没有前往野狗的仓库，继续调查。",
+                "event_eraas_dogBride_summary_s3_play": "$party.name$继续陪野狗玩耍，随后离开仓库。",
+                "event_eraas_dogBride_summary_s3_leave": "$party.name$察觉野狗的异常后离开了仓库。",
+                "event_eraas_dogBride_summary_s4_after": "【$party.name$被野狗侵犯了……。】",
+                "event_eraas_dogBride_summary_s4_after_memory":"被野狗侵犯了……",
+                "event_eraas_dogBride_summary_s4_leave": "$party.name$听从不祥的预感，避开了野狗的仓库。",
+                "event_eraas_dogBride_summary_s5_after": "【$party.name$被野狗侵犯了……】",
+                "event_eraas_dogBride_summary_s5_after_memory":"被野狗侵犯了……",
+                "event_eraas_dogBride_summary_error": "野狗遭遇事件因所需目标不可用而中止。",
+
+                "event_eraas_dogBride_memory_s4_description": "调查途中，$party.name$再次前往熟悉的野狗住处，却遭到侵犯。事后整理好衣物，带着震惊离开仓库。",
+                "event_eraas_dogBride_memory_s5_description": "调查途中，$party.name$再次回到野狗住处，重演了先前的遭遇。事后整理好衣物，离开了仓库。",
+
+                "event_eraas_dogBride_s1_01": "在较为安全的都市境界线探索时，在$party.name$的视野一端有物体在动。原本想着说不定有外敌出现在这种地方，但很快就发现不是危险的存在而松了口气。\n似乎是从都市内流浪出来的野狗慢吞吞地走着。仔细一看戴着项圈，也许是原本被人饲养的狗。野狗往这边看了一眼后，像是没什么兴趣那样继续东张西望。似乎是肚子饿了正在找东西吃，但看来今天没有什么收获，只好放弃并在当成住处的建筑物中消失……\n探索用的携带粮食中应该有可以给狗吃的东西……",
+                "event_eraas_dogBride_s1_q": "要怎么做？",
+                "event_eraas_dogBride_s1_q_op1": "分出食物",
+                "event_eraas_dogBride_s1_q_op2": "不加理会继续探索",
+                "event_eraas_dogBride_s1_feed_01": "$party.name$觉得野狗很可怜，决定拿一些食物喂食。保持警戒走进野狗刚才进入的建筑物。\n看来这个建筑物原本是用来做为仓库，虽然没有电力，但从采光用的窗户照进来的光线还是能确保视野。由于是较为安全的地区，物资已经被之前的调查队回收，几乎是空荡荡的。\n入口附近的角落，有个用压克力板分隔出的房间，刚才那只野狗就坐在那里。原本是为了给警卫进驻的房间，放着沙发和毛毯，是很适合用来取暖的地方。",
+                "event_eraas_dogBride_s1_feed_02": "$party.name$走进房间时，野狗就对侵入者发出警告的低吼声并做出警戒姿势。但是，当$party.name$拿出食物时，似乎是想起原本被饲养的事，马上解除警戒开始吃东西。\n大概是饿很久了，很快就吃完，那食欲旺盛的样子让$party.name$觉得很舒畅，又给了几份食物。野狗吃完后，大概就像对原饲主做的那样，在$party.name$的周围转了几圈后，发出可爱的汪汪声表示感谢。\n然后，似乎是吃饱了就想睡，就到沙发上开始睡觉了。$party.name$摸了睡着的野狗几次后，就回去探索了。要是心血来潮，说不定可以再带点食物过来……。",
+                "event_eraas_dogBride_s1_ignore": "即使比较安全，但这毕竟是在危险区域调查。没有绕远路的空闲，$party.name$重新打起精神前往其他地点调查。",
+
+                "event_eraas_dogBride_s2_01": "继续探索的$party.name$，看到一栋很眼熟的建筑物。看来像是之前喂过的野狗居住的仓库。\n本来是打算调查未探索地区，看来是不知不觉中回到了这里。是会又在周围觅食吗。也说不定是在仓库里睡觉。要不要去看看状况……。",
+                "event_eraas_dogBride_s2_q": "要怎么做？",
+                "event_eraas_dogBride_s2_q_op1": "到仓库看看",
+                "event_eraas_dogBride_s2_q_op2": "不加理会继续探索",
+                "event_eraas_dogBride_s2_visit_01": "想到上次的状况，想着说不定又在饿肚子的$party.name$前往仓库。再次拜访警卫室，之前戴着项圈的那只野狗正在沙发上睡觉。$party.name$接近野狗反复抚摸身体。\n之前没有仔细看，野狗的毛还算是挺整齐的。是和饲主分开的时日还不长吧。虽然不清楚品种但看起来像是柴犬。但是体格比普通的柴犬大，要是扑上来可能会很难推开。",
+                "event_eraas_dogBride_s2_visit_02": "这时候野狗醒来了。看来还记得$party.name$的事，在$party.name$周围绕圈然后用「等待」的姿势仰视着$party.name$。\n$party.name$和上次一样，给了几个饲料后就老实地开动了。吃饱后的野狗又开始在$party.name$周围打转。看来是想要人陪牠玩。\n$party.name$也为了转变心情陪着玩了几十分钟后，再度回去探索。在不能松懈的调查途中，难得有机会让心情变得轻松，$party.name$觉得之后还会再来。",
+                "event_eraas_dogBride_s2_visit_03": "但是回头想想，在玩耍过程中的视线令人感到在意……。在玩累休息的时候，虽然看起来只是坐在那边，却目不转睛地盯着这里看……\n去在意这种多余的事也没什么用，$party.name$在脑海中切换到考虑接下来的探索。",
+                "event_eraas_dogBride_s2_ignore": "也不知道会不会在仓库，又是已经探索完成的地方。下次看见时再注意就好，这次就算了。$party.name$重新打起精神去别的地方调查。",
+
+                "event_eraas_dogBride_s3_01": "在都市境界线探索的$party.name$，再次来访做为野狗住处的仓库。\n对和野狗的交流感到愉快的$party.name$给了野狗饲料，那之后一起玩耍。野狗也很中意$party.name$，开心地玩耍。",
+                "event_eraas_dogBride_s3_02": "玩累后在休息时，也再次察觉到以前感受到的视线。朝野狗看去时，牠正朝着$party.name$看。疲累的$party.name$漫不经心地做出放松姿势。\n野狗透过$party.name$敞开的衣服缝隙紧盯着胸口和腹部。似乎特别仔细观察下腹部周围一带……。",
+                "event_eraas_dogBride_s3_03": "在被$party.name$注意到的时候，野狗很快就靠了过来。哈哈地喘着粗气，虽然原先以为是因为玩累了……\n仔细观察身体，暗红色的生殖器变大挺立起来，并颤抖脉动着……比人类更大且勃起的阴茎一下子就引起$party.name$注意，马上重新恢复警戒的态势。",
+                "event_eraas_dogBride_s3_q": "野狗没有特别的举动，只是一直看向这边……\n要怎么做？",
+                "event_eraas_dogBride_s3_q_op1": "毫不在意地陪野狗玩",
+                "event_eraas_dogBride_s3_q_op2": "马上离开现场",
+                "event_eraas_dogBride_s3_play": "判断是进入发情期，但$party.name$仍毫不在意地继续陪野狗玩。野狗也一如往常，像是很怀念似的和$party.name$开心地玩球。\n但是有一点不同，在玩耍期间仍持续勃起的阴茎弹跳摆动着，$party.name$就算不想去在意，也无论如何都会不断进入视线。\n之后，在陪野狗玩到满足为止的$party.name$离开仓库。和野狗玩果然很开心。实际感受到这点的$party.name$考虑这下次要玩什么，并回去探索。",
+                "event_eraas_dogBride_s3_leave": "看到那种黑亮光泽而感到嫌恶，$party.name$立刻离开仓库。｢过段时间发情期就会结束了吧。｣这么想着的$party.name$姑且先前往下个调查区域。野狗则从仓库看着那个背影……。",
+
+                "event_eraas_dogBride_s4_01": "今天也在都市境界线探索的$party.name$想去找野狗玩。\n但是一接近仓库，不知道为什么……｢还是放弃比较好｣这种感觉涌上来。自从$party.name$在上次见到那暗红色的粗大“东西”，回去后仍不时会浮现在脑海中。",
+                "event_eraas_dogBride_s4_02": "就这样去玩也可以吗？但只是和狗玩应该不会有问题吧……。",
+                "event_eraas_dogBride_s4_q": "要怎么做？",
+                "event_eraas_dogBride_s4_q_op1": "陪野狗玩（最后的选择）",
+                "event_eraas_dogBride_s4_q_op2": "就此打住。离开现场。",
+                "event_eraas_dogBride_s4_go_01": "｢有什么好在意的。不是都已经玩过好几次了吗。｣忽视了从自己沸腾的身体直接发出的警告，$party.name$前往仓库。",
+                "event_eraas_dogBride_s4_go_01_1":"野狗很快就察觉到$party.name$走进仓库，于是出来迎接。像平时那样前往警卫室，首先给野狗喂食，野狗却不知为何不理会饲料，而是要$party.name$陪牠玩。｢今天主要是玩耍吗｣这么想着的$party.name$开始陪狗玩。",
+                "event_eraas_dogBride_s4_go_02": "但有一点不得不在意，那就是从今天出来迎接时就已经变大勃起的暗红色阴茎……。",
+                "event_eraas_dogBride_s4_go_03": "和野狗嬉戏数十分钟以上后，疲累的$party.name$决定在沙发上休息。\n$party.name$和平时一样用轻松的姿势休息时，之前一直保持距离看着这边的野狗不知为何今天却靠了过来。｢还没玩够吗｣$party.name$要野狗在那边等着，野狗却没听从，来到$party.name$身边并开始舔着$party.name$的脸。",
+                "event_eraas_dogBride_s4_go_03_1":"虽然$party.name$对那比平时更加过剩的亲昵接触吓了一跳，但因为疲累所以就放着野狗不管。不只是脸，脖颈和胸口、腹部到大腿都被野狗舔了个遍。",
+                "event_eraas_dogBride_s4_go_03_2":"在$party.name$想说差不多该阻止后，野狗将脸深入$party.name$股间，并朝股间舔了起来。",
+
+                "event_eraas_dogBride_s4_go_03_3":"由于突然产生的快感让$party.name$有了反应，暂且让野狗为所欲为。",
+
+                "event_eraas_dogBride_s4_go_04": "在持续了５分钟以上的爱抚后，$party.name$的身体做出反应而失去力气，野狗的唾液和$party.name$的爱液在股间混合变得黏稠湿滑。\n注意到这样下去会很不妙，$party.name$恢复理智想逃离这地方，但却使不上力气而用伏地爬行的体位移动。\n",
+
+"event_eraas_dogBride_s4_go_04_1":"但是，这个体位对野狗来说很熟悉。刻印在本能上的这个体位，正是母狗邀请公狗，准备好接受的姿势……\n毫无疑问是为了“交尾”、为了“繁殖”的姿势。",
+
+                "event_eraas_dogBride_s4_go_05": "兴奋起来的野狗从$party.name$背后压上去。由于用爬行的方式逃走，下半身的衣物被扯下，保护$party.name$股间的只有１件内裤……。\n理解到野狗要做什么的$party.name$想着至少要避免被插入，于是将诱人的臀部左右摆动躲避粗大的暗红色阴茎。\n反覆几次攻防后，虽然想避免插入的$party.name$，动作中被阴茎勾住内裤，反而像是在诱导插入那样让阴茎对准身体中心。",
+
+"event_eraas_dogBride_s4_go_05_1":"粗大的暗红色阴茎缓缓侵入。被本来不应迎接的异种阴茎侵入后，$party.name$的身体反应全力表示拒绝，感觉到强烈的恶寒和呼气。即使这样也无法阻止侵略，那粗大的阴茎终究还是被$party.name$身体完全吞没……。",
+
+"event_eraas_dogBride_s4_go_05_2":"和人类之间的性交不同，$party.name$完全被毫不考虑对方的野生繁殖行为给玩弄。但是，那股激烈贯穿身体的感觉，令身体错认了对象，开始产生快感……",
+"event_eraas_dogBride_s4_go_05_3":"在$party.name$被野狗侵犯的震惊以及涌上的快感玩弄期间，野狗动作逐渐变得激烈。查觉到野狗准备要射精时，｢只有这个不行｣$party.name$如此恳求着，但野狗听不懂……。",
+"event_eraas_dogBride_s4_go_05_4":"数秒后，野狗那直达子宫口最深处的阴茎，开始将人类无法想像的大量精子送入$party.name$子宫……。",
+
+"event_eraas_dogBride_s4_go_05_4_climaxed":"伴随着被狗射精的震惊，被大量精液强制给予快感令$party.name$身体动弹不得。向后一瞥，是如同夸耀胜利般地不断射精的野狗。",
+
+"event_eraas_dogBride_s4_go_05_5":"数分钟后，满足的野狗将阴茎拔出，就这样在沙发上睡着。\n仍无法行动自如的$party.name$，即使如此也不能就这么待着而开始整理仪容。看着熟睡的野狗，不知为何无法涌起敌意，带着脑中受到的震惊离开仓库……。",
+
+                "event_eraas_dogBride_s4_end": "路上，在$party.name$脑中，为什么对野狗起不了敌意，自己为什么会对那种行为有感觉，自己还会来这里吗，被卷入这类疑问的漩涡中……。",
+
+
+
+                "event_eraas_dogBride_s4_leave": "果然有某种讨厌的预感。这时候相信直觉来行动是在危险的调查中生存的秘诀。想到这里，$party.name$选择和仓库不同的方向前进。",
+
+                "event_eraas_dogBride_s5_01": "自从被野狗侵犯的那天起，$party.name$的身体，特别是子宫里有股不会熄灭的灯火。只感到嫌恶的体验……。\n但是，当注意到时，$party.name$的脚自然而然地朝那间仓库前进……。",
+                "event_eraas_dogBride_s5_02": "到了仓库，就像国王那样躺在沙发上，一直等待着$party.name$。\n$party.name$自然地接近野狗，开始爱抚已经是半勃起状态的暗红色阴茎。堕落成母狗的$party.name$，确认阴茎完全勃起后，露出下半身并高高翘起屁股，诱惑着野狗。",
+                "event_eraas_dogBride_s5_03": "完全被子宫所支配，$party.name$股间的爱液发出咕啾咕啾的声音，即使是野狗粗大的阴茎也能轻易吞下去吧。\n理解到$party.name$已经做好准备，野狗顺从本能扑向$party.name$并｢咻｣地一口气贯穿$party.name$。\n压倒性的快感蜂拥而至，一人一兽化为只懂得生殖的野兽，埋首于将两头野兽基因混合的行为……。腰部无数次地碰撞，虽然野狗虽然贪图着快乐，终究迎来界限而全身一震，开始对$party.name$输送大量精液……。",
+                "event_eraas_dogBride_s5_end": "伴随着被狗射精的震惊，被大量精液强制给予快感令$party.name$身体动弹不得。向后一瞥，是如同夸耀胜利般地不断射精的野狗。\n数分钟后，满足的野狗将阴茎拔出，就这样在沙发上睡着。\n仍无法行动自如的$party.name$，即使如此也不能就这么待着而开始整理仪容。看着熟睡的野狗，不知为何无法涌起敌意，带着脑中受到的震惊离开仓库……。\n路上，在$party.name$脑中，为什么对野狗起不了敌意，自己为什么会对那种行为有感觉，自己还会来这里吗，被卷入这类疑问的漩涡中……。",
+
+                "event_eraas_dogBride_err": "【错误】场景所需的目标不存在（party 缺失，或无法从调查据点借用野狗）。"
+            }
+        }
+    }
+}

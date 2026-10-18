@@ -280,6 +280,32 @@ public class Manageable_Party : I_IsJobGiver
 
 
     [JsonProperty] protected int _recurringCooldown = 0;
+    // Keyed by ExpEvents.eventID; survives expedition changes and save/load.
+    [JsonProperty] protected Dictionary<string, int> explorationEventCooldowns = new Dictionary<string, int>();
+
+    public bool HasExplorationEventCooldown(string eventID)
+    {
+        return !string.IsNullOrEmpty(eventID)
+            && explorationEventCooldowns.TryGetValue(eventID, out var hours) && hours > 0;
+    }
+
+    public void StartExplorationEventCooldown(string eventID, int hours)
+    {
+        if (string.IsNullOrEmpty(eventID) || hours <= 0) return;
+        explorationEventCooldowns[eventID] = hours;
+    }
+
+    /// <summary>Called by the owning faction once per world-hour boundary, including while the party is inactive.</summary>
+    public void OnHourUpdate()
+    {
+        foreach (var eventID in explorationEventCooldowns.Keys.ToList())
+        {
+            int hours = explorationEventCooldowns[eventID] - 1;
+            if (hours <= 0) explorationEventCooldowns.Remove(eventID);
+            else explorationEventCooldowns[eventID] = hours;
+        }
+    }
+
     [JsonProperty] protected bool _recurringTicked = false;
     public void ExpeditionEnd()
     {

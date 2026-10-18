@@ -95,6 +95,9 @@ public class ExpEvents
     public string eventString_Ongoing = "";
     public int DurationMinutes = 0;
 
+    /// <summary>Party-wide repeat cooldown, in world-hour ticks after a result is generated. 0 = no cooldown.</summary>
+    public int cooldownHours = 0;
+
     // modify event weight if 
 
     // instead of checking individual character, check the whole party

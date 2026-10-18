@@ -1020,6 +1020,7 @@ public class Manageable : I_Disposable, I_IsJobGiver
     
     protected void OnHourUpdate(TimeSpan t)
     {
+        foreach (var party in SubFactions) party.OnHourUpdate();
         FallbackWorkerManager.UpdateStaffing(this);
         StartHourlyEvents();
 
@@ -2652,12 +2653,20 @@ public class Manageable : I_Disposable, I_IsJobGiver
         {
             if (!exp.isUnique) continue;
             if (!exp.canExplore) continue;
+#if UNITY_EDITOR
+            // always valid
+#else
+
+
             if (matchKeyword)
             {
                 if (exp.keywords.Count < 1) continue;
+
                 if (!Utility.ListContainsStrict(this.explorationKeywords, exp.keywords)) continue;
+
             }
             else continue;
+#endif
             var expinstance = scr_System_CampaignManager.current.CreateExpedition(exp.ExpeditionID);
             if (expinstance != null) list.Add(expinstance);
         }

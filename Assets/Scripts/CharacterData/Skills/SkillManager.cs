@@ -76,7 +76,7 @@ public class SkillManager
         return this.experienceLogs[expID] + (debug_experienceLogs.ContainsKey(expID) ? debug_experienceLogs[expID] : 0);
     }
 
-    public void CheckExperienceGain(List<string> ownerTags, List<string> comTags, float amount, bool isDoer, ExperienceLog m = null)
+    public void CheckExperienceGain(List<string> ownerTags, List<string> comTags, float amount, bool isDoer, ExperienceLog m = null, ISet<string> forbiddenExperienceIDs = null)
     {
         ownerTags = Utility.Distinct(ownerTags);
         comTags = Utility.Distinct(comTags);
@@ -122,13 +122,14 @@ public class SkillManager
                 continue;
             }
 
-            AddExperience(i, amount, m);
+            AddExperience(i, amount, m, forbiddenExperienceIDs);
         }
         Owner.Relationships.CheckPrideChange(ownerTags, comTags, amount, m);
     }
 
-    protected void AddExperience(ExperienceClass i, float amount, ExperienceLog m = null)
+    protected void AddExperience(ExperienceClass i, float amount, ExperienceLog m = null, ISet<string> forbiddenExperienceIDs = null)
     {
+        if (forbiddenExperienceIDs != null && !forbiddenExperienceIDs.Add(i.ExperienceID)) return;
         //Debug.Log("AddExperience " + i.ExperienceID);
         if (!experienceLogs_currentRound.ContainsKey(i.ExperienceID)) experienceLogs_currentRound.Add(i.ExperienceID, 0);
         if (i.CountTotal)
@@ -149,7 +150,7 @@ public class SkillManager
         }
     }
 
-    public void CheckExperienceGain(List<string> ownerTags, float amount, ExperienceLog m = null)
+    public void CheckExperienceGain(List<string> ownerTags, float amount, ExperienceLog m = null, ISet<string> forbiddenExperienceIDs = null)
     {   // for anything that ignores 
         Debug.Log($"CheckExperienceGain {Owner.FirstName}, {String.Join(" ", ownerTags)}");
         foreach (var i in scr_System_Serializer.current.index_Experiences.List)
@@ -159,7 +160,7 @@ public class SkillManager
 
             if (!Utility.ListContainsStrict(ownerTags, i.RequiredOwnerTags)) continue;
 
-            AddExperience(i, amount, m);
+            AddExperience(i, amount, m, forbiddenExperienceIDs);
         }
         Owner.Relationships.CheckPrideChange(ownerTags, null, amount, m);
     }

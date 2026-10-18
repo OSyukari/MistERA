@@ -864,6 +864,12 @@ public class Character_Body
 
     public bool CheckClimax(MessageCollect message)
     {
+        return CheckClimax(message, out _);
+    }
+
+    public bool CheckClimax(MessageCollect message, out bool climaxOccurred)
+    {
+        climaxOccurred = false;
         ExperienceLog exp = new ExperienceLog();
         string climaxKeywords = "";
         string cumKeywords = "";
@@ -943,7 +949,9 @@ public class Character_Body
 
                         if (container != null)
                         {   // if valid bodyinternal container exist : Fucker != null && Fucker.canContain
-                            if (!container.Ingest(cum, exp, true))
+                            // Share only across this ingest and its follow-up grant, never across actors or loads.
+                            var forbiddenIngestExperienceIDs = new HashSet<string>();
+                            if (!container.Ingest(cum, exp, true, forbiddenExperienceIDs: forbiddenIngestExperienceIDs))
                             {
                                 scr_System_CampaignManager.current.Map.FindRoomByChara(ownerRefID).AddItem(cum);
                                 // cum on ground, write message
@@ -969,7 +977,7 @@ public class Character_Body
                             UtilityEX.GetActorTag(ref containerTags, container.Owner);
                             if (container.Sensitivity != "") containerTags.Add(container.Sensitivity);
 
-                            UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cumAmount, false, containerTags, new List<string>(), exp);
+                            UtilityEX.CheckExperienceGainNoStimulate(container.Owner, cumAmount, false, containerTags, new List<string>(), exp, forbiddenIngestExperienceIDs);
 
                             // ADDLOG CUM FOR SHOOTER
                             var desc2 = LocalizeDictionary.QueryThenParse( "ui_entry_memory_description_cumOnto");
@@ -1178,25 +1186,32 @@ public class Character_Body
                 {
                     foreach (var m in wbmessages)
                     {
-                        Owner.InteractionJob.m.AddMessage_After(new DescriptionCollector(m.Replace("$name$", Owner.FirstName)));//.AddMessage(Owner.RefID, );
+                        message.AddMessage_After(new DescriptionCollector(m.Replace("$name$", Owner.FirstName)), Owner.CurrentRoom);
                     }
                 }
 
                 //scr_UpdateHandler.current.NotifyClimax(Owner.RefID, s, exp);
                 //exp.AddClimaxMSG(Owner.RefID, s);
-                exp.Finalize(out var desc);
                 //message.exp.MergeWith(exp, false);
                 List<int> actors = new List<int>();
                 if (Owner.CurrentJob != null) actors.AddRange(Owner.CurrentJob.actorRefID);
                 actors.AddRange(Owner.InteractionJob.actorRefID);
                 Utility.DistinctInPlace(actors);
 
-                if (desc != null)
+                if (message.accumulateExperience)
                 {
-                    desc.relevantActors = actors;
-                    //desc.message_excludeRelated = desc.message;
-                    message.messages_exp.Add(desc);
-                    if (Owner.CurrentRoom != null) Owner.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
+                    message.exp.Accumulate(exp);
+                    message.exp.AddRelevantChara(actors);
+                }
+                else
+                {
+                    exp.Finalize(out var desc);
+                    if (desc != null)
+                    {
+                        desc.relevantActors = actors;
+                        message.messages_exp.Add(desc);
+                        if (Owner.CurrentRoom != null) Owner.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
+                    }
                 }
 
                 if (!logged)
@@ -1215,6 +1230,7 @@ public class Character_Body
                     //message.messages_kojo_after.Add(Owner.Relationships.Personality.GetKOJOMessage("OnClimax_single", this.Owner, tags, listEP));
                 }
 
+                climaxOccurred = true;
                 return true;
 
             }

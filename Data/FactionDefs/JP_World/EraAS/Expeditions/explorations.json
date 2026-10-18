@@ -1,0 +1,120 @@
+{
+    "_doc": "EraAS 作品共用的远征入口（外界调查）。事件分两类 feature 装载：基础 feature（requireKeywords: [\"eraas\"]）承载默认的都市境界线探索事件与氛围描述文；dogBride 专属 feature（requireKeywords: [\"eraas\",\"dogBride\"]）承载狗的新娘线及其关联事件与描述文，远征 FeatureKeywords 含 \"dogBride\" 时才会装入（ExpeditionInstance.Features 为 ListContainsStrict 全含匹配）。后续 EraAS 事件按内容归入对应 feature 的 featureEventIDs。阵营/据点结构（EraAS_SurveyBase，调查队后方据点，供 RequestFallbackWorker 借用临时角色）另行实装，此处只引用。EventRate 0.1 与 ErAV MIA 远征一致：平均每数小时一次探索事件。",
+
+    "ExpeditionEntry": {
+        "list": [
+            {
+                "ExpeditionID": "expedition_eraas",
+                "HasStartHour": false,
+                "ForceStartHour": 0,
+                "DurationHour": 8,
+                "isUnique":true, "canExplore":true,
+                "EventRate": 0.1,
+                "EventIDs": [],
+                "FeatureKeywords": [
+                    "eraas",
+                    "dogBride"
+                ],
+                "DescriptionText": [ "expedition_eraas_desc_1" ],
+                "Events": []
+            }
+        ]
+    },
+
+    "ExplorationFeatures": {
+        "list": [
+            {
+                "_comment": "基础 feature：都市境界线的默认探索事件与氛围描述文。",
+                "requireKeywords": [
+                    "eraas"
+                ],
+                "featureEventIDs": [],
+                "DescriptionText": [
+                    "expedition_eraas_exploring_1",
+                    "expedition_eraas_exploring_2",
+                    "expedition_eraas_exploring_3",
+                    "expedition_eraas_exploring_4",
+                    "expedition_eraas_exploring_5",
+                    "expedition_eraas_exploring_6",
+                    "expedition_eraas_exploring_7",
+                    "expedition_eraas_exploring_8",
+                    "expedition_eraas_exploring_9",
+                    "expedition_eraas_exploring_10"
+                ]
+            },
+            {
+                "_comment": "狗的新娘线专属 feature：该线全部探索事件与狗相关的氛围描述文。含 \"eraas\" 之外还需 \"dogBride\" 才会装入。",
+                "requireKeywords": [
+                    "eraas",
+                    "dogBride"
+                ],
+                "featureEventIDs": [
+                    "exp_event_eraas_dogBride"
+                ],
+                "DescriptionText": [
+                    "expedition_eraas_dogBride_exploring_1",
+                    "expedition_eraas_dogBride_exploring_2",
+                    "expedition_eraas_dogBride_exploring_3",
+                    "expedition_eraas_dogBride_exploring_4",
+                    "expedition_eraas_dogBride_exploring_5",
+                    "expedition_eraas_dogBride_exploring_6",
+                    "expedition_eraas_dogBride_exploring_7",
+                    "expedition_eraas_dogBride_exploring_8"
+                ]
+            }
+        ]
+    },
+
+    "Dictionary": {
+        "Entries": {
+            "zh-cn": {
+                "expedition_eraas": "外界调查·都市境界线",
+                "expedition_eraas_desc_1": "$names$受后方部队的请求，前往都市境界线的废墟地带进行调查。",
+
+                "expedition_eraas_exploring_1": "$names$沿着崩塌的公路前行，曾经的商店街只剩下被藤蔓覆盖的货架。",
+                "expedition_eraas_exploring_2": "$names$穿过一栋半塌的办公楼，玻璃碎屑在脚下嘎吱作响，四周安静得只剩下风声。",
+                "expedition_eraas_exploring_3": "$names$检查了一处废弃的检查哨，值勤表还钉在墙上，日期停在了很多年前。",
+                "expedition_eraas_exploring_4": "$names$在锈蚀的铁丝网边搜索，都市境界线的风带来远处废墟特有的尘土味。",
+                "expedition_eraas_exploring_5": "$names$翻找着一辆抛锚的运输车残骸，车内早已被之前的调查队清空。",
+                "expedition_eraas_exploring_6": "$names$沿着水渍斑斑的地下道前行，手电的光柱扫过剥落的瓷砖，没有发现任何异常。",
+                "expedition_eraas_exploring_7": "$names$在一栋仓库外停下记录坐标，卷帘门半开，里面堆着无法辨认的废弃物。",
+                "expedition_eraas_exploring_8": "$names$警惕地穿过开阔的十字路口，视野良好，暂时没有外敌的踪迹。",
+                "expedition_eraas_exploring_9": "$names$踩着瓦砾爬上一处屋顶制高点，确认周边安全后继续推进调查区域。",
+                "expedition_eraas_exploring_10": "$names$在自动售货机的残骸前停了停，机器早已断电，玻璃上蒙着厚厚的灰。",
+
+                "expedition_eraas_dogBride_exploring_1": "$names$路过那栋仓库时放慢了脚步，卷帘门的缝隙里安静得没有一点声音。",
+                "expedition_eraas_dogBride_exploring_2": "远处传来几声犬吠，$names$下意识地朝声音的方向望了一眼。",
+                "expedition_eraas_dogBride_exploring_3": "$names$发现仓库附近的杂物堆里有啃咬过的饲料包装，是狗留下的痕迹。",
+                "expedition_eraas_dogBride_exploring_4": "$names$沿着熟悉的路线前进，不知不觉又走到了警卫室附近。",
+                "expedition_eraas_dogBride_exploring_5": "$names$总觉得今天经过仓库时，心里有种说不清的在意。",
+                "expedition_eraas_dogBride_exploring_6": "沙发上残留着几根兽毛，$names$掸了掸警卫室的沙发，在调查记录里补了一笔。",
+                "expedition_eraas_dogBride_exploring_7": "$names$在仓库外驻足片刻，回想起那只戴项圈的野狗，最后还是摇摇头继续前进。",
+                "expedition_eraas_dogBride_exploring_8": "$names$检查完周边的废墟，日头偏西，风里带着些许铁锈和尘土的气味。"
+            },
+            "en-us": {
+                "expedition_eraas": "Field Survey - City Borderline",
+                "expedition_eraas_desc_1": "$names$ has been asked by the support troops to survey the ruins along the city borderline.",
+
+                "expedition_eraas_exploring_1": "$names$ walks along a collapsed highway; of the old shopping street only vine-covered shelves remain.",
+                "expedition_eraas_exploring_2": "$names$ passes through a half-collapsed office building, glass shards crunching underfoot, the surroundings so quiet only the wind can be heard.",
+                "expedition_eraas_exploring_3": "$names$ checks an abandoned checkpoint; the duty roster is still pinned to the wall, its dates frozen years ago.",
+                "expedition_eraas_exploring_4": "$names$ searches along a rusted wire fence; the borderline wind carries the peculiar dust smell of the far-off ruins.",
+                "expedition_eraas_exploring_5": "$names$ rummages through the wreck of a stalled transport truck, already emptied by earlier survey teams.",
+                "expedition_eraas_exploring_6": "$names$ advances along a water-stained underpass, the flashlight beam sweeping over peeling tiles, finding nothing unusual.",
+                "expedition_eraas_exploring_7": "$names$ stops outside a warehouse to log coordinates; the shutter hangs half open, piled with unrecognizable waste inside.",
+                "expedition_eraas_exploring_8": "$names$ crosses an open intersection warily; visibility is good and there is no trace of enemies for now.",
+                "expedition_eraas_exploring_9": "$names$ clambers over rubble onto a rooftop vantage point, confirms the area is safe, and pushes the survey zone forward.",
+                "expedition_eraas_exploring_10": "$names$ pauses before the wreck of a vending machine; long dead, its glass coated in thick dust.",
+
+                "expedition_eraas_dogBride_exploring_1": "$names$ slows down passing that warehouse; not a sound comes through the gap in the shutter.",
+                "expedition_eraas_dogBride_exploring_2": "A few barks sound in the distance, and $names$ instinctively glances toward the noise.",
+                "expedition_eraas_dogBride_exploring_3": "$names$ finds gnawed ration packaging in the debris pile near the warehouse - traces left by a dog.",
+                "expedition_eraas_dogBride_exploring_4": "$names$ follows the familiar route and somehow ends up near the guard room again.",
+                "expedition_eraas_dogBride_exploring_5": "$names$ can't help feeling there is something about the warehouse she can't quite place today.",
+                "expedition_eraas_dogBride_exploring_6": "A few tufts of animal fur remain on the sofa; $names$ brushes off the guard room sofa and adds a note to the survey log.",
+                "expedition_eraas_dogBride_exploring_7": "$names$ pauses outside the warehouse, recalls the collared stray, then shakes her head and moves on.",
+                "expedition_eraas_dogBride_exploring_8": "$names$ finishes checking the surrounding ruins as the sun slants west, the wind carrying a faint smell of rust and dust."
+            }
+        }
+    }
+}

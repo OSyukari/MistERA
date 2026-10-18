@@ -31,7 +31,7 @@
                 "tooltip":"An {0}'s head.",
                 "AvailableSlots":["Hair", "Face", "Eyes"],
                 "childID":["body_beast_pig_base"],
-                "internalID":["mouth_beast_base"],
+                "internalID":["mouth_beast_pig_base"],
                 "tags":["head"],
                 "sortOrder":0,
                 "NaturalDefense":
@@ -58,6 +58,25 @@
         ],
         "BodyInternal_Base":
         [
+            {
+                "id": "mouth_beast_pig_base",
+                "deflateEventID": "deflate_mouth",
+                "displayName":"%%bodyPart_internal_mouth%%",
+                "tooltip":"An {0}'s mouth.",
+                "AvailableSlots":["Mouth"],
+                "equipLayers":["Skin"],
+                "tags":["mouth","internal"],
+                "tag_directionIn":"ext",
+                "tag_directionOut":"stomach",
+                "sensitivityClassString":"M",
+                "maxSensitivityStatString":"stats_derived_maxSensitivity_M",
+                "sortOrder":0,
+                "sizeRatio":0.1,
+                "depthRatio":0.05,
+                "volumeRatio":0.2,
+                "firstExperienceDesc":"%%bodyPart_internal_virgin_silent%%",
+                "virginityLossTags":["internal", "external"]
+            },
             {
                 "id": "penis_beast_pig_base",
                 "displayName":"%%bodyPart_internal_penis%%",

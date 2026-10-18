@@ -126,7 +126,7 @@ public static class ExpeditionUtility
     /// </summary>
     public static int GetEventWeight(ExpEvents ev, List<Character_Trainable> actors, Manageable_Party p, int hour, bool offTime)
     {
-        if (ev == null) return -1;
+        if (ev == null || (p != null && p.HasExplorationEventCooldown(ev.eventID))) return -1;
         int weight = ev.baseWeight;
         if (!ev.teamRequirement.Validate(actors, p, out var tooltip, out var hardlock, offTime)) return -1;
         foreach (var wmod in ev.weightMods)
@@ -143,13 +143,19 @@ public static class ExpeditionUtility
     /// Rolls and applies a result of ev for actors (log line, costs, results_characters, memory, faction results, then the
     /// result's event: runImmediate / banked / immediateRunExpeditionEvent). Shared by the exploration action
     /// (ActionPackage_Expedition.Execution, which then applies progress and cooldown) and off-time events (offTime: no
-    /// progress, no cooldown, and a banked entry keeps its targets while they stay off the job). Null = no result.
+    /// progress, no general encounter cooldown, and a banked entry keeps its targets while they stay off the job).
+    /// Both paths respect and start the party's per-event cooldown. Null = no result.
     /// </summary>
     public static ExpResults ApplyResult(Job_Expedition jobb, ExpEvents ev, List<Character_Trainable> actors, string memEntryName, bool offTime)
     {
         if (jobb == null || ev == null || actors == null || actors.Count < 1) return null;
+        // Another actor may have completed this encounter since this action was selected.
+        if (jobb.FactionOwner_Party.HasExplorationEventCooldown(ev.eventID)) return null;
         var result = RandResult(ev, jobb.FactionOwner_Party, actors, offTime);
         if (result == null) return null;
+
+        // Set before applying effects or starting a scene, including scenes banked for later resolution.
+        jobb.FactionOwner_Party.StartExplorationEventCooldown(ev.eventID, ev.cooldownHours);
 
         var actorRefs = new List<int>();
         foreach (var i in actors) actorRefs.Add(i.RefID);
@@ -205,9 +211,11 @@ public static class ExpeditionUtility
             }
 
             List<int> party = new List<int>(), frontline = new List<int>(), backline = new List<int>();
+            var actorNames = new List<string>();
             foreach (var i in actors)
             {
                 party.Add(i.RefID);
+                actorNames.Add(i.CallName);
                 switch (jobb.FactionOwner_Party.GetTeamComp(i.RefID))
                 {
                     case Manageable_Party.PartyComposition.frontline:
@@ -223,6 +231,8 @@ public static class ExpeditionUtility
             package.Targets.Add("party", party);
             package.Targets.Add("teamA_frontline", frontline);
             package.Targets.Add("teamA_backline", backline);
+            package.AppendStrings[EventInstance.HeaderLocationKey] = new List<string>() { jobb.Expedition.Base.DisplayName };
+            package.AppendStrings[EventInstance.HeaderActorNamesKey] = actorNames;
             package.overrideTargetScope = result.overrideTargetScope;
             package.targetScopes = result.TargetValidators;
             package.overrideTargetGen = result.overrideTargetGeneration;

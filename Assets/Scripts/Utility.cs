@@ -262,10 +262,10 @@ public static class UtilityEX
 
 
 
-    public static void CheckExperienceGainNoStimulate(Character_Trainable a, float amount, bool isDoer, List<string> selfTags, List<string> comTags, ExperienceLog m = null)
+    public static void CheckExperienceGainNoStimulate(Character_Trainable a, float amount, bool isDoer, List<string> selfTags, List<string> comTags, ExperienceLog m = null, ISet<string> forbiddenExperienceIDs = null)
     {
         if (a == null) return;
-        a.Skills.CheckExperienceGain(selfTags, comTags, amount, isDoer, m);
+        a.Skills.CheckExperienceGain(selfTags, comTags, amount, isDoer, m, forbiddenExperienceIDs);
     }
 
 

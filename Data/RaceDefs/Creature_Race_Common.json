@@ -46,7 +46,7 @@
                 "tooltip":"An {0}'s mouth.",
                 "AvailableSlots":["Mouth"],
                 "equipLayers":["Skin"],
-                "tags":["mouth","internal","penetration"],
+                "tags":["mouth","internal"],
                 "tag_directionIn":"ext",
                 "tag_directionOut":"stomach",
                 "sensitivityClassString":"M",

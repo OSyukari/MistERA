@@ -103,14 +103,13 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         // stays frozen.
         if (scr_UpdateHandler.current != null && scr_UpdateHandler.current.IsAgentRunning) return;
 
-        var immediate = animate && todo.Count < 1;
+        if (animate) automaticMessages.Add(msg);
         todo.Add(msg);
+        var immediate = automaticMessages.Contains(todo[0]) && !WaitingForInput;
         UpdateAnimatingStatus();
         //Debug.Log($"onLogsAdd firstline? {firstLine} or animate? {animate} canAnimate? {canAnimate}");
         if (scr_System_CentralControl.current.LogPrefs.DLog_LogsMenu) Debug.Log($"OnLogsadd, waiting? {waiting} displayPortrait? {msg.DisplaPortrait} waitForPortrait? {msg.WaitForPortrait} portraitRef {(msg.Display.PortraitRef == null ? "null" : msg.Display.PortraitRef.Owner.CallName)} multiple? {msg.Display.MultipleChara.Count} animate? {animate} count? {todo.Count} firstline? {firstLine} immediate? {immediate}");
-        if (firstLine) SingleUpdate(false);
-        else if (waiting && msg.WaitForPortrait) return;
-        else if (immediate) SingleUpdate(false);
+        if (firstLine || immediate) SingleUpdate(false);
     }
 
     // ---- single-shot path: driven directly by scr_UpdateHandler's existing LLM events, same as the
@@ -1057,7 +1056,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
 
     private void SingleUpdate(bool skipAll)
     {
-        if (canAnimate && !animationLock)
+        if (canAnimate && !animationLock && !WaitingForInput)
         {
             if (skipAll || Input.GetMouseButton(1)) AnimateAll();
             else AnimateOneStep();
@@ -1071,6 +1070,10 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
     }
 
     List<MessageLog> todo;
+    readonly HashSet<MessageLog> automaticMessages = new HashSet<MessageLog>();
+    MessageLog activePrompt;
+    bool WaitingForInput => activePrompt is Message_Question question && !question.answered
+        || activePrompt is Message_InputField input && !input.answered;
 
     LogsDisplayMode currentMode = LogsDisplayMode.ERA;
 
@@ -1207,6 +1210,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         // destroy all
         //trackedLogs.Clear();
         todo.Clear();
+        automaticMessages.Clear();
+        activePrompt = null;
         scr_System_CampaignManager.current.Logs.Clear();
     }
 
@@ -1268,7 +1273,14 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
                 msgbox_ERA.SetParent(rect_ERA, false);
                 msgbox_AVG.SetParent(rect_AVG, false);
 
-                waiting = (current as Message_Text).Draw(skipImage, msgbox_ERA.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine, msgbox_AVG.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine) || waiting;
+                var text = (Message_Text)current;
+                var previousAnimateAll = text.animateAllOverride;
+                if (automaticMessages.Contains(current)) text.animateAllOverride = true;
+                try
+                {
+                    waiting = text.Draw(skipImage, msgbox_ERA.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine, msgbox_AVG.GetComponent<scr_MessageLogBox>(), this.prefab_LogLine) || waiting;
+                }
+                finally { text.animateAllOverride = previousAnimateAll; }
                 drawnNew = true;
             }
             else if (current is Message_Question)
@@ -1280,6 +1292,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
                 var questionAVG = Instantiate(prefab_question);
                 questionAVG.transform.SetParent(rect_AVG, false);
                 (current as Message_Question).Draw(skipImage, this.m_Canvas, questionERA, questionAVG, this);
+                activePrompt = current;
                 drawnNew = true;
             }
             else if (current is Message_InputField)
@@ -1291,6 +1304,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
                 var inputAVG = Instantiate(prefab_inputField);
                 inputAVG.transform.SetParent(rect_AVG, false);
                 (current as Message_InputField).Draw(skipImage, this.m_Canvas, inputERA, inputAVG, this);
+                activePrompt = current;
                 drawnNew = true;
             }
             else if (current is Message_Question_Record)
@@ -1305,6 +1319,8 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         else if (current.canAnimate())
         {
             current.Animate();
+            if (automaticMessages.Contains(current) && current is Message_Text)
+                while (current.canAnimate()) current.Animate();
         }
 
         if (current.displayed && drawnNew && firstLine && !current.autoAnimate) firstLine = false;
@@ -1312,10 +1328,11 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         if (current.displayed && !current.canAnimate())
         {
             todo.RemoveAt(0);
+            automaticMessages.Remove(current);
 
             // auto advance check
             var next = todo.Count > 0 ? todo[0] : null;
-            if (next != null && next.autoAnimate)
+            if (next != null && !WaitingForInput && (next.autoAnimate || automaticMessages.Contains(next)))
             {
                 AnimateOneStep();
             }
@@ -1338,7 +1355,7 @@ public class scr_panel_logs : scr_Menu, IPointerClickHandler, IScrollHandler
         last = null;
         skipping = true;
         int prevCount = -1;
-        while (canAnimate)
+        while (canAnimate && !WaitingForInput)
         {
             if (todo.Count == prevCount) break; // stuck (e.g. LLM query still animating), avoid infinite loop
             prevCount = todo.Count;

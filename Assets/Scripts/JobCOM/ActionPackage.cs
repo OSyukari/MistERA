@@ -2424,8 +2424,11 @@ public abstract class ActionPackage
             this.temporaryM = null;
         }
 
-        LogMessage_Climax(m);
-        LogMessage_After(m);
+        if (!m.accumulateExperience)
+        {
+            LogMessage_Climax(m);
+            LogMessage_After(m);
+        }
     }
 
     protected void UseItem(bool success, Character_Trainable c, Item_Instance item, MessageCollect m = null)

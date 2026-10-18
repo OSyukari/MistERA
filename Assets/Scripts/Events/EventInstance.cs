@@ -153,6 +153,37 @@ public class EventInstance
     /// or store string key that ca
     /// </summary>
     public Dictionary<string, List<string>> AppendStrings = new Dictionary<string, List<string>>();
+    public const string HeaderLocationKey = "eventHeaderLocation";
+    public const string HeaderActorNamesKey = "eventHeaderActorNames";
+    bool headerQueued = false;
+
+    public void QueueEventHeader(string rawLine = null)
+    {
+        if (headerQueued || currentEvent == null || string.IsNullOrWhiteSpace(currentEvent.showEventHeader)) return;
+        if (rawLine != null && string.IsNullOrEmpty(UtilityEX.ParseEventEntry(this, rawLine))) return;
+
+        var header = LocalizeDictionary.QueryThenParse(currentEvent.showEventHeader)
+            .Replace("$eventID$", LocalizeDictionary.QueryThenParse(currentEvent.ID))
+            .Replace("$currentTime$", scr_System_Time.current.getCurrentTime().ToString("hh:mm tt", System.Globalization.CultureInfo.InvariantCulture));
+        foreach (var field in new[]
+        {
+            (HeaderLocationKey, "$location$", "ui_eventHeader_location"),
+            (HeaderActorNamesKey, "$actorNames$", "ui_eventHeader_actorNames")
+        })
+        {
+            var text = AppendStrings.TryGetValue(field.Item1, out var values) && values != null
+                ? string.Join(", ", values.Where(value => !string.IsNullOrWhiteSpace(value))) : "";
+            if (text.Length > 0)
+                text = LocalizeDictionary.QueryThenParse(field.Item3).Replace("$value$", text);
+            header = header.Replace(field.Item2, text);
+        }
+        if (string.IsNullOrWhiteSpace(header)) return;
+
+        // Capture before Results can change context or clear this instance; mark at queue time to avoid repeats.
+        headerQueued = true;
+        updateHandler.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, header, false));
+    }
+
     public MessageCollect message = new MessageCollect(true);
     public string CurrentInput = "";
     /// <summary>

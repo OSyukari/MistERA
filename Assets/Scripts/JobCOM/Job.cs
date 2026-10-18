@@ -954,7 +954,12 @@ public class Job : IDisposable, I_Disposable
                 if (ap.capturedLog == null) ap.capturedLog = new MessageCollect();
                 ap.capturedLog.Merge(ap.mcol, false);
             }
-            m.Merge(ap.mcol, false);
+            if (m.accumulateExperience)
+            {
+                m.exp.Accumulate(ap.mcol.exp);
+                m.messages_exp.AddRange(ap.mcol.messages_exp);
+            }
+            else m.Merge(ap.mcol, false);
             //Debug.Log("AP packageStateChanged, merged");
             ap.CaptureRecording();
         }
@@ -963,6 +968,8 @@ public class Job : IDisposable, I_Disposable
             //Debug.Log("AP state not changed, dropped");
         }
 
+        // Event loops finalize their accumulated EXP at meaningful message boundaries, not on every AP.
+        if (m.accumulateExperience) return;
         if (!ap.isPaused && rightAlign && displayOngoing && ap.Duration > 0) ap.LogMessage_Ongoing(m, scr_System_CampaignManager.current.Player);
 
 

@@ -76,6 +76,26 @@ public class ExperienceLog
     protected SortedDictionary<int, List<string>> MessageLog = new SortedDictionary<int, List<string>>();
     protected SortedDictionary<int, string> climaxMessage = new SortedDictionary<int, string>();
 
+    [JsonIgnore]
+    public bool HasNonNumericMessages => MessageLog.Values.Any(messages => messages.Any(message => !string.IsNullOrEmpty(message)))
+        || climaxMessage.Values.Any(message => !string.IsNullOrEmpty(message));
+
+    /// <summary>Copies raw deltas and messages without finalizing or sharing mutable collections.</summary>
+    public void Accumulate(ExperienceLog source)
+    {
+        if (source == this) return;
+        leftAlignOverride |= source.leftAlignOverride;
+        AddRelevantChara(source.relevantActorRefs);
+        foreach (var actor in source.RightAlign) RightAlign[actor.Key] = source.leftAlignOverride ? false : actor.Value;
+        foreach (var actor in source.ExpLog)
+            foreach (var entry in actor.Value) AddExperience(actor.Key, entry.Key, entry.Value);
+        foreach (var actor in source.StatLog)
+            foreach (var entry in actor.Value) AddStats(actor.Key, entry.Key, entry.Value);
+        foreach (var actor in source.MessageLog)
+            foreach (var message in actor.Value) AddMessage(actor.Key, message);
+        foreach (var actor in source.climaxMessage) AppendClimaxMSG(actor.Key, actor.Value);
+    }
+
     public ExperienceLog()
     {
 

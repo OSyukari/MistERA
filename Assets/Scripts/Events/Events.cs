@@ -238,6 +238,10 @@ public class Event_CharaCondition
 public class Event : I_SerializationCallbackReceiver
 {
     public string ID = "";
+    /// <summary>
+    /// Optional localized header template key. Supports $eventID$, $currentTime$, $location$, and $actorNames$.
+    /// </summary>
+    public string showEventHeader = "";
     public bool allowDuplicate = true;
     public int cooldownTime = 0;
     public bool cooldownRestrictSelf = false;
@@ -656,7 +660,7 @@ public class Event : I_SerializationCallbackReceiver
             /// </summary>
             FlushAppendStrings,
             /// <summary>
-            /// Flush collected content in event.message.exp into screen
+            /// Flush raw event.message.exp and already-finalized event.message.messages_exp into screen, then clear both.
             /// <br/>Will save climax and message into event.self's room, if available<br/>
             /// [optional bool wipeCLIMAXMSG]
             /// </summary>
@@ -716,8 +720,12 @@ public class Event : I_SerializationCallbackReceiver
             /// </summary>
             StartSexJobInParty,
             /// <summary>
-            /// [doers, receivers, targetCOMID]<br/>
-            /// Will fail if receivers count is above 1
+            /// [string doersKey, string receiverKey, string COMID, optional int executeCount (default 1)] <br/>
+            /// Executes a fresh valid AP executeCount times on exactly one receiver; stops on invalid AP.
+            /// Checks all participants for climax after each execution, but does not stop on climax or stagnation.
+            /// Accumulates numeric EXP until a nonnumeric message triggers a flush; remaining output flushes on exit.
+            /// Stores each side's key_climaxed as "true" or "false", as with ExecuteSexAPOnSingleCharaTillClimax.
+            /// True only when all requested executions completed. executeCount must be positive.
             /// </summary>
             ExecuteAPOnSingleChara,
             /// <summary>
@@ -1182,7 +1190,37 @@ public class Event : I_SerializationCallbackReceiver
             /// count at kidnap, Character_Trainable.MIASnapshot) into AppendStrings[appendKey] for $appendKey$ in text.
             /// False if she has no snapshot.
             /// </summary>
-            StoreMIAExperienceGain
+            StoreMIAExperienceGain,
+
+            /// <summary>
+            /// [string storeKey, string targetRefKey, string memberTypeID, string templateID,
+            /// optional int count (default 1), optional bool allowReuse (default true)] <br/>
+            /// Like RequestFallbackWorker, but chooses a random non-null character from targetRefKey ("self" works)
+            /// and requests from the world resolved from that character's current room. False if no local world resolves.
+            /// Workers stay in their pool until MoveToTargetRoom; release them with ReleaseFallbackWorker on every exit.
+            /// </summary>
+            RequestFallbackWorkerFromLocalWorld,
+
+            /// <summary>
+            /// [string doersKey, string receiverKey, string COMID, int maxIteration, string requireClimaxTargetKey] <br/>
+            /// Repeats a sex AP on one receiver until every required participant newly climaxes, the limit is reached,
+            /// validation fails, or no unfinished target gains stimulation across five iterations. Required targets may
+            /// contain multiple participants. Checks climax on all participants after each execution. Numeric EXP is
+            /// accumulated; a nonnumeric message flushes it with the messages, and remaining output flushes on exit.
+            /// Stores AppendStrings[doersKey + "_climaxed"] and [receiverKey + "_climaxed"] as "true" when any actor
+            /// in that scope newly climaxed during this call, otherwise "false". Reset even when validation fails.
+            /// True only when every required participant climaxed during this call.
+            /// </summary>
+            ExecuteSexAPOnSingleCharaTillClimax,
+
+            /// <summary>
+            /// [string targetRefKey, string titleID, string descriptionTextID, bool showRoomName] <br/>
+            /// Updates each target's stored memory whose EndTime exactly matches the current game time, including
+            /// merged entries with older storage keys. Localizes/parses the title and supplemental description,
+            /// preserves existing interactions, and refreshes display caches. Does not create missing memories.
+            /// True if at least one matching entry was updated.
+            /// </summary>
+            SetMemoryNameOverride
 
         }
     }

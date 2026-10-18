@@ -25,6 +25,11 @@
                 "$type":"PortraitManager+CharaPortrait_Image, Assembly-CSharp",
 
                 "Variants":[
+                    
+                    {  "tagsMatch":["sex"], 
+                        "PortraitVariantData":["dog/assets_nsfw/1_erect.webp"],
+                        "IconVariantData":"dog/assets_nsfw/1_erect.webp"
+                    },
                     {
                         "charaReq":{
                             "requireConscious":false,

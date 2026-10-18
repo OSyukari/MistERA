@@ -597,8 +597,8 @@ public class Job_Expedition : Job
 
             var ev = ExpeditionUtility.RandOffTimeEvent(c, exp, FactionOwner_Party);
             if (ev == null) continue;
-            ExpeditionUtility.ApplyResult(this, ev, new List<Character_Trainable>() { c }, this.DisplayName, true);
-            offTimeCooldown[c.RefID] = Math.Max(0, ev.DurationMinutes);
+            if (ExpeditionUtility.ApplyResult(this, ev, new List<Character_Trainable>() { c }, this.DisplayName, true) != null)
+                offTimeCooldown[c.RefID] = Math.Max(0, ev.DurationMinutes);
         }
     }
 

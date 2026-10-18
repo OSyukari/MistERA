@@ -9,6 +9,8 @@
                 "ui_settings_requireRestart":"Some setting changes require game restart to take effect"
             },
             "zh-cn": {
+"ui_eventHeader_location": "地点：$value$",
+"ui_eventHeader_actorNames": "在场人员：$value$",
 "ui_settings_requireRestart":"部分设定变更需要重启游戏才能生效",
 
 "ui_entry_traits": "<link=\"charaDetail_panel_traits_tooltip\">特质</link>",
@@ -1106,6 +1108,8 @@
 
             },
             "en-us": {
+"ui_eventHeader_location": "Location: $value$",
+"ui_eventHeader_actorNames": "Present: $value$",
 
       "none": "None",
 "ui_entry_traits": "Traits",

@@ -20,6 +20,16 @@ public class Requirement_Manageable_Party
 
     public string debug_teamNameMatch = "";
 
+    /// <summary>
+    /// When true, the whole owning party is validated instead of only the actors doing this action:
+    /// min/maxTeamCount and the charaReq gates are checked against every member of p's roster
+    /// (Manageable_Party.ManagedChara, each still filtered by the usual member-status gates and
+    /// charaReq_Select), so e.g. maxTeamCount 1 fails while ANY other qualifying member is in the
+    /// party - the event stops triggering entirely for a multi-member team instead of once per member.
+    /// Costs (ApplyCost) are still only applied to the actual actors.
+    /// </summary>
+    public bool strictPartyCount = false;
+
     public CharaReq charaReq_All = null;
     public CharaReq charaReq_Any = null;
     public CharaReq charaReq_Select = null;
@@ -59,6 +69,11 @@ public class Requirement_Manageable_Party
         }
 
         var pp = p is Manageable_Party ? p as Manageable_Party : null;
+
+        // strictPartyCount: swap the validated list for the whole party roster (see field doc). Every
+        // per-member gate below then applies to the roster, so non-qualifying members (wrong sex, prisoner,
+        // visitor, ...) simply don't count toward min/maxTeamCount instead of hiding outside the list.
+        if (strictPartyCount && pp != null && pp.ManagedChara.Count > 0) list = pp.ManagedChara;
 
         bool valid_All = true;
         bool valid_Any = charaReq_Any == null ? true : false;

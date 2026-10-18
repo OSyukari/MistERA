@@ -41,6 +41,8 @@ public class MessageCollect
 
     public bool sendRecording = true;
     public bool displayOverride = false;
+    /// <summary>Event-loop mode: retain raw EXP and skip routine AP presentation until an explicit flush.</summary>
+    [JsonIgnore] public bool accumulateExperience = false;
     
     public void PurgeEntry(I_Records rec)
     {
@@ -346,16 +348,16 @@ public class MessageCollect
     /// This does not go through recording check
     /// </summary>
     /// <param name="visible"></param>
-    public void FlushCollectLogsCallback(Character_Trainable visible = null)
+    public void FlushCollectLogsCallback(Character_Trainable visible = null, UISpec displaySnapshot = null)
     {
         var cnManager = scr_System_CampaignManager.current;
         if (visible == null) visible = scr_System_CampaignManager.current.Player;
 
         foreach (var check in messages_checks) 
-            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(check, visible, true));
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(check, visible, true, null, displaySnapshot));
 
         foreach(var m in messages_before) 
-            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true));
+            scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(m, visible, true, null, displaySnapshot));
 
         foreach (var kvp in messages_kojo)  scr_UpdateHandler.current.AddEventCallback(() => cnManager.AddLog(kvp, false, kvp.RightAlign(visible), kvp.tooltip));
 
@@ -363,7 +365,7 @@ public class MessageCollect
         if (exps != null) messages_exp.Add(exps);
 
         foreach(var kvp in messages_exp)
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp, visible, true));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(kvp, visible, true, null, displaySnapshot));
         
 
         foreach (var kvp in messages_kojo_after)
@@ -371,7 +373,7 @@ public class MessageCollect
         
         //var s = String.Join("\n", messages_after);
         foreach (var m in messages_after) 
-            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true));
+            scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(m, visible, true, null, displaySnapshot));
         // scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(-1, s, true));
         Clear();
     }
@@ -558,6 +560,13 @@ public class MessageCollect
 
     public void Merge(MessageCollect m, bool clear = true)
     {
+        if (accumulateExperience)
+        {
+            exp.Accumulate(m.exp);
+            messages_exp.AddRange(m.messages_exp);
+            if (clear) m.Clear();
+            return;
+        }
         if (m.messages_checks.Count > 0)
         {
             this.messages_checks.AddRange(m.messages_checks);/*

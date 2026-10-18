@@ -1005,6 +1005,7 @@ public static class EventUtility
 
             // by the time callback is executed, campaign status might have changed and cause inconsistency between execution and display
             // but on execute they are consistent
+            owner.QueueEventHeader(block.line);
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, block, rA, false, snap));
             //scr_System_CampaignManager.current.AddLog_Line(owner, content, false);
         }
@@ -1032,6 +1033,7 @@ public static class EventUtility
         {
             var snap = owner.CurrentUISpec.Overwrite(block.UISpec);
             block.UISpec.PersistInto(owner.CurrentUISpec);
+            owner.QueueEventHeader();
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Question(owner, block, false, snap));
             //scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
             owner.Notify(EventStatus.waiting);
@@ -1075,6 +1077,7 @@ public static class EventUtility
         {
             var snap = owner.CurrentUISpec.Overwrite(block.UISpec);
             block.UISpec.PersistInto(owner.CurrentUISpec);
+            owner.QueueEventHeader();
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_InputField(owner, block, false, snap));
             //scr_System_CampaignManager.current.AddLog_Question(owner, block, false);
             owner.Notify(EventStatus.waiting);
@@ -1243,6 +1246,7 @@ public static class EventUtility
             // sticky fields (e.g. bgImagePath) this option overrides become the new running default for entries after it
             ops.UISpec.PersistInto(owner.CurrentUISpec);
 
+            owner.QueueEventHeader(ops.line);
             scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog_Line(owner, ops, rA, false, snap));
         }
 
@@ -1266,6 +1270,102 @@ public static class EventUtility
         //scr_UpdateHandler.current.NotifyEventStatus(EventStatus.running, false, true);
     }
 
+
+    static bool ExecuteAPOnSingleChara(EventInstance owner, Event.EventEntry.Executor exec)
+    {
+        bool untilClimax = exec.Type == Event.EventEntry.ExecutionType.ExecuteSexAPOnSingleCharaTillClimax;
+        if (exec.arguments.Count < (untilClimax ? 5 : 3)) return false;
+        owner.AppendStrings[exec.arguments[0] + "_climaxed"] = new List<string>() { "false" };
+        owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { "false" };
+        int maxIteration = 1;
+        if (exec.arguments.Count >= 4 && (!int.TryParse(exec.arguments[3], out maxIteration) || maxIteration < 1)) return false;
+        if (!TryResolveExecTargets(owner, exec.arguments[0], out var doers) || doers == null
+            || !TryResolveExecTargets(owner, exec.arguments[1], out var receivers) || receivers == null) return false;
+        var required = new List<Character_Trainable>();
+        if (untilClimax && (!TryResolveExecTargets(owner, exec.arguments[4], out required)
+            || required == null || required.Count == 0 || required.Any(c => c == null))) return false;
+
+        doers = doers.Where(c => c != null).Distinct().ToList();
+        if (doers.Count == 0 || receivers.Count != 1 || receivers[0] == null) return false;
+        var receiver = receivers[0];
+        var participants = doers.Concat(receivers).Distinct().ToList();
+        required = required.Distinct().ToList();
+        if (required.Any(c => !participants.Contains(c))) return false;
+
+        var job = receiver.InteractionJob;
+        var com = scr_System_Serializer.current.MasterList.COMs.GetByID(exec.arguments[2]);
+        if (job == null || job.ParentRoom == null || com == null) return false;
+
+        var campaign = scr_System_CampaignManager.current;
+        var collector = new MessageCollect(true) { accumulateExperience = true };
+        var participantRefs = participants.Select(c => c.RefID).ToList();
+        var doerRefs = doers.Select(c => c.RefID).ToList();
+        var previousJobs = doers.ToDictionary(c => c, c => c.CurrentJob);
+        var completed = new HashSet<Character_Trainable>();
+        var checkpoints = required.ToDictionary(c => c, c => c.Stats.SexStimulation?.Severity ?? 0f);
+
+        void Flush()
+        {
+            collector.FinalizeEXP(participantRefs, out var desc);
+            if (desc != null)
+            {
+                collector.messages_exp.Add(desc);
+                job.ParentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
+            }
+            collector.FlushCollectLogsCallback(owner.Self, owner.CurrentUISpec.Clone());
+        }
+
+        try
+        {
+            foreach (var doer in doers)
+            {
+                doer.ChangeCurrentJob(job);
+                campaign.MoveCharacterTo(doer, job.ParentRoom);
+            }
+
+            for (int iteration = 0; iteration < maxIteration; iteration++)
+            {
+                var ap = com.MakePackage(job, doerRefs, new List<int>() { receiver.RefID }, -1);
+                if (untilClimax && !(ap is ActionPackage_Sex)) return false;
+                if (!ap.Validate())
+                {
+                    ap = com.MakePackage(job, doerRefs, new List<int>(), -1);
+                    if ((untilClimax && !(ap is ActionPackage_Sex)) || !ap.Validate()) return false;
+                }
+
+                foreach (var actor in participants) actor.Body.ClearLastInteractedRefs();
+                job.InjectPackageAndExecute(ap, collector);
+                if (collector.exp.HasNonNumericMessages || collector.MessageCount > 0) Flush();
+
+                // Check everyone before deciding to stop, so simultaneous climax effects are not skipped.
+                foreach (var actor in participants)
+                {
+                    actor.Body.CheckClimax(collector, out var climaxOccurred);
+                    if (climaxOccurred) completed.Add(actor);
+                    if (collector.exp.HasNonNumericMessages || collector.MessageCount > 0) Flush();
+                }
+
+                if (untilClimax && required.All(completed.Contains)) return true;
+                if (untilClimax && (iteration + 1) % 5 == 0)
+                {
+                    var pending = required.Where(c => !completed.Contains(c)).ToList();
+                    if (!pending.Any(c => (c.Stats.SexStimulation?.Severity ?? 0f) > checkpoints[c])) return false;
+                    foreach (var actor in pending) checkpoints[actor] = actor.Stats.SexStimulation?.Severity ?? 0f;
+                }
+            }
+            return !untilClimax;
+        }
+        finally
+        {
+            owner.AppendStrings[exec.arguments[0] + "_climaxed"] = new List<string>() { doers.Any(completed.Contains) ? "true" : "false" };
+            owner.AppendStrings[exec.arguments[1] + "_climaxed"] = new List<string>() { receivers.Any(completed.Contains) ? "true" : "false" };
+            try { Flush(); }
+            finally
+            {
+                foreach (var doer in doers) doer.ChangeCurrentJob(previousJobs[doer]);
+            }
+        }
+    }
 
     public static bool Execute(EventInstance owner, Event.EventEntry.Executor exec)
     {
@@ -1589,6 +1689,28 @@ public static class EventUtility
                 {
                     return false;
                 }
+            case Event.EventEntry.ExecutionType.SetMemoryNameOverride:
+            {
+                if (exec.arguments.Count < 4 || !bool.TryParse(exec.arguments[3], out var showRoomName)) return false;
+                if (!TryResolveExecTargets(owner, exec.arguments[0], out var memoryTargets) || memoryTargets == null) return false;
+
+                var calledAt = scr_System_Time.current.getCurrentTime();
+                var title = UtilityEX.ParseEventEntry(owner, LocalizeDictionary.QueryThenParse(exec.arguments[1]));
+                var description = UtilityEX.ParseEventEntry(owner, LocalizeDictionary.QueryThenParse(exec.arguments[2]));
+                bool updated = false;
+                foreach (var actor in memoryTargets.Where(c => c != null).Distinct())
+                {
+                    // Merging can advance EndTime without changing the stored dictionary key.
+                    var entry = actor.Memory?.Entries.LastOrDefault(e => e.EndTime.Ticks == calledAt.Ticks);
+                    if (entry == null) continue;
+                    entry.entryDescription = title;
+                    if (!string.IsNullOrWhiteSpace(description)) entry.memInstanceDescription.Add(description);
+                    entry.disableRoomName = !showRoomName;
+                    entry.RefreshCache();
+                    updated = true;
+                }
+                return updated;
+            }
             case Event.EventEntry.ExecutionType.LogMemoryEntry:
                 if (exec.arguments.Count >= 2)
                 {
@@ -2443,6 +2565,8 @@ public static class EventUtility
                         if (owner.Self != null) owner.Self.CurrentRoom.NotifyDescCollect(desc);
 
                         var snap = owner.CurrentUISpec.Clone();
+                        if (owner.isVisible && desc.VisibleTo(owner.Self))
+                            owner.QueueEventHeader(desc.DirectlyRelated(owner.Self) ? desc.message : desc.message_excludeRelated);
                         // animate:false -- see RevealFaction's identical comment: an immediate draw here can race a sibling
                         // Result's own Line text in the same synchronous batch and clear it before it's ever rendered.
                         scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, false, null, snap));
@@ -2527,88 +2651,27 @@ public static class EventUtility
 
                     var relActors = owner.RelevantActors;
                     owner.message.FinalizeEXP(relActors, out var desc, !wipeClimax, !wipeClimax, true);
-                    //owner.message.exp.Finalize(out var desc, out var rec);
-                    
+
                     if (desc != null)
                     {
                         if (owner.Self != null && owner.Self.CurrentRoom != null) owner.Self.CurrentRoom.NotifyDescCollect(desc, MessageCollect_Type.exp);
-                        var snap = owner.CurrentUISpec.Clone();
-                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(desc, owner.Self, true, null, snap));
+                        owner.message.messages_exp.Add(desc);
                     }
+
+                    // AP collection can finalize EXP before this executor runs, just as in FlushMessageAll.
+                    var snap = owner.CurrentUISpec.Clone();
+                    foreach (var message in owner.message.messages_exp)
+                        scr_UpdateHandler.current.AddEventCallback(() => scr_System_CampaignManager.current.AddLog(message, owner.Self, true, null, snap));
+                    owner.message.messages_exp.Clear();
                 }
                 return true;
             case Event.EventEntry.ExecutionType.FlushMessageAll:
 
                 owner.message.FlushCollectLogsCallback();
                 return true;
+            case Event.EventEntry.ExecutionType.ExecuteSexAPOnSingleCharaTillClimax:
             case Event.EventEntry.ExecutionType.ExecuteAPOnSingleChara:
-                // randomly match doer and receiver, register doer to receiver characom, and add targetcomID
-
-                owner.message.Clear();
-                if (exec.arguments.Count >= 3)
-                {
-                    if (owner.Targets.TryGetValue(exec.arguments[1], out var victims) && victims.Count == 1 && owner.Targets.TryGetValue(exec.arguments[0], out var doers))
-                    {
-                        if (doers.Count < 1)
-                        {
-                            Debug.LogError($"ExecuteAPOnSingleChara validation failed, doer count < 1");
-                            return false;
-                        }
-                        var interactionJob = victims[0].InteractionJob;
-                        if (interactionJob == null)
-                        {
-                            Debug.LogError($"ExecuteAPOnSingleChara validation failed, victim no interactionjob");
-                            return false;
-                        }
-
-                        var targetCOM = scr_System_Serializer.current.MasterList.COMs.GetByID(exec.arguments[2]);
-                        if (targetCOM == null)
-                        {
-                            Debug.LogError($"ExecuteAPOnSingleChara validation failed, cannot find targetCOM {exec.arguments[2]}");
-                            return false;
-                        }
-
-                        var doerRefs = new List<int>();
-                        foreach (var i in doers) doerRefs.Add(i.RefID);
-
-                        foreach (var c in doers)
-                        {
-                            c.ChangeCurrentJob(interactionJob);
-                            scr_System_CampaignManager.current.MoveCharacterTo(c, interactionJob.ParentRoom);
-                        }
-
-                        var package = targetCOM.MakePackage(interactionJob, doerRefs, new List<int>() { victims[0].RefID }, -1);
-                        var package2 = targetCOM.MakePackage(interactionJob, doerRefs, new List<int>() { }, -1);
-                        ActionPackage target = null;
-                        if (package.Validate()) target = package;
-                        else if (package2.Validate()) target = package2;
-                        else
-                        {
-                            Debug.LogError($"{String.Join("|", doerRefs)} command {targetCOM.DisplayName(0)} on {interactionJob.Owner.CallName} package is invalid\npackage1: {String.Join(" | ", package.tooltip)}\npackage2: {String.Join(" | ", package2.tooltip)}");
-                            return false;
-                        }
-
-                        if (target != null)
-                        {
-
-                            interactionJob.InjectPackageAndExecute(target, owner.message);
-                            Debug.Log($"{String.Join("|", doerRefs)} executed command {targetCOM.DisplayName(0)} on {interactionJob.Owner.CallName}, variant {package.targetCOM.DisplayName(package.COMVariantID)}");
-
-                            interactionJob.Owner.Body.CheckClimax(owner.message);
-
-                            foreach (var c in doers)
-                            {
-                                c.ChangeCurrentJob(null);
-                            }
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        Debug.LogError($"ExecuteAPOnSingleChara validation failed, hasvictim? [{owner.Targets.ContainsKey(exec.arguments[1])}] count [{owner.Targets[exec.arguments[1]].Count}] hasdoer? [{owner.Targets.ContainsKey(exec.arguments[0])}]");
-                    }
-                }
-                return false;
+                return ExecuteAPOnSingleChara(owner, exec);
             case Event.EventEntry.ExecutionType.ExecuteAPOnFurniture:
                 // randomly match doer and receiver, register doer to receiver characom, and add targetcomID
 
@@ -3272,18 +3335,38 @@ public static class EventUtility
                 if (exec.arguments.Count < 2) return false;
                 return owner.AppendStrings.TryGetValue(exec.arguments[0], out var appendValues) && appendValues != null && appendValues.Contains(exec.arguments[1]);
             case Event.EventEntry.ExecutionType.RequestFallbackWorker:
+            case Event.EventEntry.ExecutionType.RequestFallbackWorkerFromLocalWorld:
             {
                 if (exec.arguments.Count < 4 || string.IsNullOrEmpty(exec.arguments[0])) return false;
-                var requestFrom = scr_System_CampaignManager.current.FindFactionByID(exec.arguments[1]);
-                if (requestFrom == null)
-                {
-                    Debug.LogError($"RequestFallbackWorker: faction [{exec.arguments[1]}] not found");
-                    return false;
-                }
                 int requestCount = 1;
                 if (exec.arguments.Count >= 5 && !int.TryParse(exec.arguments[4], out requestCount)) return false;
                 bool allowReuse = true;
                 if (exec.arguments.Count >= 6 && !bool.TryParse(exec.arguments[5], out allowReuse)) return false;
+
+                var campaign = scr_System_CampaignManager.current;
+                Manageable requestFrom;
+                if (exec.Type == Event.EventEntry.ExecutionType.RequestFallbackWorkerFromLocalWorld)
+                {
+                    if (!TryResolveExecTargets(owner, exec.arguments[1], out var localActors) || localActors == null) return false;
+                    var candidates = localActors.Where(c => c != null).ToList();
+                    if (candidates.Count < 1) return false;
+                    var anchor = Utility.GetRandomElement(candidates);
+                    var location = campaign.Map.FindRoomByChara(anchor.RefID);
+                    var faction = location?.FactionOwner?.FactionOwnerRoot;
+                    var worldID = faction is Manageable_World ? faction.ID : Manageable.ResolveWorldID(faction);
+                    if (string.IsNullOrEmpty(worldID))
+                    {
+                        Debug.LogError($"RequestFallbackWorkerFromLocalWorld: no world resolved at [{anchor.RefID}]'s location");
+                        return false;
+                    }
+                    requestFrom = campaign.FindOrAddWorldFaction(worldID);
+                }
+                else requestFrom = campaign.FindFactionByID(exec.arguments[1]);
+                if (requestFrom == null)
+                {
+                    Debug.LogError($"{exec.Type}: provider [{exec.arguments[1]}] not found");
+                    return false;
+                }
 
                 // never hand out the same worker twice within one event (e.g. lead + support from the same role)
                 var held = new HashSet<Character_Trainable>();
