@@ -1,0 +1,390 @@
+{
+    "_comment": "generate portrait_hierarchy independent of clothing",
+
+    "_docs": "Design documents (read these before reworking either layer; paths relative to the project root, may have been moved or deleted since): Docs/ImagePortraits/Plan_ImageClassifier.md (the classifier tool: tagging, rules, Analyze/Classify, user decisions) and Docs/ImagePortraits/Plan_GlobalPortraitHandler.md (the in-game generated portrait handlers built from this file: findings, design, decisions D1-D32). Code: Assets/Editor/ImageClassifier/ (tool), Assets/Scripts/CharacterData/GlobalPortraitTemplate.cs + Character_Portraits.cs (game).",
+    "_doc_file": "Two layers in one file. (1) The CLASSIFICATION rules for the editor tool Tools/Image Classifier (Docs/ImagePortraits/Plan_ImageClassifier.md): settings, excluded_tags, clause_aliases, files_category, file_name_variants, file_names, emotion_pass, portrait_emotions. Moved here from workingdir/Plans/Draft_ImageRules.json on 2026-10-17 (P3.5); the previous version of this file is workingdir/Plans/Image_Generation_Config.pre-P3.5.json. Located in Mods/Assetpacks/ so the game can read it at launch. (2) The DISPLAY layer portrait_global (see _doc_display_layer), read by the game, not by the tool.",
+    "_doc_data_driven": "ALL classification logic lives in this file; the tool has no built-in categories, tags or names. To catch a new kind of image, add a files_category entry (and file_names entries if needed); to catch a new dataset's wording, add tags to the clauses. Every key below is read by the tool; unknown keys (other than _comments) are rule-check warnings in Analyze.",
+    "_syntax": "Clause = OR of tags separated by |. An entry's clause array = AND. 'tag*0.5' scales that tag's score (weak or generic evidence). '$name' expands to clause_aliases[name]. 'none' = any of these tags above threshold rejects the entry. Pseudo-tags usable in any clause: 'rating:<general|sensitive|questionable|explicit>' (the tagger's rating head), 'face:<tag>' (WD14 on the face crop, emotion pass) and 'vlm:<label>' (1 when the emotion pass VLM answered that label). NAME ENTRIES: 'tier': the lowest tier whose best match reaches settings.tierMinScore (or the entry's own 'tierMinScore') wins - a stray lower-tier hint such as all_fours 0.42*0.5 = 0.21 cannot override fellatio 0.98 in a later tier; if no tier reaches it, the lowest matching tier wins; a winner below settings.minScore is low confidence; score only competes inside a tier; listed order breaks exact ties; tiers may be decimals (3.5) to insert one. 'hasVariants': variant ids from file_name_variants in priority order, the first that applies is appended as _<id>. 'fallback': true = only competes when no regular entry matched (other, generic). An entry with no clauses always matches with score 0. 'onlyInCategories' limits an entry to those categories. The same name may appear twice (alternative definitions). CATEGORY KEYS: all/any/none (clauses), threshold (tag threshold for this category's clauses, default settings.tagThreshold), group (consecutive matching categories with the same group compete: the highest any-clause score wins, listed order breaks ties - e.g. dog_penis 0.97 beats a stray horse_penis 0.63), hold (match = stop, image stays unmatched), nameSet (which name list names the image, default file_names), moveLowConfidence (default true), rename (false = category only, original file name kept), refines (an image sorted into that category's folder moves here when this rule's all/none clauses hold; its any clauses are not needed).",
+    "_doc_manual_changes": "How Classify treats files you handled by hand: a file named in the final convention <name>_<parent>_<folder>_<N> is settled and never moved or renamed again; rename a file to anything else to have it classified again. An image inside a category folder keeps that category (your sort or an earlier pass) and the rules only name it - except a refines move (horse -> horse_pov). Images the tool placed that you moved out of the category folders without renaming stay out. Moved or renamed files keep their tags (matched by size + date); deleted files drop out. Undo leaves everything you handled by hand where it is. Analyze creates every category folder and an 'unsorted' folder: images in unsorted/ are ignored completely (never tagged, analyzed or moved). A category with manual: true (human_female) is never chosen by the rules; images you put in its folder keep it and only get a name. The report lists where your folders and these rules disagree.",
+    "_doc_display_layer": "Two-layer design: this file also drives the DISPLAY layer, read by the game (GlobalPortraitTemplate, Docs/ImagePortraits/Plan_GlobalPortraitHandler.md), not by the tool. At every game start the game builds a global portrait template from files_category + file_names + file_name_variants + portrait_global; a character template opts in with Portrait.useGlobalHandler = [ { \"path\": \"<character folder>\", \"selfKeys\": [...] } ] (priority order; never saved). tagsMatch there are IN-GAME portrait keywords (blowjob, doggy, masturbate), NOT image tags. A new file_names entry needs a portrait_global.names entry (keywords with roles), or its images are never requested.",
+
+    "settings": {
+        "tagThreshold": 0.35,
+        "variantThreshold": 0.35,
+        "nearMissBand": 0.15,
+        "tierMinScore": 0.3,
+        "minScore": 0.5,
+        "margin": 0.15
+    },
+
+    "_excluded_tags_doc": "Tags the tagger never stores, to keep _image_tags.jsonl small (e.g. hair colours, clothing, backgrounds no rule uses). Used by the next Tag run: new images are tagged without them and existing records are stripped of them, so the list can grow bit by bit without re-tagging. Excluding a tag that a rule uses is a rule-check warning in Analyze. Removing a tag from this list only brings it back for images tagged afterwards (use Re-tag all).",
+    "excluded_tags": [
+        "gloves","heart-shaped_pupils","hair_between_eyes","high_ponytail","pink_hair","long_hair","elbow_gloves","white_gloves","hair_ornament","heart","covered_navel","symbol-shaped_pupils","bare_shoulders","leotard_aside","detached_sleeves","ahoge","sidelocks","white_leotard","leotard","thighhighs","white_thighhighs", "blue_eyes", "long_hair", "jewelry", "red_armband", "shirt", "white_shirt", "red_ribbon", "blue_jacket"
+    ],
+
+    "clause_aliases": {
+        "sex": "sex|vaginal|anal|penis|hetero|cum_in_pussy|cum_in_ass|internal_cumshot|clothed_sex|implied_sex|happy_sex|rough_sex|imminent_penetration|imminent_vaginal|imminent_anal|x-ray|cross-section|stomach_bulge|testicles",
+        "penetration": "sex|vaginal|anal|cum_in_pussy|cum_in_ass|internal_cumshot|clothed_sex|implied_sex|happy_sex|rough_sex|imminent_penetration|imminent_vaginal|imminent_anal|x-ray|cross-section|stomach_bulge|sex_from_behind|doggystyle|missionary|cowgirl_position|reverse_cowgirl_position|squatting_cowgirl_position|upright_straddle|reverse_upright_straddle|mating_press|full_nelson|prone_bone|suspended_congress|reverse_suspended_congress|standing_sex",
+        "_penetration_doc": "Evidence of intercourse, required by every position entry. Unlike $sex it has no penis/hetero/testicles (present in every oral/handjob image), so a posture tag (all_fours, from_behind, on_side) cannot turn a blowjob into a position. The sex-position tags themselves imply intercourse and are included.",
+        "male": "1boy|2boys|3boys|4boys|5boys|6+boys|multiple_boys|faceless_male|muscular_male|mature_male|old_man|fat_man|ugly_man|bara|dark-skinned_male|male_focus|topless_male|clothed_female_nude_male",
+        "sexual_context": "rating:explicit|rating:questionable|oral_invitation|$sex|fellatio|oral|irrumatio|cunnilingus|anilingus|handjob|paizuri|footjob|thigh_sex|hairjob|armpit_sex|masturbation|female_masturbation|fingering|dildo|vibrator|sex_toy|object_insertion|butt_plug|anal_beads|lactation|breast_sucking|grabbing_another's_breast|groping|cum|facial|ejaculation|after_sex|cumdrip|pussy|nipples*0.3|spread_pussy|presenting*0.5|tentacle_sex"
+    },
+
+    "files_category": [
+        { "id": "horse_pov", "group": "actor", "all": ["pov"], "any": ["horse|horse_penis"], "refines": "horse",
+          "_comment": "refines: an image sorted into horse/ (by hand or an earlier pass) moves here when the pov clause holds, even without horse tags" },
+        { "id": "horse",     "group": "actor", "any": ["horse|horse_penis"] },
+        { "id": "dog_pov",   "group": "actor", "all": ["pov"], "any": ["dog|dog_penis|knotted_penis"], "refines": "dog" },
+        { "id": "dog",       "group": "actor", "any": ["dog|dog_penis|knotted_penis"] },
+        { "id": "goblin",    "group": "actor", "any": ["goblin"] },
+        { "id": "tentacle",  "group": "actor", "any": ["tentacle_sex|tentacles|consensual_tentacles|tentacle_pit|tentacles_under_clothes"], "_comment": "tentacle_hair deliberately not listed" },
+        { "id": "_hold_bestiality", "hold": true, "any": ["bestiality|animal_penis"], "_comment": "animal involved but species unknown -> unmatched, stays in place (was silently filed as horse)" },
+        { "id": "pov_female", "all": ["female_pov"], "none": ["$male"], "threshold": 0.25, "refines": "pov",
+          "_comment": "viewer (player) is a woman: female_pov tag, no male. refines pov: a not yet named image in pov/ with these tags moves here" },
+        { "id": "pov",       "any": ["pov|pov_crotch"], "threshold": 0.25, "_comment": "pov tag in any context (ako ground truth: non-sexual pov images are filed in pov; pov never scores in human images, 3 true pov images had it at 0.26-0.33)" },
+        { "id": "black",     "any": ["dark-skinned_male"], "threshold": 0.6, "_comment": "0.39/0.44 were false positives on ako" },
+        { "id": "ugly_bastard", "any": ["ugly_man|fat_man|old_man"], "threshold": 0.6, "_comment": "was 'homeless' in the old config (no such tagger tag); matched by the male's look" },
+        { "id": "shota",     "any": ["shota|onee-shota"] },
+        { "id": "human",     "any": ["$male"], "none": ["pov"] },
+        { "id": "human_female", "manual": true,
+          "_comment": "partner is a woman. Hand-sorted only (manual: the rules never choose it - yuri tags gave too many false positives): images you put in human_female/ keep the category, even when re-classifying, and only get a name" },
+        { "id": "pov",       "all": ["$sexual_context"], "none": ["$male"], "_comment": "second pov rule: target character alone in a sexual context (solo masturbation etc.)" },
+        { "id": "portrait",  "none": ["$male", "$sexual_context"], "rename": false, "nameSet": "portrait_emotions", "moveLowConfidence": false,
+          "_comment": "category only, original file names kept (user 2026-10-16: portrait assets come from sources that already carry expression data). Set rename: true (and list portrait in emotion_pass.categories) to name them by emotion again. Low-confidence portraits never move. $sexual_context includes the questionable/explicit rating" }
+    ],
+
+    "file_name_variants": {
+        "cum":      ["cum", "cum_in_pussy", "cum_in_ass", "internal_cumshot", "cum_overflow", "cumdrip", "ejaculation", "excessive_cum"],
+        "sleeping": ["sleeping", "sleep_molestation", "unconscious", "sleeping_upright"],
+        "rape":     ["rape", "after_rape", "asphyxiation", "strangling"],
+        "pregnant": ["pregnant", "big_belly*0.6"],
+        "anal":     ["anal", "cum_in_ass", "after_anal", "imminent_anal"],
+        "vaginal":  ["vaginal", "cum_in_pussy", "after_vaginal", "imminent_vaginal"]
+    },
+
+    "file_names": [
+        { "spitroast":          ["spitroast"],                                   "tier": 1, "hasVariants": ["sleeping","rape","pregnant"] },
+        { "double_penetration": ["double_penetration|triple_penetration"],       "tier": 1, "tierMinScore": 0.6, "hasVariants": ["sleeping","rape","pregnant"],
+          "_comment": "only a strong tag (>= 0.6, eg. horse DP 0.96): weak double/triple_penetration tags on tentacle images (0.38-0.51) fall through to multiple_penetration" },
+        { "after_sex": ["after_sex|after_vaginal|after_anal"], "tier": 1.5, "tierMinScore": 0.6, "hasVariants": ["sleeping","rape","pregnant"],
+          "_comment": "a strong after-sex tag wins before the group/position tiers: solo cum-covered aftermath images carry bukkake/on_back/cum_in_pussy, which made them group_sex_multiple or missionary (cinderella 254/255, dorothy 428/429). Only at >= 0.6; weaker evidence is the tier 8 entry" },
+
+        { "group_sex_multiple":     ["gangbang|orgy|6+boys|5boys|4boys|surrounded_by_penises|bukkake*0.6", "$sex"], "tier": 2, "hasVariants": ["sleeping","rape","pregnant"], "_comment": "groups keep $sex: a gangbang can be oral only. Group / multiple-penetration names (tiers 1-2.5) never get the cum variant: cum is nearly always there" },
+        { "multiple_penetration": ["fellatio|irrumatio|oral*0.8", "vaginal|anal"], "tier": 2.5, "hasVariants": ["sleeping","rape","pregnant"],
+          "_comment": "mouth + another hole at once (tentacles: oral 0.6-0.9 with vaginal 0.74-0.93 were named oral). Never co-occurs outside tentacle images in the tagged data. Before positions and oral" },
+        { "multiple_penetration": ["vaginal", "anal"], "tier": 2.5, "onlyInCategories": ["tentacle"], "hasVariants": ["sleeping","rape","pregnant"],
+          "_comment": "vagina + anus at once, tentacle only: animal anal images carry a stray vaginal tag (horse 0.57/0.59)" },
+        { "multiple_penetration": ["breast_sucking|cum_in_mouth*0.8", "vaginal|anal"], "tier": 2.5, "onlyInCategories": ["tentacle"], "hasVariants": ["sleeping","rape","pregnant"],
+          "_comment": "tentacles on breasts / in mouth (no oral tag) + vaginal or anal, tentacle only (cinderella_after 249: oral won through cum_in_mouth*0.5)" },
+        { "group_sex_mmfthreesome": ["mmf_threesome|threesome*0.7|2boys*0.6|3boys*0.6|group_sex*0.6", "$sex"],      "tier": 2, "hasVariants": ["sleeping","rape","pregnant"] },
+
+        { "doggystyle":     ["doggystyle|sex_from_behind|all_fours*0.5|from_behind*0.4|top-down_bottom-up*0.5", "$penetration"], "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "prone_bone":     ["prone_bone|on_stomach*0.6", "$penetration"],                                          "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "full_nelson":    ["full_nelson", "$penetration"],                                                        "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "mating_press":   ["mating_press|folded*0.6|knees_to_chest*0.5", "$penetration"],                         "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "suspended_congress":         ["suspended_congress|carrying*0.4", "$penetration"],                        "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "reverse_suspended_congress": ["reverse_suspended_congress", "$penetration"],                             "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "standing":       ["standing_sex|against_wall*0.5|standing_on_one_leg*0.5|leg_up*0.3|standing*0.3", "$penetration"], "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "missionary":     ["missionary|on_back*0.5|legs_up*0.3|spread_legs*0.3", "$penetration"],                 "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "cowgirl":        ["cowgirl_position|girl_on_top|upright_straddle|squatting_cowgirl_position|straddling*0.5", "$penetration"], "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "reverse_cowgirl":["reverse_cowgirl_position|reverse_upright_straddle", "$penetration"],                  "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "sitting_on_person": ["sitting_on_person", "$penetration"],                                               "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "lotus":          ["sitting_on_lap|on_lap", "$penetration"],                                              "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"], "_comment": "'lotus' in the vocabulary is the flower, not the position" },
+        { "sideways":       ["spooning|on_side*0.5", "$penetration"],                                               "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"], "_comment": "from_side removed: it is a camera angle, not a position" },
+        { "upside_down":    ["upside-down", "$penetration"],                                                        "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "wheelbarrow":    ["wheelbarrow", "$penetration"],                                                        "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"], "_comment": "vocabulary tag is the cart object; the $penetration clause makes the position reading likely" },
+        { "leg_lock":       ["leg_lock", "$penetration"],                                                           "tier": 3, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"] },
+        { "sixty_nine":     ["69"],                                                                         "tier": 3, "hasVariants": ["sleeping","rape","pregnant"] },
+
+        { "irrumatio":   ["irrumatio|deepthroat"],                                                          "tier": 4, "hasVariants": ["sleeping","rape"] },
+        { "cunnilingus": ["cunnilingus"],                                                                   "tier": 4, "hasVariants": ["sleeping"] },
+        { "rimjob_handjob": ["anilingus", "handjob|gloved_handjob|double_handjob|two-handed_handjob|reach-around|penis_grab*0.6"], "tier": 3.4, "_comment": "rimjob while stroking: both acts present" },
+        { "rimjob":      ["anilingus"],                                                                     "tier": 3.5, "_comment": "own tier ahead of the other oral/manual acts: rimjob images usually also carry oral/licking tags, which outscored anilingus inside one tier" },
+        { "oral":        ["fellatio|licking_penis|kissing_penis|testicle_sucking|cooperative_fellatio|oral*0.5|cum_in_mouth*0.5|penis_on_face*0.6|penis_awe*0.4|after_fellatio*0.5|implied_fellatio*0.5|fellatio_gesture*0.3"], "tier": 4, "hasVariants": ["sleeping","rape"] },
+        { "handjob":     ["handjob|gloved_handjob|double_handjob|two-handed_handjob|nursing_handjob|penis_grab*0.6"], "tier": 4, "hasVariants": ["sleeping"] },
+        { "paizuri":     ["paizuri|straddling_paizuri|perpendicular_paizuri|cooperative_paizuri|paizuri_under_clothes"], "tier": 4, "hasVariants": ["sleeping"] },
+        { "footjob":     ["footjob|two-footed_footjob"],                                                    "tier": 4 },
+        { "thighjob":    ["thigh_sex"],                                                                     "tier": 4 },
+        { "hairjob":     ["hairjob"],                                                                       "tier": 4 },
+        { "armpit":      ["armpit_sex"],                                                                    "tier": 4 },
+
+        { "anal_masturbation":   ["butt_plug|anal_beads|anal_object_insertion|anal_fingering|anal_tail*0.5"],  "tier": 5 },
+        { "masturbation_toys":   ["dildo|vibrator|sex_toy*0.7|object_insertion|vaginal_object_insertion|dildo_riding|egg_vibrator|sex_machine|huge_dildo|remote_control_vibrator"], "tier": 6 },
+        { "mutual_masturbation": ["mutual_masturbation"],                                                   "tier": 6 },
+        { "fingering":           ["fingering|implied_fingering|fingering_through_clothes|fingering_through_panties"], "tier": 6, "hasVariants": ["sleeping"], "_comment": "merged masturbation_fingering: in pov (no male) fingering is self-fingering" },
+        { "masturbation":        ["masturbation|female_masturbation|clitoral_stimulation|implied_masturbation|masturbation_through_clothes|clothed_masturbation"], "tier": 6 },
+        { "breast_masturbation": ["lactation|breast_sucking|milking_machine|breast_milk|projectile_lactation|lactation_through_clothes"], "tier": 6 },
+        { "breast_grab":         ["grabbing_another's_breast|guided_breast_grab|grabbing_from_behind*0.6|groping*0.6|grabbing_own_breast*0.5"], "tier": 7, "hasVariants": ["sleeping"] },
+        { "kissing_oral_tongue": ["kiss|french_kiss|surprise_kiss|imminent_kiss*0.5|after_kiss*0.5"],     "tier": 7 },
+        { "kissing_oral_tongue": ["oral_invitation|tongue_out*0.6|saliva*0.4|hands_on_another's_face*0.6|cheek_squash*0.4|:o*0.3|close-up*0.3"], "none": ["$sex"], "tier": 10,
+          "_comment": "mouth/tongue focus teasing shots (user decision, ako pov/29 + pov/30). Separate from the kiss entry: tongue_out is common in sex images (ahegao), so this one needs no sex evidence at all and comes after every act tier" },
+
+        { "after_sex": ["after_sex|after_vaginal|after_anal|after_paizuri|after_ejaculation|after_masturbation*0.6|cumdrip|cum_pool|cum_overflow|facial|cum_on_body|cum_on_breasts|cum_on_hair|cum_on_clothes|cum_on_ass|cum_on_stomach|excessive_cum|ejaculation|cum*0.5"], "tier": 8, "hasVariants": ["sleeping","rape","pregnant"],
+          "_comment": "cum without an ongoing position is after_sex (user 2026-10-17); cum during a position is that position's _cum variant (positions are earlier tiers)" },
+        { "presenting": ["spread_pussy|spread_anus|spread_ass|spread_pussy_under_clothes|presenting*0.6"], "tier": 8.5,
+          "_comment": "presenting / spreading pussy or anus, no act (cinderella 318/319, dorothy 495/496). After the act tiers: act images often carry a weak spread_pussy" },
+        { "anal":      ["anal|cum_in_ass|spread_anus*0.5"],                                                 "tier": 9, "hasVariants": ["sleeping","rape","pregnant"] },
+
+        { "other":     ["$penetration"], "tier": 10, "fallback": true, "hasVariants": ["cum","sleeping","rape","pregnant","anal","vaginal"], "_comment": "intercourse evidence but no position/act entry matched -> other_*, inside whatever category the image is in" },
+        { "after_sex": ["$sex"], "none": ["$penetration"], "tier": 10, "fallback": true, "hasVariants": ["sleeping","rape","pregnant"], "_comment": "posing: sexual image with the actor (penis/hetero/testicles) but no intercourse and no act entry matched (user decision 2026-10-16, horse/Aemeath_4). Second after_sex entry on purpose" },
+        { "generic":   [], "tier": 10.5, "fallback": true,
+          "_comment": "last resort (user 2026-10-17): any image no act/position/after_sex entry names, sexual or not (cinderella 297 clothed tease, 335 restrained tentacle pose, a girl riding a horse). No clauses = always matches. Replaces sfw" }
+    ],
+
+    "_emotion_pass_doc": "Images whose category is listed get a second pass during Tag (ComfyUI node MisteraFaceEmotion, workflow Assets/Editor/ImageClassifier/EmotionWorkflow_API.json): the face is cropped, WD14 tags the crop (rules: face:<tag>), and the VLM picks ONE of these labels for the crop (rules: vlm:<label>, score 1). Changing labels or prompt re-runs the pass on the next Tag.",
+    "emotion_pass": {
+        "_comment": "disabled for now (categories empty): portraits keep their original names. Put \"portrait\" back to run the face crop + VLM pass during Tag.",
+        "categories": [],
+        "labels": ["happy", "relaxed", "confident", "shy", "surprised", "thinking", "serious", "sleeping", "resting"],
+        "prompt": "Look at this anime character's face. Which ONE of these expressions fits best? {labels}. Answer with exactly one word from the list, nothing else."
+    },
+
+    "_portrait_emotions_doc": "Portrait category only (names = PortraitTag_Reference core + extended + state set). Dormant while portrait has rename: false. Hybrid, user design 2026-10-16: tier 1 sleeping from the full-image tags; tier 2 the negative emotions from WD14 on the face crop (face: tags) - eva02 is reliable there - claiming the image only at score >= 0.5 (tierMinScore); open_mouth, closed_mouth, blush, smile and v-shaped_eyebrows are deliberately never used (unreliable). Tier 3 the positive/neutral emotions from the VLM answer on the face crop (vlm: labels), which tells those apart better. Portraits without emotion pass data match nothing and stay in place.",
+    "portrait_emotions": [
+        { "sleeping":     ["sleeping|zzz|sleep_bubble|sleeping_upright|sleeping_on_person|unconscious"], "tier": 1 },
+
+        { "pain":         ["face:pain|face:wince|face:injury*0.5|face:clenched_teeth*0.3"], "tier": 2, "tierMinScore": 0.5 },
+        { "fear":         ["face:scared|face:panicking|face:worried*0.7|face:trembling*0.6|face:constricted_pupils*0.6|face:shaded_face*0.4"], "tier": 2, "tierMinScore": 0.5 },
+        { "angry":        ["face:angry|face:anger_vein|face:spoken_anger_vein|face:glaring|face:scowl|face:>:(|face:annoyed*0.8|face:furrowed_brow*0.5|face:clenched_teeth*0.4"], "tier": 2, "tierMinScore": 0.5 },
+        { "disappointed": ["face:light_frown|face:sigh|face:frown*0.7|face:pout*0.6|face:jitome*0.5|face:=_=*0.5|face::<*0.5|face::t*0.5"], "tier": 2, "tierMinScore": 0.5 },
+        { "sad":          ["face:sad|face:crying|face:crying_with_eyes_open|face:streaming_tears|face:tearing_up|face:wiping_tears|face:depressed|face:tears*0.7", "face:crying|face:crying_with_eyes_open"], "tier": 2, "tierMinScore": 0.5, "none": ["face:happy_tears"],
+          "_comment": "second clause: sad only when eva02 actually sees crying; tears / tearing_up alone were false positives (user, ako portraits 2026-10-16)" },
+        { "awkward":      ["face:nervous_smile|face:nervous|face:nervous_sweating|face:flustered|face:spoken_sweatdrop|face:wavy_mouth*0.7|face:sweatdrop*0.6|face:flying_sweatdrops*0.6|face:>_<*0.5"], "tier": 2, "tierMinScore": 0.5 },
+        { "sorry":        ["own_hands_together|bowing|head_down", "face:sad|face:frown|face:light_frown|face:tears|face:crying|face:worried|face:closed_eyes*0.5"], "tier": 2, "tierMinScore": 0.5,
+          "_comment": "the gesture comes from the full image (hands are usually outside the face crop), the sad face from the crop" },
+
+        { "happy":        ["vlm:happy"],     "tier": 3 },
+        { "relaxed":      ["vlm:relaxed"],   "tier": 3 },
+        { "confident":    ["vlm:confident"], "tier": 3 },
+        { "shy":          ["vlm:shy"],       "tier": 3 },
+        { "surprised":    ["vlm:surprised"], "tier": 3 },
+        { "thinking":     ["vlm:thinking"],  "tier": 3 },
+        { "serious":      ["vlm:serious"],   "tier": 3 },
+        { "sleeping":     ["vlm:sleeping"],  "tier": 3 },
+        { "resting":      ["vlm:resting"],   "tier": 3 }
+    ],
+
+    "_portrait_global_doc": "Game only (GlobalPortraitTemplate). For every categories entry (priority order) and every roleBlocks entry (doer, receiver, none) one image handler: RequireSelfContextKeys = selfKeys, RequireTargetContextKeys = targetKeys. Its variants are the file_names entries whose role (names[].role) matches the block (role both = receiver side from <category>/, doer side from <category>_perform/, hand-sorted): one variant per applicable variants entry ([keyword, variant keywords], see _variants_doc) and one base variant ([keyword], the variants.base files). names.alsoUnder copies those variants under an implemented keyword while the own keyword is not implemented (remove alsoUnder once it is). Order inside a handler: more tagsMatch first, own images before alsoUnder copies, then file_names tier. The none block ends with an unconditional variant (no tagsMatch) of the unconditional names. alsoUseFolders: extra category folders read by that category (human also uses pov). The two pov entries: first = player only (the game tags the player pov), second = no target requirement, generic fallback that also catches solo acts. Keywords the game does not emit yet still work once it does. Built at game launch and kept in the serializer; debugOutput: in the Unity editor the built template is also written next to this file.",
+    "portrait_global": {
+        "imageExtensions": "webp|png|jpg|jpeg",
+        "debugOutput": "Image_Generation_Config.generated_portraits.json",
+        "roleBlocks": [
+            { "role": "doer",     "selfKeys": ["sex", "doer"] },
+            { "role": "receiver", "selfKeys": ["sex", "receiver"] },
+            { "role": "none",     "selfKeys": ["sex"], "unconditional": ["generic"] }
+        ],
+        "categories": [
+            { "id": "horse_pov",    "targetKeys": ["horse", "pov"] },
+            { "id": "horse",        "targetKeys": ["horse"] },
+            { "id": "dog_pov",      "targetKeys": ["dog", "pov"] },
+            { "id": "dog",          "targetKeys": ["dog"] },
+            { "id": "goblin",       "targetKeys": ["goblin"] },
+            { "id": "tentacle",     "targetKeys": ["tentacle"] },
+            { "id": "pov_female",   "targetKeys": ["pov", "female"], "_comment": "female player" },
+            { "id": "pov",          "targetKeys": ["pov"], "_comment": "set 1: the player" },
+            { "id": "black",        "targetKeys": ["black"] },
+            { "id": "ugly_bastard", "targetKeys": ["ugly_bastard"] },
+            { "id": "shota",        "targetKeys": ["shota"] },
+            { "id": "human_female", "targetKeys": ["humanrace", "female"], "alsoUseFolders": ["pov_female"] },
+            { "id": "human",        "targetKeys": ["humanrace"], "alsoUseFolders": ["pov"] },
+            { "id": "pov",          "targetKeys": [], "_comment": "set 2: generic sex fallback, solo acts" }
+        ],
+        "_variants_doc": "Portrait variants of every name: id -> { keywords, files }. keywords = in-game portrait keywords added to the name's keyword (tagsMatch [doggy, anal, raped]). files = file suffixes shown, in order (the file name is <name>_<suffix>_<pack>_<chara>_<N>); \"\" = the unspecified files (no suffix). Eg. anal_rape [doggy, anal, raped] = doggystyle_anal_rape_* + doggystyle_anal_*. \"base\" = the variant without extra keywords ([doggy], and the none block's unconditional variant); vaginal has no game keyword, so its files go there. A variant applies to a name when one of its suffixes is in the name's hasVariants (file_names) or is a suffix the classifier never writes (named by hand, eg. anal_rape); a classifier suffix not in hasVariants is skipped for that name. Order in a handler: more keywords first, then this listed order. Variants with the same keywords merge their files (rape + vaginal_rape = [raped]). Every file_name_variants id must appear in some files list, or its images are never shown (warning at launch). Longer suffixes stay apart: the anal files are doggystyle_anal_* without doggystyle_anal_rape_*.",
+        "variants": {
+            "base":         { "keywords": [],                "files": ["", "vaginal"] },
+            "cum":          { "keywords": ["cum"],           "files": ["cum"] },
+            "sleeping":     { "keywords": ["sleeping"],      "files": ["sleeping"] },
+            "anal_rape":    { "keywords": ["anal", "raped"], "files": ["anal_rape", "anal"] },
+            "vaginal_rape": { "keywords": ["vaginal", "raped"],         "files": ["vaginal_rape", "vaginal"] },
+            "rape":         { "keywords": ["raped"],         "files": ["rape", ""] },
+            "pregnant":     { "keywords": ["pregnant"],      "files": ["pregnant"] },
+            "anal":         { "keywords": ["anal"],          "files": ["anal", ""] }
+        },
+        "_names_doc": "file_names id -> keywords: OR list of { keyword, role }. keyword = in-game portrait keyword (null = no own keyword: the name is part of the none block's unconditional variant, only its keyworded variants get tags, eg. [sleeping]). role = block: doer / receiver / none / both (both = receiver side from <category>/, doer side from <category>_perform/). Any of the keywords shows these images, in priority order: the first entry is the name's own keyword; later entries are fallbacks, used after the images of names that have that keyword first. Use it for the same picture seen from the other side (oral = blowjob doer OR irrumatio receiver) and for a position the game does not have yet (reverse_cowgirl also as cowgirl - remove that entry once reverse_cowgirl is implemented). Kept here, not in file_names: the classifier treats any extra key of a file_names entry as the name and skips the entry.",
+        "names": {
+            "spitroast":                  { "keywords": [ { "keyword": "spitroast",                  "role": "receiver" } ] },
+            "double_penetration":         { "keywords": [ { "keyword": "double_penetration",         "role": "receiver" } ] },
+            "group_sex_multiple":         { "keywords": [ { "keyword": "group_sex_multiple",         "role": "receiver" } ] },
+            "group_sex_mmfthreesome":     { "keywords": [ { "keyword": "group_sex_mmfthreesome",     "role": "receiver" } ] },
+            "multiple_penetration":       { "keywords": [ { "keyword": "multiple_penetration",       "role": "receiver" } ] },
+            "doggystyle":                 { "keywords": [ { "keyword": "doggy",                      "role": "receiver" } ] },
+            "prone_bone":                 { "keywords": [ { "keyword": "prone_bone",                 "role": "receiver" }, { "keyword": "doggy",       "role": "receiver" } ] },
+            "full_nelson":                { "keywords": [ { "keyword": "full_nelson",                "role": "receiver" }, { "keyword": "doggy",       "role": "receiver" } ] },
+            "sideways":                   { "keywords": [ { "keyword": "sideways",                   "role": "receiver" }, { "keyword": "doggy",       "role": "receiver" } ] },
+            "wheelbarrow":                { "keywords": [ { "keyword": "wheelbarrow",                "role": "receiver" }, { "keyword": "doggy",       "role": "receiver" } ] },
+            "reverse_suspended_congress": { "keywords": [ { "keyword": "reverse_suspended_congress", "role": "receiver" }, { "keyword": "doggy",       "role": "receiver" } ] },
+            "missionary":                 { "keywords": [ { "keyword": "missionary",                 "role": "receiver" } ] },
+            "mating_press":               { "keywords": [ { "keyword": "mating_press",               "role": "receiver" }, { "keyword": "missionary",  "role": "receiver" } ] },
+            "leg_lock":                   { "keywords": [ { "keyword": "leg_lock",                   "role": "receiver" }, { "keyword": "missionary",  "role": "receiver" } ] },
+            "suspended_congress":         { "keywords": [ { "keyword": "suspended_congress",         "role": "receiver" }, { "keyword": "missionary",  "role": "receiver" } ] },
+            "standing":                   { "keywords": [ { "keyword": "standing",                   "role": "receiver" }, { "keyword": "missionary",  "role": "receiver" } ] },
+            "upside_down":                { "keywords": [ { "keyword": "upside_down",                "role": "receiver" }, { "keyword": "missionary",  "role": "receiver" } ] },
+            "cowgirl":                    { "keywords": [ { "keyword": "cowgirl",                    "role": "doer" } ] },
+            "reverse_cowgirl":            { "keywords": [ { "keyword": "reverse_cowgirl",            "role": "doer" },     { "keyword": "cowgirl",     "role": "doer" } ] },
+            "sitting_on_person":          { "keywords": [ { "keyword": "sitting_on_person",          "role": "doer" },     { "keyword": "cowgirl",     "role": "doer" } ] },
+            "lotus":                      { "keywords": [ { "keyword": "lotus",                      "role": "doer" },     { "keyword": "cowgirl",     "role": "doer" } ] },
+            "sixty_nine":                 { "keywords": [ { "keyword": "sixty_nine",                 "role": "doer" },     { "keyword": "blowjob",     "role": "doer" } ] },
+            "irrumatio":                  { "keywords": [ { "keyword": "irrumatio",                  "role": "receiver" }, { "keyword": "blowjob",     "role": "doer" } ],
+                                            "_comment": "irrumatio receiver = blowjob doer: the same picture, shown for both (as blowjob: after the oral images)" },
+            "cunnilingus":                { "keywords": [ { "keyword": "cunnilingus",                "role": "both" } ] },
+            "rimjob_handjob":             { "keywords": [ { "keyword": "rimjob_handjob",             "role": "doer" },     { "keyword": "rimjob",      "role": "doer" } ] },
+            "rimjob":                     { "keywords": [ { "keyword": "rimjob",                     "role": "doer" } ] },
+            "oral":                       { "keywords": [ { "keyword": "blowjob",                    "role": "doer" },     { "keyword": "irrumatio",   "role": "receiver" } ],
+                                            "_comment": "blowjob doer = irrumatio receiver (forced blowjob, com_sex_oral_P_Force: she is the receiver with [blowjob, irrumatio, forced]); as irrumatio: after the irrumatio images" },
+            "handjob":                    { "keywords": [ { "keyword": "handjob",                    "role": "doer" } ] },
+            "paizuri":                    { "keywords": [ { "keyword": "boobjob",                    "role": "doer" } ] },
+            "footjob":                    { "keywords": [ { "keyword": "footjob",                    "role": "doer" } ] },
+            "thighjob":                   { "keywords": [ { "keyword": "thighjob",                   "role": "doer" },     { "keyword": "intercrural", "role": "doer" },     { "keyword": "intercrural", "role": "receiver" } ],
+                                            "_comment": "intercrural doer = com_sex_P_V_outside_cowgirl (she moves), intercrural receiver = com_sex_P_V_outside (he moves): the same picture, shown for both" },
+            "hairjob":                    { "keywords": [ { "keyword": "hairjob",                    "role": "doer" },     { "keyword": "handjob",     "role": "doer" } ] },
+            "armpit":                     { "keywords": [ { "keyword": "armpit",                     "role": "doer" },     { "keyword": "handjob",     "role": "doer" } ] },
+            "anal_masturbation":          { "keywords": [ { "keyword": "masturbate",                 "role": "none" } ] },
+            "masturbation_toys":          { "keywords": [ { "keyword": "masturbate",                 "role": "none" } ] },
+            "mutual_masturbation":        { "keywords": [ { "keyword": "mutual_masturbation",        "role": "none" },     { "keyword": "masturbate",  "role": "none" } ] },
+            "fingering":                  { "keywords": [ { "keyword": "fingering",                  "role": "receiver" } ] },
+            "masturbation":               { "keywords": [ { "keyword": "masturbate",                 "role": "none" } ] },
+            "breast_masturbation":        { "keywords": [ { "keyword": "masturbate",                 "role": "none" } ] },
+            "breast_grab":                { "keywords": [ { "keyword": "breasts",                    "role": "receiver" } ] },
+            "kissing_oral_tongue":        { "keywords": [ { "keyword": "kiss",                       "role": "none" } ] },
+            "after_sex":                  { "keywords": [ { "keyword": "cum",                        "role": "none" } ], "_comment": "cum without an ongoing position: shown for [cum] (variants [cum, sleeping] / [cum, raped] / [cum, pregnant]), never as the catch-all" },
+            "presenting":                 { "keywords": [ { "keyword": "spread_pussy",               "role": "none" } ] },
+            "anal":                       { "keywords": [ { "keyword": "anal",                       "role": "none" } ] },
+            "other":                      { "keywords": [ { "keyword": "sex_other",                  "role": "none" } ] },
+            "generic":                    { "keywords": [ { "keyword": null,                         "role": "none" } ], "_comment": "unconditional variant of the none block" }
+        }
+    },
+
+    "_prompt_scene_doc": "Game only (ActionScenePromptUtility, Docs/ImagePortraits/Plan_ActionPromptTags.md): the image prompt of what an actor is doing - the REVERSE of portrait_global (game tags -> prompt). Read on every build, edits apply without a restart. Collected (tags only): every interaction = one doer + receiver + command (receiver none = solo act) with the command's comTags + portraitTags + job type tags; every actor = GetActorTag + its EP portrait action tags + its SHORT TAG (code: humanoid girl / boy / futa; other races their species from RaceType - dog, horse, pig, bear, goblin, android; else other). Condition syntax as the classifier: an entry 'a|b' = OR, all = every entry, any = at least one, none = no entry. Count tags (scene wide, every rule set): '<short tag>:N' (girl:N, boy:N, futa:N, dog:N ...), 'other:N' (every actor that is not girl / boy / futa, species included), 'actors:N', 'doers:N', 'receivers:N'; 'N+' = at least N. The {count} prompt counts futa as girl and every species as other (1girl, 1other). Output sections, default order: composition, one per interaction, one per doer, one per receiver, scene, room.",
+    "_prompt_derived_tags_doc": "Run before the rules, in order (later entries see earlier additions), twice: for the scene (sides = all doers / all receivers, adds scene tags) and for every interaction (sides = its doer / receiver, adds to that interaction). add = tags added when the entry matches. Own all/any/none = conditions in that context; doer / receiver = { all, any, none } on that side; differs = each tag is on exactly one side.",
+    "prompt_derived_tags": [
+        { "add": ["interracial"], "differs": ["black"], "_comment": "one side black, the other not" },
+        { "add": ["bestiality"], "all": ["sex"], "differs": ["animal"], "_comment": "an animal (race type animal: horse, dog, pig, bear) on one side only" },
+        { "add": ["yuri"], "all": ["sex"], "doer": { "all": ["girl"], "none": ["boy|futa"] }, "receiver": { "all": ["girl"], "none": ["boy|futa"] } }
+    ],
+    "_prompt_rules_doc": "Rule trees (composition / interaction / scene). A node applies when its conditions (all/any/none) match and its chance roll passes (chance 0-1, default 1; a new roll every build; a failed roll = not applied, the next sibling gets its turn). mode first: the first child that applies wins, the rest are skipped (put the specific rule before the generic one); mode all: every child that applies adds. A group applies when it has own prompts / pick or at least one child applied. prompts = comma separated tags; pick = weighted alternatives [ { weight, prompts } ], one is chosen.",
+    "_prompt_composition_rules_doc": "Once per scene: the composition section. {count} = the merged count tags (futa counted as girl: 1girl, 2boys; a species named once: horse, dog; actors without species: 1other). No rule applied = the count tags alone.",
+    "prompt_composition_rules": {
+        "mode": "all",
+        "children": [
+            { "id": "count", "mode": "first", "children": [
+                { "id": "gangbang",   "all": ["actors:5+", "receivers:1"],  "prompts": "{count}, gangbang, group sex" },
+                { "id": "mmf",        "all": ["girl:1", "boy:2", "futa:0"],  "prompts": "{count}, mmf threesome, group sex" },
+                { "id": "ffm",        "all": ["girl:2", "boy:1", "futa:0"],  "prompts": "{count}, ffm threesome, group sex" },
+                { "id": "solo",       "all": ["actors:1"],                  "prompts": "{count}, solo" },
+                { "id": "trio",       "all": ["actors:3"],                  "prompts": "{count}, threesome, group sex", "_comment": "gender agnostic fallback after mmf / ffm" },
+                { "id": "duo",        "all": ["actors:2"],                  "prompts": "{count}, duo", "_comment": "gender agnostic fallback" },
+                { "id": "default",                                          "prompts": "{count}" }
+            ]},
+            { "id": "tags", "mode": "all", "children": [
+                { "id": "sex",         "all": ["sex"],         "prompts": "sex" },
+                { "id": "interracial", "all": ["interracial"], "prompts": "interracial" },
+                { "id": "bestiality",  "all": ["bestiality"],  "prompts": "bestiality" },
+                { "id": "rough_sex",   "all": ["raped"],       "prompts": "rough sex" }
+            ]}
+        ]
+    },
+    "_prompt_interaction_rules_doc": "Once per interaction: one section each, action tags only. doer:x / receiver:x = that pair; a plain tag = the interaction's tags or either actor's. {doer} / {receiver} inside a tag become their short tags (girl / boy / futa / other) - use them only where they add information ('{receiver} on back, {doer} on top' -> 'girl on back, boy on top'); the count is in the composition section. A tag naming {receiver} is dropped in a solo act. No rule applied = no section for that interaction.",
+    "prompt_interaction_rules": {
+        "mode": "all",
+        "children": [
+            { "id": "act", "mode": "first", "children": [
+                { "_comment": "Each game act picks one of the classifier positions it stands for (portrait_global.names fallback keywords: prone_bone ... fall back to doggy). Equal weights; tune them freely.", "id": "doggy", "all": ["doggy"], "prompts": "sex from behind", "pick": [
+                    { "weight": 1, "prompts": "doggystyle, all fours" },
+                    { "weight": 1, "prompts": "prone bone, on stomach" },
+                    { "weight": 1, "prompts": "full nelson" },
+                    { "weight": 1, "prompts": "spooning, on side" },
+                    { "weight": 1, "prompts": "reverse suspended congress, carrying" }
+                ]},
+                { "_comment": "who lies under whom only on the lying positions (girl on back, boy on top)", "id": "missionary", "all": ["missionary"], "pick": [
+                    { "weight": 1, "prompts": "missionary, spread legs, {receiver} on back, {doer} on top" },
+                    { "weight": 1, "prompts": "mating press, legs up, folded, {receiver} on back, {doer} on top" },
+                    { "weight": 1, "prompts": "leg lock, {receiver} on back, {doer} on top" },
+                    { "weight": 1, "prompts": "suspended congress, carrying" },
+                    { "weight": 1, "prompts": "standing sex, against wall, leg up" },
+                    { "weight": 1, "prompts": "upside-down" }
+                ]},
+                { "_comment": "the doer rides: {doer} on top (girl on top / futa on top)", "id": "cowgirl", "all": ["cowgirl"], "prompts": "{doer} on top", "pick": [
+                    { "weight": 1, "prompts": "cowgirl position, straddling" },
+                    { "weight": 1, "prompts": "reverse cowgirl position" },
+                    { "weight": 1, "prompts": "squatting cowgirl position" },
+                    { "weight": 1, "prompts": "sitting on person" },
+                    { "weight": 1, "prompts": "sitting on lap, face-to-face" }
+                ]},
+                { "id": "irrumatio",           "all": ["irrumatio"],            "prompts": "irrumatio, fellatio, forced", "pick": [
+                    { "weight": 1, "prompts": "deepthroat" },
+                    { "weight": 1, "prompts": "hand on another's head" },
+                    { "weight": 1, "prompts": "face fucking" }
+                ]},
+                { "id": "paizuri_fellatio",    "all": ["blowjob", "boobjob"],   "prompts": "paizuri, fellatio" },
+                { "id": "blowjob", "all": ["blowjob"], "pick": [
+                    { "weight": 1, "prompts": "fellatio" },
+                    { "weight": 1, "prompts": "fellatio, licking penis" },
+                    { "weight": 1, "prompts": "fellatio, testicle sucking" },
+                    { "weight": 1, "prompts": "69, fellatio, cunnilingus" }
+                ]},
+                { "id": "paizuri", "all": ["boobjob"], "pick": [
+                    { "weight": 1, "prompts": "paizuri" },
+                    { "weight": 1, "prompts": "straddling paizuri" },
+                    { "weight": 1, "prompts": "perpendicular paizuri" }
+                ]},
+                { "id": "cunnilingus",         "all": ["cunnilingus"],          "prompts": "cunnilingus, spread legs" },
+                { "id": "rimjob", "all": ["rimjob"], "prompts": "anilingus", "pick": [
+                    { "weight": 1, "prompts": "" },
+                    { "weight": 1, "prompts": "handjob, reach-around" }
+                ]},
+                { "id": "intercrural",         "all": ["intercrural"],          "prompts": "thigh sex" },
+                { "id": "handjob", "all": ["handjob"], "pick": [
+                    { "weight": 1, "prompts": "handjob" },
+                    { "weight": 1, "prompts": "two-handed handjob" },
+                    { "weight": 1, "prompts": "hairjob" },
+                    { "weight": 1, "prompts": "armpit sex" }
+                ]},
+                { "id": "footjob", "all": ["footjob"], "pick": [
+                    { "weight": 1, "prompts": "footjob" },
+                    { "weight": 1, "prompts": "two-footed footjob" }
+                ]},
+                { "id": "fingering",           "all": ["fingering"],            "prompts": "fingering" },
+                { "id": "breast_grab", "all": ["breasts"], "pick": [
+                    { "weight": 1, "prompts": "grabbing another's breast" },
+                    { "weight": 1, "prompts": "grabbing from behind, groping" },
+                    { "weight": 1, "prompts": "breast sucking" }
+                ]},
+                { "id": "kiss", "all": ["kiss"], "pick": [
+                    { "weight": 1, "prompts": "kiss" },
+                    { "weight": 1, "prompts": "french kiss, tongue" }
+                ]},
+                { "id": "masturbation_girl", "all": ["masturbate", "doer:girl|doer:futa"], "pick": [
+                    { "weight": 1, "prompts": "female masturbation, fingering" },
+                    { "weight": 1, "prompts": "female masturbation, clitoral stimulation" },
+                    { "weight": 1, "prompts": "masturbation, dildo, object insertion" },
+                    { "weight": 1, "prompts": "masturbation, vibrator" },
+                    { "weight": 1, "prompts": "anal object insertion, butt plug" },
+                    { "weight": 1, "prompts": "grabbing own breast, breast masturbation" }
+                ]},
+                { "id": "masturbation",        "all": ["masturbate"],           "prompts": "masturbation" }
+            ]},
+            { "id": "modifiers", "mode": "all", "children": [
+                { "id": "futa_with_female",  "all": ["doer:girl|receiver:girl", "doer:futa|receiver:futa"], "prompts": "futa with female" },
+                { "id": "anal",              "all": ["anal"],                 "prompts": "anal" },
+                { "id": "sleeping",          "all": ["receiver:sleeping"],    "prompts": "sleeping, sleep molestation" },
+                { "id": "vaginal",          "all": ["vagina"],    "prompts": "vaginal" }
+
+            ]}
+        ]
+    },
+    "_prompt_scene_rules_doc": "Once per scene: the scene section (plain tags) and the section order. doer:x / receiver:x = any actor on that side. {pov} = draw the player as pov: 'pov' goes into the scene section and the player's actor section is left out; only works with the scene tag pov_possible (the player is involved and is not the main actor), so gate the rule on it and give it a chance. Layout markers (optional): {composition} (or {count}) {interaction} {doer} {receiver} {scene} {room} - sections are joined in the order the markers first appear; sections no rule places: composition first, the rest in the default order. doer / receiver sections = each actor's own prompt (CollectActorTags with that actor's tags), room = Room_Base.promptTags + prison / bedroom.",
+    "prompt_scene_rules": {
+        "mode": "all",
+        "children": [
+            { "id": "ahegao", "all": ["raped"], "chance": 0.5, "prompts": "ahegao", "_comment": "rough sex moved to the composition tags" },
+            { "id": "view", "mode": "first", "children": [
+                { "_comment": "the player's view; a failed roll falls through to the camera pick", "id": "pov", "all": ["pov_possible"], "chance": 0.5, "prompts": "{pov}" },
+                { "id": "camera", "all": ["sex"], "pick": [
+                    { "weight": 1, "prompts": "from side" },
+                    { "weight": 1, "prompts": "from above" },
+                    { "weight": 1, "prompts": "from behind" }
+                ]}
+            ]}
+        ]
+    }
+}
