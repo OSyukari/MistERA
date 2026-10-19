@@ -196,7 +196,7 @@ public class ImageTagStore
         var untrackedByKey = untracked.GroupBy(p =>
         {
             var info = new FileInfo(AbsolutePath(p));
-            return Key(info.Length, ImageTagTask.UnixMs(info.LastWriteTimeUtc), p);
+            return Key(info.Length, new DateTimeOffset(info.LastWriteTimeUtc, TimeSpan.Zero).ToUnixTimeMilliseconds(), p);
         }).ToDictionary(g => g.Key, g => g.ToList());
 
         foreach (var kv in untrackedByKey)
@@ -230,7 +230,7 @@ public class ImageTagStore
         foreach (var r in Records.Values.Where(r => present.Contains(r.path)))
         {
             var info = new FileInfo(AbsolutePath(r.path));
-            if (info.Length != r.size || ImageTagTask.UnixMs(info.LastWriteTimeUtc) != r.mtime) result.stale.Add(r.path);
+            if (info.Length != r.size || new DateTimeOffset(info.LastWriteTimeUtc, TimeSpan.Zero).ToUnixTimeMilliseconds() != r.mtime) result.stale.Add(r.path);
         }
         return result;
     }

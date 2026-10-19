@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -77,10 +78,12 @@ public static class ComfyUISceneImage
     public const string ListSeparator = "||";
 
     public static TimeSpan RequestTimeout = TimeSpan.FromMinutes(10);
+    public static float Wd14Threshold = 0.2f;
+    public static float Wd14CharacterThreshold = 0.85f;
     static readonly TimeSpan PollInterval = TimeSpan.FromMilliseconds(500);
     static readonly HttpClient http = new HttpClient { Timeout = TimeSpan.FromSeconds(60) };
     static readonly string clientId = Guid.NewGuid().ToString();
-    static readonly Regex leftoverPlaceholder = new Regex(@"\$[A-Za-z_]+\$");
+    static readonly Regex leftoverPlaceholder = new Regex(@"\$[A-Za-z_][A-Za-z0-9_]*\$");
 
     public static string WorkflowPath { get { return $"{scr_System_Serializer.AssetPacksPath}/{WorkflowFileName}"; } }
     public static string OutputFolder { get { return $"{scr_System_Serializer.AssetPacksPath}/{OutputFolderName}"; } }
@@ -98,7 +101,8 @@ public static class ComfyUISceneImage
     /// section starting with its short tag, all joined with ||; $mainActors$ = the $actors$ entry of the main actor (the actor the scene was
     /// collected for, ActionSceneTags.mainActor), $secondaryActors$ = the other entries; $actors_complex$ = the entries with a large prompt
     /// (ComplexActorMinTags+, || list), $actors_simple$ = the smaller ones merged into one ", " prompt without duplicates (not a list);
-    /// $prompt$ = the flat prompt; $seed$ = the request seed.
+    /// $prompt$ = the flat prompt; $seed$ = the request seed; $wd14_threshold$ / $wd14_character_threshold$ = tagger thresholds;
+    /// $exclude_tags$ = the config's excluded_tags joined with commas.
     /// </summary>
     public static Dictionary<string, string> BuildPlaceholders(ActionSceneTags t, ActionScenePrompt p, long seed)
     {
@@ -135,6 +139,9 @@ public static class ComfyUISceneImage
             ["$actors_simple$"] = string.Join(", ", simpleActors),
             ["$prompt$"] = p.Flatten(),
             ["$seed$"] = seed.ToString(),
+            ["$wd14_threshold$"] = Wd14Threshold.ToString(CultureInfo.InvariantCulture),
+            ["$wd14_character_threshold$"] = Wd14CharacterThreshold.ToString(CultureInfo.InvariantCulture),
+            ["$exclude_tags$"] = string.Join(",", ImageRulesJsonLoader.ReadExcludedTags(GlobalPortraitTemplate.ConfigPath)),
         };
     }
 
