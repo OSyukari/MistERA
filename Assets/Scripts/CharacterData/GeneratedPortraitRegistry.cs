@@ -64,11 +64,12 @@ public static class GeneratedPortraitRegistry
     }
 
     /// <summary>Publish only after the image and sidecar were stored and the image's short addresses registered.</summary>
-    public static void Add(string templateID)
+    public static void Add(string templateID, string imagePath)
     {
         if (!Enabled || string.IsNullOrEmpty(templateID)) return;
         versions.TryGetValue(templateID, out var version);
         versions[templateID] = version + 1;
-        scr_System_Serializer.current.GlobalPortraitByFolder.Remove($"{ComfyUISceneImage.OutputFolderName}/{templateID}");
+        GlobalPortraitTemplate.AddImage(imagePath);
+        scr_System_CentralControl.current?.AddGeneratedPortraitHandlers(templateID);
     }
 }

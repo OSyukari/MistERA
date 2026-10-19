@@ -113,6 +113,8 @@ public class scr_System_Serializer : MonoBehaviour
     }
 
     public Dictionary<string, string> ShortFileAddress = new Dictionary<string, string>();
+    readonly Dictionary<string, List<string>> imageFolderQueries = new Dictionary<string, List<string>>();
+    readonly Dictionary<string, List<string>> imageRegexQueries = new Dictionary<string, List<string>>();
 
     /// <summary>
     /// Global portrait template (GlobalPortraitTemplate.Initialize at boot): handler list as JSON with $foldername$, null = disabled
@@ -129,6 +131,7 @@ public class scr_System_Serializer : MonoBehaviour
 
     public List<string> GetAllImageFilesInFolder(string folderPath)
     {
+        if (imageFolderQueries.TryGetValue(folderPath, out var cached)) return new List<string>(cached);
         //Debug.Log($"GetAllImageFilesWithRegex {folderPath}");
         var results = new List<string>();
         foreach(var i in ShortFileAddress)
@@ -143,6 +146,7 @@ public class scr_System_Serializer : MonoBehaviour
                 }
             }
         }
+        imageFolderQueries[folderPath] = new List<string>(results);
         return results;
     }
 
@@ -167,6 +171,7 @@ public class scr_System_Serializer : MonoBehaviour
     /// </summary>
     public List<string> GetAllImageFilesByRegex(string pattern)
     {
+        if (imageRegexQueries.TryGetValue(pattern, out var cached)) return new List<string>(cached);
         var results = new List<string>();
         System.Text.RegularExpressions.Regex regex;
         try
@@ -176,6 +181,7 @@ public class scr_System_Serializer : MonoBehaviour
         catch (ArgumentException e)
         {
             Debug.LogWarning($"GetAllImageFilesByRegex invalid regex [{pattern}]: {e.Message}");
+            imageRegexQueries[pattern] = new List<string>();
             return results;
         }
         var seenFiles = new HashSet<string>();
@@ -185,11 +191,14 @@ public class scr_System_Serializer : MonoBehaviour
             if (!regex.IsMatch(i.Key)) continue;
             if (seenFiles.Add(i.Value)) results.Add(i.Key);
         }
+        imageRegexQueries[pattern] = new List<string>(results);
         return results;
     }
 
     private void BuildAddressables(bool safeMode)
     {
+        imageFolderQueries.Clear();
+        imageRegexQueries.Clear();
        // var settings = AddressableAssetSettingsDefaultObject.Settings;
 
         List<string> skippedFiles = new List<string>();
@@ -321,6 +330,9 @@ public class scr_System_Serializer : MonoBehaviour
 
         var errors = new List<string>();
         if (!RegisterAddressableFile(file, false, "runtime", new List<string>(), errors)) return false;
+        // Query results survive save loads, but not changes to the asset registry.
+        imageFolderQueries.Clear();
+        imageRegexQueries.Clear();
         foreach (var error in errors) Debug.LogWarning($"RegisterRuntimeFile: {error}");
         return ShortFileAddress.TryGetValue(key, out var registered)
             && string.Equals(registered, file.FullName, StringComparison.OrdinalIgnoreCase);

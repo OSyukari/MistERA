@@ -166,7 +166,7 @@ public sealed class GeneratedImageClassifier
             }
             if (!scr_System_Serializer.current.RegisterRuntimeFile(result.finalPath))
                 throw new InvalidOperationException("generated image could not be registered at runtime");
-            GeneratedPortraitRegistry.Add(result.templateID);
+            GeneratedPortraitRegistry.Add(result.templateID, $"{result.templateID}/{Path.GetFileName(folder)}/{Path.GetFileName(imagePath)}");
             actor.PortraitManager.InvalidateGeneratedAssetCache();
         }
         catch (Exception e)

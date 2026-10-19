@@ -104,7 +104,8 @@ public static class ComfyUISceneImage
     public const int ComplexActorMinTags = 10;
 
     /// <summary>
-    /// $composition$ $scene$ $location$ = those sections; $actions$ = one entry per interaction section, $actors$ = one entry per actor
+    /// $composition$ $scene$ $location$ = those sections; $actions$ = one combined entry per pair in layout order:
+    /// nonempty pair prompt then child action prompts joined with commas, entries joined with ||; $actors$ = one entry per actor
     /// section starting with its short tag, all joined with ||; $mainActors$ = the $actors$ entry of the main actor (the actor the scene was
     /// collected for, ActionSceneTags.mainActor), $secondaryActors$ = the other entries; $actors_complex$ = the entries with a large prompt
     /// (more than ComplexActorMinTags, || list), $actors_simple$ = every actor's full prompt up to that limit, otherwise its shortPrompt;
@@ -115,7 +116,6 @@ public static class ComfyUISceneImage
     public static Dictionary<string, string> BuildPlaceholders(ActionSceneTags t, ActionScenePrompt p, long seed)
     {
         string Join(ScenePromptSectionKind kind) { return string.Join(", ", p.sections.Where(s => s.kind == kind).SelectMany(s => s.tags)); }
-        var actions = p.sections.Where(s => s.kind == ScenePromptSectionKind.interaction).Select(s => string.Join(", ", s.tags));
         var actors = new List<string>();
         var mainActors = new List<string>();
         var secondaryActors = new List<string>();
@@ -125,10 +125,8 @@ public static class ComfyUISceneImage
         {
             foreach (var actor in t.actors)
             {
-                // Reuse the full prompt already collected by Build; POV actors have no section but still need a simple entry.
-                var section = p.sections.Find(s => s.actor == actor.character
-                    && (s.kind == ScenePromptSectionKind.doer || s.kind == ScenePromptSectionKind.receiver));
-                var full = section?.tags ?? LLMUtils.CollectActorTags(actor.character, false, out _, actor.tags);
+                // POV actors have no section, but Build still resolves their deferred details.
+                var full = p.actorPrompts[actor.character];
                 var own = full.Where(tag => !string.Equals(tag, actor.shortTag, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (own.Count > ComplexActorMinTags)
                 {
@@ -163,7 +161,7 @@ public static class ComfyUISceneImage
             ["$composition$"] = Join(ScenePromptSectionKind.composition),
             ["$scene$"] = Join(ScenePromptSectionKind.scene),
             ["$location$"] = Join(ScenePromptSectionKind.room),
-            ["$actions$"] = string.Join(ListSeparator, actions),
+            ["$actions$"] = string.Join(ListSeparator, p.ActionPrompts()),
             ["$actors$"] = string.Join(ListSeparator, actors),
             ["$mainActors$"] = string.Join(ListSeparator, mainActors),
             ["$secondaryActors$"] = string.Join(ListSeparator, secondaryActors),
@@ -209,7 +207,11 @@ public static class ComfyUISceneImage
 
             var path = WorkflowPath;
             if (!File.Exists(path)) throw new FileNotFoundException($"workflow not found at [{path}] (export it from ComfyUI with File > Export (API))");
-            var graph = JObject.Parse(File.ReadAllText(path, Encoding.UTF8));
+            var workflowText = File.ReadAllText(path, Encoding.UTF8);
+            if (request.prompt.sections.Any(s => s.kind == ScenePromptSectionKind.pair)
+                && !workflowText.Contains("$actions$") && !workflowText.Contains("$prompt$"))
+                Debug.LogWarning($"ComfyUISceneImage: workflow [{path}] does not consume $actions$ or $prompt$; pairwise descriptions will not reach generation");
+            var graph = JObject.Parse(workflowText);
             var leftovers = new HashSet<string>();
             ReplacePlaceholders(graph, request.placeholders, leftovers);
             if (leftovers.Count > 0) Debug.LogWarning($"ComfyUISceneImage: unknown placeholders in the workflow: {string.Join(", ", leftovers)}");

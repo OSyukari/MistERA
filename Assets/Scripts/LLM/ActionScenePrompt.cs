@@ -13,6 +13,8 @@ public class ActionSceneActor
     public Character_Trainable character;
     /// <summary> GetActorTag + the short tag + the jobs' JobTypeTag (no EP tags) </summary>
     public HashSet<string> baseTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    /// <summary> Actor properties only; no job or EP action tags. Used for main/support comparisons. </summary>
+    public HashSet<string> propertyTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     /// <summary> baseTags + the actor's EP portrait action tags of every collected EP </summary>
     public HashSet<string> tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     /// <summary> Short tag first; basic appearance and always-visible body tags are added when a long full prompt needs shortening </summary>
@@ -34,6 +36,8 @@ public class ActionSceneInteraction
     public ActionSceneActor doer;
     public ActionSceneActor receiver;
     public COM com;
+    /// <summary> Explicit self-targeting EP, kept distinct from an absent receiver. </summary>
+    public bool selfAction;
     /// <summary> the command's comTags + portraitTags + the job type tags, then the pair's derived tags </summary>
     public HashSet<string> tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     /// <summary> doer.baseTags + the doer's tags in this EP </summary>
@@ -44,6 +48,51 @@ public class ActionSceneInteraction
     public string Label { get { return $"{doer?.character?.FullName} > {(receiver == null ? "(solo)" : receiver.character?.FullName)} : {com?.ID}"; } }
 }
 
+public enum ScenePairKind { distinct, self, solo }
+
+/// <summary> All actions between the scene's fixed main actor and one support, independent of direction or command. </summary>
+public class ActionScenePair
+{
+    public ActionSceneActor main;
+    public ActionSceneActor support;
+    public ScenePairKind kind => support == null ? ScenePairKind.solo : support == main ? ScenePairKind.self : ScenePairKind.distinct;
+    public List<ActionSceneInteraction> actions = new List<ActionSceneInteraction>();
+    public List<string> rules = new List<string>();
+    public HashSet<string> actionTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    public HashSet<string> tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+    public bool HasTag(string tag)
+    {
+        if (string.IsNullOrEmpty(tag)) return false;
+        if (tag.StartsWith("main:", StringComparison.OrdinalIgnoreCase)) return main.propertyTags.Contains(tag.Substring(5));
+        if (tag.StartsWith("support:", StringComparison.OrdinalIgnoreCase)) return support != null && support.propertyTags.Contains(tag.Substring(8));
+        return tags.Contains(tag) || main.propertyTags.Contains(tag) || (support != null && support.propertyTags.Contains(tag));
+    }
+
+    public bool Matches(ScenePairConditions rule)
+    {
+        if (!string.IsNullOrEmpty(rule.pairKind))
+        {
+            if (!Enum.TryParse(rule.pairKind, true, out ScenePairKind required) || !Enum.IsDefined(typeof(ScenePairKind), required))
+            {
+                Debug.LogWarning($"ActionScenePrompt: unknown pairKind [{rule.pairKind}] skipped");
+                return false;
+            }
+            if (kind != required) return false;
+        }
+        if (rule.main != null && !rule.main.Matches(main.propertyTags.Contains)) return false;
+        // A missing support is not an actor with an empty set of properties, even for a 'none' condition.
+        if (rule.support != null && (support == null || !rule.support.Matches(support.propertyTags.Contains))) return false;
+        if (rule.differs != null && rule.differs.Count > 0)
+        {
+            if (support == null) return false;
+            if (!rule.differs.TrueForAll(clause => SceneClauseBlock.Clause(clause, main.propertyTags.Contains)
+                != SceneClauseBlock.Clause(clause, support.propertyTags.Contains))) return false;
+        }
+        return true;
+    }
+}
+
 /// <summary>
 /// Tags of everything the main actor is doing (Docs/ImagePortraits/Plan_ActionPromptTags.md), plus each actor's basic appearance prompt.
 /// </summary>
@@ -52,6 +101,7 @@ public class ActionSceneTags
     public Character_Trainable mainActor;
     public List<ActionSceneActor> actors = new List<ActionSceneActor>();
     public List<ActionSceneInteraction> interactions = new List<ActionSceneInteraction>();
+    public List<ActionScenePair> pairs = new List<ActionScenePair>();
     /// <summary> union of every interaction's tags, then the scene derived tags </summary>
     public HashSet<string> scene = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     /// <summary> count condition values: one per short tag (girl / boy / futa / dog / horse ...), other (every non girl / boy / futa actor), actors, doers, receivers </summary>
@@ -104,33 +154,50 @@ public class ActionSceneTags
         }
         foreach (var i in interactions)
             sb.AppendLine($"interaction [{i.Label}]: {string.Join(", ", i.tags)}");
+        foreach (var p in pairs)
+            sb.AppendLine($"pair [{p.main.character?.FullName} / {p.support?.character?.FullName ?? "(none)"}] {p.kind}, {p.actions.Count} actions: {string.Join(", ", p.tags)}");
         return sb.ToString();
     }
 }
 
-public enum ScenePromptSectionKind { composition, interaction, doer, receiver, scene, room }
+public enum ScenePromptSectionKind { composition, interaction, pair, doer, receiver, scene, room }
 
 public class ScenePromptSection
 {
     public ScenePromptSectionKind kind;
-    /// <summary> doer / receiver sections: the actor; interaction sections: the doer </summary>
+    /// <summary> doer / receiver sections: the actor; interaction: doer; pair: main </summary>
     public Character_Trainable actor;
-    /// <summary> interaction sections: the receiver (null when solo) </summary>
+    /// <summary> interaction: receiver; pair: support (null when solo) </summary>
     public Character_Trainable partner;
     public List<string> tags = new List<string>();
+    /// <summary> Pair sections own their action prompts; interactions are never emitted as root sections. </summary>
+    public List<ScenePromptSection> actions = new List<ScenePromptSection>();
+    public ActionScenePair pair;
+    public ActionSceneInteraction interaction;
+
+    public IEnumerable<string> PromptTags() => tags.Concat(actions.SelectMany(a => a.tags));
 }
 
-/// <summary> the built prompt: separate sections in layout order (empty sections left out) </summary>
+/// <summary> The built prompt: layout sections, with pair sections owning their individual action prompts. </summary>
 public class ActionScenePrompt
 {
     public List<ScenePromptSection> sections = new List<ScenePromptSection>();
     public List<string> appliedRules = new List<string>();
+    /// <summary> Resolved prompts, including actors omitted from sections by POV. </summary>
+    public Dictionary<Character_Trainable, List<string>> actorPrompts = new Dictionary<Character_Trainable, List<string>>();
     /// <summary> a scene rule wrote {pov}: "pov" in the scene section, the player's actor section left out </summary>
     public bool pov = false;
 
     public string Flatten()
     {
-        return string.Join(", ", sections.SelectMany(s => s.tags));
+        return string.Join(", ", sections.SelectMany(s => s.PromptTags()));
+    }
+
+    /// <summary> One combined relative-and-action prompt per pair; empty components and groups omitted. </summary>
+    public IEnumerable<string> ActionPrompts()
+    {
+        return sections.Where(s => s.kind == ScenePromptSectionKind.pair)
+            .Select(s => string.Join(", ", s.PromptTags())).Where(text => !string.IsNullOrEmpty(text));
     }
 
     public string ToDebugString()
@@ -139,8 +206,10 @@ public class ActionScenePrompt
         sb.AppendLine($"applied rules: {string.Join(", ", appliedRules)}");
         foreach (var s in sections)
         {
-            string who = s.actor == null ? "" : " " + s.actor.FullName + (s.kind == ScenePromptSectionKind.interaction ? " > " + (s.partner == null ? "(solo)" : s.partner.FullName) : "");
+            string who = s.actor == null ? "" : " " + s.actor.FullName + (s.kind == ScenePromptSectionKind.interaction || s.kind == ScenePromptSectionKind.pair ? " > " + (s.partner == null ? "(solo)" : s.partner.FullName) : "");
             sb.AppendLine($"[{s.kind}{who}] {string.Join(", ", s.tags)}");
+            foreach (var action in s.actions)
+                sb.AppendLine($"  action [{action.interaction?.Label}]: {string.Join(", ", action.tags)}");
         }
         return sb.ToString();
     }
@@ -154,7 +223,7 @@ public class SceneClauseBlock
     public List<string> any = new List<string>();
     public List<string> none = new List<string>();
 
-    static bool Clause(string clause, Func<string, bool> has)
+    internal static bool Clause(string clause, Func<string, bool> has)
     {
         if (string.IsNullOrEmpty(clause)) return true;
         foreach (var t in clause.Split('|')) if (has(t.Trim())) return true;
@@ -173,25 +242,34 @@ public class SceneClauseBlock
 /// <summary>
 /// prompt_derived_tags entry, run for the scene (sides = all doers / all receivers, adds to the scene tags) and for every
 /// interaction (sides = its doer / receiver, adds to its tags). Own all/any/none = conditions in that context;
-/// doer / receiver = conditions on that side; differs = each tag is on exactly one side. Later entries see earlier additions.
+/// doer / receiver = conditions on that side; differs = every OR clause matches exactly one side. Later entries see earlier additions.
 /// </summary>
 [Serializable]
-public class SceneDerivedTag : SceneClauseBlock
+public class SceneDerivedTag : ScenePairConditions
 {
     public List<string> add = new List<string>();
-    public List<string> differs = new List<string>();
     public SceneClauseBlock doer = null;
     public SceneClauseBlock receiver = null;
 }
 
+/// <summary> Extra conditions used by main/support pair rule trees and pair-derived tags. </summary>
+[Serializable]
+public class ScenePairConditions : SceneClauseBlock
+{
+    public string pairKind = "";
+    public SceneClauseBlock main = null;
+    public SceneClauseBlock support = null;
+    public List<string> differs = new List<string>();
+}
+
 /// <summary>
-/// Rule tree node (prompt_composition_rules / prompt_interaction_rules / prompt_scene_rules). Applies when its conditions match and
+/// Rule tree node (composition / interaction / pair / scene). Applies when its conditions match and
 /// its chance roll passes (a failed roll = not applied, so a "first" group moves on to the next child). mode "first": the first
 /// child that applies wins; "all": every child that applies adds. A group applies when it has own prompts / pick or at least one
 /// child applied (or has no children at all). prompts: comma separated tags plus the placeholders of that rule set.
 /// </summary>
 [Serializable]
-public class ScenePromptNode : SceneClauseBlock
+public class ScenePromptNode : ScenePairConditions
 {
     public string id = "";
     public string mode = "all";
@@ -203,7 +281,7 @@ public class ScenePromptNode : SceneClauseBlock
 }
 
 [Serializable]
-public class ScenePromptPick
+public class ScenePromptPick : SceneClauseBlock
 {
     public float weight = 1f;
     public string prompts = "";
@@ -212,7 +290,7 @@ public class ScenePromptPick
 /// <summary>
 /// Scene image prompt of what an actor is doing (Docs/ImagePortraits/Plan_ActionPromptTags.md):
 /// Collect (tags only) -> Build: derived tags -> composition rules -> interaction rules (one section per interaction) -> scene rules
-/// -> sections (composition, interactions, doers, receivers, scene, room).
+/// -> sections (composition, interactions, main/support pairs, doers, receivers, scene, room).
 /// The rules are read from Mods/Assetpacks/Image_Generation_Config.json on every Build (edits apply without a restart).
 /// </summary>
 public static class ActionScenePromptUtility
@@ -261,6 +339,7 @@ public static class ActionScenePromptUtility
                 {
                     if (ep == null || ep.Doer == null) continue;
                     var doerChara = ep.Doer;
+                    bool selfAction = ep.Receiver == doerChara;
                     var receiverChara = ep.Receiver == doerChara ? null : ep.Receiver;
                     var com = ep.targetCOM;
 
@@ -273,10 +352,10 @@ public static class ActionScenePromptUtility
                         receiver.isReceiver = true;
                     }
 
-                    string key = $"{doerChara.RefID}|{(receiverChara == null ? -1 : receiverChara.RefID)}|{com?.ID}";
+                    string key = $"{doerChara.RefID}|{(receiverChara == null ? -1 : receiverChara.RefID)}|{com?.ID}|{selfAction}";
                     if (!byKey.TryGetValue(key, out var inter))
                     {
-                        inter = new ActionSceneInteraction { doer = doer, receiver = receiver, com = com };
+                        inter = new ActionSceneInteraction { doer = doer, receiver = receiver, com = com, selfAction = selfAction };
                         byKey.Add(key, inter);
                         result.interactions.Add(inter);
                     }
@@ -312,9 +391,14 @@ public static class ActionScenePromptUtility
         {
             var actorTags = new List<string>();
             UtilityEX.GetActorTag(ref actorTags, a.character);
-            a.baseTags.UnionWith(actorTags);
-            a.shortPrompt = new List<string> { LLMUtils.GetShortTag(a.character, a.baseTags) };
-            a.baseTags.Add(a.shortTag);
+            a.propertyTags.UnionWith(actorTags);
+            // Body-type appearance tags (e.g. petite) are also useful scene-rule conditions.
+            var bodyType = a.character.Body?.GetEffectiveBodyTrait("trait_BodyType") ?? a.character.Stats?.GetTraitByGroupID("trait_BodyType");
+            if (bodyType?.promptTags != null) a.propertyTags.UnionWith(bodyType.promptTags);
+            if (bodyType?.promptTags_always != null) a.propertyTags.UnionWith(bodyType.promptTags_always);
+            a.shortPrompt = new List<string> { LLMUtils.GetShortTag(a.character, a.propertyTags) };
+            a.propertyTags.Add(a.shortTag);
+            a.baseTags.UnionWith(a.propertyTags);
             a.tags.UnionWith(a.baseTags);
             a.isPlayer = a.character == player;
         }
@@ -337,7 +421,39 @@ public static class ActionScenePromptUtility
         foreach (var s in new[] { Short_Girl, Short_Boy, Short_Futa }) if (!result.counts.ContainsKey(s)) result.counts[s] = 0;
         // other = every actor that is not girl / boy / futa (species included); the species keep their own count too (dog:1)
         result.counts[Short_Other] = result.actors.Count - result.counts[Short_Girl] - result.counts[Short_Boy] - result.counts[Short_Futa];
+        result.pairs = GroupPairs(result);
         return result;
+    }
+
+    static List<ActionScenePair> GroupPairs(ActionSceneTags t)
+    {
+        var pairs = new List<ActionScenePair>();
+        var main = t.actors.Find(a => a.character == t.mainActor);
+        if (main == null) return pairs;
+        var bySupport = new Dictionary<(ScenePairKind, int), ActionScenePair>();
+        foreach (var action in t.interactions)
+        {
+            ActionSceneActor support;
+            if (action.doer == main)
+                support = action.selfAction ? main : action.receiver;
+            else if (action.receiver == main)
+                support = action.doer;
+            else continue; // AP membership alone does not imply this EP involves the main actor.
+
+            var kind = support == null ? ScenePairKind.solo : support == main ? ScenePairKind.self : ScenePairKind.distinct;
+            var key = (kind, support?.character.RefID ?? 0);
+            if (!bySupport.TryGetValue(key, out var pair))
+            {
+                pair = new ActionScenePair { main = main, support = support };
+                bySupport.Add(key, pair);
+                pairs.Add(pair);
+            }
+            pair.actions.Add(action);
+            pair.actionTags.UnionWith(action.tags);
+            pair.tags.UnionWith(action.tags);
+        }
+        if (pairs.Count == 0) pairs.Add(new ActionScenePair { main = main });
+        return pairs;
     }
 
     static void AddJobTags(Job job, ActionSceneActor a, ActionSceneInteraction inter)
@@ -402,9 +518,12 @@ public static class ActionScenePromptUtility
 
     class Config
     {
+        public List<string> actorGroups = new List<string>();
         public List<SceneDerivedTag> derived = new List<SceneDerivedTag>();
+        public List<SceneDerivedTag> pairDerived = new List<SceneDerivedTag>();
         public ScenePromptNode composition = null;
         public ScenePromptNode interaction = null;
+        public ScenePromptNode pair = null;
         public ScenePromptNode scene = null;
     }
 
@@ -420,9 +539,12 @@ public static class ActionScenePromptUtility
         try
         {
             var o = JObject.Parse(File.ReadAllText(path));
+            if (o["prompt_actor_groups"] is JArray g) config.actorGroups = g.ToObject<List<string>>() ?? config.actorGroups;
             if (o["prompt_derived_tags"] is JArray d) config.derived = d.ToObject<List<SceneDerivedTag>>() ?? config.derived;
+            if (o["prompt_pair_derived_tags"] is JArray pd) config.pairDerived = pd.ToObject<List<SceneDerivedTag>>() ?? config.pairDerived;
             if (o["prompt_composition_rules"] is JObject c) config.composition = c.ToObject<ScenePromptNode>();
             if (o["prompt_interaction_rules"] is JObject i) config.interaction = i.ToObject<ScenePromptNode>();
+            if (o["prompt_pair_rules"] is JObject pairRules) config.pair = pairRules.ToObject<ScenePromptNode>();
             if (o["prompt_scene_rules"] is JObject s) config.scene = s.ToObject<ScenePromptNode>();
         }
         catch (Exception e)
@@ -438,6 +560,15 @@ public static class ActionScenePromptUtility
         var result = new ActionScenePrompt();
         if (t == null) return result;
         var config = LoadConfig();
+        var knownGroups = new HashSet<string>(config.actorGroups, StringComparer.OrdinalIgnoreCase);
+        var requestedGroups = new Dictionary<ActionSceneActor, List<string>>();
+
+        // Group before action-level derivation so relative flags cannot leak from other role contexts.
+        t.pairs = GroupPairs(t);
+        foreach (var pair in t.pairs)
+            ApplyDerived(config.pairDerived, pair.HasTag,
+                (supportSide, tag) => supportSide ? pair.support != null && pair.support.propertyTags.Contains(tag) : pair.main.propertyTags.Contains(tag),
+                pair.tags, rule => pair.Matches(rule));
 
         // derived tags: scene wide (sides = all doers / receivers), then per interaction (sides = the pair)
         ApplyDerived(config.derived, t.HasTag, t.SideHas, t.scene);
@@ -466,19 +597,24 @@ public static class ActionScenePromptUtility
         }
         else composition.AddRange(CountTags(t));
 
-        // one section per interaction, action tags only: {doer} / {receiver} inside a tag become the short tags
+        // Build child action sections only for the main actor's pairs. Keep raw interactions for classification.
+        // {doer} / {receiver} inside a tag become the short tags
         // ("{receiver} on back, {doer} on top" -> "girl on back, boy on top"); a tag about a missing receiver (solo) is dropped
-        var interactionSections = new List<ScenePromptSection>();
-        if (config.interaction != null)
+        var interactionSections = new Dictionary<ActionSceneInteraction, ScenePromptSection>();
+        foreach (var inter in t.pairs.SelectMany(pair => pair.actions))
         {
-            foreach (var i in t.interactions)
+            var tags = new List<string>();
+            var texts = new List<string>();
+            if (config.interaction != null
+                && Apply(config.interaction, tag => t.HasTag(inter, tag), texts, result.appliedRules, $"interaction[{inter.Label}]:"))
             {
-                var inter = i;
-                var texts = new List<string>();
-                if (!Apply(config.interaction, tag => t.HasTag(inter, tag), texts, result.appliedRules, $"interaction[{inter.Label}]:")) continue;
-                var tags = new List<string>();
                 foreach (var token in Tokens(texts))
                 {
+                    if (token.IndexOf('$') >= 0)
+                    {
+                        RequestActorGroup(token, inter, knownGroups, requestedGroups);
+                        continue;
+                    }
                     var text = token;
                     if (text.IndexOf("{receiver}", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
@@ -489,8 +625,9 @@ public static class ActionScenePromptUtility
                     if (text.IndexOf('{') >= 0) Debug.LogWarning($"ActionScenePrompt: placeholder in [{token}] is not used in interaction rules (only {{doer}} / {{receiver}})");
                     AddDistinct(tags, text);
                 }
-                interactionSections.Add(new ScenePromptSection { kind = ScenePromptSectionKind.interaction, actor = inter.doer.character, partner = inter.receiver?.character, tags = tags });
             }
+            interactionSections.Add(inter, new ScenePromptSection { kind = ScenePromptSectionKind.interaction,
+                actor = inter.doer.character, partner = inter.receiver?.character, interaction = inter, tags = tags });
         }
 
         // scene rules: plain tags = the scene section; markers set the section order; {pov} = draw the player as pov
@@ -509,25 +646,63 @@ public static class ActionScenePromptUtility
                     continue;
                 }
                 if (string.Equals(name, "count", StringComparison.OrdinalIgnoreCase)) name = nameof(ScenePromptSectionKind.composition);
+                if (string.Equals(name, "interaction", StringComparison.OrdinalIgnoreCase)) name = nameof(ScenePromptSectionKind.pair);
                 if (Enum.TryParse(name, true, out ScenePromptSectionKind kind)) { if (!layout.Contains(kind)) layout.Add(kind); }
                 else Debug.LogWarning($"ActionScenePrompt: unknown placeholder [{token}] skipped");
                 continue;
             }
             AddDistinct(sceneTags, token);
         }
+        var pairSections = new List<ScenePromptSection>();
+        foreach (var pair in t.pairs)
+        {
+            var tags = new List<string>();
+            var texts = new List<string>();
+            string label = $"pair[{pair.main.character.RefID}/{pair.support?.character.RefID.ToString() ?? "none"}]:";
+            if (config.pair != null && Apply(config.pair, pair.HasTag, texts, pair.rules, label, node => pair.Matches(node)))
+            {
+                result.appliedRules.AddRange(pair.rules);
+                foreach (var token in Tokens(texts))
+                {
+                    if (pair.support == null && token.IndexOf("$support.shortTag$", StringComparison.OrdinalIgnoreCase) >= 0) continue;
+                    var text = ReplaceIgnoreCase(token, "$main.shortTag$", pair.main.shortTag);
+                    text = ReplaceIgnoreCase(text, "$support.shortTag$", pair.support?.shortTag ?? "");
+                    if (text.IndexOf('$') >= 0)
+                    {
+                        Debug.LogWarning($"ActionScenePrompt: unknown pair placeholder in [{token}] skipped");
+                        continue;
+                    }
+                    AddDistinct(tags, text);
+                }
+            }
+            pairSections.Add(new ScenePromptSection { kind = ScenePromptSectionKind.pair,
+                actor = pair.main.character, partner = pair.support?.character, pair = pair, tags = tags,
+                actions = pair.actions.Select(action => interactionSections[action]).ToList() });
+        }
         // sections no scene rule placed: composition leads, the rest follow in the default order
         if (!layout.Contains(ScenePromptSectionKind.composition)) layout.Insert(0, ScenePromptSectionKind.composition);
         foreach (ScenePromptSectionKind kind in Enum.GetValues(typeof(ScenePromptSectionKind)))
             if (!layout.Contains(kind)) layout.Add(kind);
+
+        // Resolve once after all rolls; POV actors must use the same filtered prompt as visible actors.
+        foreach (var a in t.actors)
+        {
+            var groups = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+            var tags = LLMUtils.CollectActorTags(a.character, false, out _, a.tags, groups);
+            if (requestedGroups.TryGetValue(a, out var requests))
+                foreach (var group in requests)
+                    if (groups.TryGetValue(group, out var details)) AddDistinct(tags, details);
+            result.actorPrompts[a.character] = tags;
+        }
 
         foreach (var kind in layout)
         {
             switch (kind)
             {
                 case ScenePromptSectionKind.composition: AddSection(result, kind, null, composition); break;
-                case ScenePromptSectionKind.interaction: foreach (var s in interactionSections) if (s.tags.Count > 0) result.sections.Add(s); break;
-                case ScenePromptSectionKind.doer: foreach (var a in t.Doers) if (!(result.pov && a.isPlayer)) AddSection(result, kind, a.character, ActorTags(a)); break;
-                case ScenePromptSectionKind.receiver: foreach (var a in t.Receivers) if (!(result.pov && a.isPlayer)) AddSection(result, kind, a.character, ActorTags(a)); break;
+                case ScenePromptSectionKind.pair: result.sections.AddRange(pairSections); break;
+                case ScenePromptSectionKind.doer: foreach (var a in t.Doers) if (!(result.pov && a.isPlayer)) AddSection(result, kind, a.character, result.actorPrompts[a.character]); break;
+                case ScenePromptSectionKind.receiver: foreach (var a in t.Receivers) if (!(result.pov && a.isPlayer)) AddSection(result, kind, a.character, result.actorPrompts[a.character]); break;
                 case ScenePromptSectionKind.scene: AddSection(result, kind, null, sceneTags); break;
                 case ScenePromptSectionKind.room: AddSection(result, kind, null, t.room?.PromptTags); break;
             }
@@ -536,22 +711,13 @@ public static class ActionScenePromptUtility
     }
 
     /// <summary>
-    /// The built prompt as one JSON object: composition, scene, location (room), actions (one per interaction section),
-    /// actors (one per doer / receiver section, with role, short tag, and shortPrompt array). Full tag lists joined with ", ".
+    /// The built prompt as one JSON object: composition, scene, location (room), actors, and pairs owning their actions.
+    /// Each pair retains its relative prompt, IDs, kind and applied rules; action prompts retain their command and direction.
+    /// Full tag lists joined with ", ".
     /// </summary>
     public static string ToJson(ActionSceneTags t, ActionScenePrompt p)
     {
         string Join(ScenePromptSectionKind kind) { return string.Join(", ", p.sections.Where(s => s.kind == kind).SelectMany(s => s.tags)); }
-        var actions = new JArray();
-        foreach (var s in p.sections.Where(s => s.kind == ScenePromptSectionKind.interaction))
-        {
-            actions.Add(new JObject
-            {
-                ["doer"] = s.actor?.FullName,
-                ["receiver"] = s.partner?.FullName,
-                ["prompt"] = string.Join(", ", s.tags),
-            });
-        }
         var actors = new JArray();
         foreach (var s in p.sections.Where(s => s.kind == ScenePromptSectionKind.doer || s.kind == ScenePromptSectionKind.receiver))
         {
@@ -565,13 +731,41 @@ public static class ActionScenePromptUtility
                 ["prompt"] = string.Join(", ", s.tags),
             });
         }
+        var pairs = new JArray();
+        foreach (var section in p.sections.Where(s => s.kind == ScenePromptSectionKind.pair))
+        {
+            var pair = section.pair;
+            var actions = new JArray();
+            foreach (var action in section.actions)
+                actions.Add(new JObject
+                {
+                    ["command"] = action.interaction.com?.ID,
+                    ["doer"] = action.actor?.FullName,
+                    ["doerRef"] = action.actor?.RefID,
+                    ["receiver"] = action.partner?.FullName,
+                    ["receiverRef"] = action.partner?.RefID,
+                    ["self"] = action.interaction.selfAction,
+                    ["prompt"] = string.Join(", ", action.tags),
+                });
+            pairs.Add(new JObject
+            {
+                ["main"] = pair.main.character?.FullName,
+                ["mainRef"] = pair.main.character?.RefID,
+                ["support"] = pair.support?.character?.FullName,
+                ["supportRef"] = pair.support?.character?.RefID,
+                ["kind"] = pair.kind.ToString(),
+                ["actions"] = actions,
+                ["appliedRules"] = new JArray(pair.rules),
+                ["prompt"] = string.Join(", ", section.tags),
+            });
+        }
         var o = new JObject
         {
             ["composition"] = Join(ScenePromptSectionKind.composition),
             ["scene"] = Join(ScenePromptSectionKind.scene),
             ["pov"] = p.pov,
             ["location"] = Join(ScenePromptSectionKind.room),
-            ["actions"] = actions,
+            ["pairs"] = pairs,
             ["actors"] = actors,
             ["appliedRules"] = new JArray(p.appliedRules),
         };
@@ -615,9 +809,24 @@ public static class ActionScenePromptUtility
         result.sections.Add(new ScenePromptSection { kind = kind, actor = actor, tags = tags });
     }
 
-    static List<string> ActorTags(ActionSceneActor a)
+    static void RequestActorGroup(string token, ActionSceneInteraction interaction, HashSet<string> knownGroups,
+        Dictionary<ActionSceneActor, List<string>> requests)
     {
-        return LLMUtils.CollectActorTags(a.character, false, out _, a.tags);
+        var key = token.Length > 2 && token.StartsWith("$") && token.EndsWith("$")
+            ? token.Substring(1, token.Length - 2) : "";
+        int separator = key.IndexOf('.');
+        var role = separator < 0 ? "" : key.Substring(0, separator);
+        var group = separator < 0 ? "" : key.Substring(separator + 1);
+        bool receiver = string.Equals(role, "receiver", StringComparison.OrdinalIgnoreCase);
+        if ((!receiver && !string.Equals(role, "doer", StringComparison.OrdinalIgnoreCase)) || !knownGroups.Contains(group))
+        {
+            Debug.LogWarning($"ActionScenePrompt: unknown actor group request [{token}] skipped; expected $doer.group$ or $receiver.group$ from prompt_actor_groups");
+            return;
+        }
+        var actor = receiver ? interaction.receiver : interaction.doer;
+        if (actor == null) return;
+        if (!requests.TryGetValue(actor, out var groups)) requests[actor] = groups = new List<string>();
+        if (!groups.Contains(group)) groups.Add(group);
     }
 
     static string ReplaceIgnoreCase(string text, string placeholder, string value)
@@ -628,32 +837,38 @@ public static class ActionScenePromptUtility
         return text;
     }
 
-    static void ApplyDerived(List<SceneDerivedTag> entries, Func<string, bool> has, Func<bool, string, bool> sideHas, HashSet<string> target)
+    static void ApplyDerived(List<SceneDerivedTag> entries, Func<string, bool> has, Func<bool, string, bool> sideHas, HashSet<string> target,
+        Func<SceneDerivedTag, bool> extraMatches = null)
     {
         if (entries == null) return;
         foreach (var e in entries)
         {
             if (e == null || e.add == null || e.add.Count == 0) continue;
             if (!e.Matches(has)) continue;
+            if (extraMatches != null && !extraMatches(e)) continue;
             if (e.doer != null && !e.doer.Matches(tag => sideHas(false, tag))) continue;
             if (e.receiver != null && !e.receiver.Matches(tag => sideHas(true, tag))) continue;
-            if (e.differs != null && !e.differs.TrueForAll(tag => sideHas(false, tag) != sideHas(true, tag))) continue;
+            if (e.differs != null && !e.differs.TrueForAll(clause =>
+                SceneClauseBlock.Clause(clause, tag => sideHas(false, tag)) !=
+                SceneClauseBlock.Clause(clause, tag => sideHas(true, tag)))) continue;
             target.UnionWith(e.add);
         }
     }
 
     /// <summary> true = applied; its texts (own prompts, pick, children) are committed to output only then </summary>
-    static bool Apply(ScenePromptNode node, Func<string, bool> has, List<string> output, List<string> applied, string idPrefix)
+    static bool Apply(ScenePromptNode node, Func<string, bool> has, List<string> output, List<string> applied, string idPrefix,
+        Func<ScenePromptNode, bool> extraMatches = null)
     {
         if (node == null) return false;
         if (!node.Matches(has)) return false;
+        if (extraMatches != null && !extraMatches(node)) return false;
         if (node.chance < 1f && UnityEngine.Random.value >= node.chance) return false;
 
         var local = new List<string>();
         var localApplied = new List<string>();
         bool own = false;
         if (!string.IsNullOrWhiteSpace(node.prompts)) { local.Add(node.prompts); own = true; }
-        var picked = Pick(node.pick);
+        var picked = Pick(node.pick, has);
         if (picked != null) { local.Add(picked); own = true; }
 
         bool anyChild = false;
@@ -663,32 +878,32 @@ public static class ActionScenePromptUtility
             bool first = string.Equals(node.mode, "first", StringComparison.OrdinalIgnoreCase);
             foreach (var child in node.children)
             {
-                if (!Apply(child, has, local, localApplied, idPrefix)) continue;
+                if (!Apply(child, has, local, localApplied, idPrefix, extraMatches)) continue;
                 anyChild = true;
                 if (first) break;
             }
         }
 
-        if (hasChildren && !own && !anyChild) return false;
+        if (!own && !anyChild && (hasChildren || (node.pick != null && node.pick.Count > 0))) return false;
         output.AddRange(local);
         if (!string.IsNullOrEmpty(node.id)) applied.Add(idPrefix + node.id);
         applied.AddRange(localApplied);
         return true;
     }
 
-    static string Pick(List<ScenePromptPick> options)
+    static string Pick(List<ScenePromptPick> options, Func<string, bool> has)
     {
         if (options == null || options.Count == 0) return null;
+        var eligible = options.Where(o => o != null && o.weight > 0f && o.Matches(has)).ToList();
         float total = 0f;
-        foreach (var o in options) if (o != null && o.weight > 0f) total += o.weight;
+        foreach (var o in eligible) total += o.weight;
         if (total <= 0f) return null;
         float roll = UnityEngine.Random.value * total;
-        foreach (var o in options)
+        foreach (var o in eligible)
         {
-            if (o == null || o.weight <= 0f) continue;
             roll -= o.weight;
             if (roll < 0f) return o.prompts;
         }
-        return options.Last(o => o != null && o.weight > 0f).prompts;
+        return eligible[eligible.Count - 1].prompts;
     }
 }

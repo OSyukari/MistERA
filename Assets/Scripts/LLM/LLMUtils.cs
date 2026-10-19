@@ -1549,7 +1549,9 @@ public static class LLMUtils
     /// </summary>
     /// <param name="actionTags"> the actor's current action tags (sex, unsafe, spread_pussy...) for the rules to check;
     /// null = plain portrait, e.g. organ detail rules (testicles, clitoris, anus) then stay off </param>
-    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat, out HashSet<string> keywords, IEnumerable<string> actionTags = null)
+    /// <param name="promptGroups"> optional grouped rule and visible organ output, withheld from the flat result;
+    /// organ and requested promptTags_always remain flat. Null preserves portrait behavior. </param>
+    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat, out HashSet<string> keywords, IEnumerable<string> actionTags = null, Dictionary<string, List<string>> promptGroups = null)
     {
         // order: profile prompts (character tag) -> profile rules (hair, eyes, body, halo...) -> worn items + organs
         // (part order, head to feet) -> weapons. The body walk runs first because the rules need its keywords.
@@ -1591,8 +1593,11 @@ public static class LLMUtils
 
                     // organs lie under the Skin layer: underwear covers them too (None = Skin + Inner + Outer)
                     if (ins.GetRevealingScore(BodyEquipLayer.None) > 1 && !xray) continue;
-                    if (ins.Base.promptTags != null) gear.AddRange(ins.Base.promptTags);
-                    AddRequestedOrganTags(c, ins.Base, gear, false);
+                    bool grouped = promptGroups != null && ins.Base.promptGroups != null && ins.Base.promptGroups.Count > 0;
+                    var organTags = grouped ? new List<string>() : gear;
+                    if (ins.Base.promptTags != null) organTags.AddRange(ins.Base.promptTags);
+                    AddRequestedOrganTags(c, ins.Base, organTags, false);
+                    if (grouped) ActorPromptProfileUtility.AddGroupedPrompts(organTags, ins.Base.promptGroups, promptGroups);
 
                     foreach (var slot in ins.availableSlots)
                     {
@@ -1608,7 +1613,7 @@ public static class LLMUtils
         }
 
         // default / race / body part / race template / template prompts (+ their rulesets) and the rules on visible slots + actor state (hair, eyes, halo...), before the gear
-        ActorPromptProfileUtility.CollectPrompts(c, keywords, list, actionTags);
+        ActorPromptProfileUtility.CollectPrompts(c, keywords, list, actionTags, promptGroups);
         list.AddRange(gear);
 
         if (isCombat)

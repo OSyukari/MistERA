@@ -102,7 +102,6 @@ public class PortraitManager
         serializedBanner = null;
         serializedBannerBGColor = null;
         _portraitCache = null;
-        _generatedHandlers = null;
         ResetGeneratedAssetHandlers();
         _bannerCache = null;
         _bannerCacheInit = false;
@@ -194,81 +193,28 @@ public class PortraitManager
     {
         get
         {
-            if (_generatedHandlers == null)
-            {
-                _generatedHandlers = new List<CharaPortrait>();
-                var neutral = NeutralHandler;
-                foreach (var entry in GlobalHandlerEntries)
-                {
-                    if (entry == null || string.IsNullOrEmpty(entry.path)) continue;
-                    foreach (var pp in GlobalPortraitTemplate.GetHandlers(entry.path))
-                    {
-                        // Copy shares the already resolved Variants; no RebuildInternal (see CharaPortrait_Image.RebuildInternal)
-                        var copy = pp.Copy();
-                        if (copy == null) continue;
-                        copy.isGenerated = true;
-                        copy.Owner = this;
-                        // Copy shares the key lists: build a new one when this entry adds self keys
-                        if (entry.selfKeys != null && entry.selfKeys.Count > 0)
-                            copy.RequireSelfContextKeys = copy.RequireSelfContextKeys.Concat(entry.selfKeys).Distinct().ToList();
-                        // generated handlers have no icon of their own: use the neutral handler's
-                        if (neutral != null && copy is CharaPortrait_Image img)
-                        {
-                            img.icon_path = IconPathOf(neutral);
-                            img.icon_offset_x = neutral.icon_offset_x;
-                            img.icon_offset_y = neutral.icon_offset_y;
-                            img.icon_offset_size = neutral.icon_offset_size;
-                        }
-                        _generatedHandlers.Add(copy);
-                    }
-                }
-            }
-            return _generatedHandlers;
+            return scr_System_CentralControl.current.GetGlobalPortraitHandlers(PortraitTemplateID);
         }
     }
-    protected List<CharaPortrait> _generatedHandlers = null;
 
-    /// <summary>Generated assets for this portrait template, independent of useGlobalHandler. Rebuilt only when its registry version changes.</summary>
+    [JsonIgnore] public string PortraitTemplateID => string.IsNullOrEmpty(portraitBaseIDOverride) ? Owner?.BaseID : portraitBaseIDOverride;
+
+    /// <summary>Shared generated assets for this portrait template, independent of useGlobalHandler.</summary>
     [JsonIgnore] public List<CharaPortrait> GeneratedAssetHandlers
     {
         get
         {
             RefreshGeneratedAssetVersion();
-            if (_generatedAssetHandlers == null)
-            {
-                _generatedAssetHandlers = new List<CharaPortrait>();
-                if (_generatedAssetVersion == 0) return _generatedAssetHandlers;
-                var neutral = NeutralHandler;
-                foreach (var pp in GlobalPortraitTemplate.GetHandlers($"{ComfyUISceneImage.OutputFolderName}/{_generatedAssetTemplateID}"))
-                {
-                    var copy = pp.Copy();
-                    if (copy == null) continue;
-                    copy.isGenerated = true;
-                    copy.Owner = this;
-                    // As with GeneratedHandlers, keep the folder-resolved variants and inherit only the neutral icon.
-                    if (neutral != null && copy is CharaPortrait_Image img)
-                    {
-                        img.icon_path = IconPathOf(neutral);
-                        img.icon_offset_x = neutral.icon_offset_x;
-                        img.icon_offset_y = neutral.icon_offset_y;
-                        img.icon_offset_size = neutral.icon_offset_size;
-                    }
-                    _generatedAssetHandlers.Add(copy);
-                }
-            }
-            return _generatedAssetHandlers;
+            return scr_System_CentralControl.current.GetGlobalPortraitHandlers(PortraitTemplateID, true);
         }
     }
-    protected List<CharaPortrait> _generatedAssetHandlers = null;
     protected int _generatedAssetVersion = 0;
     protected string _generatedAssetTemplateID = null;
 
     void RefreshGeneratedAssetVersion()
     {
-        var templateID = string.IsNullOrEmpty(portraitBaseIDOverride) ? Owner?.BaseID : portraitBaseIDOverride;
-        GeneratedPortraitRegistry.TryGetVersion(templateID, out var version);
-        // Boot registers images before the global template is built; do not cache an early empty handler list as ready.
-        if (string.IsNullOrEmpty(scr_System_Serializer.current?.GlobalPortraitTemplateJson)) version = 0;
+        var templateID = PortraitTemplateID;
+        var version = GlobalPortraitTemplate.Revision;
         if (_generatedAssetVersion == version && string.Equals(_generatedAssetTemplateID, templateID, StringComparison.OrdinalIgnoreCase)) return;
         InvalidateGeneratedAssetCache();
         _generatedAssetTemplateID = templateID;
@@ -286,8 +232,6 @@ public class PortraitManager
 
     void ResetGeneratedAssetHandlers()
     {
-        if (_generatedAssetHandlers != null) foreach (var handler in _generatedAssetHandlers) handler.Destroy();
-        _generatedAssetHandlers = null;
         _generatedAssetVersion = 0;
         _generatedAssetTemplateID = null;
         _cache_NeutralPortrait = null;
@@ -356,7 +300,6 @@ public class PortraitManager
     public void RebuildInternal(Character_Trainable c)
     {
         _owner = c;
-        _generatedHandlers = null;
         ResetGeneratedAssetHandlers();
         if (serializedData != null)
         {
@@ -378,16 +321,18 @@ public class PortraitManager
     public IEnumerator CacheInternal(Character_Trainable c)
     {
         _owner = c;
-        foreach (var i in ActivePortraits) i.Owner = this;
-
-        foreach (var i in ActivePortraits)
+        // Generated image handlers have no preload work. Do not enumerate/build them on save load.
+        foreach (var i in portraitPriorityList)
         {
-            yield return i.CacheInternal();
+            i.Owner = this;
+            var cache = i.CacheInternal();
+            if (cache != null) yield return cache;
         }
 
         if (this.CharaBanner != null)
         {
-            yield return this.CharaBanner.CacheInternal();
+            var cache = this.CharaBanner.CacheInternal();
+            if (cache != null) yield return cache;
         }
     }
 
@@ -419,8 +364,6 @@ public class PortraitManager
         // backing fields only - do not populate the cache just to destroy it
         var list = serializedData ?? _portraitCache;
         if (list != null) foreach (var i in list) i.Destroy();
-        if (_generatedHandlers != null) foreach (var i in _generatedHandlers) i.Destroy();
-        _generatedHandlers = null;
         ResetGeneratedAssetHandlers();
     }
 
@@ -468,12 +411,16 @@ public class PortraitManager
 
     }
 
+    IEnumerator DrawHandlerIcon(CharaPortrait handler, scr_CharIconBox box, string path)
+    {
+        yield return (handler.isGenerated ? NeutralHandler ?? handler : handler).DrawIcon(box, path);
+    }
+
     public void Prepend(CharaPortrait cm)
     {
         MarkCustomized();
         this.portraitPriorityList.Insert(0,cm);
         cm.Owner = this;
-        _generatedHandlers = null;  // the neutral handler (generated handlers' icon) may have changed
         ResetGeneratedAssetHandlers();
 
         //Debug.Log("new portrait, owner ["+Owner.FirstName+"] cmOwner["+cm.Owner.Owner.FirstName+"] isImage[" + (cm is PortraitManager.CharaPortrait_Image) + "] listCount["+portraitPriorityList.Count+"] variantsCount [" + cm.Variants.Count + "] isvalid[" + (cm.isValid()) + "] portraitPath[" + (cm as PortraitManager.CharaPortrait_Image).PortraitPath + "]");
@@ -530,8 +477,9 @@ public class PortraitManager
                     //Debug.Log($"portrait prioriry missing [{String.Join(" ",i.RequireContextKeys)}] from [{String.Join(" ", keywords)}]");
                     continue;
                 }
-                portrait = i.PortraitPath(keywords, box);    // DOES NOT CHECK TARGET
-                icon = i.IconPath(keywords) != "" ? i.IconPath(keywords) : portrait;
+                portrait = i is CharaPortrait_Image image && i.isGenerated ? image.PortraitPath(keywords, box, Owner) : i.PortraitPath(keywords, box);
+                icon = i.isGenerated ? IconPathOf(NeutralHandler) : i.IconPath(keywords);
+                if (string.IsNullOrEmpty(icon)) icon = portrait;
 
                 if (portrait == "" || icon == "") continue;
 
@@ -567,8 +515,9 @@ public class PortraitManager
             return;
         }
 
-        portrait = handler.PortraitPath(keywords, box);
-        icon = handler.IconPath(keywords) != "" ? handler.IconPath(keywords) : portrait;
+        portrait = handler is CharaPortrait_Image image && handler.isGenerated ? image.PortraitPath(keywords, box, Owner) : handler.PortraitPath(keywords, box);
+        icon = handler.isGenerated ? IconPathOf(NeutralHandler) : handler.IconPath(keywords);
+        if (string.IsNullOrEmpty(icon)) icon = portrait;
     }
 
     public void ClearHandlerCache()
@@ -690,12 +639,12 @@ public class PortraitManager
         {
             box.currentHandler = _cache_CombatPortrait;
             box.currentIcon = _cache_CombatPortrait_icon;
-            box.Draw(_cache_CombatPortrait.DrawIcon(box, _cache_CombatPortrait_icon));
+            box.Draw(DrawHandlerIcon(_cache_CombatPortrait, box, _cache_CombatPortrait_icon));
         }
         else if (_cache_CombatPortrait_icon != "" && !scr_System_CentralControl.current.GetSprite(_cache_CombatPortrait_icon, out _))
         {
             // same icon as before, but its cached sprite lapsed while still on screen - reload it
-            box.Draw(_cache_CombatPortrait.DrawIcon(box, _cache_CombatPortrait_icon));
+            box.Draw(DrawHandlerIcon(_cache_CombatPortrait, box, _cache_CombatPortrait_icon));
         }
     }
     protected CharaPortrait _cache_ActivityPortrait = null;
@@ -869,12 +818,12 @@ public class PortraitManager
             if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} drawActivityIcon Tags [{String.Join(" ", tags_active)}] with path {_cache_ActivityPortrait_icon}");
             box.currentHandler = _cache_ActivityPortrait;
             box.currentIcon = _cache_ActivityPortrait_icon;
-            box.Draw(_cache_ActivityPortrait.DrawIcon(box, _cache_ActivityPortrait_icon));
+            box.Draw(DrawHandlerIcon(_cache_ActivityPortrait, box, _cache_ActivityPortrait_icon));
         }
         else if (_cache_ActivityPortrait_icon != "" && !scr_System_CentralControl.current.GetSprite(_cache_ActivityPortrait_icon, out _))
         {
             // same icon as before, but its cached sprite lapsed while still on screen - reload it
-            box.Draw(_cache_ActivityPortrait.DrawIcon(box, _cache_ActivityPortrait_icon));
+            box.Draw(DrawHandlerIcon(_cache_ActivityPortrait, box, _cache_ActivityPortrait_icon));
         }
 
     }
@@ -970,6 +919,17 @@ public class PortraitManager
         {
             _imagePaths = paths ?? _emptyPaths;
             _portraitOnlyImagePaths = null;
+        }
+
+        public void AddImagePath(string path)
+        {
+            if (_imagePaths == null || ReferenceEquals(_imagePaths, _emptyPaths)) _imagePaths = new List<string>();
+            if (!_imagePaths.Contains(path)) _imagePaths.Add(path);
+            if (_portraitOnlyImagePaths != null && !ReferenceEquals(_portraitOnlyImagePaths, _emptyPaths))
+            {
+                if (!PortraitImageInfo.IsLandscape(path) && !_portraitOnlyImagePaths.Contains(path)) _portraitOnlyImagePaths.Add(path);
+            }
+            else _portraitOnlyImagePaths = null;
         }
 
         /// <summary>
@@ -1255,14 +1215,23 @@ public class PortraitManager
         /// </summary>
         internal override string PortraitPath(List<string> tags, scr_CharPortraitBox box)
         {
-            if (image_orientation != ImageOrientation.auto || BoxAcceptsLandscape(box)) return PortraitPath(tags);
+            return PortraitPath(tags, box, Owner?.Owner);
+        }
+
+        internal string PortraitPath(List<string> tags, scr_CharPortraitBox box, Character_Trainable character)
+        {
+            bool portraitOnly = image_orientation == ImageOrientation.auto && !BoxAcceptsLandscape(box);
 
             if (this.Variants != null)
             {
-                // ImagePaths.Count first skips empty variants cheaply; PortraitOnlyImagePaths stays last since building it reads file headers
-                foreach (var i in this.Variants) if (i.ImagePaths.Count > 0 && i.Validate(tags) && i.Validate(Owner == null ? null : Owner.Owner) && i.PortraitOnlyImagePaths.Count > 0) return Utility.GetRandomElement(i.PortraitOnlyImagePaths);
+                foreach (var i in this.Variants)
+                {
+                    if (i.ImagePaths.Count == 0 || !i.Validate(tags) || !i.Validate(character)) continue;
+                    var paths = portraitOnly ? i.PortraitOnlyImagePaths : i.ImagePaths;
+                    if (paths.Count > 0) return Utility.GetRandomElement(paths);
+                }
             }
-            var portraitOnlyRandom = PortraitOnlyRandomPaths;
+            var portraitOnlyRandom = portraitOnly ? PortraitOnlyRandomPaths : random_portrait_path;
             if (portraitOnlyRandom.Count > 0) return Utility.GetRandomElement(portraitOnlyRandom);
             else return portrait_path;
         }

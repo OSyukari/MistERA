@@ -2506,10 +2506,17 @@ public class scr_System_CampaignManager : MonoBehaviour
             if (chara.FactionManager.HasPlayerFaction) chars.Add(chara);
         }
         int total = chars.Count;
+        float lastProgressYield = Time.realtimeSinceStartup;
         for (int i = 0; i < total; i++)
         {
             Observer_LoadProgress?.Invoke((float)i / Mathf.Max(total, 1), $"Caching portraits... {chars[i].CallName}");
             yield return chars[i].PortraitManager.CacheInternal(chars[i]);
+            // Keep progress responsive without imposing a frame wait per character or handler.
+            if (Time.realtimeSinceStartup - lastProgressYield >= 0.016f)
+            {
+                yield return null;
+                lastProgressYield = Time.realtimeSinceStartup;
+            }
         }
         Observer_LoadProgress?.Invoke(1f, "");
         Debug.Log("CachePortraitComplete");

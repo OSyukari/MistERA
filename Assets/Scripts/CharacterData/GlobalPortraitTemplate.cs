@@ -24,6 +24,7 @@ public static class GlobalPortraitTemplate
     public static string ConfigPath { get { return $"{scr_System_Serializer.AssetPacksPath}/{ConfigFileName}"; } }
 
     static readonly List<PortraitManager.CharaPortrait> _empty = new List<PortraitManager.CharaPortrait>();
+    public static int Revision { get; private set; }
 
     /// <summary>
     /// Game launch (scr_System_Serializer.BootSequence, after MasterList.Initialize): build the template from the config into the serializer.
@@ -34,6 +35,8 @@ public static class GlobalPortraitTemplate
         if (serializer == null) return;
         serializer.GlobalPortraitTemplateJson = null;
         serializer.GlobalPortraitByFolder.Clear();
+        scr_System_CentralControl.current?.ClearGlobalPortraitHandlers();
+        Revision++;
         if (scr_System_CentralControl.current != null && scr_System_CentralControl.current.isSafeMode) return;
 
         var path = ConfigPath;
@@ -90,6 +93,32 @@ public static class GlobalPortraitTemplate
         foreach (var h in list) h.isGenerated = true;
         serializer.GlobalPortraitByFolder[path] = list;
         return list;
+    }
+
+    public static void AddImage(string imagePath)
+    {
+        var serializer = scr_System_Serializer.current;
+        var fullPath = serializer.GetFullPath(imagePath).Replace('\\', '/');
+        foreach (var pair in serializer.GlobalPortraitByFolder)
+        {
+            var folder = pair.Key.Substring(pair.Key.LastIndexOf('/') + 1);
+            if (!imagePath.StartsWith(folder + "/", StringComparison.OrdinalIgnoreCase)
+                || imagePath.Count(ch => ch == '/') != 2
+                || fullPath.IndexOf("/" + pair.Key + "/", StringComparison.OrdinalIgnoreCase) < 0) continue;
+            foreach (var handler in pair.Value)
+                foreach (var variant in handler.Variants)
+                    foreach (var pattern in variant.PortraitVariantData)
+                    {
+                        if (string.IsNullOrEmpty(pattern)) continue;
+                        bool matches;
+                        try { matches = Regex.IsMatch(imagePath, $"^(?:{pattern})$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant); }
+                        catch (ArgumentException) { continue; } // Already reported when resolving the folder.
+                        if (!matches) continue;
+                        variant.AddImagePath(imagePath);
+                        break;
+                    }
+        }
+        Revision++;
     }
 
     static string NormalizePath(string path)

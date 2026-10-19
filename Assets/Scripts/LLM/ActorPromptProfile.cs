@@ -74,6 +74,8 @@ public class ActorPromptRule
     public PromptCharaReq charaReq = null;
 
     public List<string> prompts = new List<string>();
+    /// <summary> optional destinations for this rule's entire output; flat when no group dictionary is supplied </summary>
+    public List<string> promptGroups = new List<string>();
     /// <summary> trait group ids (e.g. trait_EyeColor): the actor's current trait in that group adds its promptTags and promptTags_always </summary>
     public List<string> traitGroups = new List<string>();
     /// <summary> add the hairstyle as currently seen (Character_Body.EffectiveHairstyle) </summary>
@@ -222,7 +224,7 @@ public static class ActorPromptProfileUtility
     /// profile prompts + every matching rule's output, appended to result. actionTags = the actor's current action tags
     /// (sex, unsafe, COM portrait tags...), checked by the rules like actor tags; none for a plain portrait.
     /// </summary>
-    public static void CollectPrompts(Character_Trainable c, HashSet<string> keywords, List<string> result, IEnumerable<string> actionTags = null)
+    public static void CollectPrompts(Character_Trainable c, HashSet<string> keywords, List<string> result, IEnumerable<string> actionTags = null, Dictionary<string, List<string>> promptGroups = null)
     {
         var prompts = new List<string>();
         var rules = new List<ActorPromptRule>();
@@ -235,7 +237,27 @@ public static class ActorPromptProfileUtility
         if (actionTags != null) actorTags.AddRange(actionTags);
         foreach (var rule in rules)
         {
-            if (rule.Matches(c, keywords, actorTags)) rule.Collect(c, result);
+            if (!rule.Matches(c, keywords, actorTags)) continue;
+            if (promptGroups == null || rule.promptGroups == null || rule.promptGroups.Count == 0)
+                rule.Collect(c, result);
+            else
+            {
+                var output = new List<string>();
+                rule.Collect(c, output);
+                AddGroupedPrompts(output, rule.promptGroups, promptGroups);
+            }
+        }
+    }
+
+    internal static void AddGroupedPrompts(List<string> prompts, List<string> groups, Dictionary<string, List<string>> result)
+    {
+        foreach (var group in groups)
+        {
+            if (string.IsNullOrEmpty(group)) continue;
+            if (!result.TryGetValue(group, out var output) || output == null)
+                result[group] = output = new List<string>();
+            foreach (var prompt in prompts)
+                if (!output.Contains(prompt)) output.Add(prompt);
         }
     }
 
