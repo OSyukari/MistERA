@@ -27,6 +27,8 @@ public class BodyInternal_Base
 
     /// <summary> image prompt tags added while this organ is visible (see LLMUtils.CollectActorTags) </summary>
     public List<string> promptTags = new List<string>();
+    /// <summary> optional destinations for visible promptTags and ordinary requested trait/skill tags; always tags stay flat </summary>
+    public List<string> promptGroups = new List<string>();
     /// <summary> image prompt tags added regardless of visibility </summary>
     public List<string> promptTags_always = new List<string>();
     /// <summary> trait group ids (trait_Size_B, trait_Sensitivity_B...): the owner's current trait adds its promptTags_always always, promptTags while visible </summary>

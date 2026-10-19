@@ -149,6 +149,7 @@
                 "AvailableSlots":["Nipples"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","breast","nipple"],
+                "promptGroups":["torso_front"],
                 "requestTraits":["trait_Size_B","trait_Sensitivity_B"],
                 "requestSkills":["skill_sensitivity_B"],
                 "coverSlots":["Torso"],
@@ -166,12 +167,13 @@
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
                 "promptTags":["penis"],
+                "promptGroups":["lower_front"],
                 "requestTraits":["trait_Size_P","trait_Sensitivity_C"],
                 "requestSkills":["skill_sensitivity_C"],
                 "_comment_promptProfile": "detail tags only while the action focuses on the lower body (a plain portrait has no action tags): they break the composition otherwise",
                 "promptProfile": {
                     "rules": [
-                        { "id": "penis_detail", "requireVisibleBodyTags": ["penis"], "requireAnyActorTags": ["spread_pussy", "sex", "unsafe"], "prompts": ["testicles"] }
+                        { "id": "penis_detail", "promptGroups": ["lower_front"], "requireVisibleBodyTags": ["penis"], "requireAnyActorTags": ["spread_pussy", "sex", "unsafe"], "prompts": ["testicles"] }
                     ]
                 },
                 "sensitivityClassString":"C",
@@ -194,12 +196,13 @@
                 "AvailableSlots":["Clitoris"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","clit","external"],
+                "promptGroups":["lower_front"],
                 "requestTraits":["trait_Sensitivity_C"],
                 "requestSkills":["skill_sensitivity_C"],
                 "_comment_promptProfile": "detail tag only while the action focuses on the lower body (a plain portrait has no action tags): it breaks the composition otherwise",
                 "promptProfile": {
                     "rules": [
-                        { "id": "clit_detail", "requireVisibleBodyTags": ["clit"], "requireAnyActorTags": ["spread_pussy", "sex", "unsafe"], "prompts": ["clitoris"] }
+                        { "id": "clit_detail", "promptGroups": ["lower_front"], "requireVisibleBodyTags": ["clit"], "requireAnyActorTags": ["spread_pussy", "sex", "unsafe"], "prompts": ["clitoris"] }
                     ]
                 },
                 "tag_directionIn":"vagina",
@@ -218,6 +221,7 @@
                 "equipLayers":["Skin"],
                 "tags":["nsfw","vagina","internal","arousalExpansion"],
                 "promptTags":["pussy"],
+                "promptGroups":["lower_front", "lower_back"],
                 "requestTraits":["trait_Size_V","trait_Sensitivity_V"],
                 "requestSkills":["skill_sensitivity_V","skill_expansion_V"],
                 "tag_directionIn":"womb",
@@ -319,12 +323,13 @@
                 "AvailableSlots":["Anus"],
                 "equipLayers":["Skin"],
                 "tags":["nsfw","anus","internal","arousalExpansion"],
+                "promptGroups":["lower_back"],
                 "requestTraits":["trait_Size_A","trait_Sensitivity_A"],
                 "requestSkills":["skill_sensitivity_A","skill_expansion_A"],
                 "_comment_promptProfile": "detail tag only while the action focuses on the lower body (a plain portrait has no action tags): it breaks the composition otherwise",
                 "promptProfile": {
                     "rules": [
-                        { "id": "anus_detail", "requireVisibleBodyTags": ["anus"], "requireAnyActorTags": ["spread_pussy", "sex", "unsafe"], "prompts": ["anus"] }
+                        { "id": "anus_detail", "promptGroups": ["lower_back"], "requireVisibleBodyTags": ["anus"], "requireAnyActorTags": ["spread_pussy", "sex", "unsafe"], "prompts": ["anus"] }
                     ]
                 },
                 "tag_directionIn":"guts",
