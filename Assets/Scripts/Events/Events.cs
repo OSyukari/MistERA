@@ -1220,7 +1220,20 @@ public class Event : I_SerializationCallbackReceiver
             /// preserves existing interactions, and refreshes display caches. Does not create missing memories.
             /// True if at least one matching entry was updated.
             /// </summary>
-            SetMemoryNameOverride
+            SetMemoryNameOverride,
+
+            /// <summary>
+            /// [victimlabel, MIA_faction, expeditionID, message, memberTypeID, featureKeyword... , progressBudget=INTEGER]
+            /// CharaMIA with base features plus the trailing literal keywords (distinct). Requires a non-unique def.
+            /// Optional progressBudget is a nonnegative integer, allowed once among trailing args, not a feature keyword.
+            /// </summary>
+            CharaMIAWithFeatures,
+            /// <summary>Same arguments as CharaMIAWithFeatures; replaces base features. No trailing keywords = empty features.</summary>
+            CharaMIAWithReplacedFeatures,
+            /// <summary>PartyMIA with the CharaMIAWithFeatures argument contract and additive instance features.</summary>
+            PartyMIAWithFeatures,
+            /// <summary>PartyMIA with the CharaMIAWithReplacedFeatures argument contract and replaced instance features.</summary>
+            PartyMIAWithReplacedFeatures
 
         }
     }

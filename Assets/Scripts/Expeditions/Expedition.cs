@@ -84,6 +84,8 @@ public class Expedition
     public int MaxExplorationRate = -1;
     public bool isUnique = false;
     public bool removeOnComplete = false;
+    /// <summary>Played once per actual departure, with self = player and the departing party as targets.</summary>
+    public string beginEventID = "";
     /// <summary>
     /// CanExplore == CanRescue
     /// </summary>

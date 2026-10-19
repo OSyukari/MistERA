@@ -24,7 +24,14 @@ public static class EventUtility
         }
         foreach(var k in p.AppendStrings)
         {
-            inst.AppendStrings.Add(k.Key, k.Value);
+            inst.AppendStrings.Add(k.Key, new List<string>(k.Value));
+        }
+        // New packages retain the encounter's snapshot; old saves fall back to the owning expedition.
+        if (!inst.AppendStrings.ContainsKey(ExpeditionUtility.FeatureKeywordsKey))
+        {
+            var expedition = p.rescueJobID < 0 ? j?.Expedition
+                : (scr_System_CampaignManager.current.FindJobInstanceByID(p.rescueJobID) as Job_Expedition)?.Expedition;
+            ExpeditionUtility.InjectFeatureKeywords(inst.AppendStrings, expedition);
         }
         if ( p.overrideTargetScope)
         {
@@ -2941,6 +2948,10 @@ public static class EventUtility
                 else return false;
             case Event.EventEntry.ExecutionType.PartyMIA:
             case Event.EventEntry.ExecutionType.CharaMIA:
+            case Event.EventEntry.ExecutionType.PartyMIAWithFeatures:
+            case Event.EventEntry.ExecutionType.CharaMIAWithFeatures:
+            case Event.EventEntry.ExecutionType.PartyMIAWithReplacedFeatures:
+            case Event.EventEntry.ExecutionType.CharaMIAWithReplacedFeatures:
                 // CharaMIA: same path - a victim without any party resolves victimsFaction to a non-party faction, so a new
                 // party is created and Kidnap runs with victimsFaction null (no source party)
                 if (exec.arguments.Count >= 5)
@@ -2949,10 +2960,39 @@ public static class EventUtility
                     if (kidnapFaction == null) return false;
                     // missing expedition (e.g. an nsfw def skipped in safe mode): fail before a party is created, so a branch
                     // option falls through to its next option
-                    if (Expeditions.ExpeditionEntry.GetByID(exec.arguments[2]) == null)
+                    var expeditionDef = Expeditions.ExpeditionEntry.GetByID(exec.arguments[2]);
+                    if (expeditionDef == null)
                     {
                         Debug.LogError($"{exec.Type}: expedition [{exec.arguments[2]}] not found");
                         return false;
+                    }
+
+                    bool withFeatures = exec.Type != Event.EventEntry.ExecutionType.PartyMIA && exec.Type != Event.EventEntry.ExecutionType.CharaMIA;
+                    bool replaceFeatures = exec.Type == Event.EventEntry.ExecutionType.CharaMIAWithReplacedFeatures
+                        || exec.Type == Event.EventEntry.ExecutionType.PartyMIAWithReplacedFeatures;
+                    if (withFeatures && expeditionDef.isUnique)
+                    {
+                        Debug.LogError($"{exec.Type}: custom features require a non-unique expedition [{exec.arguments[2]}]");
+                        return false;
+                    }
+                    var featureKeywords = withFeatures ? exec.arguments.Skip(5).ToList() : null;
+                    int? progressBudget = null;
+                    if (withFeatures)
+                    {
+                        for (int i = featureKeywords.Count - 1; i >= 0; i--)
+                        {
+                            var argument = featureKeywords[i];
+                            if (argument == null || (argument != "progressBudget" && !argument.StartsWith("progressBudget=", StringComparison.Ordinal))) continue;
+                            if (progressBudget.HasValue || !argument.StartsWith("progressBudget=", StringComparison.Ordinal)
+                                || !int.TryParse(argument.Substring("progressBudget=".Length), System.Globalization.NumberStyles.None,
+                                    System.Globalization.CultureInfo.InvariantCulture, out int budget))
+                            {
+                                Debug.LogError($"{exec.Type}: expected at most one progressBudget=INTEGER (>=0)");
+                                return false;
+                            }
+                            progressBudget = budget;
+                            featureKeywords.RemoveAt(i);
+                        }
                     }
 
                     if (owner.Targets.TryGetValue(exec.arguments[0], out var victims) && FactionUtility.TryGetMemberType(exec.arguments[4], out var status))
@@ -2971,9 +3011,10 @@ public static class EventUtility
                             kidnapLoc = kidnapFaction.CreateParty();
                         }
 
-                        if( Kidnap(victims, victimsFaction as Manageable_Party, new List<Character_Trainable>(), kidnapLoc, exec.arguments[2], status, exec.arguments[3]))
+                        if( Kidnap(victims, victimsFaction as Manageable_Party, new List<Character_Trainable>(), kidnapLoc, exec.arguments[2], status, exec.arguments[3], featureKeywords, replaceFeatures, progressBudget))
                         {
                             kidnapLoc.Job.AddResult(LocalizeDictionary.QueryThenParse(exec.arguments[3]), new List<string>(), victims, true);
+                            ExpeditionUtility.StartBeginEvent(kidnapLoc.Job);
                             return true;
                         }
                         else return false;
@@ -3002,6 +3043,7 @@ public static class EventUtility
                         if (Kidnap(victims, victimsFaction as Manageable_Party, new List<Character_Trainable>(), kidnapLoc, exec.arguments[2], status, exec.arguments[3]))
                         {
                             kidnapLoc.Job.AddResult(LocalizeDictionary.QueryThenParse(exec.arguments[3]), new List<string>(), victims, true);
+                            ExpeditionUtility.StartBeginEvent(kidnapLoc.Job);
                             return true;
                         }
                         else
@@ -3185,12 +3227,15 @@ public static class EventUtility
                     if (targetChars.Count < 1 && exec.arguments[0] == "")
                     {
                         //  Debug.LogError($"result startevent {exec.arguments[1]} on null actors");
-                        var ev = new EventInstance(null, exec.arguments[1], exec.arguments[2]);
+                        var ev = new EventInstance(null, exec.arguments[1], exec.arguments[2], immediateInit: false);
+                        if (owner.AppendStrings.TryGetValue(ExpeditionUtility.FeatureKeywordsKey, out var features))
+                            ev.AppendStrings[ExpeditionUtility.FeatureKeywordsKey] = new List<string>(features);
                         if (exec.arguments[3] != "" && owner.Self != null)
                         {
                             //Debug.LogError($"-- injecting self {owner.Self.FirstName} as {selfInject}");
                             ev.Targets.Add(exec.arguments[3], selfInject);
                         }
+                        ev.LoadNext(exec.arguments[1], exec.arguments[2]);
                         scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
                     }
                     else
@@ -3200,12 +3245,15 @@ public static class EventUtility
                         foreach (var chara in targetChars)
                         {
                             // Debug.LogError($"result startevent {exec.arguments[1]} on {chara.FirstName}");
-                            var ev = new EventInstance(chara, exec.arguments[1], exec.arguments[2]);
+                            var ev = new EventInstance(chara, exec.arguments[1], exec.arguments[2], immediateInit: false);
+                            if (owner.AppendStrings.TryGetValue(ExpeditionUtility.FeatureKeywordsKey, out var features))
+                                ev.AppendStrings[ExpeditionUtility.FeatureKeywordsKey] = new List<string>(features);
                             if (exec.arguments[3] != "" && owner.Self != null)
                             {
                                 //Debug.LogError($"-- injecting  self {owner.Self.FirstName} as {selfInject}");
                                 ev.Targets.Add(exec.arguments[3], selfInject);
                             }
+                            ev.LoadNext(exec.arguments[1], exec.arguments[2]);
                             scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
                         }
                     }
@@ -3280,8 +3328,10 @@ public static class EventUtility
                         lastCaptive = false;
                         break;
                     }
-                    var miaExpBase = miaParty.Job == null || miaParty.Job.Expedition == null ? null : miaParty.Job.Expedition.Base;
-                    if (lastCaptive && miaParty.Job != null && miaParty.Job.Expedition != null) miaParty.Job.Expedition.CompleteProgress();
+                    var miaJob = miaParty.Job;
+                    var miaExp = miaJob?.Expedition;
+                    var miaExpBase = miaExp?.Base;
+                    if (lastCaptive) miaExp?.CompleteProgress();
 
                     c.ChangeCurrentJob(null);
                     // unlock + RemoveFromFaction (party outfit dropped; an emptied non-player party deletes itself)
@@ -3289,17 +3339,29 @@ public static class EventUtility
                     foreach (var f in c.FactionManager.Factions) f.FactionOwnerRoot.NotifyCharaRescued(c);
                     releasedAny = true;
 
+                    if (lastCaptive && miaExpBase != null && !miaExpBase.isUnique && miaExpBase.removeOnComplete
+                        && miaJob.ActorCount == 0)
+                    {
+                        // The party may have deleted its job already; use the captured job, never recreate it via party.Job.
+                        miaJob.ExpeditionActive = false;
+                        miaJob.status = Job_Expedition.ExpeditionStatus.inactive;
+                        miaJob.SetExpedition(null);
+                        scr_System_CampaignManager.current.TryCleanupExpedition(miaExp);
+                    }
+
                     // homecoming (Expedition.returnEventID): self = her, supervisor = the player; queued, so it plays after
                     // this event. Her kidnap snapshot is dropped on her next hourly update, after the homecoming read it.
                     c.NotifyMIASnapshotReleased();
                     if (miaExpBase != null && !string.IsNullOrEmpty(miaExpBase.returnEventID))
                     {
-                        var homecoming = new EventInstance(c, miaExpBase.returnEventID, miaExpBase.returnEventLabel ?? "");
+                        var homecoming = new EventInstance(c, miaExpBase.returnEventID, miaExpBase.returnEventLabel ?? "", immediateInit: false);
+                        ExpeditionUtility.InjectFeatureKeywords(homecoming.AppendStrings, miaExp);
                         // it tells the player she is back: shown even though the player can't see her (an NPC-self event
                         // is otherwise only displayed while she is visible to the player - she was just teleported home)
                         homecoming.displayOverride = true;
                         var player = scr_System_CampaignManager.current.Player;
                         if (player != null) homecoming.Targets["supervisor"] = new List<Character_Trainable>() { player };
+                        homecoming.LoadNext(miaExpBase.returnEventID, miaExpBase.returnEventLabel ?? "");
                         scr_UpdateHandler.current.EventHandler.StartEvent(homecoming, false);
                     }
                 }
@@ -3497,14 +3559,17 @@ public static class EventUtility
         return false;
     }
 
-    internal static bool Kidnap(List<Character_Trainable> victims, Manageable_Party victimsFaction, List<Character_Trainable> kidnappers, Manageable_Party kidnapLoc, string kidnapExpID, MemberType status, string kidnapMessage)
+    internal static bool Kidnap(List<Character_Trainable> victims, Manageable_Party victimsFaction, List<Character_Trainable> kidnappers, Manageable_Party kidnapLoc, string kidnapExpID, MemberType status, string kidnapMessage,
+        List<string> featureKeywords = null, bool replaceFeatures = false, int? progressBudget = null)
     {
+        if (progressBudget < 0) return false;
         if (kidnapLoc == null || kidnapLoc.MainExit == null) return false;
 
-        ExpeditionInstance kidnapExp = scr_System_CampaignManager.current.CreateExpedition(kidnapExpID);
+        ExpeditionInstance kidnapExp = scr_System_CampaignManager.current.CreateExpedition(kidnapExpID, featureKeywords, replaceFeatures);
         if (kidnapExp == null) return false;   // unknown expedition ID (CreateExpedition already logged it)
+        if (progressBudget.HasValue) kidnapExp.SetMaxExplorationRate(progressBudget.Value);
         kidnapLoc.SetExpedition(kidnapExp);
-        kidnapLoc.ForceStartExpedition();
+        kidnapLoc.ForceStartExpedition(false, preserveResults: true);
         kidnapLoc.FactionDisplayName = kidnapExp.Base.DisplayName;
 
         bool isLockedTransfer = false;
@@ -3588,6 +3653,7 @@ public static class EventUtility
         {
             victimsFaction.Job.DumpLogInto(kidnapLoc.Job);
         }
+        // The caller starts the begin event after recording the arrival, with the complete transferred roster.
         return true;
     }
 }

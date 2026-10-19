@@ -723,6 +723,15 @@ public class Room_Instance: IDisposable, I_Disposable
             }
             return _isRoomPrivate; } }
 
+    /// <summary> image prompt tags of the room (ActionScenePrompt room section): Room_Base.promptTags + prison / bedroom when the room is one </summary>
+    [JsonIgnore] public List<string> PromptTags { get {
+            var list = new List<string>();
+            if (Base?.promptTags != null) list.AddRange(Base.promptTags);
+            if (isRoomPrison) list.Add("prison");
+            else if (isRoomPrivate) list.Add("bedroom");
+            return list;
+        } }
+
     public const string FurnitureTag_GenderMale = "room_gender_male";
     public const string FurnitureTag_GenderFemale = "room_gender_female";
 

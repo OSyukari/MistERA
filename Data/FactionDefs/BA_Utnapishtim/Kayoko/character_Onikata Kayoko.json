@@ -123,8 +123,9 @@
 
           "current prompt":"hat, peaked cap, earrings, neck ribbon, ribbon, necklace, sleeveless, minidress, bare shoulders, dress, short coat, short sleeves, coat, outerwear, medium breasts, gloves, boots, kayoko_\\(blue_archive\\), white hair, silver hair, long hair, straight hair, straight bangs, red eyes, slim, narrow waist, pale skin, light skin, white halo",
 
+          "_comment_inheritRulesets": "skin colour only once the game changed it (the character tag implies the preset); the generic halo comes from the race template",
+          "inheritRulesets": [ "ruleset_character_tag" ],
           "rules":[
-            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
             { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "white halo" ] },
             { "_comment": "horns, show under the cap", "id": "kayoko_horns", "requireBodyTags": [ "head" ], "prompts": [ "demon horns" ] },
             { "_comment": "low wings at the hips, show through clothes", "id": "kayoko_wings", "requireBodyTags": [ "lower" ], "prompts": [ "demon wings", "low wings" ] }

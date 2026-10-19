@@ -127,8 +127,9 @@
           "NEED FIXING: desired clothing prompt":"garrison cap, earrings, white capelet, sleeveless, white minidress, bare shoulders, white dress, black neckerchief, black necktie, huge breasts, white gloves, single shackle, white boots, utnapishtim operator uniform \\(blue archive\\),",
           "current prompt":"hat, peaked cap, earrings, cape, shoulder cape, sleeveless, minidress, bare shoulders, dress, huge breasts, gloves, handcuff, wrist cuffs, boots, ako_\\(blue_archive\\), blue hair, twintails, two side up, low twintails, side-swept bangs, hair over shoulders, ahoge, blue eyes, curvy, wide hips, narrow waist, light skin, blue halo, crescent halo",
 
+          "_comment_inheritRulesets": "skin colour only once the game changed it (the character tag implies the preset); the generic halo comes from the race template",
+          "inheritRulesets": [ "ruleset_character_tag" ],
           "rules":[
-            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
             { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "blue halo", "crescent halo" ] }
           ]
       },

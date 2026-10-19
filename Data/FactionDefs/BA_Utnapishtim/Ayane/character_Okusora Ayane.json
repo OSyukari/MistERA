@@ -131,8 +131,9 @@
 
           "current prompt":"hairpin, hair ornament, hat, peaked cap, cape, shoulder cape, sleeveless, minidress, bare shoulders, dress, medium breasts, gloves, boots, ayane_\\(blue_archive\\), black hair, bob cut, short hair, amber eyes, slim, narrow waist, light skin, halo",
 
+          "_comment_inheritRulesets": "skin colour only once the game changed it (the character tag implies the preset); the generic halo comes from the race template",
+          "inheritRulesets": [ "ruleset_character_tag" ],
           "rules":[
-            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
             { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "red halo" ] }
           ]
       },

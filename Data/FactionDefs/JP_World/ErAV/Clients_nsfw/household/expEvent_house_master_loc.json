@@ -1,17 +1,31 @@
 {
-    "_doc": "en-us localization for expEvent_house_master.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_house_master.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_house_master": "Night: Goodnight Service",
                 "exp_event_erav_house_master_ongoing": "At ten sharp, $names$ goes to attend the master's bedtime, per the household schedule.",
                 "exp_event_erav_house_master_result": "The master's door is unlocked. The unchanging 'goodnight service'.",
-
                 "event_erav_house_master_01": "The master says nothing. He undoes his hakama, sits on the edge of the bed, and pats his knee.\nNo superfluous orders at all - the schedule says it plainly: at night, attend the master to sleep. She kneels up and begins.",
                 "event_erav_house_master_02": "When he is hard, the master lies back into the bed, hands pillowed behind his head, eyes closed, and taps the mattress twice.\nShe climbs on and does the moving herself. All she supplies is the motion - and the master's expression is that of a man having a tool serviced, routinely.",
                 "event_erav_house_master_03": "On rare nights he tries something else: face down, entered slowly from behind, unhurried strokes carrying on for half an hour without a word.\nThose are the nights her back won't straighten the next morning.",
                 "event_erav_house_master_04": "When it ends, the master pushes her off and lifts a finger toward the door - served, dismissed.\nShe backs out on her knees and closes the door. At the corridor's end, the housekeeper checks the clock and ticks the schedule sheet.",
-                "event_erav_house_master_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_house_master_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_house_master": "Night: Goodnight Service",
+                "event_erav_house_master_writer_opening": "The master says nothing. He undoes his hakama, sits on the edge of the bed, and pats his knee.\nNo superfluous orders at all - the schedule says it plainly: at night, attend the master to sleep. She kneels up and begins.",
+                "event_erav_house_master_writer_choose_full": "Continue the full sequence",
+                "event_erav_house_master_writer_choose_first_only": "Run only the first stage",
+                "event_erav_house_master_writer_choose_skip": "Skip this event",
+                "event_erav_house_master_writer_question": "How should this event continue?",
+                "event_erav_house_master_writer_phase_1_validated": "When he is hard, the master lies back into the bed, hands pillowed behind his head, eyes closed, and taps the mattress twice.\nShe climbs on and does the moving herself. All she supplies is the motion - and the master's expression is that of a man having a tool serviced, routinely.",
+                "event_erav_house_master_writer_phase_2_validated": "On rare nights he tries something else: face down, entered slowly from behind, unhurried strokes carrying on for half an hour without a word.\nThose are the nights her back won't straighten the next morning.",
+                "event_erav_house_master_writer_first_only_validated": "When he is hard, the master lies back into the bed, hands pillowed behind his head, eyes closed, and taps the mattress twice.\nShe climbs on and does the moving herself. All she supplies is the motion - and the master's expression is that of a man having a tool serviced, routinely.",
+                "event_erav_house_master_writer_summary_completed": "When it ends, the master pushes her off and lifts a finger toward the door - served, dismissed.\nShe backs out on her knees and closes the door. At the corridor's end, the housekeeper checks the clock and ticks the schedule sheet.",
+                "event_erav_house_master_writer_summary_completed_first_only": "Only the first stage was completed.",
+                "event_erav_house_master_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_house_master_writer_summary_skipped": "This event was skipped.",
+                "event_erav_house_master_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_house_master_writer_header": "Night: Goodnight Service"
             }
         }
     }

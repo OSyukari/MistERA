@@ -66,6 +66,8 @@
                 "tooltip":"An {0}'s penis.",
                 "equipLayers":["Skin"],
                 "tags":["nsfw","penis","testicle","external"],
+                "promptTags":["dog penis", "knotted penis", "animal penis"],
+                "requestTraits":["trait_Size_P"],
                 "sensitivityClassString":"C",
                 "maxSensitivityStatString":"stats_derived_maxSensitivity_C",
                 "sortOrder":7,

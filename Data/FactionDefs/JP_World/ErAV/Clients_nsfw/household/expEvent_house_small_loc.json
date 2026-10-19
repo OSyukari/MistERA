@@ -1,5 +1,5 @@
 {
-    "_doc": "en-us localization for expEvent_house_small.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_house_small.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
@@ -8,20 +8,18 @@
                 "exp_event_erav_house_small_apron_result_1": "Bending to scrub, her skirt catches the draft; a passing man of the house flips it back down for her, the way one straightens a leaning houseplant.",
                 "exp_event_erav_house_small_apron_result_2": "Reaching for the drying pole with the bedding, she is steadied by a passing hand - which takes the chance to tour beneath the apron, then leaves as if nothing had happened.",
                 "exp_event_erav_house_small_apron_result_3": "Carrying tea down the corridor, she is stopped for a refill. By the time the tea is poured, a hand has settled on her shoulder with no intention of moving.",
-
                 "exp_event_erav_house_small_son_call": "On Call",
                 "exp_event_erav_house_small_son_call_ongoing": "The youngest son's shout carries from the game room, calling $names$ in.",
                 "exp_event_erav_house_small_son_call_result": "The youngest son wants someone kneeling beside him while he games, mouth occupied. $names$ serves him through a whole match - twenty-five minutes. \"Don't move. Move and I lose.\"",
-
                 "exp_event_erav_house_small_night_bath": "Night Chores",
                 "exp_event_erav_house_small_night_bath_ongoing": "The bathhouse lights are still on; tonight is $names$'s shift.",
                 "exp_event_erav_house_small_night_bath_result_1": "$names$ draws the late master's bath, and the hand testing the water temperature is held in it a while longer. \"Test it again. Still hot.\"",
                 "exp_event_erav_house_small_night_bath_result_2": "In the bathhouse she is idly put to scrubbing backs and handing towels. By the end, the day's bath counts as seen to.",
-
                 "exp_event_erav_house_small_housekeeper": "The Housekeeper's Inspection",
                 "exp_event_erav_house_small_housekeeper_ongoing": "The housekeeper summons $names$ to the side hall and looks her over the way one hands over household accounts.",
                 "exp_event_erav_house_small_housekeeper_result_1": "The housekeeper circles $names$, straightens her apron strings, brushes dust from her skirt. \"You are this house's face. Guests tomorrow - don't shame it.\"",
-                "exp_event_erav_house_small_housekeeper_result_2": "The housekeeper runs the routine check over $names$'s knees and between her legs, frowning, and notes two items. \"Salve's in the cabinet. See to it yourself. ...Now take in the bedding.\""
+                "exp_event_erav_house_small_housekeeper_result_2": "The housekeeper runs the routine check over $names$'s knees and between her legs, frowning, and notes two items. \"Salve's in the cabinet. See to it yourself. ...Now take in the bedding.\"",
+                "exp_event_erav_house_small_son_call_result_2": "The youngest son wants someone kneeling beside him while he games, mouth occupied. $names$ serves him through a whole match - twenty-five minutes. \"Don't move. Move and I lose.\""
             }
         }
     }

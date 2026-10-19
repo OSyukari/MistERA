@@ -1,16 +1,26 @@
 {
-    "_doc": "en-us localization for expEvent_celeb_drugged.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_celeb_drugged.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "exp_event_erav_celeb_drugged": "The Drugged Night",
-                "exp_event_erav_celeb_drugged_ongoing": "Tonight's itinerary changed to a 'private party' at the hotel.",
-                "exp_event_erav_celeb_drugged_result": "The sake in the tatami room hits far harder than usual.",
-
+                "exp_event_erav_celeb_drugged": "A Rest Period Out of Control",
+                "exp_event_erav_celeb_drugged_ongoing": "The room meant for rest has been closed off, while the outside schedule waits for her to recover.",
+                "exp_event_erav_celeb_drugged_result": "The uncontrolled arrangement is over; its consequences still require follow-up observation.",
                 "event_erav_celeb_drugged_01": "Memory comes in fragments:\nAn early one: kneeling in the middle of the tatami, stripped by four or five hands from every side, sake poured on her skin and licked off.\nLater: lying atop somebody while another presses down from behind, filled from both ends at once, flashbulbs bursting before her eyes.",
                 "event_erav_celeb_drugged_02": "The clearest fragment of all is of her own legs opening. She doesn't remember whose order, nor why she opened them.\nShutters, laughter, urging to drink - all of it very far away.",
                 "event_erav_celeb_drugged_03": "She wakes in the hotel's bathtub. Washed clean, her hair combed smooth.\nThe marks over her body piece the night back together: fingermarks inside her thighs, the dried crust at the corner of her mouth, the deep bloated fullness in her lower belly.\nThe manager holds his phone over the tub: \"Morning, girlfriend. The fans will love yesterday's footage.\"",
-                "event_erav_celeb_drugged_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_celeb_drugged_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_celeb_drugged": "A Rest Period Out of Control",
+                "event_erav_celeb_drugged_writer_opening": "She only meant to close her eyes before the next appointment. When she wakes, her sense of time is broken; voices outside and the heaviness in her body both say that someone else decided how the gap would be spent.",
+                "event_erav_celeb_drugged_writer_choose_full": "Check the situation first, then deal with the entire uncontrolled interval.",
+                "event_erav_celeb_drugged_writer_choose_skip": "Stop here, end the arrangement, and preserve room for later decisions.",
+                "event_erav_celeb_drugged_writer_question": "She must choose between restoring the schedule and finding out what happened. What comes first?",
+                "event_erav_celeb_drugged_writer_phase_1_validated": "The first step is complete. She has not regained full control, but she can at least identify which doors and voices to avoid next.",
+                "event_erav_celeb_drugged_writer_summary_completed": "She completes what can be confirmed for now, then leaves the remaining schedule for her clear-headed self to judge. No definite outcome is recorded here.",
+                "event_erav_celeb_drugged_writer_summary_failed": "The process does not finish cleanly. She stops while her condition is unclear rather than letting an already uncontrolled arrangement decide for her again.",
+                "event_erav_celeb_drugged_writer_summary_skipped": "She chooses not to continue. The room grows quiet again, and the later effects must wait until her condition is stable.",
+                "event_erav_celeb_drugged_writer_summary_error": "The site cannot confirm what happened. The process stops immediately, and every unverified claim remains outside the door.",
+                "event_erav_celeb_drugged_writer_header": "Celebrity Client: A Rest Period Out of Control"
             }
         }
     }

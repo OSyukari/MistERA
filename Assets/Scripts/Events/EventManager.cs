@@ -251,13 +251,14 @@ public class EventManager
             ac.minutesUntilNext -= 1;
             if (ac.minutesUntilNext > 0) continue;
 
-            var ev = new EventInstance(self, ac.nextEventID, "");
+            var ev = new EventInstance(self, ac.nextEventID, "", immediateInit: false);
             // inherit the chain's AppendStrings snapshot (injected at StartChain) - add-if-missing so the
             // event's own entries, if any, are never clobbered
             foreach (var kvp in ac.appendStrings)
             {
                 if (!ev.AppendStrings.ContainsKey(kvp.Key)) ev.AppendStrings.Add(kvp.Key, new List<string>(kvp.Value));
             }
+            ev.LoadNext(ac.nextEventID, "");
             string startedID = ac.nextEventID;
             ac.nextEventID = "";
             // set before starting: outside an update the event runs inside StartEvent and may already call SetChainNext

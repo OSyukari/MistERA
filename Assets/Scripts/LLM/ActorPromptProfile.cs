@@ -3,14 +3,18 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Image prompt configuration of an actor (LLMUtils.CollectActorTags). Layers: the global profile with id "default"
-/// (Index_BodyPartBase.PromptProfiles) -> Humanoid_Race.promptProfile -> CharaTemplate.promptProfile.
-/// <br/>prompts of every layer are always added. A rule with the same id as an inherited one replaces it,
-/// disableRules removes inherited rules (applied before the layer's own rules).
+/// (Index_BodyPartBase.PromptProfiles) -> Humanoid_Race.promptProfile -> BodyPart_Base / BodyInternal_Base.promptProfile of the
+/// parts the body has -> Humanoid_RaceTemplate.promptProfile -> CharaTemplate.promptProfile.
+/// <br/>Each layer applies, in order: inheritRulesets (ActorPromptRuleset, in list order) -> disableRules -> its own prompts and rules.
+/// prompts are always added. A rule with the same id as an earlier one replaces it, disableRules removes the rules
+/// collected so far (inherited layers and this layer's rulesets); a later layer may add a disabled rule back.
 /// </summary>
 [System.Serializable]
 public class ActorPromptProfile
 {
     public string id = "";
+    /// <summary> ids of ActorPromptRuleset (Index_BodyPartBase.PromptRulesets) applied before this layer's own content </summary>
+    public List<string> inheritRulesets = new List<string>();
     /// <summary> always added </summary>
     public List<string> prompts = new List<string>();
     /// <summary> ids of inherited rules to drop </summary>
@@ -19,9 +23,22 @@ public class ActorPromptProfile
 }
 
 /// <summary>
+/// Shared prompts + rules a profile opts into by id (ActorPromptProfile.inheritRulesets). Independent: a ruleset does
+/// not inherit other rulesets. Every rule needs an id so profiles can replace or disable it.
+/// </summary>
+[System.Serializable]
+public class ActorPromptRuleset
+{
+    public string id = "";
+    /// <summary> always added </summary>
+    public List<string> prompts = new List<string>();
+    public List<ActorPromptRule> rules = new List<ActorPromptRule>();
+}
+
+/// <summary>
 /// Conditional prompts. Keywords are the actor's visible body slots (BodyPartEquipSlot names: Hair, Face, Eyes, Torso,
 /// Lower...), actor tags come from UtilityEX.GetActorTag (unconscious, sleeping, timestop, gender, actorKeywords,
-/// MemberType tags...). All conditions empty = always.
+/// MemberType tags...) plus the action tags passed to CollectActorTags, if any. All conditions empty = always.
 /// </summary>
 [System.Serializable]
 public class ActorPromptRule
@@ -34,6 +51,8 @@ public class ActorPromptRule
     public List<string> excludeKeywords = new List<string>();
     /// <summary> all of these actor tags present </summary>
     public List<string> requireActorTags = new List<string>();
+    /// <summary> at least one of these actor tags present </summary>
+    public List<string> requireAnyActorTags = new List<string>();
     /// <summary> none of these actor tags present </summary>
     public List<string> excludeActorTags = new List<string>();
     /// <summary> trait group ids whose current trait (as seen) differs from the template preset, see ActorPromptProfileUtility.IsTraitChanged </summary>
@@ -46,6 +65,11 @@ public class ActorPromptRule
     public List<string> excludeTraits = new List<string>();
     /// <summary> body tags (part or organ tags: head, torso, arm, lower, leg...) the body has, covered or not - all of them </summary>
     public List<string> requireBodyTags = new List<string>();
+    /// <summary>
+    /// body tags (penis, anus, clit...) the body has and shows - all of them. Same gate as organ promptTags: coverage
+    /// below 2 counting every layer (Skin + Inner + Outer, so underwear hides), or Xray. Several parts with the tag = the most covered decides.
+    /// </summary>
+    public List<string> requireVisibleBodyTags = new List<string>();
     /// <summary> optional CharaReq the actor must pass (no job context). Only the fields written apply, see PromptCharaReq </summary>
     public PromptCharaReq charaReq = null;
 
@@ -60,12 +84,23 @@ public class ActorPromptRule
         if (requireKeywords != null) foreach (var k in requireKeywords) if (!keywords.Contains(k)) return false;
         if (excludeKeywords != null) foreach (var k in excludeKeywords) if (keywords.Contains(k)) return false;
         if (requireActorTags != null) foreach (var t in requireActorTags) if (!actorTags.Contains(t)) return false;
+        if (requireAnyActorTags != null && requireAnyActorTags.Count > 0 && !requireAnyActorTags.Exists(t => actorTags.Contains(t))) return false;
         if (excludeActorTags != null) foreach (var t in excludeActorTags) if (actorTags.Contains(t)) return false;
         if (requireChangedTraits != null) foreach (var g in requireChangedTraits) if (!ActorPromptProfileUtility.IsTraitChanged(c, g)) return false;
         if (excludeChangedTraits != null) foreach (var g in excludeChangedTraits) if (ActorPromptProfileUtility.IsTraitChanged(c, g)) return false;
         if (requireTraits != null) foreach (var t in requireTraits) if (!ActorPromptProfileUtility.HasTrait(c, t)) return false;
         if (excludeTraits != null) foreach (var t in excludeTraits) if (ActorPromptProfileUtility.HasTrait(c, t)) return false;
         if (requireBodyTags != null && requireBodyTags.Count > 0 && (c.Body == null || !c.Body.HasBodyTag(requireBodyTags))) return false;
+        if (requireVisibleBodyTags != null && requireVisibleBodyTags.Count > 0)
+        {
+            if (c.Body == null) return false;
+            bool xray = scr_System_CampaignManager.current != null && scr_System_CampaignManager.current.XrayMode;
+            foreach (var t in requireVisibleBodyTags)
+            {
+                int score = c.Body.GetRevealingScoreByTag(t, BodyEquipLayer.None);
+                if (score < 0 || (score > 1 && !xray)) return false;   // -1 = no such part
+            }
+        }
         if (charaReq != null)
         {
             List<string> noTooltip = null;
@@ -115,22 +150,66 @@ public static class ActorPromptProfileUtility
 {
     public const string DefaultProfileID = "default";
 
-    /// <summary> default -> race -> template, see ActorPromptProfile </summary>
+    /// <summary> default -> race -> body (parts + their internals) -> race template -> template, see ActorPromptProfile </summary>
     public static void Resolve(Character_Trainable c, List<string> prompts, List<ActorPromptRule> rules)
     {
         var index = CharaOrigins.Instance?.BodyPartIndex;
-        ApplyLayer(index?.GetPromptProfileByID(DefaultProfileID), prompts, rules);
-        ApplyLayer(c.Race?.promptProfile, prompts, rules);
-        ApplyLayer(c.Template?.promptProfile, prompts, rules);
+        ApplyLayer(index?.GetPromptProfileByID(DefaultProfileID), index, prompts, rules);
+        ApplyLayer(c.Race?.promptProfile, index, prompts, rules);
+        ApplyBodyLayers(c, index, prompts, rules);
+        ApplyLayer(c.RaceTemplate?.promptProfile, index, prompts, rules);
+        ApplyLayer(c.Template?.promptProfile, index, prompts, rules);
     }
 
-    static void ApplyLayer(ActorPromptProfile p, List<string> prompts, List<ActorPromptRule> rules)
+    /// <summary>
+    /// profiles of the parts and organs the body has (BodyPart_Base / BodyInternal_Base.promptProfile), in body order:
+    /// each part, then its internals. A base shared by several instances applies once.
+    /// </summary>
+    static void ApplyBodyLayers(Character_Trainable c, Index_BodyPartBase index, List<string> prompts, List<ActorPromptRule> rules)
+    {
+        if (c.Body?.Body == null) return;
+        var applied = new HashSet<ActorPromptProfile>();
+        foreach (var part in c.Body.Body)
+        {
+            var partProfile = part?.Base?.promptProfile;
+            if (partProfile != null && applied.Add(partProfile)) ApplyLayer(partProfile, index, prompts, rules);
+            if (part?.internals == null) continue;
+            foreach (var ins in part.internals)
+            {
+                var insProfile = ins?.Base?.promptProfile;
+                if (insProfile != null && applied.Add(insProfile)) ApplyLayer(insProfile, index, prompts, rules);
+            }
+        }
+    }
+
+    static void ApplyLayer(ActorPromptProfile p, Index_BodyPartBase index, List<string> prompts, List<ActorPromptRule> rules)
     {
         if (p == null) return;
+        if (p.inheritRulesets != null)
+        {
+            foreach (var rulesetID in p.inheritRulesets)
+            {
+                if (string.IsNullOrEmpty(rulesetID)) continue;
+                var ruleset = index?.GetPromptRulesetByID(rulesetID);
+                if (ruleset == null)
+                {
+                    UnityEngine.Debug.LogWarning($"prompt profile [{p.id}]: unknown ruleset id [{rulesetID}]");
+                    continue;
+                }
+                if (ruleset.prompts != null) prompts.AddRange(ruleset.prompts);
+                MergeRules(ruleset.rules, rules);
+            }
+        }
         if (p.disableRules != null && p.disableRules.Count > 0) rules.RemoveAll(r => !string.IsNullOrEmpty(r.id) && p.disableRules.Contains(r.id));
         if (p.prompts != null) prompts.AddRange(p.prompts);
-        if (p.rules == null) return;
-        foreach (var rule in p.rules)
+        MergeRules(p.rules, rules);
+    }
+
+    /// <summary> same id replaces the collected rule, otherwise appended </summary>
+    static void MergeRules(List<ActorPromptRule> source, List<ActorPromptRule> rules)
+    {
+        if (source == null) return;
+        foreach (var rule in source)
         {
             if (rule == null) continue;
             int existing = string.IsNullOrEmpty(rule.id) ? -1 : rules.FindIndex(r => r.id == rule.id);
@@ -139,8 +218,11 @@ public static class ActorPromptProfileUtility
         }
     }
 
-    /// <summary> profile prompts + every matching rule's output, appended to result </summary>
-    public static void CollectPrompts(Character_Trainable c, HashSet<string> keywords, List<string> result)
+    /// <summary>
+    /// profile prompts + every matching rule's output, appended to result. actionTags = the actor's current action tags
+    /// (sex, unsafe, COM portrait tags...), checked by the rules like actor tags; none for a plain portrait.
+    /// </summary>
+    public static void CollectPrompts(Character_Trainable c, HashSet<string> keywords, List<string> result, IEnumerable<string> actionTags = null)
     {
         var prompts = new List<string>();
         var rules = new List<ActorPromptRule>();
@@ -150,6 +232,7 @@ public static class ActorPromptProfileUtility
 
         var actorTags = new List<string>();
         UtilityEX.GetActorTag(ref actorTags, c);
+        if (actionTags != null) actorTags.AddRange(actionTags);
         foreach (var rule in rules)
         {
             if (rule.Matches(c, keywords, actorTags)) rule.Collect(c, result);

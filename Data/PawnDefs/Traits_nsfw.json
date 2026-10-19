@@ -396,35 +396,35 @@
                 },
                 {
                     "trait_ID": "trait_Size_P_tiny",
-                    "promptTags":["penis","small penis","testicles"],
+                    "promptTags":["penis","small penis"],
                     "trait_displayname": "tiny",
                     "trait_score":0,
                     "trait_tooltip": "Has penis."
                 },
                 {
                     "trait_ID": "trait_Size_P_small",
-                    "promptTags":["penis","small penis","testicles"],
+                    "promptTags":["penis","small penis"],
                     "trait_displayname": "Small",
                     "trait_score":0,
                     "trait_tooltip": "Has penis."
                 },
                 {
                     "trait_ID": "trait_Size_P_average",
-                    "promptTags":["penis","testicles"],
+                    "promptTags":["penis"],
                     "trait_displayname": "average",
                     "trait_score":0,
                     "trait_tooltip": "Has penis."
                 },
                 {
                     "trait_ID": "trait_Size_P_big",
-                    "promptTags":["penis","large penis","testicles"],
+                    "promptTags":["penis","large penis"],
                     "trait_displayname": "big",
                     "trait_score":0,
                     "trait_tooltip": "Has penis."
                 },
                 {
                     "trait_ID": "trait_Size_P_huge",
-                    "promptTags":["penis","huge penis","testicles"],
+                    "promptTags":["penis","huge penis"],
                     "trait_displayname": "huge",
                     "trait_score":0,
                     "trait_tooltip": "Has penis."

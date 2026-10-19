@@ -346,10 +346,16 @@ public class Manageable_Party : I_IsJobGiver
     /// <returns></returns>
     public void ForceStartExpedition()
     {
-        this.Job.ExpeditionResults.Clear();
+        ForceStartExpedition(true);
+    }
+
+    internal void ForceStartExpedition(bool runBeginEvent, bool preserveResults = false)
+    {
+        if (!preserveResults) this.Job.ExpeditionResults.Clear();
         this._recurringTicked = true;
         Job.RemainingMinutes = Job.Expedition.Base.DurationHour > 0 ? Job.Expedition.Base.DurationHour * 60 : -1;
         Job.status = Job_Expedition.ExpeditionStatus.active;
+        if (runBeginEvent) ExpeditionUtility.StartBeginEvent(Job);
     }
 
     /// <summary>
@@ -1055,6 +1061,7 @@ public class Manageable_Party : I_IsJobGiver
                     package.eventLabel = kexp.Base.rescueEventLabel;
 
                     package.rescueJobID = k.Job.RefID;
+                    ExpeditionUtility.InjectFeatureKeywords(package.AppendStrings, kexp);
 
                     List<int> party = new List<int>(), frontline = new List<int>(), backline = new List<int>();
                     List<int> victims = new List<int>();

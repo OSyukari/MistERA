@@ -1,16 +1,26 @@
 {
-    "_doc": "en-us localization for expEvent_house_dog.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_house_dog.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_house_dog": "Serving the Family Dog",
                 "exp_event_erav_house_dog_ongoing": "At the dinner table, the second son speaks up as if remembering something.",
                 "exp_event_erav_house_dog_result": "\"Hagen hasn't been walked in days. Little sis, you go see to him tonight.\" Nobody at the table finds anything wrong with that.",
-
                 "event_erav_house_dog_01": "\"Oh right, Hagen hasn't been walked in days. Little sis, tonight you see to him.\"\nThe second son's tone is the same as asking for more rice. The whole family hears it; nobody looks up.\nThe housekeeper leads her to the backyard and crouches to check the kennel's latch, her tone one of assigning chores: \"He knows faces. The first time he'll bite and not let go. Hold his body with both hands, and don't flinch - flinching only excites him.\"",
                 "event_erav_house_dog_02": "Behind the French windows the dining room is lit, the whole family seated with their wine glasses at the glass.\nWhen the hot, inhuman thing presses against her, her hands clench on the kennel railing.",
                 "event_erav_house_dog_03": "Afterward the housekeeper hands her a hot towel and runs the routine check over her knees and inner thighs, brow furrowed.\n\"Scraped the inside a little. Put salve on it. ...Now go turn off the living-room lights. As always.\"\nGlasses clink in the dining room. The second son is complimenting Hagen on his good form tonight.",
-                "event_erav_house_dog_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_house_dog_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_house_dog": "Serving the Family Dog",
+                "event_erav_house_dog_writer_opening": "\"Oh right, Hagen hasn't been walked in days. Little sis, tonight you see to him.\"\nThe second son's tone is the same as asking for more rice. The whole family hears it; nobody looks up.\nThe housekeeper leads her to the backyard and crouches to check the kennel's latch, her tone one of assigning chores: \"He knows faces. The first time he'll bite and not let go. Hold his body with both hands, and don't flinch - flinching only excites him.\"",
+                "event_erav_house_dog_writer_choose_full": "Continue the full sequence",
+                "event_erav_house_dog_writer_choose_skip": "Skip this event",
+                "event_erav_house_dog_writer_question": "How should this event continue?",
+                "event_erav_house_dog_writer_phase_1_validated": "Behind the French windows the dining room is lit, the whole family seated with their wine glasses at the glass.\nWhen the hot, inhuman thing presses against her, her hands clench on the kennel railing.",
+                "event_erav_house_dog_writer_summary_completed": "Afterward the housekeeper hands her a hot towel and runs the routine check over her knees and inner thighs, brow furrowed.\n\"Scraped the inside a little. Put salve on it. ...Now go turn off the living-room lights. As always.\"\nGlasses clink in the dining room. The second son is complimenting Hagen on his good form tonight.",
+                "event_erav_house_dog_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_house_dog_writer_summary_skipped": "This event was skipped.",
+                "event_erav_house_dog_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_house_dog_writer_header": "Serving the Family Dog"
             }
         }
     }

@@ -14,6 +14,8 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public List<Hairstyle_SlotOption> BodyPart_HairstyleSlotOptions = new List<Hairstyle_SlotOption>();
     /// <summary> image prompt profiles by id; "default" is the global layer (ActorPromptProfileUtility) </summary>
     public List<ActorPromptProfile> PromptProfiles = new List<ActorPromptProfile>();
+    /// <summary> shared prompt rulesets by id, inherited through ActorPromptProfile.inheritRulesets </summary>
+    public List<ActorPromptRuleset> PromptRulesets = new List<ActorPromptRuleset>();
 
     public void MergeWith(I_IndexMergeable list)
     {
@@ -26,6 +28,7 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
             if (l.BodyPart_Hairstyles != null) this.BodyPart_Hairstyles.AddRange(l.BodyPart_Hairstyles);
             if (l.BodyPart_HairstyleSlotOptions != null) this.BodyPart_HairstyleSlotOptions.AddRange(l.BodyPart_HairstyleSlotOptions);
             if (l.PromptProfiles != null) this.PromptProfiles.AddRange(l.PromptProfiles);
+            if (l.PromptRulesets != null) this.PromptRulesets.AddRange(l.PromptRulesets);
         }
     }
 
@@ -35,15 +38,35 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     Dictionary<string, Hairstyle_SlotOption> ID_Dictionary4 = new Dictionary<string, Hairstyle_SlotOption>();
     Dictionary<string, List<Hairstyle_SlotOption>> hairstyleOptionsByKeyword = new Dictionary<string, List<Hairstyle_SlotOption>>();
     Dictionary<string, ActorPromptProfile> ID_Dictionary5 = new Dictionary<string, ActorPromptProfile>();
+    Dictionary<string, ActorPromptRuleset> ID_Dictionary6 = new Dictionary<string, ActorPromptRuleset>();
     public void RegisterAllID(List<string> messages)
     {
-        messages.Add("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count + "]+[" + BodyInternal_Base.Count + "]+[" + BodyPart_Hairstyles.Count + "]+[" + BodyPart_HairstyleSlotOptions.Count + "]+[" + PromptProfiles.Count + "]");
+        messages.Add("Index_BodyPartBase : registering ID with list length [" + BodyPart_Base.Count + "]+[" + BodyInternal_Base.Count + "]+[" + BodyPart_Hairstyles.Count + "]+[" + BodyPart_HairstyleSlotOptions.Count + "]+[" + PromptProfiles.Count + "]+[" + PromptRulesets.Count + "]");
 
         ID_Dictionary5.Clear();
         foreach (ActorPromptProfile o in this.PromptProfiles)
         {
             if (o == null || string.IsNullOrEmpty(o.id)) continue;
             if (!ID_Dictionary5.TryAdd(o.id, o)) Debug.Log($"failed to add Index_BodyPartBase prompt profile id [{o.id}] due to duplicate");
+        }
+
+        ID_Dictionary6.Clear();
+        foreach (ActorPromptRuleset o in this.PromptRulesets)
+        {
+            if (o == null) continue;
+            if (string.IsNullOrEmpty(o.id))
+            {
+                Debug.LogError("Index_BodyPartBase prompt ruleset has no id, skipped");
+                continue;
+            }
+            if (!ID_Dictionary6.TryAdd(o.id, o))
+            {
+                Debug.LogError($"failed to add Index_BodyPartBase prompt ruleset id [{o.id}] due to duplicate");
+                continue;
+            }
+            // rules are replaced / disabled by id, so an id-less rule could never be overridden
+            if (o.rules != null && o.rules.RemoveAll(r => r == null || string.IsNullOrEmpty(r.id)) > 0)
+                Debug.LogError($"prompt ruleset [{o.id}]: rules without id removed");
         }
 
         foreach (BodyPart_Base o in this.BodyPart_Base)
@@ -123,6 +146,7 @@ public class Index_BodyPartBase : I_IndexHasID, I_IndexMergeable, I_RemoveElemBy
     public Hairstyle_Base GetHairstyleByID(string id) { return ID_Dictionary3.ContainsKey(id) ? ID_Dictionary3[id] : null; }
     public Hairstyle_SlotOption GetHairstyleOptionByID(string id) { return ID_Dictionary4.ContainsKey(id) ? ID_Dictionary4[id] : null; }
     public ActorPromptProfile GetPromptProfileByID(string id) { return id != null && ID_Dictionary5.TryGetValue(id, out var p) ? p : null; }
+    public ActorPromptRuleset GetPromptRulesetByID(string id) { return id != null && ID_Dictionary6.TryGetValue(id, out var r) ? r : null; }
     static readonly List<Hairstyle_SlotOption> emptyHairstyleOptions = new List<Hairstyle_SlotOption>();
     /// <summary> all options of a slot keyword. read only, don't modify the returned list </summary>
     public List<Hairstyle_SlotOption> GetHairstyleOptionsByKeyword(string keyword)
@@ -176,6 +200,9 @@ public class BodyPart_Base
     public List<string> tags = new List<string>();
     /// <summary> part tag -> the slots whose coverage decides that tag's visibility (e.g. "feet" -> Feet). A tag not listed = all slots </summary>
     public Dictionary<string, List<BodyPartEquipSlot>> tagCoverSlots = new Dictionary<string, List<BodyPartEquipSlot>>();
+    /// <summary> optional image prompt layer of every body that has this part, between race and race template (ActorPromptProfileUtility) </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ActorPromptProfile promptProfile = null;
     //public List<ItemComponent_Data> Comps = new List<ItemComponent_Data>();
 
     public List<BodyPartEquipSlot> GetTagCoverSlots(string tag)

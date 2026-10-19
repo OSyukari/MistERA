@@ -1,26 +1,24 @@
 {
-    "_doc": "en-us localization for expEvent_celeb_small.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_celeb_small.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
-                "exp_event_erav_celeb_small_fitting": "Costume Fitting",
-                "exp_event_erav_celeb_small_fitting_ongoing": "The manager arrives hauling a rack of clothes - today is 'wardrobe day'.",
-                "exp_event_erav_celeb_small_fitting_result_1": "$names$ is dressed in the sheer top; the manager lifts her hem with two fingers, checks underneath, and snaps his fingers in approval. \"Tokyo girlfriend. - Perfect.\"",
-                "exp_event_erav_celeb_small_fitting_result_2": "The too-tall heels stay on the list too. The manager circles the newly dressed $names$ filming a clip. \"The fans love this.\"",
-
-                "exp_event_erav_celeb_small_photo": "Photo Ops",
-                "exp_event_erav_celeb_small_photo_ongoing": "The tour's publicity shoot begins, and $names$ is pulled into the frame.",
-                "exp_event_erav_celeb_small_photo_result_1": "In the group photos $names$ is hugged into peace signs, smile with teeth - \"fan service.\" In the gaps when the photographer pauses, the arm around her tightens twice on purpose.",
-                "exp_event_erav_celeb_small_photo_result_2": "\"Behind-the-scenes too.\" The camera cuts to the changing breaks: $names$'s back as she fixes her outfit is filmed and captioned with something cute.",
-
-                "exp_event_erav_celeb_small_pose": "Assigned Poses",
-                "exp_event_erav_celeb_small_pose_ongoing": "The lead rapper's mood strikes again, and he snaps his fingers at $names$.",
-                "exp_event_erav_celeb_small_pose_result_1": "At the storefront she is told to flip her skirt and pull her collar low. Passersby raise their phones; nobody finds it odd - it must be some show filming.",
-                "exp_event_erav_celeb_small_pose_result_2": "At the gacha machines she is arranged into the assigned pose and expression under a hail of shutter clicks. When it's done, the rapper tips his chin and makes her 'hold that face' for another half minute.",
-
-                "exp_event_erav_celeb_small_quickie": "Backstage Time",
-                "exp_event_erav_celeb_small_quickie_ongoing": "The dressing room door locks behind them; the lead beckons $names$ over with a crooked finger.",
-                "exp_event_erav_celeb_small_quickie_result": "In the dressing room before doors, the lead presses $names$ against the vanity and is done hastily - just enough time to repair the make-up after."
+                "exp_event_erav_celeb_small_fitting": "Last-Minute Fitting",
+                "exp_event_erav_celeb_small_fitting_ongoing": "Racks and fabric are spread nearby while the fitting is rushed into the schedule.",
+                "exp_event_erav_celeb_small_fitting_result_1": "The measurements are checked on site, and a backup outfit is set aside.",
+                "exp_event_erav_celeb_small_fitting_result_2": "She sends back the unsuitable combination and keeps only the outfit that allows movement.",
+                "exp_event_erav_celeb_small_photo": "Quick Shoot",
+                "exp_event_erav_celeb_small_photo_ongoing": "Temporary lights are raised while the camera waits for the next pose.",
+                "exp_event_erav_celeb_small_photo_result_1": "The shoot captures a few usable frames before the space is cleared again.",
+                "exp_event_erav_celeb_small_photo_result_2": "She rejects an unsuitable composition, and the shoot shifts to a safer angle.",
+                "exp_event_erav_celeb_small_pose": "Pose Check",
+                "exp_event_erav_celeb_small_pose_ongoing": "The staff adjust positions one by one, looking for a pose that hides fatigue.",
+                "exp_event_erav_celeb_small_pose_result_1": "One set of poses is recorded, and the nearby markers are collected.",
+                "exp_event_erav_celeb_small_pose_result_2": "She drops the exaggerated pose and chooses a stance closer to an ordinary moment.",
+                "exp_event_erav_celeb_small_quickie": "Quick Retake",
+                "exp_event_erav_celeb_small_quickie_ongoing": "A short retake takes over the gap while staff hurry the next appointment along.",
+                "exp_event_erav_celeb_small_quickie_result": "The retake finishes before the next appointment, leaving no extra record on site.",
+                "exp_event_erav_celeb_small_quickie_result_2": "When time runs short, she puts away the props and protects the next appointment first."
             }
         }
     }

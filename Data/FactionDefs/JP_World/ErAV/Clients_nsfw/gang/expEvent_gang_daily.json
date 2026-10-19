@@ -1,6 +1,5 @@
 {
-    "_doc": "ErAV NTR Part 3 placeholder scene - J gang reward, the daily loop on the inn's top floor (Plan §4; Phase 1 skeleton). Group scene: the entry branch borrows the man who drags her over (client, gang_a) and the rest of the floor (support, gang_b x3 + gang_c x3) from the Kiryu-gumi fallback-worker pool, copies both into enemy (= every doer, ~7) and moves them into her room; every ending (error path included) runs ResolveEvent and releases client + support. Multi-doer COM variants used.",
-
+    "_doc": "gang/daily: neutral interactive writer skeleton. Major weight 1, party-wide cooldown 24 hours, exactly one female participant. Existing actor roles and COM IDs retained; one validated AP per phase, with separate preparation and AP success/failure branches. Full/first-only (where available)/skip choices differ in executed APs and final banked summary. No guaranteed physiological outcomes. Every ending redresses, returns all borrowed scopes, and resolves. Legacy dictionary keys retained as placeholders. No chronological order assumed.",
     "ExplorationEvents": {
         "list": [
             {
@@ -10,47 +9,58 @@
                 "teamRequirement": {
                     "minTeamCount": 1,
                     "allowPrisoner": true,
-                    "requireCombat": false
+                    "requireCombat": false,
+                    "maxTeamCount": 1,
+                    "strictPartyCount": true,
+                    "charaReq_Select": {
+                        "requireFemale": true
+                    }
                 },
-                "baseWeight": 3,
+                "baseWeight": 1,
                 "possibleResults": [
                     {
-                        "baseWeight": 3,
+                        "baseWeight": 1,
                         "resultText": "exp_event_erav_gang_daily_result",
                         "eventID": "event_erav_gang_daily"
                     }
-                ]
+                ],
+                "cooldownHours": 24
             }
         ]
     },
-
     "Events": {
         "list": [
             {
                 "ID": "event_erav_gang_daily",
+                "showEventHeader": "event_erav_gang_daily_writer_header",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
                         "options": [
                             {
                                 "option": "_start",
                                 "target_chara_conditions": {
-                                    "party": [ { "parameters": [ "exists" ] } ]
+                                    "party": [
+                                        {
+                                            "parameters": ["exists"]
+                                        }
+                                    ]
                                 },
                                 "Results": [
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_a", "erav_client_gang_a", "1", "true" ] },
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_b", "erav_client_gang_b", "3", "true" ] },
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_c", "erav_client_gang_c", "3", "true" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
-                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                    { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_a", "erav_client_gang_a", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_b", "erav_client_gang_b", "3", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_gang_c", "erav_client_gang_c", "3", "true"] },
+                                    { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
+                                    { "Type": "CopyTargets", "arguments": ["support", "enemy", "add"] },
+                                    { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "scene"] }
                                 ]
                             },
                             {
                                 "option": "_error",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
                                 ]
                             }
                         ]
@@ -58,46 +68,237 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "scene",
-                        "line": "event_erav_gang_daily_01"
+                        "line": "event_erav_gang_daily_writer_opening"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_gang_daily_02",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
-                            { "Type": "Undress", "arguments": [ "client", "None", "SeeThrough", "true" ] },
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_oral_P_Force" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "choice",
+                        "question": "event_erav_gang_daily_writer_question",
+                        "options": [
+                            {
+                                "option": "event_erav_gang_daily_writer_choose_full",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_gang_daily_writer_choose_first_only",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_gang_daily_writer_choose_skip",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skipped"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["client", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_gang_daily_03",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "label": "phase_1_success",
+                        "line": "event_erav_gang_daily_writer_phase_1_validated",
+                        "nextEntryLabel": "phase_2_prepare"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
-                        "line": "event_erav_gang_daily_04",
+                        "label": "phase_2_success",
+                        "line": "event_erav_gang_daily_writer_phase_2_validated",
+                        "nextEntryLabel": "completed"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["client", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["client", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "first_only_success",
+                        "line": "event_erav_gang_daily_writer_first_only_validated",
+                        "nextEntryLabel": "completed_first_only"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed",
+                        "line": "event_erav_gang_daily_writer_summary_completed",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed_first_only",
+                        "line": "event_erav_gang_daily_writer_summary_completed_first_only",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "failed",
+                        "line": "event_erav_gang_daily_writer_summary_failed",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skipped",
+                        "line": "event_erav_gang_daily_writer_summary_skipped",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "error",
-                        "line": "event_erav_gang_daily_err",
+                        "line": "event_erav_gang_daily_writer_summary_error",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     }
@@ -105,19 +306,32 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
                 "exp_event_erav_gang_daily": "日常·干",
                 "exp_event_erav_gang_daily_ongoing": "包层里的牌局照常开着，$names$随叫随到。",
                 "exp_event_erav_gang_daily_result": "牌桌上手气最差的那个人，把$names$拽了过去。",
-
                 "event_erav_gang_daily_01": "矮桌上摆着便利店塑料袋装的吃的，牌打到半，谁手感差了，就拽她过来「转转运」。\n「先说好啊，哥几个：她是抵账劳务，不是白嫖的风俗。温柔点——弄坏了你们赔。」\n「「「了解——！」」」",
                 "event_erav_gang_daily_02": "矮桌下面，她含着人的东西继续替人摸牌。谁的牌胡了，就让谁先上。",
                 "event_erav_gang_daily_03": "睡觉的通铺上，队伍沿着铺位排出去。前面的人还没完事，后面的人已经候上了，边看边自己解决。\n榻榻米、窗台、走廊、浴室的更衣凳——用的间隙，她被命令保持张开的样子等着，「省点前戏工夫」。",
                 "event_erav_gang_daily_04": "深夜，通铺正中间的她被摆好姿势。半梦半醒之间被进入、被灌满，完事后对方拍拍她的腰倒头就睡。\n她连睁眼的力气都省了，身体自己在黑暗里配合着起伏。",
-                "event_erav_gang_daily_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+                "event_erav_gang_daily_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_gang_daily": "日常·干",
+                "event_erav_gang_daily_writer_opening": "矮桌上摆着便利店塑料袋装的吃的，牌打到半，谁手感差了，就拽她过来「转转运」。\n「先说好啊，哥几个：她是抵账劳务，不是白嫖的风俗。温柔点——弄坏了你们赔。」\n「「「了解——！」」」",
+                "event_erav_gang_daily_writer_choose_full": "继续完整流程",
+                "event_erav_gang_daily_writer_choose_first_only": "仅进行首个阶段",
+                "event_erav_gang_daily_writer_choose_skip": "跳过本次事件",
+                "event_erav_gang_daily_writer_question": "如何继续？",
+                "event_erav_gang_daily_writer_phase_1_validated": "矮桌下面，她含着人的东西继续替人摸牌。谁的牌胡了，就让谁先上。",
+                "event_erav_gang_daily_writer_phase_2_validated": "睡觉的通铺上，队伍沿着铺位排出去。前面的人还没完事，后面的人已经候上了，边看边自己解决。\n榻榻米、窗台、走廊、浴室的更衣凳——用的间隙，她被命令保持张开的样子等着，「省点前戏工夫」。",
+                "event_erav_gang_daily_writer_first_only_validated": "矮桌下面，她含着人的东西继续替人摸牌。谁的牌胡了，就让谁先上。",
+                "event_erav_gang_daily_writer_summary_completed": "深夜，通铺正中间的她被摆好姿势。半梦半醒之间被进入、被灌满，完事后对方拍拍她的腰倒头就睡。\n她连睁眼的力气都省了，身体自己在黑暗里配合着起伏。",
+                "event_erav_gang_daily_writer_summary_completed_first_only": "本次仅完成首个阶段。",
+                "event_erav_gang_daily_writer_summary_failed": "本次流程未能完成。",
+                "event_erav_gang_daily_writer_summary_skipped": "已跳过本次事件。",
+                "event_erav_gang_daily_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_gang_daily_writer_header": "日常·干"
             }
         }
     }

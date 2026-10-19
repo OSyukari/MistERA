@@ -136,8 +136,9 @@
 
           "current prompt":"hat, peaked cap, cape, shoulder cape, minidress, short dress, dress, huge breasts, gloves, heeled boots, high heel boots, boots, ayumu_\\(blue_archive\\), blonde hair, long hair, wavy hair, straight bangs, hair over shoulders, green eyes, curvy, wide hips, narrow waist, light skin, gold halo",
 
+          "_comment_inheritRulesets": "skin colour only once the game changed it (the character tag implies the preset); the generic halo comes from the race template",
+          "inheritRulesets": [ "ruleset_character_tag" ],
           "rules":[
-            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
             { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "gold halo" ] },
             { "_comment": "forehead jewel, seen with the face", "id": "ayumu_forehead_jewel", "requireBodyTags": [ "head" ], "requireKeywords": [ "Face" ], "prompts": [ "forehead blue jewel" ] },
             { "_comment": "low wings at the hips, show through clothes", "id": "ayumu_wings", "requireBodyTags": [ "lower" ], "prompts": [ "black wings", "feathered wings", "low wings" ] }

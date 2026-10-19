@@ -141,10 +141,10 @@ public class Job_Expedition : Job
     {
         get
         {
-            if (Expedition == null || Expedition.ExploreRate < 0 || Expedition.Base.MaxExplorationRate <= 0) return "";
+            if (Expedition == null || Expedition.ExploreRate < 0 || Expedition.MaxExplorationRate <= 0) return "";
             
             return LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_remainingProgress")
-                    .Replace("$rate$", ((double)(Expedition.Base.MaxExplorationRate - Expedition.ExploreRate) / Expedition.Base.MaxExplorationRate).ToString("P1"));
+                    .Replace("$rate$", ((double)(Expedition.MaxExplorationRate - Expedition.ExploreRate) / Expedition.MaxExplorationRate).ToString("P1"));
         }
     }
     [JsonIgnore]
@@ -240,10 +240,26 @@ public class Job_Expedition : Job
 
         UpdateStatus(-1, -1, false);
     }
+    internal void SnapshotPendingEventFeatures()
+    {
+        foreach (var entries in ExpeditionResults.Values)
+        {
+            foreach (var entry in entries)
+            {
+                var package = entry.unresolved;
+                if (package == null || package.AppendStrings.ContainsKey(ExpeditionUtility.FeatureKeywordsKey)) continue;
+                var source = package.rescueJobID < 0 ? Expedition
+                    : (scr_System_CampaignManager.current.FindJobInstanceByID(package.rescueJobID) as Job_Expedition)?.Expedition;
+                ExpeditionUtility.InjectFeatureKeywords(package.AppendStrings, source);
+            }
+        }
+    }
+
     public void DumpLogInto(Job_Expedition other)
     {
         // re-kidnapped into the same party: nothing to move (and adding into the dictionary being iterated would throw)
         if (other == null || other == this) return;
+        SnapshotPendingEventFeatures();
         foreach(var i in this.ExpeditionResults)
         {
             // both logs can hold the same timestamp (e.g. this party's MIA notice and the new party's capture line)
@@ -326,6 +342,7 @@ public class Job_Expedition : Job
             return;
         }
         bool begin = false;
+        bool departed = false;
         if (!ExpeditionActive || Expedition == null)
         {
             status = ExpeditionStatus.inactive;
@@ -370,6 +387,7 @@ public class Job_Expedition : Job
             {
 
                 status = ExpeditionStatus.active;
+                departed = true;
                 AddResult(LocalizeDictionary.QueryThenParse("ui_management_expeditionJob_start_final"), new List<string>(), new List<int>());
                 StartCooldown();
                 foreach (var cref in this.actorRefID)
@@ -414,6 +432,13 @@ public class Job_Expedition : Job
             {
                 foreach (var c in this.FactionOwner.ManagedChara) c?.Wardrobe?.OnPartyRestStart();
             }
+        }
+
+        if (departed && (status == ExpeditionStatus.active || status == ExpeditionStatus.resting)
+            && ExpeditionUtility.StartBeginEvent(this))
+        {
+            // Begin events may change/release the expedition or party synchronously during an update.
+            return;
         }
 
         if (this.status == ExpeditionStatus.active)
@@ -479,6 +504,7 @@ public class Job_Expedition : Job
                     FactionOwner_Party.Inventory.Dump(FactionOwner_Party.OwnerFaction.Inventory, obtained);
                     result.Tooltips.Add($"obtained {String.Join(", ", obtained)}");
                     FactionOwner_Party.ExpeditionEnd();
+                    ReleaseCompletedExpedition();
                 }
                 else
                 {
@@ -486,6 +512,21 @@ public class Job_Expedition : Job
                 }
             }
         }
+    }
+
+    internal void ReleaseCompletedExpedition()
+    {
+        var finished = Expedition;
+        var definition = finished?.Base;
+        if (definition == null || definition.isUnique || !definition.removeOnComplete
+            || (!finished.IsComplete && RemainingMinutes != 0)) return;
+        finished.CompleteProgress();
+        ExpeditionActive = false;
+        status = ExpeditionStatus.inactive;
+        // Preserve the instance until every banked entry has resolved, but never recur a consumed expedition.
+        if (hasUnresolvedResult) return;
+        FactionOwner_Party.SetExpedition(null);
+        scr_System_CampaignManager.current.TryCleanupExpedition(finished);
     }
 
     /// <summary> set once the self release entry was banked (reset when a new expedition is set). No new exploration
@@ -528,6 +569,7 @@ public class Job_Expedition : Job
         package.eventLabel = expBase.selfReleaseEventLabel;
         package.isSelfRelease = true;
         package.Targets.Add("victims", new List<int>(victimRefs));
+        ExpeditionUtility.InjectFeatureKeywords(package.AppendStrings, Expedition);
 
         var entry = AddResult(LocalizeDictionary.QueryThenParse("ui_management_expedition_selfReleaseText"), new List<string>(), new List<int>(victimRefs));
         entry.unresolved = package;
@@ -750,12 +792,16 @@ public class Job_Expedition : Job
     /// </summary>
     public void SetExpedition(ExpeditionInstance exp)
     {
-
+        var previous = Expedition;
+        SnapshotPendingEventFeatures();
         _exp = null;
+        // A new assignment has not departed; the previous trip's zero timer must not complete it.
+        RemainingMinutes = -1;
         selfReleaseFired = false;
         offTimeCooldown.Clear();
         if (exp == null) this.expeditionRefID = -1;
         else this.expeditionRefID = exp.RefID;
+        if (previous != exp) scr_System_CampaignManager.current.TryCleanupExpedition(previous);
 
         //Debug.LogError($"SetExpedition! {this.expeditionRefID}");
     }

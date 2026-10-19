@@ -24,7 +24,9 @@ public class ExpeditionInstance
     {
         get
         {
-            return this.UsageCount == 0 && this.Base.removeOnComplete && this.ExploreRate == 0;
+            // Unassigned non-unique instances cannot be resumed; retirement is not completion.
+            return this.UsageCount == 0 && this.Base != null && this.Base.removeOnComplete
+                && (IsComplete || !this.Base.isUnique);
         }
     }
 
@@ -39,6 +41,34 @@ public class ExpeditionInstance
             if (_base == null && baseID != "")
             {
                 _base = Expeditions.ExpeditionEntry.GetByID(baseID);
+                if (_base == null)
+                {
+                    string category;
+                    switch (baseID)
+                    {
+                        case "expedition_erav_ntr_mia_politician": category = "politician"; break;
+                        case "expedition_erav_ntr_mia_producer": category = "producer"; break;
+                        case "expedition_erav_ntr_mia_sm_master": category = "sm_master"; break;
+                        case "expedition_erav_ntr_mia_sports": category = "sports"; break;
+                        case "expedition_erav_ntr_mia_celeb": category = "celeb"; break;
+                        case "expedition_erav_ntr_mia_household": category = "household"; break;
+                        case "expedition_erav_ntr_mia_gang": category = "gang"; break;
+                        default: return null;
+                    }
+                    var replacement = Expeditions.ExpeditionEntry.GetByID("expedition_erav_ntr_mia_clients");
+                    if (replacement != null)
+                    {
+                        // Preserve the old category budget without restarting or normalizing saved progress.
+                        Base = replacement;
+                        if (!maxExplorationRate.HasValue)
+                            maxExplorationRate = category == "politician" || category == "producer" ? 2400
+                                : category == "sm_master" || category == "household" ? 5600 : 4000;
+                        var features = new List<string>(featureKeywords ?? new List<string>());
+                        features.AddRange(replacement.FeatureKeywords);
+                        features.AddRange(new[] { "nsfw", "erav_client_labour", "client_" + category });
+                        SetFeatureKeywords(features, true);
+                    }
+                }
             }
             return _base;
         }
@@ -55,14 +85,37 @@ public class ExpeditionInstance
     }
 
     public int ExploreRate = -1;
+    [JsonProperty] protected int? maxExplorationRate = null;
+    [JsonIgnore] public int MaxExplorationRate
+    {
+        get
+        {
+            var definition = Base; // Resolve legacy migration before checking the instance override.
+            return maxExplorationRate ?? definition.MaxExplorationRate;
+        }
+    }
+
+    /// <summary>Initialize a new expedition's progress budget before departure.</summary>
+    public void SetMaxExplorationRate(int budget)
+    {
+        if (budget < 0) throw new ArgumentOutOfRangeException(nameof(budget));
+        maxExplorationRate = budget;
+        ExploreRate = budget;
+        completed = false;
+    }
+
+    [JsonProperty] protected bool completed = false;
+    [JsonIgnore] public bool IsComplete { get { return completed || ExploreRate == 0; } }
 
     public void ResetProgress()
     {
+        completed = false;
         if (this.ExploreRate == -1) return;
-        else this.ExploreRate = Base.MaxExplorationRate;
+        else this.ExploreRate = MaxExplorationRate;
     }
     public void CompleteProgress()
     {
+        completed = true;
         if (this.ExploreRate == -1) return;
         else this.ExploreRate = 0;
     }
@@ -70,14 +123,16 @@ public class ExpeditionInstance
     public bool ModProgress(int i, bool limit = false)
     {
         if (this.ExploreRate <= 0 && i <= 0) return false;
-        this.ExploreRate = Math.Clamp(this.ExploreRate + i, limit ? 1 : 0, Base.MaxExplorationRate);
+        this.ExploreRate = Math.Clamp(this.ExploreRate + i, limit ? Math.Min(1, MaxExplorationRate) : 0, MaxExplorationRate);
+        if (this.ExploreRate > 0) completed = false;
         return this.ExploreRate == 0;
     }
     public bool ModProgressRate(double db, bool limit = false)
     {
-        int i = (int)(Base.MaxExplorationRate * db);
+        int i = (int)(MaxExplorationRate * db);
         if (this.ExploreRate <= 0 && i <= 0) return false;
-        this.ExploreRate = Math.Clamp(this.ExploreRate + i, limit ? 1 : 0, Base.MaxExplorationRate);
+        this.ExploreRate = Math.Clamp(this.ExploreRate + i, limit ? Math.Min(1, MaxExplorationRate) : 0, MaxExplorationRate);
+        if (this.ExploreRate > 0) completed = false;
         return this.ExploreRate == 0;
     }
 
@@ -88,7 +143,8 @@ public class ExpeditionInstance
     public ExpeditionInstance(Expedition baseref)
     {
         Base = baseref;
-        if (baseref.MaxExplorationRate >= 0) this.ExploreRate = baseref.MaxExplorationRate;
+        SetFeatureKeywords(baseref.FeatureKeywords, true);
+        if (MaxExplorationRate >= 0) this.ExploreRate = MaxExplorationRate;
     }
 
     List<string> _descriptionText = null;
@@ -97,8 +153,9 @@ public class ExpeditionInstance
         {
             if (_descriptionText == null)
             {
+                var definition = Base;
                 _descriptionText = new List<string>();
-                _descriptionText.AddRange(this.Base.DescriptionText);
+                _descriptionText.AddRange(definition.DescriptionText);
                 foreach (var feature in Features)
                 {
                     _descriptionText.AddRange(feature.DescriptionText);
@@ -109,7 +166,29 @@ public class ExpeditionInstance
         } }
 
     [JsonIgnore] public List<string> Keywords { get { return Base.keywords; } }
-    [JsonIgnore] public List<string> FeatureKeywords { get { return Base == null ? new List<string>() : Base.FeatureKeywords; } }
+    // Null is an old save without instance features; an empty list is an intentional replacement.
+    [JsonProperty] protected List<string> featureKeywords = null;
+    [JsonIgnore] public List<string> FeatureKeywords
+    {
+        get
+        {
+            var definition = Base;
+            if (featureKeywords == null)
+                featureKeywords = (definition?.FeatureKeywords ?? new List<string>()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+            return featureKeywords;
+        }
+    }
+
+    public void SetFeatureKeywords(IEnumerable<string> keywords, bool replace = false)
+    {
+        var features = replace ? new List<string>() : new List<string>(FeatureKeywords);
+        if (keywords != null) features.AddRange(keywords);
+        featureKeywords = features.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+        _features = null;
+        _descriptionText = null;
+        _explorationEvents = null;
+        _allEvents = null;
+    }
 
     List<FeatureSet> _features = null;
     [JsonIgnore] public List<FeatureSet> Features
@@ -117,10 +196,11 @@ public class ExpeditionInstance
         {
             if (_features == null)
             {
+                var keywords = FeatureKeywords;
                 _features = new List<FeatureSet>();
                 foreach (var feature in Expeditions.ExplorationFeatures.list)
                 {
-                    if (Utility.ListContainsStrict(FeatureKeywords, feature.requireKeywords)) _features.Add(feature);
+                    if (Utility.ListContainsStrict(keywords, feature.requireKeywords)) _features.Add(feature);
                 }
                 _features = _features.Distinct().ToList();
             }

@@ -1,0 +1,16 @@
+{
+    "BodyPartBases":
+    {
+        "_comment_PromptRulesets": "Image prompt rulesets of Kivotos students (see Data/RaceDefs/PromptProfiles.json). Inherited by the humanRaceAddon_Kivotos_* race templates in Faction.json.",
+        "PromptRulesets":
+        [
+            {
+                "id": "ruleset_kivotos_halo",
+                "rules":
+                [
+                    { "_comment": "generic halo while awake; a character with a distinct halo replaces this rule by id", "id": "halo", "requireBodyTags": ["head"], "excludeActorTags": ["unconscious"], "prompts": ["halo"] }
+                ]
+            }
+        ]
+    }
+}

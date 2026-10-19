@@ -1,5 +1,5 @@
 {
-    "_doc": "en-us localization for expEvent_politician_small.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_politician_small.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
@@ -8,20 +8,18 @@
                 "exp_event_erav_politician_small_sake_result_1": "$names$ kneels and pours sake for the full table. The angle of the bottle is corrected three times before the councillor nods.",
                 "exp_event_erav_politician_small_sake_result_2": "$names$ is called to sit at the councillor's knees, his hand touring slowly over her legs through the yukata, the way one inventories luggage.",
                 "exp_event_erav_politician_small_sake_result_3": "In a lull of the party, $names$ is told to fan the councillor. As she fans, someone idly pulls half her yukata collar open.",
-
                 "exp_event_erav_politician_small_bath": "Bath Duty",
                 "exp_event_erav_politician_small_bath_ongoing": "$names$ is summoned to attend the councillor in the bath.",
                 "exp_event_erav_politician_small_bath_result_1": "In the bathhouse $names$ kneels at the pool's edge scrubbing the councillor's back. At his waist her head is pressed round - \"the front first\".",
                 "exp_event_erav_politician_small_bath_result_2": "$names$ soaks in the pool with the councillor, seated on his lap while he washes her. It is called washing; the hands are doing an inventory.",
-
                 "exp_event_erav_politician_small_yukata": "House Rules",
                 "exp_event_erav_politician_small_yukata_ongoing": "In the ryokan corridor a maid stops $names$.",
                 "exp_event_erav_politician_small_yukata_result_1": "The maid re-ties $names$'s yukata sash in the style taught in the councillor's room: nothing else permitted beneath the skirt. It is 'house rules'.",
                 "exp_event_erav_politician_small_yukata_result_2": "The maid leads $names$ room to room serving tea. Every guest's eyes linger on her; nobody finds it strange - the tag on her chest reads 'the councillor's attendant'.",
-
                 "exp_event_erav_politician_small_quickie": "Midday Summons",
                 "exp_event_erav_politician_small_quickie_ongoing": "The councillor's voice calls $names$ into his room.",
-                "exp_event_erav_politician_small_quickie_result": "During the midday lull the councillor has $names$ kneel at his low table and serve him briefly, then sends her back on duty."
+                "exp_event_erav_politician_small_quickie_result": "During the midday lull the councillor has $names$ kneel at his low table and serve him briefly, then sends her back on duty.",
+                "exp_event_erav_politician_small_quickie_result_2": "During the midday lull the councillor has $names$ kneel at his low table and serve him briefly, then sends her back on duty."
             }
         }
     }

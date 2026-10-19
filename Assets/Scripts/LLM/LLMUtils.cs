@@ -1489,10 +1489,13 @@ public static class LLMUtils
 
     /// <summary>
     /// Image prompt tags of an actor. keywords = the visible body slots (BodyPartEquipSlot names, coverage below 2),
-    /// which drive the prompt profile rules (ActorPromptProfileUtility). Organs add their own and their size trait's
-    /// (trait_Size_{traitID}) promptTags_always always and promptTags only while visible.
+    /// which drive the prompt profile rules (ActorPromptProfileUtility: default -> race -> body parts -> race template -> template layers,
+    /// each with its inherited ActorPromptRulesets). Organs add their own, their requestTraits' and their requestSkills'
+    /// (current level) promptTags_always always and promptTags only while visible.
     /// </summary>
-    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat, out HashSet<string> keywords)
+    /// <param name="actionTags"> the actor's current action tags (sex, unsafe, spread_pussy...) for the rules to check;
+    /// null = plain portrait, e.g. organ detail rules (testicles, clitoris, anus) then stay off </param>
+    public static List<string> CollectActorTags(Character_Trainable c, bool isCombat, out HashSet<string> keywords, IEnumerable<string> actionTags = null)
     {
         // order: profile prompts (character tag) -> profile rules (hair, eyes, body, halo...) -> worn items + organs
         // (part order, head to feet) -> weapons. The body walk runs first because the rules need its keywords.
@@ -1529,14 +1532,13 @@ public static class LLMUtils
                 // internals (piercings etc.): same block's stricter gate - only Xray reveals them
                 foreach (var ins in part.internals)
                 {
-                    var sizeTrait = string.IsNullOrEmpty(ins.traitID) ? null : c.Body.GetEffectiveBodyTrait("trait_Size_" + ins.traitID);
                     if (ins.Base.promptTags_always != null) gear.AddRange(ins.Base.promptTags_always);
-                    if (sizeTrait?.promptTags_always != null) gear.AddRange(sizeTrait.promptTags_always);
+                    AddRequestedOrganTags(c, ins.Base, gear, true);
 
                     // organs lie under the Skin layer: underwear covers them too (None = Skin + Inner + Outer)
                     if (ins.GetRevealingScore(BodyEquipLayer.None) > 1 && !xray) continue;
                     if (ins.Base.promptTags != null) gear.AddRange(ins.Base.promptTags);
-                    if (sizeTrait?.promptTags != null) gear.AddRange(sizeTrait.promptTags);
+                    AddRequestedOrganTags(c, ins.Base, gear, false);
 
                     foreach (var slot in ins.availableSlots)
                     {
@@ -1551,8 +1553,8 @@ public static class LLMUtils
             }
         }
 
-        // default / race / template prompts and the rules on visible slots + actor state (hair, eyes, halo...), before the gear
-        ActorPromptProfileUtility.CollectPrompts(c, keywords, list);
+        // default / race / body part / race template / template prompts (+ their rulesets) and the rules on visible slots + actor state (hair, eyes, halo...), before the gear
+        ActorPromptProfileUtility.CollectPrompts(c, keywords, list, actionTags);
         list.AddRange(gear);
 
         if (isCombat)
@@ -1574,11 +1576,51 @@ public static class LLMUtils
 
         return list;
     }
-    public static List<string> CollectInteractionTags(ActionPackage ap)
+    /// <summary>
+    /// prompt tags of an organ's requestTraits (the owner's current trait per group, outfit overrides apply) and
+    /// requestSkills (the owner's current skill level): promptTags_always when always, else promptTags
+    /// </summary>
+    static void AddRequestedOrganTags(Character_Trainable c, BodyInternal_Base b, List<string> list, bool always)
     {
-        // TODO
-        var list = new List<string>();
-        return list;
+        if (b.requestTraits != null)
+        {
+            foreach (var group in b.requestTraits)
+            {
+                if (string.IsNullOrEmpty(group)) continue;
+                var trait = c.Body?.GetEffectiveBodyTrait(group) ?? c.Stats?.GetTraitByGroupID(group);
+                var tags = always ? trait?.promptTags_always : trait?.promptTags;
+                if (tags != null) list.AddRange(tags);
+            }
+        }
+        if (b.requestSkills != null)
+        {
+            foreach (var skillID in b.requestSkills)
+            {
+                if (string.IsNullOrEmpty(skillID)) continue;
+                var skill = c.GetSkill(skillID);
+                var levels = skill?.BaseRef?.Levels;
+                if (levels == null) continue;
+                int level = skill.GetSkillLevel;
+                if (level < 0 || level >= levels.Count || levels[level] == null) continue;
+                var tags = always ? levels[level].promptTags_always : levels[level].promptTags;
+                if (tags != null) list.AddRange(tags);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Scene tags (no prompts) of everything mainActor is doing: its CurrentJob + InteractionJob ongoing APs with it, see
+    /// ActionScenePromptUtility.Collect. Build the prompt sections with BuildScenePrompt.
+    /// </summary>
+    public static ActionSceneTags CollectInteractionTags(Character_Trainable mainActor)
+    {
+        return ActionScenePromptUtility.Collect(mainActor);
+    }
+
+    /// <summary> derived tags + prompt_scene_rules (Image_Generation_Config.json) -> prompt sections; a new random roll every call </summary>
+    public static ActionScenePrompt BuildScenePrompt(ActionSceneTags tags)
+    {
+        return ActionScenePromptUtility.Build(tags);
     }
 
 

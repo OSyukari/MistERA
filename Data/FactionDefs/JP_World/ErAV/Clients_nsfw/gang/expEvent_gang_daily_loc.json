@@ -1,17 +1,31 @@
 {
-    "_doc": "en-us localization for expEvent_gang_daily.json (same folder convention).",
+    "_doc": "Neutral en-us writer placeholders for expEvent_gang_daily.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_gang_daily": "Daily: The Loop",
                 "exp_event_erav_gang_daily_ongoing": "The card game on the booked-out floor runs as usual, with $names$ on call.",
                 "exp_event_erav_gang_daily_result": "The man with the worst hand at the table drags $names$ over.",
-
                 "event_erav_gang_daily_01": "Convenience-store bags of food sit on the low table. Mid-game, whoever's luck has gone cold drags her over to \"turn his luck around\".\n\"Ground rules first, boys: she's debt labour, not a free ride. Go easy - you break her, you pay for her.\"\n\"Got it--!\"",
                 "event_erav_gang_daily_02": "Under the low table she keeps dealing his tiles with him in her mouth. Whoever wins the hand gets to go first.",
                 "event_erav_gang_daily_03": "On the shared sleeping platform the line stretches toward the corridor. The man in front isn't finished before the one behind is already waiting, watching and handling himself.\nTatami, windowsill, corridor, the bathhouse's changing bench - in the gaps between uses she is ordered to hold herself open and wait, \"to save some foreplay effort\".",
                 "event_erav_gang_daily_04": "Deep in the night, the girl in the middle of the platform is arranged into position. Half asleep, she is entered, filled; when it's over a hand pats her hip and its owner rolls over to sleep.\nShe doesn't even spare the strength to open her eyes; her body keeps pace with the rhythm in the dark on its own.",
-                "event_erav_gang_daily_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_gang_daily_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_gang_daily": "Daily: The Loop",
+                "event_erav_gang_daily_writer_opening": "Convenience-store bags of food sit on the low table. Mid-game, whoever's luck has gone cold drags her over to \"turn his luck around\".\n\"Ground rules first, boys: she's debt labour, not a free ride. Go easy - you break her, you pay for her.\"\n\"Got it--!\"",
+                "event_erav_gang_daily_writer_choose_full": "Continue the full sequence",
+                "event_erav_gang_daily_writer_choose_first_only": "Run only the first stage",
+                "event_erav_gang_daily_writer_choose_skip": "Skip this event",
+                "event_erav_gang_daily_writer_question": "How should this event continue?",
+                "event_erav_gang_daily_writer_phase_1_validated": "Under the low table she keeps dealing his tiles with him in her mouth. Whoever wins the hand gets to go first.",
+                "event_erav_gang_daily_writer_phase_2_validated": "On the shared sleeping platform the line stretches toward the corridor. The man in front isn't finished before the one behind is already waiting, watching and handling himself.\nTatami, windowsill, corridor, the bathhouse's changing bench - in the gaps between uses she is ordered to hold herself open and wait, \"to save some foreplay effort\".",
+                "event_erav_gang_daily_writer_first_only_validated": "Under the low table she keeps dealing his tiles with him in her mouth. Whoever wins the hand gets to go first.",
+                "event_erav_gang_daily_writer_summary_completed": "Deep in the night, the girl in the middle of the platform is arranged into position. Half asleep, she is entered, filled; when it's over a hand pats her hip and its owner rolls over to sleep.\nShe doesn't even spare the strength to open her eyes; her body keeps pace with the rhythm in the dark on its own.",
+                "event_erav_gang_daily_writer_summary_completed_first_only": "Only the first stage was completed.",
+                "event_erav_gang_daily_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_gang_daily_writer_summary_skipped": "This event was skipped.",
+                "event_erav_gang_daily_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_gang_daily_writer_header": "Daily: The Loop"
             }
         }
     }

@@ -8,12 +8,25 @@
                 "prompts": [],
                 "rules":
                 [
-                    { "id": "hair",        "requireKeywords": ["Hair"], "includeHairstyle": true, "traitGroups": ["trait_HairColor"] },
-                    { "id": "hair_pattern", "requireKeywords": ["Hair"], "excludeTraits": ["trait_HairColorPattern_monotone"], "traitGroups": ["trait_HairColorPattern", "trait_HairColorSecondary"] },
+                    { "_comment": "hair data only for humanoid races (RaceType humanrace / humanoid / android), not animals with a Hair slot", "id": "hair", "requireKeywords": ["Hair"], "requireAnyActorTags": ["humanrace", "humanoid", "android"], "includeHairstyle": true, "traitGroups": ["trait_HairColor"] },
+                    { "id": "hair_pattern", "requireKeywords": ["Hair"], "requireAnyActorTags": ["humanrace", "humanoid", "android"], "excludeTraits": ["trait_HairColorPattern_monotone"], "traitGroups": ["trait_HairColorPattern", "trait_HairColorSecondary"] },
                     { "id": "eyes_open",   "requireKeywords": ["Eyes"], "excludeActorTags": ["unconscious"], "traitGroups": ["trait_EyeColor"] },
                     { "id": "eyes_closed", "requireKeywords": ["Eyes"], "requireActorTags": ["unconscious"], "prompts": ["closed eyes"] },
                     { "id": "body",        "traitGroups": ["trait_BodyType"] },
-                    { "id": "skin",        "traitGroups": ["trait_SkinColor"] }
+                    { "id": "skin",        "traitGroups": ["trait_SkinColor"] },
+                    { "id": "timestop",    "requireActorTags": ["timestopped"], "prompts": [] }
+                ]
+            }
+        ],
+        "_comment_PromptRulesets": "Shared rules a prompt profile opts into with inheritRulesets (ids). Rulesets do not inherit each other; every rule needs an id. Same-id rules of the inheriting profile replace them, disableRules drops them.",
+        "PromptRulesets":
+        [
+            {
+                "id": "ruleset_character_tag",
+                "_comment": "For templates whose prompts carry a character tag that already implies the preset look.",
+                "rules":
+                [
+                    { "_comment": "skin colour only once the game changed it", "id": "skin", "requireChangedTraits": ["trait_SkinColor"], "traitGroups": ["trait_SkinColor"] }
                 ]
             }
         ]

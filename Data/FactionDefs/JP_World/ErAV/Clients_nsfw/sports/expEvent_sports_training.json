@@ -1,6 +1,5 @@
 {
-    "_doc": "ErAV NTR Part 3 placeholder scene - G sports team, training-day service (Plan §4; Phase 1 skeleton). Group scene: the entry branch borrows the lead (client, athlete_a) and the rest of the squad (support, athlete_b x2 + athlete_c x2) from the Kiryu-gumi fallback-worker pool, copies both into enemy (= every doer) and moves them into her room; every ending (error path included) runs ResolveEvent and releases client + support. The COMs used (com_sex_oral_P_Force, com_sex_P_doggy) have multi-doer variants (doerCount 99).",
-
+    "_doc": "sports/training: neutral interactive writer skeleton. Major weight 1, party-wide cooldown 24 hours, exactly one female participant. Existing actor roles and COM IDs retained; one validated AP per phase, with separate preparation and AP success/failure branches. Full/first-only (where available)/skip choices differ in executed APs and final banked summary. No guaranteed physiological outcomes. Every ending redresses, returns all borrowed scopes, and resolves. Legacy dictionary keys retained as placeholders. No chronological order assumed.",
     "ExplorationEvents": {
         "list": [
             {
@@ -10,7 +9,12 @@
                 "teamRequirement": {
                     "minTeamCount": 1,
                     "allowPrisoner": true,
-                    "requireCombat": false
+                    "requireCombat": false,
+                    "maxTeamCount": 1,
+                    "strictPartyCount": true,
+                    "charaReq_Select": {
+                        "requireFemale": true
+                    }
                 },
                 "baseWeight": 1,
                 "possibleResults": [
@@ -19,38 +23,44 @@
                         "resultText": "exp_event_erav_sports_training_result",
                         "eventID": "event_erav_sports_training"
                     }
-                ]
+                ],
+                "cooldownHours": 24
             }
         ]
     },
-
     "Events": {
         "list": [
             {
                 "ID": "event_erav_sports_training",
+                "showEventHeader": "event_erav_sports_training_writer_header",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
                         "options": [
                             {
                                 "option": "_start",
                                 "target_chara_conditions": {
-                                    "party": [ { "parameters": [ "exists" ] } ]
+                                    "party": [
+                                        {
+                                            "parameters": ["exists"]
+                                        }
+                                    ]
                                 },
                                 "Results": [
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_a", "erav_client_athlete_a", "1", "true" ] },
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_b", "erav_client_athlete_b", "2", "true" ] },
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_c", "erav_client_athlete_c", "2", "true" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
-                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                    { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_a", "erav_client_athlete_a", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_b", "erav_client_athlete_b", "2", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_athlete_c", "erav_client_athlete_c", "2", "true"] },
+                                    { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
+                                    { "Type": "CopyTargets", "arguments": ["support", "enemy", "add"] },
+                                    { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "scene"] }
                                 ]
                             },
                             {
                                 "option": "_error",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
                                 ]
                             }
                         ]
@@ -58,50 +68,237 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "scene",
-                        "line": "event_erav_sports_training_01"
+                        "line": "event_erav_sports_training_writer_opening"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_sports_training_02",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
-                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "choice",
+                        "question": "event_erav_sports_training_writer_question",
+                        "options": [
+                            {
+                                "option": "event_erav_sports_training_writer_choose_full",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_sports_training_writer_choose_first_only",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_sports_training_writer_choose_skip",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skipped"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
-                        "line": "event_erav_sports_training_03"
+                        "label": "phase_1_success",
+                        "line": "event_erav_sports_training_writer_phase_1_validated",
+                        "nextEntryLabel": "phase_2_prepare"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_sports_training_04",
-                        "Results": [
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
-                        "line": "event_erav_sports_training_05",
+                        "label": "phase_2_success",
+                        "line": "event_erav_sports_training_writer_phase_2_validated",
+                        "nextEntryLabel": "completed"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "first_only_success",
+                        "line": "event_erav_sports_training_writer_first_only_validated",
+                        "nextEntryLabel": "completed_first_only"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed",
+                        "line": "event_erav_sports_training_writer_summary_completed",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed_first_only",
+                        "line": "event_erav_sports_training_writer_summary_completed_first_only",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "failed",
+                        "line": "event_erav_sports_training_writer_summary_failed",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skipped",
+                        "line": "event_erav_sports_training_writer_summary_skipped",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "error",
-                        "line": "event_erav_sports_training_err",
+                        "line": "event_erav_sports_training_writer_summary_error",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     }
@@ -109,20 +306,33 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
                 "exp_event_erav_sports_training": "白天·训练场",
                 "exp_event_erav_sports_training_ongoing": "$names$穿着应援服，随队来到训练场。",
                 "exp_event_erav_sports_training_result": "休息的哨声响起，$names$在休息区被球员们围住了。",
-
                 "event_erav_sports_training_01": "队方指定的应援服：拉拉队短裙，裙里按规定什么都不能穿。走快些裙摆就兜风，场内的视线全程粘在她身上。\n训练开始后，她的位置是场边休息区。轮到递水的时候，手腕被人拽住了。\n\"Water girl. ——Knees.\"",
                 "event_erav_sports_training_02": "休息区到更衣室的路，是白天的主战场。\n树荫下的长椅边，她跪在草地上，轮番伺候着下来休息的球员。十五分钟的休息时间，她的休息按人头折算。",
                 "event_erav_sports_training_03": "顶到喉咙深处的尺寸越来越夸张。到晚间收操的时候，她的下颚酸得张不开。",
                 "event_erav_sports_training_04": "中场哨响，她被叫进更衣室「帮忙放松」。\n按摩床上，她趴着被从后面进入；隔壁床的球员还在让理疗师压腿，隔着帘子和这边聊着明天的赛程。",
                 "event_erav_sports_training_05": "收操的哨声里，有人拍了拍她的头顶，算是道谢。\n\"Good girl. ——明天，同样时间。\"",
-                "event_erav_sports_training_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+                "event_erav_sports_training_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_sports_training": "白天·训练场",
+                "event_erav_sports_training_writer_opening": "队方指定的应援服：拉拉队短裙，裙里按规定什么都不能穿。走快些裙摆就兜风，场内的视线全程粘在她身上。\n训练开始后，她的位置是场边休息区。轮到递水的时候，手腕被人拽住了。\n\"Water girl. ——Knees.\"",
+                "event_erav_sports_training_writer_choose_full": "继续完整流程",
+                "event_erav_sports_training_writer_choose_first_only": "仅进行首个阶段",
+                "event_erav_sports_training_writer_choose_skip": "跳过本次事件",
+                "event_erav_sports_training_writer_question": "如何继续？",
+                "event_erav_sports_training_writer_phase_1_validated": "休息区到更衣室的路，是白天的主战场。\n树荫下的长椅边，她跪在草地上，轮番伺候着下来休息的球员。十五分钟的休息时间，她的休息按人头折算。",
+                "event_erav_sports_training_writer_phase_2_validated": "顶到喉咙深处的尺寸越来越夸张。到晚间收操的时候，她的下颚酸得张不开。\n中场哨响，她被叫进更衣室「帮忙放松」。\n按摩床上，她趴着被从后面进入；隔壁床的球员还在让理疗师压腿，隔着帘子和这边聊着明天的赛程。",
+                "event_erav_sports_training_writer_first_only_validated": "休息区到更衣室的路，是白天的主战场。\n树荫下的长椅边，她跪在草地上，轮番伺候着下来休息的球员。十五分钟的休息时间，她的休息按人头折算。",
+                "event_erav_sports_training_writer_summary_completed": "收操的哨声里，有人拍了拍她的头顶，算是道谢。\n\"Good girl. ——明天，同样时间。\"",
+                "event_erav_sports_training_writer_summary_completed_first_only": "本次仅完成首个阶段。",
+                "event_erav_sports_training_writer_summary_failed": "本次流程未能完成。",
+                "event_erav_sports_training_writer_summary_skipped": "已跳过本次事件。",
+                "event_erav_sports_training_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_sports_training_writer_header": "白天·训练场"
             }
         }
     }

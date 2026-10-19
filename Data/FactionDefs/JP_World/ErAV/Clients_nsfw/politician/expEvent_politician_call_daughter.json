@@ -1,6 +1,5 @@
 {
-    "_doc": "ErAV NTR Part 3 - B politician, evening: the call home to his daughter and the 'daddy' night (draft B). Single client (the councillor), borrowed via RequestFallbackWorker -> client -> enemy; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker. COMs: com_sex_oral_P_Force, com_sex_P_missionary.",
-
+    "_doc": "politician/call_daughter: neutral interactive writer skeleton. Major weight 1, party-wide cooldown 24 hours, exactly one female participant. Existing actor roles and COM IDs retained; one validated AP per phase, with separate preparation and AP success/failure branches. Full/first-only (where available)/skip choices differ in executed APs and final banked summary. No guaranteed physiological outcomes. Every ending redresses, returns all borrowed scopes, and resolves. Legacy dictionary keys retained as placeholders. No chronological order assumed.",
     "ExplorationEvents": {
         "list": [
             {
@@ -10,7 +9,12 @@
                 "teamRequirement": {
                     "minTeamCount": 1,
                     "allowPrisoner": true,
-                    "requireCombat": false
+                    "requireCombat": false,
+                    "maxTeamCount": 1,
+                    "strictPartyCount": true,
+                    "charaReq_Select": {
+                        "requireFemale": true
+                    }
                 },
                 "baseWeight": 1,
                 "possibleResults": [
@@ -19,35 +23,41 @@
                         "resultText": "exp_event_erav_politician_call_daughter_result",
                         "eventID": "event_erav_politician_call_daughter"
                     }
-                ]
+                ],
+                "cooldownHours": 24
             }
         ]
     },
-
     "Events": {
         "list": [
             {
                 "ID": "event_erav_politician_call_daughter",
+                "showEventHeader": "event_erav_politician_call_daughter_writer_header",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
                         "options": [
                             {
                                 "option": "_start",
                                 "target_chara_conditions": {
-                                    "party": [ { "parameters": [ "exists" ] } ]
+                                    "party": [
+                                        {
+                                            "parameters": ["exists"]
+                                        }
+                                    ]
                                 },
                                 "Results": [
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_politician", "erav_client_politician", "1", "true" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
-                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                    { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_politician", "erav_client_politician", "1", "true"] },
+                                    { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
+                                    { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "scene"] }
                                 ]
                             },
                             {
                                 "option": "_error",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
                                 ]
                             }
                         ]
@@ -55,49 +65,227 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "scene",
-                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "scheming", "happy" ] },
-                        "line": "event_erav_politician_call_daughter_01"
+                        "line": "event_erav_politician_call_daughter_writer_opening"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_politician_call_daughter_02",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
-                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "choice",
+                        "question": "event_erav_politician_call_daughter_writer_question",
+                        "options": [
+                            {
+                                "option": "event_erav_politician_call_daughter_writer_choose_full",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_politician_call_daughter_writer_choose_first_only",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_politician_call_daughter_writer_choose_skip",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skipped"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
-                        "line": "event_erav_politician_call_daughter_03"
+                        "label": "phase_1_success",
+                        "line": "event_erav_politician_call_daughter_writer_phase_1_validated",
+                        "nextEntryLabel": "phase_2_prepare"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_politician_call_daughter_04",
-                        "Results": [
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_P_missionary", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
-                        "line": "event_erav_politician_call_daughter_05",
+                        "label": "phase_2_success",
+                        "line": "event_erav_politician_call_daughter_writer_phase_2_validated",
+                        "nextEntryLabel": "completed"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "first_only_success",
+                        "line": "event_erav_politician_call_daughter_writer_first_only_validated",
+                        "nextEntryLabel": "completed_first_only"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed",
+                        "line": "event_erav_politician_call_daughter_writer_summary_completed",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed_first_only",
+                        "line": "event_erav_politician_call_daughter_writer_summary_completed_first_only",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "failed",
+                        "line": "event_erav_politician_call_daughter_writer_summary_failed",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skipped",
+                        "line": "event_erav_politician_call_daughter_writer_summary_skipped",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "error",
-                        "line": "event_erav_politician_call_daughter_err",
+                        "line": "event_erav_politician_call_daughter_writer_summary_error",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     }
@@ -105,20 +293,33 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
                 "exp_event_erav_politician_call_daughter": "傍晚·家里的电话",
                 "exp_event_erav_politician_call_daughter_ongoing": "商谈散了，$names$被议员唤到走廊的电话前。",
                 "exp_event_erav_politician_call_daughter_result": "议员拨通家里电话，同时用眼神给她下了命令。",
-
                 "event_erav_politician_call_daughter_01": "旅馆的走廊电话前，议员拨了个号——是打给家里的。\n「喂，是我。……嗯，在箱根，和组里的朋友谈点事，明晚回去。……哎，小百合呢？让她接电话。」\n电话那头传来少女的声音，稚气地汇报着学校的琐事。他靠在木柱上笑呵呵地应着，同时用眼神给她下了命令。",
                 "event_erav_politician_call_daughter_02": "她跪在他面前，含住他的东西。\n「——是嘛，期末考第几名？哦哦，不愧是我女儿。……嗯，爸爸这里切切都好，同事都很照顾我。」\n他听着女儿的声音，按着她的头加深，到喉咙深处。",
                 "event_erav_politician_call_daughter_03": "「……乖。爸爸给你带箱根的果子回去。嗯，挂了。」\n挂断电话，他在她喉咙深处释放，看着她被迫吞咽完，才慢悠悠地开口。\n「刚才那个，尝出来了吧——她小时候，就是用这张嘴给我含过药的。你和她，年纪、嘴型，都像。所以这几天，」他弹了弹她的脸颊。「——你管我叫爸爸。」",
                 "event_erav_politician_call_daughter_04": "晚上的陪睡，加了条新的规矩。今晚叫爸爸。不叫，就自己回去把利息补上。\n「爸爸……」「哎。乖女儿。」\n他让「女儿」趴着叫爸爸，边缓慢贯穿边数落：家里的事不用她操心，好好伺候爸爸，比什么都强——还是太生涩了，小百合都更懂事。",
                 "event_erav_politician_call_daughter_05": "到深处时她泣不成声，泣声里还夹着那声变了调的「爸爸——」。\n「哎。爸爸在。」\n他伏下来，在她耳边，边送上最后的顶弄边温和地应着。",
-                "event_erav_politician_call_daughter_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+                "event_erav_politician_call_daughter_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_politician_call_daughter": "傍晚·家里的电话",
+                "event_erav_politician_call_daughter_writer_opening": "旅馆的走廊电话前，议员拨了个号——是打给家里的。\n「喂，是我。……嗯，在箱根，和组里的朋友谈点事，明晚回去。……哎，小百合呢？让她接电话。」\n电话那头传来少女的声音，稚气地汇报着学校的琐事。他靠在木柱上笑呵呵地应着，同时用眼神给她下了命令。",
+                "event_erav_politician_call_daughter_writer_choose_full": "继续完整流程",
+                "event_erav_politician_call_daughter_writer_choose_first_only": "仅进行首个阶段",
+                "event_erav_politician_call_daughter_writer_choose_skip": "跳过本次事件",
+                "event_erav_politician_call_daughter_writer_question": "如何继续？",
+                "event_erav_politician_call_daughter_writer_phase_1_validated": "她跪在他面前，含住他的东西。\n「——是嘛，期末考第几名？哦哦，不愧是我女儿。……嗯，爸爸这里切切都好，同事都很照顾我。」\n他听着女儿的声音，按着她的头加深，到喉咙深处。",
+                "event_erav_politician_call_daughter_writer_phase_2_validated": "「……乖。爸爸给你带箱根的果子回去。嗯，挂了。」\n挂断电话，他在她喉咙深处释放，看着她被迫吞咽完，才慢悠悠地开口。\n「刚才那个，尝出来了吧——她小时候，就是用这张嘴给我含过药的。你和她，年纪、嘴型，都像。所以这几天，」他弹了弹她的脸颊。「——你管我叫爸爸。」\n晚上的陪睡，加了条新的规矩。今晚叫爸爸。不叫，就自己回去把利息补上。\n「爸爸……」「哎。乖女儿。」\n他让「女儿」趴着叫爸爸，边缓慢贯穿边数落：家里的事不用她操心，好好伺候爸爸，比什么都强——还是太生涩了，小百合都更懂事。",
+                "event_erav_politician_call_daughter_writer_first_only_validated": "她跪在他面前，含住他的东西。\n「——是嘛，期末考第几名？哦哦，不愧是我女儿。……嗯，爸爸这里切切都好，同事都很照顾我。」\n他听着女儿的声音，按着她的头加深，到喉咙深处。",
+                "event_erav_politician_call_daughter_writer_summary_completed": "到深处时她泣不成声，泣声里还夹着那声变了调的「爸爸——」。\n「哎。爸爸在。」\n他伏下来，在她耳边，边送上最后的顶弄边温和地应着。",
+                "event_erav_politician_call_daughter_writer_summary_completed_first_only": "本次仅完成首个阶段。",
+                "event_erav_politician_call_daughter_writer_summary_failed": "本次流程未能完成。",
+                "event_erav_politician_call_daughter_writer_summary_skipped": "已跳过本次事件。",
+                "event_erav_politician_call_daughter_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_politician_call_daughter_writer_header": "傍晚·家里的电话"
             }
         }
     }

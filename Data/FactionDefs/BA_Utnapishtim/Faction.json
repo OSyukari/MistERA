@@ -80,7 +80,8 @@
                 }
             ] ,
             "requireOriginID":["charOrigin_KivotosStudent"],
-            "actorKeyword":["BlueArchive"]
+            "actorKeyword":["BlueArchive"],
+            "promptProfile": { "inheritRulesets": ["ruleset_kivotos_halo"] }
         },
         {
             "ID": "humanRaceAddon_Kivotos_Gehenna",
@@ -93,7 +94,8 @@
                 }
             ] ,
             "requireOriginID":["charOrigin_KivotosStudent"],
-            "actorKeyword":["BlueArchive"]
+            "actorKeyword":["BlueArchive"],
+            "promptProfile": { "inheritRulesets": ["ruleset_kivotos_halo"] }
         },
         {
             "ID": "humanRaceAddon_Kivotos_Millenium",
@@ -106,7 +108,8 @@
                 }
             ] ,
             "requireOriginID":["charOrigin_KivotosStudent"],
-            "actorKeyword":["BlueArchive"]
+            "actorKeyword":["BlueArchive"],
+            "promptProfile": { "inheritRulesets": ["ruleset_kivotos_halo"] }
         },
         {
             "ID": "humanRaceAddon_Kivotos_GSC",
@@ -119,7 +122,8 @@
                 }
             ] ,
             "requireOriginID":["charOrigin_KivotosStudent"],
-            "actorKeyword":["BlueArchive"]
+            "actorKeyword":["BlueArchive"],
+            "promptProfile": { "inheritRulesets": ["ruleset_kivotos_halo"] }
         },
         {
             "ID": "humanRaceAddon_Kivotos_Abydos",
@@ -132,7 +136,8 @@
                 }
             ] ,
             "requireOriginID":["charOrigin_KivotosStudent"],
-            "actorKeyword":["BlueArchive"]
+            "actorKeyword":["BlueArchive"],
+            "promptProfile": { "inheritRulesets": ["ruleset_kivotos_halo"] }
         }
     ]
     },

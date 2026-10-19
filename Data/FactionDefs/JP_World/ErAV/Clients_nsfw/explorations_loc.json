@@ -1,5 +1,5 @@
 {
-    "_doc": "en-us localization for Clients_nsfw/explorations.json (same folder convention).",
+    "_doc": "Neutral en-us writer placeholders for explorations.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
@@ -12,11 +12,38 @@
                 "expedition_erav_ntr_mia_sports": "Guarantee Labour: Team Attendant",
                 "expedition_erav_ntr_mia_sports_desc_1": "$names$ accompanies a visiting sports team - training, games and hotel, always with the squad.",
                 "expedition_erav_ntr_mia_celeb": "Guarantee Labour: Tour Escort",
-                "expedition_erav_ntr_mia_celeb_desc_1": "$names$ plays the tour group's \"Tokyo girlfriend\".",
+                "expedition_erav_ntr_mia_celeb_desc_1": "Even while speaking, she watches the nearby cameras, measuring which expression can remain in the public record.",
                 "expedition_erav_ntr_mia_household": "Guarantee Labour: Household Maid",
                 "expedition_erav_ntr_mia_household_desc_1": "$names$ moves into a west-city manor as the family's live-in \"household helper\".",
                 "expedition_erav_ntr_mia_gang": "Guarantee Labour: The Prize",
-                "expedition_erav_ntr_mia_gang_desc_1": "$names$ is sent to the upper floor of an old inn and handed to the gumi's footsoldiers as their prize."
+                "expedition_erav_ntr_mia_gang_desc_1": "$names$ is sent to the upper floor of an old inn and handed to the gumi's footsoldiers as their prize.",
+                "expedition_erav_ntr_mia_clients_desc_1": "$names$ is working off the debt wherever the Kiryu-gumi put her.",
+                "expedition_erav_ntr_mia_clients_desc_2": "$names$ is working off the debt wherever the Kiryu-gumi put her.",
+                "expedition_erav_ntr_mia_clients_desc_3": "$names$ is working off the debt wherever the Kiryu-gumi put her.",
+                "expedition_erav_ntr_mia_politician_desc_2": "$names$ stays at a Hakone ryokan as the county councillor's \"accompanying secretary\".",
+                "expedition_erav_ntr_mia_politician_desc_3": "$names$ stays at a Hakone ryokan as the county councillor's \"accompanying secretary\".",
+                "expedition_erav_ntr_mia_producer_desc_2": "$names$ takes the \"final interview\" in front of a talent agency president's camera.",
+                "expedition_erav_ntr_mia_producer_desc_3": "$names$ takes the \"final interview\" in front of a talent agency president's camera.",
+                "expedition_erav_ntr_mia_sm_master_desc_2": "$names$ is lent to a collector's suburban mansion and trained to his schedule.",
+                "expedition_erav_ntr_mia_sm_master_desc_3": "$names$ is lent to a collector's suburban mansion and trained to his schedule.",
+                "expedition_erav_ntr_mia_sports_desc_2": "$names$ accompanies a visiting sports team - training, games and hotel, always with the squad.",
+                "expedition_erav_ntr_mia_sports_desc_3": "$names$ accompanies a visiting sports team - training, games and hotel, always with the squad.",
+                "expedition_erav_ntr_mia_celeb_desc_2": "Staff keep checking the time while she compresses her private gap before the next public appointment.",
+                "expedition_erav_ntr_mia_celeb_desc_3": "She steps away from the cameras without quite escaping the feeling of being watched.",
+                "expedition_erav_ntr_mia_household_desc_2": "$names$ moves into a west-city manor as the family's live-in \"household helper\".",
+                "expedition_erav_ntr_mia_household_desc_3": "$names$ moves into a west-city manor as the family's live-in \"household helper\".",
+                "expedition_erav_ntr_mia_gang_desc_2": "$names$ is sent to the upper floor of an old inn and handed to the gumi's footsoldiers as their prize.",
+                "expedition_erav_ntr_mia_gang_desc_3": "$names$ is sent to the upper floor of an old inn and handed to the gumi's footsoldiers as their prize.",
+                "expedition_erav_ntr_mia_clients": "Kiryu-gumi: Guarantee Labour",
+                "event_erav_clients_begin": "Kiryu-gumi: Guarantee Labour",
+                "event_erav_clients_begin_politician": "The car winds up the Hakone road and stops in front of a ryokan's detached villa.\nThe councillor's shoes are already lined up in the entryway. Bowing, the proprietress leads $party.name$ deep along the veranda -\nfrom tonight on, she is the villa's \"accompanying secretary\", until the negotiation is over.",
+                "event_erav_clients_begin_producer": "In a rented meeting room above the agency, the fill lights are already set up.\nThe man who calls himself the president skims $party.name$'s file, looks up with a smile, and points at the open floor in the middle of the room.\nThis is where the \"final interview\" begins.",
+                "event_erav_clients_begin_sm_master": "The car turns into an unremarkable suburban mansion. The basement lights are on; the leather gear on the walls is sorted by body part, like an anatomy chart.\nThe old man in a cardigan adjusts his reading glasses and points at the weekly timetable filling the whiteboard.\n$party.name$'s week has already been paid for.",
+                "event_erav_clients_begin_sports": "The hotel suite is crowded with tall foreign players. The team manager skims the contract and tips his chin at $party.name$.\nThe interpreter relays only half of what is said. From tonight on, she is the squad's \"team attendant\" - training, games and hotel, always with the team.",
+                "event_erav_clients_begin_celeb": "This assignment has already been set as a celebrity-client expedition. Public expectations, private boundaries, and a shifting schedule will surface after departure; the category is not rerolled here.",
+                "event_erav_clients_begin_household": "At the gate of the west-city manor, the housekeeper in a grey dress hands her an apron and a handwritten timetable.\n\"In this house you have no name. Everyone calls you 'little sis'.\"\n$party.name$ looks down at the schedule - up at five thirty in the morning. Days off: none.",
+                "event_erav_clients_begin_gang": "The whole top floor of the old inn has been booked out. The corridor reeks of smoke; in the room, seven or eight footsoldiers are gathered around a low table playing cards.\nThe young lieutenant slaps $party.name$'s contract down on the table:\n\"Boys - this week's prize has arrived.\\",
+                "event_erav_clients_begin_fallback": "The car stops in front of an unfamiliar building.\nThe Kiryu-gumi men lead $party.name$ inside, and the door closes silently behind her.\nFrom today on, this is where she works off the debt."
             }
         }
     }

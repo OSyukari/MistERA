@@ -42,4 +42,7 @@ public class Room_Base
     public string subfactionOwnerOverwrite = "";
 
     public RoomActivityState activityState = RoomActivityState.AlwaysActive;
+
+    /// <summary> optional image prompt tags of this room (scene prompts, see Room_Instance.PromptTags) </summary>
+    public List<string> promptTags = new List<string>();
 }

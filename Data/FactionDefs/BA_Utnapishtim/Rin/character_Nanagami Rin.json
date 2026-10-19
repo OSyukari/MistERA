@@ -158,8 +158,9 @@
 
           "current prompt":"hair ribbon, hair bow, earrings, cape, shoulder cape, sleeveless, minidress, bare shoulders, dress, long coat, military uniform, captain's coat, large breasts, gun holster, holster, waist ornament, heeled boots, high heel boots, captain's boots, boots, rin_\\(blue_archive\\), blue hair, long hair, straight hair, center part, parted bangs, blue eyes, curvy, wide hips, narrow waist, light skin, cyan halo",
 
+          "_comment_inheritRulesets": "skin colour only once the game changed it (the character tag implies the preset); the generic halo comes from the race template",
+          "inheritRulesets": [ "ruleset_character_tag" ],
           "rules":[
-            { "_comment": "skin colour only once the game changed it (the character tag implies the preset)", "id": "skin", "requireChangedTraits": [ "trait_SkinColor" ], "traitGroups": [ "trait_SkinColor" ] },
             { "_comment": "replaces the default eyes_open: eye colour trait + slit pupils", "id": "eyes_open", "requireKeywords": [ "Eyes" ], "excludeActorTags": [ "unconscious" ], "traitGroups": [ "trait_EyeColor" ], "prompts": [ "slit pupils" ] },
             { "_comment": "halo while awake", "id": "halo", "requireBodyTags": [ "head" ], "excludeActorTags": [ "unconscious" ], "prompts": [ "cyan halo" ] },
             { "_comment": "the long coat makes the model drop the arms: force them while both arms are covered", "id": "rin_arms", "requireBodyTags": [ "arm" ], "excludeKeywords": [ "Arm" ], "prompts": [ "hands", "arms" ] }

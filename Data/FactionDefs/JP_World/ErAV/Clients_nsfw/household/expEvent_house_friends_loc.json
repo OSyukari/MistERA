@@ -1,18 +1,32 @@
 {
-    "_doc": "en-us localization for expEvent_house_friends.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_house_friends.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_house_friends": "The Young Masters' Guests",
                 "exp_event_erav_house_friends_ongoing": "The young masters' friends stay the night, and $names$ is called downstairs to entertain.",
                 "exp_event_erav_house_friends_result": "Three rounds in, the living-room table is cleared - and what gets spread over the coffee table is $names$.",
-
                 "event_erav_house_friends_01": "The eldest son leads her, apron on, before his guests like displaying a collectible.\n\"May I present the family treasure.\"\nAmid the laughter a guest asks her: do the young masters of this house play with you roughly? She has no answer, and earns a fresh round of laughter.",
                 "event_erav_house_friends_02": "The guests use her every which way, swapping out when done.\nThe apron stays on - \"with the apron it feels like the house's property\" - nobody is sure which guest said it first.",
                 "event_erav_house_friends_03": "The eldest son watches from the sofa, issuing directions now and then: \"Turn around.\" \"Hips up.\"\nThe way one drills a house pet in its manners for receiving guests.",
                 "event_erav_house_friends_04": "Past midnight the guests are satisfied and raise their glasses around her.\n\"To the eldest son's family treasure - kanpai!\"\nWhen the rims clink, she is still holding the pose she was told to hold.",
                 "event_erav_house_friends_05": "The guests gone, the eldest son points at the stairs: \"Bed. Same as tomorrow morning.\"\nShe climbs upstairs clutching her apron. The living-room lights stay on till last - that is this house's old rule.",
-                "event_erav_house_friends_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_house_friends_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_house_friends": "The Young Masters' Guests",
+                "event_erav_house_friends_writer_opening": "The eldest son leads her, apron on, before his guests like displaying a collectible.\n\"May I present the family treasure.\"\nAmid the laughter a guest asks her: do the young masters of this house play with you roughly? She has no answer, and earns a fresh round of laughter.",
+                "event_erav_house_friends_writer_choose_full": "Continue the full sequence",
+                "event_erav_house_friends_writer_choose_first_only": "Run only the first stage",
+                "event_erav_house_friends_writer_choose_skip": "Skip this event",
+                "event_erav_house_friends_writer_question": "How should this event continue?",
+                "event_erav_house_friends_writer_phase_1_validated": "The guests use her every which way, swapping out when done.\nThe apron stays on - \"with the apron it feels like the house's property\" - nobody is sure which guest said it first.",
+                "event_erav_house_friends_writer_phase_2_validated": "The eldest son watches from the sofa, issuing directions now and then: \"Turn around.\" \"Hips up.\"\nThe way one drills a house pet in its manners for receiving guests.\nPast midnight the guests are satisfied and raise their glasses around her.\n\"To the eldest son's family treasure - kanpai!\"\nWhen the rims clink, she is still holding the pose she was told to hold.",
+                "event_erav_house_friends_writer_first_only_validated": "The guests use her every which way, swapping out when done.\nThe apron stays on - \"with the apron it feels like the house's property\" - nobody is sure which guest said it first.",
+                "event_erav_house_friends_writer_summary_completed": "The guests gone, the eldest son points at the stairs: \"Bed. Same as tomorrow morning.\"\nShe climbs upstairs clutching her apron. The living-room lights stay on till last - that is this house's old rule.",
+                "event_erav_house_friends_writer_summary_completed_first_only": "Only the first stage was completed.",
+                "event_erav_house_friends_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_house_friends_writer_summary_skipped": "This event was skipped.",
+                "event_erav_house_friends_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_house_friends_writer_header": "The Young Masters' Guests"
             }
         }
     }

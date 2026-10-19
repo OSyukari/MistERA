@@ -149,7 +149,8 @@ public class scr_System_CampaignManager : MonoBehaviour
 
         foreach (var exp in Index_ExpeditionInstances)
         {
-            if (exp.Value.Base.isUnique) _uniqueExpeditionInstances.Add(exp.Value.Base.ExpeditionID, exp.Value);
+            var definition = exp.Value.Base;
+            if (definition != null && definition.isUnique) _uniqueExpeditionInstances.Add(definition.ExpeditionID, exp.Value);
         }
     }
 
@@ -179,7 +180,18 @@ public class scr_System_CampaignManager : MonoBehaviour
     }
     public ExpeditionInstance CreateExpedition(string id)
     {
+        return CreateExpedition(id, null, false);
+    }
+
+    /// <summary>Custom features are supported only on non-unique instances. Null preserves the original API.</summary>
+    public ExpeditionInstance CreateExpedition(string id, List<string> featureKeywords, bool replaceFeatures)
+    {
         if (_uniqueExpeditionInstances == null) RebuildExpeditionsList();
+        if (featureKeywords != null && Expeditions.ExpeditionEntry.GetByID(id)?.isUnique == true)
+        {
+            Debug.LogError($"CreateExpedition: custom features require a non-unique expedition [{id}]");
+            return null;
+        }
         if (_uniqueExpeditionInstances.TryGetValue(id, out var expinst)) return expinst;
         // create new
         var baseExp = Expeditions.ExpeditionEntry.GetByID(id);
@@ -188,7 +200,9 @@ public class scr_System_CampaignManager : MonoBehaviour
             Debug.LogError($"CreateExpedition: cannot find ExpeditionEntry by ID {id}");
             return null;
         }
-        var newstuff = Register(new ExpeditionInstance(baseExp));
+        var instance = new ExpeditionInstance(baseExp);
+        if (featureKeywords != null) instance.SetFeatureKeywords(featureKeywords, replaceFeatures);
+        var newstuff = Register(instance);
 
         //Index_ExpeditionInstances.Add(newstuff.RefID, newstuff); -> already registered
         if (baseExp.isUnique) _uniqueExpeditionInstances.Add(baseExp.ExpeditionID, newstuff);
@@ -280,6 +294,13 @@ public class scr_System_CampaignManager : MonoBehaviour
             if (chara.CurrentJob == null) Unregister(chara);
         }
         PartyCleanup();
+        // Older saves may still have an inactive player job pinning its completed one-shot instance.
+        foreach (var job in Index_JobReferenceID.Values)
+        {
+            if (job is Job_Expedition expJob && expJob.status == Job_Expedition.ExpeditionStatus.inactive
+                && !expJob.ExpeditionActive && expJob.FactionOwner_Party?.isPlayerFaction == true)
+                expJob.ReleaseCompletedExpedition();
+        }
         ExpeditionInstancesCleanup();
 
         // Recycler is a session-only sink whose contents were never meant to survive a save (see its
@@ -452,13 +473,9 @@ public class scr_System_CampaignManager : MonoBehaviour
         {
             ex.Value.ResetUsage();// = 0;
         }
-        foreach(var m in Factions)
+        foreach (var job in Index_JobReferenceID.Values)
         {
-            foreach(var p in m.SubFactions)
-            {
-                if (!p.hasExpeditionSet) continue;
-                p.Job.Expedition.NotifyUsage();
-            }
+            if (job is Job_Expedition expJob && expJob.Expedition != null) expJob.Expedition.NotifyUsage();
         }
         var list = this.Index_ExpeditionInstances.Keys.ToList();
         foreach(var k in list)
@@ -471,6 +488,18 @@ public class scr_System_CampaignManager : MonoBehaviour
             }
         }
         RebuildExpeditionsList();
+    }
+
+    /// <summary>Collect a disposable instance only after every registered expedition job has released it.</summary>
+    public void TryCleanupExpedition(ExpeditionInstance expedition)
+    {
+        if (expedition == null) return;
+        expedition.ResetUsage();
+        foreach (var job in Index_JobReferenceID.Values)
+        {
+            if (job is Job_Expedition expJob && expJob.Expedition == expedition) expedition.NotifyUsage();
+        }
+        if (expedition.CanDelete) Unregister(expedition);
     }
 
     public MessageLogManager LogManager = new MessageLogManager();
@@ -1790,7 +1819,12 @@ public class scr_System_CampaignManager : MonoBehaviour
 
     public void Unregister(Job j)
     {
+        var expeditionJob = j as Job_Expedition;
+        var expedition = expeditionJob?.Expedition;
+        // Transfers may still move this job's banked entries after the last captive removes its party.
+        expeditionJob?.SnapshotPendingEventFeatures();
         Index_JobReferenceID.Remove(j.RefID);
+        TryCleanupExpedition(expedition);
         specialUpdateJobs.Remove(j.RefID);
         temporaryJobs.Remove(j.RefID);
         int jj = 0;

@@ -1,6 +1,5 @@
 {
-    "_doc": "ErAV NTR Part 3 - H celeb entourage, the drugged night at the hotel (draft H). Group scene, same borrow pattern (client + support, role celeb). COMs: com_sex_P_doggy (multi-doer). Fragmented-memory narration only for the drug itself - no status command exists in events (reported). The leaked-footage state is narration too (no data hook).",
-
+    "_doc": "celeb/drugged: neutral interactive writer skeleton. Major weight 1, party-wide cooldown 24 hours, exactly one female participant. Existing actor roles and COM IDs retained; one validated AP per phase, with separate preparation and AP success/failure branches. Full/first-only (where available)/skip choices differ in executed APs and final banked summary. No guaranteed physiological outcomes. Every ending redresses, returns all borrowed scopes, and resolves. Legacy dictionary keys retained as placeholders. No chronological order assumed.",
     "ExplorationEvents": {
         "list": [
             {
@@ -10,7 +9,12 @@
                 "teamRequirement": {
                     "minTeamCount": 1,
                     "allowPrisoner": true,
-                    "requireCombat": false
+                    "requireCombat": false,
+                    "maxTeamCount": 1,
+                    "strictPartyCount": true,
+                    "charaReq_Select": {
+                        "requireFemale": true
+                    }
                 },
                 "baseWeight": 1,
                 "possibleResults": [
@@ -19,37 +23,43 @@
                         "resultText": "exp_event_erav_celeb_drugged_result",
                         "eventID": "event_erav_celeb_drugged"
                     }
-                ]
+                ],
+                "cooldownHours": 24
             }
         ]
     },
-
     "Events": {
         "list": [
             {
                 "ID": "event_erav_celeb_drugged",
+                "showEventHeader": "event_erav_celeb_drugged_writer_header",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
                         "options": [
                             {
                                 "option": "_start",
                                 "target_chara_conditions": {
-                                    "party": [ { "parameters": [ "exists" ] } ]
+                                    "party": [
+                                        {
+                                            "parameters": ["exists"]
+                                        }
+                                    ]
                                 },
                                 "Results": [
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "2", "true" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
-                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                    { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "2", "true"] },
+                                    { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
+                                    { "Type": "CopyTargets", "arguments": ["support", "enemy", "add"] },
+                                    { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "scene"] }
                                 ]
                             },
                             {
                                 "option": "_error",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
                                 ]
                             }
                         ]
@@ -57,38 +67,127 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "scene",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "unaware", "sad" ] },
-                        "line": "event_erav_celeb_drugged_01"
+                        "line": "event_erav_celeb_drugged_writer_opening"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_celeb_drugged_02",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
-                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_doggy" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "choice",
+                        "question": "event_erav_celeb_drugged_writer_question",
+                        "options": [
+                            {
+                                "option": "event_erav_celeb_drugged_writer_choose_full",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_celeb_drugged_writer_choose_skip",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skipped"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_P_doggy", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "empty", "sad" ] },
-                        "line": "event_erav_celeb_drugged_03",
+                        "label": "phase_1_success",
+                        "line": "event_erav_celeb_drugged_writer_phase_1_validated",
+                        "nextEntryLabel": "completed"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed",
+                        "line": "event_erav_celeb_drugged_writer_summary_completed",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "failed",
+                        "line": "event_erav_celeb_drugged_writer_summary_failed",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skipped",
+                        "line": "event_erav_celeb_drugged_writer_summary_skipped",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "error",
-                        "line": "event_erav_celeb_drugged_err",
+                        "line": "event_erav_celeb_drugged_writer_summary_error",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     }
@@ -96,18 +195,27 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "exp_event_erav_celeb_drugged": "下药的夜晚",
-                "exp_event_erav_celeb_drugged_ongoing": "今晚的行程改成了旅馆里的「私人聚会」。",
-                "exp_event_erav_celeb_drugged_result": "和室的酒杯里，后劲比往常大得多。",
-
+                "exp_event_erav_celeb_drugged": "失控的休息时间",
+                "exp_event_erav_celeb_drugged_ongoing": "原本用于休息的房间被临时封闭，外面的行程仍在等待她恢复。",
+                "exp_event_erav_celeb_drugged_result": "这次失控的安排已经结束，留下的状态需要由后续观察确认。",
                 "event_erav_celeb_drugged_01": "记忆是断的：\n头段：她跪坐在榻榻米中央，被四五双手从四面剥光，酒洒在皮肤上被舌头舔掉。\n再往后：她趴在某个人的身上，背后又压上来个人，前后同时被填满，闪光灯在眼前炸开。",
                 "event_erav_celeb_drugged_02": "最清楚的那段记忆，是她自己张开了腿。不记得是谁的命令，也不记得为什么要张开。\n快门声、笑声、劝酒声，都隔着很远。",
                 "event_erav_celeb_drugged_03": "醒来时在旅馆的浴缸里。洗干净了，头发被人梳顺了。\n身体各处的痕迹替她拼回了昨晚：大腿内侧的指印、唇角的干涸、下腹深处被灌满过的坠胀感。\n经纪人在浴缸边举着手机：「Morning, girlfriend. 昨天的素材，粉丝会喜欢的。」",
-                "event_erav_celeb_drugged_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+                "event_erav_celeb_drugged_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_celeb_drugged": "失控的休息时间",
+                "event_erav_celeb_drugged_writer_opening": "她原本只想在下一场工作前闭眼休息一会儿。醒来时，房间里的时间感已经断开，门外的人声和身体的迟钝都在提醒她：有人替她决定了这段空档该怎么度过。",
+                "event_erav_celeb_drugged_writer_choose_full": "先确认现场状况，再把这段失控的时间处理完。",
+                "event_erav_celeb_drugged_writer_choose_skip": "不再继续，立即结束这段安排并保留后续处理的余地。",
+                "event_erav_celeb_drugged_writer_question": "她需要在恢复行程和查清现场之间作出选择。现在优先做什么？",
+                "event_erav_celeb_drugged_writer_phase_1_validated": "现场的第一步处理已经完成。她仍然没有找回全部掌控感，但至少能辨认出接下来要避开的门和声音。",
+                "event_erav_celeb_drugged_writer_summary_completed": "她完成了当前能确认的处理，随后把剩余行程交给清醒后的自己重新判断。这里没有被写成一个确定的结果。",
+                "event_erav_celeb_drugged_writer_summary_failed": "处理没有顺利完成。她在状态不明时停下，不让一段已经失控的安排继续替她作出决定。",
+                "event_erav_celeb_drugged_writer_summary_skipped": "她选择不再继续。休息室重新安静下来，后续影响仍需等状态稳定后才能判断。",
+                "event_erav_celeb_drugged_writer_summary_error": "现场无法确认发生了什么。流程被立即停止，任何未经核实的说法都暂时留在门外。",
+                "event_erav_celeb_drugged_writer_header": "名人客户：失控的休息时间"
             }
         }
     }

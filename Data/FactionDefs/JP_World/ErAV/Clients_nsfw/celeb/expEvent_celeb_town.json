@@ -1,6 +1,5 @@
 {
-    "_doc": "ErAV NTR Part 3 - H celeb entourage, daytime street escort duty (draft H; Phase 2 rewrite of the Phase 1 placeholder, whose club content moved to expEvent_celeb_club.json). Group scene: the entry branch borrows the lead (client) and one more entourage member (support, same role - RequestFallbackWorker never hands the same character out twice in one event) and moves them into her room. Narration-only: the daytime beats are exposure, groping and photography - no COM fits, no sex command (reported). 'Being photographed' stays narration (no COM exists).",
-
+    "_doc": "celeb/town: neutral interactive writer skeleton. Major weight 1, party-wide cooldown 24 hours, exactly one female participant. Existing actor roles and COM IDs retained; one validated AP per phase, with separate preparation and AP success/failure branches. Full/first-only (where available)/skip choices differ in executed APs and final banked summary. No guaranteed physiological outcomes. Every ending redresses, returns all borrowed scopes, and resolves. Three non-AP handlers remain non-AP and record lastChoice (1=review, 0=skip) in a self relationship variable. Legacy dictionary keys retained as placeholders. No chronological order assumed.",
     "ExplorationEvents": {
         "list": [
             {
@@ -10,46 +9,57 @@
                 "teamRequirement": {
                     "minTeamCount": 1,
                     "allowPrisoner": true,
-                    "requireCombat": false
+                    "requireCombat": false,
+                    "maxTeamCount": 1,
+                    "strictPartyCount": true,
+                    "charaReq_Select": {
+                        "requireFemale": true
+                    }
                 },
-                "baseWeight": 2,
+                "baseWeight": 1,
                 "possibleResults": [
                     {
-                        "baseWeight": 2,
+                        "baseWeight": 1,
                         "resultText": "exp_event_erav_celeb_town_result",
                         "eventID": "event_erav_celeb_town"
                     }
-                ]
+                ],
+                "cooldownHours": 24
             }
         ]
     },
-
     "Events": {
         "list": [
             {
                 "ID": "event_erav_celeb_town",
+                "showEventHeader": "event_erav_celeb_town_writer_header",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
                         "options": [
                             {
                                 "option": "_start",
                                 "target_chara_conditions": {
-                                    "party": [ { "parameters": [ "exists" ] } ]
+                                    "party": [
+                                        {
+                                            "parameters": ["exists"]
+                                        }
+                                    ]
                                 },
                                 "Results": [
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "support", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "support", "enemy", "add" ] },
-                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                    { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true"] },
+                                    { "Type": "RequestFallbackWorker", "arguments": ["support", "ErAV_KiryuGumi_Office", "membertype_erav_client_celeb", "erav_client_celeb", "1", "true"] },
+                                    { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
+                                    { "Type": "CopyTargets", "arguments": ["support", "enemy", "add"] },
+                                    { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "scene"] }
                                 ]
                             },
                             {
                                 "option": "_error",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
                                 ]
                             }
                         ]
@@ -57,40 +67,103 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "scene",
-                        "UISpec": { "portraitRefKey": "client", "selfTags": [ "smug", "happy" ] },
-                        "line": "event_erav_celeb_town_01"
+                        "line": "event_erav_celeb_town_writer_opening"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_celeb_town_02",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "choice",
+                        "question": "event_erav_celeb_town_writer_question",
+                        "options": [
+                            {
+                                "option": "event_erav_celeb_town_writer_choose_full",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "non_ap_review"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_celeb_town_writer_choose_skip",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skipped"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "non_ap_review",
+                        "options": [
+                            {
+                                "option": "_review",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "completed"] }
+                                ]
+                            },
+                            {
+                                "option": "_review_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
-                        "line": "event_erav_celeb_town_03"
+                        "label": "completed",
+                        "line": "event_erav_celeb_town_writer_summary_completed",
+                        "Results": [
+                            { "Type": "SetSelfKojoVariable", "arguments": ["party", "false", "event_erav_celeb_town_lastChoice", "1"] },
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
-                        "line": "event_erav_celeb_town_04",
+                        "label": "failed",
+                        "line": "event_erav_celeb_town_writer_summary_failed",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skipped",
+                        "line": "event_erav_celeb_town_writer_summary_skipped",
+                        "Results": [
+                            { "Type": "SetSelfKojoVariable", "arguments": ["party", "false", "event_erav_celeb_town_lastChoice", "0"] },
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "error",
-                        "line": "event_erav_celeb_town_err",
+                        "line": "event_erav_celeb_town_writer_summary_error",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "support" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "Redress", "arguments": ["support"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["support"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     }
@@ -98,19 +171,27 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
-                "exp_event_erav_celeb_town": "白天·当街陪玩",
-                "exp_event_erav_celeb_town_ongoing": "$names$领着巡演团体，开始今天的「导游」工作。",
-                "exp_event_erav_celeb_town_result": "原宿的人潮里，$names$被夹在队伍正中间往前走。",
-
+                "exp_event_erav_celeb_town": "非公开形象审查",
+                "exp_event_erav_celeb_town_ongoing": "街区的镜头已经架好，非公开的形象审查正在等待最后确认。",
+                "exp_event_erav_celeb_town_result": "这次形象审查已经结束，记录只保留当时作出的选择。",
                 "event_erav_celeb_town_01": "白天的工作是「导游」：透视上衣下面是真空，超短裙里只穿了条细绳。她走在人群正中间，被轮流搂着肩、搭着腰，手从裙摆底下伸进来扶「怕她摔倒」。\n原宿、涩谷、表参道——行程表排得满，快门声没有停过。",
                 "event_erav_celeb_town_02": "潮牌店门口、扭蛋机前，她被搂着合影，被摆出各种手势。\n领队的 rapper 兴起了，就要她在店门口拉低领口、把嘴张成特定的形状。她照做。周围的行人举起手机——没人觉得奇怪，大概以为这是哪个节目在拍。",
                 "event_erav_celeb_town_03": "路人的手机、团里随行的手机、经纪人专门举着的手机——她分不清哪些会流到哪里去。\n「See? Tokyo girls, so open!」",
                 "event_erav_celeb_town_04": "傍晚收工，经纪人替她理好裙摆，像收拾件道具。\n「明晚，夜店。穿昨天那条短的。」\n行程单上，「日本女朋友」的后头跟着整周排满的「行程」。",
-                "event_erav_celeb_town_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+                "event_erav_celeb_town_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_celeb_town": "非公开形象审查",
+                "event_erav_celeb_town_writer_opening": "这次经过街区没有公开宣传，只有一组镜头和一份需要确认的形象记录。她知道镜头会留下什么，却不知道记录会被谁拿去解释。",
+                "event_erav_celeb_town_writer_choose_full": "配合审查，确认这份非公开记录可以继续使用。",
+                "event_erav_celeb_town_writer_choose_skip": "拒绝审查，不让这组镜头替她决定私人形象。",
+                "event_erav_celeb_town_writer_question": "镜头已经准备好，但记录的用途还没有说清。要配合这次审查吗？",
+                "event_erav_celeb_town_writer_summary_completed": "她完成了审查，并亲自看过现场留下的记录。决定是否正确没有被替她下结论，但这次选择已经留下。",
+                "event_erav_celeb_town_writer_summary_failed": "审查没有顺利完成。镜头被收起，未确认的画面不能被当成她的正式形象。",
+                "event_erav_celeb_town_writer_summary_skipped": "她拒绝了这次审查。街区仍然照常运转，只有那组没有被授权的镜头停在原处。",
+                "event_erav_celeb_town_writer_summary_error": "现场无法确认记录的用途，审查被中止。没有人能把未完成的检查说成已经得到许可。",
+                "event_erav_celeb_town_writer_header": "名人客户：非公开形象审查"
             }
         }
     }

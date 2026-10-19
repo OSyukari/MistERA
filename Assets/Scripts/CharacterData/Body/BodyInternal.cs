@@ -29,6 +29,13 @@ public class BodyInternal_Base
     public List<string> promptTags = new List<string>();
     /// <summary> image prompt tags added regardless of visibility </summary>
     public List<string> promptTags_always = new List<string>();
+    /// <summary> trait group ids (trait_Size_B, trait_Sensitivity_B...): the owner's current trait adds its promptTags_always always, promptTags while visible </summary>
+    public List<string> requestTraits = new List<string>();
+    /// <summary> skill ids (skill_expansion_V, skill_sensitivity_V...): the owner's current level adds its promptTags_always always, promptTags while visible </summary>
+    public List<string> requestSkills = new List<string>();
+    /// <summary> optional image prompt layer of every body that has this organ, after its part's (ActorPromptProfileUtility) </summary>
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public ActorPromptProfile promptProfile = null;
 
     public List<string> childID = new List<string>();
 

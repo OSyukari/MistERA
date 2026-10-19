@@ -265,6 +265,10 @@ public class CharaSkill
         public List<Stat_Modifier> stat_modifiers = new List<Stat_Modifier>();
         public string DisplayName = "";
         public List<SkillUse> validUse = new List<SkillUse>();
+        /// <summary> image prompt tags of this level, added while the requesting organ is visible (BodyInternal_Base.requestSkills) </summary>
+        public List<string> promptTags = new List<string>();
+        /// <summary> image prompt tags of this level, added regardless of visibility </summary>
+        public List<string> promptTags_always = new List<string>();
 
         public bool ValidateChara(Character_Trainable c, List<string> tooltips = null)
         {

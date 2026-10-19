@@ -1,17 +1,26 @@
 {
-    "_doc": "en-us localization for expEvent_sm_bondage.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_sm_bondage.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_sm_bondage": "Day Three: Bondage Endurance",
                 "exp_event_erav_sm_bondage_ongoing": "Today's subject is written on the whiteboard: bondage endurance.",
                 "exp_event_erav_sm_bondage_result": "$names$ is folded into a new position and bound, and the hourglass is turned over.",
-
                 "event_erav_sm_bondage_01": "\"Today's subject is not the body. It is endurance.\"\nSuspension, folding, chair tie, shrimp tie - each has a timer before release. The old man sits to the side doing his woodwork, sandpaper hissing, glancing up at the hourglass now and then.",
                 "event_erav_sm_bondage_02": "The ropes undress her in place of hands. For the last tie she is folded double and hung in midair, held there until her legs go numb before being lowered.",
                 "event_erav_sm_bondage_03": "The moment blood returns, pins and needles from toe to groin have her writhing on the floor. He crouches, waits out the spasm, then offers her a cup of water.\n\"Blocked blood numbs. After numbness, pain. After pain, heat. Remember all three stages. A toy must know its every state.\"\n\"...Remembered? Good. Next position.\"",
                 "event_erav_sm_bondage_04": "At the day's end the old man makes an entry in her record: endurance passed; circulation recovers quickly.\n\"Tomorrow: service training. The mouth is a toy's face.\"",
-                "event_erav_sm_bondage_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_sm_bondage_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_sm_bondage": "Day Three: Bondage Endurance",
+                "event_erav_sm_bondage_writer_opening": "\"Today's subject is not the body. It is endurance.\"\nSuspension, folding, chair tie, shrimp tie - each has a timer before release. The old man sits to the side doing his woodwork, sandpaper hissing, glancing up at the hourglass now and then.",
+                "event_erav_sm_bondage_writer_choose_full": "Continue the full sequence",
+                "event_erav_sm_bondage_writer_choose_skip": "Skip this event",
+                "event_erav_sm_bondage_writer_question": "How should this event continue?",
+                "event_erav_sm_bondage_writer_summary_completed": "The ropes undress her in place of hands. For the last tie she is folded double and hung in midair, held there until her legs go numb before being lowered.\nThe moment blood returns, pins and needles from toe to groin have her writhing on the floor. He crouches, waits out the spasm, then offers her a cup of water.\n\"Blocked blood numbs. After numbness, pain. After pain, heat. Remember all three stages. A toy must know its every state.\"\n\"...Remembered? Good. Next position.\"\nAt the day's end the old man makes an entry in her record: endurance passed; circulation recovers quickly.\n\"Tomorrow: service training. The mouth is a toy's face.\"",
+                "event_erav_sm_bondage_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_sm_bondage_writer_summary_skipped": "This event was skipped.",
+                "event_erav_sm_bondage_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_sm_bondage_writer_header": "Day Three: Bondage Endurance"
             }
         }
     }

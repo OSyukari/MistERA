@@ -1,6 +1,5 @@
 {
-    "_doc": "ErAV NTR Part 3 - D producer, SMALL events (handoff 'Small event template'). Type D has only one full scene (the final interview), so that scene carries weight 4; small events 3+3+2+3 = 11 -> scene share 4/15 (~27%, about one scene per 3-4 h). Text-only results write to the MIA log without a click; the quick act's result also starts its hidden event at once (runImmediate, empty lines, no flush, no ResolveEvent, releases its keys on every path).",
-
+    "_doc": "producer: frequent result-only minor encounters, weight 10 each. Every encounter has multiple short neutral writer-placeholder results. No eventID, runImmediate, AP, or invented effects. Old quick-handler IDs are inactive compatibility no-ops.",
     "ExplorationEvents": {
         "list": [
             {
@@ -12,7 +11,7 @@
                     "allowPrisoner": true,
                     "requireCombat": false
                 },
-                "baseWeight": 3,
+                "baseWeight": 10,
                 "possibleResults": [
                     {
                         "baseWeight": 2,
@@ -37,7 +36,7 @@
                     "allowPrisoner": true,
                     "requireCombat": false
                 },
-                "baseWeight": 3,
+                "baseWeight": 10,
                 "possibleResults": [
                     {
                         "baseWeight": 1,
@@ -58,7 +57,7 @@
                     "allowPrisoner": true,
                     "requireCombat": false
                 },
-                "baseWeight": 2,
+                "baseWeight": 10,
                 "possibleResults": [
                     {
                         "baseWeight": 1,
@@ -79,65 +78,32 @@
                     "allowPrisoner": true,
                     "requireCombat": false
                 },
-                "baseWeight": 3,
+                "baseWeight": 10,
                 "possibleResults": [
                     {
                         "baseWeight": 1,
-                        "resultText": "exp_event_erav_producer_small_quickie_result",
-                        "eventID": "event_erav_producer_small_quickie",
-                        "runImmediate": true
+                        "resultText": "exp_event_erav_producer_small_quickie_result"
+                    },
+                    {
+                        "baseWeight": 1,
+                        "resultText": "exp_event_erav_producer_small_quickie_result_2"
                     }
                 ]
             }
         ]
     },
-
     "Events": {
         "list": [
             {
                 "ID": "event_erav_producer_small_quickie",
-                "_comment": "Hidden (runImmediate): empty lines only, no flush. self = player, party = the victim.",
+                "_comment": "COMPATIBILITY ONLY: retained executable ID for old references. Inactive: no exploration result links here. Intentional no-op; no actor loans, AP, clothing, or output.",
                 "events": [
                     {
-                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
-                        "options": [
-                            {
-                                "option": "_start",
-                                "target_chara_conditions": {
-                                    "party": [ { "parameters": [ "exists" ] } ]
-                                },
-                                "Results": [
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_producer", "erav_client_producer", "1", "true" ] },
-                                    { "Type": "MoveToTargetRoom", "arguments": [ "client", "party" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "act" ] }
-                                ]
-                            },
-                            {
-                                "option": "_error",
-                                "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "fail" ] }
-                                ]
-                            }
-                        ]
-                    },
-                    {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "act",
+                        "label": "compatibility_end",
                         "line": "",
                         "Results": [
-                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] },
-                            { "Type": "Undress", "arguments": [ "client", "None", "SeeThrough", "true" ] },
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "client", "party", "com_sex_P_missionary" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
-                        ],
-                        "isLast": true
-                    },
-                    {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "label": "fail",
-                        "line": "",
-                        "Results": [
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     }
@@ -145,7 +111,6 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
@@ -154,20 +119,18 @@
                 "exp_event_erav_producer_small_photo_result_1": "$names$被要求对着镜头换表情：委屈的、茫然的、快要哭出来的。每换种，快门就响串。\n「眼神不能躲，躲了就废了。」",
                 "exp_event_erav_producer_small_photo_result_2": "社长举着手机绕$names$转了整圈，专拍裙摆底下。「企划用的资料。……对，资料。」",
                 "exp_event_erav_producer_small_photo_result_3": "$names$按指导保持了个别扭的姿势，保持到腿都麻了。照片传去了哪里，她没敢问。",
-
                 "exp_event_erav_producer_small_styling": "造型指导",
                 "exp_event_erav_producer_small_styling_ongoing": "社长拎着衣架来了，说今天是「定装日」。",
                 "exp_event_erav_producer_small_styling_result_1": "$names$被换了三套衣服。每套的通行规则样：清纯的部分要留着，其余的部分让开。",
                 "exp_event_erav_producer_small_styling_result_2": "社长亲手替$names$解开两颗扣子，退后半步端详，又解开第二颗。「定位是『清水』，但要懂事的清水。」",
-
                 "exp_event_erav_producer_small_schedule": "事务所的日程",
                 "exp_event_erav_producer_small_schedule_ongoing": "社长打着电话进了屋，用手势示意$names$别出声。",
                 "exp_event_erav_producer_small_schedule_result_1": "电话里，社长把她接下来的「档期」安排给了别的制作委员会。挂断后他拍拍她的头：「都是好企划，别紧张。」",
                 "exp_event_erav_producer_small_schedule_result_2": "$names$替社长整理企划书和名片夹，被纠正了摆放的顺序。「秘书的基本功。将来转了所，这些都用得上。」",
-
                 "exp_event_erav_producer_small_quickie": "即兴试镜",
                 "exp_event_erav_producer_small_quickie_ongoing": "社长忽然合上企划书：「对了，还有个即兴环节。」",
-                "exp_event_erav_producer_small_quickie_result": "社长把$names$按在补光灯下「即兴试镜」了整场，完事了才想起来补句「这条不收录」。手机倒是稳稳架在旁边。"
+                "exp_event_erav_producer_small_quickie_result": "社长把$names$按在补光灯下「即兴试镜」了整场，完事了才想起来补句「这条不收录」。手机倒是稳稳架在旁边。",
+                "exp_event_erav_producer_small_quickie_result_2": "社长把$names$按在补光灯下「即兴试镜」了整场，完事了才想起来补句「这条不收录」。手机倒是稳稳架在旁边。"
             }
         }
     }

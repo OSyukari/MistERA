@@ -1,5 +1,5 @@
 {
-    "_doc": "en-us localization for expEvent_sports_small.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_sports_small.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
@@ -8,20 +8,18 @@
                 "exp_event_erav_sports_small_cheer_result_1": "Walk fast and the skirt fills with wind. Every gaze on the field sticks under its hem - by regulation, nothing may be worn beneath.",
                 "exp_event_erav_sports_small_cheer_result_2": "$names$ is called to lead the stretches. Each arm-raise sets the skirt swaying, and the stands' shutter clicks never stop - the team's publicity photos are also part of the business.",
                 "exp_event_erav_sports_small_cheer_result_3": "At halftime $names$ is posted at the players' tunnel to see each man onto the court. During the high-fives, hands keep 'missing' up under the skirt.",
-
                 "exp_event_erav_sports_small_water": "Water Duty",
                 "exp_event_erav_sports_small_water_ongoing": "Training pauses; $names$ carries the cooler out to hand out water.",
                 "exp_event_erav_sports_small_water_result_1": "At the third man the water bottle becomes his sports drink, and the delivery method changes too - \"Kneel. Use your mouth.\" The interpreter doesn't translate, but the gesture translates itself.",
                 "exp_event_erav_sports_small_water_result_2": "$names$ goes down the line of resting players with water and towels. Where the towel reaches his waist, a hand presses it lower - \"sweat there too.\"",
-
                 "exp_event_erav_sports_small_locker": "Locker Room Duty",
                 "exp_event_erav_sports_small_locker_ongoing": "Whistles carry out of the locker room, calling $names$ in to 'help with relaxation'.",
                 "exp_event_erav_sports_small_locker_result": "At the halftime whistle $names$ is called into the locker room to help the starting ace 'relax'. By the time she comes out, the second half is kicking off.",
-
                 "exp_event_erav_sports_small_suite": "Suite Seating",
                 "exp_event_erav_sports_small_suite_ongoing": "In the evening $names$ is summoned to the suite to 'keep the team company'.",
                 "exp_event_erav_sports_small_suite_result_1": "$names$ is assigned to the team leader's lap for the drinking. Three rounds in, he practices Chinese toasts with great enthusiasm - while the hand beneath never needs an interpreter.",
-                "exp_event_erav_sports_small_suite_result_2": "Losers of the video game face a 'penalty round': the forfeit is $names$ sitting on the winner's lap, pinched everywhere over her skirt. The losers jeal jeer all the same."
+                "exp_event_erav_sports_small_suite_result_2": "Losers of the video game face a 'penalty round': the forfeit is $names$ sitting on the winner's lap, pinched everywhere over her skirt. The losers jeal jeer all the same.",
+                "exp_event_erav_sports_small_locker_result_2": "At the halftime whistle $names$ is called into the locker room to help the starting ace 'relax'. By the time she comes out, the second half is kicking off."
             }
         }
     }

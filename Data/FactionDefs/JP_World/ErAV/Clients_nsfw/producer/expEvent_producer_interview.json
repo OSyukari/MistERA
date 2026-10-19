@@ -1,6 +1,5 @@
 {
-    "_doc": "ErAV NTR Part 3 placeholder scene - D producer, the 'final interview' (Plan §4; Phase 1 skeleton). Same skeleton as expEvent_politician_night1.json: banked exploration event + scene event; the entry branch borrows the client from the Kiryu-gumi fallback-worker pool (RequestFallbackWorker -> client, copied into enemy) and moves them into her room; every ending (error path included) runs ResolveEvent and ReleaseFallbackWorker.",
-
+    "_doc": "producer/interview: neutral interactive writer skeleton. Major weight 1, party-wide cooldown 24 hours, exactly one female participant. Existing actor roles and COM IDs retained; one validated AP per phase, with separate preparation and AP success/failure branches. Full/first-only (where available)/skip choices differ in executed APs and final banked summary. No guaranteed physiological outcomes. Every ending redresses, returns all borrowed scopes, and resolves. Legacy dictionary keys retained as placeholders. No chronological order assumed.",
     "ExplorationEvents": {
         "list": [
             {
@@ -10,44 +9,55 @@
                 "teamRequirement": {
                     "minTeamCount": 1,
                     "allowPrisoner": true,
-                    "requireCombat": false
+                    "requireCombat": false,
+                    "maxTeamCount": 1,
+                    "strictPartyCount": true,
+                    "charaReq_Select": {
+                        "requireFemale": true
+                    }
                 },
-                "baseWeight": 4,
+                "baseWeight": 1,
                 "possibleResults": [
                     {
-                        "baseWeight": 4,
+                        "baseWeight": 1,
                         "resultText": "exp_event_erav_producer_interview_result",
                         "eventID": "event_erav_producer_interview"
                     }
-                ]
+                ],
+                "cooldownHours": 24
             }
         ]
     },
-
     "Events": {
         "list": [
             {
                 "ID": "event_erav_producer_interview",
+                "showEventHeader": "event_erav_producer_interview_writer_header",
                 "events": [
                     {
                         "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "start",
                         "options": [
                             {
                                 "option": "_start",
                                 "target_chara_conditions": {
-                                    "party": [ { "parameters": [ "exists" ] } ]
+                                    "party": [
+                                        {
+                                            "parameters": ["exists"]
+                                        }
+                                    ]
                                 },
                                 "Results": [
-                                    { "Type": "RequestFallbackWorker", "arguments": [ "client", "ErAV_KiryuGumi_Office", "membertype_erav_client_producer", "erav_client_producer", "1", "true" ] },
-                                    { "Type": "CopyTargets", "arguments": [ "client", "enemy" ] },
-                                    { "Type": "MoveToTargetRoom", "arguments": [ "enemy", "party" ] },
-                                    { "Type": "JumpToLabel", "arguments": [ "", "scene" ] }
+                                    { "Type": "RequestFallbackWorker", "arguments": ["client", "ErAV_KiryuGumi_Office", "membertype_erav_client_producer", "erav_client_producer", "1", "true"] },
+                                    { "Type": "CopyTargets", "arguments": ["client", "enemy"] },
+                                    { "Type": "MoveToTargetRoom", "arguments": ["enemy", "party"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "scene"] }
                                 ]
                             },
                             {
                                 "option": "_error",
                                 "Results": [
-                                    { "Type": "JumpToLabel", "arguments": [ "", "error" ] }
+                                    { "Type": "JumpToLabel", "arguments": ["", "error"] }
                                 ]
                             }
                         ]
@@ -55,54 +65,227 @@
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "scene",
-                        "line": "event_erav_producer_interview_01"
+                        "line": "event_erav_producer_interview_writer_opening"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_producer_interview_02",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "party", "None", "SeeThrough", "true" ] }
+                        "$type": "Event+EventEntry+EventEntry_Question, Assembly-CSharp",
+                        "label": "choice",
+                        "question": "event_erav_producer_interview_writer_question",
+                        "options": [
+                            {
+                                "option": "event_erav_producer_interview_writer_choose_full",
+                                "isDefaultAccept": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_producer_interview_writer_choose_first_only",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_prepare"] }
+                                ]
+                            },
+                            {
+                                "option": "event_erav_producer_interview_writer_choose_skip",
+                                "isDefaultCancel": true,
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "skipped"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_1_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_1_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_producer_interview_03",
-                        "Results": [
-                            { "Type": "Undress", "arguments": [ "enemy", "None", "SeeThrough", "true" ] },
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_oral_P_Force" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "label": "phase_1_success",
+                        "line": "event_erav_producer_interview_writer_phase_1_validated",
+                        "nextEntryLabel": "phase_2_prepare"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "phase_2_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_P_missionary", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "phase_2_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "embarrassed", "sad" ] },
-                        "line": "event_erav_producer_interview_04"
+                        "label": "phase_2_success",
+                        "line": "event_erav_producer_interview_writer_phase_2_validated",
+                        "nextEntryLabel": "completed"
                     },
                     {
-                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "line": "event_erav_producer_interview_05",
-                        "Results": [
-                            { "Type": "ExecuteAPOnSingleChara", "arguments": [ "enemy", "party", "com_sex_P_missionary" ] },
-                            { "Type": "FlushMessageExpAll" }
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_prepare",
+                        "options": [
+                            {
+                                "option": "_prepare",
+                                "Results": [
+                                    { "Type": "Undress", "arguments": ["party", "None", "SeeThrough", "true"] },
+                                    { "Type": "Undress", "arguments": ["enemy", "None", "SeeThrough", "true"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_execute"] }
+                                ]
+                            },
+                            {
+                                "option": "_prepare_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "first_only_execute",
+                        "options": [
+                            {
+                                "option": "_try_ap",
+                                "Results": [
+                                    { "Type": "ExecuteAPOnSingleChara", "arguments": ["enemy", "party", "com_sex_oral_P_Force", "1"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "first_only_success"] }
+                                ]
+                            },
+                            {
+                                "option": "_ap_failed",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "failed"] }
+                                ]
+                            }
                         ]
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
-                        "UISpec": { "portraitRefKey": "party", "selfTags": [ "sad", "relaxed" ] },
-                        "line": "event_erav_producer_interview_06",
+                        "label": "first_only_success",
+                        "line": "event_erav_producer_interview_writer_first_only_validated",
+                        "nextEntryLabel": "completed_first_only"
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed",
+                        "line": "event_erav_producer_interview_writer_summary_completed",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "completed_first_only",
+                        "line": "event_erav_producer_interview_writer_summary_completed_first_only",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "failed",
+                        "line": "event_erav_producer_interview_writer_summary_failed",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
+                        ],
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "skipped",
+                        "line": "event_erav_producer_interview_writer_summary_skipped",
+                        "Results": [
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     },
                     {
                         "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
                         "label": "error",
-                        "line": "event_erav_producer_interview_err",
+                        "line": "event_erav_producer_interview_writer_summary_error",
                         "Results": [
-                            { "Type": "ExecuteCallbackPermissive", "arguments": [ "ResolveEvent" ] },
-                            { "Type": "ReleaseFallbackWorker", "arguments": [ "client" ] }
+                            { "Type": "Redress", "arguments": ["party"] },
+                            { "Type": "Redress", "arguments": ["client"] },
+                            { "Type": "ReleaseFallbackWorker", "arguments": ["client"] },
+                            { "Type": "ExecuteCallbackPermissive", "arguments": ["ResolveEvent"] }
                         ],
                         "isLast": true
                     }
@@ -110,21 +293,34 @@
             }
         ]
     },
-
     "Dictionary": {
         "Entries": {
             "zh-cn": {
                 "exp_event_erav_producer_interview": "最终面试",
                 "exp_event_erav_producer_interview_ongoing": "$names$在补光灯下等待「最终面试」的开始。",
                 "exp_event_erav_producer_interview_result": "$names$被社长叫进了架好摄像机的房间。",
-
                 "event_erav_producer_interview_01": "自称社长的男人围着$party.name$来回踱步，像导演在走位。\n「灯光不行。没事，笑起来就行。来——笑个。……好，可以。这张脸，出道没问题。」\n他脱掉外套搭在椅背上，活动了下脖子。「那么——最终面试，开始。」",
                 "event_erav_producer_interview_02": "他不动手脱衣服，他做「造型指导」。\n「这件留着，底下的脱了。扣子全解开——企划是『清纯』，清纯的部分要留着。……好。停。就这个状态，保持。」",
                 "event_erav_producer_interview_03": "「来，镜头感练习。」他掏出手机横过来。\n「看着镜头做。眼神不能躲，躲了就废了。……对对对，就这样看着我。眼泪也留着，别擦。观众就吃这个。」",
                 "event_erav_producer_interview_04": "「停——刚才那个表情，绝了。再做做看，这次慢点。」\n他盯着屏幕里的她，笑得像发现了矿脉。\n「哦哦哦，天赋。这是天赋啊。签我们事务所吧，封面写你的名字。」",
                 "event_erav_producer_interview_05": "「主考官进场。」他笑着分开她的腿。\n「声音！声音要出来！不是痛苦的那种——对，就那个音，保持住，保持——」\n他边动边点评，手还在她腰上打着拍子。「到时候企划书这么写：『新人·桐生组推荐·讨债系美少女』——诶，这个标题我自己都觉得能卖。」",
                 "event_erav_producer_interview_06": "「片尾了。按行规——」他在她体内释放，隔了片刻才想起补上后半句。\n「……里面还是外面，本来该让你选的。算了，素材里，里面的更好卖。」\n他收起手机。「刚才的素材，我会发给你监督看看的。毕竟——账还不上的时候，折价处理的可是他哦。」",
-                "event_erav_producer_interview_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。"
+                "event_erav_producer_interview_err": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_producer_interview": "最终面试",
+                "event_erav_producer_interview_writer_opening": "自称社长的男人围着$party.name$来回踱步，像导演在走位。\n「灯光不行。没事，笑起来就行。来——笑个。……好，可以。这张脸，出道没问题。」\n他脱掉外套搭在椅背上，活动了下脖子。「那么——最终面试，开始。」\n他不动手脱衣服，他做「造型指导」。\n「这件留着，底下的脱了。扣子全解开——企划是『清纯』，清纯的部分要留着。……好。停。就这个状态，保持。」",
+                "event_erav_producer_interview_writer_choose_full": "继续完整流程",
+                "event_erav_producer_interview_writer_choose_first_only": "仅进行首个阶段",
+                "event_erav_producer_interview_writer_choose_skip": "跳过本次事件",
+                "event_erav_producer_interview_writer_question": "如何继续？",
+                "event_erav_producer_interview_writer_phase_1_validated": "「来，镜头感练习。」他掏出手机横过来。\n「看着镜头做。眼神不能躲，躲了就废了。……对对对，就这样看着我。眼泪也留着，别擦。观众就吃这个。」",
+                "event_erav_producer_interview_writer_phase_2_validated": "「停——刚才那个表情，绝了。再做做看，这次慢点。」\n他盯着屏幕里的她，笑得像发现了矿脉。\n「哦哦哦，天赋。这是天赋啊。签我们事务所吧，封面写你的名字。」\n「主考官进场。」他笑着分开她的腿。\n「声音！声音要出来！不是痛苦的那种——对，就那个音，保持住，保持——」\n他边动边点评，手还在她腰上打着拍子。「到时候企划书这么写：『新人·桐生组推荐·讨债系美少女』——诶，这个标题我自己都觉得能卖。」",
+                "event_erav_producer_interview_writer_first_only_validated": "「来，镜头感练习。」他掏出手机横过来。\n「看着镜头做。眼神不能躲，躲了就废了。……对对对，就这样看着我。眼泪也留着，别擦。观众就吃这个。」",
+                "event_erav_producer_interview_writer_summary_completed": "「片尾了。按行规——」他在她体内释放，隔了片刻才想起补上后半句。\n「……里面还是外面，本来该让你选的。算了，素材里，里面的更好卖。」\n他收起手机。「刚才的素材，我会发给你监督看看的。毕竟——账还不上的时候，折价处理的可是他哦。」",
+                "event_erav_producer_interview_writer_summary_completed_first_only": "本次仅完成首个阶段。",
+                "event_erav_producer_interview_writer_summary_failed": "本次流程未能完成。",
+                "event_erav_producer_interview_writer_summary_skipped": "已跳过本次事件。",
+                "event_erav_producer_interview_writer_summary_error": "【错误】场景所需的目标不存在（party 缺失，或客人无法从桐生组调来）。",
+                "event_erav_producer_interview_writer_header": "最终面试"
             }
         }
     }

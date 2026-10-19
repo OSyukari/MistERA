@@ -1,173 +1,13 @@
 {
-    "_doc": "ErAV NTR punishment Part 3 - one MIA expedition def per client type (Docs/Expeditions/Handoff_NTR_Punishment_Part3_ClientEvents.md, Plan §3.2). Copies of expedition_erav_ntr_mia (ErAV/Events/ErAV_NTR_Punishment.json) with their own EventIDs/description/background; all share selfReleaseEventID erav_ntr_mia_release. rescueEventID stays empty (nobody rescues), canExplore false, FeatureKeywords nsfw. MaxExplorationRate = intended stay length: progress only drops by DurationMinutes when an exploration action finishes, and she only explores while on the job (sleep / meals pause it), so roughly 800 progress per day (assumed ~15 h on the job, ~10% lost to the cooldown between actions) - B/D 3 days (2400), G/H/J 5 days (4000), F/I 7 days (5600; DurationHour 168 is the backstop). Unverified estimate - balance in game. The dictionary key of each ExpeditionID is the MIA party's shown name. Safe mode skips this folder, so CharaMIA on these IDs fails there and the arrival falls back to the generic skeleton def.",
-
+    "_doc": "Single client-labour MIA expedition. MaxExplorationRate 4000 is the default, not a normalization: external arrival preserves the old 2400/4000/5600 budgets through the optional progressBudget=INTEGER argument to CharaMIAWithFeatures before begin/validation; DurationHour 168 remains the backstop. Base features are nsfw + erav_client_labour. Common atmosphere belongs to the erav_client_labour feature module. The seven client_<category> modules are independent content examples, not engine-required categories; the engine composes all modules whose requireKeywords are present. Current external arrival selects one client feature; no category is rolled or mutated here. The begin handler uses first-match briefing dispatch and a neutral fallback when none match. Existing modules supply all 53 retained encounter IDs and three atmosphere placeholders each. All majors weight 1/cooldown 24h; all minors weight 10/result-only with no executable scene. Existing external release/homecoming IDs and empty rescue settings retained. This nsfw directory remains skipped in safe mode; external generic fallback is not changed. Old seven category expedition definitions are replaced, not aliases; external arrival/save migration is owned outside this subtree.",
     "ExpeditionEntry": {
         "list": [
             {
-                "_comment": "B - county councillor: two-day-one-night 'accompanying secretary' business trip at a Hakone ryokan.",
-                "ExpeditionID": "expedition_erav_ntr_mia_politician",
+                "ExpeditionID": "expedition_erav_ntr_mia_clients",
                 "HasStartHour": false,
+                "isUnique": false,
                 "removeOnComplete": true,
-                "DurationHour": 168,
-                "MaxExplorationRate": 2400,
-                "rescueEventID": "",
-                "canExplore": false,
-                "selfReleaseEventID": "erav_ntr_mia_release",
-                "returnEventID": "erav_ntr_mia_homecoming",
-                "backgroundImagePath": "Media_UI_Scenario_Background/BG_RyokanRestLounge_Night.jpg",
-                "EventRate": 0.1,
-                "EventIDs": [
-                    "exp_event_erav_politician_night1",
-                    "exp_event_erav_politician_day_negotiation",
-                    "exp_event_erav_politician_call_daughter",
-                    "exp_event_erav_politician_night2_gangbath",
-                    "exp_event_erav_politician_small_sake",
-                    "exp_event_erav_politician_small_bath",
-                    "exp_event_erav_politician_small_yukata",
-                    "exp_event_erav_politician_small_quickie"
-                ],
-                "DescriptionText": [ "expedition_erav_ntr_mia_politician_desc_1" ],
-                "keywords": [],
-                "FeatureKeywords": [ "nsfw" ]
-            },
-            {
-                "_comment": "D - talent agency president: the 'final interview'.",
-                "ExpeditionID": "expedition_erav_ntr_mia_producer",
-                "HasStartHour": false,
-                "removeOnComplete": true,
-                "DurationHour": 168,
-                "MaxExplorationRate": 2400,
-                "rescueEventID": "",
-                "canExplore": false,
-                "selfReleaseEventID": "erav_ntr_mia_release",
-                "returnEventID": "erav_ntr_mia_homecoming",
-                "backgroundImagePath": "Media_UI_Scenario_Background/BG_SchaleOperationRoom.jpg",
-                "EventRate": 0.1,
-                "EventIDs": [
-                    "exp_event_erav_producer_interview",
-                    "exp_event_erav_producer_small_photo",
-                    "exp_event_erav_producer_small_styling",
-                    "exp_event_erav_producer_small_schedule",
-                    "exp_event_erav_producer_small_quickie"
-                ],
-                "DescriptionText": [ "expedition_erav_ntr_mia_producer_desc_1" ],
-                "keywords": [],
-                "FeatureKeywords": [ "nsfw" ]
-            },
-            {
-                "_comment": "F - toy collector: a week as his 'temporary toy' in the basement playroom.",
-                "ExpeditionID": "expedition_erav_ntr_mia_sm_master",
-                "HasStartHour": false,
-                "removeOnComplete": true,
-                "DurationHour": 168,
-                "MaxExplorationRate": 5600,
-                "rescueEventID": "",
-                "canExplore": false,
-                "selfReleaseEventID": "erav_ntr_mia_release",
-                "returnEventID": "erav_ntr_mia_homecoming",
-                "backgroundImagePath": "Media_UI_Scenario_Background/BG_Storage_Night.jpg",
-                "EventRate": 0.1,
-                "EventIDs": [
-                    "exp_event_erav_sm_inspection",
-                    "exp_event_erav_sm_anal",
-                    "exp_event_erav_sm_bondage",
-                    "exp_event_erav_sm_oral",
-                    "exp_event_erav_sm_review",
-                    "exp_event_erav_sm_acceptance",
-                    "exp_event_erav_sm_small_schedule",
-                    "exp_event_erav_sm_small_display",
-                    "exp_event_erav_sm_small_toy",
-                    "exp_event_erav_sm_small_maintenance",
-                    "exp_event_erav_sm_small_check"
-                ],
-                "DescriptionText": [ "expedition_erav_ntr_mia_sm_master_desc_1" ],
-                "keywords": [],
-                "FeatureKeywords": [ "nsfw" ]
-            },
-            {
-                "_comment": "G - visiting foreign sports team: 'team attendant' for the whole squad.",
-                "ExpeditionID": "expedition_erav_ntr_mia_sports",
-                "HasStartHour": false,
-                "removeOnComplete": true,
-                "DurationHour": 168,
-                "MaxExplorationRate": 4000,
-                "rescueEventID": "",
-                "canExplore": false,
-                "selfReleaseEventID": "erav_ntr_mia_release",
-                "returnEventID": "erav_ntr_mia_homecoming",
-                "backgroundImagePath": "Media_UI_Scenario_Background/BG_SchoolGround.jpg",
-                "EventRate": 0.1,
-                "EventIDs": [
-                    "exp_event_erav_sports_training",
-                    "exp_event_erav_sports_hotel",
-                    "exp_event_erav_sports_drugged",
-                    "exp_event_erav_sports_small_cheer",
-                    "exp_event_erav_sports_small_water",
-                    "exp_event_erav_sports_small_locker",
-                    "exp_event_erav_sports_small_suite"
-                ],
-                "DescriptionText": [ "expedition_erav_ntr_mia_sports_desc_1" ],
-                "keywords": [],
-                "FeatureKeywords": [ "nsfw" ]
-            },
-            {
-                "_comment": "H - foreign celebrity entourage: 'Tokyo girlfriend' escort duty on tour.",
-                "ExpeditionID": "expedition_erav_ntr_mia_celeb",
-                "HasStartHour": false,
-                "removeOnComplete": true,
-                "DurationHour": 168,
-                "MaxExplorationRate": 4000,
-                "rescueEventID": "",
-                "canExplore": false,
-                "selfReleaseEventID": "erav_ntr_mia_release",
-                "returnEventID": "erav_ntr_mia_homecoming",
-                "backgroundImagePath": "Media_UI_Scenario_Background/BG_ShoppingDistrict_Night.jpg",
-                "EventRate": 0.1,
-                "EventIDs": [
-                    "exp_event_erav_celeb_town",
-                    "exp_event_erav_celeb_club",
-                    "exp_event_erav_celeb_drugged",
-                    "exp_event_erav_celeb_small_fitting",
-                    "exp_event_erav_celeb_small_photo",
-                    "exp_event_erav_celeb_small_pose",
-                    "exp_event_erav_celeb_small_quickie"
-                ],
-                "DescriptionText": [ "expedition_erav_ntr_mia_celeb_desc_1" ],
-                "keywords": [],
-                "FeatureKeywords": [ "nsfw" ]
-            },
-            {
-                "_comment": "I - rich family's household toy: live-in maid for the manor's master and sons.",
-                "ExpeditionID": "expedition_erav_ntr_mia_household",
-                "HasStartHour": false,
-                "removeOnComplete": true,
-                "DurationHour": 168,
-                "MaxExplorationRate": 5600,
-                "rescueEventID": "",
-                "canExplore": false,
-                "selfReleaseEventID": "erav_ntr_mia_release",
-                "returnEventID": "erav_ntr_mia_homecoming",
-                "backgroundImagePath": "Media_UI_Scenario_Background/BG_VillaComplex_Night.jpg",
-                "EventRate": 0.1,
-                "EventIDs": [
-                    "exp_event_erav_house_chores",
-                    "exp_event_erav_house_master",
-                    "exp_event_erav_house_friends",
-                    "exp_event_erav_house_dog",
-                    "exp_event_erav_house_small_apron",
-                    "exp_event_erav_house_small_son_call",
-                    "exp_event_erav_house_small_night_bath",
-                    "exp_event_erav_house_small_housekeeper"
-                ],
-                "DescriptionText": [ "expedition_erav_ntr_mia_household_desc_1" ],
-                "keywords": [],
-                "FeatureKeywords": [ "nsfw" ]
-            },
-            {
-                "_comment": "J - gang reward: handed to the footsoldiers as the week's 'prize', top floor of an old inn.",
-                "ExpeditionID": "expedition_erav_ntr_mia_gang",
-                "HasStartHour": false,
-                "removeOnComplete": true,
+                "beginEventID": "event_erav_clients_begin",
                 "DurationHour": 168,
                 "MaxExplorationRate": 4000,
                 "rescueEventID": "",
@@ -176,7 +16,132 @@
                 "returnEventID": "erav_ntr_mia_homecoming",
                 "backgroundImagePath": "Media_UI_Scenario_Background/BG_Warehouse.jpg",
                 "EventRate": 0.1,
-                "EventIDs": [
+                "EventIDs": [],
+                "keywords": [],
+                "FeatureKeywords": ["nsfw", "erav_client_labour"]
+            }
+        ]
+    },
+    "ExplorationFeatures": {
+        "list": [
+            {
+                "requireKeywords": ["erav_client_labour"],
+                "featureEventIDs": [],
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_clients_desc_1",
+                    "expedition_erav_ntr_mia_clients_desc_2",
+                    "expedition_erav_ntr_mia_clients_desc_3"
+                ]
+            },
+            {
+                "requireKeywords": ["erav_client_labour", "client_politician"],
+                "featureEventIDs": [
+                    "exp_event_erav_politician_call_daughter",
+                    "exp_event_erav_politician_day_negotiation",
+                    "exp_event_erav_politician_night1",
+                    "exp_event_erav_politician_night2_gangbath",
+                    "exp_event_erav_politician_small_sake",
+                    "exp_event_erav_politician_small_bath",
+                    "exp_event_erav_politician_small_yukata",
+                    "exp_event_erav_politician_small_quickie"
+                ],
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_politician_desc_1",
+                    "expedition_erav_ntr_mia_politician_desc_2",
+                    "expedition_erav_ntr_mia_politician_desc_3"
+                ]
+            },
+            {
+                "requireKeywords": ["erav_client_labour", "client_producer"],
+                "featureEventIDs": [
+                    "exp_event_erav_producer_interview",
+                    "exp_event_erav_producer_small_photo",
+                    "exp_event_erav_producer_small_styling",
+                    "exp_event_erav_producer_small_schedule",
+                    "exp_event_erav_producer_small_quickie"
+                ],
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_producer_desc_1",
+                    "expedition_erav_ntr_mia_producer_desc_2",
+                    "expedition_erav_ntr_mia_producer_desc_3"
+                ]
+            },
+            {
+                "requireKeywords": ["erav_client_labour", "client_sm_master"],
+                "featureEventIDs": [
+                    "exp_event_erav_sm_acceptance",
+                    "exp_event_erav_sm_anal",
+                    "exp_event_erav_sm_bondage",
+                    "exp_event_erav_sm_inspection",
+                    "exp_event_erav_sm_oral",
+                    "exp_event_erav_sm_review",
+                    "exp_event_erav_sm_small_schedule",
+                    "exp_event_erav_sm_small_display",
+                    "exp_event_erav_sm_small_toy",
+                    "exp_event_erav_sm_small_maintenance",
+                    "exp_event_erav_sm_small_check"
+                ],
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_sm_master_desc_1",
+                    "expedition_erav_ntr_mia_sm_master_desc_2",
+                    "expedition_erav_ntr_mia_sm_master_desc_3"
+                ]
+            },
+            {
+                "requireKeywords": ["erav_client_labour", "client_sports"],
+                "featureEventIDs": [
+                    "exp_event_erav_sports_drugged",
+                    "exp_event_erav_sports_hotel",
+                    "exp_event_erav_sports_training",
+                    "exp_event_erav_sports_small_cheer",
+                    "exp_event_erav_sports_small_water",
+                    "exp_event_erav_sports_small_locker",
+                    "exp_event_erav_sports_small_suite"
+                ],
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_sports_desc_1",
+                    "expedition_erav_ntr_mia_sports_desc_2",
+                    "expedition_erav_ntr_mia_sports_desc_3"
+                ]
+            },
+            {
+                "requireKeywords": ["erav_client_labour", "client_celeb"],
+                "featureEventIDs": [
+                    "exp_event_erav_celeb_club",
+                    "exp_event_erav_celeb_drugged",
+                    "exp_event_erav_celeb_town",
+                    "exp_event_erav_celeb_small_fitting",
+                    "exp_event_erav_celeb_small_photo",
+                    "exp_event_erav_celeb_small_pose",
+                    "exp_event_erav_celeb_small_quickie"
+                ],
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_celeb_desc_1",
+                    "expedition_erav_ntr_mia_celeb_desc_2",
+                    "expedition_erav_ntr_mia_celeb_desc_3"
+                ]
+            },
+            {
+                "requireKeywords": ["erav_client_labour", "client_household"],
+                "featureEventIDs": [
+                    "exp_event_erav_house_chores",
+                    "exp_event_erav_house_dog",
+                    "exp_event_erav_house_friends",
+                    "exp_event_erav_house_master",
+                    "exp_event_erav_house_small_apron",
+                    "exp_event_erav_house_small_son_call",
+                    "exp_event_erav_house_small_night_bath",
+                    "exp_event_erav_house_small_housekeeper"
+                ],
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_household_desc_1",
+                    "expedition_erav_ntr_mia_household_desc_2",
+                    "expedition_erav_ntr_mia_household_desc_3"
+                ]
+            },
+            {
+                "requireKeywords": ["erav_client_labour", "client_gang"],
+                "featureEventIDs": [
                     "exp_event_erav_gang_daily",
                     "exp_event_erav_gang_exception",
                     "exp_event_erav_gang_small_errand",
@@ -185,13 +150,133 @@
                     "exp_event_erav_gang_small_bath",
                     "exp_event_erav_gang_small_night"
                 ],
-                "DescriptionText": [ "expedition_erav_ntr_mia_gang_desc_1" ],
-                "keywords": [],
-                "FeatureKeywords": [ "nsfw" ]
+                "DescriptionText": [
+                    "expedition_erav_ntr_mia_gang_desc_1",
+                    "expedition_erav_ntr_mia_gang_desc_2",
+                    "expedition_erav_ntr_mia_gang_desc_3"
+                ]
             }
         ]
     },
-
+    "Events": {
+        "list": [
+            {
+                "ID": "event_erav_clients_begin",
+                "_comment": "Engine begin hook; not banked. Feature membership is injected before validation. Dispatch options contain comparison + jump ONLY because executor lists do not short-circuit. No random selection, actor loans, AP, or ResolveEvent callback. These are content-specific briefing examples, not an engine category requirement. First matching briefing wins if several client features are supplied; encounter modules still compose independently. No match uses the neutral fallback. Every briefing and fallback path terminates.",
+                "events": [
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Branch, Assembly-CSharp",
+                        "label": "dispatch",
+                        "options": [
+                            {
+                                "option": "_feature_politician",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["expeditionFeatureKeywords", "client_politician"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_politician"] }
+                                ]
+                            },
+                            {
+                                "option": "_feature_producer",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["expeditionFeatureKeywords", "client_producer"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_producer"] }
+                                ]
+                            },
+                            {
+                                "option": "_feature_sm_master",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["expeditionFeatureKeywords", "client_sm_master"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_sm_master"] }
+                                ]
+                            },
+                            {
+                                "option": "_feature_sports",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["expeditionFeatureKeywords", "client_sports"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_sports"] }
+                                ]
+                            },
+                            {
+                                "option": "_feature_celeb",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["expeditionFeatureKeywords", "client_celeb"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_celeb"] }
+                                ]
+                            },
+                            {
+                                "option": "_feature_household",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["expeditionFeatureKeywords", "client_household"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_household"] }
+                                ]
+                            },
+                            {
+                                "option": "_feature_gang",
+                                "Results": [
+                                    { "Type": "AppendStringEquals", "arguments": ["expeditionFeatureKeywords", "client_gang"] },
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_gang"] }
+                                ]
+                            },
+                            {
+                                "option": "_fallback",
+                                "Results": [
+                                    { "Type": "JumpToLabel", "arguments": ["", "begin_fallback"] }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_politician",
+                        "line": "event_erav_clients_begin_politician",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_producer",
+                        "line": "event_erav_clients_begin_producer",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_sm_master",
+                        "line": "event_erav_clients_begin_sm_master",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_sports",
+                        "line": "event_erav_clients_begin_sports",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_celeb",
+                        "line": "event_erav_clients_begin_celeb",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_household",
+                        "line": "event_erav_clients_begin_household",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_gang",
+                        "line": "event_erav_clients_begin_gang",
+                        "isLast": true
+                    },
+                    {
+                        "$type": "Event+EventEntry+EventEntry_Line, Assembly-CSharp",
+                        "label": "begin_fallback",
+                        "line": "event_erav_clients_begin_fallback",
+                        "isLast": true
+                    }
+                ]
+            }
+        ]
+    },
     "Dictionary": {
         "Entries": {
             "zh-cn": {
@@ -204,11 +289,38 @@
                 "expedition_erav_ntr_mia_sports": "担保劳务·随队陪同",
                 "expedition_erav_ntr_mia_sports_desc_1": "$names$作为随队女性陪同访日球队，训练、比赛、酒店全程跟队。",
                 "expedition_erav_ntr_mia_celeb": "担保劳务·随行陪同",
-                "expedition_erav_ntr_mia_celeb_desc_1": "$names$作为巡演团体的「日本女朋友」随行陪玩。",
+                "expedition_erav_ntr_mia_celeb_desc_1": "她在交谈间仍会留意附近的镜头，像是在计算哪一种表情能留在公开记录里。",
                 "expedition_erav_ntr_mia_household": "担保劳务·家用女仆",
                 "expedition_erav_ntr_mia_household_desc_1": "$names$住进城西大宅，做这户人家的「家政助手」。",
                 "expedition_erav_ntr_mia_gang": "担保劳务·犒劳",
-                "expedition_erav_ntr_mia_gang_desc_1": "$names$被当作犒劳品送进旧旅馆的包层，交给组里的小弟们。"
+                "expedition_erav_ntr_mia_gang_desc_1": "$names$被当作犒劳品送进旧旅馆的包层，交给组里的小弟们。",
+                "expedition_erav_ntr_mia_clients_desc_1": "$names$正在桐生组安排的地方抵账。",
+                "expedition_erav_ntr_mia_clients_desc_2": "$names$正在桐生组安排的地方抵账。",
+                "expedition_erav_ntr_mia_clients_desc_3": "$names$正在桐生组安排的地方抵账。",
+                "expedition_erav_ntr_mia_politician_desc_2": "$names$在箱根的温泉旅馆，作为县议员的「随行秘书」陪同商谈。",
+                "expedition_erav_ntr_mia_politician_desc_3": "$names$在箱根的温泉旅馆，作为县议员的「随行秘书」陪同商谈。",
+                "expedition_erav_ntr_mia_producer_desc_2": "$names$在艺能事务所社长的镜头前接受「最终面试」。",
+                "expedition_erav_ntr_mia_producer_desc_3": "$names$在艺能事务所社长的镜头前接受「最终面试」。",
+                "expedition_erav_ntr_mia_sm_master_desc_2": "$names$被借给郊外宅邸的收藏家，按时间表接受调教。",
+                "expedition_erav_ntr_mia_sm_master_desc_3": "$names$被借给郊外宅邸的收藏家，按时间表接受调教。",
+                "expedition_erav_ntr_mia_sports_desc_2": "$names$作为随队女性陪同访日球队，训练、比赛、酒店全程跟队。",
+                "expedition_erav_ntr_mia_sports_desc_3": "$names$作为随队女性陪同访日球队，训练、比赛、酒店全程跟队。",
+                "expedition_erav_ntr_mia_celeb_desc_2": "工作人员不断核对时间，她把私人间隙压缩到下一项公开安排之前。",
+                "expedition_erav_ntr_mia_celeb_desc_3": "她暂时离开镜头，却没有真正离开被注视的感觉。",
+                "expedition_erav_ntr_mia_household_desc_2": "$names$住进城西大宅，做这户人家的「家政助手」。",
+                "expedition_erav_ntr_mia_household_desc_3": "$names$住进城西大宅，做这户人家的「家政助手」。",
+                "expedition_erav_ntr_mia_gang_desc_2": "$names$被当作犒劳品送进旧旅馆的包层，交给组里的小弟们。",
+                "expedition_erav_ntr_mia_gang_desc_3": "$names$被当作犒劳品送进旧旅馆的包层，交给组里的小弟们。",
+                "expedition_erav_ntr_mia_clients": "桐生组·担保劳务",
+                "event_erav_clients_begin": "桐生组·担保劳务",
+                "event_erav_clients_begin_politician": "车沿着山路开进箱根，在温泉旅馆的别栋前停下。\n议员的鞋已经在玄关摆好了。带路的女将低着头，把$party.name$领向檐廊深处——\n从今晚起，她是这栋别栋的「随行秘书」，直到商谈结束。",
+                "event_erav_clients_begin_producer": "事务所楼上的出租会议室里，补光灯已经架好了。\n自称社长的男人翻着$party.name$的资料，抬头笑了笑，指指房间中央的空地。\n「最终面试」就从这里开始。",
+                "event_erav_clients_begin_sm_master": "车开进郊外毫不起眼的宅邸。地下室的灯亮着，四壁挂着的皮具如同解剖图，按部位分类。\n穿开衫的老人推了推老花镜，指指墙上白板里那张排满的周间时间表。\n$party.name$的这周，已经被买下了。",
+                "event_erav_clients_begin_sports": "酒店的套房里聚满了高大的外国球员。领队翻着合同，朝$party.name$抬了抬下巴。\n翻译转述了半句就停住了。从今晚起，她是这支球队的「随队女性」——训练、比赛、酒店，全程跟队。",
+                "event_erav_clients_begin_celeb": "这一趟安排已经被定为名人客户行程。公开期待、私人边界和不断变化的时间表，会在出发后分别出现；当前类别不会重新抽选。",
+                "event_erav_clients_begin_household": "城西的大宅门前，灰布上衣的女管家递给她条围裙和手写的作息表。\n「在这栋房子里，你不用名字。大家叫你『小妹』。」\n$party.name$低头看了看作息表——清晨五点半起床，休日：无。",
+                "event_erav_clients_begin_gang": "旧旅馆的顶楼整层被包下了。走廊里烟味呛人，房间里七八个小弟围着矮桌打牌。\n带队的若头把$party.name$的契约啪地拍在桌上：\n「哥几个，这周的犒劳品到了。」",
+                "event_erav_clients_begin_fallback": "车停在一栋陌生的建筑前。\n$party.name$被桐生组的人领了进去，身后的门无声地合上了。\n从今天起，她要在这里「抵账」。"
             }
         }
     }

@@ -1,17 +1,31 @@
 {
-    "_doc": "en-us localization for expEvent_sm_anal.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_sm_anal.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_sm_anal": "Day Two: Anal Day",
                 "exp_event_erav_sm_anal_ongoing": "The schedule turns to 'anal day', and $names$ is strapped onto the dedicated table.",
                 "exp_event_erav_sm_anal_result": "The morning's first task: an enema. Hose and bag, both prepared by his own hands.",
-
                 "event_erav_sm_anal_01": "\"A dirty passage makes for an unusable toy.\" The old man raises the water bag.\n\"Endure it. Hold it. Count to a hundred before you may go.\"\nShe begs at sixty. He is unmoved and raises the bag another inch. \"Miscounted. Start over. A toy doesn't act on its own initiative.\" Three fill-and-drain rounds before he lets her up.",
                 "event_erav_sm_anal_02": "The stretching begins with fingers, moves to a cone-shaped trainer, then to something like a numbing tail - worn while she sits straight, kneels straight, serves tea, bows.\n\"Drop it, and time is added.\" By supper she has earned three extensions.",
                 "event_erav_sm_anal_03": "Evening brings 'inspection'. Bent over the training rack, she is taken from behind.\nThe repeatedly-stretched entrance burns - and deep inside the burn a heat from being filled pools, a heat she dare not admit to.",
                 "event_erav_sm_anal_04": "\"Record: sphincter tolerance good. Reflex contraction still present - a fine sign. A toy with no reactions at all would be dull.\"\nHe closes the notebook. \"Tomorrow: bondage endurance. Today's added time comes out of tomorrow morning.\"",
-                "event_erav_sm_anal_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_sm_anal_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_sm_anal": "Day Two: Anal Day",
+                "event_erav_sm_anal_writer_opening": "\"A dirty passage makes for an unusable toy.\" The old man raises the water bag.\n\"Endure it. Hold it. Count to a hundred before you may go.\"\nShe begs at sixty. He is unmoved and raises the bag another inch. \"Miscounted. Start over. A toy doesn't act on its own initiative.\" Three fill-and-drain rounds before he lets her up.",
+                "event_erav_sm_anal_writer_choose_full": "Continue the full sequence",
+                "event_erav_sm_anal_writer_choose_first_only": "Run only the first stage",
+                "event_erav_sm_anal_writer_choose_skip": "Skip this event",
+                "event_erav_sm_anal_writer_question": "How should this event continue?",
+                "event_erav_sm_anal_writer_phase_1_validated": "The stretching begins with fingers, moves to a cone-shaped trainer, then to something like a numbing tail - worn while she sits straight, kneels straight, serves tea, bows.\n\"Drop it, and time is added.\" By supper she has earned three extensions.",
+                "event_erav_sm_anal_writer_phase_2_validated": "Evening brings 'inspection'. Bent over the training rack, she is taken from behind.\nThe repeatedly-stretched entrance burns - and deep inside the burn a heat from being filled pools, a heat she dare not admit to.",
+                "event_erav_sm_anal_writer_first_only_validated": "The stretching begins with fingers, moves to a cone-shaped trainer, then to something like a numbing tail - worn while she sits straight, kneels straight, serves tea, bows.\n\"Drop it, and time is added.\" By supper she has earned three extensions.",
+                "event_erav_sm_anal_writer_summary_completed": "\"Record: sphincter tolerance good. Reflex contraction still present - a fine sign. A toy with no reactions at all would be dull.\"\nHe closes the notebook. \"Tomorrow: bondage endurance. Today's added time comes out of tomorrow morning.\"",
+                "event_erav_sm_anal_writer_summary_completed_first_only": "Only the first stage was completed.",
+                "event_erav_sm_anal_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_sm_anal_writer_summary_skipped": "This event was skipped.",
+                "event_erav_sm_anal_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_sm_anal_writer_header": "Day Two: Anal Day"
             }
         }
     }

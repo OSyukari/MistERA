@@ -1612,10 +1612,55 @@ public static class UtilityEX
                         Debug.LogError("collectActorTags: error target null");
                         break;
                     }
-                    // optional second arg enables the combat branch (inventory weapon tags)
-                    bool combat = parsed.Count() >= 2 && bool.TryParse(parsed[1], out bool combatArg) && combatArg;
-                    var tags = LLMUtils.CollectActorTags(target, combat, out var visibleSlots);
-                    Debug.Log($"collectActorTags [{target.RefID} {target.FullName}] isCombat {combat} visible slots [{String.Join(", ", visibleSlots)}] result {tags.Count}:\n{String.Join(", ", tags)}");
+                    // every further arg is an action tag (e.g. collectActorTags relaxed sex unsafe combat); "combat" also enables the combat branch (inventory weapon tags)
+                    var actionTags = parsed.Skip(1).Where(s => !string.IsNullOrEmpty(s)).ToList();
+                    bool combat = actionTags.Contains("combat");
+                    var tags = LLMUtils.CollectActorTags(target, combat, out var visibleSlots, actionTags);
+                    Debug.Log($"collectActorTags [{target.RefID} {target.FullName}] action tags [{String.Join(", ", actionTags)}] isCombat {combat} visible slots [{String.Join(", ", visibleSlots)}] result {tags.Count}:\n{String.Join(", ", tags)}");
+                    parsedSuccessful = true;
+                }
+                break;
+            case "collectSceneTags":
+                {
+                    // main actor: the current target, "self" = the player
+                    var main = parsed.Count() >= 2 && parsed[1] == "self" ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget;
+                    if (main == null)
+                    {
+                        Debug.LogError("collectSceneTags: error main actor null");
+                        break;
+                    }
+                    var sceneTags = LLMUtils.CollectInteractionTags(main);
+                    var prompt = LLMUtils.BuildScenePrompt(sceneTags);
+                    Debug.Log($"collectSceneTags [{main.RefID} {main.FullName}]\n-- collected (after derived tags) --\n{sceneTags.ToDebugString()}-- prompt --\n{prompt.ToDebugString()}-- flat --\n{prompt.Flatten()}");
+                    parsedSuccessful = true;
+                }
+                break;
+            case "collectScenePromptJson":
+                {
+                    // main actor: the current target, "self" = the player
+                    var main = parsed.Count() >= 2 && parsed[1] == "self" ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget;
+                    if (main == null)
+                    {
+                        Debug.LogError("collectScenePromptJson: error main actor null");
+                        break;
+                    }
+                    var sceneTags = LLMUtils.CollectInteractionTags(main);
+                    var prompt = LLMUtils.BuildScenePrompt(sceneTags);
+                    Debug.Log($"collectScenePromptJson [{main.RefID} {main.FullName}]\n{ActionScenePromptUtility.ToJson(sceneTags, prompt)}");
+                    parsedSuccessful = true;
+                }
+                break;
+            case "generateSceneImage":
+                {
+                    // main actor: the current target, "self" = the player; runs async, the result is logged when ComfyUI is done
+                    var main = parsed.Count() >= 2 && parsed[1] == "self" ? scr_System_CampaignManager.current.Player : scr_System_CampaignManager.current.CurrentTarget;
+                    if (main == null)
+                    {
+                        Debug.LogError("generateSceneImage: error main actor null");
+                        break;
+                    }
+                    Debug.Log($"generateSceneImage [{main.RefID} {main.FullName}]: sent to {ComfyUISceneImage.BaseUrl}");
+                    ComfyUISceneImage.GenerateFromConsole(main);
                     parsedSuccessful = true;
                 }
                 break;

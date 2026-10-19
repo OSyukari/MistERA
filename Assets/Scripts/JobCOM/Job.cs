@@ -777,6 +777,11 @@ public class Job : IDisposable, I_Disposable
     protected List<ActionPackage> packages_placeholder = new List<ActionPackage>();
 
     [JsonIgnore] public List<ActionPackage> ExecutingPackages { get { return packages_previous; } }
+    /// <summary> the ongoing packages, same set as IsInUse: added but not yet active (packages_current) + executing (packages_previous) </summary>
+    [JsonIgnore] public IEnumerable<ActionPackage> OngoingPackages { get {
+            foreach (var ap in packages_current) yield return ap;
+            foreach (var ap in packages_previous) yield return ap;
+        } }
 
     /// <summary>
     /// Return AP by reference and filter out AP that has actorRef

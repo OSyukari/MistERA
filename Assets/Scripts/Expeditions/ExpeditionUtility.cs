@@ -4,6 +4,41 @@ using UnityEngine;
 
 public static class ExpeditionUtility
 {
+    public const string FeatureKeywordsKey = "expeditionFeatureKeywords";
+
+    public static void InjectFeatureKeywords(Dictionary<string, List<string>> appendStrings, ExpeditionInstance expedition)
+    {
+        if (expedition != null) appendStrings[FeatureKeywordsKey] = new List<string>(expedition.FeatureKeywords);
+    }
+
+    public static bool StartBeginEvent(Job_Expedition job)
+    {
+        var expedition = job?.Expedition;
+        var definition = expedition?.Base;
+        if (definition == null || string.IsNullOrEmpty(definition.beginEventID) || job.FactionOwner_Party == null) return false;
+
+        var package = new SerializableEventPackage { eventID = definition.beginEventID };
+        var party = new List<int>();
+        var frontline = new List<int>();
+        var backline = new List<int>();
+        foreach (var c in job.FactionOwner_Party.ManagedChara)
+        {
+            if (c == null) continue;
+            party.Add(c.RefID);
+            switch (job.FactionOwner_Party.GetTeamComp(c.RefID))
+            {
+                case Manageable_Party.PartyComposition.frontline: frontline.Add(c.RefID); break;
+                case Manageable_Party.PartyComposition.backline: backline.Add(c.RefID); break;
+            }
+        }
+        package.Targets["party"] = party;
+        package.Targets["teamA_frontline"] = frontline;
+        package.Targets["teamA_backline"] = backline;
+        InjectFeatureKeywords(package.AppendStrings, expedition);
+        var ev = EventUtility.StartEvent(job, package);
+        return ev.isValid && scr_UpdateHandler.current.EventHandler.StartEvent(ev, false);
+    }
+
     /*
     Expedition parsing
     1. read random expevent, load it into AP
@@ -47,6 +82,8 @@ public static class ExpeditionUtility
             m.resolveMessage = ev.DumpCurrentLine;
             package.isResolved = true;
             m.unresolved = null;
+            if (job.status == Job_Expedition.ExpeditionStatus.inactive && !job.ExpeditionActive)
+                job.ReleaseCompletedExpedition();
         });
 
         var callbacks2 = new List<Action>();
@@ -149,6 +186,7 @@ public static class ExpeditionUtility
     public static ExpResults ApplyResult(Job_Expedition jobb, ExpEvents ev, List<Character_Trainable> actors, string memEntryName, bool offTime)
     {
         if (jobb == null || ev == null || actors == null || actors.Count < 1) return null;
+        var expedition = jobb.Expedition;
         // Another actor may have completed this encounter since this action was selected.
         if (jobb.FactionOwner_Party.HasExplorationEventCooldown(ev.eventID)) return null;
         var result = RandResult(ev, jobb.FactionOwner_Party, actors, offTime);
@@ -233,6 +271,7 @@ public static class ExpeditionUtility
             package.Targets.Add("teamA_backline", backline);
             package.AppendStrings[EventInstance.HeaderLocationKey] = new List<string>() { jobb.Expedition.Base.DisplayName };
             package.AppendStrings[EventInstance.HeaderActorNamesKey] = actorNames;
+            InjectFeatureKeywords(package.AppendStrings, expedition);
             package.overrideTargetScope = result.overrideTargetScope;
             package.targetScopes = result.TargetValidators;
             package.overrideTargetGen = result.overrideTargetGeneration;

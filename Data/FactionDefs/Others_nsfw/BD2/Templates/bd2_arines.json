@@ -49,7 +49,10 @@
           "_comment_prompts": "Always added, no conditions.",
           "prompts": [ "arines (brown dust 2)", "1girl" ],
 
-          "_comment_disableRules": "Drop inherited rules by id. Applied before this layer's own rules.",
+          "_comment_inheritRulesets": "Shared rulesets by id (PromptRulesets in Data/RaceDefs/PromptProfiles.json), applied first. ruleset_character_tag: the skin colour trait only once the game changed it from the template preset.",
+          "inheritRulesets": [ "ruleset_character_tag" ],
+
+          "_comment_disableRules": "Drop inherited rules by id (earlier layers + this layer's rulesets). Applied before this layer's own rules.",
           "disableRules": [ "eyes_closed" ],
 
           "rules": [
@@ -126,12 +129,6 @@
                   "id": "body",
                   "traitGroups": [ "trait_BodyType" ],
                   "prompts": [ "petite" ]
-              },
-              {
-                  "_comment": "Replaces the default 'skin' rule: the skin colour trait only once the game changed it from the template preset.",
-                  "id": "skin",
-                  "requireChangedTraits": [ "trait_SkinColor" ],
-                  "traitGroups": [ "trait_SkinColor" ]
               },
               {
                   "_comment": "Literal skin prompt while the skin colour is still the template preset.",

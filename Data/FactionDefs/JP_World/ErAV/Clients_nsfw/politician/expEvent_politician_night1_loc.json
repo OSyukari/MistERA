@@ -1,19 +1,33 @@
 {
-    "_doc": "en-us localization for expEvent_politician_night1.json (same folder convention).",
+    "_doc": "Neutral en-us writer placeholders for expEvent_politician_night1.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_politician_night1": "First Night: Shared Bed",
                 "exp_event_erav_politician_night1_ongoing": "$names$'s first night belongs to the ryokan villa's bedroom.",
                 "exp_event_erav_politician_night1_result": "The councillor summons $names$ into the villa's bedroom.",
-
                 "event_erav_politician_night1_01": "After dinner is cleared away, the councillor has $party.name$ stand under the lamp and undoes her yukata's sash himself, slowly, pausing halfway to take in the view before continuing.\n\"A councillor's work is seven parts socializing. The secret of socializing is to always keep something soothing at your side.\"\nThe folding fan taps his own knee. \"Sharing a bed - literally.\"",
                 "event_erav_politician_night1_02": "The yukata slips from her shoulders. Caught in the lamplight, with nowhere to hide, she can only let that gaze measure her at its leisure.",
                 "event_erav_politician_night1_03": "Between the sheets he presses down on her, unhurried, in a position that looks down on her like an elder, taking his time deep into the night.",
                 "event_erav_politician_night1_04": "Deep in the night, she is shaken out of her shallow sleep.\n\"A secretary reads the room. I'm not fully awake yet - by now you should know what to do.\"\nShe pushes herself up and climbs on top of him.",
                 "event_erav_politician_night1_05": "Before dawn, the room holds nothing but her suppressed, shallow gasps.",
                 "event_erav_politician_night1_06": "Before daybreak he spends himself inside her, tells her to keep the position and not move, and goes back to sleep.\nShe lies there until morning, too afraid to stir, the heat pooled deep in her belly.",
-                "event_erav_politician_night1_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_politician_night1_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_politician_night1": "First Night: Shared Bed",
+                "event_erav_politician_night1_writer_opening": "After dinner is cleared away, the councillor has $party.name$ stand under the lamp and undoes her yukata's sash himself, slowly, pausing halfway to take in the view before continuing.\n\"A councillor's work is seven parts socializing. The secret of socializing is to always keep something soothing at your side.\"\nThe folding fan taps his own knee. \"Sharing a bed - literally.\"\nThe yukata slips from her shoulders. Caught in the lamplight, with nowhere to hide, she can only let that gaze measure her at its leisure.",
+                "event_erav_politician_night1_writer_choose_full": "Continue the full sequence",
+                "event_erav_politician_night1_writer_choose_first_only": "Run only the first stage",
+                "event_erav_politician_night1_writer_choose_skip": "Skip this event",
+                "event_erav_politician_night1_writer_question": "How should this event continue?",
+                "event_erav_politician_night1_writer_phase_1_validated": "Between the sheets he presses down on her, unhurried, in a position that looks down on her like an elder, taking his time deep into the night.",
+                "event_erav_politician_night1_writer_phase_2_validated": "Deep in the night, she is shaken out of her shallow sleep.\n\"A secretary reads the room. I'm not fully awake yet - by now you should know what to do.\"\nShe pushes herself up and climbs on top of him.\nBefore dawn, the room holds nothing but her suppressed, shallow gasps.",
+                "event_erav_politician_night1_writer_first_only_validated": "Between the sheets he presses down on her, unhurried, in a position that looks down on her like an elder, taking his time deep into the night.",
+                "event_erav_politician_night1_writer_summary_completed": "Before daybreak he spends himself inside her, tells her to keep the position and not move, and goes back to sleep.\nShe lies there until morning, too afraid to stir, the heat pooled deep in her belly.",
+                "event_erav_politician_night1_writer_summary_completed_first_only": "Only the first stage was completed.",
+                "event_erav_politician_night1_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_politician_night1_writer_summary_skipped": "This event was skipped.",
+                "event_erav_politician_night1_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_politician_night1_writer_header": "First Night: Shared Bed"
             }
         }
     }

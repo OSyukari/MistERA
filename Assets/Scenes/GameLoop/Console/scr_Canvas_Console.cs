@@ -165,7 +165,10 @@ public class scr_Canvas_Console : scr_Menu, IPointerClickHandler
         "debug_refuse_salary_payment",
         "debug_force_joinFaction_Agree",
         "listallvalidbookings",
-        "collectActorTags"
+        "collectActorTags",
+        "collectSceneTags",
+        "collectScenePromptJson",
+        "generateSceneImage"
     };
 
     protected void ActivateUI()

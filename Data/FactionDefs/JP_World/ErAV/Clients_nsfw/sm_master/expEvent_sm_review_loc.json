@@ -1,19 +1,33 @@
 {
-    "_doc": "en-us localization for expEvent_sm_review.json.",
+    "_doc": "Neutral en-us writer placeholders for expEvent_sm_review.json. Keys match zh-cn; legacy keys retained.",
     "Dictionary": {
         "Entries": {
             "en-us": {
                 "exp_event_erav_sm_review": "Days Five and Six: Breasts and Hips / Review",
                 "exp_event_erav_sm_review_ongoing": "The whiteboard's subjects move on to 'breasts and hips', then 'review'.",
                 "exp_event_erav_sm_review_result": "The suction pump and clamp-style nipple trainers are laid out on the side table like surgical instruments.",
-
                 "event_erav_sm_review_01": "Day five turns to her upper body. The pump sucks her nipples swollen to triple their size; clamp trainers are fitted on top, weighted with little hammers, letting the weight do her 'exercise'.\n\"The nipples are switches. Train the switches sensitive and the body becomes useful.\"\nThe tip of the thin whip flicks the swollen buds with each strike, every blow landing on the same spot, until the spot flinches at mere air.",
                 "event_erav_sm_review_02": "Day six is the review - chaining the past five days' subjects together: enema while bound, service with the tail worn, taking the whip at deep-throat depth.\nThe old man ticks items off his record like a man inspecting a shipment.",
                 "event_erav_sm_review_03": "\"Mm. The ordinary goods that could only cry five days ago now runs the whole routine back to back. Fine progress.\"\nHe sets down the pen. \"At the end of review: a supplementary exam.\"",
                 "event_erav_sm_review_04": "Supplementary item one: service. She kneels at the rack, kisses, bows, announces the count per etiquette, then takes him in and finishes the act.",
                 "event_erav_sm_review_05": "Supplementary item two: rear entry. The restraint strap still buckled at her wrists, she lies over the rack in 'a toy's default position'.\nHe enters slowly, spot-checking the week's development segment by segment.",
                 "event_erav_sm_review_06": "The check-up complete, only the last entry remains on the record's to-do list.\n\"Tomorrow: acceptance. You will demonstrate this week's lessons - for your supervisor.\"",
-                "event_erav_sm_review_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi)."
+                "event_erav_sm_review_err": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_sm_review": "Days Five and Six: Breasts and Hips / Review",
+                "event_erav_sm_review_writer_opening": "Day five turns to her upper body. The pump sucks her nipples swollen to triple their size; clamp trainers are fitted on top, weighted with little hammers, letting the weight do her 'exercise'.\n\"The nipples are switches. Train the switches sensitive and the body becomes useful.\"\nThe tip of the thin whip flicks the swollen buds with each strike, every blow landing on the same spot, until the spot flinches at mere air.\nDay six is the review - chaining the past five days' subjects together: enema while bound, service with the tail worn, taking the whip at deep-throat depth.\nThe old man ticks items off his record like a man inspecting a shipment.\n\"Mm. The ordinary goods that could only cry five days ago now runs the whole routine back to back. Fine progress.\"\nHe sets down the pen. \"At the end of review: a supplementary exam.\"",
+                "event_erav_sm_review_writer_choose_full": "Continue the full sequence",
+                "event_erav_sm_review_writer_choose_first_only": "Run only the first stage",
+                "event_erav_sm_review_writer_choose_skip": "Skip this event",
+                "event_erav_sm_review_writer_question": "How should this event continue?",
+                "event_erav_sm_review_writer_phase_1_validated": "Supplementary item one: service. She kneels at the rack, kisses, bows, announces the count per etiquette, then takes him in and finishes the act.",
+                "event_erav_sm_review_writer_phase_2_validated": "Supplementary item two: rear entry. The restraint strap still buckled at her wrists, she lies over the rack in 'a toy's default position'.\nHe enters slowly, spot-checking the week's development segment by segment.",
+                "event_erav_sm_review_writer_first_only_validated": "Supplementary item one: service. She kneels at the rack, kisses, bows, announces the count per etiquette, then takes him in and finishes the act.",
+                "event_erav_sm_review_writer_summary_completed": "The check-up complete, only the last entry remains on the record's to-do list.\n\"Tomorrow: acceptance. You will demonstrate this week's lessons - for your supervisor.\"",
+                "event_erav_sm_review_writer_summary_completed_first_only": "Only the first stage was completed.",
+                "event_erav_sm_review_writer_summary_failed": "The sequence could not be completed.",
+                "event_erav_sm_review_writer_summary_skipped": "This event was skipped.",
+                "event_erav_sm_review_writer_summary_error": "[ERROR] Scene targets missing (no party, or the client could not be borrowed from the Kiryu-gumi).",
+                "event_erav_sm_review_writer_header": "Days Five and Six: Breasts and Hips / Review"
             }
         }
     }
