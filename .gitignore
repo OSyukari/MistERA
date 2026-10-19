@@ -80,3 +80,9 @@ Assets/*
 *.VC.db
 *.jpg
 !Demo/*.png
+
+!Mods/
+Mods/*
+!Mods/Assetpacks/
+Mods/Assetpacks/*
+!Mods/Assetpacks/Image_Generation_Config.json
