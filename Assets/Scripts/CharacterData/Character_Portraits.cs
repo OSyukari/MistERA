@@ -103,6 +103,7 @@ public class PortraitManager
         serializedBannerBGColor = null;
         _portraitCache = null;
         _generatedHandlers = null;
+        ResetGeneratedAssetHandlers();
         _bannerCache = null;
         _bannerCacheInit = false;
         colorInit = false;
@@ -227,6 +228,73 @@ public class PortraitManager
     }
     protected List<CharaPortrait> _generatedHandlers = null;
 
+    /// <summary>Generated assets for this portrait template, independent of useGlobalHandler. Rebuilt only when its registry version changes.</summary>
+    [JsonIgnore] public List<CharaPortrait> GeneratedAssetHandlers
+    {
+        get
+        {
+            RefreshGeneratedAssetVersion();
+            if (_generatedAssetHandlers == null)
+            {
+                _generatedAssetHandlers = new List<CharaPortrait>();
+                if (_generatedAssetVersion == 0) return _generatedAssetHandlers;
+                var neutral = NeutralHandler;
+                foreach (var pp in GlobalPortraitTemplate.GetHandlers($"{ComfyUISceneImage.OutputFolderName}/{_generatedAssetTemplateID}"))
+                {
+                    var copy = pp.Copy();
+                    if (copy == null) continue;
+                    copy.isGenerated = true;
+                    copy.Owner = this;
+                    // As with GeneratedHandlers, keep the folder-resolved variants and inherit only the neutral icon.
+                    if (neutral != null && copy is CharaPortrait_Image img)
+                    {
+                        img.icon_path = IconPathOf(neutral);
+                        img.icon_offset_x = neutral.icon_offset_x;
+                        img.icon_offset_y = neutral.icon_offset_y;
+                        img.icon_offset_size = neutral.icon_offset_size;
+                    }
+                    _generatedAssetHandlers.Add(copy);
+                }
+            }
+            return _generatedAssetHandlers;
+        }
+    }
+    protected List<CharaPortrait> _generatedAssetHandlers = null;
+    protected int _generatedAssetVersion = 0;
+    protected string _generatedAssetTemplateID = null;
+
+    void RefreshGeneratedAssetVersion()
+    {
+        var templateID = string.IsNullOrEmpty(portraitBaseIDOverride) ? Owner?.BaseID : portraitBaseIDOverride;
+        GeneratedPortraitRegistry.TryGetVersion(templateID, out var version);
+        // Boot registers images before the global template is built; do not cache an early empty handler list as ready.
+        if (string.IsNullOrEmpty(scr_System_Serializer.current?.GlobalPortraitTemplateJson)) version = 0;
+        if (_generatedAssetVersion == version && string.Equals(_generatedAssetTemplateID, templateID, StringComparison.OrdinalIgnoreCase)) return;
+        InvalidateGeneratedAssetCache();
+        _generatedAssetTemplateID = templateID;
+        _generatedAssetVersion = version;
+    }
+
+    /// <summary>New assets invalidate both selection and its activity context; the next draw collects fresh paired tags.</summary>
+    public void InvalidateGeneratedAssetCache()
+    {
+        ResetGeneratedAssetHandlers();
+        // Message-driven tags can reference shared lists; replace rather than clearing them in place.
+        tags_active = new List<string>();
+        tags_active_target = new List<string>();
+    }
+
+    void ResetGeneratedAssetHandlers()
+    {
+        if (_generatedAssetHandlers != null) foreach (var handler in _generatedAssetHandlers) handler.Destroy();
+        _generatedAssetHandlers = null;
+        _generatedAssetVersion = 0;
+        _generatedAssetTemplateID = null;
+        _cache_NeutralPortrait = null;
+        _cache_CombatPortrait = null;
+        _cache_ActivityPortrait = null;
+    }
+
     /// <summary>
     /// The original handler a draw without context keys picks: first enabled one with no Require*ContextKeys, else the last (GetValidPortrait's fallback)
     /// </summary>
@@ -258,13 +326,14 @@ public class PortraitManager
     }
 
     /// <summary>
-    /// Matching order: generated handlers first, then the original handlers
+    /// Matching order: configured global handlers, generated-asset handlers, then original handlers
     /// </summary>
     [JsonIgnore] public IEnumerable<CharaPortrait> ActivePortraits
     {
         get
         {
             foreach (var i in GeneratedHandlers) yield return i;
+            foreach (var i in GeneratedAssetHandlers) yield return i;
             foreach (var i in portraitPriorityList) yield return i;
         }
     }
@@ -288,6 +357,7 @@ public class PortraitManager
     {
         _owner = c;
         _generatedHandlers = null;
+        ResetGeneratedAssetHandlers();
         if (serializedData != null)
         {
             foreach (var i in serializedData)
@@ -308,9 +378,9 @@ public class PortraitManager
     public IEnumerator CacheInternal(Character_Trainable c)
     {
         _owner = c;
-        foreach (var i in portraitPriorityList) i.Owner = this;
+        foreach (var i in ActivePortraits) i.Owner = this;
 
-        foreach (var i in this.portraitPriorityList)
+        foreach (var i in ActivePortraits)
         {
             yield return i.CacheInternal();
         }
@@ -348,11 +418,10 @@ public class PortraitManager
     {
         // backing fields only - do not populate the cache just to destroy it
         var list = serializedData ?? _portraitCache;
-        if (list == null) return;
-        foreach(var i in list)
-        {
-            i.Destroy();
-        }
+        if (list != null) foreach (var i in list) i.Destroy();
+        if (_generatedHandlers != null) foreach (var i in _generatedHandlers) i.Destroy();
+        _generatedHandlers = null;
+        ResetGeneratedAssetHandlers();
     }
 
     [JsonIgnore]
@@ -405,6 +474,7 @@ public class PortraitManager
         this.portraitPriorityList.Insert(0,cm);
         cm.Owner = this;
         _generatedHandlers = null;  // the neutral handler (generated handlers' icon) may have changed
+        ResetGeneratedAssetHandlers();
 
         //Debug.Log("new portrait, owner ["+Owner.FirstName+"] cmOwner["+cm.Owner.Owner.FirstName+"] isImage[" + (cm is PortraitManager.CharaPortrait_Image) + "] listCount["+portraitPriorityList.Count+"] variantsCount [" + cm.Variants.Count + "] isvalid[" + (cm.isValid()) + "] portraitPath[" + (cm as PortraitManager.CharaPortrait_Image).PortraitPath + "]");
     }
@@ -424,7 +494,7 @@ public class PortraitManager
         handler = null;
         portrait = "";
         icon = "";
-        if (portraitPriorityList.Count < 1 && GeneratedHandlers.Count < 1)
+        if (portraitPriorityList.Count < 1 && GeneratedHandlers.Count < 1 && GeneratedAssetHandlers.Count < 1)
         {
             handler = Transparent;
         }
@@ -528,6 +598,7 @@ public class PortraitManager
     }
     protected void DrawNeutralPortrait(scr_CharPortraitBox box)
     {
+        RefreshGeneratedAssetVersion();
         CharaPortrait handler;
         string path;
 
@@ -588,6 +659,7 @@ public class PortraitManager
     protected string _cache_CombatPortrait_icon = "";
     public void DrawCombatPortrait(I_StatsManager stats, scr_CharPortraitBox box, bool forceRefresh = false)
     {
+        RefreshGeneratedAssetVersion();
         if (_cache_CombatPortrait == null || forceRefresh)
         {
             GetValidPortrait(new List<string>() { "combat" }, null, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon, box);
@@ -608,6 +680,7 @@ public class PortraitManager
     }
     public void DrawCombatIcon(I_StatsManager stats, scr_CharIconBox box, bool forceRefresh = false)
     {
+        RefreshGeneratedAssetVersion();
         if (_cache_CombatPortrait == null || forceRefresh)
         {
             GetValidPortrait(new List<string>() { "combat" }, null, out _cache_CombatPortrait, out _cache_CombatPortrait_path, out _cache_CombatPortrait_icon);
@@ -632,7 +705,8 @@ public class PortraitManager
     /// Draws the "current activity" portrait shown in the CurrentTarget box. Tag source depends on the call path:
     /// <br/>- handler != null (a dialogue/message line just fired, eg. from Log_TrySetChara): forces a refresh and adopts
     ///   that message's own SelfPortraitTag/TargetPortraitTag as the new tags_active/tags_active_target pair.
-    /// <br/>- handler == null and tags_active is already populated (left over from a previous handler-driven call, or a
+    /// <br/>- handler == null and forceRefresh (portrait click): collect fresh paired tags from the current activity.
+    /// <br/>- handler == null, no forced refresh, and tags_active is already populated (left over from a previous handler-driven call, or a
     ///   previous fresh collect below): reuse tags_active/tags_active_target as-is. Does NOT re-collect and does NOT
     ///   wipe the paired target tags - they must survive together, since they describe the same moment.
     /// <br/>- handler == null and tags_active is empty (nothing cached yet, eg. first draw or cache was cleared):
@@ -643,8 +717,9 @@ public class PortraitManager
     /// </summary>
     protected void DrawActivityPortrait(scr_CharPortraitBox box, I_hasPortrait handler = null, bool forceRefresh = false, bool lowPriority = false)
     {
+        RefreshGeneratedAssetVersion();
         //Debug.Log($"{Owner.CallName} DrawActivityPortrait");
-        forceRefresh = handler != null;
+        forceRefresh = forceRefresh || handler != null;
         if (_cache_ActivityPortrait == null || forceRefresh)
         {
             if (handler != null)
@@ -652,7 +727,7 @@ public class PortraitManager
                 tags_active = handler.SelfPortraitTag;
                 tags_active_target = handler.TargetPortraitTag;
             }
-            else if (tags_active.Count < 1)
+            else if (forceRefresh || tags_active.Count < 1)
             {
                 tags_active = GetOwnerActionTagsByPriority();
                 tags_active_target = GetOwnerActionTargetTagsByPriority();
@@ -685,7 +760,7 @@ public class PortraitManager
             }
             else
             {
-                if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} DrawActivityPortrait ABORT 2 due to cannot find distinct portrait for Tags [{String.Join(" ", tags_active)}]");
+                if (scr_System_CentralControl.current.LogPrefs.DLog_Portraits) Debug.Log($"{Owner?.CallName} DrawActivityPortrait ABORT 2: selection unchanged, handler [{_cache_ActivityPortrait?.GetType().Name}], path [{_cache_ActivityPortrait_path}], self tags [{String.Join(" ", tags_active)}], target tags [{String.Join(" ", tags_active_target)}]");
 
             }
         }
@@ -699,11 +774,11 @@ public class PortraitManager
     public List<string> GetOwnerActionTagsByPriority()
     {
         var result = new List<string>();
-        if (Owner == null || Owner.InteractionJob == null) return result;
+        if (Owner == null) return result;
 
         UtilityEX.GetActorTag(ref result, Owner);
         var packages = new List<ActionPackage>();
-        if (Owner.InteractionJob.isActive)
+        if (Owner.InteractionJob != null && Owner.InteractionJob.isActive)
         {
             Owner.InteractionJob.GetActorAPTags(Owner.RefID, result, packages);
             //if (result.Count > 0) return result;
@@ -742,14 +817,27 @@ public class PortraitManager
     public List<string> GetOwnerActionTargetTagsByPriority()
     {
         var result = new List<string>();
-        if (Owner == null || Owner.InteractionJob == null) return result;
-        if (Owner.InteractionJob.isActive)
+        if (Owner == null) return result;
+        var packages = new List<ActionPackage>();
+        if (Owner.InteractionJob != null && Owner.InteractionJob.isActive)
         {
-            Owner.InteractionJob.GetActorAPTargetTags(Owner.RefID, result);
+            Owner.InteractionJob.GetActorAPTargetTags(Owner.RefID, result, packages);
         }
         if (Owner.CurrentJob != null)
         {
-            Owner.CurrentJob.GetActorAPTargetTags(Owner.RefID, result);
+            Owner.CurrentJob.GetActorAPTargetTags(Owner.RefID, result, packages);
+        }
+        // Category requirements describe the partner, not just the partner's action in an EP.
+        var partners = new HashSet<Character_Trainable>();
+        foreach (var ap in packages.Distinct())
+        {
+            if (ap?.ListEP == null) continue;
+            foreach (var ep in ap.ListEP)
+            {
+                if (ep == null) continue;
+                var partner = ep.Doer == Owner ? ep.Receiver : ep.Receiver == Owner ? ep.Doer : null;
+                if (partner != null && partner != Owner && partners.Add(partner)) UtilityEX.GetActorTag(ref result, partner);
+            }
         }
         result = result.Distinct().ToList();
         return result;
@@ -766,6 +854,7 @@ public class PortraitManager
     /// </summary>
     protected void drawActivityIcon(scr_CharIconBox box)
     {
+        RefreshGeneratedAssetVersion();
         //Debug.Log($"{Owner.CallName} drawActivityIcon");
         if (_cache_ActivityPortrait == null)
         {
@@ -794,7 +883,7 @@ public class PortraitManager
         if (box != null && box.currentlyRunning == null)
         {
              Debug.Log("clicked!");
-            DrawActivityPortrait(box, null, false, true);
+            DrawActivityPortrait(box, null, true, true);
            // _cache_ActivityPortrait.Click();
         }
     }

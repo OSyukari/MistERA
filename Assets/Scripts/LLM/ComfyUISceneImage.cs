@@ -35,6 +35,10 @@ public class ComfyUISceneRequest
     public string promptId;
     /// <summary> the images of the batch as saved, in batch order </summary>
     public List<string> imagePaths = new List<string>();
+    /// <summary> WD14 scores in batch order; null means unavailable and classification uses game data alone </summary>
+    public List<ImageTagRecord> tagRecords = new List<ImageTagRecord>();
+    /// <summary> one classification/storage result per saved image, in batch order </summary>
+    public List<GeneratedImageClassifier.Result> stored = new List<GeneratedImageClassifier.Result>();
 
     public JObject ToJson()
     {
@@ -54,6 +58,8 @@ public class ComfyUISceneRequest
             ["promptId"] = promptId,
             ["seed"] = seed,
             ["images"] = new JArray(imagePaths.Select(p => (object)p).ToArray()),
+            ["tagRecords"] = new JArray(tagRecords.Select(r => r == null ? null : JObject.FromObject(r))),
+            ["stored"] = new JArray(stored.Select(r => r.ToJson())),
             ["placeholders"] = JObject.FromObject(placeholders),
             ["scene"] = scene,
         };
@@ -75,6 +81,7 @@ public static class ComfyUISceneImage
     public const string OutputFolderName = "_generated";
     public const string OutputFileName = "temp";
     public const string OutputNodeTitle = "MisteraOutput";
+    public const string TaggerNodeClass = "WD14TaggerScoredImage";
     public const string ListSeparator = "||";
 
     public static TimeSpan RequestTimeout = TimeSpan.FromMinutes(10);
@@ -93,14 +100,15 @@ public static class ComfyUISceneImage
     /// <summary> raised once per request, Done or Failed, on the main thread </summary>
     public static event Action<ComfyUISceneRequest> Completed;
 
-    /// <summary> $actors_complex$: actors whose own prompt (short tag not counted) has at least this many tags; fewer = $actors_simple$ </summary>
+    /// <summary> $actors_complex$: actors whose full own prompt (short tag not counted) exceeds this many tags </summary>
     public const int ComplexActorMinTags = 10;
 
     /// <summary>
     /// $composition$ $scene$ $location$ = those sections; $actions$ = one entry per interaction section, $actors$ = one entry per actor
     /// section starting with its short tag, all joined with ||; $mainActors$ = the $actors$ entry of the main actor (the actor the scene was
     /// collected for, ActionSceneTags.mainActor), $secondaryActors$ = the other entries; $actors_complex$ = the entries with a large prompt
-    /// (ComplexActorMinTags+, || list), $actors_simple$ = the smaller ones merged into one ", " prompt without duplicates (not a list);
+    /// (more than ComplexActorMinTags, || list), $actors_simple$ = every actor's full prompt up to that limit, otherwise its shortPrompt;
+    /// simple entries are joined with ", " in actor order and duplicates are kept;
     /// $prompt$ = the flat prompt; $seed$ = the request seed; $wd14_threshold$ / $wd14_character_threshold$ = tagger thresholds;
     /// $exclude_tags$ = the config's excluded_tags joined with commas.
     /// </summary>
@@ -113,6 +121,28 @@ public static class ComfyUISceneImage
         var secondaryActors = new List<string>();
         var complexActors = new List<string>();
         var simpleActors = new List<string>();
+        if (t != null)
+        {
+            foreach (var actor in t.actors)
+            {
+                // Reuse the full prompt already collected by Build; POV actors have no section but still need a simple entry.
+                var section = p.sections.Find(s => s.actor == actor.character
+                    && (s.kind == ScenePromptSectionKind.doer || s.kind == ScenePromptSectionKind.receiver));
+                var full = section?.tags ?? LLMUtils.CollectActorTags(actor.character, false, out _, actor.tags);
+                var own = full.Where(tag => !string.Equals(tag, actor.shortTag, StringComparison.OrdinalIgnoreCase)).ToList();
+                if (own.Count > ComplexActorMinTags)
+                {
+                    actor.shortPrompt = LLMUtils.CollectShortPrompt(actor.character, actor.baseTags);
+                    simpleActors.AddRange(actor.shortPrompt);
+                }
+                else
+                {
+                    actor.shortPrompt = new List<string> { actor.shortTag };
+                    simpleActors.Add(actor.shortTag);
+                    simpleActors.AddRange(own);
+                }
+            }
+        }
         foreach (var s in p.sections.Where(s => s.kind == ScenePromptSectionKind.doer || s.kind == ScenePromptSectionKind.receiver))
         {
             var shortTag = t?.actors.Find(a => a.character == s.actor)?.shortTag;
@@ -123,9 +153,11 @@ public static class ComfyUISceneImage
             var entry = string.Join(", ", tags);
             actors.Add(entry);
             (t != null && s.actor == t.mainActor ? mainActors : secondaryActors).Add(entry);
-            if (own.Count >= ComplexActorMinTags) complexActors.Add(entry);
-            else foreach (var tag in tags) if (!simpleActors.Contains(tag)) simpleActors.Add(tag);
+            if (own.Count > ComplexActorMinTags) complexActors.Add(entry);
         }
+        string excludedTags = "";
+        try { excludedTags = string.Join(",", ImageRulesJsonLoader.ReadExcludedTags(GlobalPortraitTemplate.ConfigPath)); }
+        catch (Exception e) { Debug.LogWarning($"ComfyUISceneImage: cannot read excluded tags, using none: {e.Message}"); }
         return new Dictionary<string, string>
         {
             ["$composition$"] = Join(ScenePromptSectionKind.composition),
@@ -141,7 +173,7 @@ public static class ComfyUISceneImage
             ["$seed$"] = seed.ToString(),
             ["$wd14_threshold$"] = Wd14Threshold.ToString(CultureInfo.InvariantCulture),
             ["$wd14_character_threshold$"] = Wd14CharacterThreshold.ToString(CultureInfo.InvariantCulture),
-            ["$exclude_tags$"] = string.Join(",", ImageRulesJsonLoader.ReadExcludedTags(GlobalPortraitTemplate.ConfigPath)),
+            ["$exclude_tags$"] = excludedTags,
         };
     }
 
@@ -188,6 +220,7 @@ public static class ComfyUISceneImage
 
             var images = PickImages(graph, entry);
             if (images.Count == 0) throw new InvalidOperationException($"the workflow produced no image (no image output, or none titled {OutputNodeTitle})");
+            request.tagRecords = ReadTagRecords(graph, entry, images.Count);
 
             Directory.CreateDirectory(OutputFolder);
             ClearPreviousOutput();
@@ -204,6 +237,8 @@ public static class ComfyUISceneImage
                 request.imagePaths.Add(outPath);
             }
             request.state = ComfyUISceneRequest.State.Done;
+            try { GeneratedImageClassifier.ClassifyAndStore(request); }
+            catch (Exception e) { Debug.LogWarning($"ComfyUISceneImage: classification could not finish: {e.Message}"); }
         }
         catch (Exception e)
         {
@@ -212,15 +247,14 @@ public static class ComfyUISceneImage
         }
         finally
         {
-            Current = null;
+            try
+            {
+                if (request.state == ComfyUISceneRequest.State.Done)
+                    File.WriteAllText(Path.Combine(OutputFolder, OutputFileName + ".json"), request.ToJson().ToString(Formatting.Indented), Encoding.UTF8);
+            }
+            catch (Exception e) { Debug.LogWarning($"ComfyUISceneImage: cannot write {OutputFileName}.json: {e.Message}"); }
+            finally { Current = null; }
         }
-
-        try
-        {
-            if (request.state == ComfyUISceneRequest.State.Done)
-                File.WriteAllText(Path.Combine(OutputFolder, OutputFileName + ".json"), request.ToJson().ToString(Formatting.Indented), Encoding.UTF8);
-        }
-        catch (Exception e) { Debug.LogWarning($"ComfyUISceneImage: cannot write {OutputFileName}.json: {e.Message}"); }
 
         try { Completed?.Invoke(request); }
         catch (Exception e) { Debug.LogError($"ComfyUISceneImage: Completed handler failed: {e}"); }
@@ -295,6 +329,59 @@ public static class ComfyUISceneImage
             if (DateTime.UtcNow > deadline) throw new TimeoutException($"ComfyUI did not finish prompt {promptId} within {RequestTimeout.TotalMinutes} min");
             await Task.Delay(PollInterval);
         }
+    }
+
+    /// <summary>Optional tagger history output, aligned exactly to the chosen image batch. Never shifts or filters positions.</summary>
+    static List<ImageTagRecord> ReadTagRecords(JObject graph, JObject historyEntry, int imageCount)
+    {
+        var records = Enumerable.Repeat<ImageTagRecord>(null, imageCount).ToList();
+        var nodes = graph.Properties().Where(p => p.Value is JObject node && (string)node["class_type"] == TaggerNodeClass).ToList();
+        if (nodes.Count == 0) return records;
+        if (nodes.Count != 1)
+        {
+            Debug.LogWarning("ComfyUISceneImage: multiple WD14 image taggers are ambiguous; using game data only");
+            return records;
+        }
+        try
+        {
+            var output = (historyEntry["outputs"] as JObject)?[nodes[0].Name] as JObject;
+            if (!(output?["tags_json"] is JArray payload) || payload.Count != 1 || payload[0].Type != JTokenType.String) return records;
+            var entries = JArray.Parse((string)payload[0]);
+            if (entries.Count != imageCount)
+            {
+                Debug.LogWarning($"ComfyUISceneImage: WD14 record count [{entries.Count}] differs from image count [{imageCount}]; using game data only");
+                return records;
+            }
+            bool ValidScores(JToken token)
+            {
+                if (!(token is JObject scores)) return false;
+                foreach (var score in scores.Properties())
+                {
+                    if (score.Value.Type != JTokenType.Float && score.Value.Type != JTokenType.Integer) return false;
+                    double value = (double)score.Value;
+                    if (!(value >= 0 && value <= 1)) return false;
+                }
+                return true;
+            }
+            for (int i = 0; i < entries.Count; i++)
+            {
+                try
+                {
+                    if (!(entries[i] is JObject entry)
+                        || (entry["error"] != null && entry["error"].Type != JTokenType.Null)
+                        || !ValidScores(entry["rating"]) || !ValidScores(entry["general"]) || !ValidScores(entry["character"])) continue;
+                    records[i] = new ImageTagRecord
+                    {
+                        rating = entry["rating"].ToObject<Dictionary<string, float>>(),
+                        general = entry["general"].ToObject<Dictionary<string, float>>(),
+                        character = entry["character"].ToObject<Dictionary<string, float>>(),
+                    };
+                }
+                catch (Exception e) { Debug.LogWarning($"ComfyUISceneImage: WD14 record [{i}] unavailable, using game data only: {e.Message}"); }
+            }
+        }
+        catch (Exception e) { Debug.LogWarning($"ComfyUISceneImage: WD14 output unavailable, using game data only: {e.Message}"); }
+        return records;
     }
 
     /// <summary> images ({ filename, subfolder, type }) of the node titled MisteraOutput, else of the first output node with images </summary>

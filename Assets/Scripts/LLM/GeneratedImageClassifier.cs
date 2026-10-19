@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 /// <summary>Traces a generated image back to the main actor's game actions before consulting WD14 scores.
-/// Does not move files or change the portrait registry.</summary>
+/// Classify is read-only; Store copies a classified image and publishes its runtime registration.</summary>
 public sealed class GeneratedImageClassifier
 {
     public sealed class Result
@@ -15,6 +18,38 @@ public sealed class GeneratedImageClassifier
         public string folder;
         public string skipReason;
         public readonly List<string> unmappedInteractions = new List<string>();
+        public int imageIndex;
+        public string sourcePath;
+        public string finalPath;
+        public string templateID;
+
+        public JObject ToJson()
+        {
+            return new JObject
+            {
+                ["imageIndex"] = imageIndex,
+                ["sourcePath"] = sourcePath,
+                ["finalPath"] = finalPath,
+                ["templateID"] = templateID,
+                ["folder"] = folder,
+                ["skipReason"] = skipReason,
+                ["unmappedInteractions"] = new JArray(unmappedInteractions),
+                ["classification"] = classification == null ? null : new JObject
+                {
+                    ["category"] = classification.CategoryId,
+                    ["name"] = classification.name,
+                    ["baseName"] = classification.nameRule?.name,
+                    ["variant"] = classification.variant,
+                    ["status"] = classification.status.ToString(),
+                    ["tier"] = classification.nameRule?.tier,
+                    ["score"] = classification.score,
+                    ["runnerUp"] = classification.runnerUp?.name,
+                    ["runnerUpScore"] = classification.runnerUpScore,
+                    ["reasons"] = new JArray(classification.reasons),
+                    ["tags"] = classification.record == null ? null : JObject.FromObject(classification.record),
+                },
+            };
+        }
     }
 
     sealed class Candidate
@@ -36,6 +71,121 @@ public sealed class GeneratedImageClassifier
     {
         var path = GlobalPortraitTemplate.ConfigPath;
         return new GeneratedImageClassifier(ImageRulesJsonLoader.Load(path), JObject.Parse(File.ReadAllText(path)));
+    }
+
+    /// <summary>Main thread, after the full batch is saved. Classification failures do not change generation state or abort later images.</summary>
+    public static void ClassifyAndStore(ComfyUISceneRequest request)
+    {
+        if (request == null) throw new ArgumentNullException(nameof(request));
+        request.stored.Clear();
+        if (request.imagePaths.Count == 0) return;
+        GeneratedImageClassifier classifier = null;
+        string loadIssue = null;
+        try { classifier = Load(); }
+        catch (Exception e) { loadIssue = $"classification unavailable: {e.Message}"; }
+
+        for (int i = 0; i < request.imagePaths.Count; i++)
+        {
+            Result result;
+            try
+            {
+                var record = request.tagRecords != null && i < request.tagRecords.Count ? request.tagRecords[i] : null;
+                result = classifier == null ? new Result { skipReason = loadIssue } : classifier.Classify(request.tags, record);
+            }
+            catch (Exception e) { result = new Result { skipReason = $"classification failed: {e.Message}" }; }
+            result.imageIndex = i;
+            result.sourcePath = request.imagePaths[i];
+            request.stored.Add(result);
+        }
+        for (int i = 0; i < request.stored.Count; i++)
+        {
+            try { Store(request, i, request.stored[i]); }
+            catch (Exception e) { request.stored[i].skipReason = $"store failed: {e.Message}"; }
+        }
+    }
+
+    /// <summary>Copies one successful classification without deleting the source. Failures remain per-image skip reasons.</summary>
+    public static Result Store(ComfyUISceneRequest request, int imageIndex, Result result)
+    {
+        if (result == null) throw new ArgumentNullException(nameof(result));
+        result.imageIndex = imageIndex;
+        result.sourcePath = request != null && imageIndex >= 0 && imageIndex < request.imagePaths.Count ? request.imagePaths[imageIndex] : null;
+        if (result.classification == null || result.skipReason != null) return result;
+        string imagePath = null, sidecarPath = null;
+        bool ownsImage = false, ownsSidecar = false;
+        try
+        {
+            if (!GeneratedPortraitRegistry.Enabled)
+                throw new InvalidOperationException("generated assets unavailable (safe mode, disabled pack, or serializer unavailable)");
+            var actor = request?.tags?.mainActor ?? request?.mainActor;
+            if (actor == null) throw new InvalidOperationException("no main actor for generated image storage");
+            var portraitID = actor.PortraitManager.portraitBaseIDOverride;
+            result.templateID = string.IsNullOrEmpty(portraitID) ? actor.BaseID : portraitID;
+            if (!IsFileNamePart(result.templateID) || !IsFileNamePart(result.folder) || !IsFileNamePart(result.classification.name))
+                throw new InvalidDataException("template ID, category folder, or classified name is not a valid file name component");
+            if (result.classification.status == ClassificationStatus.Unmatched)
+                throw new InvalidOperationException("unmatched classification cannot be stored");
+            if (string.IsNullOrEmpty(result.sourcePath) || !File.Exists(result.sourcePath))
+                throw new FileNotFoundException("source image not found", result.sourcePath);
+            var extension = Path.GetExtension(result.sourcePath).ToLowerInvariant();
+            if (extension != ".png" && extension != ".jpg" && extension != ".jpeg" && extension != ".webp")
+                throw new InvalidDataException($"unsupported generated image extension [{extension}]");
+
+            var folder = Path.Combine(ComfyUISceneImage.OutputFolder, result.templateID, result.folder);
+            Directory.CreateDirectory(folder);
+            int next = 1;
+            foreach (var file in Directory.EnumerateFiles(folder))
+            {
+                var stem = Path.GetFileNameWithoutExtension(file);
+                if (int.TryParse(stem.Substring(stem.LastIndexOf('_') + 1), NumberStyles.None, CultureInfo.InvariantCulture, out var number) && number >= next)
+                    next = checked(number + 1);
+            }
+            do
+            {
+                var stem = $"{result.classification.name}_generated_{result.templateID}_{next.ToString(CultureInfo.InvariantCulture)}";
+                imagePath = Path.Combine(folder, stem + extension);
+                sidecarPath = Path.Combine(folder, stem + ".json");
+                next = checked(next + 1);
+            } while (File.Exists(imagePath) || File.Exists(sidecarPath));
+
+            using (var source = File.OpenRead(result.sourcePath))
+            using (var target = new FileStream(imagePath, FileMode.CreateNew, FileAccess.Write))
+            {
+                ownsImage = true;
+                source.CopyTo(target);
+            }
+            result.finalPath = Path.GetFullPath(imagePath);
+            var sidecar = request.ToJson();
+            // Sidecars describe their own image; only temp.json contains the final batch storage results.
+            sidecar.Remove("stored");
+            sidecar["storedImage"] = result.ToJson();
+            using (var stream = new FileStream(sidecarPath, FileMode.CreateNew, FileAccess.Write))
+            {
+                ownsSidecar = true;
+                using (var writer = new StreamWriter(stream, new UTF8Encoding(false))) writer.Write(sidecar.ToString(Formatting.Indented));
+            }
+            if (!scr_System_Serializer.current.RegisterRuntimeFile(result.finalPath))
+                throw new InvalidOperationException("generated image could not be registered at runtime");
+            GeneratedPortraitRegistry.Add(result.templateID);
+            actor.PortraitManager.InvalidateGeneratedAssetCache();
+        }
+        catch (Exception e)
+        {
+            result.finalPath = null;
+            result.skipReason = $"store failed: {e.Message}";
+            try { if (ownsSidecar) File.Delete(sidecarPath); }
+            catch (Exception cleanup) { result.skipReason += $"; sidecar cleanup failed: {cleanup.Message}"; }
+            try { if (ownsImage) File.Delete(imagePath); }
+            catch (Exception cleanup) { result.skipReason += $"; image cleanup failed: {cleanup.Message}"; }
+        }
+        return result;
+    }
+
+    static bool IsFileNamePart(string value)
+    {
+        return !string.IsNullOrWhiteSpace(value) && value != "." && value != ".."
+            && value.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 && value.IndexOf('/') < 0 && value.IndexOf('\\') < 0
+            && !value.EndsWith(".", StringComparison.Ordinal) && !value.EndsWith(" ", StringComparison.Ordinal);
     }
 
     public GeneratedImageClassifier(ImageRules rules, JObject config)

@@ -396,7 +396,19 @@ public class scr_CharPortraitBox : MonoBehaviour, IPointerEnterHandler, IPointer
             currentlyRunning = null;
         }
         _storedPortrait = this.currentPortrait;
-        currentlyRunning = StartCoroutine(routine);
+        bool finished = false;
+        IEnumerator DrawToCompletion()
+        {
+            try { yield return routine; }
+            finally
+            {
+                finished = true;
+                currentlyRunning = null;
+            }
+        }
+        var running = StartCoroutine(DrawToCompletion());
+        // Cached Spine draws may finish synchronously, before StartCoroutine returns its handle.
+        currentlyRunning = finished ? null : running;
         mouseOver = false;
         updateImage();
     }

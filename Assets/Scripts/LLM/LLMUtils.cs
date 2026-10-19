@@ -1482,6 +1482,60 @@ public static class LLMUtils
         return false;
     }
 
+    static readonly HashSet<string> shortPromptRaceCategories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        { "animal", "humanoid", "humanrace", "playableRace" };
+
+    /// <summary>Body-based girl / boy / futa for humanoids, otherwise species or other. No appearance prompt scanning.</summary>
+    public static string GetShortTag(Character_Trainable c, ICollection<string> actorTags = null)
+    {
+        if (c == null) return ActionScenePromptUtility.Short_Other;
+        if (actorTags == null)
+        {
+            var tags = new List<string>();
+            UtilityEX.GetActorTag(ref tags, c);
+            actorTags = tags;
+        }
+        if (!actorTags.Contains("humanrace"))
+        {
+            var species = c.Race?.RaceType?.LastOrDefault(r => !string.IsNullOrEmpty(r) && !shortPromptRaceCategories.Contains(r));
+            return string.IsNullOrEmpty(species) ? ActionScenePromptUtility.Short_Other : species.ToLowerInvariant();
+        }
+        if (c.Body != null)
+        {
+            bool penis = c.Body.HasMaleParts;
+            bool female = c.Appearance == Humanoid_GenderAppearance.Female || c.Body.HasFemaleParts;
+            return penis ? (female ? ActionScenePromptUtility.Short_Futa : ActionScenePromptUtility.Short_Boy)
+                : female ? ActionScenePromptUtility.Short_Girl : ActionScenePromptUtility.Short_Other;
+        }
+        return ActionScenePromptUtility.Short_Other;
+    }
+
+    /// <summary>Basic appearance only: short tag, skin color, body shape, and always-visible organ prompts.
+    /// Ordinary organ promptTags are excluded even in Xray mode. Order and duplicate tags are preserved.</summary>
+    public static List<string> CollectShortPrompt(Character_Trainable c, ICollection<string> actorTags = null)
+    {
+        var list = new List<string> { GetShortTag(c, actorTags) };
+        if (c == null) return list;
+        foreach (var group in new[] { "trait_SkinColor", "trait_BodyType" })
+        {
+            var trait = c.Body?.GetEffectiveBodyTrait(group) ?? c.Stats?.GetTraitByGroupID(group);
+            if (trait?.promptTags != null) list.AddRange(trait.promptTags);
+            if (trait?.promptTags_always != null) list.AddRange(trait.promptTags_always);
+        }
+        if (c.Body?.Body == null) return list;
+        foreach (var part in c.Body.Body)
+        {
+            if (part?.internals == null) continue;
+            foreach (var organ in part.internals)
+            {
+                if (organ?.Base == null) continue;
+                if (organ.Base.promptTags_always != null) list.AddRange(organ.Base.promptTags_always);
+                AddRequestedOrganTags(c, organ.Base, list, true);
+            }
+        }
+        return list;
+    }
+
     public static List<string> CollectActorTags(Character_Trainable c, bool isCombat = false)
     {
         return CollectActorTags(c, isCombat, out _);
@@ -1609,7 +1663,7 @@ public static class LLMUtils
     }
 
     /// <summary>
-    /// Scene tags (no prompts) of everything mainActor is doing: its CurrentJob + InteractionJob ongoing APs with it, see
+    /// Scene tags and basic actor appearance prompts of everything mainActor is doing: its CurrentJob + InteractionJob ongoing APs with it, see
     /// ActionScenePromptUtility.Collect. Build the prompt sections with BuildScenePrompt.
     /// </summary>
     public static ActionSceneTags CollectInteractionTags(Character_Trainable mainActor)

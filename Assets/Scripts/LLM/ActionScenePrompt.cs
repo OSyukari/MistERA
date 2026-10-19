@@ -15,8 +15,10 @@ public class ActionSceneActor
     public HashSet<string> baseTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     /// <summary> baseTags + the actor's EP portrait action tags of every collected EP </summary>
     public HashSet<string> tags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-    /// <summary> girl / boy / futa, a species (dog / horse / goblin ...) or other (ActionScenePromptUtility.GetShortTag) </summary>
-    public string shortTag = ActionScenePromptUtility.Short_Other;
+    /// <summary> Short tag first; basic appearance and always-visible body tags are added when a long full prompt needs shortening </summary>
+    public List<string> shortPrompt = new List<string> { ActionScenePromptUtility.Short_Other };
+    /// <summary> girl / boy / futa, a species (dog / horse / goblin ...) or other; always the first shortPrompt element </summary>
+    public string shortTag => shortPrompt.Count > 0 ? shortPrompt[0] : ActionScenePromptUtility.Short_Other;
     public bool isDoer = false;
     /// <summary> receiver in any EP: on the receiver side (receiver wins over doer) </summary>
     public bool isReceiver = false;
@@ -43,7 +45,7 @@ public class ActionSceneInteraction
 }
 
 /// <summary>
-/// Tags of everything the main actor is doing (Docs/ImagePortraits/Plan_ActionPromptTags.md), tags only - no prompts.
+/// Tags of everything the main actor is doing (Docs/ImagePortraits/Plan_ActionPromptTags.md), plus each actor's basic appearance prompt.
 /// </summary>
 public class ActionSceneTags
 {
@@ -96,7 +98,10 @@ public class ActionSceneTags
         sb.AppendLine($"counts: {string.Join(", ", counts.Select(kv => kv.Key + ":" + kv.Value))}");
         sb.AppendLine($"scene: {string.Join(", ", scene)}");
         foreach (var a in actors)
+        {
             sb.AppendLine($"{(a.isReceiver ? "receiver" : "doer")} [{a.character?.RefID} {a.character?.FullName}] {a.shortTag}{(a.isPlayer ? " player" : "")}: {string.Join(", ", a.tags)}");
+            sb.AppendLine($"shortPrompt: {string.Join(", ", a.shortPrompt)}");
+        }
         foreach (var i in interactions)
             sb.AppendLine($"interaction [{i.Label}]: {string.Join(", ", i.tags)}");
         return sb.ToString();
@@ -308,7 +313,7 @@ public static class ActionScenePromptUtility
             var actorTags = new List<string>();
             UtilityEX.GetActorTag(ref actorTags, a.character);
             a.baseTags.UnionWith(actorTags);
-            a.shortTag = GetShortTag(a.character, a.baseTags);
+            a.shortPrompt = new List<string> { LLMUtils.GetShortTag(a.character, a.baseTags) };
             a.baseTags.Add(a.shortTag);
             a.tags.UnionWith(a.baseTags);
             a.isPlayer = a.character == player;
@@ -341,30 +346,6 @@ public static class ActionScenePromptUtility
         if (jobTags == null) return;
         a.baseTags.UnionWith(jobTags);
         inter.tags.UnionWith(jobTags);
-    }
-
-    /// <summary> RaceType entries that name a category, not a species (creature races: [animal, dog], goblin: [humanoid, goblin]) </summary>
-    static readonly HashSet<string> raceCategoryWords = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "animal", "humanoid", "humanrace", "playableRace" };
-
-    /// <summary>
-    /// The actor simplified for image prompts (the game gender tags follow the content settings, this is body based):
-    /// humanoids (actor tag humanrace): futa = penis + female appearance or female parts; boy = penis only;
-    /// girl = no penis, female appearance or female parts. Other races: the species, the last RaceType entry that is not a category word
-    /// (dog, horse, pig, bear, goblin, android). Nothing found / no parts: other.
-    /// </summary>
-    public static string GetShortTag(Character_Trainable c, ICollection<string> actorTags)
-    {
-        if (c == null) return Short_Other;
-        if (actorTags == null || !actorTags.Contains("humanrace"))
-        {
-            var species = c.Race?.RaceType?.LastOrDefault(r => !string.IsNullOrEmpty(r) && !raceCategoryWords.Contains(r));
-            return string.IsNullOrEmpty(species) ? Short_Other : species.ToLowerInvariant();
-        }
-        if (c.Body == null) return Short_Other;
-        bool penis = c.Body.HasMaleParts;
-        bool female = c.Appearance == Humanoid_GenderAppearance.Female || c.Body.HasFemaleParts;
-        if (penis) return female ? Short_Futa : Short_Boy;
-        return female ? Short_Girl : Short_Other;
     }
 
     /// <summary> "name:N" (exactly N) / "name:N+" (at least N) when name is a count key; false = not a count tag </summary>
@@ -556,7 +537,7 @@ public static class ActionScenePromptUtility
 
     /// <summary>
     /// The built prompt as one JSON object: composition, scene, location (room), actions (one per interaction section),
-    /// actors (one per doer / receiver section, with role and short tag). Tag lists joined with ", ".
+    /// actors (one per doer / receiver section, with role, short tag, and shortPrompt array). Full tag lists joined with ", ".
     /// </summary>
     public static string ToJson(ActionSceneTags t, ActionScenePrompt p)
     {
@@ -580,6 +561,7 @@ public static class ActionScenePromptUtility
                 ["name"] = s.actor?.FullName,
                 ["role"] = s.kind.ToString(),
                 ["shortTag"] = a?.shortTag,
+                ["shortPrompt"] = a == null ? new JArray() : new JArray(a.shortPrompt),
                 ["prompt"] = string.Join(", ", s.tags),
             });
         }

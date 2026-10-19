@@ -307,6 +307,25 @@ public class scr_System_Serializer : MonoBehaviour
     }
 
 
+    /// <summary>Registers a newly written file with the same short addresses as boot registration. Never publishes in safe mode.</summary>
+    public bool RegisterRuntimeFile(string fullPath)
+    {
+        if (scr_System_CentralControl.current != null && scr_System_CentralControl.current.isSafeMode) return false;
+        var file = new FileInfo(fullPath);
+        if (!file.Exists || file.Directory?.Parent == null
+            || file.Extension.Equals(".json", StringComparison.OrdinalIgnoreCase)
+            || file.Extension.Equals(".meta", StringComparison.OrdinalIgnoreCase)) return false;
+        var key = $"{file.Directory.Parent.Name}/{file.Directory.Name}/{file.Name}";
+        if (ShortFileAddress.TryGetValue(key, out var existing)
+            && !string.Equals(existing, file.FullName, StringComparison.OrdinalIgnoreCase)) return false;
+
+        var errors = new List<string>();
+        if (!RegisterAddressableFile(file, false, "runtime", new List<string>(), errors)) return false;
+        foreach (var error in errors) Debug.LogWarning($"RegisterRuntimeFile: {error}");
+        return ShortFileAddress.TryGetValue(key, out var registered)
+            && string.Equals(registered, file.FullName, StringComparison.OrdinalIgnoreCase);
+    }
+
     protected void CustomCalls()
     {
 
@@ -336,6 +355,7 @@ public class scr_System_Serializer : MonoBehaviour
         bool bootSafeMode = scr_System_CentralControl.current.isSafeMode;
         ModLoader.LoadPatches(Mods, file => IsDefFileFiltered(file, bootSafeMode, out _));
         BuildAddressables(scr_System_CentralControl.current.isSafeMode);
+        GeneratedPortraitRegistry.Initialize(this);
 
         Observer_LoadProgress?.Invoke(0.10f, "Loading definitions...");
         yield return null;
